@@ -60,7 +60,6 @@ public class SqlInsertBuilder {
      * @param columns
      * @param rows
      * @param sqlOptions
-     * @param sqlErrors
      */
     public SqlInsertBuilder(String table, List<String> columns, List<ArrayList<SqlData>> rows, JsonNode sqlOptions) {
         this.table = table;
@@ -181,7 +180,7 @@ public class SqlInsertBuilder {
         }
 
         boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-        String colNamesWithSep = columns.stream().map(col -> col.replaceAll("\\s", "")).collect(Collectors.joining(","));
+        String colNamesWithSep = columns.stream().map(col -> col.replaceAll("[^a-zA-Z0-9_]", "_")).collect(Collectors.joining(","));
         if (!trimColNames) {
             colNamesWithSep = columns.stream().collect(Collectors.joining(","));
         }
@@ -212,7 +211,6 @@ public class SqlInsertBuilder {
      * @param col
      * @param rowValue
      * @param quote
-     * @param fieldCount
      */
     public void handleNullField(
             boolean allowNullChkBox,

@@ -34,12 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.grel.controls;
 
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.grel.ControlDescription;
 
 public class IsError extends IsTest {
 
     @Override
     public String getDescription() {
-        return "Returns whether o is an error";
+        return ControlDescription.is_error_desc();
     }
 
     @Override

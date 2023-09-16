@@ -54,7 +54,13 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   .appendTo(document.body);
 
   elmt.css("visibility", "hidden").appendTo(container);
-  container.css("top", Math.round((overlay.height() - elmt.height()) / 2) + "px");
+// Dialogs should be in the upper half of the window
+// Offset by 10% of window height to separate from browser bar
+// Unless dialog is as big or bigger than the window, then set top to 0 + 5px;
+  var top1 = overlay.height()/10;
+  var top2 = Math.round((overlay.height() - elmt.height()) / 2);
+  var top = (top1 < top2) ? top1 : top2;
+  container.css("top", Math.round((top < 0 ) ? 5 : top) + "px");
   elmt.css("visibility", "visible");
 
   container.draggable({ handle: '.dialog-header', cursor: 'move' });
@@ -68,25 +74,36 @@ DialogSystem.showDialog = function(elmt, onCancel) {
 
   var level = DialogSystem._layers.length;
 
-  $(window).keydown(escapeKey);
-  
+  DialogSystem.setupEscapeKeyHandling();
+
   return level;
 };
+
+
+DialogSystem.pauseEscapeKeyHandling = function() {
+  $(window).off('keydown',escapeKey);
+}
+
+DialogSystem.setupEscapeKeyHandling = function() {
+  $(window).on('keydown',escapeKey);
+}
 
 DialogSystem.dismissLevel = function(level) {
     var layer = DialogSystem._layers[level];
 
-    $(document).unbind("keydown", layer.keyHandler);
+    if (layer) {
+      $(document).off("keydown", layer.keyHandler);
 
-    layer.overlay.remove();
-    layer.container.remove();
-    layer.container.unbind();
+      layer.overlay.remove();
+      layer.container.remove();
+      layer.container.off();
 
-    if (layer.onCancel) {
-      try {
-        layer.onCancel();
-      } catch (e) {
-        Refine.reportException(e);
+      if (layer.onCancel) {
+        try {
+          layer.onCancel();
+        } catch (e) {
+          Refine.reportException(e);
+        }
       }
     }
 };

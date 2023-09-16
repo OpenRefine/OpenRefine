@@ -27,7 +27,7 @@ Refine.SetLanguageUI = function(elmt) {
     
   });
 
-	this._elmts.set_lan_btn.bind('click', function(e) {		
+	this._elmts.set_lan_btn.on('click', function(e) {		
                 Refine.wrapCSRF(function(token) {
                     $.ajax({
                             url : "command/core/set-preference?",

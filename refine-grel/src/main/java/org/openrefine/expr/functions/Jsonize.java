@@ -37,6 +37,8 @@ import java.io.IOException;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 import org.openrefine.util.ParsingUtilities;
 
@@ -53,13 +55,12 @@ public class Jsonize extends PureFunction {
                 throw new RuntimeException(e);
             }
         }
-        String errorMessage = " accepts a single argument";
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + errorMessage);
+        return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Quotes a value as a JSON literal value";
+        return FunctionDescription.fun_jsonize();
     }
 
     @Override

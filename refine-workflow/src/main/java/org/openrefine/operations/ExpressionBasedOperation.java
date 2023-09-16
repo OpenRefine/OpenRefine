@@ -3,6 +3,7 @@ package org.openrefine.operations;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -35,6 +36,7 @@ import org.openrefine.model.changes.RowInRecordChangeDataProducer;
 import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.cell.TextTransformOperation;
 import org.openrefine.operations.column.ColumnAdditionOperation;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
@@ -205,7 +207,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
 
             int columnIndex = columnModel.getColumnIndexByName(_baseColumnName);
             RowInRecordChangeDataProducer<Cell> changeDataProducer = changeDataProducer(columnIndex, _baseColumnName, _onError, _eval,
-                    columnModel, _projectId);
+                    columnModel, state.getOverlayModels(), _projectId);
 
             try {
                 if (Mode.RowBased.equals(_engine.getMode())) {
@@ -255,6 +257,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
             OnError onError,
             Evaluable eval,
             ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels,
             long projectId) {
         return new RowInRecordChangeDataProducer<Cell>() {
 
@@ -266,7 +269,7 @@ public abstract class ExpressionBasedOperation extends EngineDependentOperation 
                 Cell newCell = null;
 
                 Properties bindings = new Properties();
-                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, baseColumnName, cell);
+                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, baseColumnName, cell, overlayModels);
                 bindings.put("project_id", projectId);
 
                 Object o = eval.evaluate(bindings);

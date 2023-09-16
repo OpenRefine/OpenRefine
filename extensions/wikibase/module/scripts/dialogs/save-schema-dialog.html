@@ -1,0 +1,24 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <form bind="form">
+    <div class="dialog-body" bind="dialogBody">
+        <div class="save-new-template-dialog-input-group">
+          <label for="nameInputId" bind="nameLabel"></label>
+          <input type="text" name="name-input" bind="nameInput" id="nameInputId" style="width: 100%" />
+        </div>
+        <div bind="existingTemplateArea" class="save-new-template-dialog-input-group">
+          <label for="templateSelectId" bind="existingTemplateLabel"></label>
+          <select name="existing-template-select" bind="templateSelect" id="templateSelectId"></select>
+        </div>
+    </div>
+    <div class="dialog-footer" style="justify-content: space-between">
+      <div class="dialog-footer-bg">
+        <button class="button" type="button" bind="manageButton"></button>
+      </div>
+      <div class="dialog-footer-bg">
+        <button class="button cancel-button" type="button" bind="cancelButton"></button>
+        <button class="button button-primary" type="submit" bind="saveButton"></button>
+      </div>
+    </div>
+  </form>
+</div>

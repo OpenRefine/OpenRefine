@@ -73,7 +73,7 @@ For example, the Getty ULAN shows an artist’s discipline, nationality, and bir
 
 Hovering over the suggestion will also offer the two matching options as buttons. 
 
-For matched values (those appearing as dark blue links), the underlying cell value has not been altered - the cell is storing both the original string and the matched entity link at the same time. If you were to copy your column to a new column at this point using `value`, for example, the reconcilation data would not transfer - only the original strings. You can learn more about how OpenRefine stores different pieces of information in each cell in [the Variables section specific to reconciliation data](expressions#reconciliation).
+For matched values (those appearing as dark blue links), the underlying cell value has not been altered - the cell is storing both the original string and the matched entity link at the same time. If you were to copy your column to a new column at this point using `value`, for example, the reconciliation data would not transfer - only the original strings. You can learn more about how OpenRefine stores different pieces of information in each cell in [the Variables section specific to reconciliation data](expressions#reconciliation).
 
 For each cell, you can manually “Create new item,” which will take the cell’s original value and apply it, as though it is a match. This will not become a dark blue link, because at this time there is nothing to link to: it is a draft entity stored only in your project. You can use this feature to prepare these entries for eventual upload to an editable service such as [Wikibase](wikibase/overview), but most services do not yet support this feature. 
 
@@ -122,13 +122,16 @@ The other options available under <span class="menuItems">Reconcile</span> are:
 
 ## Reconciling with unique identifiers {#reconciling-with-unique-identifiers}
 
-Reconciliation services use unique identifiers for their entities. For example, the 14th Dalai Lama has the VIAF ID [38242123](https://viaf.org/viaf/38242123/) and the Wikidata ID [Q17293](https://www.wikidata.org/wiki/Q37349). You can supply these identifiers directly to your chosen reconciliation service in order to pull more data, but these strings will not be “reconciled” against the external dataset. 
+Reconciliation services use unique identifiers for their entities. For example, the 14th Dalai Lama has the VIAF ID [38242123](https://viaf.org/viaf/38242123/) and the Wikidata ID [Q17293](https://www.wikidata.org/wiki/Q37349). You can supply your known identifiers in a column to immediately match with the known IDs from a reconciliation service in order to subsequently pull more data about them. 
 
-Select the column with unique identifiers and apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span>. This will bring up the list of reconciliation services you have already added (to add a new service, open the <span class="menuItems">Start reconciling...</span> window first). If you use this operation on a column of IDs, you will not have access to the usual reconciliation settings.
+Select the column with unique known identifiers of a service and apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span>. If you use this operation on a column of known IDs, you will not have access to the usual reconciliation settings.  Instead, this will bring up a dialog to select a service from the list of reconciliation services you have already added (to add a new service, open the <span class="menuItems">Start reconciling...</span> window first). 
 
-Matching identifiers does not validate them. All cells will appear as dark blue “confirmed” matches. You should check before this operation that the identifiers in the column exist on the target service. 
+:::info Before running this operation, ensure that the IDs in your column **already exist** with the reconciliation service.  <span class="menuItems">Use values as identifiers</span> assumes they exist with the service, and so does not perform a lookup or "reconcile" against the service.  
+:::
 
-You may get false positives, which you will need to hover over or click on to identify:
+This operation is typically very fast and after it completes all cells will appear as dark blue “confirmed” matches.
+
+You may get false positives (ex. the IDs no longer exist with the service), which you will need to hover over or click on to identify:
 
 ![Hovering over an error.](/img/reconcileIDerror.png)
 
@@ -234,6 +237,12 @@ OpenRefine supplies a number of variables related specifically to reconciled val
 * `cell.recon.matched` (a “true” or “false” value)
 
 You can find out more in the [reconciliaton variables](expressions#reconciliaton-variables) section. 
+
+:::tip Make a copy of a reconciled column
+
+To make a copy of a reconciled column and all it's contents (the entire recon object for each cell) into a new column just use the GREL expression `cell` only when using <span class="menuItems">Edit column</span> → <span class="menuItems">Add column based on this column</span>.
+
+:::
 
 ## Exporting reconciled data {#exporting-reconciled-data}
 

@@ -38,6 +38,8 @@ import org.jsoup.parser.Parser;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class ParseXml extends PureFunction {
@@ -58,16 +60,18 @@ public class ParseXml extends PureFunction {
                 } else if (mode.equals("xml")) {
                     return Jsoup.parse(o1.toString(), "", Parser.xmlParser());
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to identify which parser to use");
+                    // parser to use");
+                    return new EvalError(EvalErrorMessage.unable_to_identify_parser(ControlFunctionRegistry.getFunctionName(this)));
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
+        // argument");
+        return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Given a cell full of XML-formatted text, parseXml() returns a full XML document and adds any missing closing tags.";
+        return FunctionDescription.xml_parsexml();
     }
 
     @Override

@@ -42,8 +42,31 @@ import org.openrefine.grel.GrelEvaluable;
 import org.openrefine.grel.ast.FieldAccessorExpr;
 import org.openrefine.grel.ast.VariableExpr;
 
+/**
+ * Parser class
+ */
 public class Parser {
 
+    /**
+     * findEndBrace method Finds the first true ending brace in a cell, ignoring escaped end braces
+     *
+     * @param expression
+     *            string that will be interrogated for first true end brace
+     * @param lowIndex
+     *            index from which the interrogation will start
+     * @return index of the first true end brace CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/3381
+     */
+    private static int findEndBrace(final String expression, final int lowIndex) throws ParsingException {
+        int closeBrace = expression.indexOf('}', lowIndex);
+        if (expression.charAt(closeBrace - 1) == '\\') {
+            closeBrace = findEndBrace(expression, closeBrace + 1);
+        }
+        return closeBrace;
+    }
+
+    /**
+     * Parse method
+     */
     static public Template parse(String s) throws ParsingException {
         List<Fragment> fragments = new ArrayList<Fragment>();
 
@@ -85,7 +108,9 @@ public class Parser {
                     continue;
                 }
             } else if (c == '{' && c2 == '{') {
-                int closeBrace = s.indexOf('}', current + 2);
+
+                int closeBrace = findEndBrace(s, current + 2);
+
                 if (closeBrace > current + 1 && closeBrace < s.length() - 1 && s.charAt(closeBrace + 1) == '}') {
                     String expression = s.substring(current + 2, closeBrace);
 

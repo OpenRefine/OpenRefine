@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,7 +82,7 @@ public class ListFacetResultTests {
     @Test
     public void serializeListFacet() throws JsonParseException, JsonMappingException, IOException {
         ColumnModel model = new ColumnModel(Arrays.asList(new ColumnMetadata("Column A")));
-        ListFacet facet = config.apply(model);
+        ListFacet facet = config.apply(model, Collections.emptyMap());
 
         Map<String, Long> map = new HashMap<>();
         map.put("foobar", 1L);
@@ -96,7 +97,7 @@ public class ListFacetResultTests {
     @Test
     public void serializeListFacetWithError() throws JsonParseException, JsonMappingException, IOException {
         ColumnModel model = new ColumnModel(Arrays.asList(new ColumnMetadata("Column B")));
-        ListFacet facet = config.apply(model);
+        ListFacet facet = config.apply(model, Collections.emptyMap());
 
         ListFacetResult result = facet.getFacetResult(facet.getInitialFacetState());
 
@@ -106,7 +107,7 @@ public class ListFacetResultTests {
     @Test
     public void testSelectedEmptyChoice() throws IOException {
         ColumnModel model = new ColumnModel(Arrays.asList(new ColumnMetadata("Column A")));
-        ListFacet facet = config.apply(model);
+        ListFacet facet = config.apply(model, Collections.emptyMap());
 
         Map<String, Long> map = new HashMap<>();
         map.put("abar", 1L);

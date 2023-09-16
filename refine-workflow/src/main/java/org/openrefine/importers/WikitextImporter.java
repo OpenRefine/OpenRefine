@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
 import com.google.common.io.CharStreams;
 import de.fau.cs.osr.ptk.common.AstVisitor;
 import org.sweble.wikitext.parser.ParserConfig;
@@ -314,7 +315,7 @@ public class WikitextImporter extends ReaderImporter {
             if (value == null) {
                 value = "";
             }
-            value = value.trim();
+            value = CharMatcher.whitespace().trimFrom(value);
             cellStringBuilder = null;
             return value;
         }

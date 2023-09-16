@@ -51,7 +51,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
     );
   };
-
   MenuSystem.appendTo(menu, [ "core/facet" ], [
     {
       id: "core/text-facet",
@@ -101,20 +100,47 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       id: "core/scatterplot-facet",
       label: $.i18n('core-views/scatterplot-facet'),
       click: function() {
-        new ScatterplotDialog(column.name);
+          var params = {
+              project: theProject.id
+          };
+          $.getJSON("command/core/get-columns-info?" + $.param(params),(data) => {
+              if (data === null || typeof data.length == 'undefined') {
+                  alert($.i18n('core-dialogs/error-getColumnInfo'));
+                  return;
+              }
+              var numericColumns = [];
+              let isFocusColumnNumeric = false;
+              for (var i = 0; i < data.length; i++) {
+                  if (data[i].is_numeric) {
+                      if (data[i].name === column.name) {
+                          isFocusColumnNumeric = true;
+                      }
+                      numericColumns.push(data[i]);
+                  }
+              }
+              if (!isFocusColumnNumeric) {
+                  alert($.i18n('core-dialogs/column-not-numeric',column.name));
+                  return;
+              } else if (numericColumns.length < 2) {
+                  alert($.i18n('core-dialogs/no-other-numeric-columns',column.name));
+                  return;
+              }
+              new ScatterplotDialog(column.name);
+          });
+
       }
     },
     {},
     {
       id: "core/custom-text-facet",
-      label: $.i18n('core-views/custom-text-facet')+'...',
+      label: $.i18n('core-views/custom-text-facet'),
       click: function() {
         doFilterByExpressionPrompt(null, "list");
       }
     },
     {
       id: "core/custom-numeric-facet",
-      label: $.i18n('core-views/custom-numeric')+'...',
+      label: $.i18n('core-views/custom-numeric'),
       click: function() {
         doFilterByExpressionPrompt(null, "range");
       }
@@ -142,13 +168,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           id: "core/duplicates-facet",
           label: $.i18n('core-views/duplicates-facet'),
           click: function() {
+            let columnName = column.name.replace(/'/g, "\\'");
             ui.browsingEngine.addFacet(
                 "list",
                 {
                   "name": column.name,
                   "columnName": column.name,
                   "expression": "facetCount(value, 'value', '" +
-                  column.name + "') > 1"
+                  columnName + "') > 1"
                 }
             );
           }

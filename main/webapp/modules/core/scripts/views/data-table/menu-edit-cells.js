@@ -66,8 +66,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click',dismiss);
+    elmts.okButton.on('click',function() {
       doTextTransform(
         previewWidget.getExpression(true),
         $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
@@ -90,7 +90,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       params.repeat = elmts.repeatCheckbox[0].checked;
       params.repeatCount = elmts.repeatCountInput[0].value;
     };
-    elmts.repeatCheckbox.click(function() {
+    elmts.repeatCheckbox.on('click',function() {
       previewWidget.update();
     });
   };
@@ -235,7 +235,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   }
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/replace-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/replace'));
+    elmts.dialogHeader.text($.i18n('core-views/replace/header'));
     elmts.or_views_text_to_find.text($.i18n('core-views/text-to-find'));
     elmts.or_views_replacement.text($.i18n('core-views/replacement-text'));
     elmts.or_views_finding_info1.text($.i18n('core-views/finding-info1'));
@@ -249,9 +249,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
-    elmts.cancelButton.click(dismiss);
-    elmts.text_to_findInput.focus();
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click',dismiss);
+    elmts.text_to_findInput.trigger('focus');
+    elmts.okButton.on('click',function() {
       var text_to_find = elmts.text_to_findInput[0].value;
       var replacement_text = elmts.replacement_textInput[0].value;
       var replace_dont_escape = elmts.replace_dont_escapeInput[0].checked;
@@ -293,7 +293,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-multi-valued-cells-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/split-cells'));
+    elmts.dialogHeader.text($.i18n('core-views/split-cells/header'));
 
     elmts.or_views_howSplit.text($.i18n('core-views/how-split-cells'));
     elmts.or_views_bySep.text($.i18n('core-views/by-sep'));
@@ -320,10 +320,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
     var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
     elmts.separatorInput[0].value = defaultValue;
-    elmts.separatorInput.focus().select();
+    elmts.separatorInput.trigger('focus').trigger('select');
     
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click',dismiss);
+    elmts.okButton.on('click',function() {
       var mode = $("input[name='split-by-mode']:checked")[0].value;
       var config = {
         columnName: column.name,
@@ -392,7 +392,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/edit-cells" ], [
     {
       id: "core/text-transform",
-      label: $.i18n('core-views/transform')+"...",
+      label: $.i18n('core-views/transform'),
       click: function() { doTextTransformPrompt(); }
     },
     {
@@ -401,66 +401,66 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       submenu: [
         {
           id: "core/trim-whitespace",
-          label: $.i18n('core-views/trim-all'),
+          label: $.i18n('core-views/trim-all/single'),
           click: function() { doTextTransform("value.trim()", "keep-original", false, ""); }
         },
         {
           id: "core/collapse-whitespace",
-          label: $.i18n('core-views/collapse-white'),
-          click: function() { doTextTransform("value.replace(/\\s+/,' ')", "keep-original", false, ""); }
+          label: $.i18n('core-views/collapse-white/single'),
+          click: function() { doTextTransform("value.replace(/[\\p{Zs}\\s]+/,' ')", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/unescape-html-entities",
-          label: $.i18n('core-views/unescape-html'),
+          label: $.i18n('core-views/unescape-html/single'),
           click: function() { doTextTransform("value.unescape('html')", "keep-original", true, 10); }
         },
         {
           id: "core/replace-smartquotes",
-          label: $.i18n('core-views/replace-smartquotes'),
+          label: $.i18n('core-views/replace-smartquotes/single'),
           click: function() { doTextTransform("value.replace(/[\u2018\u2019\u201A\u201B\u2039\u203A\u201A]/,\"\\\'\").replace(/[\u201C\u201D\u00AB\u00BB\u201E]/,\"\\\"\")", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-titlecase",
-          label: $.i18n('core-views/titlecase'),
+          label: $.i18n('core-views/titlecase/single'),
           click: function() { doTextTransform("value.toTitlecase()", "keep-original", false, ""); }
         },
         {
           id: "core/to-uppercase",
-          label: $.i18n('core-views/uppercase'),
+          label: $.i18n('core-views/uppercase/single'),
           click: function() { doTextTransform("value.toUppercase()", "keep-original", false, ""); }
         },
         {
           id: "core/to-lowercase",
-          label: $.i18n('core-views/lowercase'),
+          label: $.i18n('core-views/lowercase/single'),
           click: function() { doTextTransform("value.toLowercase()", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-number",
-          label: $.i18n('core-views/to-number'),
+          label: $.i18n('core-views/to-number/single'),
           click: function() { doTextTransform("value.toNumber()", "keep-original", false, ""); }
         },
         {
           id: "core/to-date",
-          label: $.i18n('core-views/to-date'),
+          label: $.i18n('core-views/to-date/single'),
           click: function() { doTextTransform("value.toDate()", "keep-original", false, ""); }
         },
         {
           id: "core/to-text",
-          label: $.i18n('core-views/to-text'),
+          label: $.i18n('core-views/to-text/single'),
           click: function() { doTextTransform("value.toString()", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-blank",
-          label: $.i18n('core-views/blank-out'),
+          label: $.i18n('core-views/blank-out/single'),
           click: function() { doTextTransform("null", "keep-original", false, ""); }
         },
         {
           id: "core/to-empty",
-          label: $.i18n('core-views/blank-out-empty'),
+          label: $.i18n('core-views/blank-out-empty/single'),
           click: function() { doTextTransform("\"\"", "keep-original", false, ""); }
         }
       ]
@@ -493,18 +493,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/split-multi-valued-cells",
-      label: $.i18n('core-views/split-cells')+"...",
+      label: $.i18n('core-views/split-cells'),
       click: doSplitMultiValueCells
     },
     {
       id: "core/join-multi-valued-cells",
-      label: $.i18n('core-views/join-cells')+"...",
+      label: $.i18n('core-views/join-cells'),
       click: doJoinMultiValueCells
     },
     {},
     {
       id: "core/cluster",
-      label: $.i18n('core-views/cluster-edit')+"...",
+      label: $.i18n('core-views/cluster-edit'),
       click: function() { new ClusteringDialog(column.name, "value"); }
     },
     {},
@@ -545,8 +545,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var columns = theProject.columnModel.columns;
 
-    elmts.cancelButton.click(function() { dismiss(); });
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click',function() { dismiss(); });
+    elmts.okButton.on('click',function() {
       var config = {
         startColumnName: elmts.fromColumnSelect[0].value,
         columnCount: elmts.toColumnSelect[0].value,
@@ -556,8 +556,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       var mode = dialog.find('input[name="transpose-dialog-column-choices"]:checked')[0].value;
       if (mode == "2") {
-        config.keyColumnName = $.trim(elmts.keyColumnNameInput[0].value);
-        config.valueColumnName = $.trim(elmts.valueColumnNameInput[0].value);
+        config.keyColumnName = jQueryTrim(elmts.keyColumnNameInput[0].value);
+        config.valueColumnName = jQueryTrim(elmts.valueColumnNameInput[0].value);
         if (config.keyColumnName == "") {
           alert($.i18n('core-views/spec-new-name'));
           return;
@@ -566,7 +566,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           return;
         }
       } else {
-        config.combinedColumnName = $.trim(elmts.combinedColumnNameInput[0].value);
+        config.combinedColumnName = jQueryTrim(elmts.combinedColumnNameInput[0].value);
         config.prependColumnName = elmts.prependColumnNameCheckbox[0].checked;
         config.separator = elmts.separatorInput[0].value;
         if (config.combinedColumnName == "") {
@@ -623,7 +623,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     };
     populateToColumn();
 
-    elmts.fromColumnSelect.bind("change", populateToColumn);
+    elmts.fromColumnSelect.on("change", populateToColumn);
   };
 
   var doTransposeRowsIntoColumns = function() {
@@ -672,8 +672,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var columns = theProject.columnModel.columns;
 
-    elmts.cancelButton.click(function() { dismiss(); });
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click',function() { dismiss(); });
+    elmts.okButton.on('click',function() {
       var config = {
         keyColumnName: elmts.keyColumnSelect[0].value,
         valueColumnName: elmts.valueColumnSelect[0].value,
@@ -737,18 +737,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/transpose" ], [
       {
         id: "core/transpose-columns-into-rows",
-        label: $.i18n('core-views/transp-cell-row')+"...",
+        label: $.i18n('core-views/transp-cell-row'),
         click: doTransposeColumnsIntoRows
       },
       {
         id: "core/transpose-rows-into-columns",
-        label: $.i18n('core-views/transp-cell-col')+"...",
+        label: $.i18n('core-views/transp-cell-col'),
         click: doTransposeRowsIntoColumns
       },
       {},
       {
         id: "core/key-value-columnize",
-        label: $.i18n('core-views/columnize-col')+"...",
+        label: $.i18n('core-views/columnize-col'),
         click: doKeyValueColumnize
       }
     ]

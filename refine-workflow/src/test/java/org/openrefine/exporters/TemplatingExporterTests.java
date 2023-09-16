@@ -158,6 +158,8 @@ public class TemplatingExporterTests extends RefineTest {
 
         when(options.getProperty("template"))
                 .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+        when(options.getProperty("template"))
+                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
@@ -208,5 +210,66 @@ public class TemplatingExporterTests extends RefineTest {
                         // third row should be skipped because of limit
                         + suffix);
 
+    }
+
+    /**
+     * This test is add for checking the fix for issue 3955. Issue link:
+     * https://github.com/OpenRefine/OpenRefine/issues/3955
+     */
+    @Test
+    public void exportTemplateInRecordMode() {
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1" },
+                        { null, "row1cell1" }
+                });
+        Engine engine = new Engine(grid, EngineConfig.ALL_RECORDS);
+        String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
+        when(options.getProperty("template")).thenReturn(template);
+        when(options.getProperty("prefix")).thenReturn(prefix);
+        when(options.getProperty("suffix")).thenReturn(suffix);
+        when(options.getProperty("separator")).thenReturn(rowSeparator);
+
+        try {
+            SUT.export(grid, projectMetadata, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
+                        + rowPrefix + "null" + cellSeparator + "row1cell1"
+                        + suffix);
+    }
+
+    /**
+     * Testing that curly braces are properly escaped. CS427 Issue Link:
+     * https://github.com/OpenRefine/OpenRefine/issues/3381
+     */
+    @Test
+    public void exportTemplateWithProperEscaping() {
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1" },
+                        { null, "row1cell1" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        String template = rowPrefix + "{{\"\\}\\}\"}}" + cellSeparator + "{{\"\\}\\}\"}}";
+        when(options.getProperty("template")).thenReturn(template);
+        when(options.getProperty("prefix")).thenReturn(prefix);
+        when(options.getProperty("suffix")).thenReturn(suffix);
+        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        try {
+            SUT.export(grid, projectMetadata, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "}}" + cellSeparator + "}}" + rowSeparator
+                        + rowPrefix + "}}" + cellSeparator + "}}"
+                        + suffix);
     }
 }

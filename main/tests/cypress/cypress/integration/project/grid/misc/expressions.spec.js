@@ -18,7 +18,7 @@ describe(__filename, function () {
     loadExpressionPanel();
 
     cy.get('.dialog-container').within(() => {
-      cy.get('td[bind="or_dialog_expr"]').contains('Expression');
+      cy.get('label[bind="or_dialog_expr"]').contains('Expression');
       cy.get('select[bind="expressionPreviewLanguageSelect"] option').should(
         'have.length',
         3
@@ -107,7 +107,7 @@ describe(__filename, function () {
 
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('to.contain', 'Error: Traceback');
+    ).should('to.contain', 'Error:');
   });
 
   it('Test a Clojure language error', function () {

@@ -69,11 +69,11 @@ class ParserState {
     /** value indicating an unset variable. */
     static final int UNSET = Integer.MIN_VALUE;
 
-    /** <tt>true</tt> if year should appear before month. */
+    /** <code>true</code> if year should appear before month. */
     private boolean yearBeforeMonth;
-    /** <tt>true</tt> if year should appear before day. */
+    /** <code>true</code> if year should appear before day. */
     private boolean yearBeforeDay;
-    /** <tt>true</tt> if month should appear before day. */
+    /** <code>true</code> if month should appear before day. */
     private boolean monthBeforeDay;
 
     /** year. */
@@ -91,17 +91,17 @@ class ParserState {
     /** millisecond (0-999). */
     private int milli;
 
-    /** <tt>true</tt> if time is after noon. */
+    /** <code>true</code> if time is after noon. */
     private boolean timePostMeridian;
 
-    /** time zone (use default time zone if this is <tt>null</tt>). */
+    /** time zone (use default time zone if this is <code>null</code>). */
     private TimeZone timeZone;
 
     /**
      * Create parser state for the specified order.
      * 
      * @param order
-     *            <tt>YY_MM_DD</tt>, <tt>MM_DD_YY</tt>, etc.
+     *            <code>YY_MM_DD</code>, <code>MM_DD_YY</code>, etc.
      */
     ParserState(int order) {
         yearBeforeMonth = (order & YEAR_BEFORE_MONTH) == YEAR_BEFORE_MONTH;
@@ -174,7 +174,7 @@ class ParserState {
     /**
      * Get time zone.
      * 
-     * @return time zone (<tt>null</tt> if none was specified)
+     * @return time zone (<code>null</code> if none was specified)
      */
     TimeZone getTimeZone() {
         return timeZone;
@@ -192,7 +192,7 @@ class ParserState {
     /**
      * Is day of month value set?
      * 
-     * @return <tt>true</tt> if a value has been assigned
+     * @return <code>true</code> if a value has been assigned
      */
     boolean isDateSet() {
         return (day != UNSET);
@@ -201,7 +201,7 @@ class ParserState {
     /**
      * Is hour value set?
      * 
-     * @return <tt>true</tt> if a value has been assigned
+     * @return <code>true</code> if a value has been assigned
      */
     boolean isHourSet() {
         return (hour != UNSET);
@@ -210,7 +210,7 @@ class ParserState {
     /**
      * Is millisecond value set?
      * 
-     * @return <tt>true</tt> if a value has been assigned
+     * @return <code>true</code> if a value has been assigned
      */
     boolean isMillisecondSet() {
         return (milli != UNSET);
@@ -219,7 +219,7 @@ class ParserState {
     /**
      * Is minute value set?
      * 
-     * @return <tt>true</tt> if a value has been assigned
+     * @return <code>true</code> if a value has been assigned
      */
     boolean isMinuteSet() {
         return (minute != UNSET);
@@ -228,7 +228,7 @@ class ParserState {
     /**
      * Is a numeric month placed before a numeric day of month?
      * 
-     * @return <tt>true</tt> if month is before day of month
+     * @return <code>true</code> if month is before day of month
      */
     boolean isMonthBeforeDay() {
         return monthBeforeDay;
@@ -237,7 +237,7 @@ class ParserState {
     /**
      * Is month value set?
      * 
-     * @return <tt>true</tt> if a value has been assigned
+     * @return <code>true</code> if a value has been assigned
      */
     boolean isMonthSet() {
         return (month != UNSET);
@@ -246,7 +246,7 @@ class ParserState {
     /**
      * Is second value set?
      * 
-     * @return <tt>true</tt> if a value has been assigned
+     * @return <code>true</code> if a value has been assigned
      */
     boolean isSecondSet() {
         return (second != UNSET);
@@ -255,7 +255,7 @@ class ParserState {
     /**
      * Is the time post-meridian (i.e. afternoon)?
      * 
-     * @return <tt>true</tt> if time is P.M.
+     * @return <code>true</code> if time is P.M.
      */
     boolean isTimePostMeridian() {
         return (timePostMeridian || hour > 12);
@@ -264,7 +264,7 @@ class ParserState {
     /**
      * Is a numeric year placed before a numeric day of month?
      * 
-     * @return <tt>true</tt> if year is before day of month
+     * @return <code>true</code> if year is before day of month
      */
     boolean isYearBeforeDay() {
         return yearBeforeDay;
@@ -273,7 +273,7 @@ class ParserState {
     /**
      * Is a numeric year placed before a numeric month?
      * 
-     * @return <tt>true</tt> if year is before month
+     * @return <code>true</code> if year is before month
      */
     boolean isYearBeforeMonth() {
         return yearBeforeMonth;
@@ -282,7 +282,7 @@ class ParserState {
     /**
      * Is year value set?
      * 
-     * @return <tt>true</tt> if a value has been assigned
+     * @return <code>true</code> if a value has been assigned
      */
     boolean isYearSet() {
         return (year != UNSET);
@@ -456,7 +456,7 @@ class ParserState {
      * Set the AM/PM indicator value.
      * 
      * @param val
-     *            <tt>true</tt> if time represented is after noon
+     *            <code>true</code> if time represented is after noon
      */
     void setTimePostMeridian(boolean val) {
         timePostMeridian = val;
@@ -548,7 +548,7 @@ public class CalendarParser {
     /** value indicating an unset variable. */
     private static final int UNSET = ParserState.UNSET;
 
-    /** set to <tt>true</tt> to enable debugging. */
+    /** set to <code>true</code> to enable debugging. */
     private static final boolean DEBUG = false;
 
     /** list of weekday names. */
@@ -708,7 +708,7 @@ public class CalendarParser {
      * @param place
      *            place ID
      * 
-     * @return place name (<tt>"hour"</tt>, <tt>"minute"</tt>, etc.
+     * @return place name (<code>"hour"</code>, <code>"minute"</code>, etc.
      */
     private static final String getTimePlaceString(int place) {
         switch (place) {
@@ -733,7 +733,7 @@ public class CalendarParser {
      * @param str
      *            weekday name to check
      * 
-     * @return <tt>true</tt> if the supplied string is a weekday name.
+     * @return <code>true</code> if the supplied string is a weekday name.
      */
     private static final boolean isWeekdayName(String str) {
         if (str == null || str.length() < 3) {
@@ -754,7 +754,7 @@ public class CalendarParser {
     /**
      * Load list of time zones if sun.util.calendar.ZoneInfo exists.
      * 
-     * @return <tt>null</tt> if time zone list cannot be loaded.
+     * @return <code>null</code> if time zone list cannot be loaded.
      */
     private static final String[] loadTimeZoneNames() {
         Class<?> zoneInfo;

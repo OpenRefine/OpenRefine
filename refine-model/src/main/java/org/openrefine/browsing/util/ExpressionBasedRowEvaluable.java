@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.util;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.openrefine.expr.Evaluable;
@@ -41,6 +42,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.overlay.OverlayModel;
 
 public class ExpressionBasedRowEvaluable implements RowEvaluable {
 
@@ -49,14 +51,16 @@ public class ExpressionBasedRowEvaluable implements RowEvaluable {
     final protected int _cellIndex;
     final protected Evaluable _eval;
     final protected ColumnModel _columnModel;
+    final protected Map<String, OverlayModel> _overlayModels;
 
     public ExpressionBasedRowEvaluable(
-            String columnName, int cellIndex, Evaluable eval, ColumnModel columnModel) {
+            String columnName, int cellIndex, Evaluable eval, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
 
         _columnName = columnName;
         _cellIndex = cellIndex;
         _eval = eval;
         _columnModel = columnModel;
+        _overlayModels = overlayModels;
     }
 
     @Override
@@ -65,7 +69,7 @@ public class ExpressionBasedRowEvaluable implements RowEvaluable {
 
         Cell cell = row.getCell(_cellIndex);
 
-        ExpressionUtils.bind(bindings, _columnModel, row, rowIndex, record, _columnName, cell);
+        ExpressionUtils.bind(bindings, _columnModel, row, rowIndex, record, _columnName, cell, _overlayModels);
 
         return _eval.evaluate(bindings);
     }

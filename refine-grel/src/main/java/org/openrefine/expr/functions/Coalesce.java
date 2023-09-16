@@ -35,6 +35,8 @@ package org.openrefine.expr.functions;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Coalesce extends PureFunction {
@@ -53,12 +55,12 @@ public class Coalesce extends PureFunction {
             }
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least two arguments");
+        return new EvalError(EvalErrorMessage.expects_at_least_two_args(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the first non-null from a series of objects (meaning any data type - string, date, number, boolean, etc.).";
+        return FunctionDescription.fun_coalesce();
     }
 
     @Override

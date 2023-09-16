@@ -73,11 +73,25 @@ public class OdsExporter implements StreamExporter {
 
             OdfTable table;
             // int rowCount = 0;
+            int rowBeforeHeader = 0;
 
             @Override
             public void startFile(JsonNode options) {
                 table = OdfTable.newTable(odfDoc);
-                table.setTableName(projectMetadata.getName());
+                String tableName = projectMetadata.getName();
+
+                // the ODF document might already contain some other tables
+                try {
+                    table.setTableName(tableName);
+                } catch (IllegalArgumentException e) {
+                    // there is already a table with that name
+                    table = odfDoc.getTableByName(tableName);
+                }
+                // delete any other table which has another name
+                odfDoc.getTableList().stream()
+                        .filter(table -> !table.getTableName().equals(tableName))
+                        .forEach(OdfTable::remove);
+                rowBeforeHeader = table.getRowCount();
             }
 
             @Override
@@ -110,6 +124,11 @@ public class OdsExporter implements StreamExporter {
                             // TODO: How do we do output hyperlinks?
                         }
                     }
+                }
+                if (rowBeforeHeader != 0) { // avoid the api change the default values again
+                    int nowRows = table.getRowCount();
+                    table.removeRowsByIndex(0, rowBeforeHeader);
+                    rowBeforeHeader -= nowRows - table.getRowCount();
                 }
             }
         };

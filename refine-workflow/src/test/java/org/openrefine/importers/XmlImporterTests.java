@@ -37,7 +37,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -51,6 +53,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.importers.tree.TreeImportingParserBase;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
@@ -111,6 +114,36 @@ public class XmlImporterTests extends ImporterTest {
         GridState grid = RunTest(getSample());
 
         assertGridEquals(grid, expectedGrid);
+    }
+
+    @Test
+    public void setsProjectMetadata() throws Exception {
+        // Setup a file record to import
+        FileUtils.writeStringToFile(new File(job.getRawDataDir(), "test-file.xml"), getSample(), "UTF-8");
+        List<ImportingFileRecord> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.mapper.readValue(
+                "{\"location\": \"test-file.xml\",\"fileName\": \"test-file.xml\"}", ImportingFileRecord.class));
+
+        // We need a real ObjectNode to support the deepCopy() method
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(path, "library");
+        JSONUtilities.append(path, "book");
+
+        JSONUtilities.safePut(options, "recordPath", path);
+
+        SUT.parse(
+                runner,
+                metadata,
+                job,
+                fileRecords,
+                "text/json",
+                -1,
+                options);
+
+        Assert.assertNotNull(metadata.getModified());
+        Assert.assertNotNull(metadata.getCreated());
+        Assert.assertNotEquals(metadata.getImportOptionMetadata().size(), 0);
     }
 
     @Test

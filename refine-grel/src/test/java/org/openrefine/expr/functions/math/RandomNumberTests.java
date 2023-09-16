@@ -36,16 +36,33 @@ import org.openrefine.grel.FunctionTestBase;
 public class RandomNumberTests extends FunctionTestBase {
 
     @Test
-    public void testRandomNumberParameters() {
-        Assert.assertTrue(invoke("randomNumber") instanceof EvalError);
-        Assert.assertTrue(invoke("randomNumber", "string1") instanceof EvalError);
-        Assert.assertTrue(invoke("randomNumber", "string1", "string2") instanceof EvalError);
-        Assert.assertTrue(invoke("randomNumber", 3, 2) instanceof EvalError);
+    public void testCall() {
+        Object result1 = invoke("random");
+        Assert.assertTrue(result1 instanceof Double && inRange(0, 1, result1));
+
+        Object result2 = invoke("random", 3, 4);
+        Assert.assertTrue(inRange(3, 4, result2));
+
+        Object result3 = invoke("randomNumber", 3, 4.4);
+        Assert.assertTrue(inRange(3, 4.4, result3));
+
+        Object result4 = invoke("random", 2.3, 4);
+        Assert.assertTrue(result4 instanceof Double && inRange(2.3, 4, result4));
+
+        Object result5 = invoke("randomNumber", 3.2, 12.2);
+        Assert.assertTrue(result5 instanceof Double && inRange(3.2, 12.2, result5));
+    }
+
+    public boolean inRange(double min, double max, Object result) {
+        return (Double) result >= min && (Double) result <= max;
     }
 
     @Test
-    public void testRandomNumber() {
-        Object a = invoke("randomNumber", 1, 10);
-        Assert.assertTrue((int) a < 11 && (int) a > 0);
+    public void testCallInvalidParams() {
+        Assert.assertTrue(invoke("random", 2) instanceof EvalError);
+        Assert.assertTrue(invoke("random", 3) instanceof EvalError);
+        Assert.assertTrue(invoke("random", null, null) instanceof EvalError);
+        Assert.assertTrue(invoke("random", 3, 4, 6, 5) instanceof EvalError);
     }
+
 }

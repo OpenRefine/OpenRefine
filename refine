@@ -93,7 +93,6 @@ and <action> is one of
    dist <version> ...................... Make all distributions
 
    clean ............................... Clean compiled classes
-   distclean ........................... Remove all generated files
                 
 EOF
     exit 1
@@ -122,8 +121,8 @@ check_macosx() {
 }
 
 check_downloaders() {
-    CURL="`which curl 2> /dev/null`"
-    WGET="`which wget 2> /dev/null`"
+    CURL="`command -v curl 2> /dev/null`"
+    WGET="`command -v wget 2> /dev/null`"
     
     if [ -z "$CURL" ] && [ -z "$WGET" ] ; then
         error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
@@ -131,7 +130,7 @@ check_downloaders() {
 }
 
 check_unzip() {
-    UNZIP="`which unzip 2> /dev/null`"
+    UNZIP="`command -v unzip 2> /dev/null`"
     
     if [ -z "$UNZIP" ] ; then
         error "We need 'unzip' present in PATH to expand external dependencies."
@@ -139,7 +138,7 @@ check_unzip() {
 }
     
 check_python() {
-    PYTHON="`which python 2> /dev/null`"
+    PYTHON="`command -v python 2> /dev/null`"
     if [ -z "$PYTHON" ] ; then
         error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
     fi
@@ -267,7 +266,7 @@ load_data() {
     FILE=$1
     NAME=$2
     URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/command/core/create-project-from-upload"
-    CURL="`which curl 2> /dev/null`"
+    CURL="`command -v curl 2> /dev/null`"
     
     if [ -z "$CURL" ] ; then
         error "We need 'curl' present in PATH to upload data to OpenRefine."
@@ -294,6 +293,7 @@ build_prepare() {
     if [ ! -d $REFINE_BUILD_DIR ] ; then 
         mkdir $REFINE_BUILD_DIR || error "Error while making directory $REFINE_BUILD_DIR"
     fi
+    ( cd main/webapp && npm install )
 }
 
 dist_prepare() {
@@ -311,12 +311,12 @@ tools_prepare() {
 mvn_prepare() {
     tools_prepare
 
-    MVN_VERSION="3.8.4"
+    MVN_VERSION="3.8.5"
     MVN_URL="https://dlcdn.apache.org/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
     MVN_FILE=`echo $MVN_URL | sed 's|.*/||'`
     MVN_DIR="apache-maven-${MVN_VERSION}"
 
-    MVN="`which mvn 2> /dev/null`"
+    MVN="`command -v mvn 2> /dev/null`"
    
     if [ -z "$MVN" ] ; then
         if [ -z "$MVN_HOME" ] ; then
@@ -381,7 +381,7 @@ virtualenv_prepare() {
     
 # ----------------------------------------------------------------------------------------------
 
-mvn() {
+do_mvn() {
     mvn_prepare   
     
     "$MVN" $MVN_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running maven task '$1'"
@@ -391,6 +391,7 @@ mvn() {
 
 dist() {
     get_version $1
+    build_prepare
     mvn_prepare
     "$MVN" versions:set -DnewVersion="$VERSION"
     "$MVN" package
@@ -398,6 +399,7 @@ dist() {
 
 windows_dist() {
     get_version $1
+    build_prepare
     mvn_prepare
     "$MVN" versions:set -DnewVersion="$VERSION"
     "$MVN" package -P windows
@@ -405,6 +407,7 @@ windows_dist() {
 
 linux_dist() {
     get_version $1
+    build_prepare
     mvn_prepare
     "$MVN" versions:set -DnewVersion="$VERSION"
     "$MVN" package -P linux
@@ -414,6 +417,7 @@ linux_dist() {
 # but no longer needed as "mvn package" does it directly on both mac and linux.
 mac_dist() {
     check_macosx
+    build_prepare
     dist_prepare
     get_version $1
     get_revision
@@ -588,6 +592,7 @@ run() {
         IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
         if [ -z "$IS_JAR" ] ; then
             mvn_prepare
+            build_prepare
             $MVN process-resources
             $MVN compile
             echo ""
@@ -776,11 +781,11 @@ checkJavaMajorVersion() {
     # Java 9+ starts with x using semver versioning
     major=`echo ${java_ver} | sed -E 's/([0-9]+)(-ea|(\.[0-9]+)*)/\1/g'`
   fi
-  if (( ${major} < 8 )); then
-    error "OpenRefine requires Java version 8 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+  if (( ${major} < 11 )); then
+    error "OpenRefine requires Java version 11 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
   fi
-  if (( ${major} > 12 )); then
-    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 12."
+  if (( ${major} > 17 )); then
+    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 17."
   fi
 }
 
@@ -824,7 +829,7 @@ fi
 if [ "$JAVA_HOME" ] ; then
     JAVA="$JAVA_HOME/bin/java"
 else 
-    JAVA="`which java 2> /dev/null`"
+    JAVA="`command -v java 2> /dev/null`"
 fi
 
 if [ ! -x "$JAVA" ] ; then
@@ -986,10 +991,9 @@ fi
 
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
-  build) build_prepare; mvn process-resources; mvn compile;;
-  clean) mvn clean;;
+  build) build_prepare; do_mvn process-resources; do_mvn compile;;
+  clean) do_mvn clean;;
   whitespace) whitespace $1;;
-  distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
   ui_tests) ui_tests;;    

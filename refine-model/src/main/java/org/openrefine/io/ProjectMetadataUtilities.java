@@ -34,10 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.io;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
@@ -152,7 +154,7 @@ public class ProjectMetadataUtilities {
     }
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
-        FileReader reader = new FileReader(metadataFile);
+        Reader reader = new InputStreamReader(new FileInputStream(metadataFile), StandardCharsets.UTF_8);
         return ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
     }
 }

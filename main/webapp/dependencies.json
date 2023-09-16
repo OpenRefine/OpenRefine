@@ -1,0 +1,42 @@
+{
+  "directories": [
+    "tablesorter",
+    "jquery.i18n",
+    "jquery.i18n/languages",
+    "select2"
+  ],
+  "files" : [
+    {"from": "tablesorter/dist/js/jquery.tablesorter.js", "to": "tablesorter/jquery.tablesorter.js"},
+    {"from": "tablesorter/dist/css/theme.blue.css", "to": "tablesorter/theme.blue.css"},
+    {"from": "moment/min/moment-with-locales.js", "to": "moment-with-locales.js"},
+    {"from": "underscore/underscore.js", "to": "underscore.js"},
+    {"from": "js-cookie/dist/js.cookie.js", "to": "js.cookie.js"},
+    {"from": "jquery-migrate/dist/jquery-migrate.js", "to": "jquery-migrate.js"},
+    {"from": "datejs-coolite/build/date.js", "to": "date.js"},
+    {"from": "jquery/dist/jquery.js", "to": "jquery.js"},
+    {"from": "select2/dist/css/select2.css", "to": "select2/select2.css"},
+    {"from": "select2/dist/js/select2.js", "to": "select2/select2.js"},
+    {"from": "@wikimedia/jquery.i18n/libs/CLDRPluralRuleParser/src/CLDRPluralRuleParser.js", "to": "jquery.i18n/CLDRPluralRuleParser.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/bs.js", "to": "jquery.i18n/languages/bs.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/dsb.js", "to": "jquery.i18n/languages/dsb.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/fi.js", "to": "jquery.i18n/languages/fi.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/ga.js", "to": "jquery.i18n/languages/ga.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/he.js", "to": "jquery.i18n/languages/he.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/hsb.js", "to": "jquery.i18n/languages/hsb.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/hu.js", "to": "jquery.i18n/languages/hu.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/hy.js", "to": "jquery.i18n/languages/hy.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/la.js", "to": "jquery.i18n/languages/la.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/ml.js", "to": "jquery.i18n/languages/ml.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/os.js", "to": "jquery.i18n/languages/os.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/ru.js", "to": "jquery.i18n/languages/ru.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/sl.js", "to": "jquery.i18n/languages/sl.js"},
+    {"from": "@wikimedia/jquery.i18n/src/languages/uk.js", "to": "jquery.i18n/languages/uk.js"},
+    {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.emitter.bidi.js", "to": "jquery.i18n/jquery.i18n.emitter.bidi.js"},
+    {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.emitter.js", "to": "jquery.i18n/jquery.i18n.emitter.js"},
+    {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.fallbacks.js", "to": "jquery.i18n/jquery.i18n.fallbacks.js"},
+    {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.js", "to": "jquery.i18n/jquery.i18n.js"},
+    {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.language.js", "to": "jquery.i18n/jquery.i18n.language.js"},
+    {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.messagestore.js", "to": "jquery.i18n/jquery.i18n.messagestore.js"},
+    {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.parser.js", "to": "jquery.i18n/jquery.i18n.parser.js"}
+  ]
+}

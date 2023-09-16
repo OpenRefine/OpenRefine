@@ -1,10 +1,7 @@
 
 package org.openrefine.importers;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.io.InputStream;
 import java.time.OffsetDateTime;
@@ -90,5 +87,33 @@ public class OdsImporterTests extends ImporterTest {
         assertTrue((Boolean) rows.get(1).getCellValue(7));
 
         assertNull((String) rows.get(2).getCellValue(2));
+    }
+
+    @Test
+    public void showErrorDialogWhenWrongFormat() throws Exception {
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+
+        options.set("sheets", sheets);
+        options.put("ignoreLines", 0);
+        options.put("headerLines", 1);
+        options.put("skipDataLines", 0);
+        options.put("limit", 5);
+        options.put("storeBlankCellsAsNulls", true);
+
+        InputStream stream = ClassLoader.getSystemResourceAsStream("importers/NoData_NoSpreadsheet.ods");
+
+        try {
+            parseOneFile(SUT, stream);
+            fail("No exception thrown when parsing an empty ODS file");
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertEquals(e.getMessage(),
+                    "Attempted to parse file as Ods file but failed. " +
+                            "No tables found in Ods file. " +
+                            "Please validate file format on https://odfvalidator.org/, then try re-uploading the file.");
+        }
     }
 }

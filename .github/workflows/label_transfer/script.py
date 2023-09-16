@@ -39,7 +39,7 @@ def get_linked_issues(pr_number):
     page = requests.get(url)
     page.raise_for_status()
     parsed = html.document_fromstring(page.text)
-    matches = parsed.xpath('//form/div[@class="css-truncate my-1"]/a')
+    matches = parsed.xpath('//form/span[@class="Truncate truncate-with-responsive-width my-1"]/a')
     for match in matches:
         yield int(match.attrib['href'].split('/')[-1])
 
@@ -57,6 +57,8 @@ def transfer_issue_labels(pr_number):
     Transfers labels from all the linked issues to the PR
     """
     linked_issues = get_linked_issues(pr_number)
+    if not linked_issues:
+        print('No linked issues found')
     all_labels = [ label for issue in linked_issues for label in get_issue_labels(issue) ]
     to_transfer = [ label for label in all_labels if label not in do_not_transfer ]
     current_labels = get_issue_labels(pr_number)

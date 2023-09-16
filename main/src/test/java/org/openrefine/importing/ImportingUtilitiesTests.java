@@ -39,6 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,17 +59,21 @@ import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.StringBody;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.entity.mime.StringBody;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.RefineServlet;
 import org.openrefine.importers.ImporterTest;
 import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.importers.ImportingParserBase;
@@ -167,7 +172,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
 
         HttpServletRequest req = mock(HttpServletRequest.class);
-        when(req.getContentType()).thenReturn(entity.getContentType().getValue());
+        when(req.getContentType()).thenReturn(entity.getContentType());
         when(req.getParameter("download")).thenReturn(url.toString());
         when(req.getMethod()).thenReturn("POST");
         when(req.getContentLength()).thenReturn((int) entity.getContentLength());
@@ -198,6 +203,61 @@ public class ImportingUtilitiesTests extends ImporterTest {
             assertEquals(exception.getMessage(), MESSAGE);
         } finally {
             server.close();
+        }
+    }
+
+    @Test
+    public void urlImportingInvalidProtocol() throws IOException {
+
+        String url = "file:///etc/passwd";
+        String message = "Unsupported protocol: file";
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        StringBody stringBody = new StringBody(url.toString(), ContentType.MULTIPART_FORM_DATA);
+        builder = builder.addPart("download", stringBody);
+        HttpEntity entity = builder.build();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        entity.writeTo(os);
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+        RefineServlet servlet = mock(RefineServlet.class);
+        File tempDir = TestUtils.createTempDirectory("openrefine-url-invalid-protocol-test");
+        tempDir.deleteOnExit();
+        when(servlet.getTempDir()).thenReturn(tempDir);
+        ImportingManager.initialize(servlet);
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getContentType()).thenReturn(entity.getContentType());
+        when(req.getParameter("download")).thenReturn(url.toString());
+        when(req.getMethod()).thenReturn("POST");
+        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+
+        ImportingJob job = ImportingManager.createJob();
+        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        RetrievalRecord retrievalRecord = new RetrievalRecord();
+        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+        try {
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                    new ImportingUtilities.Progress() {
+
+                        @Override
+                        public void setProgress(String message, int percent) {
+                            if (message != null) {
+                                JSONUtilities.safePut(progress, "message", message);
+                            }
+                            JSONUtilities.safePut(progress, "percent", percent);
+                        }
+
+                        @Override
+                        public boolean isCanceled() {
+                            return job.canceled;
+                        }
+                    });
+            fail("No Exception was thrown");
+        } catch (Exception exception) {
+            assertEquals(exception.getMessage(), message);
         }
     }
 
@@ -356,6 +416,31 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 new Properties(), job.getRawDataDir(), retrievalRecord, dummyProgress));
         assertThrows(IOException.class, () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job));
 
+    }
+
+    @Test
+    public void testImportGZipCompressedFiles() throws IOException {
+        String[] filenames = { "persons", "persons.csv.gz" };
+        InputStreamReader reader = null;
+        for (String filename : filenames) {
+            String filePathNoExtension = ClassLoader.getSystemResource(filename).getPath();
+
+            File tmp = File.createTempFile("openrefine-test-" + filename.split("\\.")[0], "", job.getRawDataDir());
+            tmp.deleteOnExit();
+            FileUtils.copyFile(new File(filePathNoExtension), tmp);
+
+            InputStream is = ImportingUtilities.tryOpenAsCompressedFile(tmp, null, null);
+            // assert input stream is not null
+            Assert.assertNotNull(is);
+
+            reader = new InputStreamReader(is);
+            Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader()
+                    .withIgnoreHeaderCase().withTrim().parse(reader);
+
+            // assert size of iterable is same as number of rows in csv file without header
+            Assert.assertEquals(IterableUtils.size(records), 3);
+        }
+        reader.close();
     }
 
 }

@@ -38,6 +38,8 @@ import org.jsoup.nodes.Element;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.functions.Type;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class WholeText extends PureFunction {
@@ -53,17 +55,20 @@ public class WholeText extends PureFunction {
                 return e1.wholeText();
 
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
-                        + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+                // new Type().call(bindings, args) + "' and failed as the first parameter is not an XML or HTML Element.
+                // Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+                return new EvalError(EvalErrorMessage.xml_text_cannot_work_with_and_failed(ControlFunctionRegistry.getFunctionName(this),
+                        new Type().call(args)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
-                + "' and expects a single XML or HTML element as an argument");
+        // Type().call(bindings, args) + "' and expects a single XML or HTML element as an argument");
+        return new EvalError(EvalErrorMessage.xml_text_cannot_work_with_and_expects(ControlFunctionRegistry.getFunctionName(this),
+                new Type().call(args)));
     }
 
     @Override
     public String getDescription() {
-        return "Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element.";
+        return FunctionDescription.xml_wholetext();
     }
 
     @Override

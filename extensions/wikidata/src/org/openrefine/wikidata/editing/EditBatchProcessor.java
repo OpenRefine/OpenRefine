@@ -22,7 +22,7 @@
  * SOFTWARE.
  ******************************************************************************/
 
-package org.openrefine.wikidata.editing;
+package org.openrefine.wikibase.editing;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,10 +52,10 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
+import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikibase.schema.exceptions.NewItemNotCreatedYetException;
+import org.openrefine.wikibase.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
 
 /**
  * Schedules and performs a list of updates to items via the API.

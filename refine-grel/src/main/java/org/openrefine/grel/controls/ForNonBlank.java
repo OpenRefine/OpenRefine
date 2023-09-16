@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.grel.Control;
+import org.openrefine.grel.ControlEvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.grel.ast.VariableExpr;
@@ -46,10 +47,9 @@ public class ForNonBlank implements Control {
     @Override
     public String checkArguments(GrelExpr[] args) {
         if (args.length != 4) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
+            return ControlEvalError.expects_four_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) +
-                    " expects second argument to be a variable name";
+            return ControlEvalError.expects_second_arg_var_name(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }

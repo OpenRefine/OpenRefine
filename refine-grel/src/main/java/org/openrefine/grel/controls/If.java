@@ -37,6 +37,8 @@ import java.util.Properties;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.grel.Control;
+import org.openrefine.grel.ControlDescription;
+import org.openrefine.grel.ControlEvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.ast.GrelExpr;
 
@@ -45,7 +47,7 @@ public class If implements Control {
     @Override
     public String checkArguments(GrelExpr[] args) {
         if (args.length != 3) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
+            return ControlEvalError.expects_three_args(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -64,8 +66,8 @@ public class If implements Control {
 
     @Override
     public String getDescription() {
-        return "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. " +
-                "Otherwise, evaluates expression eFalse and returns that result instead.";
+        // "Otherwise, evaluates expression eFalse and returns that result instead.";
+        return ControlDescription.if_desc();
     }
 
     @Override

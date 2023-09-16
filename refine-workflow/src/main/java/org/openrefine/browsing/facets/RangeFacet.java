@@ -48,6 +48,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.overlay.OverlayModel;
 
 public class RangeFacet implements Facet {
 
@@ -124,9 +125,9 @@ public class RangeFacet implements Facet {
         }
 
         @Override
-        public RangeFacet apply(ColumnModel columnModel) {
+        public RangeFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
             int cellIndex = columnModel.getColumnIndexByName(_columnName);
-            return new RangeFacet(this, cellIndex, columnModel);
+            return new RangeFacet(this, cellIndex, columnModel, overlayModels);
         }
 
         @Override
@@ -176,14 +177,17 @@ public class RangeFacet implements Facet {
      */
     protected int _cellIndex;
     protected ColumnModel _columnModel;
+    protected Map<String, OverlayModel> _overlayModels;
 
     public RangeFacet(
             RangeFacetConfig config,
             int cellIndex,
-            ColumnModel columnModel) {
+            ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels) {
         _config = config;
         _cellIndex = cellIndex;
         _columnModel = columnModel;
+        _overlayModels = overlayModels;
     }
 
     @Override
@@ -200,7 +204,7 @@ public class RangeFacet implements Facet {
     @Override
     public FacetAggregator<NumericFacetState> getAggregator() {
         return new NumericFacetAggregator(100,
-                new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel),
+                new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel, _overlayModels),
                 _config._from,
                 _config._to,
                 _config._selectNumeric,

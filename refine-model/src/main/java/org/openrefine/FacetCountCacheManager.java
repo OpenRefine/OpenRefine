@@ -67,7 +67,8 @@ public class FacetCountCacheManager {
 
         RowEvaluable evaluable;
         try {
-            evaluable = new ExpressionBasedRowEvaluable(columnName, cellIndex, MetaParser.parse(expression), columnModel);
+            evaluable = new ExpressionBasedRowEvaluable(columnName, cellIndex, MetaParser.parse(expression), columnModel,
+                    grid.getOverlayModels());
         } catch (ParsingException e) {
             throw new FacetCountException(String.format("The expression '%s' is invalid: %s", expression, e.getMessage()));
         }

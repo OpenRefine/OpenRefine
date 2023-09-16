@@ -1,0 +1,48 @@
+{
+  "entityTypeSiteIRI": {},
+  "entityEdits": [
+    {
+      "type": "wbmediainfoeditexpr",
+      "fileName": null,
+      "filePath": null,
+      "wikitext": null,
+      "overrideWikitext": false,
+      "nameDescs": [],
+      "statementGroups": [
+        {
+          "property": {
+            "datatype": "wikibase-item",
+            "label": "position held",
+            "pid": "P39",
+            "type": "wbpropconstant"
+          },
+          "statements": [
+            {
+              "mergingStrategy": {
+                "pids": [],
+                "type": "qualifiers",
+                "valueMatcher": {
+                  "type": "strict"
+                }
+              },
+              "mode": "add_or_merge",
+              "qualifiers": [],
+              "references": [],
+              "value": {
+                "label": "president",
+                "qid": "Q30461",
+                "type": "wbitemconstant"
+              }
+            }
+          ]
+        }
+      ],
+      "subject": {
+        "columnName": "name",
+        "type": "wbentityvariable"
+      }
+    }
+  ],
+  "mediaWikiApiEndpoint": "https://commons.wikimedia.org/w/api.php",
+  "siteIri": "http://commons.wikimedia.org/entity/"
+}

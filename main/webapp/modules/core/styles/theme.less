@@ -57,62 +57,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @padding_loose: 10px;
 @padding_looser: 15px;
 
-.rounded_corners (@radius: 5px) { 
-  -moz-border-radius: @radius;
-  -webkit-border-radius: @radius;
+.rounded_corners (@radius: 5px) {
   border-radius: @radius;
-  }
+}
 
-.rounded_corners_top (@radius: 5px) { 
-  -webkit-border-top-left-radius: @radius;
-  -webkit-border-top-right-radius: @radius;
-  -moz-border-radius-topleft: @radius;
-  -moz-border-radius-topright: @radius;
+.rounded_corners_top (@radius: 5px) {
   border-top-right-radius: @radius;
   border-top-left-radius: @radius;
-  }
+}
 
-.rounded_corners_bottom (@radius: 5px) { 
-  -webkit-border-bottom-left-radius: @radius;
-  -webkit-border-bottom-right-radius: @radius;
-  -moz-border-radius-bottomleft: @radius;
-  -moz-border-radius-bottomright: @radius;
+.rounded_corners_bottom (@radius: 5px) {
   border-bottom-right-radius: @radius;
   border-bottom-left-radius: @radius;
-  }
+}
 
-.rounded_corners_left (@radius: 5px) { 
-  -webkit-border-top-left-radius: @radius;
-  -webkit-border-bottom-left-radius: @radius;
-  -moz-border-radius-topleft: @radius;
-  -moz-border-radius-bottomleft: @radius;
+.rounded_corners_left (@radius: 5px) {
   border-top-left-radius: @radius;
   border-bottom-left-radius: @radius;
-  }
+}
 
-.rounded_corners_right (@radius: 5px) { 
-  -webkit-border-top-right-radius: @radius;
-  -webkit-border-bottom-right-radius: @radius;
-  -moz-border-radius-topright: @radius;
-  -moz-border-radius-bottomright: @radius;
+.rounded_corners_right (@radius: 5px) {
   border-top-right-radius: @radius;
   border-bottom-right-radius: @radius;
-  }
+}
 
 .sharp_corners_left () {
-  -webkit-border-top-right-radius: 0;
-  -webkit-border-bottom-right-radius: 0;
-  -moz-border-radius-topright: 0;
-  -moz-border-radius-bottomright: 0;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;	
-  }
+}
 
 .sharp_corners_right () {
-  -moz-border-radius-topleft: 0;
-  -moz-border-radius-bottomleft: 0;
-  -webkit-border-top-left-radius: 0;
-  -webkit-border-bottom-left-radius: 0;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  }
+}

@@ -41,7 +41,9 @@ import org.openrefine.ProjectManager;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
 import org.openrefine.grel.Function;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.util.GetProjectIDException;
 import org.openrefine.util.LookupException;
 
@@ -90,17 +92,13 @@ public class Cross implements Function {
             }
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                + " expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
+        // name to look up (optional), and a column name in that project (optional)");
+        return new EvalError(EvalErrorMessage.fun_cross_expects_value_project_column(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Looks up the given value in the target column of the target project, returns an array of matched rows. Two values match if and only if they have the same string representation. "
-                +
-                "The first argument will be interpreted as cell.value if set to cell. " +
-                "The second argument will be interpreted as the current project name if omitted or set to \"\". " +
-                "The third argument will be interpreted as the index (starts from 0) column if omitted or set to \"\".";
+        return FunctionDescription.fun_cross();
     }
 
     @Override

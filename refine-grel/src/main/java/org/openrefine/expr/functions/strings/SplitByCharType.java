@@ -37,6 +37,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class SplitByCharType extends PureFunction {
@@ -52,12 +54,12 @@ public class SplitByCharType extends PureFunction {
                 return StringUtils.splitByCharacterType(s);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
+        return new EvalError(EvalErrorMessage.expects_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change Unicode categories.";
+        return FunctionDescription.str_split_by_char_type();
     }
 
     @Override

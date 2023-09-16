@@ -1,0 +1,6 @@
+Apple distribution certificates
+===============================
+
+Those certificates are used to code-sign OpenRefine binaries.
+They are decoded in the CI using the embedded GPG key.
+

@@ -57,6 +57,7 @@ import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.OperationDescription;
 
 public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
 
@@ -183,6 +184,6 @@ public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
 
     @Override
     public String getDescription() {
-        return String.format("Copy recon judgments from column %s to %s", _fromColumnName, StringUtils.join(_toColumnNames));
+        return OperationDescription.recon_copy_across_columns_brief(_fromColumnName, StringUtils.join(_toColumnNames));
     }
 }

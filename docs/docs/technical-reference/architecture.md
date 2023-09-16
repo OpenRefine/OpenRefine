@@ -62,6 +62,17 @@ Columns in the column model can be removed and re-ordered without changing the r
 
 ##### Column Groups {#column-groups}
 
+:::caution
+This feature is partially implemented, buggy and deprecated. It will be removed in OpenRefine 4.0.
+See the following links for details:
+
+- [Issue#5122](https://github.com/OpenRefine/OpenRefine/issues/5122) that first argues it's a useful feature, but then agrees with its deprecation
+- Discussion [Who uses column groups?](https://groups.google.com/g/openrefine/c/A8RhOwlulRs/m/NFR8LDBmBwAJ)
+- Discussion [The future of the records mode](https://groups.google.com/g/openrefine/c/X9O8NBC1UKQ) about better ways of implementing grouping and a hierarchical model in OntoRefine
+
+This feature is related to [Rows vs Records](../manual/exploring#rows-vs-records), which however continues to be supported.
+:::
+
 Consider the following data:
 
 ![Illustration of row groups in OpenRefine](https://raw.github.com/OpenRefine/OpenRefine/2.0/graphics/row-groups.png)

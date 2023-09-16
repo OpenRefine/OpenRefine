@@ -35,6 +35,8 @@ package org.openrefine.expr.functions;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class ToNumber extends PureFunction {
@@ -65,16 +67,16 @@ public class ToNumber extends PureFunction {
                     } catch (NumberFormatException e) {
                     }
                 }
-                return new EvalError("Unable to parse as number");
+                return new EvalError(EvalErrorMessage.unable_to_parse_as_number());
             }
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
+            return new EvalError(EvalErrorMessage.expects_one_non_null_arg(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
 
     @Override
     public String getDescription() {
-        return "Returns a string converted to a number. Will attempt to convert other formats into a string, then into a number. If the value is already a number, it will return the number.";
+        return FunctionDescription.fun_to_number();
     }
 
     @Override

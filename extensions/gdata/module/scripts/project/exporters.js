@@ -23,30 +23,15 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-var dictionary = "";
-$.ajax({
-	url : "command/core/load-language?",
-	type : "POST",
-	async : false,
-	data : {
-	  module : "gdata",
-//		lang : lang
-	},
-	success : function(data) {
-		dictionary = data['dictionary'];
-                lang = data['lang'];
-	}
-});
-$.i18n().load(dictionary, lang);
-// End internationalization
+I18NUtil.init("gdata");
 
 ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push(
@@ -85,7 +70,9 @@ ExporterManager.MenuItems.push(
             } else {
                 alert($.i18n('gdata-exporter/upload-error') + o.message)
             }
-            onDone();
+            if (onDone) {
+              onDone();
+            }
           },
           "json"
         );
@@ -128,7 +115,6 @@ ExporterManager.handlers.exportProjectToGoogleDrive = function () {
           } else {
             alert($.i18n('gdata-exporter/upload-error') + o.message)
           }
-          onDone();
         },
         "json"
       );
@@ -162,7 +148,6 @@ ExporterManager.handlers.exportProjectToGoogleSheets = function () {
           } else {
             alert($.i18n('gdata-exporter/upload-error') + o.message)
           }
-          onDone();
         },
         "json"
       );

@@ -18,7 +18,7 @@ module.exports = {
       'manual/reconciling',
       {
         type: 'category',
-        label: 'Wikibase',
+        label: 'Wikibase, Wikidata and Wikimedia Commons',
         items: ['manual/wikibase/overview', 'manual/wikibase/configuration', 'manual/wikibase/reconciling', 'manual/wikibase/schema-alignment',
                 'manual/wikibase/new-entities', 'manual/wikibase/quality-assurance', 'manual/wikibase/uploading'],
       },
@@ -35,6 +35,7 @@ module.exports = {
     'Technical Reference': [
       'technical-reference/technical-reference-index',
       'technical-reference/architecture',
+      'technical-reference/clustering-in-depth',
       'technical-reference/openrefine-api',
       'technical-reference/reconciliation-api',
       'technical-reference/contributing',
@@ -47,7 +48,8 @@ module.exports = {
       'technical-reference/translating-ui',
       'technical-reference/translating-docs',
       'technical-reference/functional-tests',
-      'technical-reference/maintainer-guidelines'
+      'technical-reference/maintainer-guidelines',
+      'technical-reference/wikibase/architecture'
   ]
   },
 };

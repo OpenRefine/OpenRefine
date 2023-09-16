@@ -151,33 +151,33 @@ class TimeRangeFacet extends Facet{
     this._elmts = DOM.bind(this._div);
 
     this._elmts.facetTitle.text(this._config.name);
-    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).click(function() {
+    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).on('click',function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
           self._editExpression();
         }
       });
     });
-    this._elmts.expressionDiv.text(this._config.expression).click(function() { 
+    this._elmts.expressionDiv.text(this._config.expression).on('click',function() { 
       self._editExpression(); 
     }).hide();
 
-    this._elmts.resetButton.click(function() {
+    this._elmts.resetButton.on('click',function() {
       self.reset();
       self._updateRest();
     });
     
-    this._elmts.removeButton.click(function() { self._remove(); });
-    this._elmts.minimizeButton.click(function() { self._minimize(); });
+    this._elmts.removeButton.on('click',function() { self._remove(); });
+    this._elmts.minimizeButton.on('click',function() { self._minimize(); });
 
-    this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
+    this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#668CFF", "#174092" ] });
     this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
 
-    this._elmts.sliderWidgetDiv.bind("slide", function(evt, data) {
+    this._elmts.sliderWidgetDiv.on("slide", function(evt, data) {
       self._from = data.from;
       self._to = data.to;
       self._setRangeIndicators();
-    }).bind("stop", function(evt, data) {
+    }).on("stop", function(evt, data) {
       self._from = data.from;
       self._to = data.to;
       self._selectTime = true;
@@ -200,7 +200,7 @@ class TimeRangeFacet extends Facet{
     // ----------------- time -----------------
 
     var timeDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
-    var timeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-time").appendTo(timeDiv).change(function() {
+    var timeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-time").appendTo(timeDiv).on('change',function() {
       self._selectTime = !self._selectTime;
       self._updateRest();
     });
@@ -213,7 +213,7 @@ class TimeRangeFacet extends Facet{
     // ----------------- non-Time -----------------
 
     var nonTimeDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
-    var nonTimeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-time").appendTo(nonTimeDiv).change(function() {
+    var nonTimeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-time").appendTo(nonTimeDiv).on('change',function() {
       self._selectNonTime = !self._selectNonTime;
       self._updateRest();
     });
@@ -228,7 +228,7 @@ class TimeRangeFacet extends Facet{
     // ----------------- blank -----------------
 
     var blankDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
-    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).change(function() {
+    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).on('change',function() {
       self._selectBlank = !self._selectBlank;
       self._updateRest();
     });
@@ -243,7 +243,7 @@ class TimeRangeFacet extends Facet{
     // ----------------- error -----------------
 
     var errorDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
-    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).change(function() {
+    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).on('change',function() {
       self._selectError = !self._selectError;
       self._updateRest();
     });

@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -72,6 +73,7 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
@@ -188,6 +190,7 @@ public class PreviewExpressionCommand extends Command {
             }
 
             GridState state = project.getCurrentGridState();
+            Map<String, OverlayModel> overlayModels = state.getOverlayModels();
             ColumnModel columnModel = state.getColumnModel();
             Engine engine = new Engine(state, engineConfig);
 
@@ -202,15 +205,17 @@ public class PreviewExpressionCommand extends Command {
                     for (IndexedRow indexedRow : rows) {
                         Cell cell = indexedRow.getRow().getCell(cellIndex);
                         Record record = null;
-                        evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, project.getId(), eval, repeat,
-                                repeatCount));
+                        evaluated.add(
+                                evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels, project.getId(), eval,
+                                        repeat, repeatCount));
                     }
                 } else {
                     List<Record> records = state.getRecords(engine.combinedRecordFilters(), sortingConfig, 0, limit);
                     for (Record record : records) {
                         for (IndexedRow indexedRow : record.getIndexedRows()) {
                             Cell cell = indexedRow.getRow().getCell(cellIndex);
-                            evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, project.getId(), eval,
+                            evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, overlayModels,
+                                    project.getId(), eval,
                                     repeat, repeatCount));
                         }
                     }
@@ -235,13 +240,14 @@ public class PreviewExpressionCommand extends Command {
             Record record,
             String columnName,
             Cell cell,
+            Map<String, OverlayModel> overlayModels,
             long projectId,
             Evaluable eval,
             boolean repeat,
             int repeatCount) {
         Row row = indexedRow.getRow();
         long rowIndex = indexedRow.getIndex();
-        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell);
+        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell, overlayModels);
         bindings.put("project_id", projectId);
         Object result = null;
         try {
@@ -251,7 +257,7 @@ public class PreviewExpressionCommand extends Command {
             if (repeat) {
                 for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
                     Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
-                    ExpressionUtils.bind(bindings, null, row, rowIndex, record, columnName, newCell);
+                    ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, newCell, overlayModels);
 
                     Object newResult = eval.evaluate(bindings);
                     if (ExpressionUtils.isError(newResult)) {

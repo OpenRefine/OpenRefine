@@ -1,0 +1,13 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <label for="schema-file" bind="fileLabel"></label><input type="file" id="schema-file" bind="fileInput"/><br/><br/>
+    <label for="schema" bind="schemaLabel"></label><br/><br/>
+    <textarea id="schema" class="wikibase-schema-textarea" bind="schemaTextarea"></textarea>
+    <div class="wikibase-invalid-schema" bind="invalidSchema"></div>
+  </div>
+  <div class="dialog-footer">
+    <button class="button cancel-button" bind="cancelButton"></button>
+    <button class="button button-primary" bind="importButton"></button>
+  </div>
+</div>

@@ -94,7 +94,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
 
   $('input#connectionName').val($.i18n('database-source/connectionNameDefaultValue'));
 
-  this._elmts.newConnectionButton.click(function(evt) {
+  this._elmts.newConnectionButton.on('click',function(evt) {
       self._resetDatabaseImportForm();
       $( "#newConnectionDiv" ).show();
       $( "#sqlEditorDiv" ).hide();
@@ -102,7 +102,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
     //   self._body.find('.sqlEditorDiv').hide();
   });
   
-  this._elmts.databaseTypeSelect.change(function(event) {
+  this._elmts.databaseTypeSelect.on('change',function(event) {
     var type = $( "select#databaseTypeSelect" ).val();
 
     self._updateDatabaseType(type);
@@ -111,7 +111,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   var defaultDatabase = $( "select#databaseTypeSelect" ).val();
   self._updateDatabaseType(defaultDatabase);
 
-  this._elmts.testDatabaseButton.click(function(evt) {
+  this._elmts.testDatabaseButton.on('click',function(evt) {
       
           if(self._validateNewConnectionForm() === true){
              self._testDatabaseConnect(self._getConnectionInfo());
@@ -119,7 +119,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
        
    });
   
-  this._elmts.databaseConnectButton.click(function(evt) {
+  this._elmts.databaseConnectButton.on('click',function(evt) {
       
       if(self._validateNewConnectionForm() === true){
              self._connect(self._getConnectionInfo());
@@ -128,10 +128,10 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
    
  });
   
- this._elmts.saveConnectionButton.click(function(evt) {
+ this._elmts.saveConnectionButton.on('click',function(evt) {
       
        if(self._validateNewConnectionForm() == true){
-            var connectionNameInput = $.trim(self._elmts.connectionNameInput[0].value);
+            var connectionNameInput = jQueryTrim(self._elmts.connectionNameInput[0].value);
             if (connectionNameInput.length === 0) {
                 window.alert($.i18n('database-source/alert-connection-name'));   
             } else{
@@ -142,7 +142,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
 
  });
   
-  this._elmts.executeQueryButton.click(function(evt) {
+  this._elmts.executeQueryButton.on('click',function(evt) {
         var jdbcQueryInfo = {};
         jdbcQueryInfo.connectionName = $( "#currentConnectionNameInput" ).val();
         jdbcQueryInfo.databaseType = $( "#currentDatabaseTypeInput" ).val();
@@ -151,7 +151,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
         jdbcQueryInfo.databaseUser = $( "#currentDatabaseUserInput" ).val();
         jdbcQueryInfo.databasePassword = $( "#currentDatabasePasswordInput" ).val();
         jdbcQueryInfo.initialDatabase = $( "#currentInitialDatabaseInput" ).val();
-        jdbcQueryInfo.query = $.trim($( "#queryTextArea" ).val()); 
+        jdbcQueryInfo.query = jQueryTrim($( "#queryTextArea" ).val()); 
       
         if(self.validateQuery(jdbcQueryInfo.query)) {
                 self._executeQuery(jdbcQueryInfo);
@@ -162,10 +162,10 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
 
 
   
-  this._elmts.editConnectionButton.click(function(evt) {
+  this._elmts.editConnectionButton.on('click',function(evt) {
       
       if(self._validateNewConnectionForm() == true){
-               var connectionNameInput = $.trim(self._elmts.connectionNameInput[0].value);
+               var connectionNameInput = jQueryTrim(self._elmts.connectionNameInput[0].value);
             if (connectionNameInput.length === 0) {
                 window.alert($.i18n('database-source/alert-connection-name'));   
             } else{
@@ -176,7 +176,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
     
  });
   
- this._elmts.cancelEditConnectionButton.click(function(evt) {
+ this._elmts.cancelEditConnectionButton.on('click',function(evt) {
      self._resetDatabaseImportForm();
         
  });
@@ -448,14 +448,14 @@ Refine.DatabaseSourceUI.prototype._connect = function(jdbcConnectionInfo) {
 Refine.DatabaseSourceUI.prototype._getConnectionInfo = function() {
      var self = this;
      var jdbcConnectionInfo = {};
-     jdbcConnectionInfo.connectionName = $.trim(self._elmts.connectionNameInput[0].value);
-     jdbcConnectionInfo.databaseType = $.trim(self._elmts.databaseTypeSelect[0].value);
-     jdbcConnectionInfo.databaseServer = $.trim(self._elmts.databaseHostInput[0].value);
-     jdbcConnectionInfo.databasePort = $.trim(self._elmts.databasePortInput[0].value);
-     jdbcConnectionInfo.databaseUser = $.trim(self._elmts.databaseUserInput[0].value);
-     jdbcConnectionInfo.databasePassword = $.trim(self._elmts.databasePasswordInput[0].value); 
-     jdbcConnectionInfo.initialDatabase = $.trim(self._elmts.initialDatabaseInput[0].value);
-     jdbcConnectionInfo.initialSchema = $.trim(self._elmts.initialSchemaInput[0].value);
+     jdbcConnectionInfo.connectionName = jQueryTrim(self._elmts.connectionNameInput[0].value);
+     jdbcConnectionInfo.databaseType = jQueryTrim(self._elmts.databaseTypeSelect[0].value);
+     jdbcConnectionInfo.databaseServer = jQueryTrim(self._elmts.databaseHostInput[0].value);
+     jdbcConnectionInfo.databasePort = jQueryTrim(self._elmts.databasePortInput[0].value);
+     jdbcConnectionInfo.databaseUser = jQueryTrim(self._elmts.databaseUserInput[0].value);
+     jdbcConnectionInfo.databasePassword = jQueryTrim(self._elmts.databasePasswordInput[0].value); 
+     jdbcConnectionInfo.initialDatabase = jQueryTrim(self._elmts.initialDatabaseInput[0].value);
+     jdbcConnectionInfo.initialSchema = jQueryTrim(self._elmts.initialSchemaInput[0].value);
      return jdbcConnectionInfo;
     
 }
@@ -464,14 +464,14 @@ Refine.DatabaseSourceUI.prototype._getConnectionInfo = function() {
 Refine.DatabaseSourceUI.prototype._validateNewConnectionForm = function() {
     
         var self = this;
-        var connectionNameInput = $.trim(self._elmts.connectionNameInput[0].value);
-        var databaseTypeSelect = $.trim(self._elmts.databaseTypeSelect[0].value);
-        var databaseHostInput = $.trim(self._elmts.databaseHostInput[0].value);
-        var databasePortInput = $.trim(self._elmts.databasePortInput[0].value);
-        var databaseUserInput = $.trim(self._elmts.databaseUserInput[0].value);
-        var databasePasswordInput = $.trim(self._elmts.databasePasswordInput[0].value);   
-        var initialDatabaseInput = $.trim(self._elmts.initialDatabaseInput[0].value);
-        var initialSchemaInput = $.trim(self._elmts.initialSchemaInput[0].value);
+        var connectionNameInput = jQueryTrim(self._elmts.connectionNameInput[0].value);
+        var databaseTypeSelect = jQueryTrim(self._elmts.databaseTypeSelect[0].value);
+        var databaseHostInput = jQueryTrim(self._elmts.databaseHostInput[0].value);
+        var databasePortInput = jQueryTrim(self._elmts.databasePortInput[0].value);
+        var databaseUserInput = jQueryTrim(self._elmts.databaseUserInput[0].value);
+        var databasePasswordInput = jQueryTrim(self._elmts.databasePasswordInput[0].value);   
+        var initialDatabaseInput = jQueryTrim(self._elmts.initialDatabaseInput[0].value);
+        var initialSchemaInput = jQueryTrim(self._elmts.initialSchemaInput[0].value);
         
         var alphaNumRE = /^[a-zA-Z0-9._-]*$/;
         var numRE = /^[0-9]*$/;
@@ -524,5 +524,5 @@ Refine.DatabaseSourceUI.prototype._resetDatabaseImportForm = function() {
 
   $( "#editConnectionControlDiv" ).hide();
   $( "#newConnectionControlDiv" ).show();
-  $('#connectionName').removeAttr('readonly');
+  $('#connectionName').prop('readonly',false);
 };

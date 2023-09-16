@@ -1,12 +1,16 @@
 
-  <span bind="or_views_dataType"></span> <select bind="typeSelect">
-    <option value="text" bind="or_views_text"></option>
-    <option value="number" bind="or_views_number"></option>
-    <option value="boolean" bind="or_views_boolean"></option>
-    <option value="date" bind="or_views_date"></option>
-  </select>
+<label for="typeSelectId" bind="or_views_dataType"></label> <select bind="typeSelect" id="typeSelectId">
+  <option value="text" bind="or_views_text"></option>
+  <option value="number" bind="or_views_number"></option>
+  <option value="boolean" bind="or_views_boolean"></option>
+  <option value="date" bind="or_views_date"></option>
+</select>
 
-<textarea class="data-table-cell-editor-editor" bind="textarea" />
+<div id="data-table-cell-editor-help" bind="cell_help">
+  <span bind="cell_help_text"></span>&nbsp;
+</div>
+
+<textarea aria-label="" class="data-table-cell-editor-editor" bind="textarea"></textarea>
 
 <div id="data-table-cell-editor-actions">
   <div class="data-table-cell-editor-action">

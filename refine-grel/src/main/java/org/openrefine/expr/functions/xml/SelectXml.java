@@ -37,6 +37,8 @@ import org.jsoup.nodes.Element;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class SelectXml extends PureFunction {
@@ -54,16 +56,17 @@ public class SelectXml extends PureFunction {
                     return e1.select(o2.toString());
                 }
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml()");
+                // is not an XML or HTML Element. Please first use parseXml() or parseHtml()");
+                return new EvalError(
+                        EvalErrorMessage.failed_as_param_not_xml_or_html_element(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");
+        return new EvalError(EvalErrorMessage.expects_two_args(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns an array of all the desired elements from an HTML or XML document, if the element exists. Elements are identified using the Jsoup selector syntax: https://jsoup.org/apidocs/org/jsoup/select/Selector.html.";
+        return FunctionDescription.xml_selectxml();
     }
 
     @Override

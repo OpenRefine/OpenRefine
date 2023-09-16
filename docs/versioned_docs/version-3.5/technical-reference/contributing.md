@@ -47,7 +47,7 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Install OpenRefine, learn to use it by following some tutorials or watching [some videos](http://openrefine.org/). That will ensure you understand the user workflows and get familiar with the terminology used in the tool.
 
-- Fork the GitHub repository, clone it on your machine and set up your IDE to work on it. We have [instructions for this](https://github.com/OpenRefine/OpenRefine/wiki/Building-OpenRefine-From-Source).
+- Fork the GitHub repository, clone it on your machine and set up your IDE to work on it. We have [instructions for this](/technical-reference/build-test-run).
 
 - Browse through the list of issues to find an issue that you find interesting. You should pick one where you understand what the problem is as a user, you can see why fixing it would be an improvement to the tool. It is also a good idea to pick an issue that matches your technical skills: some require work on the backend (in Java) or in the frontend (Javascript), often both. We try to maintain a list of [good first issues](https://github.com/OpenRefine/OpenRefine/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) which should be easier than others and should not require any difficult design decision.
 
@@ -57,12 +57,22 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Study how the current code works. You might want to use a debugger to put breakpoints at the relevant locations (for inspecting the backend, use your IDE's debugger, for the frontend, use your browser's developer tools).
 
+- Before going too far in the exploration and solving of the issue, make sure no one is already assigned to it. If someone is already assigned, and you don't see action or discussions since a few weeks, you can ask the assigned person if he is still currently active in working to solve the issue. If not, or no answer after a few days, you can remove him and assign yourself.
+
+- Please note that in periods when the OpenRefine community is actively participating in a program like Outreachy or Google Summer of Code, it might be safer to ask mentors before assigning yourself to a "good first issue" or "good second issue".
+
 - Create a git branch for your fix. The name of your branch should contain the issue number, and a few words to describe the topic of the fix, for instance "issue-1234-columnize-layout".
 
-- Make changes to the code to fix the issue. If you are changing backend code, it would be great if you could also write a test in Java to demonstrate the fix. You can imitate existing tests for that. We currently do not have frontend tests.
+- Make changes to the code to fix the issue. When you change the backend code, it's conveniant to also write one or more tests in Java to demonstrate the fix. You can imitate existing tests of comparable functionalities for that. 
 
-- commit your changes, using a message that contains one of the special words "closes" and "fixes" which are detected by Github, followed by the issue number, e.g. "closes #1234" or "fixes #1234", this will link the commit to the issue you are working on.
+- We now have [functional tests](/technical-reference/functional-tests). These are built with Cypress. They mimic a human user in front of a Chrome browser. If your change has a meaningful impact on the user interface, a functional test should probably be written.
 
-- push your branch to your fork and create a pull request for it, explaining the approach you have used, any design decisions you have made.
+- If you made Java changes, run linting to make sure they conform to our code style, with `mvn formatter:format`.
+
+- Commit your changes, using a message that contains one of the special words "closes" and "fixes" which are detected by Github, followed by the issue number, e.g. "closes #1234" or "fixes #1234", this will link the commit to the issue you are working on.
+
+- Push your branch to your fork and create a pull request for it, explaining the approach you have used, any design decisions you have made.
 
 Thank you!
+
+For more information, there is also the [Maintainer Guidelines](/technical-reference/maintainer-guidelines) section.

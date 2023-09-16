@@ -60,6 +60,9 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     private GridState initialState;
     private ReconConfig reconConfig;
+    private String service = "http://my.service.com/api";
+    private String identifierSpace = "http://my.service.com/identifierSpace";
+    private String schemaSpace = "http://my.service.com/schemaSpace";
 
     @BeforeSuite
     public void registerOperation() {
@@ -68,9 +71,9 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @BeforeTest
     public void setupInitialState() throws ModelException {
-        reconConfig = new StandardReconConfig("http://my.service.com/api",
-                "http://my.service.com/identifierSpace",
-                "http://my.service.com/schemaSpace",
+        reconConfig = new StandardReconConfig(service,
+                identifierSpace,
+                schemaSpace,
                 null,
                 true,
                 Collections.emptyList(),
@@ -94,7 +97,10 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\","
                 + "\"shareNewTopics\":true,"
-                + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\""
+                + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\","
+                + "\"service\":\"http://my.service.com/api\","
+                + "\"identifierSpace\":\"http://my.service.com/identifierSpace\","
+                + "\"schemaSpace\":\"http://my.service.com/schemaSpace\""
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMarkNewTopicsOperation.class), json,
                 ParsingUtilities.defaultWriter);
@@ -102,7 +108,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @Test
     public void testReconMarkNewTopicsOperation() throws DoesNotApplyException, ModelException {
-        Change change = new ReconMarkNewTopicsOperation(EngineConfig.ALL_ROWS, "bar", true).createChange();
+        Change change = new ReconMarkNewTopicsOperation(
+                EngineConfig.ALL_ROWS, "bar", true, null, null, null).createChange();
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
@@ -140,7 +147,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @Test
     public void testReconJudgeSimilarCellsIndividually() throws DoesNotApplyException, ModelException {
-        Change change = new ReconMarkNewTopicsOperation(EngineConfig.ALL_ROWS, "bar", false).createChange();
+        Change change = new ReconMarkNewTopicsOperation(EngineConfig.ALL_ROWS, "bar", false, service, identifierSpace, schemaSpace)
+                .createChange();
 
         ChangeContext context = mock(ChangeContext.class);
         when(context.getHistoryEntryId()).thenReturn(2891L);
@@ -166,6 +174,52 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                                 .withJudgmentHistoryEntry(2891L)
                                 .withId(thirdReconId)
                                 .withJudgmentAction("mass")) }
+                });
+
+        // Make sure recon stats are updated too
+        ReconStats reconStats = ReconStats.create(3, 3, 0);
+        ColumnModel columnModel = expected.getColumnModel();
+        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar").withReconConfig(reconConfig);
+        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testNotPreviouslyReconciled() throws DoesNotApplyException, ModelException {
+        GridState initialGrid = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "c", "b" },
+                        { "c", "d" }
+                });
+
+        Change change = new ReconMarkNewTopicsOperation(
+                EngineConfig.ALL_ROWS, "bar", true, service, identifierSpace, schemaSpace).createChange();
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(2891L);
+
+        GridState applied = change.apply(initialState, context);
+
+        long commonReconId = applied.collectRows().get(0).getRow().getCell(1).recon.id;
+        long otherReconId = applied.collectRows().get(2).getRow().getCell(1).recon.id;
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", reconConfig.createNewRecon(2891L)
+                                .withId(commonReconId)
+                                .withJudgmentAction("mass")
+                                .withJudgment(Judgment.New)) },
+                        { "c", new Cell("b", reconConfig.createNewRecon(2891L)
+                                .withId(commonReconId)
+                                .withJudgmentAction("mass")
+                                .withJudgment(Judgment.New)) },
+                        { "c", new Cell("d", reconConfig.createNewRecon(2891L)
+                                .withId(otherReconId)
+                                .withJudgmentAction("mass")
+                                .withJudgment(Judgment.New)) }
                 });
 
         // Make sure recon stats are updated too

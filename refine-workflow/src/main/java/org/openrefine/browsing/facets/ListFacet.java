@@ -52,6 +52,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.StringUtils;
 
 public class ListFacet implements Facet {
@@ -118,8 +119,8 @@ public class ListFacet implements Facet {
         }
 
         @Override
-        public ListFacet apply(ColumnModel columnModel) {
-            return new ListFacet(this, columnModel);
+        public ListFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
+            return new ListFacet(this, columnModel, overlayModels);
         }
 
         @Override
@@ -190,6 +191,7 @@ public class ListFacet implements Facet {
 
     final ListFacetConfig _config;
     final ColumnModel _columnModel;
+    final Map<String, OverlayModel> _overlayModels;
 
     /*
      * Derived configuration
@@ -198,9 +200,10 @@ public class ListFacet implements Facet {
     protected Evaluable _eval;
     protected String _errorMessage;
 
-    public ListFacet(ListFacetConfig config, ColumnModel model) {
+    public ListFacet(ListFacetConfig config, ColumnModel model, Map<String, OverlayModel> overlayModels) {
         _config = config;
         _columnModel = model;
+        _overlayModels = overlayModels;
 
         if (_config.columnName.length() > 0) {
             _cellIndex = _columnModel.getColumnIndexByName(_config.columnName);
@@ -243,7 +246,7 @@ public class ListFacet implements Facet {
     public FacetAggregator<StringValuesFacetState> getAggregator() {
         if (_errorMessage == null) {
             return new StringValuesFacetAggregator(_columnModel, _cellIndex,
-                    new ExpressionBasedRowEvaluable(_config.columnName, _cellIndex, _eval, _columnModel),
+                    new ExpressionBasedRowEvaluable(_config.columnName, _cellIndex, _eval, _columnModel, _overlayModels),
                     Arrays.stream(createMatches()).map(o -> StringUtils.toString(o))
                             .collect(Collectors.toSet()),
                     _config.selectBlank, _config.selectError, _config.invert);

@@ -41,8 +41,10 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
+import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.OperationDescription;
 
 public class RowStarOperation extends ImmediateRowMapOperation {
 
@@ -63,12 +65,7 @@ public class RowStarOperation extends ImmediateRowMapOperation {
 
     @Override
     public String getDescription() {
-        return (_starred ? "Star rows" : "Unstar rows");
-    }
-
-    @Override
-    public RowInRecordMapper getPositiveRowMapper(GridState grid, ChangeContext context) {
-        return rowMapper(_starred);
+        return _starred ? OperationDescription.row_star_brief() : OperationDescription.row_unstar_brief();
     }
 
     protected static RowInRecordMapper rowMapper(boolean starred) {
@@ -82,5 +79,11 @@ public class RowStarOperation extends ImmediateRowMapOperation {
             }
 
         };
+
+    }
+
+    @Override
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws Change.DoesNotApplyException {
+        return rowMapper(_starred);
     }
 }

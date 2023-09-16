@@ -91,59 +91,6 @@ describe(__filename, function () {
     );
   });
 
-  it('Test project renaming', function () {
-    cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food.mini.csv');
-    cy.get('.create-project-ui-panel').contains('Configure parsing options');
-    cy.get(
-      '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).type('this is a test');
-
-    // click next to create the project, and wait until it's loaded
-    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create project »')
-      .click();
-    cy.get('#create-project-progress-message').contains('Done.');
-
-    cy.get('#project-name-button').contains('this is a test');
-  });
-
-  it('Test project tagging by adding various tags', function () {
-    cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food.mini.csv');
-    cy.get('.create-project-ui-panel').contains('Configure parsing options');
-    const uniqueProjectName = Date.now();
-    const uniqueTagName1 = 'tag1_' + Date.now();
-    const uniqueTagName2 = 'tag2_' + Date.now();
-
-    cy.get('#project-tags-container').click();
-    // Type and Validate the tag, pressing enter
-    cy.get('#project-tags-container .select2-input').type(uniqueTagName1, { force: true });
-    cy.get('body').type('{enter}');
-    cy.get('#project-tags-container .select2-input').type(uniqueTagName2, { force: true });
-    cy.get('body').type('{enter}');
-    cy.get('#or-import-parsopt').click();
-
-    // click next to create the project, and wait until it's loaded
-    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create project »')
-      .click();
-    cy.get('#create-project-progress-message').contains('Done.');
-
-    cy.visitOpenRefine();
-    cy.navigateTo('Open project');
-    cy.get('#projects-list')
-      .contains(uniqueProjectName)
-      .parent()
-      .parent()
-      .contains(uniqueTagName1);
-    cy.get('#projects-list')
-      .contains(uniqueProjectName)
-      .parent()
-      .parent()
-      .contains(uniqueTagName2);
-  });
-
   it('Tests ignore-first of parsing options', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
@@ -171,7 +118,7 @@ describe(__filename, function () {
   });
   it('Tests parse-next of parsing options', function () {
     navigateToProjectPreview();
-    cy.get('input[bind="headerLinesCheckbox"]').uncheck();
+    cy.get('input[bind="columnNamesCheckbox"]').check();
     cy.waitForImportUpdate();
     cy.get('input[bind="headerLinesInput"]').type('{backspace}0');
     cy.get('input[bind="headerLinesCheckbox"]').check();

@@ -34,12 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.grel.controls;
 
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.grel.ControlDescription;
 
 public class IsBlank extends IsTest {
 
     @Override
     public String getDescription() {
-        return "Returns whether o is null or an empty string";
+        return ControlDescription.is_blank_desc();
     }
 
     @Override

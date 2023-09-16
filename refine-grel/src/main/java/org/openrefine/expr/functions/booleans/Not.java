@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.booleans;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Not extends PureFunction {
@@ -46,7 +48,7 @@ public class Not extends PureFunction {
         if (args.length == 1 && args[0] instanceof Boolean) {
             return !objectToBoolean(args[0]);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a boolean");
+        return new EvalError(EvalErrorMessage.expects_one_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     public static boolean objectToBoolean(Object o) {
@@ -55,7 +57,7 @@ public class Not extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Uses the logical operator NOT on a boolean to output a boolean. For example, not(1 > 7) returns true because 1 > 7 itself is false.";
+        return FunctionDescription.bool_not();
     }
 
     @Override

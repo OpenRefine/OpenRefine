@@ -38,6 +38,8 @@ import org.jsoup.nodes.Element;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.functions.Type;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class ScriptText extends PureFunction {
@@ -52,25 +54,22 @@ public class ScriptText extends PureFunction {
                 return e1.data();
 
             } else {
-
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '"
-                        + new Type().call(args) + "'"
-                        + " but instead needs a jsoup DataNode from style, script tags, etc. to work with."
-                        + " See https://jsoup.org/apidocs/org/jsoup/nodes/Element.html#data()"
-                        + " For arrays, you might select an index or loop over them with forEach()."
-                        + " dataNodes() is currently not implemented.");
+                // + new Type().call(bindings, args) + "'"
+                // + " but instead needs a jsoup DataNode from style, script tags, etc. to work with."
+                // + " See https://jsoup.org/apidocs/org/jsoup/nodes/Element.html#data()"
+                // + " For arrays, you might select an index or loop over them with forEach()."
+                // + " dataNodes() is currently not implemented.");
+                return new EvalError(EvalErrorMessage.xml_script_text_cannot_work_with(ControlFunctionRegistry.getFunctionName(this),
+                        new Type().call(args)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
+        return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
         // the description needs to be valid HTML.
-        return "Returns the combined data of an HTML/XML Element. Data is e.g. the inside of a &lt;script&gt; tag.\n"
-                + "Note that data is NOT the text of the element.\n"
-                + "Use htmlText() to get the text that would be visible to a user, and scriptText() for the contents of &lt;script&gt;, &lt;style&gt;, etc.\n"
-                + "Use scriptText() in conjunction with parseHtml() and select().";
+        return FunctionDescription.xml_scripttext();
     }
 
     @Override

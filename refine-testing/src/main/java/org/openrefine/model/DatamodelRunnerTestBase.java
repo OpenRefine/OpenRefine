@@ -516,8 +516,8 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testComputeRowFacets() {
-        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel());
-        Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel());
+        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels());
+        Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels());
 
         List<Facet> facets = Arrays.asList(facetFoo, facetBar);
         List<FacetState> initialStates = facets
@@ -554,8 +554,8 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test
     public void testComputeRecordFacets() {
-        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel());
-        Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel());
+        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels());
+        Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel(), simpleGrid.getOverlayModels());
 
         List<Facet> facets = Arrays.asList(facetFoo, facetBar);
         List<FacetState> initialStates = facets

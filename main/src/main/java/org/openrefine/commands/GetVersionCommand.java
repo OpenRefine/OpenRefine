@@ -64,6 +64,8 @@ public class GetVersionCommand extends Command {
         @JsonProperty("java_runtime_version")
         // public String java_runtime_version = Runtime.getRuntime().version(); // Java 9 or later
         public String java_runtime_version = System.getProperty("java.runtime.version", "?");
+        @JsonProperty("display_new_version_notice")
+        public String display_new_version_notice = System.getProperty("refine.display.new.version.notice");
     }
 
     @Override

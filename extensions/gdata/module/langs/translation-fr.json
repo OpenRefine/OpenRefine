@@ -45,7 +45,7 @@
     "gdata-exporter/enter-filename": "Entrez un nom de fichier pour l'export du projet dans Google Drive",
     "gdata-exporter/upload-google-sheets-success": "Projet téléversé sur Google Drive ",
     "gdata-exporter/upload-google-drive-success": "Projet téléversé sur Google Drive ",
-    "gdata-exporter/google-sheets": "Google Sheets",
+    "gdata-exporter/google-sheets": "Google Sheets…",
     "gdata-import/re-sign-in-another": "Connectez-vous avec un autre compte",
     "gdata-import/please-signin": "Veuillez vous connecter et autoriser l'accès à vos données Google",
     "gdata-exporter/export-to-google-drive": "Projet OpenRefine archivé dans Google Drive…",

@@ -1,4 +1,8 @@
 describe('Match each cell to its best candidate', () => {
+    afterEach(() => {
+        cy.addProjectForDeletion();
+    });
+    
     it('Match each cell to its best candidate', () => {
         cy.visitOpenRefine();
         cy.navigateTo('Import project');

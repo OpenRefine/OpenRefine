@@ -37,6 +37,8 @@ import org.apache.commons.text.WordUtils;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class ToTitlecase extends PureFunction {
@@ -57,13 +59,13 @@ public class ToTitlecase extends PureFunction {
             String delims = o instanceof String ? (String) o : o.toString();
             return WordUtils.capitalizeFully(s, delims.toCharArray());
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a one or two strings");
+            return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
 
     @Override
     public String getDescription() {
-        return "Returns string s converted into titlecase: a capital letter starting each word, and the rest of the letters lowercase. For example, 'Once upon a midnight DREARY'.toTitlecase() returns the string 'Once Upon A Midnight Dreary'.";
+        return FunctionDescription.str_to_title_case();
     }
 
     @Override

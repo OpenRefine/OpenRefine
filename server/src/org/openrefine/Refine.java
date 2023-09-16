@@ -50,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -104,6 +105,7 @@ public class Refine {
             host = "*";
         }
 
+        System.setProperty("refine.display.new.version.notice", Configurations.get("refine.display.new.version.notice", "true"));
         Refine refine = new Refine();
 
         refine.init(args);
@@ -197,7 +199,7 @@ class RefineServer extends Server {
         }
 
         final String contextPath = Configurations.get("refine.context_path", "/");
-        final int maxFormContentSize = Configurations.getInteger("refine.max_form_content_size", 1048576);
+        final int maxFormContentSize = Configurations.getInteger("refine.max_form_content_size", 64 * 1048576); // 64 MB
 
         logger.info("Initializing context: '" + contextPath + "' from '" + webapp.getAbsolutePath() + "'");
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
@@ -248,11 +250,12 @@ class RefineServer extends Server {
                 threadPool.shutdown();
             }
             Thread.sleep(3000);
-            // then let the parent stop
-            super.doStop();
         } catch (InterruptedException e) {
-            // ignore
+            // stop current thread
+            Thread.currentThread().interrupt();
         }
+        // then let the parent stop
+        super.doStop();
     }
 
     static private boolean isWebapp(File dir) {
@@ -430,13 +433,32 @@ class RefineClient extends JFrame implements ActionListener {
     }
 
     private void openBrowser() {
-        if (!Desktop.isDesktopSupported()) {
-            logger.warn("Java Desktop class not supported on this platform.  Please open %s in your browser", uri.toString());
+        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            try {
+                openBrowserFallback();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                Desktop.getDesktop().browse(uri);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        try {
-            Desktop.getDesktop().browse(uri);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    }
+
+    private void openBrowserFallback() throws IOException {
+        Runtime rt = Runtime.getRuntime();
+
+        if (SystemUtils.IS_OS_WINDOWS) {
+            rt.exec("rundll32 url.dll,FileProtocolHandler " + uri);
+        } else if (SystemUtils.IS_OS_MAC_OSX) {
+            rt.exec("open " + uri);
+        } else if (SystemUtils.IS_OS_LINUX) {
+            rt.exec("xdg-open " + uri);
+        } else {
+            logger.warn("Java Desktop class not supported on this platform. Please open %s in your browser", uri.toString());
         }
     }
 }

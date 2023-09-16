@@ -1,4 +1,8 @@
 describe('Discard reconciliation judgments', () => {
+    afterEach(() => {
+        cy.addProjectForDeletion();
+    });
+    
     it('Test discard existing reconciliation judgments', () => {
         cy.visitOpenRefine();
         cy.navigateTo('Import project');

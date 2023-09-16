@@ -40,10 +40,11 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.grel.Control;
+import org.openrefine.grel.ControlDescription;
+import org.openrefine.grel.ControlEvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.grel.ast.VariableExpr;
@@ -53,10 +54,9 @@ public class Filter implements Control {
     @Override
     public String checkArguments(GrelExpr[] args) {
         if (args.length != 3) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
+            return ControlEvalError.expects_three_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) +
-                    " expects second argument to be a variable name";
+            return ControlEvalError.expects_second_arg_var_name(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -67,7 +67,7 @@ public class Filter implements Control {
         if (ExpressionUtils.isError(o)) {
             return o;
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return new EvalError("First argument is not an array");
+            return ControlEvalError.filter();
         }
 
         String name = ((VariableExpr) args[1]).getName();
@@ -145,7 +145,9 @@ public class Filter implements Control {
 
     @Override
     public String getDescription() {
-        return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array.";
+        // evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result
+        // array.";
+        return ControlDescription.filter_desc();
     }
 
     @Override

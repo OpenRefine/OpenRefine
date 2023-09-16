@@ -36,6 +36,8 @@ package org.openrefine.expr.functions.html;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.functions.xml.ParseXml;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class ParseHtml extends PureFunction {
@@ -50,12 +52,13 @@ public class ParseHtml extends PureFunction {
                 return new ParseXml().call(args, "html");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
+        // argument");
+        return new EvalError(EvalErrorMessage.expects_single_string_as_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Given a cell full of HTML-formatted text, parseHtml() simplifies HTML tags (such as by removing ' /' at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. A cell cannot store the output of parseHtml() unless you convert it with toString(): for example, value.parseHtml().toString().";
+        return FunctionDescription.html_parse_html();
     }
 
     @Override

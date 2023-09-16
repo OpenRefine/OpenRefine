@@ -5,6 +5,7 @@
   <name>OpenRefine - packaging</name>
   <description>Creates packages for all supported operating systems</description>
   <url>http://openrefine.org/</url>
+  <packaging>pom</packaging>
 
   <parent>
     <groupId>org.openrefine</groupId>
@@ -13,19 +14,24 @@
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
-    <fullversion>0.0.0.0</fullversion>
-    <built.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</built.webapp.dir>
     <webapp.dir>../main/webapp</webapp.dir>
     <webapp.target>../main/target</webapp.target>
-    <icon.path>../graphics/icon/openrefine.icns</icon.path>
-    <mac.jre.path>/opt/jre1.8.0_181.jre</mac.jre.path>
+    <embedded.jre.version>11</embedded.jre.version>
 
-    <!-- default options for windows: no embedded JRE. Use the "embedded-jre" from ../settings.xml to add a JRE -->
-    <windows.package.jre.path>%JAVA_HOME%;%PATH%</windows.package.jre.path>
-    <windows.package.jre.directory>null</windows.package.jre.directory>
-    <windows.package.jre.outputDirectory>jre</windows.package.jre.outputDirectory>
-    <windows.package.jre.prefix></windows.package.jre.prefix>
-    <windows.package.jre.bundledAsFallback>false</windows.package.jre.bundledAsFallback>
+    <mac.jre.path>${project.build.directory}/mac_jre</mac.jre.path>
+    <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/x64/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
+    <mac.build.directory>OpenRefine ${project.version}</mac.build.directory>
+    <mac.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</mac.webapp.dir>
+    <mac.icon.path>../graphics/icon/openrefine.icns</mac.icon.path>
+    <mac.dmg.path>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</mac.dmg.path>
+    <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>
+    <!-- Apple Notarization settings -->
+    <apple.notarization.timeout>10m</apple.notarization.timeout>
+
+    <windows.jre.path>${project.build.directory}/windows_jre</windows.jre.path>
+    <windows.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/windows/x64/jre/hotspot/normal/eclipse?project=jdk</windows.jre.url>
+    <windows.copyright.line>Copyright (c) 2018 OpenRefine contributors, 2010 Google, Inc.</windows.copyright.line>
+    <windows.fullversion>0.0.0.0</windows.fullversion>
   </properties>
 
   <profiles>
@@ -45,8 +51,10 @@
                 <configuration>
                   <descriptors>
                     <descriptor>linux.xml</descriptor>
-                    <descriptor>windows.xml</descriptor>
+                    <descriptor>windows-without-jre.xml</descriptor>
+                    <descriptor>windows-with-jre.xml</descriptor>
                   </descriptors>
+                  <attach>false</attach>
                 </configuration>
               </execution>
             </executions>
@@ -68,6 +76,7 @@
                   <descriptors>
                     <descriptor>linux.xml</descriptor>
                   </descriptors>
+                  <attach>false</attach>
                 </configuration>
               </execution>
             </executions>
@@ -80,6 +89,10 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>sh.tak.appbundler</groupId>
+            <artifactId>appbundle-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
             <executions>
@@ -87,8 +100,10 @@
                 <id>package-distributions</id>
                 <configuration>
                   <descriptors>
-                    <descriptor>windows.xml</descriptor>
+                    <descriptor>windows-without-jre.xml</descriptor>
+                    <descriptor>windows-with-jre.xml</descriptor>
                   </descriptors>
+                  <attach>false</attach>
                 </configuration>
               </execution>
             </executions>
@@ -114,54 +129,83 @@
           </execution>
         </executions>
       </plugin>
+      <plugin> <!-- we attach a dummy main artifact for the packaging project, 
+                because Appbundle requires one -->
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>groovy-maven-plugin</artifactId>
+        <version>2.1.1</version>
+        <executions>
+          <execution>
+          <id>set-main-artifact</id>
+          <phase>prepare-package</phase>
+          <goals> 
+            <goal>execute</goal>
+          </goals>
+          <configuration>
+            <source>
+            project.artifact.setFile(new File("./packaging/target/dummy_artifact.jar"))
+            </source>
+          </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin> <!-- necessary for Appbundle -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
-            <phase>generate-test-resources</phase>
+            <phase>prepare-package</phase>
+            <id>prepare-mac-bundle</id>
             <configuration>
 
               <target>
                 <mkdir dir="./target/"/>
+                <touch file="./target/dummy_artifact.jar" />
 
-                <mkdir dir="${built.webapp.dir}" />
+                <mkdir dir="${mac.webapp.dir}" />
                     
-                    <copy todir="${built.webapp.dir}">
+                    <copy todir="${mac.webapp.dir}">
                         <fileset dir="${webapp.dir}">
                             <include name="**/*"/>
+                            <exclude name="node_modules/**"/>
+                            <exclude name="package.json"/>
+                            <exclude name="package-lock.json"/>
+                            <exclude name="dependencies.json"/>
+                            <exclude name="copy-dependencies.js"/>
+                            <exclude name="README.md"/>
+                            <exclude name="**/test-output/**"/>
                             <exclude name="WEB-INF/classes/**"/>
                             <exclude name="WEB-INF/lib-local/**"/>
                             <exclude name="WEB-INF/lib-local-src/**"/>
                             <exclude name="WEB-INF/lib/icu4j*.jar"/>
                         </fileset>
                     </copy>
-                    <copy todir="${built.webapp.dir}">
+                    <copy todir="${mac.webapp.dir}">
                         <fileset dir="${webapp.dir}">
                             <include name="**/*.properties"/>
                         </fileset>
                     </copy>
-                    <copy todir="${built.webapp.dir}/WEB-INF/lib/">
+                    <copy todir="${mac.webapp.dir}/WEB-INF/lib/">
                         <fileset dir="${webapp.target}">
                             <include name="openrefine-main.jar" />
                         </fileset>
                     </copy>
                     
-                    <copy todir="${built.webapp.dir}/licenses/"> <!-- licenses for the backend -->
+                    <copy todir="${mac.webapp.dir}/licenses/"> <!-- licenses for the backend -->
                         <fileset dir="${project.build.directory}/generated-resources/">
                             <include name="licenses.xml" />
                             <include name="licenses/**/*" />
                         </fileset>
                     </copy>
 
-                    <copy todir="${built.webapp.dir}/licenses/licenses/"> <!-- licenses for the frontend -->
+                    <copy todir="${mac.webapp.dir}/licenses/licenses/"> <!-- licenses for the frontend -->
                         <fileset dir="${webapp.dir}/licenses/">
                             <include name="**/*" />
                         </fileset>
                     </copy>
 
-                    <copy todir="${built.webapp.dir}/extensions">
+                    <copy todir="${mac.webapp.dir}/extensions">
                         <fileset dir="../extensions">
                             <include name="**/*"/>
                             <exclude name="**/pom.xml"/>
@@ -176,11 +220,11 @@
                         </fileset>
                     </copy>
                     
-                    <replace file="${built.webapp.dir}/WEB-INF/web.xml">
+                    <replace file="${mac.webapp.dir}/WEB-INF/web.xml">
                         <replacefilter token="$VERSION" value="${project.version}"/>
                     </replace>
 
-                    <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
+                    <replace file="${mac.webapp.dir}/WEB-INF/butterfly.properties">
                         <replacefilter token="../../extensions" value="extensions"/>
                     </replace>
 
@@ -191,12 +235,118 @@
               <goal>run</goal>
             </goals>
           </execution>
+          <execution>
+            <id>download-jre</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target name="downloadJRE" description="Download JRE">
+                <!-- Download JRE (Mac OS X) -->
+                <exec dir="${project.build.directory}" executable="curl">
+                  <arg line="-L"/>
+                  <arg line="-C"/>
+                  <arg line="-"/>
+                  <arg line="-o"/>
+                  <arg line="mac_jre.tar.gz"/>
+                  <arg line="${mac.jre.url}"/>
+                </exec>
+
+                <!-- Download JRE (Windows) -->
+                <exec dir="${project.build.directory}" executable="curl">
+                  <arg line="-L"/>
+                  <arg line="-C"/>
+                  <arg line="-"/>
+                  <arg line="-o"/>
+                  <arg line="windows_jre.zip"/>
+                  <arg line="${windows.jre.url}"/>
+                </exec>
+
+                <!-- Unzip Mac JRE archive -->
+                <mkdir dir="${project.build.directory}/mac_jre"/>
+                <exec dir="${project.build.directory}" executable="tar">
+                  <arg line="-zxf"/>
+                  <arg line="mac_jre.tar.gz"/>
+                  <arg line="-C &quot;mac_jre&quot; --strip-components=1"/>
+                </exec>
+
+                <!-- Unzip Windows JRE archive -->
+                <!-- The Windows JRE is downloaded as a Zip file so we cannot untar it. -->
+                <!-- We use the mapper to get rid of the root directory whose name is unpredictable -->
+                <mkdir dir="${project.build.directory}/windows_jre"/>
+                <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
+                  <mapper type="regexp" from="^([^/]*)/(.*)$$" to="\2"/>
+                </unzip>
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-dmg</id>
+            <phase>package</phase> 
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target name="generateDMG" description="Generate DMG">
+
+                <!-- Remove manpages from JRE as they are not accessible anyway, and prevent us from codesigning -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
+                    <arg line="-r"/>
+                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/man&quot;"/>
+                </exec>
+                <!-- remove JRE licenses folder, cannot be signed -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
+                    <arg line="-r"/>
+                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/legal&quot;"/>
+                </exec>
+                <!-- adapt file permissions, for https://github.com/OpenRefine/OpenRefine/issues/5160 -->
+                <exec dir="${project.build.directory}" executable="chmod">
+                    <arg line="-R" />
+                    <arg line="o+r" />
+                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/Resources/webapp/WEB-INF/&quot;" />
+                </exec>
+
+                <!-- Create DMG (Mac OS X) -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil">
+                    <arg value="create"/>
+                    <arg value="-noanyowners"/>
+                    <arg value="-imagekey"/>
+                    <arg value="zlib-level=9"/>
+                    <arg value="-srcfolder"/>
+                    <arg value="${mac.build.directory}"/>
+                    <arg value="${mac.dmg.path}"/>
+                </exec>
+
+                <!-- Create DMG (Linux), only for testing -->
+                <exec dir="${project.build.directory}" os="Linux" executable="genisoimage">
+                    <arg value="-V"/>
+                    <arg value="OpenRefine"/>
+                    <arg value="-U"/>
+                    <arg value="-D"/>
+                    <arg value="-l"/>
+                    <arg value="-allow-multidot"/>
+                    <arg value="-max-iso9660-filenames"/>
+                    <arg value="-relaxed-filenames"/>
+                    <arg value="-no-iso-translate"/>
+                    <arg value="-r"/>
+                    <arg value="-o"/>
+                    <arg value="${mac.dmg.path}"/>
+                    <arg value="-root"/>
+                    <arg value="${mac.build.directory}"/>
+                    <arg value="${mac.build.directory}"/>
+                </exec>
+
+              </target>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.1.2</version>
+        <version>2.1.3</version>
 
             <!-- This is a clean snapshot of launch4j's master branch,
                 which includes fixes to Java discovery that we need
@@ -213,17 +363,58 @@
           <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-          <version>1.4.12</version>
+          <version>1.4.19</version>
         </dependency>
         </dependencies>
         <executions>
           <execution>
-            <id>l4j-clui</id>
+            <id>l4j-clui-without-jre</id>
             <phase>package</phase>
             <goals><goal>launch4j</goal></goals>
             <configuration>
               <headerType>console</headerType>
-              <outfile>target/openrefine.exe</outfile>
+              <outfile>target/openrefine_without_jre.exe</outfile>
+              <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
+              <dontWrapJar>true</dontWrapJar>
+              <saveConfig>true</saveConfig>
+              <icon>openrefine.ico</icon>
+              <downloadUrl>https://docs.openrefine.org/manual/installing#java</downloadUrl>
+              <classPath>
+                <mainClass>com.google.refine.Refine</mainClass>
+                <jarLocation>server/target/lib/</jarLocation>
+                <postCp>server/target/lib/*.jar</postCp>
+              </classPath>
+              <jre>
+                <path>%JAVA_HOME%;%PATH%</path>
+                <minVersion>${java.minversion}</minVersion>
+                <maxVersion>${java.maxversion}</maxVersion>
+                <bundledJreAsFallback>false</bundledJreAsFallback>
+                <initialHeapSize>512</initialHeapSize>
+                <maxHeapSize>2048</maxHeapSize>
+                <opts>
+                  <opt>-Djava.library.path=server/target/lib/native/windows</opt>
+                </opts>
+              </jre>
+              <versionInfo>
+                <fileVersion>${windows.fullversion}</fileVersion>
+                <txtFileVersion>${project.version}</txtFileVersion>
+                <fileDescription>openrefine</fileDescription>
+                <copyright>${windows.copyright.line}</copyright>
+                <productVersion>${windows.fullversion}</productVersion>
+                <txtProductVersion>${project.version}</txtProductVersion>
+                <productName>OpenRefine</productName>
+                <internalName>openrefine</internalName>
+                <originalFilename>openrefine.exe</originalFilename>
+              </versionInfo>
+            </configuration>
+          </execution>
+          <execution>
+            <id>l4j-clui-with-jre</id>
+            <phase>package</phase>
+            <goals><goal>launch4j</goal></goals>
+            <configuration>
+              <headerType>console</headerType>
+              <outfile>target/openrefine_with_jre.exe</outfile>
               <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
               <dontWrapJar>true</dontWrapJar>
               <saveConfig>true</saveConfig>
@@ -234,21 +425,21 @@
                 <postCp>server/target/lib/*.jar</postCp>
               </classPath>
               <jre>
-                <path>${windows.package.jre.path}</path>
+                <path>server/target/jre</path>
                 <minVersion>${java.minversion}</minVersion>
                 <maxVersion>${java.maxversion}</maxVersion>
-                <bundledJreAsFallback>${windows.package.jre.bundledAsFallback}</bundledJreAsFallback>
+                <bundledJreAsFallback>true</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
                 </opts>
               </jre>
               <versionInfo>
-                <fileVersion>${fullversion}</fileVersion>
+                <fileVersion>${windows.fullversion}</fileVersion>
                 <txtFileVersion>${project.version}</txtFileVersion>
                 <fileDescription>openrefine</fileDescription>
-                <copyright>Copyright (c) 2018 OpenRefine contributors, 2010 Google, Inc.</copyright>
-                <productVersion>${fullversion}</productVersion>
+                <copyright>${windows.copyright.line}</copyright>
+                <productVersion>${windows.fullversion}</productVersion>
                 <txtProductVersion>${project.version}</txtProductVersion>
                 <productName>OpenRefine</productName>
                 <internalName>openrefine</internalName>
@@ -256,6 +447,7 @@
               </versionInfo>
             </configuration>
           </execution>
+
         </executions>
       </plugin>
       <plugin>
@@ -302,7 +494,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.4.2</version>
           <executions>
             <execution>
               <id>package-distributions</id>
@@ -323,7 +515,7 @@
 	   <artifactId>maven-deploy-plugin</artifactId>
 	   <version>${maven-deploy-plugin.version}</version>
 	   <configuration>
-	    <skip>true</skip>
+	    <skip>false</skip>
 	  </configuration>
          </plugin>
     	</plugins>

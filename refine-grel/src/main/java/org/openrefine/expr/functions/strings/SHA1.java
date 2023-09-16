@@ -37,6 +37,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class SHA1 extends PureFunction {
@@ -50,12 +52,12 @@ public class SHA1 extends PureFunction {
             String s = (o instanceof String) ? (String) o : o.toString();
             return DigestUtils.sha1Hex(s);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+        return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the SHA-1 hash of an object. If fed something other than a string (array, number, date, etc.), sha1() will convert it to a string and deliver the hash of the string.";
+        return FunctionDescription.str_sha1();
     }
 
     @Override

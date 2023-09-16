@@ -34,10 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.cell;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.jena.sparql.function.library.eval;
 
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
@@ -57,6 +59,7 @@ import org.openrefine.model.changes.ColumnChangeByChangeData;
 import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
+import org.openrefine.overlay.OverlayModel;
 
 public class TextTransformOperation extends ExpressionBasedOperation {
 
@@ -121,7 +124,8 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     @Override
     protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
         int columnIndex = RowMapChange.columnIndex(state.getColumnModel(), _baseColumnName);
-        return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), eval, _onError, _repeat ? _repeatCount : 0);
+        return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), state.getOverlayModels(), eval, _onError,
+                _repeat ? _repeatCount : 0);
     }
 
     @Override
@@ -136,8 +140,9 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                 null);
     }
 
-    protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel, Evaluable eval,
-            OnError onError, int repeatCount) {
+    protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels,
+            Evaluable eval, OnError onError, int repeatCount) {
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 2272064171042189466L;
@@ -149,7 +154,7 @@ public class TextTransformOperation extends ExpressionBasedOperation {
 
                 Object oldValue = cell != null ? cell.value : null;
                 Properties bindings = new Properties();
-                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, columnName, cell);
+                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, columnName, cell, overlayModels);
 
                 Object o = eval.evaluate(bindings);
                 if (o == null) {
@@ -172,7 +177,7 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                         newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
 
                         for (int i = 0; i < repeatCount; i++) {
-                            ExpressionUtils.bind(bindings, null, row, rowId, record, columnName, newCell);
+                            ExpressionUtils.bind(bindings, null, row, rowId, record, columnName, newCell, overlayModels);
 
                             newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                             if (ExpressionUtils.isError(newValue)) {

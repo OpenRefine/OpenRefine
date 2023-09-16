@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.math;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Cosh extends PureFunction {
@@ -43,15 +45,15 @@ public class Cosh extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
+        if (args.length == 1 && args[0] instanceof Number) {
             return StrictMath.cosh(((Number) args[0]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
+        return new EvalError(EvalErrorMessage.expects_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the hyperbolic cosine of a value.";
+        return FunctionDescription.math_cosh();
     }
 
     @Override

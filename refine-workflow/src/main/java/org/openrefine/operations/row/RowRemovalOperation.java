@@ -35,6 +35,7 @@ package org.openrefine.operations.row;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.jena.sparql.function.library.context;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;

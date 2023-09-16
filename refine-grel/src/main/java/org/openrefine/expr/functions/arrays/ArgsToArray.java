@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.arrays;
 
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class ArgsToArray extends PureFunction {
@@ -44,7 +45,7 @@ public class ArgsToArray extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns all arguments passed to it as an array";
+        return FunctionDescription.arr_args_to_array();
     }
 
     @Override

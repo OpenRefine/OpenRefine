@@ -50,6 +50,7 @@ import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.OperationDescription;
 
 public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
 
@@ -103,9 +104,7 @@ public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
 
     @Override
     public String getDescription() {
-        return "Match specific item " +
-                match.name + " (" +
-                match.id + ") to cells in column " + columnName;
+        return OperationDescription.recon_match_specific_topic_brief(match.name, match.id, columnName);
     }
 
     @Override

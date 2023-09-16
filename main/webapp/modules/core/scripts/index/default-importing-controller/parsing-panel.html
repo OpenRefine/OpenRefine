@@ -5,14 +5,15 @@
   <td width="1px"><button bind="startOverButton" class="button"></button></td>
   <td width="1px"><button bind="previousButton" class="button"></button></td>
   <td width="auto" id="or-import-parsopt"></td>
-  <td width="100px" style="text-align: right;" id="or-import-projname"></td>
+  <td width="100px" style="text-align: right;"><label for="projectNameInputId" id="or-import-projname"></label></td>
   <td width="200px">
-   <input class="inline" type="text" size="30" bind="projectNameInput" style="width: 200px;" />
+   <input class="inline" type="text" size="30" bind="projectNameInput" id="projectNameInputId" style="width: 200px;" />
   </td>
-  <td width="35px" style="text-align: right;" id="or-import-projtags"></td>
+  <td width="35px" style="text-align: right;"><label for="tagsInput" id="or-import-projtags"></label></td>
   <td width="200px">
    <div id="project-tags-container" class="inline">
-    <input type="hidden" id="tagsInput" style="width: 200px;" />
+    <select id="tagsInput" style="width: 200px;" multiple="multiple">
+    </select>
    </div>
   </td>
   <td width="1px"><button bind="nextButton" class="button button-primary"></button></td>

@@ -43,9 +43,25 @@ public class ToStringTests extends FunctionTestBase {
     public void testToString() throws CalendarParserException {
         assertTrue(invoke("toString") instanceof EvalError);
         assertEquals(invoke("toString", (Object) null), "");
-        assertEquals(invoke("toString", Long.valueOf(100)), "100");
-        assertEquals(invoke("toString", Double.valueOf(100.0)), "100.0");
-        assertEquals(invoke("toString", Double.valueOf(100.0), "%.0f"), "100");
+        assertEquals(invoke("toString", 100L), "100");
+        assertEquals(invoke("toString", 100.0), "100.0");
+        assertEquals(invoke("toString", 100.0, "%.0f"), "100");
+        assertEquals(invoke("toString", 100.0, "%.1f"), String.format("%.1f", 100D));
+
+        // test with other radix (2, 8, 10, 16)
+        assertEquals(invoke("toString", 100L, "%x"), "64");
+        assertEquals(invoke("toString", 100L, "%o"), "144");
+        assertEquals(invoke("toString", 100L, "%d"), "100");
+        assertEquals(invoke("toString", 100L, "%X"), "64");
+
+        // test with invalid radix
+        assertTrue(invoke("toString", 100L, "%z") instanceof EvalError);
+        assertTrue(invoke("toString", 100L, "%") instanceof EvalError);
+        assertTrue(invoke("toString", 100L, "%.") instanceof EvalError);
+        assertTrue(invoke("toString", 100L, "%0") instanceof EvalError);
+
+        // test with large number
+        assertEquals(invoke("toString", 1000000000000000000L, "%d"), "1000000000000000000");
 
         String inputDate = "2013-06-01";
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate)), "2013-06-01T00:00:00Z");

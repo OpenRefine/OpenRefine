@@ -66,7 +66,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
   var elmts = DOM.bind(td);
 
   elmts.nameContainer.text(this._column.name);
-  elmts.dropdownMenu.click(function() {
+  elmts.dropdownMenu.on('click',function() {
     self._createMenuForColumnHeader(this);
   });
 
@@ -127,7 +127,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
       this._dataTableView._getSortingCriterionForColumn(this._column.name) === null ?
         {
           id: "core/sort",
-          "label": $.i18n('core-views/sort')+"...",
+          "label": $.i18n('core-views/sort'),
           "click": function() {
             self._showSortingCriterion(null, self._dataTableView._getSortingCriteriaCount() > 0);
           }
@@ -247,7 +247,7 @@ DataTableColumnHeaderUI.prototype.createSortingMenu = function() {
 
   var items = [
     {
-      "label": $.i18n('core-views/sort')+"...",
+      "label": $.i18n('core-views/sort'),
       "click": function() {
         self._showSortingCriterion(criterion, hasOtherCriteria);
       }
@@ -326,7 +326,7 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
   };
   elmts.valueTypeOptions
   .find("input[type='radio']")
-  .change(function() {
+  .on('change',function() {
     setValueType(this.value);
   });
 
@@ -370,8 +370,8 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
 
   setValueType(criterion.valueType); 
 
-  elmts.cancelButton.click(dismiss);
-  elmts.okButton.click(function() {
+  elmts.cancelButton.on('click',dismiss);
+  elmts.okButton.on('click',function() {
     var criterion2 = {
         column: self._column.name,
         valueType: elmts.valueTypeOptions.find("input[type='radio']:checked")[0].value,

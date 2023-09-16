@@ -28,6 +28,7 @@ const groups = [
   },
   {
     specs: [
+      'cypress/integration/project/grid/column/reconcile/**/*.spec.js',
       'cypress/integration/project/grid/column/transpose/**/*.spec.js',
       'cypress/integration/project/grid/column/view/**/*.spec.js',
     ],

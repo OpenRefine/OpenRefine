@@ -23,37 +23,19 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-//Internationalization init
-var lang = navigator.language.split("-")[0]
-		|| navigator.userLanguage.split("-")[0];
-var dictionary = "";
-$.ajax({
-	url : "command/core/load-language?",
-	type : "POST",
-	async : false,
-	data : {
-	  module : "gdata",
-//		lang : lang
-	},
-	success : function(data) {
-		dictionary = data['dictionary'];
-                lang = data['lang'];
-	}
-});
-$.i18n().load(dictionary, lang);
-// End internationalization
+I18NUtil.init("gdata");
 
 Refine.GDataImportingController = function(createProjectUI) {
   this._createProjectUI = createProjectUI;
-  
+
   this._parsingPanel = createProjectUI.addCustomPanel();
 
   createProjectUI.addSourceSelectionUI({
@@ -61,15 +43,15 @@ Refine.GDataImportingController = function(createProjectUI) {
     id: "gdata-source",
     ui: new Refine.GDataSourceUI(this)
   });
-  
-  $('#gdata-authorize').text($.i18n('gdata-auth/authorize-label')); 
+
+  $('#gdata-authorize').text($.i18n('gdata-auth/authorize-label'));
   $('#gdata-authorized').text($.i18n('gdata-auth/authorized-label'));
 };
 Refine.CreateProjectUI.controllers.push(Refine.GDataImportingController);
 
 Refine.GDataImportingController.prototype.startImportingDocument = function(doc) {
   var dismiss = DialogSystem.showBusy($.i18n('gdata-import/preparing'));
-  
+
   var self = this;
   Refine.postCSRF(
     "command/core/create-importing-job",
@@ -87,12 +69,12 @@ Refine.GDataImportingController.prototype.startImportingDocument = function(doc)
             null,
             function(data2) {
             dismiss();
-            
+
             if (data2.status == 'ok') {
                 self._doc = doc;
                 self._jobID = data.jobID;
                 self._options = data2.options;
-                
+
                 self._showParsingPanel();
             } else {
                 alert(data2.message);
@@ -143,7 +125,7 @@ Refine.GDataImportingController.prototype.getOptions = function() {
       options.headerLines = 0;
     }
   }
-  
+
   if (this._parsingPanelElmts.skipCheckbox[0].checked) {
     options.skipDataLines = parseIntDefault(this._parsingPanelElmts.skipInput[0].value, 0);
   } else {
@@ -164,12 +146,12 @@ Refine.GDataImportingController.prototype.getOptions = function() {
 
 Refine.GDataImportingController.prototype._showParsingPanel = function() {
   var self = this;
-  
-  this._parsingPanel.unbind().empty().html(
+
+  this._parsingPanel.off().empty().html(
       DOM.loadHTML("gdata", 'scripts/index/gdata-parsing-panel.html'));
   this._parsingPanelElmts = DOM.bind(this._parsingPanel);
-  
-  this._parsingPanelElmts.gdata_worksheet.html($.i18n('gdata-parsing/worksheet')); 
+
+  this._parsingPanelElmts.gdata_worksheet.html($.i18n('gdata-parsing/worksheet'));
   this._parsingPanelElmts.gdata_ignore_first.html($.i18n('gdata-parsing/ignore-first'));
   this._parsingPanelElmts.gdata_ignore.html($.i18n('gdata-parsing/ignore'));
   this._parsingPanelElmts.gdata_parse_next.html($.i18n('gdata-parsing/parse-next'));
@@ -188,11 +170,11 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   this._parsingPanelElmts.gdata_limit.html($.i18n('gdata-parsing/limit'));
   this._parsingPanelElmts.gdata_store_row.html($.i18n('gdata-parsing/store-row'));
   this._parsingPanelElmts.gdata_store_cell.html($.i18n('gdata-parsing/store-cell'));
-  
+
   if (this._parsingPanelResizer) {
-    $(window).unbind('resize', this._parsingPanelResizer);
+    $(window).off('resize', this._parsingPanelResizer);
   }
-  
+
   this._parsingPanelResizer = function() {
     var elmts = self._parsingPanelElmts;
     var width = self._parsingPanel.width();
@@ -217,29 +199,29 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
     .css("width", (width - DOM.getHPaddings(elmts.controlPanel)) + "px")
     .css("height", (controlPanelHeight - DOM.getVPaddings(elmts.controlPanel)) + "px");
   };
-  $(window).resize(this._parsingPanelResizer);
+  $(window).on('resize',this._parsingPanelResizer);
   this._parsingPanelResizer();
-  
-  this._parsingPanelElmts.startOverButton.click(function() {
+
+  this._parsingPanelElmts.startOverButton.on('click',function() {
     // explicitly cancel the import job
     Refine.CreateProjectUI.cancelImportingJob(self._jobID);
-    
+
     delete self._doc;
     delete self._jobID;
     delete self._options;
-    
+
     self._createProjectUI.showSourceSelectionPanel();
   });
-  this._parsingPanelElmts.createProjectButton.click(function() { self._createProject(); });
-  this._parsingPanelElmts.previewButton.click(function() { self._updatePreview(); });
-  
+  this._parsingPanelElmts.createProjectButton.on('click',function() { self._createProject(); });
+  this._parsingPanelElmts.previewButton.on('click',function() { self._updatePreview(); });
+
   this._parsingPanelElmts.projectNameInput[0].value = this._doc.title;
 
   if (this._doc.type != 'table') {
     var sheetTable = this._parsingPanelElmts.sheetRecordContainer[0];
     $.each(this._options.worksheets, function(i, v) {
       var id = 'gdata_worksheet-' + Math.round(Math.random() * 1000000);
-      
+
       var tr = sheetTable.insertRow(sheetTable.rows.length);
       var td0 = $(tr.insertCell(0)).attr('width', '1%');
       var checkbox = $('<input>')
@@ -252,12 +234,12 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
       if (i === 0) {
         checkbox.prop("checked", true);
       }
-      
+
       $('<label>')
         .attr('for', id)
         .text(this.name)
         .appendTo(tr.insertCell(1));
-      
+
       $('<label>')
         .attr('for', id)
         .text(this.rows + ' rows')
@@ -273,7 +255,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
       this._parsingPanelElmts.headerLinesInput[0].value = this._options.headerLines.toString();
     }
   }
-  
+
   if (this._options.limit > 0) {
     this._parsingPanelElmts.limitCheckbox.prop("checked", true);
     this._parsingPanelElmts.limitInput[0].value = this._options.limit.toString();
@@ -300,9 +282,9 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
         self._scheduleUpdatePreview();
     }
   };
-  this._parsingPanel.find("input").bind("change", onChange);
-  this._parsingPanel.find("select").bind("change", onChange);
-  
+  this._parsingPanel.find("input").on("change", onChange);
+  this._parsingPanel.find("select").on("change", onChange);
+
   this._createProjectUI.showCustomPanel(this._parsingPanel);
   this._updatePreview();
 };
@@ -343,11 +325,11 @@ Refine.GDataImportingController.prototype._updatePreview = function() {
             self._parsingPanelElmts.progressPanel.hide();
             self._parsingPanelElmts.dataPanel.show();
 
-            new Refine.PreviewTable(projectData, self._parsingPanelElmts.dataPanel.unbind().empty());
+            new Refine.PreviewTable(projectData, self._parsingPanelElmts.dataPanel.off().empty());
             });
         } else {
             self._parsingPanelElmts.progressPanel.hide();
-            alert('Errors:\n' + 
+            alert('Errors:\n' +
             (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
         }
         },
@@ -369,7 +351,7 @@ Refine.GDataImportingController.prototype._getPreviewData = function(callback, n
           result[n] = data[n];
         }
       }
-      
+
       $.post(
         "command/core/get-rows?" + $.param({
           "importingJobID" : self._jobID,
@@ -389,7 +371,7 @@ Refine.GDataImportingController.prototype._getPreviewData = function(callback, n
 };
 
 Refine.GDataImportingController.prototype._createProject = function() {
-  var projectName = $.trim(this._parsingPanelElmts.projectNameInput[0].value);
+  var projectName = jQueryTrim(this._parsingPanelElmts.projectNameInput[0].value);
   if (projectName.length == 0) {
     window.alert("Please name the project.");
     this._parsingPanelElmts.projectNameInput.focus();

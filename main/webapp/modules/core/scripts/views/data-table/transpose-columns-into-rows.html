@@ -4,48 +4,47 @@
     <div class="dialog-body" bind="dialogBody">
       <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
         <tr>
-          <td bind="or_views_fromCol"></td>
-          <td bind="or_views_toCol"></td>
+          <td><label for="fromColumnSelectId" bind="or_views_fromCol"></label></td>
+          <td><label for="toColumnSelectId" bind="or_views_toCol"></label></td>
           <td bind="or_views_transpose"></td>
         </tr>
         <tr>
-          <td><select bind="fromColumnSelect" size="20" style="width: 100%;"></select></td>
-          <td><select bind="toColumnSelect" size="20" style="width: 100%;"></select></td>
+          <td><select bind="fromColumnSelect" id="fromColumnSelectId" size="20" style="width: 100%;"></select></td>
+          <td><select bind="toColumnSelect" id="toColumnSelectId" size="20" style="width: 100%;"></select></td>
           <td><div class="grid-layout layout-tight"><table>
             <tr>
               <td><input type="radio" id="$transpose-dialog-two-columns" name="transpose-dialog-column-choices" value="2" checked /></td>
-              <td><label for="$transpose-dialog-two-columns"><span bind="or_views_twoCol"></span></td>
+              <td><label for="$transpose-dialog-two-columns"><span bind="or_views_twoCol"></span></label></td>
             </tr>
             <tr>
               <td>&nbsp;</td>
               <td><div class="grid-layout layout-tightest"><table>
                 <tr>
-                  <td bind="or_views_keyCol"></td>
-                  <td><input bind="keyColumnNameInput" size="15"> <span bind="or_views_containNames"></span></td>
+                  <td><label for="keyColumnNameInputId" bind="or_views_keyCol"></label></td>
+                  <td><input bind="keyColumnNameInput" id="keyColumnNameInputId" size="15"> <span bind="or_views_containNames"></span></td>
                 </tr>
                 <tr>
-                  <td bind="or_views_valCol"></td>
-                  <td><input bind="valueColumnNameInput" size="15"> <span bind="or_views_containOrig"></span></td>
+                  <td><label for="valueColumnNameInputId" bind="or_views_valCol"></label></td>
+                  <td><input bind="valueColumnNameInput" id="valueColumnNameInputId" size="15"> <span bind="or_views_containOrig"></span></td>
                 </tr>
               </table></div></td>
             </tr>
             <tr>
               <td><input type="radio" id="$transpose-dialog-one-column" name="transpose-dialog-column-choices" value="1" /></td>
-              <td><label for="$transpose-dialog-one-column"><span bind="or_views_oneCol"></span> <input bind="combinedColumnNameInput" size="15" /></td>
+              <td><label for="$transpose-dialog-one-column"><span bind="or_views_oneCol"></span> <input bind="combinedColumnNameInput" size="15" /></label></td>
             </tr>
             <tr>
               <td>&nbsp;</td>
               <td><div class="grid-layout layout-tightest"><table>
                 <tr>
-                  <td><input type="checkbox" bind="prependColumnNameCheckbox" id="$transpose-dialog-prepend" /></td>
+                  <td><input aria-describedby="or_views_followById separatorInputId or_views_beforeValId" type="checkbox" bind="prependColumnNameCheckbox" id="$transpose-dialog-prepend" /></td>
                   <td><label for="$transpose-dialog-prepend"><span bind="or_views_prependName"></span></label></td>
-                </tr>
                 </tr>
                 <tr>
                   <td>&nbsp;</td>
-                  <td><span bind="or_views_followBy"></span>
-                    <input bind="separatorInput" size="2" value=":" />
-                    <span bind="or_views_beforeVal"></span>
+                  <td><span bind="or_views_followBy" id="or_views_followById"></span>
+                    <input aria-label="" bind="separatorInput" id="separatorInputId" size="2" value=":" />
+                    <span bind="or_views_beforeVal" id="or_views_beforeValId"></span>
                   </td>
                 </tr>
               </table></div></td>

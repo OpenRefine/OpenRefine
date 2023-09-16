@@ -36,6 +36,7 @@ package org.openrefine.expr.functions.strings;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Partition extends PureFunction {
@@ -100,7 +101,7 @@ public class Partition extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns an array of strings [ a, fragment, z ] where a is the substring within s before the first occurrence of fragment, and z is the substring after fragment. Fragment can be a string or a regex. If omitFragment is true, frag is not returned.";
+        return FunctionDescription.str_partition();
     }
 
     @Override

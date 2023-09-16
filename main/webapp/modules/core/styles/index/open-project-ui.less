@@ -121,21 +121,38 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #metadata-body tr:nth-child(even) {background: #f2f2f2}
 #metadata-body tr:nth-child(odd) {background: #FFF}
 
-#metadata-body > table {
+#metadata-body table {
   table-layout: fixed;
 }
 
-#metadata-body > table > tbody > tr > td {
+#metadata-body table > tbody > tr > td {
   word-wrap: break-word;
 }
 
-#metadata-body > table > tbody > tr:nth-child(1) > th:nth-child(2) {
+#metadata-body table > tbody > tr:nth-child(1) > th:nth-child(2) {
  width: 80%
  }
 
-#metadata-body > table > tbody > tr:nth-child(1) > th:nth-child(3) {
+#metadata-body table > tbody > tr:nth-child(1) > th:nth-child(3) {
  width: 4%
  }
+
+
+/* Making metadata table scrollable*/
+.scrollable-table{
+	max-height: 70vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+/* Making metadata table header sticky and darker*/
+#metadata-body table > tbody > tr >th{
+	position:sticky;
+	top:0;
+	color:black;
+	background:#b7b7b7;
+}
+
  
  /* Project Tags */
 #projectTags {
@@ -144,8 +161,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	margin: 5px;
 	font-size: 130%;
 	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
 	background: #bcf;
 	min-height: 18px;
 	height: auto;
@@ -182,8 +197,6 @@ ul#tagsUl li a  {
 #projectTags .current {
 	background-color: #DEE6FF;
 	border-radius: 10px;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
 }
 
 /* Project List */
@@ -196,11 +209,8 @@ ul#tagsUl li a  {
 	padding: 3px 8px;
 	margin: 0px 2px;
 	border-radius: 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
 	font-size: 100%;
 	font-weight: bold;
 	background: #28458A;
 	color: white;
-	cursor: pointer;
 }

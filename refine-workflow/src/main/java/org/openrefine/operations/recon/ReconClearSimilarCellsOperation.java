@@ -46,6 +46,7 @@ import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.OperationDescription;
 
 public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
 
@@ -74,8 +75,7 @@ public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
 
     @Override
     public String getDescription() {
-        return "Clear recon data for cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+        return OperationDescription.recon_clear_similar_cells_brief(_similarValue, _columnName);
     }
 
     @Override

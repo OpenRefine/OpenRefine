@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.strings;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class StartsWith extends PureFunction {
@@ -50,12 +52,12 @@ public class StartsWith extends PureFunction {
                 return ((String) s1).startsWith((String) s2);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
+        return new EvalError(EvalErrorMessage.expects_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns a boolean indicating whether s starts with sub. For example, \"food\".startsWith(\"foo\") returns true, whereas \"food\".startsWith(\"bar\") returns false.";
+        return FunctionDescription.str_starts_with();
     }
 
     @Override

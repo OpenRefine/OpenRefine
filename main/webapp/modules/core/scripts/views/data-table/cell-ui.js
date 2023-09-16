@@ -41,6 +41,8 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
   this._render();
 }
 
+var reconMatchSilimilarCellsByDefault = true;
+
 DataTableCellUI.previewMatchedCells = true;
 
 (function() {
@@ -73,9 +75,9 @@ DataTableCellUI.prototype._render = function() {
   editLink.addEventListener('click', function() { self._startEdit(this); });
 
   $(this._td).empty()
-  .unbind()
-  .mouseenter(function() { editLink.style.visibility = "visible" })
-  .mouseleave(function() { editLink.style.visibility = "hidden" });
+  .off()
+  .on('mouseenter',function() { editLink.style.visibility = "visible" })
+  .on('mouseleave',function() { editLink.style.visibility = "hidden" });
 
   if (!cell || ("v" in cell && cell.v === null)) {
     var nullSpan = document.createElement('span');
@@ -99,7 +101,7 @@ DataTableCellUI.prototype._render = function() {
     } else {
       var arr = cell.v.split(" ");
       var spanArr = [];
-      for (var i=0; i<arr.length; i++){
+      for (var i=0; i<arr.length; i++) {
         if (URL.looksLikeUrl(arr[i])) {
           if (spanArr.length != 0) {
             var span = document.createElement('span');
@@ -107,14 +109,24 @@ DataTableCellUI.prototype._render = function() {
             divContent.appendChild(span).appendChild(document.createTextNode('\u00A0'));
             spanArr = [];
           }
+          var [realURL, extra] = (() => {
+            var parts = arr[i].split('\n');
+            return parts.length > 1 ? [parts[0], parts.slice(1).map((s) => ("\n" + s))] : [parts[0], []];
+          })();
+
           var url = document.createElement('a');
-          url.textContent = arr[i];
-          url.setAttribute('href', arr[i]);
+          url.textContent = realURL;
+          url.setAttribute('href', realURL);
           url.setAttribute('target', '_blank');
-          if (i == arr.length-1){
+          if (i === arr.length-1){
             divContent.appendChild(url)
           } else {
             divContent.appendChild(url).appendChild(document.createTextNode('\u00A0'));
+          }
+          if (extra.length > 0) {
+            for (var j=0; j<extra.length; j++) {
+              spanArr.push(extra[j]);
+            }
           }
         } else {
           spanArr.push(arr[i]);
@@ -138,7 +150,7 @@ DataTableCellUI.prototype._render = function() {
       $('<a href="javascript:{}"></a>')
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
-      .appendTo(divContentRecon).click(function(evt) {
+      .appendTo(divContentRecon).on('click',function(evt) {
         self._doRematch();
       });
     } else if (r.j == "matched" && "m" in r && r.m !== null) {
@@ -149,7 +161,7 @@ DataTableCellUI.prototype._render = function() {
       .appendTo(divContentRecon);
 
       if (service && (service.view) && (service.view.url)) {
-        a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(match.id)));
+        a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
       }
 
       if (DataTableCellUI.previewMatchedCells) {
@@ -161,7 +173,7 @@ DataTableCellUI.prototype._render = function() {
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
       .appendTo(divContentRecon)
-      .click(function(evt) {
+      .on('click',function(evt) {
         self._doRematch();
       });
     } else {
@@ -178,14 +190,14 @@ DataTableCellUI.prototype._render = function() {
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match-similar")
             .attr("title", $.i18n('core-views/match-all-cells'))
-            .appendTo(liSpan).click(function(evt) {
+            .appendTo(liSpan).on('click',function(evt) {
               self._doMatchTopicToSimilarCells(candidate);
             });
 
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match")
             .attr("title", $.i18n('core-views/match-this-cell') )
-            .appendTo(liSpan).click(function(evt) {
+            .appendTo(liSpan).on('click',function(evt) {
               self._doMatchTopicToOneCell(candidate);
             });
 
@@ -196,7 +208,7 @@ DataTableCellUI.prototype._render = function() {
             .appendTo(liSpan);
 
             if ((service) && (service.view) && (service.view.url)) {
-              a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(candidate.id)));
+              a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
             }
 
             self._previewOnHover(service, candidate, liSpan.parent(), liSpan, true);
@@ -219,14 +231,14 @@ DataTableCellUI.prototype._render = function() {
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match-similar")
         .attr("title", $.i18n('core-views/create-topic-cells'))
-        .appendTo(liNew).click(function(evt) {
+        .appendTo(liNew).on('click',function(evt) {
           self._doMatchNewTopicToSimilarCells();
         });
 
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match")
         .attr("title", $.i18n('core-views/create-topic-cell'))
-        .appendTo(liNew).click(function(evt) {
+        .appendTo(liNew).on('click',function(evt) {
           self._doMatchNewTopicToOneCell();
         });
 
@@ -249,7 +261,7 @@ DataTableCellUI.prototype._render = function() {
         var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(divContentRecon);
         if (addSuggest) {
           $('<a href="javascript:{}"></a>')
-          .click(function(evt) {
+          .on('click',function(evt) {
             self._searchForMatch(suggestOptions);
             return false;
           })
@@ -353,6 +365,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   var elmts = DOM.bind(frame);
   
   elmts.dialogHeader.html($.i18n('core-views/search-match'));
+  elmts.input.attr('aria-label',$.i18n('core-views/item-to-match'));
   elmts.or_views_searchFor.html($.i18n('core-views/search-for'));
   elmts.or_views_matchOther.html($.i18n('core-views/match-other'));
   elmts.or_views_matchThis.html($.i18n('core-views/match-this'));
@@ -361,8 +374,15 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   elmts.clearButton.html($.i18n('core-buttons/dont-reconcile'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
 
+	if (!reconMatchSilimilarCellsByDefault) {
+		elmts.radioSimilar[0].setAttribute("checked", false);
+		elmts.radioOne[0].setAttribute("checked", true);
+	}
+
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() {
+	reconMatchSilimilarCellsByDefault = elmts.radioSimilar[0].checked;
+	  
     DialogSystem.dismissUntil(level - 1);
   };
 
@@ -416,10 +436,10 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     dismiss();
   };
 
-  elmts.okButton.click(commit);
-  elmts.newButton.click(commitNew);
-  elmts.clearButton.click(commitClear);
-  elmts.cancelButton.click(dismiss);
+  elmts.okButton.on('click',commit);
+  elmts.newButton.on('click',commitNew);
+  elmts.clearButton.on('click',commitClear);
+  elmts.cancelButton.on('click',dismiss);
 
   var suggestOptions2 = $.extend({ align: "left" }, suggestOptions 
                           || { all_types: true, // FIXME: all_types isn't documented for Suggest.  Is it still implemented?
@@ -429,15 +449,25 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     suggestOptions2.key = null;
     suggestOptions2.query_param_name = "prefix";
   }
-  elmts.input
+  var suggest = elmts.input
   .val(this._cell.v)
-  .suggest(suggestOptions2)
-  .bind("fb-select", function(e, data) {
+  .suggest(suggestOptions2);
+
+  suggest.on("fb-pane-show", function(e, data) {
+    DialogSystem.pauseEscapeKeyHandling();
+  });
+
+  suggest.on("fb-pane-hide", function(e, data) {
+    DialogSystem.setupEscapeKeyHandling();
+  });
+
+  suggest.on("fb-select", function(e, data) {
     match = data;
     commit();
   })
-  .focus()
+      .trigger('focus')
   .data("suggest").textchange();
+
 };
 
 DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyParams, columnStatsChanged) {
@@ -481,7 +511,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
   }
 
   if (preview && preview.url) { // Service has a preview URL associated with it
-    var url = preview.url.replace("{{id}}", encodeURIComponent(id));
+    var url = encodeURI(preview.url.replace("{{id}}", id));
     var iframe = $('<iframe></iframe>')
     .width(preview.width)
     .height(preview.height)
@@ -496,7 +526,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
 
   var dismissMenu = function() {
      fakeMenu.remove();
-     fakeMenu.unbind();  
+     fakeMenu.off();  
   };
 
   if (showActions) {
@@ -506,15 +536,15 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     elmts.matchSimilarButton.html($.i18n('core-views/match-identical'));
     elmts.cancelButton.html($.i18n('core-buttons/cancel'));
     
-    elmts.matchButton.click(function() {
+    elmts.matchButton.on('click',function() {
         self._doMatchTopicToOneCell(candidate);
         dismissMenu();
     });
-    elmts.matchSimilarButton.click(function() {
+    elmts.matchSimilarButton.on('click',function() {
         self._doMatchTopicToSimilarCells(candidate);
         dismissMenu();
     });
-    elmts.cancelButton.click(function() {
+    elmts.cancelButton.on('click',function() {
         dismissMenu();
     });
   }
@@ -533,12 +563,12 @@ DataTableCellUI.prototype._previewOnHover = function(service, candidate, hoverEl
 
     if (preview) {
         var dismissCallback = null;
-        hoverElement.hover(function(evt) {
+        hoverElement.on('mouseenter',function(evt) {
         if (!evt.metaKey && !evt.ctrlKey) {
             dismissCallback = self._previewCandidateTopic(candidate, coreElement, preview, showActions);
             evt.preventDefault();
         }
-        }, function(evt) {
+        }).on('mouseleave',function(evt) {
         if(dismissCallback !== null) {
             dismissCallback();
         }
@@ -556,6 +586,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   var elmts = DOM.bind(menu);
 
   elmts.or_views_dataType.html($.i18n('core-views/data-type'));
+  elmts.textarea.attr('aria-label',$.i18n('core-views/cell-content'));
   elmts.or_views_text.html($.i18n('core-views/text'));
   elmts.or_views_number.html($.i18n('core-views/number'));
   elmts.or_views_boolean.html($.i18n('core-views/boolean'));
@@ -570,6 +601,21 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   var cellDataType = typeof originalContent === "string" ? "text" : typeof originalContent;
   cellDataType = (this._cell !== null && "t" in this._cell && this._cell.t !=  null) ? this._cell.t : cellDataType;
   elmts.typeSelect.val(cellDataType);
+
+  elmts.typeSelect.on('change', function() {
+    var newType = elmts.typeSelect.val();
+    if (newType === "date") {
+      elmts.cell_help_text.html($.i18n('core-views/cell-edit-date-help'));
+      $(elmts.cell_help_text).show();
+    } else {
+      $(elmts.cell_help_text).hide();
+    }
+  });
+
+  if (cellDataType === "date") {
+    elmts.cell_help_text.html($.i18n('core-views/cell-edit-date-help'));
+    $(elmts.cell_help_text).show();
+  }
 
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, $(this._td));
@@ -595,9 +641,6 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
       value = ("true" == text);
     } else if (type == "date") {
       value = Date.parse(text);
-      if (!value) {
-        value = DateTimeUtil.parseIso8601DateTime(text);
-      }
       if (!value) {
         alert($.i18n('core-views/not-valid-date'));
         return;
@@ -644,11 +687,11 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     }
   };
 
-  elmts.okButton.click(commit);
-  elmts.okallButton.click(commit);
+  elmts.okButton.on('click',commit);
+  elmts.okallButton.on('click',commit);
   elmts.textarea
   .text(originalContent)
-  .keydown(function(evt) {
+  .on('keydown',function(evt) {
     if (!evt.shiftKey) {
       if (evt.keyCode == 13) {
         if (evt.ctrlKey) {
@@ -661,10 +704,12 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
       }
     }
   })
-  .select()
-  .focus();
+  .trigger('select')
+  .trigger('focus');
 
-  elmts.cancelButton.click(function() {
+  setInitialHeightTextArea(elmts.textarea[0]);
+
+  elmts.cancelButton.on('click',function() {
     MenuSystem.dismissAll();
   });
 };

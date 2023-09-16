@@ -41,15 +41,27 @@ public class LoadLanguageCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testLoadLanguages() throws ServletException, IOException {
+    public void testLoadSingleLanguage() throws ServletException, IOException {
         when(request.getParameter("module")).thenReturn("core");
-        when(request.getParameterValues("lang")).thenReturn(new String[] { "en" });
+        when(request.getParameterValues("lang")).thenReturn(new String[] { "en_GB" });
 
         command.doPost(request, response);
 
         JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertTrue(response.has("dictionary"));
-        assertTrue(response.has("lang"));
+        assertEquals(response.get("lang").asText(), "en_GB");
+    }
+
+    @Test
+    public void testLoadMultiLanguages() throws ServletException, IOException {
+        when(request.getParameter("module")).thenReturn("core");
+        when(request.getParameterValues("lang")).thenReturn(new String[] { "ja", "it", "es", "de" });
+
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertTrue(response.has("dictionary"));
+        assertEquals(response.get("lang").asText(), "ja");
     }
 
     @Test
@@ -67,7 +79,20 @@ public class LoadLanguageCommandTests extends CommandTestBase {
     @Test
     public void testLoadNoLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
         when(request.getParameter("module")).thenReturn("core");
-        when(request.getParameter("lang")).thenReturn("");
+        // when(request.getParameter("lang")).thenReturn("");
+        when(request.getParameterValues("lang")).thenReturn(new String[] { "" });
+
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertTrue(response.has("dictionary"));
+        assertEquals(response.get("lang").asText(), "en");
+    }
+
+    @Test
+    public void testLoadNullLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
+        when(request.getParameter("module")).thenReturn("core");
+        when(request.getParameterValues("lang")).thenReturn(null);
 
         command.doPost(request, response);
 

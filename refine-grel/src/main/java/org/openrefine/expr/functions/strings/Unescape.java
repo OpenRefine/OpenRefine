@@ -40,6 +40,8 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Unescape extends PureFunction {
@@ -68,7 +70,8 @@ public class Unescape extends PureFunction {
                     } catch (UnsupportedEncodingException e) {
                     }
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " does not recognize mode '" + mode + "'.");
+                    // + mode + "'.");
+                    return new EvalError(EvalErrorMessage.unrecognized_mode(ControlFunctionRegistry.getFunctionName(this), mode));
                 }
             }
         }
@@ -77,7 +80,7 @@ public class Unescape extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Unescapes s in the given escaping mode. The mode can be one of: 'html', 'xml', 'csv', 'url', 'javascript'. Note that quotes are required around your mode. ";
+        return FunctionDescription.str_unescape();
     }
 
     @Override

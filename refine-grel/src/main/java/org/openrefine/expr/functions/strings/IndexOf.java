@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.strings;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class IndexOf extends PureFunction {
@@ -50,12 +52,12 @@ public class IndexOf extends PureFunction {
                 return ((String) s1).indexOf((String) s2);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
+        return new EvalError(EvalErrorMessage.expects_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the first character index of sub as it first occurs in s; or, returns -1 if s does not contain sub. For example, \"internationalization\".indexOf(\"nation\") returns 5.";
+        return FunctionDescription.str_index_of();
     }
 
     @Override

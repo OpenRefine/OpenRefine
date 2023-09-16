@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.booleans;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Or extends PureFunction {
@@ -51,12 +53,12 @@ public class Or extends PureFunction {
             }
             return false;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two or more booleans");
+        return new EvalError(EvalErrorMessage.expects_two_or_more_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Uses the logical operator OR on two or more booleans to output a boolean. For example, (1 < 3).or(1 > 7) returns true because at least one of the conditions (the first one) is true.";
+        return FunctionDescription.bool_or();
     }
 
     @Override

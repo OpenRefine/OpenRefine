@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.strings;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class SplitByLengths extends PureFunction {
@@ -65,12 +67,13 @@ public class SplitByLengths extends PureFunction {
 
             return results;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 string and 1 or more numbers");
+        // numbers");
+        return new EvalError(EvalErrorMessage.expects_one_string_and_at_least_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, \"internationalization\".splitByLengths(5, 6, 3) returns an array of 3 strings: [ \"inter\", \"nation\", \"ali\" ]. Excess characters are discarded.";
+        return FunctionDescription.str_split_by_lengths();
     }
 
     @Override

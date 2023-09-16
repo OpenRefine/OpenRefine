@@ -43,7 +43,7 @@ var CustomSuggest = {};
     oldInit.call(this);
 
     var self = this;
-    this.input.bind("remove", function() {
+    this.input.on("remove", function() {
       self._destroy();
     });
   };

@@ -44,7 +44,7 @@
     "gdata-exporter/enter-filename": "נא למלא שם קובץ לייצוא המיזם ב־Google Drive",
     "gdata-exporter/upload-google-sheets-success": "המיזם הועלה ל־Google Drive ",
     "gdata-exporter/upload-google-drive-success": "המיזם הועלה ל־Google Drive ",
-    "gdata-exporter/google-sheets": "Google Sheets",
+    "gdata-exporter/google-sheets": "…Google Sheets",
     "gdata-exporter/export-to-google-drive": "מיזם OpenRefine שומר בארכיון ל־Google Drive…",
     "gdata-import/re-sign-in-another": "כניסה עם חשבון אחר",
     "gdata-import/please-signin": "נא להיכנס כדי לאשר את הגישה לנתונים שלך ב־Google",

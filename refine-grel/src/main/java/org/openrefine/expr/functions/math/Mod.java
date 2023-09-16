@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.math;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Mod extends PureFunction {
@@ -44,19 +46,19 @@ public class Mod extends PureFunction {
     @Override
     public Object call(Object[] args) {
         if (args.length == 2 &&
-                args[0] != null && args[0] instanceof Number &&
-                args[1] != null && args[1] instanceof Number) {
+                args[0] instanceof Number &&
+                args[1] instanceof Number) {
             int a = ((Number) args[0]).intValue();
             int b = ((Number) args[1]).intValue();
 
             return a % b;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 numbers");
+        return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns n1 modulus n2.";
+        return FunctionDescription.math_mod();
     }
 
     @Override

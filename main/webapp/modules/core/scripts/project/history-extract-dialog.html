@@ -1,4 +1,4 @@
-<div class="dialog-frame" style="width: 800px;">
+<div class="dialog-frame" style="min-width: 800px;">
   <div class="dialog-border">
     <div class="dialog-header" bind="dialogHeader"></div>
     <div class="dialog-body" bind="dialogBody">
@@ -11,13 +11,14 @@
         <tr>
           <td width="50%" style="vertical-align: top"><div class="history-extract-dialog-panel"><table class="history-extract-dialog-entries" bind="entryTable"></table></div></td>
           <td width="50%" rowspan="2" style="vertical-align: top">
-              <div class="input-container"><textarea wrap="off" class="history-operation-json" bind="textarea" /></div>
+              <div class="input-container"><textarea aria-label="" spellcheck="false" wrap="off" class="history-operation-json" bind="textarea"></textarea></div>
           </td>
         </tr>
         <tr>
           <td>
             <button class="button" bind="selectAllButton"></button>
-            <button class="button" bind="unselectAllButton"></button>
+            <button class="button" bind="deselectAllButton"></button>
+            <button class="button" bind="saveJsonAsFileButton" style="float: right"></button>
           </td>
         </tr>
       </table></div>

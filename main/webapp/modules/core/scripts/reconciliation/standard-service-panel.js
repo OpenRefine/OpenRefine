@@ -95,8 +95,13 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.or_proc_noType.html($.i18n('core-recon/no-type'));
   this._elmts.or_proc_autoMatch.html($.i18n('core-recon/auto-match'));
   this._elmts.or_proc_max_candidates.html($.i18n('core-recon/max-candidates'));
+  this._elmts.typeInput.attr('aria-label',$.i18n('core-recon/type'))
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
+
+  this._elmts.againstType.on('change', function() {
+    self._elmts.typeInput.trigger('focus').trigger('select');
+  });
 
   this._guessTypes(function() {
     self._populatePanel();
@@ -147,7 +152,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
       .val(typeID)
       .attr("typeName", typeName)
       .appendTo(td0)
-      .click(function() {
+      .on('click',function() {
         self._rewirePropertySuggests(this.value);
       });
 
@@ -177,7 +182,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
     .find('input[name="type-choice"][value=""]')
     .prop('checked', true);
 
-    this._elmts.typeInput.focus();
+    this._elmts.typeInput.trigger('focus');
   }
 
   /*
@@ -218,7 +223,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
 
 ReconStandardServicePanel.prototype._wireEvents = function() {
   var self = this;
-  var input = this._elmts.typeInput.unbind();
+  var input = this._elmts.typeInput.off();
 
   if ("suggest" in this._service && "type" in this._service.suggest && this._service.suggest.type.service_url) {
     // Old style suggest API
@@ -232,7 +237,7 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
     input.suggestT(suggestOptions);
   }
 
-  input.bind("fb-select", function(e, data) {
+  input.on("bind fb-select", function(e, data) {
     self._panel
     .find('input[name="type-choice"][value=""]')
     .prop('checked', true);
@@ -246,7 +251,7 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
 ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
   var inputs = this._panel
   .find('input[name="property"]')
-  .unbind();
+  .off();
 
   if ("suggest" in this._service && "property" in this._service.suggest && this._service.suggest.property.service_url) {
     // Old style suggest API
@@ -302,7 +307,7 @@ ReconStandardServicePanel.prototype.start = function() {
           }
         });
       } else {
-        var property = $.trim(this.value);
+        var property = jQueryTrim(this.value);
         if (property && include[index].checked) {
           columnDetails.push({
             column: this.getAttribute("columnName"),

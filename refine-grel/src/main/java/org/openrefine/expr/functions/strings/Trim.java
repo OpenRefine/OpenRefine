@@ -36,6 +36,9 @@ package org.openrefine.expr.functions.strings;
 import com.google.common.base.CharMatcher;
 
 import org.openrefine.expr.EvalError;
+import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Trim extends PureFunction {
@@ -50,12 +53,12 @@ public class Trim extends PureFunction {
                 return CharMatcher.whitespace().trimFrom((String) s1);
             }
         }
-        return new EvalError("Invalid parameters");
+        return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns a copy of string s with leading and trailing whitespace removed.";
+        return FunctionDescription.str_trim();
     }
 
     @Override

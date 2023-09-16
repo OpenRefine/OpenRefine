@@ -39,6 +39,8 @@ import java.time.temporal.TemporalUnit;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Inc extends PureFunction {
@@ -58,7 +60,8 @@ public class Inc extends PureFunction {
 
             return date.plus(amount, getField(unit));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date, a number and a string");
+        // string");
+        return new EvalError(EvalErrorMessage.expects_date_number_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     private TemporalUnit getField(String unit) {
@@ -88,7 +91,7 @@ public class Inc extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns a date changed by the given amount in the given unit of time, in quotes. See https://docs.openrefine.org/manual/grelfunctions/#incd-n-s-timeunit for a table. The default unit is 'hour'. A positive value increases the date, and a negative value moves it back in time.";
+        return FunctionDescription.date_inc();
     }
 
     @Override

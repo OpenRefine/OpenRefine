@@ -63,11 +63,11 @@ Refine.FixedWidthParserUI.prototype.confirmReadyToCreateProject = function() {
 
 Refine.FixedWidthParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value),
+    encoding: jQueryTrim(this._optionContainerElmts.encodingInput[0].value),
     columnWidths: this._getColumnWidths()
   };
 
-  var columnNames = $.trim(this._optionContainerElmts.columnNamesInput[0].value).replace(/,\s+/g, ',').split(',');
+  var columnNames = jQueryTrim(this._optionContainerElmts.columnNamesInput[0].value).replace(/,\s+/g, ',').split(',');
   if (columnNames.length > 0 && columnNames[0].length > 0) {
     options.columnNames = columnNames;
   }
@@ -120,10 +120,10 @@ Refine.FixedWidthParserUI.prototype.getOptions = function() {
 Refine.FixedWidthParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/fixed-width-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self.updatePreview(); });
+  this._optionContainerElmts.previewButton.on('click',function() { self.updatePreview(); });
 
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
   $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));
@@ -150,7 +150,7 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   
   this._optionContainerElmts.encodingInput
     .val(this._config.encoding || '')
-    .click(function() {
+    .on('click',function() {
       Encoding.selectEncoding($(this), function() {
         self.updatePreview();
       });
@@ -206,13 +206,13 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
         self._scheduleUpdatePreview();
     }
   };
-  this._optionContainer.find("input").bind("change", onChange);
-  this._optionContainer.find("select").bind("change", onChange);
+  this._optionContainer.find("input").on("change", onChange);
+  this._optionContainer.find("select").on("change", onChange);
 };
 
 Refine.FixedWidthParserUI.prototype._getColumnWidths = function() {
   var newColumnWidths = [];
-  var a = $.trim(this._optionContainerElmts.columnWidthsInput[0].value).replace(/,\s+/g, ',').split(',');
+  var a = jQueryTrim(this._optionContainerElmts.columnWidthsInput[0].value).replace(/,\s+/g, ',').split(',');
   for (var i = 0; i < a.length; i++) {
     var n = parseInt(a[i],10);
     if (!isNaN(n)) {
@@ -271,7 +271,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   var scrollTop = this._elmt[0].scrollTop;
   var scrollLeft = this._elmt[0].scrollLeft;
 
-  this._elmt.unbind().empty();
+  this._elmt.off().empty();
 
   var self = this;
   var container = $('<div>')
@@ -424,13 +424,13 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
 
     positionColumnSeparator(outer, charIndex);
 
-    outer.mouseover(function() {
+    outer.on('mouseover',function() {
       newSeparator.hide();
     })
-    .mouseout(function() {
+    .on('mouseout',function() {
       newSeparator.show();
     })
-    .mousedown(function() {
+    .on('mousedown',function() {
       var mouseMove = function(evt) {
         var newCharIndex = computeCharIndex(evt);
         positionColumnSeparator(outer, newCharIndex);
@@ -440,8 +440,8 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
         return false;
       };
       var mouseUp = function(evt) {
-        container.unbind('mousemove', mouseMove);
-        container.unbind('mouseup', mouseUp);
+        container.off('mousemove', mouseMove);
+        container.off('mouseup', mouseUp);
 
         var newCharIndex = computeCharIndex(evt);
         positionColumnSeparator(outer, newCharIndex);
@@ -453,11 +453,11 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
         evt.stopPropagation();
         return false;
       };
-      container.bind('mousemove', mouseMove);
-      container.bind('mouseup', mouseUp);
+      container.on('mousemove', mouseMove);
+      container.on('mouseup', mouseUp);
     });
 
-    close.click(function() {
+    close.on('click',function() {
       columnCharIndexes[index] = index > 0 ? columnCharIndexes[index - 1] : 0;
       updatePreview();
     });
@@ -471,15 +471,15 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   }
 
   container
-  .mouseout(function(evt) {
+  .on('mouseout',function(evt) {
     newSeparator.hide();
   })
-  .mousemove(function(evt) {
+  .on('mousemove',function(evt) {
     var offset = evt.pageX - container.offset().left;
     var newCharIndex = Math.round((offset - pixelOffset) / pixelsPerChar);
     positionColumnSeparator(newSeparator.show(), newCharIndex);
   });
-  newSeparator.mousedown(function(evt) {
+  newSeparator.on('mousedown',function(evt) {
     var newCharIndex = computeCharIndex(evt);
     columnCharIndexes.push(newCharIndex);
     updatePreview();

@@ -41,7 +41,7 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     var self = this;
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/templating-exporter-dialog.html"));
     this._elmts = DOM.bind(dialog);
-    this._elmts.controls.find("textarea").bind("keyup change input",function() { self._scheduleUpdate(); });
+    this._elmts.controls.find("textarea").on("keyup change input",function() { self._scheduleUpdate(); });
     
     this._elmts.dialogHeader.html($.i18n('core-dialogs/template-export'));
     this._elmts.or_dialog_prefix.html($.i18n('core-dialogs/template-prefix'));
@@ -51,10 +51,11 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     this._elmts.resetButton.html($.i18n('core-buttons/reset-template'));
     this._elmts.exportButton.html($.i18n('core-buttons/export'));
     this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+    this._elmts.previewTextarea.attr('aria-label',$.i18n('core-dialogs/template-preview'))
     
-    this._elmts.exportButton.click(function() { self._export(); self._dismiss(); });
-    this._elmts.cancelButton.click(function() { self._dismiss(); });
-    this._elmts.resetButton.click(function() {
+    this._elmts.exportButton.on('click',function() { self._export(); self._dismiss(); });
+    this._elmts.cancelButton.on('click',function() { self._dismiss(); });
+    this._elmts.resetButton.on('click',function() {
         self._fillInTemplate(self._createDefaultTemplate());
         self._updatePreview();
     });
@@ -152,8 +153,7 @@ TemplatingExporterDialog.prototype._export = function() {
     $(form)
         .css("display", "none")
         .attr("method", "post")
-        .attr("action", "command/core/export-rows/" + name + ".txt")
-        .attr("target", "refine-export");
+        .attr("action", "command/core/export-rows/" + name + ".txt");
         
     var appendField = function(name, value) {
         $('<textarea />')
@@ -172,9 +172,6 @@ TemplatingExporterDialog.prototype._export = function() {
     appendField("template", this._elmts.templateTextarea[0].value);
 
     document.body.appendChild(form);
-
-    window.open(" ", "refine-export");
     form.submit();
-
     document.body.removeChild(form);
 };

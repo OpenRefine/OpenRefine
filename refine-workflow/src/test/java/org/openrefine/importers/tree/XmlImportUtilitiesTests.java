@@ -51,7 +51,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.importers.JsonImporter;
 import org.openrefine.importers.JsonImporter.JSONTreeReader;
 import org.openrefine.importers.JsonImporterTests;
 import org.openrefine.importers.XmlImporter.XmlParser;
@@ -88,6 +87,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         rows = new ArrayList<>();
     }
 
+    @Override
     @AfterMethod
     public void TearDown() throws IOException {
         SUT = null;
@@ -180,29 +180,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
             Assert.fail(e.getMessage());
         }
         Assert.assertNull(response);
-    }
-
-    @Test
-    public void detectRecordElementRegressionXmlTest() {
-        loadSampleXml();
-
-        String[] path = XmlImportUtilities.detectRecordElement(createXmlParser());
-        Assert.assertNotNull(path);
-        Assert.assertEquals(path.length, 2);
-        Assert.assertEquals(path[0], "library");
-        Assert.assertEquals(path[1], "book");
-    }
-
-    @Test
-    public void detectRecordElementRegressionJsonTest() {
-        loadSampleJson();
-
-        String[] path = XmlImportUtilities.detectRecordElement(
-                new JSONTreeReader(inputStream));
-        Assert.assertNotNull(path);
-        Assert.assertEquals(path.length, 2);
-        Assert.assertEquals(path[0], JsonImporter.ANONYMOUS);
-        Assert.assertEquals(path[1], JsonImporter.ANONYMOUS);
     }
 
     @Test

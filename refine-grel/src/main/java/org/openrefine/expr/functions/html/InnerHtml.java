@@ -39,6 +39,8 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.functions.Type;
 import org.openrefine.expr.functions.xml.InnerXml;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class InnerHtml extends PureFunction {
@@ -52,17 +54,20 @@ public class InnerHtml extends PureFunction {
             if (o1 != null && o1 instanceof Element) {
                 return new InnerXml().call(args, "html");
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
-                        + "'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+                // new Type().call(bindings, args) + "'. The first parameter is not an HTML Element. Please first use
+                // parseHtml(string) and select(query) prior to using this function");
+                return new EvalError(EvalErrorMessage.html_cannot_work_with_this_use_parse_html(
+                        ControlFunctionRegistry.getFunctionName(this), new Type().call(args)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
-                + "' and expects a single String as an argument");
+        // Type().call(bindings, args) + "' and expects a single String as an argument");
+        return new EvalError(EvalErrorMessage.html_cannot_work_with_this_expects_one_string(ControlFunctionRegistry.getFunctionName(this),
+                new Type().call(args)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the inner HTML of an HTML element. This will include text and children elements within the element selected. Use it in conjunction with parseHtml() and select() to provide an element.";
+        return FunctionDescription.html_inner_html();
     }
 
     @Override

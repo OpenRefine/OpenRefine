@@ -134,6 +134,7 @@ public class GrelTests {
                 { "1<=2", "true" },
                 { "2<=2", "true" },
                 { "3<=2", "false" },
+                { "0/0", "NaN" },
 //                { "", "" }, 
         };
         for (String[] test : tests) {
@@ -161,6 +162,7 @@ public class GrelTests {
                 { "3/2", "1" },
                 { "3.0/2", "1.5" },
                 { "1", "1" },
+                { "0/0", "NaN" },
         };
         for (String[] test : tests) {
             parseEval(bindings, test);

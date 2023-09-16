@@ -1,9 +1,9 @@
-<div class="dialog-frame" style="width: 800px;">
+<div class="dialog-frame" style="min-width: 800px;">
   <div class="dialog-border">
     <div class="dialog-header" bind="dialogHeader"></div>
     <div class="dialog-body" bind="dialogBody">
-      <div class="dialog-instruction" bind="or_proj_pasteJson"></div>  
-      <div class="input-container"><textarea wrap="off" bind="textarea" class="history-operation-json" /></div>
+      <div class="dialog-instruction"><label for="textareaId" bind="or_proj_pasteJson"></label></div>
+      <div class="input-container"><textarea spellcheck="false" wrap="off" bind="textarea" id="textareaId" class="history-operation-json" style="min-width: 764px"></textarea></div>
     </div>
     <div class="dialog-footer" bind="dialogFooter">
     <button class="button" bind="applyButton"></button>

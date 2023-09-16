@@ -69,6 +69,7 @@ import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
 import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.operations.OperationDescription;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
@@ -109,8 +110,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
     @Override
     public String getDescription() {
-        return "Extend data at index " + _columnInsertIndex +
-                " based on column " + _baseColumnName;
+        return OperationDescription.recon_extend_data_brief(_columnInsertIndex, _baseColumnName);
     }
 
     @Override

@@ -378,21 +378,21 @@ function init() {
   registerReconConfigs();
 
   var commonModules = [
-      "externals/jquery-1.12.4.js",
-      "externals/jquery-migrate-1.4.1.js",
+      "3rdparty/jquery.js",
+      "3rdparty/jquery-migrate.js",
       "externals/jquery-ui/jquery-ui.js",
-      "externals/js.cookie.js",
-      "externals/underscore-min.js",
+      "3rdparty/js.cookie.js",
+      "3rdparty/underscore.js",
 
-      "externals/CLDRPluralRuleParser.js",
-      "externals/jquery.i18n.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.fallbacks.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
-      "externals/languages/fi.js",
-      "externals/languages/ru.js",
+      "3rdparty/jquery.i18n/CLDRPluralRuleParser.js",
+      "3rdparty/jquery.i18n/jquery.i18n.js",
+      "3rdparty/jquery.i18n/jquery.i18n.messagestore.js",
+      "3rdparty/jquery.i18n/jquery.i18n.fallbacks.js",
+      "3rdparty/jquery.i18n/jquery.i18n.parser.js",
+      "3rdparty/jquery.i18n/jquery.i18n.emitter.js",
+      "3rdparty/jquery.i18n/jquery.i18n.language.js",
+      "3rdparty/jquery.i18n/languages/fi.js",
+      "3rdparty/jquery.i18n/languages/ru.js",
     ];
 
   var RC = Packages.org.openrefine.model.recon.ReconConfig;
@@ -402,19 +402,20 @@ function init() {
     "index/scripts",
     module,
     commonModules.concat([
-      "externals/date.js",
-      "externals/tablesorter/jquery.tablesorter.min.js",
-      "externals/moment-with-locales.min.js",
-      "externals/select2/select2.min.js",
+      "3rdparty/date.js",
+      "3rdparty/tablesorter/jquery.tablesorter.js",
+      "3rdparty/moment-with-locales.js",
+      "3rdparty/select2/select2.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
       "scripts/util/string.js",
       "scripts/util/ajax.js",
+      "scripts/util/i18n.js",
+      "scripts/util/csrf.js",
       "scripts/util/menu.js",
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
-      "scripts/util/date-time.js",
       "scripts/util/encoding.js",
       "scripts/util/sign.js",
       "scripts/util/filter-lists.js",
@@ -450,8 +451,8 @@ function init() {
     module,
     [
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
-      "externals/select2/select2.css",
-      "externals/tablesorter/theme.blue.css",
+      "3rdparty/select2/select2.css",
+      "3rdparty/tablesorter/theme.blue.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
@@ -481,10 +482,10 @@ function init() {
     module,
     commonModules.concat([
       "externals/suggest/suggest-4_3a.js",
-      "externals/date.js",
-
+      "3rdparty/date.js",
+      "scripts/util/i18n.js",
+      "scripts/util/csrf.js",
       "scripts/project.js",
-
       "scripts/util/misc.js",
       "scripts/util/url.js",
       "scripts/util/string.js",
@@ -492,7 +493,6 @@ function init() {
       "scripts/util/menu.js",
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
-      "scripts/util/date-time.js",
       "scripts/util/custom-suggest.js",
       "scripts/util/encoding.js",
       "scripts/util/sign.js",
@@ -529,7 +529,7 @@ function init() {
       "scripts/reconciliation/standard-service-panel.js",
 
       "scripts/dialogs/expression-preview-dialog.js",
-      "scripts/dialogs/extend-data-preview-dialog.js",
+      "scripts/dialogs/add-column-by-reconciliation.js",
       "scripts/dialogs/clustering-dialog.js",
       "scripts/dialogs/scatterplot-dialog.js",
       "scripts/dialogs/templating-exporter-dialog.js",
@@ -546,7 +546,7 @@ function init() {
     "project/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_3.min.css",
+      "externals/suggest/css/suggest-4_3.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
@@ -576,9 +576,10 @@ function init() {
       "styles/dialogs/column-reordering-dialog.less",
       "styles/dialogs/custom-tabular-exporter-dialog.less",
       "styles/dialogs/sql-exporter-dialog.less",
+      "styles/dialogs/recon-service-selection-dialog.less",
       "styles/reconciliation/recon-dialog.less",
       "styles/reconciliation/standard-service-panel.less",
-      "styles/reconciliation/extend-data-preview-dialog.less",
+      "styles/reconciliation/add-column-by-reconciliation.less",
     ]
   );
 
@@ -586,6 +587,8 @@ function init() {
     "preferences/scripts",
     module,
     commonModules.concat([
+      "scripts/util/i18n.js",
+      "scripts/util/csrf.js",
       "scripts/preferences.js",
     ])
   );
@@ -593,7 +596,7 @@ function init() {
     "preferences/styles",
     module,
     [
-      "externals/suggest/css/suggest-4_3.min.css",
+      "externals/suggest/css/suggest-4_3.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",

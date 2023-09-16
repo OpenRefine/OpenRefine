@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openrefine.ProjectManager;
 import org.openrefine.model.Project;
 import org.openrefine.preference.PreferenceStore;
+import org.openrefine.util.LocaleUtils;
 import org.openrefine.util.ParsingUtilities;
 
 public class SetPreferenceCommand extends Command {
@@ -71,6 +72,10 @@ public class SetPreferenceCommand extends Command {
             respondJSON(response, Collections.singletonMap("code", "ok"));
         } catch (IOException e) {
             respondException(response, e);
+        }
+
+        if (prefName.equals("userLang")) {
+            LocaleUtils.setLocale(valueString);
         }
     }
 

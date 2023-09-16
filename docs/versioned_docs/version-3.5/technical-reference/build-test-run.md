@@ -9,8 +9,9 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 You will need:
 * [OpenRefine source code](https://github.com/OpenRefine/OpenRefine)
-* [Java JDK](http://java.sun.com/javase/downloads/index.jsp) (Get [OpenJDK from here](https://jdk.java.net/15/).)
+* [Java JDK](http://java.sun.com/javase/downloads/index.jsp) (Get [OpenJDK from here](https://adoptium.net/).)
 * [Apache Maven](https://maven.apache.org)  (OPTIONAL)
+* [Node.js](https://nodejs.org/en/download/) and npm
 * A Unix/Linux shell environment OR the Windows command line
 
 From the top level directory in the OpenRefine application you can build, test and run OpenRefine using the `./refine` shell script (if you are working in a \*nix shell), or using the `refine.bat` script from the Windows command line. Note that the `refine.bat` on Windows only supports a subset of the functionality, supported by the `refine` shell script. The example commands below are using the `./refine` shell script, and you will need to use `refine.bat` if you are working from the Windows command line.
@@ -21,7 +22,7 @@ With Git installed, use the `git clone` command to download the [project's repo]
 
 ### Set up JDK {#set-up-jdk}
 
-You must [install JDK](https://jdk.java.net/15/) and set the JAVA_HOME environment variable (please ensure it points to the JDK, and not the JRE).
+You must [install JDK](https://adoptium.net/) and set the JAVA_HOME environment variable (please ensure it points to the JDK, and not the JRE).
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -65,7 +66,8 @@ Check the environment variable `JAVA_HOME` with:
 $JAVA_HOME/bin/java --version
 ```
 
-To set the environment variable for the current Java version of your MacOS:
+If this shows your Java version, your `JAVA_HOME` variable is set up correctly. If it shows an error, you need to adjust it.
+To do so, you can use:
 
 ```
 export JAVA_HOME="$(/usr/libexec/java_home)"
@@ -139,17 +141,32 @@ It should show the path you set above.
 
 
 ### Maven (Optional) {#maven-optional}
-OpenRefine's build script will download Maven for you and use it, if not found already locally installed.
+OpenRefine development requires Apache Maven for its build, test, and packaging processing.  We encourage using the latest version of Apache Maven for development of OpenRefine, otherwise sometimes spurious errors appear in your IDE regarding POM, dependencies, or packages.
 
-If you will be using your Maven installation instead of OpenRefine's build script download installation, then set the `MVN_HOME` environment variable. You may need to reboot your machine after setting these environment variables. If you receive a message `Could not find the main class: com.google.refine.Refine. Program will exit.` it is likely `JAVA_HOME` is not set correctly.
+If Maven is not already locally installed, then OpenRefine's build script will automatically download Maven for you and use it.
+
+If you will be using your own [Maven installation](https://maven.apache.org/install.html) instead of OpenRefine's build script download installation, then set the `MAVEN_HOME` environment variable. You may need to reboot your machine after setting these environment variables. If you receive a message `Could not find the main class: com.google.refine.Refine. Program will exit.` it is likely `JAVA_HOME` is not set correctly.
 
 Ensure that you set your `MAVEN_HOME` environment variable, for example:
 
 ```shell
-MAVEN_HOME=E:\Downloads\apache-maven-3.5.4-bin\apache-maven-3.5.4\
+MAVEN_HOME=E:\Downloads\apache-maven-3.8.4-bin\apache-maven-3.8.4\
 ```
 
 NOTE: You can use Maven commands directly, but running some goals in isolation might fail (try adding the `compile test-compile` goals in your invocation if that is the case).
+
+### Node.js and npm
+
+The OpenRefine webapp requires node and npm to install package dependencies.
+Download and install [Node.js](https://nodejs.org).  (On Windows, you can alternatively install [nvm](https://github.com/coreybutler/nvm-windows) to easily manage multiple npm versions on your system).  You should then have node and npm intalled. You can check the versions by typing:
+```
+node -v
+npm -v
+```
+You can update the version of npm to the latest by typing
+```
+npm install -g npm@latest
+```
 
 ### Building {#building}
 
@@ -195,6 +212,8 @@ To run OpenRefine from the command line (assuming you have been able to build fr
 ```
 By default, OpenRefine will use [refine.ini](https://github.com/OpenRefine/OpenRefine/blob/master/refine.ini) for configuration. You can copy it and rename it to `refine-dev.ini`, which will be used for configuration instead. `refine-dev.ini` won't be tracked by Git, so feel free to put your custom configurations into it.
 
+If you wish to run the application manually, without using the `refine` script, you can do so via Maven with `mvn exec:java`. The entry point of the application is the `com.google.refine.Refine` class.
+
 ## Building Distributions (Kits) {#building-distributions-kits}
 
 The Refine build system uses Apache Ant to automate the creation of the installation packages for the different operating systems. The packages are currently optimized to run on Mac OS X which is the only platform capable of creating the packages for all three OS that we support.
@@ -229,6 +248,13 @@ Right click on the `server` subproject, click `Run as...` and `Run configuration
 ![Screenshot of Add a run configuration with the exec:java goal](/img/eclipse-exec-config.png)
 
 This will add a run configuration that you can then use to run OpenRefine from Eclipse.
+
+## Code style in Eclipse
+
+You can apply the supplied Eclipse code style (in `IDEs/eclipse/Refine.style.xml`) to make sure Eclipse lints your files according to the existing style.
+Pull requests deviating from this style will fail in the CI.
+
+You can manually apply the code style (regardless of your IDE) with the `mvn formatter:format` command.
 
 ## Testing in Eclipse {#testing-in-eclipse}
 

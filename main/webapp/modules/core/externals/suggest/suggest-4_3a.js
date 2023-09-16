@@ -76,7 +76,7 @@
         };
       }
     }, 1);
-    div.bind("remove", function() {
+    div.on("remove", function() {
       clearTimeout(t);
     });
     div.remove();
@@ -186,20 +186,20 @@
         }
         $(document.body).append(p);
       }
-      p.bind("mousedown", function(e) {
+      p.on("mousedown", function(e) {
         //console.log("pane mousedown");
         self.input.data("dont_hide", true);
         e.stopPropagation();
       })
-      .bind("mouseup", function(e) {
+      .on("mouseup", function(e) {
         //console.log("pane mouseup");
         if (self.input.data("dont_hide")) {
-          self.input.focus();
+          self.input.trigger('focus');
         }
         self.input.removeData("dont_hide");
         e.stopPropagation();
       })
-      .bind("click", function(e) {
+      .on("click", function(e) {
         //console.log("pane click");
         e.stopPropagation();
         var s = self.get_selected();
@@ -214,34 +214,34 @@
       var hoverout = function(e) {
         self.hoverout_list(e);
       };
-      l.hover(hoverover, hoverout);
+      l.on('mouseenter',hoverover).on('mouseleave',hoverout);
       //console.log(this.pane, this.list);
 
       this.input = $(input)
         .attr("autocomplete", "off")
-        .unbind(".suggest")
-        .bind("remove.suggest", function(e) {
+        .off(".suggest")
+        .on("remove.suggest", function(e) {
           self._destroy();
         })
-        .bind("keydown.suggest", function(e) {
+        .on("keydown.suggest", function(e) {
           self.keydown(e);
         })
-        .bind("keypress.suggest", function(e) {
+        .on("keypress.suggest", function(e) {
           self.keypress(e);
         })
-        .bind("keyup.suggest", function(e) {
+        .on("keyup.suggest", function(e) {
           self.keyup(e);
         })
-        .bind("blur.suggest", function(e) {
+        .on("blur.suggest", function(e) {
           self.blur(e);
         })
-        .bind("textchange.suggest", function(e) {
+        .on("textchange.suggest", function(e) {
           self.textchange();
         })
-        .bind("focus.suggest", function(e) {
+        .on("focus.suggest", function(e) {
           self.focus(e);
         })
-        .bind("paste.suggest input.suggest", function(e) {
+        .on("paste.suggest input.suggest", function(e) {
           clearTimeout(self.paste_timeout);
           self.paste_timeout = setTimeout(function() {
             self.textchange();
@@ -263,8 +263,8 @@
         };
 
         $(window)
-          .bind("resize.suggest", this.onresize)
-          .bind("scroll.suggest", this.onresize);
+          .on("resize.suggest", this.onresize)
+          .on("scroll.suggest", this.onresize);
     };
 
     $.suggest[name].prototype = $.extend({}, $.suggest.prototype, prototype);
@@ -278,10 +278,10 @@
     _destroy: function() {
       this.pane.remove();
       this.list.remove();
-      this.input.unbind(".suggest");
+      this.input.off(".suggest");
       $(window)
-        .unbind("resize.suggest", this.onresize)
-        .unbind("scroll.suggest", this.onresize);
+        .off("resize.suggest", this.onresize)
+        .off("scroll.suggest", this.onresize);
     },
 
     invalidate_position: function() {
@@ -622,7 +622,7 @@
       }
       var result = [];
 
-      if ($.isArray(data)) {
+      if (Array.isArray(data)) {
         result = data;
       }
       else if ("result" in data) {
@@ -645,7 +645,7 @@
             n.id = n.mid;
         }
         var li = self.create_item(n, data)
-          .bind("mouseover.suggest", function(e) {
+          .on("mouseover.suggest", function(e) {
             self.mouseover_item(e);
           });
           li.data("data.suggest", n);
@@ -678,7 +678,7 @@
             $nomatch.append($tips);
           }
         }
-        $nomatch.bind("click.suggest", function(e) {
+        $nomatch.on("click.suggest", function(e) {
           e.stopPropagation();
         });
         this.list.append($nomatch);
@@ -1027,7 +1027,7 @@
             qstr = qstr.replace(m[0], "");
             m = regex.exec(str);
         }
-        qstr = $.trim(qstr.replace(/\s+/g, " "));
+        qstr = jQueryTrim(qstr.replace(/\s+/g, " "));
         return [qstr, filters, overrides];
     },
 
@@ -1132,8 +1132,8 @@
         var hoverout = function(e) {
           self.hoverout_list(e);
         };
-        this.flyoutpane.hover(hoverover, hoverout)
-          .bind("mousedown.suggest", function(e) {
+        this.flyoutpane.on('mouseenter',hoverover).on('mouseleave', hoverout)
+          .on("mousedown.suggest", function(e) {
             e.stopPropagation();
             self.pane.click();
           });
@@ -1183,7 +1183,7 @@
       // SEARCH_PARAMS can be overridden inline
       var extend_ac_param = null;
 
-      if ($.type(filter) === "string") {
+      if (typeof filter === "string") {
           // the original filter may be a single filter param (string)
           filter = [filter];
       }
@@ -1364,7 +1364,7 @@
       var correction = response_data.correction;
       if (correction && correction.length) {
         var spell_link = $('<a class="fbs-spell-link" href="#">').text(correction[0])
-          .bind("click.suggest", function(e) {
+          .on("click.suggest", function(e) {
             e.preventDefault();
             e.stopPropagation();
             self.input.val(correction[0]).trigger("textchange");
@@ -1381,7 +1381,7 @@
         if (!more.length) {
           var more_link = $('<a class="fbs-more-link" href="#" title="(Ctrl+m)">view more</a>');
           more = $('<div class="fbs-more">').append(more_link);
-          more_link.bind("click.suggest", function(e) {
+          more_link.on("click.suggest", function(e) {
             e.preventDefault();
             e.stopPropagation();
             var m = $(this).parent(".fbs-more");
@@ -1406,7 +1406,7 @@
             .append('<div class="fbs-suggestnew-description">Your item not in the list?</div>')
             .append(button)
             .append('<span class="fbs-suggestnew-shortcut">(Shift+Enter)</span>')
-            .bind("click.suggest", function(e) {
+            .on("click.suggest", function(e) {
               e.stopPropagation();
               self.suggest_new(e);
             });

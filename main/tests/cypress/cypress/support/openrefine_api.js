@@ -1,5 +1,19 @@
 const fixtures = require('../fixtures/fixtures.js');
 
+Cypress.Commands.add('addProjectForDeletion', () => {
+const path = '/project?project=';
+  cy.url().then(($url) => {
+    if($url.includes(path)) {
+      const projectId = $url.split('=').slice(-1)[0];
+      cy.get('@loadedProjectIds', { log: true }).then((loadedProjectIds) => {
+        loadedProjectIds.push(projectId);
+        cy.wrap(loadedProjectIds, { log: true })
+            .as('loadedProjectIds');
+      });
+    }
+  })
+});
+
 Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
   const openRefineUrl = Cypress.env('OPENREFINE_URL');
   return cy
@@ -26,6 +40,29 @@ Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
     });
 });
 
+Cypress.Commands.add('deletePreference', (preferenceName) => {
+  const openRefineUrl = Cypress.env('OPENREFINE_URL');
+  return cy
+      .request(openRefineUrl + '/command/core/get-csrf-token')
+      .then((response) => {
+        return cy
+            .request({
+              method: 'POST',
+              url: `${openRefineUrl}/command/core/set-preference`,
+              body: `name=${preferenceName}&csrf_token=${response.body.token}`,
+              form: false,
+              headers: {
+                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              },
+            })
+            .then((resp) => {
+              cy.log(
+                  'Delete preference ' +
+                  preferenceName 
+              );
+            });
+      });
+});
 
 Cypress.Commands.add('importProject', (projectTarFile, projectName) => {
   const openRefineUrl = Cypress.env('OPENREFINE_URL');
@@ -151,7 +188,7 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
     });
     content = csv.join('\n');
   }
-
+  
   cy.get('@token', { log: false }).then((token) => {
     // cy.request(Cypress.env('OPENREFINE_URL')+'/command/core/get-csrf-token').then((response) => {
     const openRefineFormat = 'text/line-based/*sv';

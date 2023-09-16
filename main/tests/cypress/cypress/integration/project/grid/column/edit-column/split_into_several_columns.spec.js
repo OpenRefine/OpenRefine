@@ -4,7 +4,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', [
       'Edit column',
-      'Split into several columns...',
+      'Split into several columns…',
     ]);
     cy.waitForDialogPanel();
 
@@ -30,7 +30,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', [
       'Edit column',
-      'Split into several columns...',
+      'Split into several columns…',
     ]);
     cy.waitForDialogPanel();
 
@@ -58,7 +58,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', [
       'Edit column',
-      'Split into several columns...',
+      'Split into several columns…',
     ]);
     cy.waitForDialogPanel();
 
@@ -85,7 +85,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', [
       'Edit column',
-      'Split into several columns...',
+      'Split into several columns…',
     ]);
     cy.waitForDialogPanel();
 

@@ -29,10 +29,14 @@ package org.openrefine.io;
 
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -45,10 +49,12 @@ import org.openrefine.util.TestUtils;
 public class FileProjectManagerTests {
 
     protected File workspaceDir;
+    protected File workspaceFile;
 
     @BeforeMethod
     public void createDirectory() throws IOException {
         workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        workspaceFile = File.createTempFile(workspaceDir.getPath(), "workspace.json");
     }
 
     protected class FileProjectManagerStub extends FileProjectManager {
@@ -56,6 +62,7 @@ public class FileProjectManagerTests {
         protected FileProjectManagerStub(File dir) {
             super(dir, mock(DatamodelRunner.class));
             _projectsMetadata.put(5555L, mock(ProjectMetadata.class));
+
         }
     }
 
@@ -93,5 +100,21 @@ public class FileProjectManagerTests {
         manager.saveWorkspace();
         manager = new FileProjectManagerStub(workspaceDir);
         assertEquals(manager.getPreferenceStore().get("testPref"), "Refiné");
+    }
+
+    /**
+     * Issue fix Issue #1418 Issue #3719 Issue #3277 deleting the only existing project and saving the workspace should
+     * remove the projectID from workspace.json
+     */
+    @Test
+    public void deleteProjectAndSaveWorkspace() throws IOException {
+        FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
+        manager.saveToFile(workspaceFile);
+        manager.deleteProject(5555);
+        manager.saveToFile(workspaceFile);
+
+        InputStream inputStream = new FileInputStream(workspaceFile);
+        ObjectNode json = (ObjectNode) ParsingUtilities.mapper.readTree(inputStream);
+        assertTrue(json.get("projectIDs").isEmpty());
     }
 }

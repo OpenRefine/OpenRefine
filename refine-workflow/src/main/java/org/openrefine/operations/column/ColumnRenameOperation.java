@@ -45,6 +45,7 @@ import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.OperationDescription;
 
 public class ColumnRenameOperation extends ImmediateRowMapOperation {
 
@@ -72,7 +73,7 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
 
     @Override
     public String getDescription() {
-        return "Rename column " + _oldColumnName + " to " + _newColumnName;
+        return OperationDescription.column_rename_brief(_oldColumnName, _newColumnName);
     }
 
     @Override

@@ -1,0 +1,13 @@
+{
+  "op": "wikidata/perform-wikibase-edits",
+  "description": "Perform Wikibase edits",
+  "summary": "test null edit",
+  "maxlag": 5,
+  "editGroupsUrlSchema": "([[:toollabs:editgroups/b/OR/${batch_id}|details]])",
+  "engineConfig": {
+    "mode": "row-based",
+    "facets": []
+  },
+  "tag" : "openrefine-${version}",
+  "maxEditsPerMinute": 60
+}

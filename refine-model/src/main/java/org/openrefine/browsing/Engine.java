@@ -93,7 +93,7 @@ public class Engine {
         _state = state;
         _config = config;
         _facets = config.getFacetConfigs().stream()
-                .map(fc -> fc.apply(state.getColumnModel()))
+                .map(fc -> fc.apply(state.getColumnModel(), state.getOverlayModels()))
                 .collect(Collectors.toList());
         _facetsState = null;
 

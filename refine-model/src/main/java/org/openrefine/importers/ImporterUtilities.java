@@ -55,9 +55,11 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
 
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.messages.OpenRefineMessage;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -72,7 +74,7 @@ public class ImporterUtilities {
 
     static public Serializable parseCellValue(String text) {
         if (text.length() > 0) {
-            String text2 = text.trim();
+            String text2 = CharMatcher.whitespace().trimFrom(text);
             if (text2.length() > 0) {
                 try {
                     return Long.parseLong(text2);
@@ -117,7 +119,7 @@ public class ImporterUtilities {
     }
 
     static public void appendColumnName(List<String> columnNames, int index, String name) {
-        name = name.trim();
+        name = CharMatcher.whitespace().trimFrom(name);
 
         while (columnNames.size() <= index) {
             columnNames.add("");
@@ -136,12 +138,12 @@ public class ImporterUtilities {
     static public ColumnModel setupColumns(List<String> columnNames) {
         Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
         for (int c = 0; c < columnNames.size(); c++) {
-            String cell = columnNames.get(c).trim();
+            String cell = CharMatcher.whitespace().trimFrom(columnNames.get(c));
             if (cell.isEmpty()) {
                 cell = "Column";
             } else if (cell.startsWith("\"") && cell.endsWith("\"")) {
                 // FIXME: is trimming quotation marks appropriate?
-                cell = cell.substring(1, cell.length() - 1).trim();
+                cell = CharMatcher.whitespace().trimFrom(cell.substring(1, cell.length() - 1));
             }
 
             if (nameToIndex.containsKey(cell)) {
@@ -225,7 +227,7 @@ public class ImporterUtilities {
         if (c < columns.size()) {
             return columnModel;
         } else if (c == columns.size()) {
-            String prefix = "Column ";
+            String prefix = OpenRefineMessage.importer_utilities_column() + " ";
             int i = c + 1;
             while (true) {
                 String columnName = prefix + i;

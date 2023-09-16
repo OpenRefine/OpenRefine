@@ -37,6 +37,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class MD5 extends PureFunction {
@@ -50,12 +52,12 @@ public class MD5 extends PureFunction {
             String s = (o instanceof String) ? (String) o : o.toString();
             return DigestUtils.md5Hex(s);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+        return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the MD5 hash of an object. If fed something other than a string (array, number, date, etc.), md5() will convert it to a string and deliver the hash of the string.";
+        return FunctionDescription.str_md5();
     }
 
     @Override

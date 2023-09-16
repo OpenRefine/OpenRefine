@@ -63,8 +63,8 @@ describe(__filename, function () {
 
     cy.assertNotificationContainingText('Text transform on cells in column b');
 
-    cy.assertCellEquals(0, 'b', 'replace expects 3 strings, or 1 string, 1 regex, and 1 string');
-    cy.assertCellEquals(1, 'b', 'replace expects 3 strings, or 1 string, 1 regex, and 1 string');
-    cy.assertCellEquals(2, 'b', 'replace expects 3 strings, or 1 string, 1 regex, and 1 string');
+    cy.assertCellEquals(0, 'b', 'replace expects three strings, or one string, one regex, and one string');
+    cy.assertCellEquals(1, 'b', 'replace expects three strings, or one string, one regex, and one string');
+    cy.assertCellEquals(2, 'b', 'replace expects three strings, or one string, one regex, and one string');
   });
 });

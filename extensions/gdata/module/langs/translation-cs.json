@@ -3,16 +3,16 @@
     "gdata-auth/authorize-label": "OpenRefine – autorizace",
     "gdata-exporter/enter-filename": "Zadejte název souboru pro export projektu na Disk Google",
     "gdata-exporter/upload-google-sheets-success": "Projekt se nahrál na Disk Google ",
-    "gdata-exporter/enter-spreadsheet": "Zadejte název pro tabulku Google",
+    "gdata-exporter/enter-spreadsheet": "Zadejte název Google tabulky",
     "gdata-exporter/new-spreadsheet": "Nová tabulka Google",
     "gdata-exporter/upload-google-drive-success": "Projekt se nahrál na Disk Google ",
     "gdata-exporter/upload-error": "Chyba nahrávání: ",
     "gdata-exporter/uploading": "Nahrávání…",
-    "gdata-exporter/google-sheets": "Tabulky Google",
+    "gdata-exporter/google-sheets": "Tabulky Google…",
     "gdata-exporter/export-to-google-drive": "Zálohovat projekt OpenRefine na Disk Google…",
     "gdata-source/updated": "Aktualizováno",
     "gdata-source/authors": "Autoři",
-    "gdata-source/title": "Titul",
+    "gdata-source/title": "Název",
     "gdata-source/type": "Typ",
     "gdata-source/alert-url": "Musíte určit webovou adresu (URL) pro import.",
     "gdata-parsing/store-cell": "Uložit prádné buňky jako null",
@@ -43,5 +43,6 @@
     "gdata-import/import-by-url": "Importovat <em>veřejný</em> sešit Googlu pomocí URL:",
     "gdata-import/title": "Veřejné dokumenty",
     "gdata-import/creating": "Vytváření projektu…",
-    "gdata-import/preparing": "Příprava…"
+    "gdata-import/preparing": "Příprava…",
+    "gdata-parsing/disable-auto-preview": "Vypnout automatický náhled"
 }

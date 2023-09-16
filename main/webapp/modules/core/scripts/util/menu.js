@@ -41,7 +41,7 @@ MenuSystem.showMenu = function(elmt, onDismiss) {
     MenuSystem._overlay = $('<div>&nbsp;</div>')
     .addClass("menu-overlay")
     .appendTo(document.body)
-    .click(MenuSystem.dismissAll);
+    .on('click',MenuSystem.dismissAll);
   }
 
   elmt.css("z-index", 1010 + MenuSystem._layers.length).appendTo(document.body);
@@ -70,10 +70,10 @@ MenuSystem.dismissUntil = function(level) {
   for (var i = MenuSystem._layers.length - 1; i >= level; i--) {
     var layer = MenuSystem._layers[i];
 
-    $(document).unbind("keydown", layer.keyHandler);
+    $(document).off("keydown", layer.keyHandler);
 
     layer.elmt.remove();
-    layer.elmt.unbind();
+    layer.elmt.off();
     layer.onDismiss();
   }
   MenuSystem._layers = MenuSystem._layers.slice(0, level);
@@ -143,7 +143,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           '<td width="1%"><img src="images/right-arrow.png" /></td>' +
           '</tr></table>'
         );
-        menuItem.mouseenter(function() {
+        menuItem.on('mouseenter',function() {
           MenuSystem.dismissUntil(level);
 
           menuItem.addClass("menu-expanded");
@@ -161,16 +161,22 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           MenuSystem.createAndShowStandardMenu(item.submenu, this, options);
         });
       } else {
-        menuItem.html(item.label).click(function(evt) {
-          item.click.call(this, evt);
-          MenuSystem.dismissAll();
-        });
-        if ("tooltip" in item) {
-          menuItem.attr("title", item.tooltip);
+        if ("download" in item) {
+          menuItem.html(item.label);
+          menuItem.attr("href",item.download);
+          menuItem.attr("download","");
+        } else {
+          menuItem.html(item.label).on('click', function (evt) {
+            item.click.call(this, evt);
+            MenuSystem.dismissAll();
+          });
+          if ("tooltip" in item) {
+            menuItem.attr("title", item.tooltip);
+          }
+          menuItem.on('mouseenter', function () {
+            MenuSystem.dismissUntil(level);
+          });
         }
-        menuItem.mouseenter(function() {
-          MenuSystem.dismissUntil(level);
-        });
       }
     } else if ("heading" in item) {
       $('<div></div>').addClass("menu-section").text(item.heading).appendTo(menu);

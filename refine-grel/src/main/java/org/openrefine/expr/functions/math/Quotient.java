@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.math;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Quotient extends PureFunction {
@@ -43,16 +45,16 @@ public class Quotient extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if (args.length == 2 && args[0] != null && args[0] instanceof Number
-                && args[1] != null && args[1] instanceof Number) {
+        if (args.length == 2 && args[0] instanceof Number
+                && args[1] instanceof Number) {
             return Math.floor((((Number) args[0]).doubleValue() / ((Number) args[1]).doubleValue()));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+        return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.";
+        return FunctionDescription.math_quotient();
     }
 
     @Override

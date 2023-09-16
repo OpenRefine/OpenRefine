@@ -37,6 +37,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class RandomNumber extends PureFunction {
@@ -45,18 +47,31 @@ public class RandomNumber extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if (args.length == 2 && args[0] != null && args[0] instanceof Number
-                && args[1] != null && args[1] instanceof Number && ((Number) args[0]).intValue() < ((Number) args[1]).intValue()) {
-            int randomNum = ThreadLocalRandom.current().nextInt(((Number) args[0]).intValue(), ((Number) args[1]).intValue() + 1);
-            return randomNum;
+        if (args.length == 0) {
+            // Return a double in the interval 0.0 <= x < 1.0
+            return ThreadLocalRandom.current().nextDouble();
+        } else if (args.length == 2) {
+            // Return a double in the interval lowerBound <= x < upperBound
+            if (args[0] instanceof Number && args[1] instanceof Number
+                    && ((Number) args[0]).intValue() < ((Number) args[1]).intValue()) {
+
+                // check if arguments are long
+                if (args[0] instanceof Long && args[1] instanceof Long) {
+                    // return a long
+                    return ThreadLocalRandom.current().nextLong(((Number) args[0]).longValue(), ((Number) args[1]).longValue() + 1);
+                } else {
+                    // return a double
+                    return ThreadLocalRandom.current().nextDouble(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
+                }
+            }
         }
-        return new EvalError(
-                ControlFunctionRegistry.getFunctionName(this) + " expects two numbers, the first must be less than the second");
+        // the first must be less than the second");
+        return new EvalError(EvalErrorMessage.expects_no_arg_or_two_numbers_asc(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.";
+        return FunctionDescription.math_random_number();
     }
 
     @Override

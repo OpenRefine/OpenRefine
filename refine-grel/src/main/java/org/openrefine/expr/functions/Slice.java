@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.HasFieldsList;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Slice extends PureFunction {
@@ -126,7 +127,7 @@ public class Slice extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Given a string, returns the substring starting from character index from, and up to character index to. If the to argument is omitted, will output to the end of s. Remember character indices start from zero. Given an array, returns a sub-array from the first index provided up to and including the last index provided. If the to value is omitted, it is understood to be the end of the array. Slice only.";
+        return FunctionDescription.fun_slice();
 
     }
 

@@ -40,6 +40,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.HasFieldsList;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Length extends PureFunction {
@@ -67,12 +69,12 @@ public class Length extends PureFunction {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array or a string");
+        return new EvalError(EvalErrorMessage.expects_one_array_or_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the length of string s as a number, or the size of array a, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0.";
+        return FunctionDescription.fun_length();
     }
 
     @Override

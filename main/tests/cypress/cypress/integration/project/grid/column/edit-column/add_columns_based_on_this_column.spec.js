@@ -4,7 +4,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', [
       'Edit column',
-      'Add column based on this column...',
+      'Add column based on this column…',
     ]);
     cy.waitForDialogPanel();
 
@@ -23,7 +23,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', [
       'Edit column',
-      'Add column based on this column...',
+      'Add column based on this column…',
     ]);
     cy.waitForDialogPanel();
 
@@ -43,7 +43,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', [
       'Edit column',
-      'Add column based on this column...',
+      'Add column based on this column…',
     ]);
     cy.waitForDialogPanel();
 

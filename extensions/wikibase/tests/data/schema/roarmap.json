@@ -1,0 +1,212 @@
+{
+  "itemDocuments" : [ {
+    "type" : "wbitemeditexpr",
+    "subject" : {
+      "type" : "wbitemvariable",
+      "columnName" : "oapolicy_name"
+    },
+    "nameDescs" : [ {
+      "type" : "wbnamedescexpr",
+      "name_type" : "LABEL",
+      "value" : {
+        "type" : "wbmonolingualexpr",
+        "language" : {
+          "type" : "wblanguageconstant",
+          "id" : "en",
+          "label" : "en"
+        },
+        "value" : {
+          "type" : "wbstringvariable",
+          "columnName" : "oapolicy_name"
+        }
+      }
+    } ],
+    "statementGroups" : [ {
+      "type" : "wbstatementgroupexpr",
+      "property" : {
+        "type" : "wbpropconstant",
+        "pid" : "P4203",
+        "label" : "ROARMAP ID",
+        "datatype" : "external-id"
+      },
+      "statements" : [ {
+        "type" : "wbstatementexpr",
+        "value" : {
+          "type" : "wbstringvariable",
+          "columnName" : "roarmap_id"
+        },
+        "qualifiers" : [ ],
+        "references" : [ ]
+      } ]
+    }, {
+      "type" : "wbstatementgroupexpr",
+      "property" : {
+        "type" : "wbpropconstant",
+        "pid" : "P1891",
+        "label" : "signatory",
+        "datatype" : "wikibase-item"
+      },
+      "statements" : [ {
+        "type" : "wbstatementexpr",
+        "value" : {
+          "type" : "wbitemvariable",
+          "columnName" : "eprint - title"
+        },
+        "qualifiers" : [ ],
+        "references" : [ {
+          "type" : "wbreferences",
+          "snaks" : [ {
+            "prop" : {
+              "type" : "wbpropconstant",
+              "pid" : "P4203",
+              "label" : "ROARMAP ID",
+              "datatype" : "external-id"
+            },
+            "value" : {
+              "type" : "wbstringvariable",
+              "columnName" : "roarmap_id"
+            }
+          }, {
+            "prop" : {
+              "type" : "wbpropconstant",
+              "pid" : "P813",
+              "label" : "retrieved",
+              "datatype" : "time"
+            },
+            "value" : {
+              "type" : "wbdateconstant",
+              "value" : "2017-09-18"
+            }
+          } ]
+        } ]
+      } ]
+    }, {
+      "type" : "wbstatementgroupexpr",
+      "property" : {
+        "type" : "wbpropconstant",
+        "pid" : "P571",
+        "label" : "inception",
+        "datatype" : "time"
+      },
+      "statements" : [ {
+        "type" : "wbstatementexpr",
+        "value" : {
+          "type" : "wbdatevariable",
+          "columnName" : "eprint - policy_adoption"
+        },
+        "qualifiers" : [ ],
+        "references" : [ {
+          "type" : "wbreferences",
+          "snaks" : [ {
+            "prop" : {
+              "type" : "wbpropconstant",
+              "pid" : "P4203",
+              "label" : "ROARMAP ID",
+              "datatype" : "external-id"
+            },
+            "value" : {
+              "type" : "wbstringvariable",
+              "columnName" : "roarmap_id"
+            }
+          }, {
+            "prop" : {
+              "type" : "wbpropconstant",
+              "pid" : "P813",
+              "label" : "retrieved",
+              "datatype" : "time"
+            },
+            "value" : {
+              "type" : "wbdateconstant",
+              "value" : "2017-09-18"
+            }
+          } ]
+        } ]
+      } ]
+    }, {
+      "type" : "wbstatementgroupexpr",
+      "property" : {
+        "type" : "wbpropconstant",
+        "pid" : "P31",
+        "label" : "instance of",
+        "datatype" : "wikibase-item"
+      },
+      "statements" : [ {
+        "type" : "wbstatementexpr",
+        "value" : {
+          "type" : "wbitemconstant",
+          "qid" : "Q2000006",
+          "label" : "open access policy"
+        },
+        "qualifiers" : [ ],
+        "references" : [ {
+          "type" : "wbreferences",
+          "snaks" : [ {
+            "prop" : {
+              "type" : "wbpropconstant",
+              "pid" : "P4203",
+              "label" : "ROARMAP ID",
+              "datatype" : "external-id"
+            },
+            "value" : {
+              "type" : "wbstringvariable",
+              "columnName" : "roarmap_id"
+            }
+          }, {
+            "prop" : {
+              "type" : "wbpropconstant",
+              "pid" : "P813",
+              "label" : "retrieved",
+              "datatype" : "time"
+            },
+            "value" : {
+              "type" : "wbdateconstant",
+              "value" : "2017-09-18"
+            }
+          } ]
+        } ]
+      } ]
+    }, {
+      "type" : "wbstatementgroupexpr",
+      "property" : {
+        "type" : "wbpropconstant",
+        "pid" : "P953",
+        "label" : "full work available at",
+        "datatype" : "url"
+      },
+      "statements" : [ {
+        "type" : "wbstatementexpr",
+        "value" : {
+          "type" : "wbstringvariable",
+          "columnName" : "first_policy_url"
+        },
+        "qualifiers" : [ ],
+        "references" : [ {
+          "type" : "wbreferences",
+          "snaks" : [ {
+            "prop" : {
+              "type" : "wbpropconstant",
+              "pid" : "P4203",
+              "label" : "ROARMAP ID",
+              "datatype" : "external-id"
+            },
+            "value" : {
+              "type" : "wbstringvariable",
+              "columnName" : "roarmap_id"
+            }
+          }, {
+            "prop" : {
+              "type" : "wbpropconstant",
+              "pid" : "P813",
+              "label" : "retrieved",
+              "datatype" : "time"
+            },
+            "value" : {
+              "type" : "wbdateconstant",
+              "value" : "2017-09-18"
+            }
+          } ]
+        } ]
+      } ]
+    } ]
+  } ]
+}

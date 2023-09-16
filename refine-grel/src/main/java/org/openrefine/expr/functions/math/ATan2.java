@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.math;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class ATan2 extends PureFunction {
@@ -43,16 +45,16 @@ public class ATan2 extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if (args.length == 2 && args[0] != null && args[0] instanceof Number
-                && args[1] != null && args[1] instanceof Number) {
+        if (args.length == 2 && args[0] instanceof Number
+                && args[1] instanceof Number) {
             return Math.atan2(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
+        return new EvalError(EvalErrorMessage.expects_one_number(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta.";
+        return FunctionDescription.math_atan2();
     }
 
     @Override

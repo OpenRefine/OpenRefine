@@ -132,8 +132,7 @@ li.fbs-nomatch {
     border: 1px solid #f5f5f5;
 }
 
-h1#fbs-flyout-title,
-li.fbs-selected .fbs-item-name { 
+h1#fbs-flyout-title { 
     color: #f60;
 }
 
@@ -247,7 +246,7 @@ Freebase Suggest Structure
 .fbs-flyout-pane { width: 319px; margin-left: 3px; } /* flyout container, 3px narrower on each side to create drawer appearance */
 
 ul.fbs-list {    
-    max-height: 320px;  
+    max-height: 400px;
     overflow: auto;
     overflow-x: hidden;
     border-bottom: 0;
@@ -324,6 +323,13 @@ a.fbs-more-link {
     font-size: 1.4em;
     line-height: 1.4em;
     background: #f4f8fb;
+}
+
+.fbs-item-name span {
+    white-space: normal;
+    line-height: 1.4em;
+    min-height: 1.4em;
+    max-height: 2.8em;
 }
 
 /* result name */

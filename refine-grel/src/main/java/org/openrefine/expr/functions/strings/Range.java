@@ -30,8 +30,12 @@ package org.openrefine.expr.functions.strings;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.CharMatcher;
+
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 /**
@@ -67,9 +71,9 @@ public class Range extends PureFunction {
             return createRangeWithThreeGivenArguments(args);
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                + "are the start and the end of the range respectively and c is the step (increment)");
+        // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
+        // + "are the start and the end of the range respectively and c is the step (increment)");
+        return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     /**
@@ -104,31 +108,31 @@ public class Range extends PureFunction {
 
         // Check for valid string argument(s)
         if (range != null && range instanceof String) {
-            String rangeString = ((String) range).trim();
+            String rangeString = CharMatcher.whitespace().trimFrom((String) range);
             String[] rangeValues = rangeString.split(SEPARATOR);
 
             if (hasCommaAsLastCharacter(rangeString)) {
-                return new EvalError("the last character in the input string should not be a comma");
+                return new EvalError(EvalErrorMessage.expects_last_character_not_comma());
             }
 
             try {
                 if (rangeValues.length == 1) {
-                    rangeEnd = Integer.parseInt(rangeValues[0].trim());
+                    rangeEnd = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[0]));
                     return createRange(rangeStart, rangeEnd, rangeStep);
                 } else if (rangeValues.length == 2) {
-                    rangeStart = Integer.parseInt(rangeValues[0].trim());
-                    rangeEnd = Integer.parseInt(rangeValues[1].trim());
+                    rangeStart = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[0]));
+                    rangeEnd = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[1]));
                     return createRange(rangeStart, rangeEnd, rangeStep);
                 } else if (rangeValues.length == 3) {
-                    rangeStart = Integer.parseInt(rangeValues[0].trim());
-                    rangeEnd = Integer.parseInt(rangeValues[1].trim());
-                    rangeStep = Integer.parseInt(rangeValues[2].trim());
+                    rangeStart = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[0]));
+                    rangeEnd = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[1]));
+                    rangeStep = Integer.parseInt(CharMatcher.whitespace().trimFrom(rangeValues[2]));
                     return createRange(rangeStart, rangeEnd, rangeStep);
                 }
             } catch (NumberFormatException nfe) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                        + "are the start and the end of the range respectively and c is the step (increment)");
+                // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
+                // + "are the start and the end of the range respectively and c is the step (increment)");
+                return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
 
@@ -144,15 +148,15 @@ public class Range extends PureFunction {
                 rangeEnd = Integer.parseInt(String.valueOf(range));
                 return createRange(DEFAULT_START, rangeEnd, DEFAULT_STEP);
             } catch (NumberFormatException nfe) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                        + "are the start and the end of the range respectively and c is the step (increment)");
+                // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
+                // + "are the start and the end of the range respectively and c is the step (increment)");
+                return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                + "are the start and the end of the range respectively and c is the step (increment)");
+        // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
+        // + "are the start and the end of the range respectively and c is the step (increment)");
+        return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     /**
@@ -178,9 +182,9 @@ public class Range extends PureFunction {
         int rangeStep = DEFAULT_STEP;
 
         if (firstArg == null || secondArg == null) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                    + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                    + "are the start and the end of the range respectively and c is the step (increment)");
+            // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
+            // + "are the start and the end of the range respectively and c is the step (increment)");
+            return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
         }
 
         boolean hasString = false;
@@ -203,12 +207,12 @@ public class Range extends PureFunction {
             secondArg = ((Double) secondArg).intValue();
         }
 
-        String firstArgStringified = String.valueOf(firstArg).trim();
-        String secondArgStringified = String.valueOf(secondArg).trim();
+        String firstArgStringified = CharMatcher.whitespace().trimFrom(String.valueOf(firstArg));
+        String secondArgStringified = CharMatcher.whitespace().trimFrom(String.valueOf(secondArg));
         String thirdArgStringified = "";
 
         if (hasCommaAsLastCharacter(firstArgStringified) || hasCommaAsLastCharacter(secondArgStringified)) {
-            return new EvalError("the last character in the input string should not be a comma");
+            return new EvalError(EvalErrorMessage.expects_last_character_not_comma());
         }
 
         // Check if the strings are valid strings (e.g. range("1, 2", "3, 4") should fail but
@@ -223,12 +227,12 @@ public class Range extends PureFunction {
                 hasThreeArguments = true;
 
                 if (firstArgArray.length == 1) {
-                    secondArgStringified = secondArgArray[0].trim();
-                    thirdArgStringified = secondArgArray[1].trim();
+                    secondArgStringified = CharMatcher.whitespace().trimFrom(secondArgArray[0]);
+                    thirdArgStringified = CharMatcher.whitespace().trimFrom(secondArgArray[1]);
                 } else {
-                    firstArgStringified = firstArgArray[0].trim();
-                    secondArgStringified = firstArgArray[1].trim();
-                    thirdArgStringified = secondArgArray[0].trim();
+                    firstArgStringified = CharMatcher.whitespace().trimFrom(firstArgArray[0]);
+                    secondArgStringified = CharMatcher.whitespace().trimFrom(firstArgArray[1]);
+                    thirdArgStringified = CharMatcher.whitespace().trimFrom(secondArgArray[0]);
                 }
 
             } else if (combinedArrayLength == 2) {
@@ -248,14 +252,14 @@ public class Range extends PureFunction {
                 return createRange(rangeStart, rangeEnd, rangeStep);
             }
         } catch (NumberFormatException nfe) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                    + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                    + "are the start and the end of the range respectively and c is the step (increment)");
+            // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
+            // + "are the start and the end of the range respectively and c is the step (increment)");
+            return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                + "are the start and the end of the range respectively and c is the step (increment)");
+        // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
+        // + "are the start and the end of the range respectively and c is the step (increment)");
+        return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     /**
@@ -284,14 +288,14 @@ public class Range extends PureFunction {
         }
 
         try {
-            int rangeStart = Integer.parseInt(String.valueOf(firstArg).trim());
-            int rangeEnd = Integer.parseInt(String.valueOf(secondArg).trim());
-            int rangeStep = Integer.parseInt(String.valueOf(thirdArg).trim());
+            int rangeStart = Integer.parseInt(CharMatcher.whitespace().trimFrom(String.valueOf(firstArg)));
+            int rangeEnd = Integer.parseInt(CharMatcher.whitespace().trimFrom(String.valueOf(secondArg)));
+            int rangeStep = Integer.parseInt(CharMatcher.whitespace().trimFrom(String.valueOf(thirdArg)));
             return createRange(rangeStart, rangeEnd, rangeStep);
         } catch (NumberFormatException nfe) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                    + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                    + "are the start and the end of the range respectively and c is the step (increment)");
+            // + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
+            // + "are the start and the end of the range respectively and c is the step (increment)");
+            return new EvalError(EvalErrorMessage.expects_one_string_in_form_abc(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
 
@@ -319,7 +323,7 @@ public class Range extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).";
+        return FunctionDescription.str_range();
     }
 
     @Override

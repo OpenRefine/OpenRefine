@@ -3,8 +3,8 @@ describe(__filename, function () {
     const fixture = [
       ['NDB_No', 'Shrt_Desc'],
       ['01001', 'THIS    IS A     TEST'],
-      ['01002', 'THIS    IS ANOTHER     TEST'],
-      ['01003', 'THIS IS a THIRD TEST'],
+      ['01002', 'THIS    IS ANOTHER     TEST'], // this line contains U+00A0 (non-breaking space)
+      ['01003', 'THIS IS a THIRD TEST'], // this one too
     ];
     cy.loadAndVisitProject(fixture);
 

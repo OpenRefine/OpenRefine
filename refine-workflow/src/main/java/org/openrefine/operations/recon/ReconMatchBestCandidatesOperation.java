@@ -49,6 +49,7 @@ import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.OperationDescription;
 
 public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation {
 
@@ -69,7 +70,7 @@ public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation 
 
     @Override
     public String getDescription() {
-        return "Match each cell to its best recon candidate in column " + _columnName;
+        return OperationDescription.recon_match_best_candidates_brief(_columnName);
     }
 
     @Override

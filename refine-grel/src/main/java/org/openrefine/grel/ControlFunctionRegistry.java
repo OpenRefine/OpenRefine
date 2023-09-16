@@ -39,18 +39,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.openrefine.expr.functions.Coalesce;
-import org.openrefine.expr.functions.Cross;
-import org.openrefine.expr.functions.FacetCount;
-import org.openrefine.expr.functions.Get;
-import org.openrefine.expr.functions.HasField;
-import org.openrefine.expr.functions.Jsonize;
-import org.openrefine.expr.functions.Length;
-import org.openrefine.expr.functions.Slice;
-import org.openrefine.expr.functions.ToDate;
-import org.openrefine.expr.functions.ToNumber;
-import org.openrefine.expr.functions.ToString;
-import org.openrefine.expr.functions.Type;
+import org.openrefine.expr.functions.*;
 import org.openrefine.expr.functions.arrays.InArray;
 import org.openrefine.expr.functions.arrays.Join;
 import org.openrefine.expr.functions.arrays.Reverse;
@@ -99,40 +88,7 @@ import org.openrefine.expr.functions.math.Sinh;
 import org.openrefine.expr.functions.math.Sum;
 import org.openrefine.expr.functions.math.Tan;
 import org.openrefine.expr.functions.math.Tanh;
-import org.openrefine.expr.functions.strings.Chomp;
-import org.openrefine.expr.functions.strings.Contains;
-import org.openrefine.expr.functions.strings.Diff;
-import org.openrefine.expr.functions.strings.EndsWith;
-import org.openrefine.expr.functions.strings.Escape;
-import org.openrefine.expr.functions.strings.Find;
-import org.openrefine.expr.functions.strings.Fingerprint;
-import org.openrefine.expr.functions.strings.IndexOf;
-import org.openrefine.expr.functions.strings.LastIndexOf;
-import org.openrefine.expr.functions.strings.MD5;
-import org.openrefine.expr.functions.strings.Match;
-import org.openrefine.expr.functions.strings.NGram;
-import org.openrefine.expr.functions.strings.NGramFingerprint;
-import org.openrefine.expr.functions.strings.ParseJson;
-import org.openrefine.expr.functions.strings.Partition;
-import org.openrefine.expr.functions.strings.Phonetic;
-import org.openrefine.expr.functions.strings.RPartition;
-import org.openrefine.expr.functions.strings.Range;
-import org.openrefine.expr.functions.strings.Reinterpret;
-import org.openrefine.expr.functions.strings.Replace;
-import org.openrefine.expr.functions.strings.ReplaceChars;
-import org.openrefine.expr.functions.strings.SHA1;
-import org.openrefine.expr.functions.strings.SmartSplit;
-import org.openrefine.expr.functions.strings.Split;
-import org.openrefine.expr.functions.strings.SplitByCharType;
-import org.openrefine.expr.functions.strings.SplitByLengths;
-import org.openrefine.expr.functions.strings.StartsWith;
-import org.openrefine.expr.functions.strings.ToLowercase;
-import org.openrefine.expr.functions.strings.ToTitlecase;
-import org.openrefine.expr.functions.strings.ToUppercase;
-import org.openrefine.expr.functions.strings.Trim;
-import org.openrefine.expr.functions.strings.Unescape;
-import org.openrefine.expr.functions.strings.Unicode;
-import org.openrefine.expr.functions.strings.UnicodeType;
+import org.openrefine.expr.functions.strings.*;
 import org.openrefine.expr.functions.xml.InnerXml;
 import org.openrefine.expr.functions.xml.OwnText;
 import org.openrefine.expr.functions.xml.Parent;
@@ -214,10 +170,13 @@ public class ControlFunctionRegistry {
         registerFunction("toString", new ToString());
         registerFunction("toNumber", new ToNumber());
         registerFunction("toDate", new ToDate());
+        registerFunction("timeSinceUnixEpochToDate", new TimeSinceUnixEpochToDate());
 
         registerFunction("toUppercase", new ToUppercase());
         registerFunction("toLowercase", new ToLowercase());
         registerFunction("toTitlecase", new ToTitlecase());
+
+        registerFunction("detectLanguage", new DetectLanguage());
 
         registerFunction("hasField", new HasField());
         registerFunction("get", new Get());
@@ -225,6 +184,7 @@ public class ControlFunctionRegistry {
         registerFunction("substring", new Slice());
         registerFunction("replace", new Replace());
         registerFunction("replaceChars", new ReplaceChars());
+        registerFunction("replaceEach", new ReplaceEach());
         registerFunction("range", new Range());
         registerFunction("split", new Split());
         registerFunction("smartSplit", new SmartSplit());
@@ -237,6 +197,8 @@ public class ControlFunctionRegistry {
         registerFunction("contains", new Contains());
         registerFunction("escape", new Escape());
         registerFunction("unescape", new Unescape());
+        registerFunction("encode", new Encode());
+        registerFunction("decode", new Decode());
         registerFunction("length", new Length());
         registerFunction("sha1", new SHA1());
         registerFunction("md5", new MD5());
@@ -253,6 +215,8 @@ public class ControlFunctionRegistry {
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
         registerFunction("find", new Find());
+
+        registerFunction("parseUri", new ParseUri());
 
         // XML and HTML functions from JSoup
         registerFunction("parseXml", new ParseXml());
@@ -313,6 +277,7 @@ public class ControlFunctionRegistry {
         registerFunction("degrees", new Degrees());
         registerFunction("radians", new Radians());
         registerFunction("randomNumber", new RandomNumber());
+        registerFunction("random", new RandomNumber());
         registerFunction("gcd", new GreatestCommonDenominator());
         registerFunction("lcm", new LeastCommonMultiple());
         registerFunction("multinomial", new Multinomial());

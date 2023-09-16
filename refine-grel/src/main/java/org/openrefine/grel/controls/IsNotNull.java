@@ -33,11 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.grel.controls;
 
+import org.openrefine.grel.ControlDescription;
+
 public class IsNotNull extends IsTest {
 
     @Override
     public String getDescription() {
-        return "Returns whether o is not null";
+        return ControlDescription.is_not_null_desc();
     }
 
     @Override

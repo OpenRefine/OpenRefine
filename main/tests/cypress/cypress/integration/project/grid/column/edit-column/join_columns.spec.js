@@ -2,7 +2,7 @@ describe(__filename, function () {
   it('Ensures two columns are joined', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns...']);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns…']);
     cy.waitForDialogPanel();
 
     cy.get('input[column="NDB_No"]').check();
@@ -15,11 +15,11 @@ describe(__filename, function () {
   it('Ensures two columns are joined respecting the column ordering', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns...']);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns…']);
     cy.waitForDialogPanel();
 
     cy.get('input[column="NDB_No"]').check();
-    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]');
+    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]','top');
 
     cy.confirmDialogPanel();
 
@@ -29,7 +29,7 @@ describe(__filename, function () {
   it('Ensures two columns are joined with given seperator', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns...']);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns…']);
     cy.waitForDialogPanel();
 
     cy.get('input[column="NDB_No"]').check();
@@ -43,10 +43,10 @@ describe(__filename, function () {
   it('Ensures two columns are joined with given seperator with columns reorder', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns...']);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns…']);
     cy.waitForDialogPanel();
 
-    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]');
+    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]','top');
     cy.get('input[column="NDB_No"]').check();
     cy.get('input[bind="field_separatorInput"]').type(':-:');
 
@@ -58,7 +58,7 @@ describe(__filename, function () {
   it('Ensures three columns are joined and written into a new column', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns...']);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns…']);
     cy.waitForDialogPanel();
 
     cy.get('input[column="NDB_No"]').check();
@@ -79,7 +79,7 @@ describe(__filename, function () {
   it('Ensures three columns are joined and written into a new column with a given seperator', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns...']);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns…']);
     cy.waitForDialogPanel();
 
     cy.get('input[column="NDB_No"]').check();
@@ -105,7 +105,7 @@ describe(__filename, function () {
   it('Ensures columns are joined and original columns are deleted', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns...']);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns…']);
     cy.waitForDialogPanel();
 
     cy.get('button[bind="selectAllButton"]').click();

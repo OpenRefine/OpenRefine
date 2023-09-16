@@ -33,6 +33,7 @@ import static org.mockito.Mockito.when;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import org.mockito.Mockito;
@@ -97,8 +98,8 @@ public class EngineTests {
         FacetConfig facetConfigA = mock(FacetConfig.class);
         FacetConfig facetConfigAll = mock(FacetConfig.class);
 
-        when(facetConfigA.apply(Mockito.any(ColumnModel.class))).thenReturn(facetA);
-        when(facetConfigAll.apply(Mockito.any(ColumnModel.class))).thenReturn(facetAll);
+        when(facetConfigA.apply(Mockito.any(ColumnModel.class), Mockito.any(Map.class))).thenReturn(facetA);
+        when(facetConfigAll.apply(Mockito.any(ColumnModel.class), Mockito.any(Map.class))).thenReturn(facetAll);
         when(facetA.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0));
         when(facetAll.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0));
         when(facetA.getFacetResult(new FacetStateStub(65, 35))).thenReturn(new FacetStateStub(65, 35));

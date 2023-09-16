@@ -72,7 +72,7 @@ ExtensionBar.prototype._createMenuButton = function(label, submenu) {
 
   var menuItem = $("<a>").addClass("button").append('<span class="button-menu">' + label + '</span>');
 
-  menuItem.click(function(evt) {
+  menuItem.on('click',function(evt) {
     MenuSystem.createAndShowStandardMenu(
         submenu,
         this,

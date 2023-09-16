@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openrefine.expr.ExpressionUtils;
@@ -44,6 +45,7 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.overlay.OverlayModel;
 
 public class Template {
 
@@ -69,7 +71,8 @@ public class Template {
         _separator = separator;
     }
 
-    public void writeRows(Iterable<IndexedRow> rows, Writer writer, ColumnModel columnModel, int limit) throws IOException {
+    public void writeRows(Iterable<IndexedRow> rows, Writer writer, ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            int limit) throws IOException {
         Properties bindings = ExpressionUtils.createBindings();
         if (_prefix != null) {
             writer.write(_prefix);
@@ -80,7 +83,7 @@ public class Template {
                 break;
             }
 
-            internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel);
+            internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels, null);
             total++;
         }
         if (_suffix != null) {
@@ -88,7 +91,8 @@ public class Template {
         }
     }
 
-    public void writeRecords(Iterable<Record> records, Writer writer, ColumnModel columnModel, int limit) throws IOException {
+    public void writeRecords(Iterable<Record> records, Writer writer, ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            int limit) throws IOException {
         Properties bindings = ExpressionUtils.createBindings();
         if (_prefix != null) {
             writer.write(_prefix);
@@ -103,7 +107,7 @@ public class Template {
                 if (limit > 0 && total >= limit) {
                     break;
                 }
-                internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel);
+                internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel, overlayModels, record);
                 bindings.remove("recordIndex");
                 total++;
             }
@@ -113,13 +117,14 @@ public class Template {
         }
     }
 
-    public void internalVisit(long rowIndex, Row row, long total, Writer writer, Properties bindings, ColumnModel columnModel)
+    public void internalVisit(long rowIndex, Row row, long total, Writer writer, Properties bindings,
+            ColumnModel columnModel, Map<String, OverlayModel> overlayModels, Record record)
             throws IOException {
         if (total > 0 && _separator != null) {
             writer.write(_separator);
         }
 
-        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, null, null, null);
+        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, null, null, overlayModels);
         for (Fragment f : _fragments) {
             if (f instanceof StaticFragment) {
                 writer.write(((StaticFragment) f).text);

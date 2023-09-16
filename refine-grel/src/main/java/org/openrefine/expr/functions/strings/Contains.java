@@ -36,6 +36,7 @@ package org.openrefine.expr.functions.strings;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Contains extends PureFunction {
@@ -64,7 +65,7 @@ public class Contains extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns a boolean indicating whether s contains sub, which is either a substring or a regex pattern. For example, \"food\".contains(\"oo\") returns true.";
+        return FunctionDescription.str_contains();
     }
 
     @Override

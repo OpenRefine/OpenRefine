@@ -33,13 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.strings;
 
-import org.openrefine.clustering.binning.ColognePhoneticKeyer;
-import org.openrefine.clustering.binning.DoubleMetaphoneKeyer;
-import org.openrefine.clustering.binning.Metaphone3Keyer;
-import org.openrefine.clustering.binning.MetaphoneKeyer;
-import org.openrefine.clustering.binning.SoundexKeyer;
+import org.openrefine.clustering.binning.*;
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Phonetic extends PureFunction {
@@ -59,7 +57,7 @@ public class Phonetic extends PureFunction {
             Object o1 = args[0];
             str = (o1 instanceof String) ? (String) o1 : o1.toString();
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+            return new EvalError(EvalErrorMessage.expects_at_least_one_arg(ControlFunctionRegistry.getFunctionName(this)));
         }
         String encoding = "metaphone3";
         if (args.length > 1) {
@@ -68,12 +66,12 @@ public class Phonetic extends PureFunction {
                 if (o2 instanceof String) {
                     encoding = ((String) o2).toLowerCase();
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                            + " expects a string for the second argument");
+                    // + " expects a string for the second argument");
+                    return new EvalError(EvalErrorMessage.expects_second_param_string(ControlFunctionRegistry.getFunctionName(this)));
                 }
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " expects a string for the second argument, the phonetic encoding to use.");
+                // + " expects a string for the second argument, the phonetic encoding to use.");
+                return new EvalError(EvalErrorMessage.expects_second_param_string_phonetic(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
         if (args.length < 3) {
@@ -88,19 +86,19 @@ public class Phonetic extends PureFunction {
             } else if ("cologne".equalsIgnoreCase(encoding)) {
                 return cologne.key(str);
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " doesn't know how to handle the '"
-                        + encoding + "' encoding.");
+                // + " doesn't know how to handle the '"
+                // + encoding + "' encoding.");
+                return new EvalError(EvalErrorMessage.unable_to_handle_encoding(ControlFunctionRegistry.getFunctionName(this), encoding));
             }
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                    + " expects one or two string arguments");
+            // + " expects one or two string arguments");
+            return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
 
     @Override
     public String getDescription() {
-        return "Returns a phonetic encoding of a string, based on an available phonetic algorithm. Can be one of the following supported phonetic methods: metaphone, doublemetaphone, metaphone3, soundex, cologne. Defaults to 'metaphone3'.";
+        return FunctionDescription.str_phonetic();
     }
 
     @Override

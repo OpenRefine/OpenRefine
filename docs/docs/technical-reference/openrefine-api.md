@@ -42,40 +42,40 @@ If the project creation is successful, you will be redirected to a URL of the fo
 From the project parameter you can extract the project id for use in future API calls. The content of the response is the HTML for the OpenRefine interface for viewing the project.
 
 ### Get project models: {#get-project-models}
-    
+
 > **Command:** _GET /command/core/get-models?_
 
       'project' : project id
 
 Recovers the models for the specific project. This includes  columns, records, overlay models, scripting. In the columnModel a list of the columns is displayed, key index and name, and column groupings.
-    
+
 ### Response: {#response}
 **On success:**
 ```JSON
-{  
-   "columnModel":{  
-      "columns":[  
-         {  
+{
+   "columnModel":{
+      "columns":[
+         {
             "cellIndex":0,
             "originalName":"email",
             "name":"email"
          },
-         {  
+         {
             "cellIndex":1,
             "originalName":"name",
             "name":"name"
          },
-         {  
+         {
             "cellIndex":2,
             "originalName":"state",
             "name":"state"
          },
-         {  
+         {
             "cellIndex":3,
             "originalName":"gender",
             "name":"gender"
          },
-         {  
+         {
             "cellIndex":4,
             "originalName":"purchase",
             "name":"purchase"
@@ -83,26 +83,26 @@ Recovers the models for the specific project. This includes  columns, records, o
       ],
       "keyCellIndex":0,
       "keyColumnName":"email",
-      "columnGroups":[  
+      "columnGroups":[
 
       ]
    },
-   "recordModel":{  
+   "recordModel":{
       "hasRecords":false
    },
-   "overlayModels":{  
+   "overlayModels":{
 
    },
-   "scripting":{  
-      "grel":{  
+   "scripting":{
+      "grel":{
          "name":"General Refine Expression Language (GREL)",
          "defaultExpression":"value"
       },
-      "jython":{  
+      "jython":{
          "name":"Python / Jython",
          "defaultExpression":"return value"
       },
-      "clojure":{  
+      "clojure":{
          "name":"Clojure",
          "defaultExpression":"value"
       }
@@ -110,7 +110,32 @@ Recovers the models for the specific project. This includes  columns, records, o
 }
 ```
 
+## Rename Project or Change Metadata
 
+> **Command:** _POST /command/core/set-project-metadata_
+
+Use this command to rename a proejct or change project metadata as described in [Project management](../manual/starting#project-management).
+
+In the form data
+
+      'project' : project id
+      'name': metadata field, one of: name, creator, contributors, subject, description, title, version, license, homepage, image, customMetadata
+      'value': metadata value
+
+- To rename a project, use the `name` metadata field.
+- To set custom metadata fields, use `customMetadata` and a JSON object `value`
+
+## Change Project Tags
+
+> **Command:** _POST /command/core/set-project-tags_
+
+Tags are used to organize projects, see  [Project management](../manual/starting#project-management).
+
+In the form data
+
+      'project' : project id
+      'old': tags to remove (comma-separated list)
+      'new': tags to add (comma-separated list)
 
 ## Apply operations {#apply-operations}
 
@@ -126,11 +151,11 @@ In the form data
 
 Example of a Valid JSON **Array**
 ```JSON
-'[  
-   {  
+'[
+   {
       "op":"core/column-addition",
       "description":"Create column zip type at index 15 based on column Zip Code 2 using expression grel:value.type()",
-      "engineConfig":{  
+      "engineConfig":{
          "mode":"row-based",
          "facets":[]
       },
@@ -140,10 +165,10 @@ Example of a Valid JSON **Array**
       "expression":"grel:value.type()",
       "onError":"set-to-blank"
    },
-   {  
+   {
       "op":"core/column-addition",
       "description":"Create column testing at index 15 based on column Zip Code 2 using expression grel:value.toString()0,5]",
-      "engineConfig":{  
+      "engineConfig":{
          "mode":"row-based",
          "facets":[]
       },
@@ -158,20 +183,20 @@ Example of a Valid JSON **Array**
 
 On success returns JSON response
 `{ "code" : "ok" }`
-    
+
 ## Export rows {#export-rows}
 
 > **Command:** _POST /command/core/export-rows_
 
 In the parameter
 
-      'project' : project id      
+      'project' : project id
       'format' : format... (e.g 'tsv', 'csv')
 
 In the form data
 
       'engine' : JSON string... (e.g. '{"facets":[],"mode":"row-based"}')
-      
+
 Returns exported row data in the specified format. The formats supported will depend on the version of OpenRefine you are using and any Extensions you have installed. The common formats include:
 
 * csv
@@ -180,29 +205,29 @@ Returns exported row data in the specified format. The formats supported will de
 * xlsx
 * ods
 * html
-    
+
 ## Delete project {#delete-project}
 
 > **Command:** _POST /command/core/delete-project_
 
       'project' : project id...
-      
+
 Returns JSON response
-    
+
 ## Check status of async processes {#check-status-of-async-processes}
 
 > **Command:** _GET /command/core/get-processes_
 
       'project' : project id...
-      
+
 Returns JSON response
 
 ## Get all projects metadata: {#get-all-projects-metadata}
-    
+
 > **Command:** _GET /command/core/get-all-project-metadata_
 
 Recovers the meta data for all projects. This includes the project's id, name, time of creation and last time of modification.
-    
+
 ### Response: {#response-1}
 ```json
 {
@@ -216,24 +241,24 @@ Recovers the meta data for all projects. This includes the project's id, name, t
     }
 }
 ```
-    
+
 ## Expression Preview {#expression-preview}
 > **Command:** _POST /command/core/preview-expression_
 
 Pass some expression (GREL or otherwise) to the server where it will be executed on selected columns and the result returned.
 
 ### Parameters: {#parameters}
-* **cellIndex**: _[column]_  
+* **cellIndex**: _[column]_
 The cell/column you wish to execute the expression on.
 * **rowIndices**: _[rows]_
 The rows to execute the expression on as JSON array. Example: `[0,1]`
-* **expression**: _[language]_:_[expression]_  
+* **expression**: _[language]_:_[expression]_
 The expression to execute. The language can either be grel, jython or clojure. Example: grel:value.toLowercase()
-* **project**: _[project_id]_  
+* **project**: _[project_id]_
 The project id to execute the expression on.
-* **repeat**: _[repeat]_  
+* **repeat**: _[repeat]_
 A boolean value (true/false) indicating whether or not this command should be repeated multiple times. A repeated command will be executed until the result of the current iteration equals the result of the previous iteration.
-* **repeatCount**: _[repeatCount]_  
+* **repeatCount**: _[repeatCount]_
 The maximum amount of times a command will be repeated.
 
 ### Response: {#response-2}

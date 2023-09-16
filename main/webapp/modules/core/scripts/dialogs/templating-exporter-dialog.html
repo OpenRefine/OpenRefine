@@ -4,28 +4,26 @@
     <div class="grid-layout layout-normal layout-full"><table>
       <tr>
         <td style="vertical-align: top"><div class="grid-layout layout-tighter layout-full" bind="controls"><table>
-          <tr><td bind="or_dialog_prefix"></td></tr>
-          <tr><td><div class="input-container"><textarea bind="prefixTextarea" class="code" wrap="off" style="height:5em;"></textarea></div></td></tr>
-          <tr><td bind="or_dialog_rowTmpl"></td></tr>
-          <tr><td><div class="input-container"><textarea bind="templateTextarea" class="code" wrap="off" style="height:20em;"></textarea></div></td></tr>
-          <tr><td bind="or_dialog_rowSep"></td></tr>
-          <tr><td><div class="input-container"><textarea bind="separatorTextarea" class="code" wrap="off" style="height:3em;"></textarea></div></td></tr>
-          <tr><td bind="or_dialog_suffix"></td></tr>
-          <tr><td><div class="input-container"><textarea bind="suffixTextarea" class="code" wrap="off" style="height:5em;"></textarea></div></td></tr>
+          <tr><td><label for="prefixTextareaId" bind="or_dialog_prefix"></label></td></tr>
+          <tr><td><div class="input-container"><textarea  spellcheck="false" bind="prefixTextarea" id="prefixTextareaId" class="code" wrap="off" style="min-height: 5em; min-width: 430px;"></textarea></div></td></tr>
+          <tr><td><label for="templateTextareaId" bind="or_dialog_rowTmpl"></label></td></tr>
+          <tr><td><div class="input-container"><textarea  spellcheck="false" bind="templateTextarea" id="templateTextareaId" class="code" wrap="off" style="min-height: 20em; min-width: 430px;"></textarea></div></td></tr>
+          <tr><td><label for="separatorTextareaId" bind="or_dialog_rowSep"></label></td></tr>
+          <tr><td><div class="input-container"><textarea  spellcheck="false" bind="separatorTextarea" id="separatorTextareaId" class="code" wrap="off" style="min-height: 3em; min-width: 430px;"></textarea></div></td></tr>
+          <tr><td><label for="suffixTextareaId" bind="or_dialog_suffix"></label></td></tr>
+          <tr><td><div class="input-container"><textarea  spellcheck="false" bind="suffixTextarea" id="suffixTextareaId" class="code" wrap="off" style="min-height: 5em; min-width: 430px;"></textarea></div></td></tr>
         </table></div></td>
         <td width="50%" style="vertical-align: top">
-          <div class="input-container"><textarea bind="previewTextarea" class="code" wrap="off" style="height: 40em;"></textarea></div>
+          <div class="input-container"><textarea aria-label="" spellcheck="false" bind="previewTextarea" class="code" wrap="off" style="min-height: 40em; min-width: 430px;"></textarea></div>
         </td>
       </tr>
     </table></div>
   </div>
-  <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-normal layout-full"><table><tr>
-    <td align="left">
+  <div class="dialog-footer" bind="dialogFooter" style="justify-content: space-between">
       <button class="button" bind="resetButton"></button>
-    </td>
-    <td style="text-align: right;">
+    <div class="dialog-footer-bg">
       <button class="button" bind="exportButton"></button>
       <button class="button" bind="cancelButton"></button>
-    </td>
-  </tr></table></div></div>
+    </div>
+  </div>
 </div>

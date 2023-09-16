@@ -129,6 +129,10 @@ const jsonValue = `[
   }
 ]`;
 describe(__filename, function () {
+  afterEach(() => {
+    cy.addProjectForDeletion();
+  });
+
   it('ensures rows and records display same in csv file', function () {
     cy.loadAndVisitProject('food.small');
 

@@ -33,21 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
+import java.util.Collections;
 import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
-import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
-import org.openrefine.model.RowInRecordMapper;
+import org.openrefine.model.*;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ColumnNotFoundException;
@@ -55,7 +52,9 @@ import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.OperationDescription;
 
 /**
  * Marks all filtered cells in a given column as reconciled to "new". Similar values can either be matched to the same
@@ -65,15 +64,24 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
 
     final protected boolean _shareNewTopics;
     final protected String _columnName;
+    final protected String _service;
+    final protected String _identifierSpace;
+    final protected String _schemaSpace;
 
     @JsonCreator
     public ReconMarkNewTopicsOperation(
             @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("columnName") String columnName,
-            @JsonProperty("shareNewTopics") boolean shareNewTopics) {
+            @JsonProperty("shareNewTopics") boolean shareNewTopics,
+            @JsonProperty("service") String service,
+            @JsonProperty("identifierSpace") String identifierSpace,
+            @JsonProperty("schemaSpace") String schemaSpace) {
         super(engineConfig);
         _columnName = columnName;
         _shareNewTopics = shareNewTopics;
+        _service = service;
+        _identifierSpace = identifierSpace;
+        _schemaSpace = schemaSpace;
     }
 
     @JsonProperty("columnName")
@@ -86,10 +94,40 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
         return _shareNewTopics;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("service")
+    public String getService() {
+        return _service;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("identifierSpace")
+    public String getIdentifierSpace() {
+        return _identifierSpace;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("schemaSpace")
+    public String getSchemaSpace() {
+        return _schemaSpace;
+    }
+
     @Override
     public String getDescription() {
-        return "Mark to create new items for cells in column " + _columnName +
-                (_shareNewTopics ? ", one item for each group of similar cells" : ", one item for each cell");
+        return _shareNewTopics ? OperationDescription.recon_mark_new_topics_shared_brief(_columnName)
+                : OperationDescription.recon_mark_new_topics_brief(_columnName);
+    }
+
+    protected ReconConfig getNewReconConfig(ColumnMetadata column) {
+        return column.getReconConfig() != null ? column.getReconConfig()
+                : new StandardReconConfig(
+                        _service,
+                        _identifierSpace,
+                        _schemaSpace,
+                        null,
+                        false,
+                        Collections.emptyList(),
+                        0);
     }
 
     @Override
@@ -98,11 +136,7 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(_columnName);
         }
-        ReconConfig reconConfig = state.getColumnModel().getColumnByName(_columnName).getReconConfig();
-        if (reconConfig == null) {
-            // TODO let the user supply its own recon config via the UI (just like UseValuesAsIdentifiers)
-            throw new DoesNotApplyException(String.format("Column '%s' is not reconciled", _columnName));
-        }
+        ReconConfig reconConfig = getNewReconConfig(state.getColumnModel().getColumnByName(_columnName));
         long historyEntryId = context.getHistoryEntryId();
 
         if (_shareNewTopics) {

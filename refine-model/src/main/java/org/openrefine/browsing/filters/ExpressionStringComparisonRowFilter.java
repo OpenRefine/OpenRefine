@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.browsing.filters;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -41,10 +42,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowInRecordFilter;
+import org.openrefine.model.*;
+import org.openrefine.overlay.OverlayModel;
 
 /**
  * Judge if a row matches by evaluating a given expression on the row, based on a particular column, and checking the
@@ -58,6 +57,8 @@ abstract public class ExpressionStringComparisonRowFilter extends RowInRecordFil
     final protected Boolean _invert;
     final protected String _columnName;
     final protected int _cellIndex;
+    final protected ColumnModel _columnModel;
+    final protected Map<String, OverlayModel> _overlayModels;
 
     public ExpressionStringComparisonRowFilter(Evaluable evaluable, Boolean invert, String columnName, int cellIndex) {
         super(!invert);
@@ -65,6 +66,9 @@ abstract public class ExpressionStringComparisonRowFilter extends RowInRecordFil
         _invert = invert;
         _columnName = columnName;
         _cellIndex = cellIndex;
+        // TODO make those available in expressions too
+        _columnModel = null;
+        _overlayModels = null;
     }
 
     @Override
@@ -72,7 +76,7 @@ abstract public class ExpressionStringComparisonRowFilter extends RowInRecordFil
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(bindings, null, row, rowIndex, record, _columnName, cell);
+        ExpressionUtils.bind(bindings, _columnModel, row, rowIndex, record, _columnName, cell, _overlayModels);
         Boolean invert = _invert;
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {

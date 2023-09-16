@@ -63,7 +63,7 @@ Refine.LineBasedParserUI.prototype.dispose = function() {
 
 Refine.LineBasedParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value),
+    encoding: jQueryTrim(this._optionContainerElmts.encodingInput[0].value),
     recordPath: this._config.recordPath
   };
 
@@ -108,10 +108,10 @@ Refine.LineBasedParserUI.prototype.getOptions = function() {
 Refine.LineBasedParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/line-based-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  this._optionContainerElmts.previewButton.on('click',function() { self._updatePreview(); });
 
   $('#or-import-encoding').html($.i18n('core-index-import/char-encoding'));
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
@@ -133,7 +133,7 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
   
   this._optionContainerElmts.encodingInput
     .val(this._config.encoding || '')
-    .click(function() {
+    .on('click',function() {
       Encoding.selectEncoding($(this), function() {
         self._updatePreview();
       });
@@ -178,8 +178,8 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
         self._scheduleUpdatePreview();
     }
   };
-  this._optionContainer.find("input").bind("change", onChange);
-  this._optionContainer.find("select").bind("change", onChange);
+  this._optionContainer.find("input").on("change", onChange);
+  this._optionContainer.find("select").on("change", onChange);
 };
 
 Refine.LineBasedParserUI.prototype._scheduleUpdatePreview = function() {
@@ -205,7 +205,7 @@ Refine.LineBasedParserUI.prototype._updatePreview = function() {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
 
-        new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
+        new Refine.PreviewTable(projectData, self._dataContainer.off().empty());
       });
     }
   });

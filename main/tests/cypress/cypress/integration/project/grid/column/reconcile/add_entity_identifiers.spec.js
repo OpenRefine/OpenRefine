@@ -1,4 +1,8 @@
 describe('Add entity identifiers', () => {
+  afterEach(() => {
+    cy.addProjectForDeletion();
+  });
+  
   it('Add a new column that contains the reconciliation id', () => {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');

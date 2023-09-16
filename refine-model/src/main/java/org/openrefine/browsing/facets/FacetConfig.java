@@ -35,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 import org.openrefine.model.ColumnModel;
+import org.openrefine.overlay.OverlayModel;
 
 /**
  * Represents the configuration of a facet, as stored in the engine configuration and in the JSON serialization of
@@ -53,10 +54,12 @@ public interface FacetConfig {
      * 
      * @param columnModel
      *            the header of the table the facet is applied to.
-     * 
+     * @param overlayModels
+     *            the overlay models of the table the facet is applied to (can be accessed by expressions evaluated by
+     *            the facet)
      * @return a computed facet on the given project.
      */
-    public Facet apply(ColumnModel columnModel);
+    public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels);
 
     /**
      * Computes the set of columns the facet depends on. If the facet relies on an unknown set of columns, or if it is

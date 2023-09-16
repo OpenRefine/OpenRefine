@@ -134,6 +134,13 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
             try {
                 parseOneFile(allocator, rows, metadata, job, fileSource, archiveFileName, inputStream,
                         rootColumnGroup, limit, options);
+
+                ObjectNode fileOptions = options.deepCopy();
+                JSONUtilities.safePut(fileOptions, "fileSource", fileSource);
+                JSONUtilities.safePut(fileOptions, "archiveFileName", archiveFileName);
+                // TODO: This will save a separate copy for each file in the import, but they're
+                // going to be mostly the same
+                metadata.appendImportOptionMetadata(fileOptions);
             } finally {
                 inputStream.close();
             }

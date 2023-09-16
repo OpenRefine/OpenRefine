@@ -21,16 +21,13 @@ describe(__filename, function () {
   it('Ensures a column is renamed in the data-table', function () {
     cy.loadProject('food.mini').then((projectId) => {
       cy.visit(
-        Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId,
-        {
-          onBeforeLoad(win) {
-            cy.stub(win, 'prompt').returns('test_rename_butter');
-          },
-        }
-      );
+        Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
     });
-
     cy.columnActionClick('Shrt_Desc', ['Edit column', 'Rename this column']);
+    cy.waitForDialogPanel();
+    cy.get('.dialog-container .dialog-body input').clear();
+    cy.get('.dialog-container .dialog-body input').type('test_rename_butter');
+    cy.get('.dialog-container .dialog-footer button').contains('OK').click();
 
     cy.assertNotificationContainingText('Rename column Shrt_Desc');
 

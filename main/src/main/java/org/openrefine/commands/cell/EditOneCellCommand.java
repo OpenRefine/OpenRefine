@@ -116,6 +116,7 @@ public class EditOneCellCommand extends Command {
             GridState state = project.getCurrentGridState();
             Cell cell = state.getRow(rowIndex).getCell(cellIndex);
             ColumnMetadata column = state.getColumnModel().getColumns().get(cellIndex);
+
             if (column == null) {
                 throw new Exception("No such column");
             }

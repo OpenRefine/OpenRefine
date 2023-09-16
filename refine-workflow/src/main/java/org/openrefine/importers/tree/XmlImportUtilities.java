@@ -34,14 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.importers.tree;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
+import com.google.common.base.CharMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +77,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @return If the tag is found, an array of strings is returned. If the tag is at the top level, the tag will be the
      *         only item in the array. If the tag is nested beneath the top level, the array is filled with the
      *         hierarchy with the tag name at the last index null if the the tag is not found.
-     * @throws ServletException
+     * @throws TreeReaderException
      */
     static protected List<String> detectRecordElement(TreeReader parser, String tag) throws TreeReaderException {
         if (parser.current() == Token.Ignorable) {
@@ -242,7 +238,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
 
     /**
      * @param parser
-     * @param project
+     * @param columnIndexAllocator
+     * @param rows
      * @param recordPath
      * @param rootColumnGroup
      * @param limit
@@ -297,7 +294,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * @param project
+     * @param allocator
+     * @param rows
      * @param parser
      * @param recordPath
      * @param pathIndex
@@ -305,8 +303,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param limit
      * @param parameters
      * @throws TreeReaderException
-     * @deprecated Use
-     *             {@link XmlImportUtilities#findRecord(Project, TreeReader, String[], int, ImportColumnGroup, int, boolean, boolean, boolean)}
+     * @deprecated Use {@link XmlImportUtilities#findRecord(ColumnIndexAllocator, List<Row>, TreeReader, String[], int,
+     *             ImportColumnGroup, int, boolean, boolean, boolean)}
      */
     @Deprecated
     static protected void findRecord(
@@ -323,7 +321,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * @param project
+     * @param columnIndexAllocator
+     * @param rows
      * @param parser
      * @param recordPath
      * @param pathIndex
@@ -409,13 +408,14 @@ public class XmlImportUtilities extends TreeImportUtilities {
     }
 
     /**
-     * @param project
+     * @param allocator
+     * @param rows
      * @param parser
      * @param rootColumnGroup
      * @param parameter
      * @throws TreeReaderException
-     * @deprecated Use
-     *             {@link XmlImportUtilities#processRecord(Project, TreeReader, ImportColumnGroup, boolean, boolean, boolean)}
+     * @deprecated Use {@link XmlImportUtilities#processRecord(ColumnIndexAllocator, List<Row>, TreeReader,
+     *             ImportColumnGroup, boolean, boolean, boolean)}
      */
     @Deprecated
     static protected void processRecord(
@@ -434,12 +434,13 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * processRecord parses Tree data for a single element and it's sub-elements, adding the parsed data as a row to the
      * project
      * 
-     * @param project
+     * @param columnIndexAllocator
+     * @param rows
      * @param parser
      * @param rootColumnGroup
      * @param archiveFileName
      * @param includeArchiveName
-     * @throws ServletException
+     * @throws TreeReaderException
      */
     static protected void processRecord(
             ColumnIndexAllocator columnIndexAllocator,
@@ -469,7 +470,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param columnIndexAllocator
      * @param parser
      * @param rootColumnGroup
-     * @throws ServletException
+     * @throws TreeReaderException
      */
     static protected void processFieldAsRecord(
             ColumnIndexAllocator columnIndexAllocator,
@@ -491,7 +492,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         if (value instanceof String) {
             String text = (String) value;
             if (trimStrings) {
-                text = text.trim();
+                text = CharMatcher.whitespace().trimFrom(text);
             }
             if (text.length() > 0 | !storeEmptyStrings) {
                 record = new ImportRecord();
@@ -549,11 +550,12 @@ public class XmlImportUtilities extends TreeImportUtilities {
 
     /**
      *
-     * @param project
+     * @param columnIndexAllocator
+     * @param rows
      * @param parser
      * @param columnGroup
      * @param record
-     * @throws ServletException
+     * @throws TreeReaderException
      */
     static protected void processSubRecord(
             ColumnIndexAllocator columnIndexAllocator,
@@ -583,7 +585,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         for (int i = 0; i < attributeCount; i++) {
             String text = parser.getAttributeValue(i);
             if (trimStrings) {
-                text = text.trim();
+                text = CharMatcher.whitespace().trimFrom(text);
             }
             if (text.length() > 0 | !storeEmptyStrings) {
                 addCell(

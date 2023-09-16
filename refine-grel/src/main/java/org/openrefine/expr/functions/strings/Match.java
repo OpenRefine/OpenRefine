@@ -38,6 +38,8 @@ import java.util.regex.Pattern;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Match extends PureFunction {
@@ -72,12 +74,12 @@ public class Match extends PureFunction {
 
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects regex");
+        return new EvalError(EvalErrorMessage.expects_one_regex(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Attempts to match the string s in its entirety against the regex pattern p and, if the pattern is found, outputs an array of all capturing groups (found in order).";
+        return FunctionDescription.str_match();
     }
 
     @Override

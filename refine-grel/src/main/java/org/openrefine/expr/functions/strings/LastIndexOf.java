@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.strings;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class LastIndexOf extends PureFunction {
@@ -50,12 +52,12 @@ public class LastIndexOf extends PureFunction {
                 return ((String) s1).lastIndexOf((String) s2);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
+        return new EvalError(EvalErrorMessage.expects_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the first character index of sub as it last occurs in s; or, returns -1 if s does not contain sub. For example, \"parallel\".lastIndexOf(\"a\") returns 3 (pointing at the second 'a').";
+        return FunctionDescription.str_last_index_of();
     }
 
     @Override

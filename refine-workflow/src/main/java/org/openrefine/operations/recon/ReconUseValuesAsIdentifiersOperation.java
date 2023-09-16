@@ -51,6 +51,7 @@ import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.operations.OperationDescription;
 
 /**
  * When a column contains bare identifiers or URLs, this can be used to mark them as reconciled to some reconciliation
@@ -90,7 +91,7 @@ public class ReconUseValuesAsIdentifiersOperation extends ImmediateRowMapOperati
 
     @Override
     public String getDescription() {
-        return "Use values as reconciliation identifiers in column " + columnName;
+        return OperationDescription.recon_use_values_as_identifiers_brief(columnName);
     }
 
     @Override

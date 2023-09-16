@@ -27,6 +27,8 @@ package org.openrefine.expr.functions.booleans;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Xor extends PureFunction {
@@ -38,12 +40,12 @@ public class Xor extends PureFunction {
         if (args.length >= 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {
             return (Boolean) args[0] ^ (Boolean) args[1];
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 or more booleans");
+        return new EvalError(EvalErrorMessage.expects_two_or_more_bool(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Uses the logical operator XOR (exclusive-or) on two or more booleans to output a boolean. Evaluates multiple statements, then returns true if only one of them is true. For example, (1 < 3).xor(1 < 7) returns false because more than one of the conditions is true.";
+        return FunctionDescription.bool_xor();
     }
 
     @Override

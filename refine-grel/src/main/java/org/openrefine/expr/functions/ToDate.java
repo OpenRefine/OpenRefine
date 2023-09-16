@@ -37,21 +37,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.IllformedLocaleException;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
+import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.util.CalendarParser;
 import org.openrefine.expr.util.CalendarParserException;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 import org.openrefine.util.ParsingUtilities;
 
@@ -68,7 +64,7 @@ public class ToDate extends PureFunction {
 
         // Check there is at least one argument
         if (args.length == 0) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+            return new EvalError(EvalErrorMessage.expects_at_least_one_arg(ControlFunctionRegistry.getFunctionName(this)));
         } else {
             Object arg0 = args[0];
             // check the first argument is something that can be parsed as a date
@@ -76,11 +72,11 @@ public class ToDate extends PureFunction {
                 return arg0;
             } else if (arg0 instanceof Long) {
                 o1 = ((Long) arg0).toString(); // treat integers as years
-            } else if (arg0 instanceof String && arg0.toString().trim().length() > 0) {
+            } else if (arg0 instanceof String && CharMatcher.whitespace().trimFrom(arg0.toString()).length() > 0) {
                 o1 = (String) arg0;
             } else {
                 // ignore cell values that aren't Date, Calendar, Long or String
-                return new EvalError("Unable to parse as date");
+                return new EvalError(EvalErrorMessage.unable_to_parse_as_date());
             }
         }
 
@@ -96,11 +92,11 @@ public class ToDate extends PureFunction {
             } else if (args[1] instanceof String) {
                 formats.add(StringUtils.trim((String) args[1]));
             } else {
-                return new EvalError("Invalid argument");
+                return new EvalError(EvalErrorMessage.invalid_arg());
             }
             for (int i = 2; i < args.length; i++) {
                 if (!(args[i] instanceof String)) {
-                    return new EvalError("Invalid non-string format argument " + args[i].toString());
+                    return new EvalError(EvalErrorMessage.invalid_non_string_format_arg(args[i].toString()));
                 }
                 formats.add(StringUtils.trim((String) args[i]));
             }
@@ -117,7 +113,7 @@ public class ToDate extends PureFunction {
         if (date != null) {
             return date;
         }
-        return new EvalError("Unable to convert to a date");
+        return new EvalError(EvalErrorMessage.unable_to_convert_to_date());
     }
 
     private OffsetDateTime parse(String o1, Boolean month_first, List<String> formats) throws DateFormatException {
@@ -197,7 +193,7 @@ public class ToDate extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the inputted object converted to a date object. Without arguments, it returns the ISO 8601 extended format. With arguments, you can control the output format. With monthFirst: set false if the date is formatted with the day before the month. With formatN: attempt to parse the date using an ordered list of possible formats. Supply formats based on the SimpleDateFormat syntax: <a href=\"http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html\">SimpleDateFormat</a>";
+        return FunctionDescription.fun_to_date();
     }
 
     @Override

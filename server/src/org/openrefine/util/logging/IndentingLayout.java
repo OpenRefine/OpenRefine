@@ -1,7 +1,3 @@
-
-package org.openrefine.util.logging;
-
-import java.nio.charset.Charset;
 /*
  * Copyright (c) Massachusetts Institute of Technology, 2007 
  *
@@ -32,6 +28,10 @@ import java.nio.charset.Charset;
  *
  *    Original code:  http://simile.mit.edu/repository/tracer/trunk/
  */
+
+package org.openrefine.util.logging;
+
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 

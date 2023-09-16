@@ -45,6 +45,7 @@ import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -72,7 +73,7 @@ public class EngineConfigTests {
     protected static class MyFacetConfig implements FacetConfig {
 
         @Override
-        public Facet apply(ColumnModel columnModel) {
+        public Facet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
             return null;
         }
 

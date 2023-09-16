@@ -58,6 +58,7 @@ import org.openrefine.RefineServlet;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.HistoryEntry;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
 import org.openrefine.sorting.SortingConfig;
@@ -116,7 +117,6 @@ public abstract class Command {
      *
      * @param request
      * @return
-     * @throws JSONException
      */
     static protected EngineConfig getEngineConfig(HttpServletRequest request) {
         if (request == null) {
@@ -174,7 +174,11 @@ public abstract class Command {
         } catch (NumberFormatException e) {
             throw new ServletException("Can't find project: badly formatted id #", e);
         }
-        Project p = ProjectManager.singleton.getProject(id, RefineServlet.getDatamodelRunner());
+        DatamodelRunner runner = ProjectManager.singleton.getLatestDatamodelRunner();
+        if (runner == null) {
+            runner = RefineServlet.getDatamodelRunner();
+        }
+        Project p = ProjectManager.singleton.getProject(id, runner);
         if (p != null) {
             return p;
         } else {
@@ -286,6 +290,8 @@ public abstract class Command {
         HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
         if (historyEntry != null) {
             Writer w = response.getWriter();
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
             ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
 
             w.flush();
@@ -359,6 +365,7 @@ public abstract class Command {
             throws IOException, ServletException {
 
         logger.warn("Exception caught", e);
+        e.printStackTrace();
 
         if (response == null) {
             throw new ServletException("Response object can't be null");

@@ -38,6 +38,8 @@ import org.jsoup.nodes.Element;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.functions.Type;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Parent extends PureFunction {
@@ -52,21 +54,21 @@ public class Parent extends PureFunction {
                 return e1.parent();
 
             } else {
-
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + "() cannot work with this '"
-                        + new Type().call(args)
-                        + "'"
-                        + " but instead needs a jsoup XML or HTML Element to work with."
-                        + " For arrays, you might select an index or loop over them with forEach().");
+                // + "() cannot work with this '"
+                // + new Type().call(bindings, args)
+                // + "'"
+                // + " but instead needs a jsoup XML or HTML Element to work with."
+                // + " For arrays, you might select an index or loop over them with forEach().");
+                return new EvalError(EvalErrorMessage.xml_parent_cannot_work_with(ControlFunctionRegistry.getFunctionName(this),
+                        new Type().call(args)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
+        return new EvalError(EvalErrorMessage.expects_one_arg(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the parent node or null if no parent. Use it in conjunction with parseHtml() and select() to provide an element.";
+        return FunctionDescription.xml_parent();
     }
 
     @Override

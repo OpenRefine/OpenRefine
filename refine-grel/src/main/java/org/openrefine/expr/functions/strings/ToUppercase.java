@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.strings;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class ToUppercase extends PureFunction {
@@ -47,12 +49,12 @@ public class ToUppercase extends PureFunction {
             Object o = args[0];
             return (o instanceof String ? (String) o : o.toString()).toUpperCase();
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+        return new EvalError(EvalErrorMessage.expects_one_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns string s converted to all uppercase characters.";
+        return FunctionDescription.str_to_uppercase();
     }
 
     @Override

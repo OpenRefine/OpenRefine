@@ -54,6 +54,7 @@ import java.util.stream.Collectors;
 
 import au.com.bytecode.opencsv.CSVParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -167,7 +168,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
             if (strings.length > 0) {
                 retrievedColumnNames = new ArrayList<Object>();
                 for (String s : strings) {
-                    s = s.trim();
+                    s = CharMatcher.whitespace().trimFrom(s);
                     if (!s.isEmpty()) {
                         retrievedColumnNames.add(s);
                     }

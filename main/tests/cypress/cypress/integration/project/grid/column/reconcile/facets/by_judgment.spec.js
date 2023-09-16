@@ -1,5 +1,8 @@
 describe('Facet by judgment', () => {
-
+  afterEach(() => {
+    cy.addProjectForDeletion();
+  });
+  
   it('Facets by judgment', () => {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');

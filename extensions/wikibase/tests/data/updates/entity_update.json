@@ -1,0 +1,82 @@
+{
+  "type": "item",
+  "addedAliases": [],
+  "descriptions": [],
+  "descriptionsIfNew": [],
+  "labels": [],
+  "labelsIfNew": [],
+  "new": false,
+  "statementGroups": [
+    {
+      "property": {
+        "type": "wikibase-entityid",
+        "value": {
+          "entity-type": "property",
+          "id": "P348",
+          "numeric-id": 348
+        }
+      },
+      "statementEdits": [
+        {
+          "mergingStrategy": {
+            "type": "property"
+          },
+          "mode": "add_or_merge",
+          "statement": {
+            "mainsnak": {
+              "property": "P348",
+              "snaktype": "novalue"
+            },
+            "rank": "normal",
+            "type": "statement"
+          }
+        }
+      ]
+    },
+    {
+      "property": {
+        "type": "wikibase-entityid",
+        "value": {
+          "entity-type": "property",
+          "id": "P52",
+          "numeric-id": 52
+        }
+      },
+      "statementEdits": [
+        {
+          "mergingStrategy": {
+            "type": "property"
+          },
+          "mode": "delete",
+          "statement": {
+            "mainsnak": {
+              "datatype": "wikibase-item",
+              "datavalue": {
+                "entityType": "http://www.wikidata.org/ontology#Item",
+                "id": "Q1234",
+                "iri": "http://localhost/entity/Q1234",
+                "label": "new item",
+                "placeholder": true,
+                "reconInternalId": 1234,
+                "siteIri": "http://localhost/entity/",
+                "types": []
+              },
+              "property": "P52",
+              "snaktype": "value"
+            },
+            "rank": "normal",
+            "type": "statement"
+          }
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "type": "wikibase-entityid",
+    "value": {
+      "entity-type": "item",
+      "id": "Q34",
+      "numeric-id": 34
+    }
+  }
+}

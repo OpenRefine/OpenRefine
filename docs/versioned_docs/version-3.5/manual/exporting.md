@@ -95,7 +95,7 @@ Anything that appears inside doubled curly braces ({{ }}) is treated as a GREL e
 ```
 
 :::caution
-Note that some syntax is different in this tool than elsewhere in OpenRefine: a forward slash must be escaped with a backslash, while other characters do not need escaping. You cannot, at this time, include a closing curly brace (}) anywhere in your expression, or it will cause it to malfunction.
+Note that some syntax is different in this tool than elsewhere in OpenRefine: a forward slash or a closing curly brace (}) must be escaped with a backslash, while other characters do not need escaping.
 :::
 
 You can include [regular expressions](expressions#regular-expressions) as usual (inside forward slashes, with any GREL function that accepts them). For example, you could output a version of your cells with punctuation removed, using an expression such as 

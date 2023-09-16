@@ -44,6 +44,8 @@ import java.util.TimeZone;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class DatePart extends PureFunction {
@@ -66,7 +68,7 @@ public class DatePart extends PureFunction {
                 return getPart((OffsetDateTime) args[0], part);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date and a string");
+        return new EvalError(EvalErrorMessage.expects_date_and_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     private Object getPart(OffsetDateTime offsetDateTime, String part) {
@@ -95,7 +97,7 @@ public class DatePart extends PureFunction {
         } else if ("time".equals(part)) { // get Time In Millis
             return offsetDateTime.toInstant().toEpochMilli();
         } else {
-            return new EvalError("Date unit '" + part + "' not recognized.");
+            return new EvalError(EvalErrorMessage.unrecognized_date_part(part));
         }
     }
 
@@ -136,13 +138,13 @@ public class DatePart extends PureFunction {
         } else if ("time".equals(part)) {
             return c.getTimeInMillis();
         } else {
-            return new EvalError("Date unit '" + part + "' not recognized.");
+            return new EvalError(EvalErrorMessage.unrecognized_date_part(part));
         }
     }
 
     @Override
     public String getDescription() {
-        return "Returns part of a date. The data type returned depends on the unit. See https://docs.openrefine.org/manual/grelfunctions/#datepartd-s-timeunit for a table. ";
+        return FunctionDescription.date_part();
     }
 
     @Override

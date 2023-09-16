@@ -33,3 +33,9 @@ You can control what data you view in the grid. On each column, you will see a <
 You can find, under <span class="menuItems">All</span> → <span class="menuItems">View</span>, the option to show and hide [“null” values](exploring#data-types). A small grey “null” will appear in each applicable cell. Remember that a null cell is not the same thing as an empty cell. 
 
 ![A screenshot of what a null value looks like.](/img/null.png)
+
+## Page navigation {#page-navigation}
+
+You can go directly to any page by changing the page number on the right-hand side. Using the up and down arrow keys in this input lets you go to the next and previous pages. You can also change the number of rows or records per page on the left-hand side of this view header bar.
+ 
+![A screenshot of the Page Navigation Feature.](/img/goto.png)

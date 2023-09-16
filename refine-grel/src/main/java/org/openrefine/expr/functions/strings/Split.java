@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Split extends PureFunction {
@@ -76,7 +77,7 @@ public class Split extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the array of strings obtained by splitting s by sep. The separator can be either a string or a regex pattern. If preserveTokens is true, empty segments are preserved.";
+        return FunctionDescription.str_split();
     }
 
     @Override

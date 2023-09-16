@@ -49,6 +49,7 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordFilter;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.PatternSyntaxExceptionParser;
 
 public class TextSearchFacet implements Facet {
@@ -89,7 +90,7 @@ public class TextSearchFacet implements Facet {
         }
 
         @Override
-        public TextSearchFacet apply(ColumnModel columnModel) {
+        public TextSearchFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
             int cellIndex = columnModel.getColumnIndexByName(_columnName);
             return new TextSearchFacet(this, cellIndex);
         }

@@ -62,7 +62,7 @@ Refine.SeparatorBasedParserUI.prototype.confirmReadyToCreateProject = function()
 
 Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
+    encoding: jQueryTrim(this._optionContainerElmts.encodingInput[0].value)
   };
   
   switch (this._optionContainer.find("input[name='column-separator']:checked")[0].value) {
@@ -136,10 +136,10 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
 Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/separator-based-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  this._optionContainerElmts.previewButton.on('click',function() { self._updatePreview(); });
   
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
   $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));
@@ -149,7 +149,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   $('#or-import-tabs').html($.i18n('core-index-parser/tabs'));
   $('#or-import-custom').html($.i18n('core-index-parser/custom'));
   $('#or-import-escape').html($.i18n('core-index-parser/escape'));
-  $('#or-import-columnNames').html($.i18n('core-index-parser/column-names-label') + ':');
+  $('#or-import-columnNames').html($.i18n('core-index-parser/column-names-label'));
   $('#or-import-optional').html($.i18n('core-index-parser/column-names-optional'));
   $('#or-import-trim').html($.i18n('core-index-parser/trim'));
   
@@ -174,7 +174,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
 
   this._optionContainerElmts.encodingInput
     .val(this._config.encoding || '')
-    .click(function() {
+    .on('click',function() {
       Encoding.selectEncoding($(this), function() {
         self._updatePreview();
       });
@@ -267,9 +267,9 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
     }
   };
 
-  this._optionContainer.find("input").bind("change", onChange);
-  this._optionContainer.find("select").bind("change", onChange);
-  this._optionContainerElmts.columnNamesInput.bind("keyup",onChange);
+  this._optionContainer.find("input").on("change", onChange);
+  this._optionContainer.find("select").on("change", onChange);
+  this._optionContainerElmts.columnNamesInput.on("keyup",onChange);
 };
 
 Refine.SeparatorBasedParserUI.prototype._scheduleUpdatePreview = function() {
@@ -295,7 +295,7 @@ Refine.SeparatorBasedParserUI.prototype._updatePreview = function() {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
 
-        new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
+        new Refine.PreviewTable(projectData, self._dataContainer.off().empty());
       });
     }
   });

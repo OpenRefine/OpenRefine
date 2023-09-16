@@ -37,6 +37,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class ReplaceChars extends PureFunction {
@@ -54,12 +56,12 @@ public class ReplaceChars extends PureFunction {
                 return StringUtils.replaceChars(str, (String) o2, (String) o3);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
+        return new EvalError(EvalErrorMessage.expects_three_strings(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. You cannot use this to replace a single character with more than one character.";
+        return FunctionDescription.str_replace_chars();
     }
 
     @Override

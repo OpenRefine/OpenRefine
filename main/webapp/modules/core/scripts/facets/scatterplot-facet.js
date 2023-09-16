@@ -137,10 +137,10 @@ class ScatterplotFacet extends Facet {
     this._elmts = DOM.bind(this._div);
 
     this._elmts.titleSpan.text(this._config.name);
-    this._elmts.removeButton.click(function() { self._remove(); });
-    this._elmts.minimizeButton.click(function() { self._minimize(); });
+    this._elmts.removeButton.on('click',function() { self._remove(); });
+    this._elmts.minimizeButton.on('click',function() { self._minimize(); });
     
-    this._elmts.resetButton.click(function() {
+    this._elmts.resetButton.on('click',function() {
       self.reset();
       self._updateRest();
     });
@@ -189,7 +189,7 @@ class ScatterplotFacet extends Facet {
       this._elmts.selectors.find("#" + facet_id + "-dot-regular").prop('checked', true);
     }
 
-    this._elmts.selectors.find(".scatterplot-dim-selector").change(function() {
+    this._elmts.selectors.find(".scatterplot-dim-selector").on('change',function() {
       var dim = $(this).find("input:checked").val();
       self._config.dim_x = dim;
       self._config.dim_y = dim;
@@ -198,14 +198,14 @@ class ScatterplotFacet extends Facet {
       self.changePlot();
     });
 
-    this._elmts.selectors.find(".scatterplot-rot-selector").change(function() {
+    this._elmts.selectors.find(".scatterplot-rot-selector").on('change',function() {
       self._config.r = $(this).find("input:checked").val();
       self.reset();
       self._updateRest();
       self.changePlot();        
     });
 
-    this._elmts.selectors.find(".scatterplot-dot-selector").change(function() {
+    this._elmts.selectors.find(".scatterplot-dot-selector").on('change',function() {
       var dot_size = $(this).find("input:checked").val();
       if (dot_size == "small") {
         self._config.dot = 0.4;

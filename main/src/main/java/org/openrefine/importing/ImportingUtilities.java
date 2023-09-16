@@ -33,21 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importing;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -96,6 +87,8 @@ import org.openrefine.util.ParsingUtilities;
 public class ImportingUtilities {
 
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
+
+    final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
 
     static public interface Progress {
 
@@ -280,6 +273,10 @@ public class ImportingUtilities {
                 } else if ("download".equals(name)) {
                     String urlString = Streams.asString(stream);
                     URL url = new URL(urlString);
+
+                    if (!allowedProtocols.contains(url.getProtocol().toLowerCase())) {
+                        throw new IOException("Unsupported protocol: " + url.getProtocol());
+                    }
 
                     ImportingFileRecord fileRecord = new ImportingFileRecord(
                             null, // sparkURI
@@ -625,8 +622,14 @@ public class ImportingUtilities {
     static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) {
         String fileName = file.getName();
         try {
-            if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) {
-                return new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
+            if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || isFileGZipped(file)) {
+                TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
+                if (archiveInputStream.getNextTarEntry() != null) {
+                    // It's a tar archive
+                    return archiveInputStream;
+                }
+                // It's not a tar archive, so it must be gzip compressed (or something else)
+                return null;
             } else if (fileName.endsWith(".tar.bz2")) {
                 return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
             } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
@@ -643,6 +646,15 @@ public class ImportingUtilities {
         } catch (IOException e) {
         }
         return null;
+    }
+
+    private static boolean isFileGZipped(File file) {
+        int magic = 0;
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r");) {
+            magic = raf.read() & 0xff | ((raf.read() << 8) & 0xff00);
+        } catch (IOException ignored) {
+        }
+        return magic == GZIPInputStream.GZIP_MAGIC;
     }
 
     // FIXME: This is wasteful of space and time. We should try to process on the fly
@@ -725,6 +737,7 @@ public class ImportingUtilities {
         String fileName = file.getName();
         try {
             if (fileName.endsWith(".gz")
+                    || isFileGZipped(file)
                     || "gzip".equals(contentEncoding)
                     || "x-gzip".equals(contentEncoding)
                     || "application/x-gzip".equals(mimeType)) {

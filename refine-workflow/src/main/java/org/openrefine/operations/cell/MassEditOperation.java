@@ -48,15 +48,12 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowInRecordMapper;
+import org.openrefine.model.*;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.StringUtils;
 
@@ -188,7 +185,8 @@ public class MassEditOperation extends EngineDependentOperation {
         @Override
         public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
             int columnIdx = columnIndex(state.getColumnModel(), _columnName);
-            return mapper(columnIdx, _evaluable, _columnName, _fromTo, _fromBlankTo, _fromErrorTo);
+            return mapper(columnIdx, _evaluable, _columnName, state.getColumnModel(), state.getOverlayModels(), _fromTo, _fromBlankTo,
+                    _fromErrorTo);
         }
 
         @Override
@@ -199,6 +197,7 @@ public class MassEditOperation extends EngineDependentOperation {
     }
 
     private static RowInRecordMapper mapper(int columnIdx, Evaluable evaluable, String columnName,
+            ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
             Map<String, Serializable> fromTo, Serializable fromBlankTo, Serializable fromErrorTo) {
         return new RowInRecordMapper() {
 
@@ -210,7 +209,7 @@ public class MassEditOperation extends EngineDependentOperation {
                 Cell newCell = cell;
 
                 Properties bindings = ExpressionUtils.createBindings();
-                ExpressionUtils.bind(bindings, null, row, rowIndex, record, columnName, cell);
+                ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell, overlayModels);
 
                 Object v = evaluable.evaluate(bindings);
                 if (ExpressionUtils.isError(v)) {

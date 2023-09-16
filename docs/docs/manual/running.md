@@ -12,11 +12,12 @@ You will see a command line window open when you run OpenRefine. Ignore that win
 
 No matter how you start OpenRefine, it will load its interface in your computer’s default browser. If you would like to use another browser instead, start OpenRefine and then point your chosen browser at the home screen: [http://127.0.0.1:3333/](http://127.0.0.1:3333/).
 
-OpenRefine works best on browsers based on Webkit, such as:
-*   Google Chrome
-*   Chromium
-*   Opera
-*   Microsoft Edge
+OpenRefine works best on browsers based on WebKit, such as:
+*   [Google Chrome](https://www.google.com/chrome/)
+*   [Chromium](https://ungoogled-software.github.io/)
+*   [Opera](https://www.opera.com/)
+*   [Microsoft Edge](https://www.microsoft.com/edge)
+*   [Safari](https://www.apple.com/safari/)
 
 We are aware of some minor rendering and performance issues on other browsers such as Firefox. We don't support Internet Explorer.
 
@@ -158,9 +159,9 @@ To see the full list of command-line options, run `./refine -h`.
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
 |-r|Changes the [data model runner](../technical-reference/workflow-execution/overview#available-runners) |./refine -r org.openrefine.model.LocalDatamodelRunner|
 |-H|HTTP host to expect on incoming requests|./refine -H openrefine.internal|
-|-k|Add a Google API key|_need an example_|
-|-v|Verbosity (from low to high)|error,warn,info,debug,trace|
-|-x|Additional configuration parameters|_need an example_|
+|-k|Add a Google API key|./refine -k YOUR_API_KEY|
+|-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
+|-x|Additional Java configuration parameters (see Java documentation)|./refine -x refine.autosave=5 <br/>./refine -x refine.data_dir=/ <br/>./refine -x refine.development=false <br/> ./refine -x refine.headless=false <br/>./refine -x refine.host=127.0.0.1 <br/>./refine -x refine.port=3333 <br/>./refine -x refine.webapp=main/webapp <br/>./refine -x refine.display.new.version.notice=true|
 |--debug|Enable debugging (on port 8000)|./refine --debug|
 |--jmx|Enable JMX monitoring for Jconsole and JvisualVM|./refine --jmx|
 
@@ -201,6 +202,20 @@ REFINE_MIN_MEMORY=1400M
 Further modifications can be performed by using JVM preferences. These JVM preferences are different options and have different syntax than the key/value descriptions used on the command line. 
 
 Some of the most common keys (with their defaults) are:
+|Description|Argument|Syntax example|
+|---|---|---|
+|The project [autosave](starting#autosaving) frequency|`-Drefine.autosave`|5 [minutes]
+|The workspace director|`-Drefine.data_dir`|/
+|Development mode|`-Drefine.development`|false
+|Headless mode|`-Drefine.headless`|false
+|IP|`-Drefine.host`|127.0.0.1
+|Port|`-Drefine.port`|3333
+|The application folder|`-Drefine.webapp`|main/webapp
+|New version notice|`-Drefine.display.new.version.notice`|true
+|The datamodel runner|`-Drefine.runner.class`|org.openrefine.model.LocalDatamodelRunner
+
+In addition to those settings, each [data model runner](../technical-reference/workflow-execution/overview#available-runners) can accept further parameters, defined in a similar way.
+||||||| add4eb638
 *   The project [autosave](starting#autosaving) frequency: `-Drefine.autosave` (5 [minutes])
 *   The workspace director: `-Drefine.data_dir` (/)
 *   Development mode: `-Drefine.development` (false)
@@ -208,9 +223,19 @@ Some of the most common keys (with their defaults) are:
 *   IP: `-Drefine.host` (127.0.0.1)
 *   Port: `-Drefine.port` (3333)
 *   The application folder: `-Drefine.webapp` (main/webapp)
-*   The datamodel runner: `-Drefine.runner.class (org.openrefine.model.LocalDatamodelRunner)`
+=======
+|Description|Argument|Syntax example|
+|---|---|---|
+|The project [autosave](starting#autosaving) frequency|`-Drefine.autosave`|5 [minutes]
+|The workspace director|`-Drefine.data_dir`|/
+|Development mode|`-Drefine.development`|false
+|Headless mode|`-Drefine.headless`|false
+|IP|`-Drefine.host`|127.0.0.1
+|Port|`-Drefine.port`|3333
+|The application folder|`-Drefine.webapp`|main/webapp
+|New version notice|`-Drefine.display.new.version.notice`|true
 
-In addition to those settings, each [data model runner](../technical-reference/workflow-execution/overview#available-runners) can accept further parameters, defined in a similar way.
+>>>>>>> origin/master
 
 The syntax is as follows:
 
@@ -232,6 +257,8 @@ Locate the `refine.l4j.ini` file, and insert lines in this way:
 -Drefine.port=3334 
 -Drefine.host=127.0.0.2
 -Drefine.webapp=broker/core
+-Dhttp.proxyHost=yourproxyhost
+-Dhttp.proxyPort=8080
 ```
 
 In `refine.ini`, use a similar syntax, but set multiple parameters within a single line starting with `JAVA_OPTIONS=`:
@@ -273,6 +300,9 @@ Add in values such as:
 <string>-Drefine.webapp=$APP_ROOT/Contents/Resource/webapp</string>
 <string>-Drefine.autosave=2</string>
 <string>-Drefine.port=3334</string>
+<string>-Dhttp.proxyHost=yourproxyhost</string>
+<string>-Dhttp.proxyPort=8080</string>
+
 </array>
 
 ```
@@ -287,6 +317,8 @@ Locate the `refine.ini` file, and add `JAVA_OPTIONS=` before the `-Drefine.prefe
 JAVA_OPTIONS=-Drefine.autosave=2
 JAVA_OPTIONS=-Drefine.port=3334
 JAVA_OPTIONS=-Drefine.data_dir=usr/lib/OpenRefineWorkspace
+JAVA_OPTIONS=-Dhttp.proxyHost=yourproxyhost
+JAVA_OPTIONS=-Dhttp.proxyPort=8080
 ```
 
 </TabItem>
@@ -326,7 +358,7 @@ From the home screen, look in the options to the left for <span class="menuItems
 To leave the Language Settings screen, click on the diamond “OpenRefine” logo.
 
 :::info Help us Translate OpenRefine
-We use Weblate to provide translations for the interface. You can check [our profile on Weblate](https://hosted.weblate.org/projects/openrefine/translations/) to see which languages are in the process of being supported. See [our technical reference if you are interested in contributing translation work](https://docs.openrefine.org/technical-reference/translating) to make OpenRefine accessible to people in other languages.
+We use Weblate to provide translations for the interface. You can check [our profile on Weblate](https://hosted.weblate.org/projects/openrefine/translations/) to see which languages are in the process of being supported. See [our technical reference if you are interested in contributing translation work](../technical-reference/translating-ui) to make OpenRefine accessible to people in other languages.
 :::
 
 ### Preferences {#preferences}
@@ -341,7 +373,7 @@ In the bottom left corner of the screen, look for <span class="menuItems">Prefer
 |Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|—|
 |Maximum lag for Wikibase edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|—|
 |Display of the reconciliation preview on hover|cell-ui.previewMatchedCells|Boolean|true|false|v3.2|
-|Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100,500,1000 ]|v3.4|
+|Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100, 500, 1000 ]|v3.4|
 |Width of the panel for facets/history|ui.browsing.facetsHistoryPanelWidth|Number (pixel)|300|500|v3.5|
 
 To leave the Preferences screen, click on the diamond “OpenRefine” logo.

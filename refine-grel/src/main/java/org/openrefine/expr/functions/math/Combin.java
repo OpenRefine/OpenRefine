@@ -35,6 +35,7 @@ package org.openrefine.expr.functions.math;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Combin extends PureFunction {
@@ -46,10 +47,10 @@ public class Combin extends PureFunction {
         if (args.length != 2) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
         }
-        if (args[0] == null || !(args[0] instanceof Number)) {
+        if (!(args[0] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first argument to be a number");
         }
-        if (args[1] == null || !(args[1] instanceof Number)) {
+        if (!(args[1] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second argument to be a number");
         }
 
@@ -84,7 +85,7 @@ public class Combin extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the number of combinations for n2 elements as divided into n1.";
+        return FunctionDescription.math_ceil();
     }
 
     @Override

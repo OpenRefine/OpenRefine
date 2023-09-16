@@ -49,6 +49,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.overlay.OverlayModel;
 
 public class TimeRangeFacet implements Facet {
 
@@ -121,9 +122,9 @@ public class TimeRangeFacet implements Facet {
         };
 
         @Override
-        public TimeRangeFacet apply(ColumnModel columnModel) {
+        public TimeRangeFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
             int cellIndex = columnModel.getColumnIndexByName(_columnName);
-            return new TimeRangeFacet(this, cellIndex, columnModel);
+            return new TimeRangeFacet(this, cellIndex, columnModel, overlayModels);
         }
 
         @Override
@@ -214,12 +215,14 @@ public class TimeRangeFacet implements Facet {
     protected int _cellIndex;
     protected String _errorMessage;
     protected ColumnModel _columnModel;
+    protected Map<String, OverlayModel> _overlayModels;
 
-    public TimeRangeFacet(TimeRangeFacetConfig config, int cellIndex, ColumnModel columnModel) {
+    public TimeRangeFacet(TimeRangeFacetConfig config, int cellIndex, ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
         _config = config;
         _cellIndex = cellIndex;
         _errorMessage = cellIndex == -1 ? "No column named " + _config._columnName : config._errorMessage;
         _columnModel = columnModel;
+        _overlayModels = overlayModels;
     }
 
     @Override
@@ -240,7 +243,7 @@ public class TimeRangeFacet implements Facet {
             return new TimeRangeFacetAggregator(
                     _config,
                     false,
-                    new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel));
+                    new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel, _overlayModels));
         } else {
             return null;
         }

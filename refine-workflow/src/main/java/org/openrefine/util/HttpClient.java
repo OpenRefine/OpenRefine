@@ -21,11 +21,13 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.EntityDetails;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.HttpResponse;
@@ -52,6 +54,10 @@ public class HttpClient {
     private CloseableHttpClient httpClient;
     private int _delay;
     private int _retryInterval; // delay between original request and first retry, in ms
+    private HttpHost proxy;
+    private int proxyPort;
+    private String proxyHost;
+    private DefaultProxyRoutePlanner routePlanner;
 
     public HttpClient() {
         this(0);
@@ -105,6 +111,23 @@ public class HttpClient {
 
                     }
                 });
+
+        if (System.getProperty("http.proxyHost") != null) {
+            proxyHost = System.getProperty("http.proxyHost");
+        }
+
+        if (System.getProperty("http.proxyPort") != null) {
+            proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+        }
+
+        if (proxyHost != null && proxyPort != 0) {
+            proxy = new HttpHost("http", proxyHost, proxyPort);
+            httpClientBuilder.setProxy(proxy);
+        }
+        if (proxy != null) {
+            routePlanner = new DefaultProxyRoutePlanner(proxy);
+            httpClientBuilder.setRoutePlanner(routePlanner);
+        }
 
         // TODO: Placeholder for future Basic Auth implementation
 //        String userinfo = url.getUserInfo();

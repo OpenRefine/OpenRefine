@@ -22,7 +22,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Field', [
       'Transpose',
-      'Columnize by key/value columns...',
+      'Columnize by key/value columns…',
     ]);
     cy.get('select[bind="keyColumnSelect"]').select('Field');
     cy.get('select[bind="valueColumnSelect"]').select('Data');
@@ -60,7 +60,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Field', [
       'Transpose',
-      'Columnize by key/value columns...',
+      'Columnize by key/value columns…',
     ]);
     cy.get('select[bind="keyColumnSelect"]').select('Field');
     cy.get('select[bind="valueColumnSelect"]').select('Data');

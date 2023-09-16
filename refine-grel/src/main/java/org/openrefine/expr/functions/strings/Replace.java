@@ -37,6 +37,8 @@ import java.util.regex.Pattern;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Replace extends PureFunction {
@@ -60,12 +62,13 @@ public class Replace extends PureFunction {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings, or 1 string, 1 regex, and 1 string");
+        // regex, and 1 string");
+        return new EvalError(EvalErrorMessage.expects_three_strings_as_string_regex_string(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns the string obtained by replacing the find string with the replace string in the inputted string. For example, 'The cow jumps over the moon and moos'.replace('oo', 'ee') returns the string 'The cow jumps over the meen and mees'. Find can be a regex pattern.";
+        return FunctionDescription.str_replace();
     }
 
     @Override

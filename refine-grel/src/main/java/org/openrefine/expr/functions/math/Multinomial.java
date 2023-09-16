@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.math;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class Multinomial extends PureFunction {
@@ -44,12 +46,12 @@ public class Multinomial extends PureFunction {
     @Override
     public Object call(Object[] args) {
         if (args.length < 1) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one or more numbers");
+            return new EvalError(EvalErrorMessage.expects_at_least_one_number(ControlFunctionRegistry.getFunctionName(this)));
         }
         int sum = 0;
         int product = 1;
         for (int i = 0; i < args.length; i++) {
-            if (args[i] == null || !(args[i] instanceof Number)) {
+            if (!(args[i] instanceof Number)) {
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects parameter " + (i + 1) + " to be a number");
             }
             int num = ((Number) args[i]).intValue();
@@ -61,7 +63,7 @@ public class Multinomial extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Calculates the multinomial of one number or a series of numbers.";
+        return FunctionDescription.math_multinomial();
     }
 
     @Override

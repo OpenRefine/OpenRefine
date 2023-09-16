@@ -37,6 +37,8 @@ import org.jsoup.nodes.Element;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class XmlAttr extends PureFunction {
@@ -54,16 +56,17 @@ public class XmlAttr extends PureFunction {
                     return e1.attr(o2.toString());
                 }
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select() prior to using this function");
+                // is not an XML or HTML Element. Please first use parseXml() or parseHtml() and select() prior to using
+                // this function");
+                return new EvalError(EvalErrorMessage.xml_attr_failed(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");
+        return new EvalError(EvalErrorMessage.expects_two_args(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return "Returns a string from an attribute on an XML or HTML element. Use it in conjunction with parseHtml() or parseXml() to point to an element first.";
+        return FunctionDescription.xml_xmlattr();
     }
 
     @Override

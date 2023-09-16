@@ -35,11 +35,7 @@ package org.openrefine.expr;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -48,6 +44,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.overlay.OverlayModel;
 
 public class ExpressionUtils {
 
@@ -71,14 +68,48 @@ public class ExpressionUtils {
         return bindings;
     }
 
-    static public void bind(Properties bindings, ColumnModel columnModel, Row row, long rowIndex, Record record, String columnName,
-            Cell cell) {
+    /**
+     * Prepares the context for the evaluation of an expression by storing certain context objects within the supplied
+     * bindings.
+     * 
+     * @param bindings
+     *            the dictionary representing the variables available in the expression's context
+     * @param columnModel
+     *            the list of column metadata for the project being currently evaluated
+     * @param row
+     *            the row on which the expression is evaluated
+     * @param rowIndex
+     *            the index of the row on which the expression is evaluated
+     * @param record
+     *            the enclosing record, if available (only in records mode)
+     * @param columnName
+     *            the name of the base column for the expression
+     * @param cell
+     *            the cell at the intersection of the base column and current row
+     * @param overlayModels
+     *            the overlay models stored in the grid on which the expression is evaluated
+     */
+    static public void bind(
+            Properties bindings,
+            ColumnModel columnModel,
+            Row row,
+            long rowIndex,
+            Record record,
+            String columnName,
+            Cell cell,
+            Map<String, OverlayModel> overlayModels) {
         bindings.put("rowIndex", rowIndex);
         bindings.put("row", new WrappedRow(columnModel, rowIndex, row, record));
         bindings.put("cells", new CellTuple(columnModel, row));
+        if (overlayModels != null) {
+            bindings.put("overlayModels", overlayModels);
+        }
 
         if (columnName != null) {
             bindings.put("columnName", columnName);
+        }
+        if (columnModel != null) {
+            bindings.put("columnModel", columnModel);
         }
 
         if (cell == null) {

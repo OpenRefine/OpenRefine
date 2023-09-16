@@ -37,6 +37,7 @@ import java.text.Normalizer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -101,7 +102,7 @@ public class FingerprintKeyer extends Keyer {
 
     protected String normalize(String s, boolean strong) {
         if (strong) {
-            s = s.trim(); // first off, remove whitespace around the string
+            s = CharMatcher.whitespace().trimFrom(s); // first off, remove whitespace around the string
             s = s.toLowerCase(); // TODO: This is using the default locale. Is that what we want?
         }
         s = stripDiacritics(s);

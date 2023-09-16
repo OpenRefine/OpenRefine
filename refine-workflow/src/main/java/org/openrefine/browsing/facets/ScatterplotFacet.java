@@ -54,6 +54,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.overlay.OverlayModel;
 
 public class ScatterplotFacet implements Facet {
 
@@ -293,11 +294,12 @@ public class ScatterplotFacet implements Facet {
         }
 
         @Override
-        public ScatterplotFacet apply(ColumnModel columnModel) {
+        public ScatterplotFacet apply(ColumnModel columnModel, Map<String, OverlayModel> overlayModels) {
             return new ScatterplotFacet(this,
                     columnModel.getColumnIndexByName(columnName_x),
                     columnModel.getColumnIndexByName(columnName_y),
-                    columnModel);
+                    columnModel,
+                    overlayModels);
         }
 
         @JsonIgnore
@@ -323,11 +325,14 @@ public class ScatterplotFacet implements Facet {
     protected String errorMessage_x;
     protected String errorMessage_y;
     protected ColumnModel columnModel;
+    protected Map<String, OverlayModel> overlayModels;
 
     final static Logger logger = LoggerFactory.getLogger("scatterplot_facet");
 
-    public ScatterplotFacet(ScatterplotFacetConfig config, int cellIndexX, int cellIndexY, ColumnModel columnModel) {
+    public ScatterplotFacet(ScatterplotFacetConfig config, int cellIndexX, int cellIndexY, ColumnModel columnModel,
+            Map<String, OverlayModel> overlayModels) {
         this.config = config;
+        this.overlayModels = overlayModels;
 
         columnIndex_x = cellIndexX;
         columnIndex_y = cellIndexY;
@@ -413,8 +418,8 @@ public class ScatterplotFacet implements Facet {
     public FacetAggregator<ScatterplotFacetState> getAggregator() {
         if (config.evaluableX != null && config.evaluableY != null) {
             return new ScatterplotFacetAggregator(config,
-                    new ExpressionBasedRowEvaluable(config.columnName_x, columnIndex_x, config.evaluableX, columnModel),
-                    new ExpressionBasedRowEvaluable(config.columnName_y, columnIndex_y, config.evaluableY, columnModel));
+                    new ExpressionBasedRowEvaluable(config.columnName_x, columnIndex_x, config.evaluableX, columnModel, overlayModels),
+                    new ExpressionBasedRowEvaluable(config.columnName_y, columnIndex_y, config.evaluableY, columnModel, overlayModels));
         } else {
             return null;
         }

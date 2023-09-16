@@ -22,7 +22,7 @@
  * SOFTWARE.
  ******************************************************************************/
 
-package org.openrefine.wikidata.schema;
+package org.openrefine.wikibase.schema;
 
 import static org.testng.Assert.assertEquals;
 
@@ -44,8 +44,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.testing.JacksonSerializationTest;
+import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 
 public class WbStatementExprTest extends WbExpressionTest<Statement> {
 

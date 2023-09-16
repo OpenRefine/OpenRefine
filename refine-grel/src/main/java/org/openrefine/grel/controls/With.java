@@ -36,6 +36,8 @@ package org.openrefine.grel.controls;
 import java.util.Properties;
 
 import org.openrefine.grel.Control;
+import org.openrefine.grel.ControlDescription;
+import org.openrefine.grel.ControlEvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.grel.ast.VariableExpr;
@@ -45,10 +47,9 @@ public class With implements Control {
     @Override
     public String checkArguments(GrelExpr[] args) {
         if (args.length != 3) {
-            return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
+            return ControlEvalError.expects_three_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) +
-                    " expects second argument to be a variable name";
+            return ControlEvalError.expects_second_arg_var_name(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -81,7 +82,7 @@ public class With implements Control {
 
     @Override
     public String getDescription() {
-        return "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result";
+        return ControlDescription.with_desc();
     }
 
     @Override

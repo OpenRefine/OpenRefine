@@ -9,7 +9,7 @@ describe(__filename, function () {
     // click
     cy.columnActionClick('A column', [
       'Edit cells',
-      'Split multi-valued cells...',
+      'Split multi-valued cells…',
     ]);
     cy.get('.dialog-container label').contains('by separator').click();
     cy.get('.dialog-container input[bind="separatorInput"]').type('***');
@@ -32,7 +32,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('A column', [
       'Edit cells',
-      'Split multi-valued cells...',
+      'Split multi-valued cells…',
     ]);
     cy.get('.dialog-container label').contains('by separator').click();
     cy.get('.dialog-container input[bind="separatorInput"]').type('\\d');
@@ -55,7 +55,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('A column', [
       'Edit cells',
-      'Split multi-valued cells...',
+      'Split multi-valued cells…',
     ]);
     cy.get('.dialog-container').should('to.contain', 'Split multi-valued');
     cy.get('.dialog-container textarea[bind="lengthsTextarea"]').type('2,4,8');
@@ -71,7 +71,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('A column', [
       'Edit cells',
-      'Split multi-valued cells...',
+      'Split multi-valued cells…',
     ]);
     cy.get('.dialog-container input[value="cases"]').check();
     cy.confirmDialogPanel();
@@ -85,7 +85,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('A column', [
       'Edit cells',
-      'Split multi-valued cells...',
+      'Split multi-valued cells…',
     ]);
 
     cy.get('.dialog-container input[value="number"]').check();

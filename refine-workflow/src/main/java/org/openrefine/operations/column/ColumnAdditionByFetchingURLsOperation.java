@@ -37,11 +37,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -76,6 +72,7 @@ import org.openrefine.model.changes.ColumnChangeByChangeData;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.OnError;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
@@ -229,6 +226,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
         private static final long serialVersionUID = 131571544240263338L;
         final protected OnError _onError;
+        final protected ColumnModel _columnModel;
+        final protected Map<String, OverlayModel> _overlayModels;
         final protected List<HttpHeader> _httpHeaders;
         final protected boolean _cacheResponses;
         final protected int _delay;
@@ -247,7 +246,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 int delay,
                 int cellIndex,
                 String baseColumnName,
-                Evaluable eval) {
+                Evaluable eval,
+                ColumnModel columnModel,
+                Map<String, OverlayModel> overlayModels) {
             _onError = onError;
             _cacheResponses = cacheResponses;
             _httpHeaders = httpHeaders != null ? httpHeaders : Collections.emptyList();
@@ -257,7 +258,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             _eval = eval;
             _headers = null;
             _httpClient = null;
-
+            _columnModel = columnModel;
+            _overlayModels = overlayModels;
         }
 
         protected HttpClient getHttpClient() {
@@ -293,7 +295,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
             Properties bindings = new Properties();
             Record record = null; // TODO enable records mode
-            ExpressionUtils.bind(bindings, null, row, rowId, record, _baseColumnName, cell);
+            ExpressionUtils.bind(bindings, _columnModel, row, rowId, record, _baseColumnName, cell, _overlayModels);
 
             Object o = _eval.evaluate(bindings);
             if (o != null) {
@@ -432,7 +434,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                     _delay,
                     _cellIndex,
                     _baseColumnName,
-                    _eval);
+                    _eval,
+                    state.getColumnModel(),
+                    state.getOverlayModels());
 
             ChangeData<Cell> changeData = state.mapRows(_engine.combinedRowFilters(), changeProducer);
 

@@ -35,6 +35,8 @@ package org.openrefine.expr.functions.math;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.EvalErrorMessage;
+import org.openrefine.grel.FunctionDescription;
 import org.openrefine.grel.PureFunction;
 
 public class FactN extends PureFunction {
@@ -44,13 +46,15 @@ public class FactN extends PureFunction {
     @Override
     public Object call(Object[] args) {
         if (args.length != 2) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+            return new EvalError(EvalErrorMessage.expects_two_numbers(ControlFunctionRegistry.getFunctionName(this)));
         }
-        if (args[0] == null || !(args[0] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first parameter to be a number");
+        if (!(args[0] instanceof Number)) {
+            // a number");
+            return new EvalError(EvalErrorMessage.expects_first_param_number(ControlFunctionRegistry.getFunctionName(this)));
         }
-        if (args[1] == null || !(args[1] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second parameter to be a number");
+        if (!(args[1] instanceof Number)) {
+            // a number");
+            return new EvalError(EvalErrorMessage.expects_second_param_number(ControlFunctionRegistry.getFunctionName(this)));
         }
 
         return FactN.factorial(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
@@ -77,7 +81,7 @@ public class FactN extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the factorial of n1, starting from n2.";
+        return FunctionDescription.math_factn();
     }
 
     @Override

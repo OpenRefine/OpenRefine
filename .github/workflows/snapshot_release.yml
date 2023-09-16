@@ -7,6 +7,8 @@ on:
       - '4.0'
     paths-ignore:
       - 'docs/**'
+  release:
+    types: [created]
 
 jobs:
   prepare_ui_test_matrix:
@@ -14,12 +16,12 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3.5.0
         with:
           node-version: '12'
       - id: set-matrix
@@ -32,13 +34,18 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.prepare_ui_test_matrix.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
+      - name: Set up secrets
+        run: |
+          echo "CYPRESS_RECORD_KEY=$(echo YzE3ZDU4OGItZTBkOC00ZjJmLTg4NjYtNzJmNmFmYmRhNGQxCg== | base64 -d)" >> $GITHUB_ENV
+          echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
+
       - name: Restore dependency cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -46,7 +53,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Set up Java 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: 11
@@ -55,12 +62,12 @@ jobs:
         run: ./refine build
 
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3.5.0
         with:
           node-version: '12'
 
       - name: Restore Tests dependency cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: |
             ~/cache
@@ -84,8 +91,8 @@ jobs:
           ./refine ui_tests
         env:
           CYPRESS_BROWSER: ${{ matrix.browser }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs }}
 
@@ -121,12 +128,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2.3.4
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0 # This is wasteful, but needed for git describe
 
+    - name: Set up secrets
+      run: |
+        echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
+
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.7
+      uses: actions/cache@v3
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -134,7 +145,7 @@ jobs:
             ${{ runner.os }}-maven-
 
     - name: Set up Java 11
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: 'adopt'
         java-version: 11
@@ -158,20 +169,73 @@ jobs:
       env:
         PGPASSWORD: postgres
 
+    - name: Install webapp dependencies
+      run: cd main/webapp && npm install
+      
     - name: Build and test with Maven
       run: mvn jacoco:prepare-agent test
 
-    - name: Submit test coverage to Coveralls
-      run: |
-        mvn prepare-package -DskipTests=true
-        mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=master
+    - name: Install webapp dependencies
+      run: cd main/webapp && npm install
 
     - name: Generate dist files
       run: mvn package -DskipTests=true
 
+  mac_test_and_deploy:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Restore dependency cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+            ${{ runner.os }}-maven-
+
+    - name: Set up Java 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: 17
+        server-id: ossrh
+        server-username: OSSRH_USER
+        server-password: OSSRH_PASS
+        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+        gpg-passphrase: GPG_PASSPHRASE
+
+    - name: Decrypt Apple certificates
+      run: |
+        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.cer --decrypt packaging/apple_certs/apple_cert.cer.enc
+        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.p12 --decrypt packaging/apple_certs/apple_cert.p12.enc
+        .github/workflows/release/add_apple_keys.sh
+      env:
+        P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
+
+    - name: Apply patch to insert Google API credentials
+      run: |
+        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/gdata.patch --decrypt .github/workflows/release/gdata.patch.asc
+        git am .github/workflows/release/gdata.patch
+        git reset HEAD^
+
+    - name: Install webapp dependencies
+      run: cd main/webapp && npm install
+      
+    - name: Build, test and package
+      run: mvn package -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
+      env:
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        APPLE_USERNAME: ${{ secrets.APPLE_USERNAME }}
+        APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+
     - name: Upload snapshot releases to OSSRH
-      run: mvn deploy -DskipTests=true
+      run: |
+        mvn deploy -DskipTests=true -DrepositoryId=ossrh
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
