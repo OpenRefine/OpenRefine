@@ -40,7 +40,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -51,9 +50,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.importers.ImporterUtilities;
-import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Row;
 
 public class ImporterUtilitiesTests extends RefineTest {
 
@@ -111,37 +108,6 @@ public class ImporterUtilitiesTests extends RefineTest {
         ImporterUtilities.appendColumnName(columnNames, 0, "bar");
         Assert.assertEquals(columnNames.size(), 1);
         Assert.assertEquals(columnNames.get(0), "foo bar");
-    }
-
-    @Test
-    public void ensureColumnsInRowExist() {
-        String VALUE_1 = "value1";
-        String VALUE_2 = "value2";
-        Row row = new Row(Arrays.asList(new Cell[2]));
-        ArrayList<String> columnNames = new ArrayList<String>(2);
-        columnNames.add(VALUE_1);
-        columnNames.add(VALUE_2);
-
-        ImporterUtilities.ensureColumnsInRowExist(columnNames, row);
-
-        Assert.assertEquals(columnNames.size(), 2);
-        Assert.assertEquals(columnNames.get(0), VALUE_1);
-        Assert.assertEquals(columnNames.get(1), VALUE_2);
-    }
-
-    @Test
-    public void ensureColumnsInRowExistDoesExpand() {
-        Row row = new Row(Arrays.asList(new Cell[4]));
-        for (int i = 1; i < 5; i++) {
-            row.cells.add(new Cell("value" + i, null));
-        }
-
-        ArrayList<String> columnNames = new ArrayList<String>(2);
-
-        ImporterUtilities.ensureColumnsInRowExist(columnNames, row);
-
-        Assert.assertEquals(row.cells.size(), 4);
-        Assert.assertEquals(columnNames.size(), 4);
     }
 
     @Test

@@ -30,11 +30,14 @@ package org.openrefine.importers;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.CharStreams;
@@ -79,30 +82,34 @@ import org.sweble.wikitext.parser.nodes.WtXmlStartTag;
 import org.sweble.wikitext.parser.parser.PreprocessorToParserTransformer;
 import org.sweble.wikitext.parser.preprocessor.PreprocessedWikitext;
 import org.sweble.wikitext.parser.utils.SimpleParserConfig;
-import xtc.parser.ParseException;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importers.TabularParserHelper.TableDataReader;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconJob;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.model.recon.StandardReconConfig.ColumnDetail;
+import org.openrefine.operations.utils.ReconStatsAggregator;
 import org.openrefine.util.JSONUtilities;
 
-public class WikitextImporter extends TabularParserHelper {
+public class WikitextImporter extends ReaderImporter {
     // static final private Logger logger = LoggerFactory.getLogger(WikitextImporter.class);
 
-    public WikitextImporter() {
-        super(false);
+    private TabularParserHelper tabularParserHelper;
+
+    public WikitextImporter(DatamodelRunner runner) {
+        super(runner);
+        tabularParserHelper = new TabularParserHelper(runner);
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(
-            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
@@ -684,89 +691,68 @@ public class WikitextImporter extends TabularParserHelper {
     }
 
     @Override
-    public void parseOneFile(
-            Project project,
-            ProjectMetadata metadata,
-            ImportingJob job,
-            String fileSource,
-            Reader reader,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, Reader reader,
+            long limit, ObjectNode options) throws Exception {
         // Set-up a simple wiki configuration
         ParserConfig parserConfig = new SimpleParserConfig();
 
-        try {
-            // Encoding validation
+        // Encoding validation
+        WikitextEncodingValidator v = new WikitextEncodingValidator();
 
-            WikitextEncodingValidator v = new WikitextEncodingValidator();
+        String wikitext = CharStreams.toString(reader);
+        String title = "Page title";
+        ValidatedWikitext validated = v.validate(parserConfig, wikitext, title);
 
-            String wikitext = CharStreams.toString(reader);
-            String title = "Page title";
-            ValidatedWikitext validated = v.validate(parserConfig, wikitext, title);
+        // Pre-processing
+        WikitextPreprocessor prep = new WikitextPreprocessor(parserConfig);
 
-            // Pre-processing
-            WikitextPreprocessor prep = new WikitextPreprocessor(parserConfig);
+        WtPreproWikitextPage prepArticle = (WtPreproWikitextPage) prep.parseArticle(validated, title, false);
 
-            WtPreproWikitextPage prepArticle = (WtPreproWikitextPage) prep.parseArticle(validated, title, false);
+        // Parsing
+        PreprocessedWikitext ppw = PreprocessorToParserTransformer
+                .transform(prepArticle);
 
-            // Parsing
-            PreprocessedWikitext ppw = PreprocessorToParserTransformer
-                    .transform(prepArticle);
+        WikitextParser parser = new WikitextParser(parserConfig);
 
-            WikitextParser parser = new WikitextParser(parserConfig);
+        WtParsedWikitextPage parsedArticle;
+        parsedArticle = (WtParsedWikitextPage) parser.parseArticle(ppw, title);
 
-            WtParsedWikitextPage parsedArticle;
-            parsedArticle = (WtParsedWikitextPage) parser.parseArticle(ppw, title);
+        // Compile the retrieved page
+        boolean blankSpanningCells = JSONUtilities.getBoolean(options, "blankSpanningCells", true);
+        boolean includeRawTemplates = JSONUtilities.getBoolean(options, "includeRawTemplates", false);
+        boolean parseReferences = JSONUtilities.getBoolean(options, "parseReferences", true);
+        final WikitextTableVisitor vs = new WikitextTableVisitor(blankSpanningCells, includeRawTemplates);
+        vs.go(parsedArticle);
 
-            // Compile the retrieved page
-            boolean blankSpanningCells = JSONUtilities.getBoolean(options, "blankSpanningCells", true);
-            boolean includeRawTemplates = JSONUtilities.getBoolean(options, "includeRawTemplates", false);
-            boolean parseReferences = JSONUtilities.getBoolean(options, "parseReferences", true);
-            final WikitextTableVisitor vs = new WikitextTableVisitor(blankSpanningCells, includeRawTemplates);
-            vs.go(parsedArticle);
+        WikiTableDataReader dataReader = new WikiTableDataReader(vs, parseReferences);
 
-            WikiTableDataReader dataReader = new WikiTableDataReader(vs, parseReferences);
+        // Reconcile if needed
+        String wikiUrl = JSONUtilities.getString(options, "wikiUrl", null);
+        // Wikidata reconciliation endpoint, hardcoded because the user might not have it in its services
+        String reconUrl = JSONUtilities.getString(options, "reconService",
+                "https://wdreconcile.toolforge.org/en/api");
+        StandardReconConfig cfg = getReconConfig(reconUrl);
 
-            // Reconcile if needed
-            String wikiUrl = JSONUtilities.getString(options, "wikiUrl", null);
-            // Wikidata reconciliation endpoint, hardcoded because the user might not have it in its services
-            String reconUrl = JSONUtilities.getString(options, "reconService",
-                    "https://tools.wmflabs.org/openrefine-wikidata/en/api");
-            StandardReconConfig cfg = getReconConfig(reconUrl);
-
-            if (wikiUrl != null) {
-                dataReader.reconcileToQids(wikiUrl, cfg);
-            }
-
-            // Set metadata
-            if (vs.caption != null && vs.caption.length() > 0) {
-                metadata.setName(vs.caption);
-                // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
-            }
-
-            TabularParserHelper.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
-
-            // Add reconciliation statistics
-            if (dataReader.columnReconciled != null) {
-                for (int i = 0; i != dataReader.columnReconciled.size(); i++) {
-                    if (dataReader.columnReconciled.get(i)) {
-                        ColumnMetadata col = project.columnModel.getColumns().get(i);
-                        ColumnMetadata newCol = col
-                                .withReconStats(ReconStats.create(project, i))
-                                .withReconConfig(cfg);
-                        project.columnModel.getColumns().set(i, newCol);
-                    }
-                }
-            }
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } catch (ParseException e1) {
-            exceptions.add(e1);
-            e1.printStackTrace();
+        if (wikiUrl != null) {
+            dataReader.reconcileToQids(wikiUrl, cfg);
         }
 
-        super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
+        // Set metadata
+        if (vs.caption != null && vs.caption.length() > 0) {
+            metadata.setName(vs.caption);
+            // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
+        }
+
+        GridState grid = tabularParserHelper.parseOneFile(metadata, job, fileSource, dataReader, limit, options);
+
+        int nbColumns = grid.getColumnModel().getColumnNames().size();
+        List<Integer> allColumnIndices = IntStream.range(0, nbColumns)
+                .boxed().collect(Collectors.toList());
+
+        // Add reconciliation statistics
+        grid = ReconStatsAggregator.updateReconStats(grid, allColumnIndices, Collections.nCopies(nbColumns, cfg));
+
+        return grid;
     }
 
     private StandardReconConfig getReconConfig(String url) {

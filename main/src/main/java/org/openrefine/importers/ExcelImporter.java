@@ -76,8 +76,11 @@ public class ExcelImporter extends InputStreamImporter {
 
     static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
 
+    private final TabularParserHelper tabularParserHelper;
+
     public ExcelImporter(DatamodelRunner runner) {
         super(runner);
+        tabularParserHelper = new TabularParserHelper(runner);
     }
 
     @Override
@@ -170,6 +173,7 @@ public class ExcelImporter extends InputStreamImporter {
         }
 
         ArrayNode sheets = (ArrayNode) options.get("sheets");
+        List<GridState> gridStates = new ArrayList<>(sheets.size());
 
         for (int i = 0; i < sheets.size(); i++) {
             String[] fileNameAndSheetIndex = new String[2];
@@ -183,50 +187,45 @@ public class ExcelImporter extends InputStreamImporter {
             final Sheet sheet = wb.getSheetAt(Integer.parseInt(fileNameAndSheetIndex[1]));
             final int lastRow = sheet.getLastRowNum();
 
-            TabularParserHelper.readTable(
-                    project,
+            TableDataReader dataReader = new TableDataReader() {
+
+                int nextRow = 0;
+                Map<String, Recon> reconMap = new HashMap<String, Recon>();
+
+                @Override
+                public List<Object> getNextRowOfCells() throws IOException {
+                    if (nextRow > lastRow) {
+                        return null;
+                    }
+
+                    List<Object> cells = new ArrayList<Object>();
+                    org.apache.poi.ss.usermodel.Row row = sheet.getRow(nextRow++);
+                    if (row != null) {
+                        short lastCell = row.getLastCellNum();
+                        for (short cellIndex = 0; cellIndex < lastCell; cellIndex++) {
+                            Cell cell = null;
+
+                            org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
+                            if (sourceCell != null) {
+                                cell = extractCell(sourceCell, reconMap);
+                            }
+                            cells.add(cell);
+                        }
+                    }
+                    return cells;
+                }
+            };
+
+            gridStates.add(tabularParserHelper.parseOneFile(
                     metadata,
                     job,
-                    dataReader,
                     fileSource + "#" + sheet.getSheetName(),
+                    dataReader,
                     limit,
-                    options);
+                    options));
         }
 
-        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
-    }
-
-    @Override
-    protected TableDataReader createTableDataReader(ProjectMetadata metadata, ImportingJob job, InputStream inputStream,
-            ObjectNode options) {
-        return new TableDataReader() {
-
-            int nextRow = 0;
-            Map<String, Recon> reconMap = new HashMap<String, Recon>();
-
-            @Override
-            public List<Object> getNextRowOfCells() throws IOException {
-                if (nextRow > lastRow) {
-                    return null;
-                }
-
-                List<Object> cells = new ArrayList<Object>();
-                org.apache.poi.ss.usermodel.Row row = sheet.getRow(nextRow++);
-                if (row != null) {
-                    short lastCell = row.getLastCellNum();
-                    for (short cellIndex = 0; cellIndex < lastCell; cellIndex++) {
-                        Cell cell = null;
-
-                        org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
-                        if (sourceCell != null) {
-                            cell = extractCell(sourceCell, reconMap);
-                        }
-                        cells.add(cell);
-                    }
-                }
-                return cells;
-            }
-        };
+        return mergeGridStates(gridStates);
     }
 
     static protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
@@ -297,16 +296,15 @@ public class ExcelImporter extends InputStreamImporter {
 
                         if (reconMap.containsKey(id)) {
                             recon = reconMap.get(id);
-                            recon.judgmentBatchSize++;
                         } else {
-                            recon = new Recon(0, null, null);
-                            recon.service = "import";
-                            recon.match = new ReconCandidate(id, value.toString(), new String[0], 100);
-                            recon.matchRank = 0;
-                            recon.judgment = Judgment.Matched;
-                            recon.judgmentAction = "auto";
-                            recon.judgmentBatchSize = 1;
-                            recon.addCandidate(recon.match);
+                            ReconCandidate candidate = new ReconCandidate(id, value.toString(), new String[0], 100);
+                            recon = new Recon(0, null, null)
+                                    .withService("import")
+                                    .withMatch(candidate)
+                                    .withMatchRank(0)
+                                    .withJudgment(Judgment.Matched)
+                                    .withJudgmentAction("auto")
+                                    .withCandidate(candidate);
 
                             reconMap.put(id, recon);
                         }

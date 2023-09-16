@@ -38,21 +38,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importers.TabularParserHelper.TableDataReader;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.Project;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
 import org.openrefine.util.JSONUtilities;
 
-public class LineBasedImporter extends TabularParserHelper {
+public class LineBasedImporter extends ReaderImporter {
 
     static final Logger logger = LoggerFactory.getLogger(LineBasedImporter.class);
 
-    public LineBasedImporter() {
-        super(false);
+    private TabularParserHelper tabularParserHelper;
+
+    public LineBasedImporter(DatamodelRunner runner) {
+        super(runner);
+        tabularParserHelper = new TabularParserHelper(runner);
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(
-            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
         JSONUtilities.safePut(options, "linesPerRow", 1);
@@ -63,15 +69,13 @@ public class LineBasedImporter extends TabularParserHelper {
     }
 
     @Override
-    public void parseOneFile(
-            Project project,
+    public GridState parseOneFile(
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
             Reader reader,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
+            long limit,
+            ObjectNode options) throws Exception {
         final int linesPerRow = JSONUtilities.getInt(options, "linesPerRow", 1);
 
         final List<Object> columnNames;
@@ -131,8 +135,6 @@ public class LineBasedImporter extends TabularParserHelper {
             }
         };
 
-        TabularParserHelper.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
-
-        super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
+        return tabularParserHelper.parseOneFile(metadata, job, fileSource, dataReader, limit, options);
     }
 }
