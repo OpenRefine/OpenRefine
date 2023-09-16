@@ -73,20 +73,19 @@ public class ExecuteQueryCommandTest extends DBExtensionTests {
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("queryString")).thenReturn("SELECT count(*) FROM " + testTable);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        
 
         StringWriter sw = new StringWriter();
 
         PrintWriter pw = new PrintWriter(sw);
-        
+
         when(response.getWriter()).thenReturn(pw);
         ExecuteQueryCommand executeQueryCommand = new ExecuteQueryCommand();
-       
+
         executeQueryCommand.doPost(request, response);
-        
+
         String result = sw.getBuffer().toString().trim();
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-   
+
         String code = json.get("code").asText();
         Assert.assertEquals(code, "ok");
 

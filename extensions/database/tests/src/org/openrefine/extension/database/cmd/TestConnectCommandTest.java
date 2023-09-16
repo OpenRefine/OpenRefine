@@ -65,7 +65,7 @@ public class TestConnectCommandTest extends DBExtensionTests {
 
     @Test
     public void testDoPost() throws IOException, ServletException {
-        
+
         when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
         when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
@@ -73,7 +73,6 @@ public class TestConnectCommandTest extends DBExtensionTests {
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        
 
         StringWriter sw = new StringWriter();
 
@@ -81,15 +80,15 @@ public class TestConnectCommandTest extends DBExtensionTests {
 
         when(response.getWriter()).thenReturn(pw);
         TestConnectCommand connectCommand = new TestConnectCommand();
-       
+
         connectCommand.doPost(request, response);
-        
+
         String result = sw.getBuffer().toString().trim();
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-   
+
         String code = json.get("code").asText();
         Assert.assertEquals(code, "ok");
-      
+
     }
 
     @Test

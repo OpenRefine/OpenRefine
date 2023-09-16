@@ -80,12 +80,12 @@ public class TestQueryCommandTest extends DBExtensionTests {
 
         when(response.getWriter()).thenReturn(pw);
         TestQueryCommand executeQueryCommand = new TestQueryCommand();
-       
+
         executeQueryCommand.doPost(request, response);
-        
+
         String result = sw.getBuffer().toString().trim();
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-   
+
         String code = json.get("code").asText();
         Assert.assertEquals(code, "ok");
 

@@ -151,13 +151,13 @@ public class ScatterplotDrawCommandTests extends RefineTest {
 
     @Test
     public void testDrawScatterplot() throws ServletException, IOException {
-    	when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
-    	when(request.getParameter("plotter")).thenReturn(configJson);
-    	when(request.getParameter("engineConfig")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
-    	
-    	command.doGet(request, response);
-    	// Not sure how to check the resulting image - at least this test ensures that no exception was thrown
-    	Assert.assertEquals(writer.toString(), "");
+        when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
+        when(request.getParameter("plotter")).thenReturn(configJson);
+        when(request.getParameter("engineConfig")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+
+        command.doGet(request, response);
+        // Not sure how to check the resulting image - at least this test ensures that no exception was thrown
+        Assert.assertEquals(writer.toString(), "");
     }
 
     @Test

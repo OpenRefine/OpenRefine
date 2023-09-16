@@ -104,7 +104,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
     }
 
     private void saveDatabaseConfiguration(String savedDbName) {
-        
+
         when(request.getParameter("connectionName")).thenReturn(savedDbName);
         when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
@@ -115,7 +115,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        
+
         try {
             when(response.getWriter()).thenReturn(pw);
 
@@ -125,12 +125,12 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-       
+
     }
 
     @Test
     public void testDoPost() throws IOException, ServletException {
-        
+
         when(request.getParameter("connectionName")).thenReturn("test-db-name");
         when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
@@ -139,26 +139,26 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-       
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        
+
         when(response.getWriter()).thenReturn(pw);
-       
+
         SUT.doPost(request, response);
-        
+
         String result = sw.getBuffer().toString().trim();
         assertNotNull(result);
         assertFalse(result.isEmpty(), "Valid response Message expected!");
-        
+
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-       // System.out.println("json:" + json);
-        
+        // System.out.println("json:" + json);
+
         ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
-        
+
         int len = savedConnections.size();
-        
+
         Assert.assertEquals(len, 1);
     }
 
@@ -282,13 +282,14 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
 
     /**
      * Added to check XSS invalid tokens
+     * 
      * @throws IOException
      * @throws ServletException
      */
     @Test
     public void testDoPostInvalidConnectionName() throws IOException, ServletException {
-        
-    	when(request.getParameter("connectionName")).thenReturn("<img></img>");
+
+        when(request.getParameter("connectionName")).thenReturn("<img></img>");
         when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
         when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
@@ -296,14 +297,14 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-       
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        
+
         when(response.getWriter()).thenReturn(pw);
-       
+
         SUT.doPost(request, response);
-        
+
         verify(response, times(1)).sendError(HttpStatus.SC_BAD_REQUEST, "Connection Name is Invalid. Expecting [a-zA-Z0-9._-]");
     }
 

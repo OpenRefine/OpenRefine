@@ -143,7 +143,7 @@ public class CancelProcessesCommandTests {
     }
 
     /**
-     *  Contract for a complete working post
+     * Contract for a complete working post
      */
     @Test
     public void doPostRegressionTest() {
@@ -186,12 +186,12 @@ public class CancelProcessesCommandTests {
     }
 
     @Test
-     public void doPostThrowsIfCommand_getProjectReturnsNull(){
+    public void doPostThrowsIfCommand_getProjectReturnsNull() {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong()))
-            .thenReturn(null);
+                .thenReturn(null);
         try {
             when(response.getWriter()).thenReturn(pw);
         } catch (IOException e1) {
@@ -202,7 +202,7 @@ public class CancelProcessesCommandTests {
         try {
             SUT.doPost(request, response);
         } catch (ServletException e) {
-            //expected
+            // expected
         } catch (IOException e) {
             Assert.fail();
         }
@@ -210,7 +210,7 @@ public class CancelProcessesCommandTests {
         // verify
         verify(request, times(1)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
-     }
+    }
 
     @Test
     public void doPostCatchesExceptionFromWriter() {

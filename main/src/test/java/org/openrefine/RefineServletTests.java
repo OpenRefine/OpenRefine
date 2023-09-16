@@ -275,7 +275,7 @@ public class RefineServletTests extends RefineTest {
     // ----------------getCommandName tests----------------
 
     @Test
-    public void getCommandNameHandlesBadCommandName(){
+    public void getCommandNameHandlesBadCommandName() {
 
         when(request.getPathInfo()).thenReturn("/command/this-command-has-no-trailing-slash");
 
@@ -285,11 +285,11 @@ public class RefineServletTests extends RefineTest {
     }
 
     // ------------helpers
-    protected void whenGetCommandNameThenReturn(String commandName){
+    protected void whenGetCommandNameThenReturn(String commandName) {
         when(request.getPathInfo()).thenReturn(commandName);
     }
 
-    protected void whenGetMethodThenReturn(String method){
+    protected void whenGetMethodThenReturn(String method) {
         when(request.getMethod()).thenReturn(method);
     }
 

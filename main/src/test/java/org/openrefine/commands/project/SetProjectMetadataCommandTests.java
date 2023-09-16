@@ -116,13 +116,13 @@ public class SetProjectMetadataCommandTests {
     }
 
     /**
-     *  Contract for a complete working post
+     * Contract for a complete working post
      */
     @Test
     public void setMetadataTest() {
         when(request.getParameter("name")).thenReturn("subject");
         when(request.getParameter("value")).thenReturn(SUBJECT);
-        
+
         // run
         try {
             SUT.doPost(request, response);
@@ -133,7 +133,7 @@ public class SetProjectMetadataCommandTests {
         }
 
         // verify
-        verify(request, times(2)).getParameter("project");      
+        verify(request, times(2)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
 
         verify(response, times(1))
@@ -145,18 +145,18 @@ public class SetProjectMetadataCommandTests {
             Assert.fail();
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
-        
+
         Assert.assertEquals(proj.getMetadata().getSubject(), SUBJECT);
     }
 
     /**
-     *  set a user defined metadata field
+     * set a user defined metadata field
      */
     @Test
     public void setUserMetadataFieldTest() {
         when(request.getParameter("name")).thenReturn("clientID");
         when(request.getParameter("value")).thenReturn("IBM");
-        
+
         // run
         try {
             SUT.doPost(request, response);
@@ -167,7 +167,7 @@ public class SetProjectMetadataCommandTests {
         }
 
         // verify
-        verify(request, times(2)).getParameter("project");      
+        verify(request, times(2)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
 
         verify(response, times(1))
@@ -179,7 +179,7 @@ public class SetProjectMetadataCommandTests {
             Assert.fail();
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
-        
+
         ObjectNode obj = (ObjectNode) proj.getMetadata().getUserMetadata().get(0);
         Assert.assertEquals(obj.get("name").asText(), "clientID");
         Assert.assertEquals(obj.get("value").asText(), "IBM");

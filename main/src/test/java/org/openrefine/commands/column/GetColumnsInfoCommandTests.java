@@ -49,12 +49,12 @@ public class GetColumnsInfoCommandTests extends CommandTestBase {
     }
 
     @Test
-	public void testGetColumnsInfo() throws ServletException, IOException {
-		when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
-		
-		command.doGet(request, response);
-		
-		TestUtils.assertEqualAsJson(jsonResponse, writer.toString());
-	}
+    public void testGetColumnsInfo() throws ServletException, IOException {
+        when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
+
+        command.doGet(request, response);
+
+        TestUtils.assertEqualAsJson(jsonResponse, writer.toString());
+    }
 
 }

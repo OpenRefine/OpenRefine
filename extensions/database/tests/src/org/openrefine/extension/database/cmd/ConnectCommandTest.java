@@ -73,21 +73,21 @@ public class ConnectCommandTest extends DBExtensionTests {
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-    
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
         when(response.getWriter()).thenReturn(pw);
         ConnectCommand connectCommand = new ConnectCommand();
-       
+
         connectCommand.doPost(request, response);
-        
+
         String result = sw.getBuffer().toString().trim();
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-   
+
         String code = json.get("code").asText();
         Assert.assertEquals(code, "ok");
-        
+
         String databaseInfo = json.get("databaseInfo").asText();
         Assert.assertNotNull(databaseInfo);
     }

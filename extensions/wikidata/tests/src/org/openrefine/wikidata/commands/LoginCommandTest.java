@@ -133,18 +133,18 @@ public class LoginCommandTest extends CommandTest {
     }
 
     @Test
-    public void testUsernamePasswordLogin() throws Exception {       
+    public void testUsernamePasswordLogin() throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-        
+
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
 
         command.doPost(request, response);
-        
+
         verify(connectionManager, times(1)).login(apiEndpoint, username, password);
 
         assertLogin();
@@ -165,7 +165,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-        
+
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
@@ -181,7 +181,8 @@ public class LoginCommandTest extends CommandTest {
         assertLogin();
 
         Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues());
-        cookieMap.forEach((key, value) -> assertCookieEquals(cookies.get(apiEndpointPrefix + WIKIBASE_COOKIE_PREFIX + key), value, ONE_YEAR));
+        cookieMap.forEach(
+                (key, value) -> assertCookieEquals(cookies.get(apiEndpointPrefix + WIKIBASE_COOKIE_PREFIX + key), value, ONE_YEAR));
         assertCookieEquals(cookies.get(apiEndpointPrefix + USERNAME), username, ONE_YEAR);
         assertCookieEquals(cookies.get(apiEndpointPrefix + CONSUMER_TOKEN), "", 0);
         assertCookieEquals(cookies.get(apiEndpointPrefix + CONSUMER_SECRET), "", 0);
@@ -194,8 +195,8 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         when(request.getCookies()).thenReturn(makeRequestCookies());
-        
-        when(connectionManager.login(eq(apiEndpoint), eq(username), Mockito.<List<Cookie>>any())).thenReturn(true);
+
+        when(connectionManager.login(eq(apiEndpoint), eq(username), Mockito.<List<Cookie>> any())).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
         BasicApiConnection connection = mock(BasicApiConnection.class);
@@ -205,7 +206,7 @@ public class LoginCommandTest extends CommandTest {
 
         command.doPost(request, response);
 
-        verify(connectionManager, times(1)).login(eq(apiEndpoint), eq(username), Mockito.<List<Cookie>>any());
+        verify(connectionManager, times(1)).login(eq(apiEndpoint), eq(username), Mockito.<List<Cookie>> any());
 
         assertLogin();
 
@@ -225,7 +226,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(CONSUMER_SECRET)).thenReturn(consumerSecret);
         when(request.getParameter(ACCESS_TOKEN)).thenReturn(accessToken);
         when(request.getParameter(ACCESS_SECRET)).thenReturn(accessSecret);
-        
+
         when(connectionManager.login(apiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
@@ -234,7 +235,7 @@ public class LoginCommandTest extends CommandTest {
         when(connection.getCurrentUser()).thenReturn(username);
 
         command.doPost(request, response);
-        
+
         verify(connectionManager, times(1)).login(apiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret);
 
         assertLogin();
@@ -258,7 +259,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(ACCESS_TOKEN)).thenReturn(accessToken);
         when(request.getParameter(ACCESS_SECRET)).thenReturn(accessSecret);
         when(request.getCookies()).thenReturn(makeRequestCookies());
-        
+
         when(connectionManager.login(apiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
@@ -290,17 +291,18 @@ public class LoginCommandTest extends CommandTest {
         Cookie consumerSecretCookie = new Cookie(apiEndpointPrefix + CONSUMER_SECRET, consumerSecret);
         Cookie accessTokenCookie = new Cookie(apiEndpointPrefix + ACCESS_TOKEN, accessToken);
         Cookie accessSecretCookie = new Cookie(apiEndpointPrefix + ACCESS_SECRET, accessSecret);
-        when(request.getCookies()).thenReturn(new Cookie[]{consumerTokenCookie, consumerSecretCookie, accessTokenCookie, accessSecretCookie});
-        
+        when(request.getCookies())
+                .thenReturn(new Cookie[] { consumerTokenCookie, consumerSecretCookie, accessTokenCookie, accessSecretCookie });
+
         when(connectionManager.login(apiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
         OAuthApiConnection connection = mock(OAuthApiConnection.class);
         when(connectionManager.getConnection(apiEndpoint)).thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
-        
+
         command.doPost(request, response);
-        
+
         verify(connectionManager, times(1)).login(apiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret);
 
         assertLogin();
@@ -324,8 +326,9 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(ACCESS_TOKEN)).thenReturn(accessToken);
         when(request.getParameter(ACCESS_SECRET)).thenReturn(accessSecret);
         when(request.getCookies()).thenReturn(makeRequestCookies());
-        
-        when(connectionManager.login(apiEndpoint, "malformed consumer token \r\n %?", consumerSecret, accessToken, accessSecret)).thenReturn(true);
+
+        when(connectionManager.login(apiEndpoint, "malformed consumer token \r\n %?", consumerSecret, accessToken, accessSecret))
+                .thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
         OAuthApiConnection connection = mock(OAuthApiConnection.class);
@@ -347,15 +350,17 @@ public class LoginCommandTest extends CommandTest {
         Cookie consumerSecretCookie = new Cookie(apiEndpointPrefix + CONSUMER_SECRET, consumerSecret);
         Cookie accessTokenCookie = new Cookie(apiEndpointPrefix + ACCESS_TOKEN, accessToken);
         Cookie accessSecretCookie = new Cookie(apiEndpointPrefix + ACCESS_SECRET, accessSecret);
-        when(request.getCookies()).thenReturn(new Cookie[]{consumerTokenCookie, consumerSecretCookie, accessTokenCookie, accessSecretCookie});
+        when(request.getCookies())
+                .thenReturn(new Cookie[] { consumerTokenCookie, consumerSecretCookie, accessTokenCookie, accessSecretCookie });
 
-        when(connectionManager.login(apiEndpoint, "malformed consumer token \r\n %?", consumerSecret, accessToken, accessSecret)).thenReturn(true);
+        when(connectionManager.login(apiEndpoint, "malformed consumer token \r\n %?", consumerSecret, accessToken, accessSecret))
+                .thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
         OAuthApiConnection connection = mock(OAuthApiConnection.class);
         when(connectionManager.getConnection(apiEndpoint)).thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
-        
+
         command.doPost(request, response);
 
         verify(connectionManager).login(apiEndpoint, "malformed consumer token \r\n %?", consumerSecret, accessToken, accessSecret);
@@ -368,7 +373,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-        
+
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
@@ -387,7 +392,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getCookies()).thenReturn(makeRequestCookies()); // will be cleared
         StringWriter logoutWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(logoutWriter));
-        
+
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(false);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(null);
 
@@ -395,9 +400,11 @@ public class LoginCommandTest extends CommandTest {
 
         verify(connectionManager).logout(apiEndpoint);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(false);
-        assertEqualAsJson("{\"logged_in\":false,\"username\":null, \"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}", logoutWriter.toString());
+        assertEqualAsJson("{\"logged_in\":false,\"username\":null, \"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}",
+                logoutWriter.toString());
 
-        Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues().subList(loginCookiesSize, cookieCaptor.getAllValues().size()));
+        Map<String, Cookie> cookies = getCookieMap(
+                cookieCaptor.getAllValues().subList(loginCookiesSize, cookieCaptor.getAllValues().size()));
         cookieMap.forEach((key, value) -> assertCookieEquals(cookies.get(apiEndpointPrefix + WIKIBASE_COOKIE_PREFIX + key), "", 0));
         assertCookieEquals(cookies.get(apiEndpointPrefix + USERNAME), "", 0);
         assertCookieEquals(cookies.get(apiEndpointPrefix + CONSUMER_TOKEN), "", 0);
@@ -413,7 +420,7 @@ public class LoginCommandTest extends CommandTest {
         // we don't check the username/password here
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-        
+
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(false);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(false);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(null);
@@ -430,8 +437,8 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         // we don't check the username/password here
         when(request.getCookies()).thenReturn(makeRequestCookies());
-        
-        when(connectionManager.login(eq(apiEndpoint), eq(username), Mockito.<List<Cookie>>any())).thenReturn(false);
+
+        when(connectionManager.login(eq(apiEndpoint), eq(username), Mockito.<List<Cookie>> any())).thenReturn(false);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(false);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(null);
         when(connectionManager.getConnection(apiEndpoint)).thenReturn(null);
@@ -439,7 +446,7 @@ public class LoginCommandTest extends CommandTest {
         // login first
         command.doPost(request, response);
 
-        verify(connectionManager).login(eq(apiEndpoint), eq(username), Mockito.<List<Cookie>>any());
+        verify(connectionManager).login(eq(apiEndpoint), eq(username), Mockito.<List<Cookie>> any());
         assertFalse(ConnectionManager.getInstance().isLoggedIn(apiEndpoint));
     }
 
@@ -452,7 +459,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(CONSUMER_SECRET)).thenReturn(consumerSecret);
         when(request.getParameter(ACCESS_TOKEN)).thenReturn(accessToken);
         when(request.getParameter(ACCESS_SECRET)).thenReturn(accessSecret);
-        
+
         when(connectionManager.login(apiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret)).thenReturn(false);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(false);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(null);
@@ -469,7 +476,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-        
+
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
@@ -481,7 +488,7 @@ public class LoginCommandTest extends CommandTest {
 
         // logout
         when(request.getParameter("logout")).thenReturn("true");
-        
+
         command.doPost(request, response);
 
         // still logged in

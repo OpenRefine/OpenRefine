@@ -114,7 +114,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("cell")).thenReturn("0");
         when(request.getParameter("judgment")).thenReturn("new");
         command.doPost(request, response);
-        
+
         Cell cell = project.getCurrentGridState().getRow(0L).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.recon.service/rdf/space", cell.recon.identifierSpace);
@@ -129,7 +129,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("identifierSpace")).thenReturn("http://my.custom.space/id");
         when(request.getParameter("schemaSpace")).thenReturn("http://my.custom.space/schema");
         command.doPost(request, response);
-        
+
         Cell cell = project.getCurrentGridState().getRow(0L).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.custom.space/id", cell.recon.identifierSpace);

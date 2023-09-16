@@ -98,8 +98,8 @@ public class PreviewWikibaseSchemaCommandTest extends CommandTest {
     @Test
     public void testNoSchema()
             throws ServletException, IOException {
-    	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-    	
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+
         command.doPost(request, response);
 
         assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"No Wikibase schema provided.\"}");
