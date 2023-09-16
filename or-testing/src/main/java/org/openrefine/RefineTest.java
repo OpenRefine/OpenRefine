@@ -156,6 +156,13 @@ public class RefineTest extends PowerMockTestCase {
     protected Project createProject(String projectName, String[] columns, Serializable[][] rows) {
         ProjectMetadata meta = new ProjectMetadata();
         meta.setName(projectName);
+        GridState state = createGrid(columns, rows);
+        Project project = new Project(state);
+        ProjectManager.singleton.registerProject(project, meta);
+        return project;
+    }
+
+    protected GridState createGrid(String[] columns, Serializable[][] rows) {
         List<ColumnMetadata> columnMeta = new ArrayList<>(columns.length);
         for (String column : columns) {
             columnMeta.add(new ColumnMetadata(column));
@@ -169,10 +176,7 @@ public class RefineTest extends PowerMockTestCase {
             }
         }
 
-        GridState state = runner().create(model, toRows(cells), Collections.emptyMap());
-        Project project = new Project(state);
-        ProjectManager.singleton.registerProject(project, meta);
-        return project;
+        return runner().create(model, toRows(cells), Collections.emptyMap());
     }
 
     @Deprecated

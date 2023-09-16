@@ -8,9 +8,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 
 public class AllFacetsAggregatorTests {
 
@@ -87,7 +87,7 @@ public class AllFacetsAggregatorTests {
         Row row = new Row(Arrays.asList(
                 new Cell("foo", null), new Cell("bar", null)));
 
-        List<FacetState> result = SUT.increment(initial, 1, row);
+        List<FacetState> result = SUT.withRow(initial, 1, row);
         Assert.assertEquals(result, Arrays.asList(
                 new FacetStateStub(1, 0),
                 new FacetStateStub(1, 0),
@@ -99,7 +99,7 @@ public class AllFacetsAggregatorTests {
         Row row = new Row(Arrays.asList(
                 new Cell("wrong", null), new Cell("bar", null)));
 
-        List<FacetState> result = SUT.increment(initial, 1, row);
+        List<FacetState> result = SUT.withRow(initial, 1, row);
         Assert.assertEquals(result, Arrays.asList(
                 new FacetStateStub(0, 0),
                 new FacetStateStub(0, 1),
@@ -111,7 +111,7 @@ public class AllFacetsAggregatorTests {
         Row row = new Row(Arrays.asList(
                 new Cell("wrong", null), new Cell("fail", null)));
 
-        List<FacetState> result = SUT.increment(initial, 1, row);
+        List<FacetState> result = SUT.withRow(initial, 1, row);
         Assert.assertEquals(result, initial);
     }
 
@@ -120,7 +120,7 @@ public class AllFacetsAggregatorTests {
         Row row = new Row(Arrays.asList(
                 new Cell("wrong", null), new Cell("fail", null)));
 
-        List<FacetState> result = SUT.increment(initial, 43, row);
+        List<FacetState> result = SUT.withRow(initial, 43, row);
         Assert.assertEquals(result, initial);
     }
 

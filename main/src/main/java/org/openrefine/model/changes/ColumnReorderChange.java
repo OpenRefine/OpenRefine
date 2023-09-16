@@ -33,211 +33,87 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.openrefine.history.Change;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 
-public class ColumnReorderChange extends ColumnChange {
+public class ColumnReorderChange extends RowMapChange {
 
     final protected List<String> _columnNames;
-    protected List<ColumnMetadata> _oldColumns;
-    protected List<ColumnMetadata> _newColumns;
-    protected List<ColumnMetadata> _removedColumns;
-    protected CellAtRowCellIndex[] _oldCells;
 
-    public ColumnReorderChange(List<String> columnNames) {
+    @JsonCreator
+    public ColumnReorderChange(
+            @JsonProperty("columnNames") List<String> columnNames) {
+        super(EngineConfig.ALL_ROWS);
         _columnNames = columnNames;
+        Set<String> deduplicated = new HashSet<>(columnNames);
+        if (deduplicated.size() != columnNames.size()) {
+            throw new IllegalArgumentException("Duplicates in the list of final column names");
+        }
+    }
+
+    @JsonProperty("columnNames")
+    public List<String> getColumnNames() {
+        return _columnNames;
     }
 
     @Override
-    public void apply(Project project) {
-        synchronized (project) {
-            if (_newColumns == null) {
-                _newColumns = new ArrayList<ColumnMetadata>();
-                _oldColumns = new ArrayList<ColumnMetadata>(project.columnModel.getColumns());
-
-                for (String n : _columnNames) {
-                    ColumnMetadata column = project.columnModel.getColumnByName(n);
-                    if (column != null) {
-                        _newColumns.add(column);
-                    }
-                }
-            }
-
-            if (_removedColumns == null) {
-                _removedColumns = new ArrayList<ColumnMetadata>();
-                for (String n : project.columnModel.getColumnNames()) {
-                    ColumnMetadata oldColumn = project.columnModel.getColumnByName(n);
-                    if (!_newColumns.contains(oldColumn)) {
-                        _removedColumns.add(oldColumn);
-                    }
-                }
-            }
-
-            if (_oldCells == null) {
-                _oldCells = new CellAtRowCellIndex[project.rows.size() * _removedColumns.size()];
-
-                int count = 0;
-                for (int i = 0; i < project.rows.size(); i++) {
-                    for (int j = 0; j < _removedColumns.size(); j++) {
-                        int cellIndex = _removedColumns.get(j).getCellIndex();
-                        Row row = project.rows.get(i);
-
-                        Cell oldCell = null;
-                        if (cellIndex < row.cells.size()) {
-                            oldCell = row.cells.get(cellIndex);
-                        }
-                        _oldCells[count++] = new CellAtRowCellIndex(i, cellIndex, oldCell);
-                    }
-                }
-            }
-
-            // Clear cells on removed columns.
-            for (int i = 0; i < project.rows.size(); i++) {
-                for (int j = 0; j < _removedColumns.size(); j++) {
-                    int cellIndex = _removedColumns.get(j).getCellIndex();
-                    Row row = project.rows.get(i);
-                    row.setCell(cellIndex, null);
-                }
-            }
-
-            project.columnModel.getColumns().clear();
-            project.columnModel.getColumns().addAll(_newColumns);
-
-            project.update();
-        }
+    public boolean isImmediate() {
+        return true;
     }
 
     @Override
-    public void revert(Project project) {
-        synchronized (project) {
-            project.columnModel.getColumns().clear();
-            project.columnModel.getColumns().addAll(_oldColumns);
-
-            for (int i = 0; i < _oldCells.length; i++) {
-                Row row = project.rows.get(_oldCells[i].row);
-                row.setCell(_oldCells[i].cellIndex, _oldCells[i].cell);
+    public ColumnModel getNewColumnModel(GridState grid) throws DoesNotApplyException {
+        ColumnModel model = grid.getColumnModel();
+        List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
+        for (String columnName : _columnNames) {
+            ColumnMetadata meta = model.getColumnByName(columnName);
+            if (meta == null) {
+                throw new DoesNotApplyException(String.format("Column '%s' does not exist", columnName));
             }
-
-            project.update();
+            columns.add(meta);
         }
+        return new ColumnModel(columns);
     }
 
     @Override
-    public void save(Writer writer, Properties options) throws IOException {
-        writer.write("columnNameCount=");
-        writer.write(Integer.toString(_columnNames.size()));
-        writer.write('\n');
-        for (String n : _columnNames) {
-            writer.write(n);
-            writer.write('\n');
-        }
-        writer.write("oldColumnCount=");
-        writer.write(Integer.toString(_oldColumns.size()));
-        writer.write('\n');
-        for (ColumnMetadata c : _oldColumns) {
-            c.save(writer);
-            writer.write('\n');
-        }
-        writer.write("newColumnCount=");
-        writer.write(Integer.toString(_newColumns.size()));
-        writer.write('\n');
-        for (ColumnMetadata c : _newColumns) {
-            c.save(writer);
-            writer.write('\n');
-        }
-        writer.write("removedColumnCount=");
-        writer.write(Integer.toString(_removedColumns.size()));
-        writer.write('\n');
-        for (ColumnMetadata c : _removedColumns) {
-            c.save(writer);
-            writer.write('\n');
-        }
-        writer.write("oldCellCount=");
-        writer.write(Integer.toString(_oldCells.length));
-        writer.write('\n');
-        for (CellAtRowCellIndex c : _oldCells) {
-            c.save(writer, options);
-            writer.write('\n');
+    public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+        // Build a map from new indices to original ones
+        List<Integer> origIndex = new ArrayList<>(_columnNames.size());
+        for (int i = 0; i != _columnNames.size(); i++) {
+            origIndex.add(columnIndex(state.getColumnModel(), _columnNames.get(i)));
         }
 
-        writer.write("/ec/\n"); // end of change marker
+        return mapper(origIndex);
     }
 
-    static public Change load(LineNumberReader reader) throws Exception {
-        List<String> columnNames = new ArrayList<String>();
-        List<ColumnMetadata> oldColumns = new ArrayList<ColumnMetadata>();
-        List<ColumnMetadata> newColumns = new ArrayList<ColumnMetadata>();
-        List<ColumnMetadata> removedColumns = new ArrayList<ColumnMetadata>();
-        CellAtRowCellIndex[] oldCells = new CellAtRowCellIndex[0];
+    protected static RowMapper mapper(List<Integer> origIndex) {
+        return new RowMapper() {
 
-        String line;
-        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
-            int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
+            private static final long serialVersionUID = 7653347685611673401L;
 
-            if ("columnNameCount".equals(field)) {
-                int count = Integer.parseInt(line.substring(equal + 1));
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        columnNames.add(line);
-                    }
-                }
-            } else if ("oldColumnCount".equals(field)) {
-                int count = Integer.parseInt(line.substring(equal + 1));
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        oldColumns.add(ColumnMetadata.load(line));
-                    }
-                }
-            } else if ("newColumnCount".equals(field)) {
-                int count = Integer.parseInt(line.substring(equal + 1));
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        newColumns.add(ColumnMetadata.load(line));
-                    }
-                }
-            } else if ("removedColumnCount".equals(field)) {
-                int count = Integer.parseInt(line.substring(equal + 1));
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        removedColumns.add(ColumnMetadata.load(line));
-                    }
-                }
-            } else if ("oldCellCount".equals(field)) {
-                int oldCellCount = Integer.parseInt(line.substring(equal + 1));
-
-                oldCells = new CellAtRowCellIndex[oldCellCount];
-                for (int i = 0; i < oldCellCount; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        oldCells[i] = CellAtRowCellIndex.load(line);
-                    }
-                }
-            } else if ("oldColumnGroupCount".equals(field)) {
-                int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
+            @Override
+            public Row call(long rowId, Row row) {
+                List<Cell> newCells = origIndex.stream()
+                        .map(i -> row.getCell(i))
+                        .collect(Collectors.toList());
+                return new Row(newCells);
             }
-        }
 
-        ColumnReorderChange change = new ColumnReorderChange(columnNames);
-        change._oldColumns = oldColumns;
-        change._newColumns = newColumns;
-        change._removedColumns = removedColumns;
-        change._oldCells = oldCells;
-
-        return change;
+        };
     }
+
 }

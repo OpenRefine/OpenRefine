@@ -1,14 +1,13 @@
 
 package org.openrefine.browsing.facets;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.model.Record;
+import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 
 /**
  * Internal aggregator to compute the state of all facets in one pass over the grid.
@@ -16,7 +15,7 @@ import org.openrefine.model.Row;
  * @author Antonin Delpeuch
  *
  */
-public class AllFacetsAggregator implements Serializable {
+public class AllFacetsAggregator implements RowAggregator<List<FacetState>>, RecordAggregator<List<FacetState>> {
 
     private static final long serialVersionUID = -8277361327137906882L;
 
@@ -34,7 +33,8 @@ public class AllFacetsAggregator implements Serializable {
         }
     }
 
-    public List<FacetState> increment(List<FacetState> states, long rowId, Row row) {
+    @Override
+    public List<FacetState> withRow(List<FacetState> states, long rowId, Row row) {
         if (states.size() != _facetAggregators.size()) {
             throw new IllegalArgumentException("Incompatible list of facet states and facet aggregators");
         }
@@ -68,7 +68,8 @@ public class AllFacetsAggregator implements Serializable {
         return newStates;
     }
 
-    public List<FacetState> increment(List<FacetState> states, Record record) {
+    @Override
+    public List<FacetState> withRecord(List<FacetState> states, Record record) {
         if (states.size() != _facetAggregators.size()) {
             throw new IllegalArgumentException("Incompatible list of facet states and facet aggregators");
         }
@@ -107,6 +108,7 @@ public class AllFacetsAggregator implements Serializable {
         return newStates;
     }
 
+    @Override
     public List<FacetState> sum(List<FacetState> first, List<FacetState> second) {
         if (first.size() != second.size()) {
             throw new IllegalArgumentException("Attempting to merge incompatible AllFacetStates");

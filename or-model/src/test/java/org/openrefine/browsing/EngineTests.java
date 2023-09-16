@@ -49,6 +49,7 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 
 public class EngineTests {
 

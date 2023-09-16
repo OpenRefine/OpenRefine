@@ -6,11 +6,11 @@ import java.util.Map;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.RecordFilter;
 import org.openrefine.model.RecordMapper;
+import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowMapper;
 import org.openrefine.overlay.OverlayModel;
 
@@ -27,6 +27,36 @@ import org.openrefine.overlay.OverlayModel;
 public abstract class RowMapChange extends EngineDependentChange {
 
     /**
+     * Stores the new column model to be applied on the new grid, and the row mappers used to derive the new grid.
+     * 
+     * The positive mapper is applied to the rows matched by the filter, the negative one is applied to the other rows.
+     * 
+     * Computing both the ColumnModel and the RowMappers can be useful in certain situations (such as
+     * {@link ColumnSplitChange}) where computing both separately would be wasteful.
+     * 
+     * @author Antonin Delpeuch
+     *
+     */
+    protected static class GridMap {
+
+        protected final ColumnModel columnModel;
+        protected final RowMapper positiveMapper;
+        protected final RowMapper negativeMapper;
+        protected final Map<String, OverlayModel> overlayModels;
+
+        protected GridMap(
+                ColumnModel columnModel,
+                RowMapper positiveMapper,
+                RowMapper negativeMapper,
+                Map<String, OverlayModel> overlayModels) {
+            this.columnModel = columnModel;
+            this.positiveMapper = positiveMapper;
+            this.negativeMapper = negativeMapper;
+            this.overlayModels = overlayModels;
+        }
+    }
+
+    /**
      * Constructs a change given a row-wise function to apply to all filtered rows.
      * 
      * @param engineConfig
@@ -37,50 +67,109 @@ public abstract class RowMapChange extends EngineDependentChange {
     }
 
     /**
-     * Returns the function that is applied to each row and row index.
+     * Returns the function that is applied to each row and row index, the new column model applied to the grid, and the
+     * new overlay models. Computing these in one go can be useful in certain situations (such as
+     * {@link ColumnSplitChange}).
      * 
-     * @param columnModel
+     * If a subclass needs to return only one non-default value out of mapper, column model and overlay models it can
+     * instead override the corresponding method.
+     * 
+     * @param state
      *            the initial column model
+     * @throws DoesNotApplyException
+     *             if the change does not apply to the given grid
      */
-    public abstract RowMapper getRowMapper(ColumnModel columnModel);
-
-    /**
-     * Subclasses can override this to change the column model when the change is applied
-     * 
-     * @param grid
-     *            the initial grid state
-     * @return the new column model
-     */
-    public ColumnModel getNewColumnModel(GridState grid) {
-        return grid.getColumnModel();
+    protected GridMap getGridMap(GridState state) throws DoesNotApplyException {
+        return new GridMap(
+                getNewColumnModel(state),
+                getPositiveRowMapper(state),
+                getNegativeRowMapper(state),
+                getNewOverlayModels(state));
     }
 
     /**
-     * Subclasses can override this to change the overlay models when the change is applied.
+     * Returns the column model after the change is applied to the given grid state. By default, returns the same column
+     * model.
      * 
-     * @param grid
-     *            the initial grid state
-     * @return the new column model
+     * @param state
+     *            the grid to which the change should be applied
+     * @return the column model of the new grid state
      */
-    public Map<String, OverlayModel> getNewOverlayModels(GridState grid) {
-        return grid.getOverlayModels();
+    protected ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+        return state.getColumnModel();
+    }
+
+    /**
+     * Returns the row mapper applied to the rows matched by the filter.
+     * 
+     * @param state
+     *            the initial state of the grid
+     * @return
+     * @throws DoesNotApplyException
+     */
+    protected RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+        return RowMapper.IDENTITY;
+    }
+
+    /**
+     * Returns the row mapper applied to the rows not matched by the filter.
+     * 
+     * @param state
+     *            the initial state of the grid
+     * @return
+     * @throws DoesNotApplyException
+     */
+    protected RowMapper getNegativeRowMapper(GridState state) throws DoesNotApplyException {
+        return RowMapper.IDENTITY;
+    }
+
+    /**
+     * Returns the new overlay models after this change is applied.
+     * 
+     * @param state
+     * @return
+     */
+    protected Map<String, OverlayModel> getNewOverlayModels(GridState state) throws DoesNotApplyException {
+        return state.getOverlayModels();
     }
 
     @Override
-    public GridState apply(GridState projectState) {
+    public GridState apply(GridState projectState) throws DoesNotApplyException {
         Engine engine = getEngine(projectState);
-        RowMapper operation = getRowMapper(projectState.getColumnModel());
-        ColumnModel newColumnModel = getNewColumnModel(projectState);
-        Map<String, OverlayModel> newOverlayModels = getNewOverlayModels(projectState);
+        GridMap gridMap = getGridMap(projectState);
+        RowMapper positiveMapper = gridMap.positiveMapper;
+        RowMapper negativeMapper = gridMap.negativeMapper;
+        ColumnModel newColumnModel = gridMap.columnModel;
+        Map<String, OverlayModel> newOverlayModels = gridMap.overlayModels;
         if (Mode.RowBased.equals(engine.getMode())) {
             RowFilter rowFilter = engine.combinedRowFilters();
-            return projectState.mapFilteredRows(rowFilter, operation, newColumnModel)
+            return projectState.mapRows(RowMapper.conditionalMapper(rowFilter, positiveMapper, negativeMapper), newColumnModel)
                     .withOverlayModels(newOverlayModels);
         } else {
             RecordFilter recordFilter = engine.combinedRecordFilters();
-            RecordMapper recordMapper = RecordMapper.rowWiseRecordMapper(operation);
-            return projectState.mapFilteredRecords(recordFilter, recordMapper, newColumnModel)
+            RecordMapper recordMapper = RecordMapper.rowWiseRecordMapper(positiveMapper);
+            RecordMapper negativeRecordMapper = RecordMapper.rowWiseRecordMapper(negativeMapper);
+            return projectState.mapRecords(
+                    RecordMapper.conditionalMapper(recordFilter, recordMapper, negativeRecordMapper),
+                    newColumnModel)
                     .withOverlayModels(newOverlayModels);
         }
+    }
+
+    /**
+     * Utility method to retrieve a column index and throw an exception if that column does not exist.
+     * 
+     * @param model
+     * @param columnName
+     * @return
+     * @throws DoesNotApplyException
+     */
+    protected int columnIndex(ColumnModel model, String columnName) throws DoesNotApplyException {
+        int index = model.getColumnIndexByName(columnName);
+        if (index == -1) {
+            throw new DoesNotApplyException(
+                    String.format("Column '%s' does not exist", columnName));
+        }
+        return index;
     }
 }

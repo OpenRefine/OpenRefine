@@ -5,12 +5,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.rdd.OrderedRDDFunctions;
 import scala.Tuple2;
 import scala.math.Ordering;
 import scala.reflect.ClassManifestFactory;
+
+import org.openrefine.model.rdd.SortedRDD;
+import org.openrefine.model.rdd.ZippedWithIndexRDD;
 
 /**
  * Collection of utilities around Spark RDDs.
@@ -38,6 +42,17 @@ public class RDDUtils {
         } else {
             return filterByRange(rdd, start, Long.MAX_VALUE).take(limit);
         }
+    }
+
+    /**
+     * This is what JavaRDD.zipWithIndex really ought to do
+     * 
+     * @param <T>
+     * @param rdd
+     * @return
+     */
+    public static <T> JavaPairRDD<Long, T> zipWithIndex(JavaRDD<T> rdd) {
+        return SortedRDD.assumeSorted(new ZippedWithIndexRDD<T>(rdd).asPairRDD());
     }
 
     /**

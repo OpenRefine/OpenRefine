@@ -45,6 +45,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.GridState;
 
 public class HistoryTests {
@@ -65,7 +66,7 @@ public class HistoryTests {
     List<HistoryEntry> entries;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws DoesNotApplyException {
         initialState = mock(GridState.class);
         intermediateState = mock(GridState.class);
         finalState = mock(GridState.class);
@@ -87,7 +88,7 @@ public class HistoryTests {
     }
 
     @Test
-    public void testConstruct() {
+    public void testConstruct() throws DoesNotApplyException {
 
         History history = new History(initialState, entries, 1);
 
@@ -118,7 +119,7 @@ public class HistoryTests {
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testUnknownChangeId() {
+    public void testUnknownChangeId() throws DoesNotApplyException {
         History history = new History(initialState, entries, 1);
 
         history.undoRedo(34782L);

@@ -36,13 +36,12 @@ package org.openrefine.operations.column;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.Change;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnRenameChange;
-import org.openrefine.operations.Operation;
+import org.openrefine.operations.ImmediateOperation;
 
-public class ColumnRenameOperation extends Operation {
+public class ColumnRenameOperation extends ImmediateOperation {
 
     final protected String _oldColumnName;
     final protected String _newColumnName;
@@ -66,21 +65,12 @@ public class ColumnRenameOperation extends Operation {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Rename column " + _oldColumnName + " to " + _newColumnName;
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        if (project.columnModel.getColumnByName(_oldColumnName) == null) {
-            throw new Exception("No column named " + _oldColumnName);
-        }
-        if (project.columnModel.getColumnByName(_newColumnName) != null) {
-            throw new Exception("Another column already named " + _newColumnName);
-        }
-
-        Change change = new ColumnRenameChange(_oldColumnName, _newColumnName);
-
-        return new HistoryEntry(historyEntryID, project, getDescription(), ColumnRenameOperation.this, change);
+    public Change createChange() throws ParsingException {
+        return new ColumnRenameChange(_oldColumnName, _newColumnName);
     }
 }

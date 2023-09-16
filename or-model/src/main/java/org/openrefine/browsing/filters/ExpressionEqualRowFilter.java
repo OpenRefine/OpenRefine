@@ -39,12 +39,12 @@ import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 import org.openrefine.util.StringUtils;
 
 /**

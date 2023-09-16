@@ -31,12 +31,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package org.openrefine.browsing;
+package org.openrefine.model;
 
 import java.io.Serializable;
 import java.util.List;
-
-import org.openrefine.model.Row;
 
 /**
  * Interface for judging if a particular row matches or doesn't match some particular criterion, such as a facet

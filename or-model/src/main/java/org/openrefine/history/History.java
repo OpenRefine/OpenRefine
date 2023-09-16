@@ -40,6 +40,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.RefineModel;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.GridState;
 
 /**
@@ -76,11 +77,12 @@ public class History {
      * 
      * @param initialGrid
      * @param metadata
+     * @throws DoesNotApplyException
      */
     public History(
             GridState initialGrid,
             List<HistoryEntry> entries,
-            int position) {
+            int position) throws DoesNotApplyException {
         this(initialGrid);
         for (HistoryEntry entry : entries) {
             addEntry(entry);
@@ -122,8 +124,9 @@ public class History {
      * Adds a HistoryEntry to the list of past histories Adding a new entry clears all currently held future histories
      * 
      * @param entry
+     * @throws DoesNotApplyException
      */
-    public void addEntry(HistoryEntry entry) {
+    public void addEntry(HistoryEntry entry) throws DoesNotApplyException {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
             _entries = _entries.subList(0, _position);

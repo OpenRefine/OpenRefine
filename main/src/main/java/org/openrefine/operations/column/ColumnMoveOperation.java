@@ -36,13 +36,12 @@ package org.openrefine.operations.column;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.Change;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnMoveChange;
-import org.openrefine.operations.Operation;
+import org.openrefine.operations.ImmediateOperation;
 
-public class ColumnMoveOperation extends Operation {
+public class ColumnMoveOperation extends ImmediateOperation {
 
     final protected String _columnName;
     final protected int _index;
@@ -66,21 +65,12 @@ public class ColumnMoveOperation extends Operation {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Move column " + _columnName + " to position " + _index;
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        if (project.columnModel.getColumnByName(_columnName) == null) {
-            throw new Exception("No column named " + _columnName);
-        }
-        if (_index < 0 || _index >= project.columnModel.getColumns().size()) {
-            throw new Exception("New column index out of range " + _index);
-        }
-
-        Change change = new ColumnMoveChange(_columnName, _index);
-
-        return new HistoryEntry(historyEntryID, project, getDescription(), ColumnMoveOperation.this, change);
+    public Change createChange() throws ParsingException {
+        return new ColumnMoveChange(_columnName, _index);
     }
 }

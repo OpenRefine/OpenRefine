@@ -9,7 +9,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.util.StringUtils;
@@ -38,8 +38,8 @@ public class MassEditChange extends RowMapChange {
     }
 
     @Override
-    public RowMapper getRowMapper(ColumnModel columnModel) {
-        int columnIdx = columnModel.getColumnIndexByName(_columnName);
+    public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+        int columnIdx = columnIndex(state.getColumnModel(), _columnName);
         return mapper(columnIdx, _evaluable, _columnName, _fromTo, _fromBlankTo, _fromErrorTo);
     }
 

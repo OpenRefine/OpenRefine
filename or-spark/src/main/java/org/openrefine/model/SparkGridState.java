@@ -3,7 +3,6 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,17 +18,15 @@ import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.storage.StorageLevel;
 import scala.Tuple2;
 
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
-import org.openrefine.browsing.facets.AllFacetsAggregator;
-import org.openrefine.browsing.facets.Facet;
-import org.openrefine.browsing.facets.FacetResult;
-import org.openrefine.browsing.facets.FacetState;
+import org.openrefine.browsing.facets.Combiner;
+import org.openrefine.browsing.facets.RecordAggregator;
+import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.rdd.PartitionedRDD;
 import org.openrefine.model.rdd.RecordRDD;
 import org.openrefine.model.rdd.SortedRDD;
@@ -342,75 +339,47 @@ public class SparkGridState implements GridState {
     // Facet computation
 
     @Override
-    public List<FacetResult> computeRowFacets(List<Facet> facets) {
-        List<FacetState> initialStates = facets
-                .stream().map(facet -> facet.getInitialFacetState())
-                .collect(Collectors.toList());
-
-        AllFacetsAggregator aggregator = new AllFacetsAggregator(facets
-                .stream().map(facet -> facet.getAggregator())
-                .collect(Collectors.toList()));
-
-        List<FacetState> states = grid.aggregate(initialStates, rowSeqOp(aggregator), facetCombineOp(aggregator));
-
-        List<FacetResult> facetResults = new ArrayList<>();
-        for (int i = 0; i != states.size(); i++) {
-            facetResults.add(facets.get(i).getFacetResult(states.get(i)));
-        }
-        return facetResults;
+    public <T> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
+        return grid.aggregate(initialState, rowSeqOp(aggregator), facetCombineOp(aggregator));
     }
 
     @Override
-    public List<FacetResult> computeRecordFacets(List<Facet> facets) {
-        List<FacetState> initialStates = facets
-                .stream().map(facet -> facet.getInitialFacetState())
-                .collect(Collectors.toList());
-
-        AllFacetsAggregator aggregator = new AllFacetsAggregator(facets
-                .stream().map(facet -> facet.getAggregator())
-                .collect(Collectors.toList()));
-
-        List<FacetState> states = getRecords().aggregate(initialStates, recordSeqOp(aggregator), facetCombineOp(aggregator));
-
-        List<FacetResult> facetResults = new ArrayList<>();
-        for (int i = 0; i != states.size(); i++) {
-            facetResults.add(facets.get(i).getFacetResult(states.get(i)));
-        }
-        return facetResults;
+    public <T> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
+        return getRecords().aggregate(initialState, recordSeqOp(aggregator), facetCombineOp(aggregator));
     }
 
-    private static Function2<List<FacetState>, Tuple2<Long, Row>, List<FacetState>> rowSeqOp(AllFacetsAggregator aggregator) {
-        return new Function2<List<FacetState>, Tuple2<Long, Row>, List<FacetState>>() {
+    private static <T> Function2<T, Tuple2<Long, Row>, T> rowSeqOp(RowAggregator<T> aggregator) {
+        return new Function2<T, Tuple2<Long, Row>, T>() {
 
             private static final long serialVersionUID = 2188564367142265354L;
 
             @Override
-            public List<FacetState> call(List<FacetState> states, Tuple2<Long, Row> rowTuple) throws Exception {
-                return aggregator.increment(states, rowTuple._1, rowTuple._2);
+            public T call(T states, Tuple2<Long, Row> rowTuple) throws Exception {
+                return aggregator.withRow(states, rowTuple._1, rowTuple._2);
             }
         };
     }
 
-    private static Function2<List<FacetState>, Tuple2<Long, Record>, List<FacetState>> recordSeqOp(AllFacetsAggregator aggregator) {
-        return new Function2<List<FacetState>, Tuple2<Long, Record>, List<FacetState>>() {
+    private static <T> Function2<T, Tuple2<Long, Record>, T> recordSeqOp(RecordAggregator<T> aggregator) {
+        return new Function2<T, Tuple2<Long, Record>, T>() {
 
             private static final long serialVersionUID = 6349675935547753918L;
 
             @Override
-            public List<FacetState> call(List<FacetState> states, Tuple2<Long, Record> tuple) throws Exception {
-                return aggregator.increment(states, tuple._2);
+            public T call(T states, Tuple2<Long, Record> tuple) throws Exception {
+                return aggregator.withRecord(states, tuple._2);
             }
 
         };
     }
 
-    private static Function2<List<FacetState>, List<FacetState>, List<FacetState>> facetCombineOp(AllFacetsAggregator aggregator) {
-        return new Function2<List<FacetState>, List<FacetState>, List<FacetState>>() {
+    private static <T> Function2<T, T, T> facetCombineOp(Combiner<T> aggregator) {
+        return new Function2<T, T, T>() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public List<FacetState> call(List<FacetState> statesA, List<FacetState> statesB) throws Exception {
+            public T call(T statesA, T statesB) throws Exception {
                 return aggregator.sum(statesA, statesB);
             }
         };
@@ -419,47 +388,65 @@ public class SparkGridState implements GridState {
     // Transformation
 
     @Override
-    public SparkGridState mapFilteredRows(RowFilter filter, RowMapper mapper, ColumnModel newColumnModel) {
-        JavaPairRDD<Long, Row> rows = RDDUtils.mapKeyValuesToValues(grid, conditionalRowMap(mapper, filter));
+    public SparkGridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
+        JavaPairRDD<Long, Row> rows = RDDUtils.mapKeyValuesToValues(grid, rowMap(mapper));
         return new SparkGridState(newColumnModel, rows, overlayModels);
     }
 
-    private static Function2<Long, Row, Row> conditionalRowMap(RowMapper mapper, RowFilter filter) {
+    private static Function2<Long, Row, Row> rowMap(RowMapper mapper) {
         return new Function2<Long, Row, Row>() {
 
             private static final long serialVersionUID = 429225090136968798L;
 
             @Override
             public Row call(Long id, Row row) throws Exception {
-                if (filter.filterRow(id, row)) {
-                    return mapper.call(id, row);
-                } else {
-                    return row;
-                }
+                return mapper.call(id, row);
             }
         };
     }
 
     @Override
-    public SparkGridState mapFilteredRecords(RecordFilter filter, RecordMapper mapper, ColumnModel newColumnModel) {
-        JavaPairRDD<Long, Tuple2<Long, Row>> newRows = getRecords().flatMapValues(conditionalRecordMap(mapper, filter));
-        JavaPairRDD<Long, Row> rows = new PartitionedRDD<Long, Row>(JavaPairRDD.fromJavaRDD(newRows.values()),
-                newRows.partitioner().get())
-                .asPairRDD(newRows.kClassTag(), grid.vClassTag());
+    public SparkGridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
+        JavaPairRDD<Long, Row> rows;
+        if (mapper.preservesRowCount()) {
+            // Row ids do not change, we can reuse the same partitioner
+            JavaPairRDD<Long, Tuple2<Long, Row>> newRows = getRecords().flatMapValues(rowPreservingRecordMap(mapper));
+            rows = new PartitionedRDD<Long, Row>(JavaPairRDD.fromJavaRDD(newRows.values()),
+                    newRows.partitioner().get())
+                    .asPairRDD(newRows.kClassTag(), grid.vClassTag());
+        } else {
+            // We need to recompute row ids and get a new partitioner
+            JavaRDD<Row> newRows = getRecords().values().flatMap(recordMap(mapper));
+            rows = RDDUtils.zipWithIndex(newRows);
+        }
         return new SparkGridState(newColumnModel, rows, overlayModels);
     }
 
-    private static Function<Record, Iterable<Tuple2<Long, Row>>> conditionalRecordMap(RecordMapper mapper, RecordFilter filter) {
+    private static Function<Record, Iterable<Tuple2<Long, Row>>> rowPreservingRecordMap(RecordMapper mapper) {
         return new Function<Record, Iterable<Tuple2<Long, Row>>>() {
 
             private static final long serialVersionUID = 7501726558696862638L;
 
             @Override
             public Iterable<Tuple2<Long, Row>> call(Record record) throws Exception {
-                List<Row> result = filter.filterRecord(record) ? mapper.call(record) : record.getRows();
+                List<Row> result = mapper.call(record);
                 return IntStream.range(0, result.size())
                         .mapToObj(i -> new Tuple2<Long, Row>(record.getStartRowId() + i, result.get(i)))
                         .collect(Collectors.toList());
+            }
+
+        };
+    }
+
+    private static FlatMapFunction<Record, Row> recordMap(RecordMapper mapper) {
+        return new FlatMapFunction<Record, Row>() {
+
+            private static final long serialVersionUID = 6663749328661449792L;
+
+            @Override
+            public Iterator<Row> call(Record record) throws Exception {
+                List<Row> rows = mapper.call(record);
+                return rows.iterator();
             }
 
         };
@@ -469,4 +456,5 @@ public class SparkGridState implements GridState {
     public SparkGridState withOverlayModels(Map<String, OverlayModel> newOverlayModels) {
         return new SparkGridState(columnModel, grid, newOverlayModels);
     }
+
 }

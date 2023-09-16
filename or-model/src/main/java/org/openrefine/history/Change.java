@@ -50,6 +50,16 @@ import org.openrefine.model.GridState;
 @JsonTypeIdResolver(ChangeResolver.class)
 public interface Change {
 
+    public static class DoesNotApplyException extends Exception {
+
+        public DoesNotApplyException(String message) {
+            super(message);
+        }
+
+        private static final long serialVersionUID = 1L;
+
+    }
+
     /**
      * Derives the new grid state from the current grid state. Executing this method should be quick (even on large
      * datasets) since it is expected to just derive the new RDD from the existing one without actually executing any
@@ -60,8 +70,10 @@ public interface Change {
      * 
      * @param projectState
      * @return
+     * @throws DoesNotApplyException
+     *             when the change cannot be applied to the given grid
      */
-    public GridState apply(GridState projectState);
+    public GridState apply(GridState projectState) throws DoesNotApplyException;
 
     /**
      * Returns true when the change is derived purely from the operation metadata and does not store any data by itself.

@@ -51,7 +51,7 @@ public class ReconStatsTests {
     public void testCreateFromColumn() {
         ReconStats rs = new ReconStats(3, 1, 2);
         GridState state = mock(GridState.class);
-        when(state.computeRowFacets(Mockito.any())).thenReturn(Collections.singletonList(rs));
+        when(state.aggregateRows(Mockito.any(), Mockito.eq(ReconStats.ZERO))).thenReturn(rs);
         when(state.getColumnModel()).thenReturn(new ColumnModel(Collections.singletonList(new ColumnMetadata("some column"))));
 
         Assert.assertEquals(ReconStats.create(state, "some column"), rs);

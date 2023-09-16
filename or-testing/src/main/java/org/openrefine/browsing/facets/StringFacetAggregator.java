@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
+import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 
 public class StringFacetAggregator implements FacetAggregator<StringFacetState> {
 

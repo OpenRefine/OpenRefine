@@ -36,14 +36,12 @@ package org.openrefine.operations.column;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.Change;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnRemovalChange;
-import org.openrefine.operations.Operation;
+import org.openrefine.operations.ImmediateOperation;
 
-public class ColumnRemovalOperation extends Operation {
+public class ColumnRemovalOperation extends ImmediateOperation {
 
     final protected String _columnName;
 
@@ -59,21 +57,12 @@ public class ColumnRemovalOperation extends Operation {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Remove column " + _columnName;
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
-        if (column == null) {
-            throw new Exception("No column named " + _columnName);
-        }
-
-        String description = "Remove column " + column.getName();
-
-        Change change = new ColumnRemovalChange(project.columnModel.getColumns().indexOf(column));
-
-        return new HistoryEntry(historyEntryID, project, description, ColumnRemovalOperation.this, change);
+    public Change createChange() throws ParsingException {
+        return new ColumnRemovalChange(_columnName);
     }
 }

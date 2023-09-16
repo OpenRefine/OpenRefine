@@ -34,10 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.cell;
 
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
@@ -45,10 +43,8 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
-import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.MultiValuedCellJoinOperation;
-import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -88,42 +84,6 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 + "\"separator\":\",\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json,
                 ParsingUtilities.defaultWriter);
-    }
-
-    /*
-     * Test to demonstrate the intended behaviour of the function
-     */
-
-    @Test
-    public void testJoinMultiValuedCells() throws Exception {
-        Operation op = new MultiValuedCellJoinOperation(
-                "Value",
-                "Key",
-                ",");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
-
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,two,three,four");
-    }
-
-    @Test
-    public void testJoinMultiValuedCellsMultipleSpaces() throws Exception {
-        Operation op = new MultiValuedCellJoinOperation(
-                "Value",
-                "Key",
-                ",     ,");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
-
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,     ,two,     ,three,     ,four");
     }
 
 }

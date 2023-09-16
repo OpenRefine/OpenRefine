@@ -40,12 +40,12 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.ScatterplotFacet;
 import org.openrefine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
+import org.openrefine.model.RowFilter;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

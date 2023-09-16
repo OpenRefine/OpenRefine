@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,9 +45,14 @@ import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
+import org.openrefine.browsing.facets.RecordAggregator;
+import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
+import org.openrefine.model.RecordFilter;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 
 /**
  * Faceted browsing engine. Given a GridState and facet configurations, it can be used to compute facet statistics and
@@ -103,7 +109,13 @@ public class Engine {
 
     @JsonProperty("facets")
     public List<FacetResult> getFacetResults() {
-        return _state.computeRowFacets(_facets);
+        List<FacetState> states = _state.aggregateRows(allFacetsAggregator(), allFacetsInitialState());
+
+        List<FacetResult> facetResults = new ArrayList<>();
+        for (int i = 0; i != states.size(); i++) {
+            facetResults.add(_facets.get(i).getFacetResult(states.get(i)));
+        }
+        return facetResults;
     }
 
     @JsonIgnore
@@ -157,6 +169,30 @@ public class Engine {
         return RecordFilter.conjunction(facetRecordFilters());
     }
 
+    /**
+     * Runs an aggregator only on the rows that are selected by facets.
+     * 
+     * @param <T>
+     * @param aggregator
+     * @param initialState
+     * @return
+     */
+    public <T> T aggregateFilteredRows(RowAggregator<T> aggregator, T initialState) {
+        return _state.aggregateRows(restrictAggregator(aggregator, combinedRowFilters()), initialState);
+    }
+
+    /**
+     * Runs an aggregator only on the records that are selected by facets.
+     * 
+     * @param <T>
+     * @param aggregator
+     * @param initialState
+     * @return
+     */
+    public <T> T aggregateFilteredRecords(RecordAggregator<T> aggregator, T initialState) {
+        return _state.aggregateRecords(restrictAggregator(aggregator, combinedRecordFilters()), initialState);
+    }
+
     @JsonIgnore
     private List<RowFilter> facetRowFilters() {
         return _facets.stream()
@@ -187,5 +223,49 @@ public class Engine {
         return new AllFacetsAggregator(_facets
                 .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
+    }
+
+    private static <T> RowAggregator<T> restrictAggregator(RowAggregator<T> aggregator, RowFilter filter) {
+        return new RowAggregator<T>() {
+
+            private static final long serialVersionUID = 8407224640500910094L;
+
+            @Override
+            public T sum(T first, T second) {
+                return aggregator.sum(first, second);
+            }
+
+            @Override
+            public T withRow(T state, long rowId, Row row) {
+                if (filter.filterRow(rowId, row)) {
+                    return aggregator.withRow(state, rowId, row);
+                } else {
+                    return state;
+                }
+            }
+
+        };
+    }
+
+    private static <T> RecordAggregator<T> restrictAggregator(RecordAggregator<T> aggregator, RecordFilter filter) {
+        return new RecordAggregator<T>() {
+
+            private static final long serialVersionUID = 8407224640500910094L;
+
+            @Override
+            public T sum(T first, T second) {
+                return aggregator.sum(first, second);
+            }
+
+            @Override
+            public T withRecord(T state, Record record) {
+                if (filter.filterRecord(record)) {
+                    return aggregator.withRecord(state, record);
+                } else {
+                    return state;
+                }
+            }
+
+        };
     }
 }

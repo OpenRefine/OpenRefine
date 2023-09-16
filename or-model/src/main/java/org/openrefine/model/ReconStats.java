@@ -34,16 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
-import org.openrefine.model.recon.ReconStatusFacet;
+import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.Recon.Judgment;
 
 public class ReconStats implements FacetState, FacetResult, Serializable {
 
@@ -55,6 +54,8 @@ public class ReconStats implements FacetState, FacetResult, Serializable {
     final public long newTopics;
     @JsonProperty("matchedTopics")
     final public long matchedTopics;
+
+    public static final ReconStats ZERO = new ReconStats(0L, 0L, 0L);
 
     /**
      * Creates a summary of reconciliation statistics.
@@ -86,9 +87,8 @@ public class ReconStats implements FacetState, FacetResult, Serializable {
      * @return the statistics of cell reconciliation in the column
      */
     static public ReconStats create(GridState state, String columnName) {
-        List<Facet> facets = Collections.singletonList(new ReconStatusFacet.Config(columnName).apply(state.getColumnModel()));
-        List<FacetResult> results = state.computeRowFacets(facets);
-        return (ReconStats) results.get(0);
+        Aggregator aggregator = new Aggregator(state.getColumnModel().getColumnIndexByName(columnName));
+        return state.aggregateRows(aggregator, ZERO);
     }
 
     /**
@@ -120,5 +120,47 @@ public class ReconStats implements FacetState, FacetResult, Serializable {
     public String toString() {
         return String.format("[ReconStats: non-blanks: %d, new: %d, matched: %d]",
                 nonBlanks, newTopics, matchedTopics);
+    }
+
+    protected static class Aggregator implements RowAggregator<ReconStats> {
+
+        private static final long serialVersionUID = -7078589836137133764L;
+        int _cellIndex;
+
+        protected Aggregator(int cellIndex) {
+            _cellIndex = cellIndex;
+        }
+
+        @Override
+        public ReconStats sum(ReconStats first, ReconStats second) {
+            return new ReconStats(
+                    first.nonBlanks + second.nonBlanks,
+                    first.newTopics + second.newTopics,
+                    first.matchedTopics + second.matchedTopics);
+        }
+
+        @Override
+        public ReconStats withRow(ReconStats stats, long rowId, Row row) {
+            int nonBlanks = 0;
+            int newTopics = 0;
+            int matchedTopics = 0;
+            Cell cell = row.getCell(_cellIndex);
+            if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                nonBlanks++;
+
+                if (cell.recon != null) {
+                    if (cell.recon.judgment == Judgment.New) {
+                        newTopics++;
+                    } else if (cell.recon.judgment == Judgment.Matched) {
+                        matchedTopics++;
+                    }
+                }
+            }
+            return new ReconStats(
+                    stats.nonBlanks + nonBlanks,
+                    stats.newTopics + newTopics,
+                    stats.matchedTopics + matchedTopics);
+        }
+
     }
 }

@@ -8,10 +8,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
-import org.openrefine.browsing.facets.Facet;
-import org.openrefine.browsing.facets.FacetResult;
+import org.openrefine.browsing.facets.RecordAggregator;
+import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.overlay.OverlayModel;
 
 /**
@@ -176,20 +174,14 @@ public interface GridState {
     // Aggregations
 
     /**
-     * Computes the state of the given facets on the grid, where the facet filters are applied in rows mode.
-     * 
-     * @param facets
-     * @return the list of facet results, in the same order
+     * Computes the result of a row aggregator on the grid.
      */
-    public List<FacetResult> computeRowFacets(List<Facet> facets);
+    public <T> T aggregateRows(RowAggregator<T> aggregator, T initialState);
 
     /**
-     * Computes the state of the given facets on the grid, where the facet filters are applied in records mode.
-     * 
-     * @param facets
-     * @return the list of facet results, in the same order
+     * Computes the result of a row aggregator on the grid.
      */
-    public List<FacetResult> computeRecordFacets(List<Facet> facets);
+    public <T> T aggregateRecords(RecordAggregator<T> aggregator, T initialState);
 
     // Transformations
 
@@ -203,21 +195,18 @@ public interface GridState {
     public GridState withOverlayModels(Map<String, OverlayModel> overlayModel);
 
     /**
-     * Returns a new grid state, where the rows matched by the filter have been transformed by the mapper.
+     * Returns a new grid state, where the rows have been mapped by the mapper.
      * 
-     * @param filter
-     *            the subset of rows to which the mapper should be applied. This object and its dependencies are
-     *            required to be serializable.
      * @param mapper
      *            the function used to transform rows This object and its dependencies are required to be serializable.
      * @param newColumnModel
      *            the column model of the resulting grid state
      * @return the resulting grid state
      */
-    public GridState mapFilteredRows(RowFilter filter, RowMapper mapper, ColumnModel newColumnModel);
+    public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel);
 
     /**
-     * Returns a new grid state, where the records matched by the filter have been transformed by the mapper.
+     * Returns a new grid state, where the records have been mapped by the mapper
      * 
      * @param filter
      *            the subset of records to which the mapper should be applied. This object and its dependencies are
@@ -229,7 +218,7 @@ public interface GridState {
      *            the column model of the resulting grid state
      * @return the resulting grid state
      */
-    public GridState mapFilteredRecords(RecordFilter filter, RecordMapper mapper, ColumnModel newColumnModel);
+    public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel);
 
     /**
      * Utility class to help with deserialization of the metadata without other attributes (such as number of rows)

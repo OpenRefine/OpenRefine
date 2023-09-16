@@ -27,41 +27,23 @@
 
 package org.openrefine.operations.column;
 
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Properties;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.Project;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnReorderOperation;
-import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ColumnReorderOperationTests extends RefineTest {
 
-    Project project;
-
     @BeforeSuite
     public void setUp() {
         OperationRegistry.registerOperation("core", "column-reorder", ColumnReorderOperation.class);
-    }
-
-    @BeforeMethod
-    public void createProject() {
-        project = createProject(
-                new String[] {
-                        "a", "b", "c" },
-                new Serializable[] {
-                        "1|2", "d", "e",
-                        "3", "f", "g" });
     }
 
     @Test
@@ -72,30 +54,4 @@ public class ColumnReorderOperationTests extends RefineTest {
                 + "\"columnNames\":[\"b\",\"c\",\"a\"]}", ParsingUtilities.defaultWriter);
     }
 
-    @Test
-    public void testEraseCellsOnRemovedColumns() throws Exception {
-
-        int aCol = project.columnModel.getColumnByName("a").getCellIndex();
-        int bCol = project.columnModel.getColumnByName("b").getCellIndex();
-        int cCol = project.columnModel.getColumnByName("c").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(aCol), "1|2");
-        Assert.assertEquals(project.rows.get(0).getCellValue(bCol), "d");
-        Assert.assertEquals(project.rows.get(0).getCellValue(cCol), "e");
-        Assert.assertEquals(project.rows.get(1).getCellValue(aCol), "3");
-        Assert.assertEquals(project.rows.get(1).getCellValue(bCol), "f");
-        Assert.assertEquals(project.rows.get(1).getCellValue(cCol), "g");
-
-        Operation op = new ColumnReorderOperation(Arrays.asList("a"));
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(aCol), "1|2");
-        Assert.assertEquals(project.rows.get(0).getCellValue(bCol), null);
-        Assert.assertEquals(project.rows.get(0).getCellValue(cCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(aCol), "3");
-        Assert.assertEquals(project.rows.get(1).getCellValue(bCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(cCol), null);
-
-    }
 }

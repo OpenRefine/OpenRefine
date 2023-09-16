@@ -33,114 +33,72 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.Properties;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.history.Change;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 
-public class ColumnRemovalChange extends ColumnChange {
+/**
+ * Removes a column from the grid.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
+public class ColumnRemovalChange extends RowMapChange {
 
-    final protected int _oldColumnIndex;
-    protected ColumnMetadata _oldColumn;
-    protected CellAtRow[] _oldCells;
+    final protected String _columnName;
 
-    public ColumnRemovalChange(int index) {
-        _oldColumnIndex = index;
+    /**
+     * Creates a change.
+     * 
+     * @param columnName
+     *            the column to remove
+     */
+    @JsonCreator
+    public ColumnRemovalChange(
+            @JsonProperty("columnName") String columnName) {
+        super(EngineConfig.ALL_ROWS);
+        _columnName = columnName;
+    }
+
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
     }
 
     @Override
-    public void apply(Project project) {
-        synchronized (project) {
-
-            _oldColumn = project.columnModel.getColumns().remove(_oldColumnIndex);
-            _oldCells = new CellAtRow[project.rows.size()];
-            int cellIndex = _oldColumn.getCellIndex();
-            for (int i = 0; i < _oldCells.length; i++) {
-                Row row = project.rows.get(i);
-
-                Cell oldCell = null;
-                if (cellIndex < row.cells.size()) {
-                    oldCell = row.cells.get(cellIndex);
-                }
-                _oldCells[i] = new CellAtRow(i, oldCell);
-
-                row.setCell(cellIndex, null);
-            }
-
-            project.update();
-        }
+    public boolean isImmediate() {
+        return true;
     }
 
     @Override
-    public void revert(Project project) {
-        synchronized (project) {
-            project.columnModel.getColumns().add(_oldColumnIndex, _oldColumn);
-
-            int cellIndex = _oldColumn.getCellIndex();
-            for (CellAtRow cell : _oldCells) {
-                project.rows.get(cell.row).cells.set(cellIndex, cell.cell);
-            }
-
-            project.update();
-        }
+    public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+        ColumnModel model = state.getColumnModel();
+        int columnIndex = columnIndex(model, _columnName);
+        return model.removeColumn(columnIndex);
     }
 
     @Override
-    public void save(Writer writer, Properties options) throws IOException {
-        writer.write("oldColumnIndex=");
-        writer.write(Integer.toString(_oldColumnIndex));
-        writer.write('\n');
-        writer.write("oldColumn=");
-        _oldColumn.save(writer);
-        writer.write('\n');
-        writer.write("oldCellCount=");
-        writer.write(Integer.toString(_oldCells.length));
-        writer.write('\n');
-        for (CellAtRow c : _oldCells) {
-            c.save(writer, options);
-            writer.write('\n');
-        }
-
-        writer.write("/ec/\n"); // end of change marker
+    public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+        int columnIndex = columnIndex(state.getColumnModel(), _columnName);
+        return mapper(columnIndex);
     }
 
-    static public Change load(LineNumberReader reader) throws Exception {
-        int oldColumnIndex = -1;
-        ColumnMetadata oldColumn = null;
-        CellAtRow[] oldCells = null;
+    protected static RowMapper mapper(int columnIndex) {
+        return new RowMapper() {
 
-        String line;
-        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
-            int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
+            private static final long serialVersionUID = -120614551816915787L;
 
-            if ("oldColumnIndex".equals(field)) {
-                oldColumnIndex = Integer.parseInt(line.substring(equal + 1));
-            } else if ("oldColumn".equals(field)) {
-                oldColumn = ColumnMetadata.load(line.substring(equal + 1));
-            } else if ("oldCellCount".equals(field)) {
-                int oldCellCount = Integer.parseInt(line.substring(equal + 1));
-
-                oldCells = new CellAtRow[oldCellCount];
-                for (int i = 0; i < oldCellCount; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        oldCells[i] = CellAtRow.load(line);
-                    }
-                }
+            @Override
+            public Row call(long rowId, Row row) {
+                return row.removeCell(columnIndex);
             }
-        }
 
-        ColumnRemovalChange change = new ColumnRemovalChange(oldColumnIndex);
-        change._oldColumn = oldColumn;
-        change._oldCells = oldCells;
-
-        return change;
+        };
     }
+
 }

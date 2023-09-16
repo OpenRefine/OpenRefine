@@ -82,20 +82,56 @@ public class ColumnModel implements Serializable {
         return _keyColumnIndex;
     }
 
-    public ColumnModel withColumn(int index, ColumnMetadata column, boolean avoidNameCollision) throws ModelException {
+    public ColumnModel replaceColumn(int index, ColumnMetadata column) throws ModelException {
+        String name = column.getName();
+
+        if (_nameToPosition.containsKey(name) && _nameToPosition.get(name) != index) {
+            throw new ModelException("Duplicated column name");
+        }
+        List<ColumnMetadata> newColumns = new ArrayList<>();
+        newColumns.addAll(getColumns().subList(0, index));
+        newColumns.add(column);
+        newColumns.addAll(getColumns().subList(index + 1, getColumns().size()));
+        return new ColumnModel(newColumns);
+    }
+
+    public ColumnModel insertColumn(int index, ColumnMetadata column) throws ModelException {
         String name = column.getName();
 
         if (_nameToPosition.containsKey(name)) {
-            if (!avoidNameCollision) {
-                throw new ModelException("Duplicated column name");
-            } else {
-                name = getUnduplicatedColumnName(name);
-                column = column.withName(name);
-            }
+            throw new ModelException("Duplicated column name");
         }
-        List<ColumnMetadata> newColumns = getColumns().subList(0, index);
+        List<ColumnMetadata> newColumns = new ArrayList<>();
+        newColumns.addAll(getColumns().subList(0, index));
         newColumns.add(column);
         newColumns.addAll(getColumns().subList(index, getColumns().size()));
+        return new ColumnModel(newColumns);
+    }
+
+    public ColumnModel insertUnduplicatedColumn(int index, ColumnMetadata column) {
+        String name = column.getName();
+
+        if (_nameToPosition.containsKey(name)) {
+            name = getUnduplicatedColumnName(name);
+            column = column.withName(name);
+        }
+        List<ColumnMetadata> newColumns = new ArrayList<>();
+        newColumns.addAll(getColumns().subList(0, index));
+        newColumns.add(column);
+        newColumns.addAll(getColumns().subList(index, getColumns().size()));
+        return new ColumnModel(newColumns);
+    }
+
+    public ColumnModel renameColumn(int index, String newName) throws ModelException {
+        ColumnMetadata newColumn = _columns.get(index);
+        return replaceColumn(index, newColumn.withName(newName));
+    }
+
+    public ColumnModel removeColumn(int index) {
+        List<ColumnMetadata> newColumns = new ArrayList<>();
+        List<ColumnMetadata> columns = getColumns();
+        newColumns.addAll(columns.subList(0, index));
+        newColumns.addAll(columns.subList(index + 1, columns.size()));
         return new ColumnModel(newColumns);
     }
 

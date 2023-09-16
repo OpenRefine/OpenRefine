@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.DatamodelRunner;
@@ -259,7 +260,12 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public Project loadProject(long id) throws IOException {
         File dir = getProjectDir(id);
-        History history = _historyEntryManager.load(dir);
+        History history;
+        try {
+            history = _historyEntryManager.load(dir);
+        } catch (DoesNotApplyException e) {
+            throw new IOException(e);
+        }
         return new Project(id, history);
     }
 

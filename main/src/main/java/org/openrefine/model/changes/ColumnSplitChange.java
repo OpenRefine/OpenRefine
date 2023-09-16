@@ -33,351 +33,337 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Serializable;
-import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.history.Change;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
+
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.util.ParsingUtilities;
+import org.openrefine.model.RowMapper;
 
-public class ColumnSplitChange implements Change {
+public class ColumnSplitChange extends RowMapChange {
+
+    public static enum Mode {
+        @JsonProperty("lengths")
+        Lengths, @JsonProperty("separator")
+        Separator
+    }
 
     final protected String _columnName;
-
-    final protected List<String> _columnNames;
-    final protected List<Integer> _rowIndices;
-    final protected List<List<Serializable>> _tuples;
-
     final protected boolean _removeOriginalColumn;
+    final protected CellValueSplitter _splitter;
+    final protected boolean _guessCellType;
+    final protected Mode _mode;
+    final protected String _separator;
+    final protected Boolean _regex;
+    final protected Integer _maxColumns;
+    final protected int[] _fieldLengths;
 
-    protected ColumnMetadata _column;
-    protected int _columnIndex;
-
-    protected int _firstNewCellIndex = -1;
-    protected List<Row> _oldRows;
-    protected List<Row> _newRows;
-
+    @JsonCreator
     public ColumnSplitChange(
-            String columnName,
-            List<String> columnNames,
-            List<Integer> rowIndices,
-            List<List<Serializable>> tuples,
-            boolean removeOriginalColumn) {
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("mode") Mode mode,
+            @JsonProperty("separator") String separator,
+            @JsonProperty("regex") Boolean regex,
+            @JsonProperty("maxColumns") Integer maxColumns,
+            @JsonProperty("fieldLengths") int[] fieldLengths,
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("removeOriginalColumn") boolean removeOriginalColumn,
+            @JsonProperty("guessCellType") boolean guessCellType) {
+        super(engineConfig);
         _columnName = columnName;
-
-        _columnNames = columnNames;
-        _rowIndices = rowIndices;
-        _tuples = tuples;
-
+        _mode = mode;
+        _separator = separator;
+        _regex = regex;
+        _maxColumns = maxColumns;
+        _fieldLengths = fieldLengths;
         _removeOriginalColumn = removeOriginalColumn;
+        _guessCellType = guessCellType;
+        _splitter = CellValueSplitter.construct(mode, separator, regex, fieldLengths, maxColumns);
     }
 
-    protected ColumnSplitChange(
-            String columnName,
-            List<String> columnNames,
-            List<Integer> rowIndices,
-            List<List<Serializable>> tuples,
-            boolean removeOriginalColumn,
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
 
-            ColumnMetadata column,
-            int columnIndex,
+    @JsonProperty("guessCellType")
+    public boolean getGuessCellType() {
+        return _guessCellType;
+    }
 
-            int firstNewCellIndex,
-            List<Row> oldRows,
-            List<Row> newRows) {
-        _columnName = columnName;
+    @JsonProperty("removeOriginalColumn")
+    public boolean getRemoveOriginalColumn() {
+        return _removeOriginalColumn;
+    }
 
-        _columnNames = columnNames;
-        _rowIndices = rowIndices;
-        _tuples = tuples;
+    @JsonProperty("mode")
+    public Mode getMode() {
+        return _mode;
+    }
 
-        _removeOriginalColumn = removeOriginalColumn;
+    @JsonProperty("separator")
+    @JsonInclude(Include.NON_NULL)
+    public String getSeparator() {
+        return _separator;
+    }
 
-        _column = column;
-        _columnIndex = columnIndex;
+    @JsonProperty("regex")
+    @JsonInclude(Include.NON_NULL)
+    public Boolean getRegex() {
+        return _regex;
+    }
 
-        _firstNewCellIndex = firstNewCellIndex;
-        _oldRows = oldRows;
-        _newRows = newRows;
+    @JsonProperty("maxColumns")
+    @JsonInclude(Include.NON_NULL)
+    public Integer getMaxColumns() {
+        return _maxColumns;
+    }
+
+    @JsonProperty("fieldLengths")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getFieldLengths() {
+        return _fieldLengths;
     }
 
     @Override
-    public void apply(Project project) {
-        synchronized (project) {
-            if (_firstNewCellIndex < 0) {
-                _firstNewCellIndex = project.columnModel.allocateNewCellIndex();
-                for (int i = 1; i < _columnNames.size(); i++) {
-                    project.columnModel.allocateNewCellIndex();
+    public boolean isImmediate() {
+        return true;
+    }
+
+    @Override
+    public GridMap getGridMap(GridState state) throws DoesNotApplyException {
+        ColumnModel origColumnModel = state.getColumnModel();
+        int origColumnIdx = columnIndex(origColumnModel, _columnName);
+
+        // Create an aggregator which counts the number of columns generated
+        // by the splitting settings.
+        Engine engine = getEngine(state);
+        int nbColumns = engine.aggregateFilteredRows(buildAggregator(_splitter, origColumnIdx), 0);
+        if (_maxColumns != null && _maxColumns > 0) {
+            nbColumns = Math.min(nbColumns, _maxColumns);
+        }
+
+        // Build new column model
+        List<String> columnNames = new ArrayList<>(nbColumns);
+        int columnNameIndex = 1;
+        for (int i = 0; i < nbColumns; i++) {
+            while (true) {
+                String newColumnName = _columnName + " " + columnNameIndex++;
+                if (origColumnModel.getColumnByName(newColumnName) == null) {
+                    columnNames.add(newColumnName);
+                    break;
                 }
+            }
+        }
 
-                ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _columnName);
-                _column = project.columnModel.getColumnByName(_columnName);
-                _columnIndex = project.columnModel.getColumnIndexByName(_columnName);
+        int startColumnIdx = _removeOriginalColumn ? origColumnIdx : origColumnIdx + 1;
+        List<ColumnMetadata> origColumns = origColumnModel.getColumns();
+        List<ColumnMetadata> newColumns = new ArrayList<>(origColumns.subList(0, startColumnIdx));
+        newColumns.addAll(columnNames.stream().map(n -> new ColumnMetadata(n)).collect(Collectors.toList()));
+        newColumns.addAll(origColumns.subList(origColumnIdx + 1, origColumns.size()));
+        ColumnModel newColumnModel = new ColumnModel(newColumns);
 
-                _oldRows = new ArrayList<Row>(_rowIndices.size());
-                _newRows = new ArrayList<Row>(_rowIndices.size());
+        return new GridMap(
+                newColumnModel,
+                mapper(_splitter, origColumnIdx, nbColumns, _removeOriginalColumn, _guessCellType),
+                negativeMapper(origColumnIdx, nbColumns, _removeOriginalColumn),
+                state.getOverlayModels());
+    }
 
-                int cellIndex = _column.getCellIndex();
+    protected static RowMapper negativeMapper(int columnIdx, int nbColumns, boolean removeOrigColumn) {
+        return new RowMapper() {
 
-                for (int i = 0; i < _rowIndices.size(); i++) {
-                    int r = _rowIndices.get(i);
-                    List<Serializable> tuple = _tuples.get(i);
+            private static final long serialVersionUID = 467330557649346821L;
 
-                    Row oldRow = project.rows.get(r);
-                    Row newRow = oldRow.dup();
-
-                    _oldRows.add(oldRow);
-                    _newRows.add(newRow);
-
-                    for (int c = 0; c < tuple.size(); c++) {
-                        Serializable value = tuple.get(c);
-                        if (value != null) {
-                            newRow.setCell(_firstNewCellIndex + c, new Cell(value, null));
-                        }
-                    }
-
-                    if (_removeOriginalColumn) {
-                        newRow.setCell(cellIndex, null);
-                    }
+            @Override
+            public Row call(long rowId, Row row) {
+                Row newRow = row.insertCells(columnIdx + 1, Collections.nCopies(nbColumns, null));
+                if (removeOrigColumn) {
+                    newRow = newRow.removeCell(columnIdx);
                 }
+                return newRow;
             }
 
-            for (int i = 0; i < _rowIndices.size(); i++) {
-                int r = _rowIndices.get(i);
-                Row newRow = _newRows.get(i);
-
-                project.rows.set(r, newRow);
-            }
-
-            for (int i = 0; i < _columnNames.size(); i++) {
-                String name = _columnNames.get(i);
-                int cellIndex = _firstNewCellIndex + i;
-
-                ColumnMetadata column = new ColumnMetadata(cellIndex, name);
-
-                project.columnModel.getColumns().add(_columnIndex + 1 + i, column);
-            }
-
-            if (_removeOriginalColumn) {
-                project.columnModel.getColumns().remove(_columnIndex);
-            }
-
-            project.update();
-        }
+        };
     }
 
-    @Override
-    public void revert(Project project) {
-        synchronized (project) {
-            for (int i = 0; i < _rowIndices.size(); i++) {
-                int r = _rowIndices.get(i);
-                Row oldRow = _oldRows.get(i);
+    protected static RowMapper mapper(CellValueSplitter splitter, int columnIdx, int nbColumns, boolean removeOrigColumn,
+            boolean guessCellType) {
+        return new RowMapper() {
 
-                project.rows.set(r, oldRow);
-            }
+            private static final long serialVersionUID = -5552242219011530334L;
 
-            if (_removeOriginalColumn) {
-                project.columnModel.getColumns().add(_columnIndex, _column);
-            }
-
-            for (int i = 0; i < _columnNames.size(); i++) {
-                project.columnModel.getColumns().remove(_columnIndex + 1);
-                ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _columnNames.get(i));
-            }
-
-            project.update();
-        }
-    }
-
-    @Override
-    public void save(Writer writer, Properties options) throws IOException {
-        writer.write("columnName=");
-        writer.write(_columnName);
-        writer.write('\n');
-
-        writer.write("columnNameCount=");
-        writer.write(Integer.toString(_columnNames.size()));
-        writer.write('\n');
-        for (String name : _columnNames) {
-            writer.write(name);
-            writer.write('\n');
-        }
-        writer.write("rowIndexCount=");
-        writer.write(Integer.toString(_rowIndices.size()));
-        writer.write('\n');
-        for (Integer rowIndex : _rowIndices) {
-            writer.write(rowIndex.toString());
-            writer.write('\n');
-        }
-        writer.write("tupleCount=");
-        writer.write(Integer.toString(_tuples.size()));
-        writer.write('\n');
-        for (List<Serializable> tuple : _tuples) {
-            writer.write(Integer.toString(tuple.size()));
-            writer.write('\n');
-
-            for (Serializable value : tuple) {
-                if (value == null) {
-                    writer.write("null");
-                } else if (value instanceof String) {
-                    writer.write(ParsingUtilities.mapper.writeValueAsString((String) value));
+            @Override
+            public Row call(long rowId, Row row) {
+                // Split the cell
+                Serializable value = row.getCellValue(columnIdx);
+                List<String> split;
+                if (!(value instanceof String)) {
+                    split = Collections.emptyList();
                 } else {
-                    writer.write(value.toString());
+                    split = splitter.split((String) value);
                 }
-                writer.write('\n');
+
+                // Insert the split values in the row
+                List<Cell> splitCells = new ArrayList<>(nbColumns);
+                for (int i = 0; i != nbColumns; i++) {
+                    Serializable cellValue = null;
+                    if (i < split.size()) {
+                        cellValue = guessCellType ? ImporterUtilities.parseCellValue(split.get(i)) : split.get(i);
+                    }
+                    splitCells.add(new Cell(cellValue, null));
+                }
+
+                Row newRow = row.insertCells(columnIdx + 1, splitCells);
+                if (removeOrigColumn) {
+                    newRow = newRow.removeCell(columnIdx);
+                }
+                return newRow;
             }
-        }
-        writer.write("removeOriginalColumn=");
-        writer.write(Boolean.toString(_removeOriginalColumn));
-        writer.write('\n');
 
-        writer.write("column=");
-        _column.save(writer);
-        writer.write('\n');
-        writer.write("columnIndex=");
-        writer.write(Integer.toString(_columnIndex));
-        writer.write('\n');
-
-        writer.write("firstNewCellIndex=");
-        writer.write(Integer.toString(_firstNewCellIndex));
-        writer.write('\n');
-
-        writer.write("newRowCount=");
-        writer.write(Integer.toString(_newRows.size()));
-        writer.write('\n');
-        for (Row row : _newRows) {
-            row.save(writer, options);
-            writer.write('\n');
-        }
-        writer.write("oldRowCount=");
-        writer.write(Integer.toString(_oldRows.size()));
-        writer.write('\n');
-        for (Row row : _oldRows) {
-            row.save(writer, options);
-            writer.write('\n');
-        }
-        writer.write("/ec/\n"); // end of change marker
+        };
     }
 
-    static public Change load(LineNumberReader reader) throws Exception {
-        String columnName = null;
-        List<String> columnNames = null;
-        List<Integer> rowIndices = null;
-        List<List<Serializable>> tuples = null;
-        boolean removeOriginalColumn = false;
+    /**
+     * Provides different ways to split a cell value into multiple strings.
+     * 
+     * @author Antonin Delpeuch
+     *
+     */
+    public interface CellValueSplitter extends Serializable {
 
-        ColumnMetadata column = null;
-        int columnIndex = -1;
+        public List<String> split(String source);
 
-        int firstNewCellIndex = -1;
-        List<Row> oldRows = null;
-        List<Row> newRows = null;
-
-        String line;
-        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
-            int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
-            String value = line.substring(equal + 1);
-
-            if ("columnName".equals(field)) {
-                columnName = value;
-            } else if ("columnNameCount".equals(field)) {
-                int count = Integer.parseInt(value);
-
-                columnNames = new ArrayList<String>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        columnNames.add(line);
-                    }
-                }
-            } else if ("rowIndexCount".equals(field)) {
-                int count = Integer.parseInt(value);
-
-                rowIndices = new ArrayList<Integer>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        rowIndices.add(Integer.parseInt(line));
-                    }
-                }
-            } else if ("tupleCount".equals(field)) {
-                int count = Integer.parseInt(value);
-
-                tuples = new ArrayList<List<Serializable>>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-
-                    if (line == null) {
-                        continue;
-                    }
-
-                    int valueCount = Integer.parseInt(line);
-
-                    List<Serializable> tuple = new ArrayList<Serializable>(valueCount);
-                    for (int r = 0; r < valueCount; r++) {
-                        line = reader.readLine();
-
-                        tuple.add((Serializable) ParsingUtilities.mapper.readValue(line, Object.class));
-                    }
-
-                    tuples.add(tuple);
-                }
-            } else if ("removeOriginalColumn".equals(field)) {
-                removeOriginalColumn = Boolean.parseBoolean(value);
-
-            } else if ("column".equals(field)) {
-                column = ColumnMetadata.load(value);
-            } else if ("columnIndex".equals(field)) {
-                columnIndex = Integer.parseInt(value);
-            } else if ("firstNewCellIndex".equals(field)) {
-                firstNewCellIndex = Integer.parseInt(value);
-            } else if ("oldRowCount".equals(field)) {
-                int count = Integer.parseInt(value);
-
-                oldRows = new ArrayList<Row>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        oldRows.add(Row.load(line));
-                    }
-                }
-            } else if ("newRowCount".equals(field)) {
-                int count = Integer.parseInt(value);
-
-                newRows = new ArrayList<Row>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        newRows.add(Row.load(line));
-                    }
+        /**
+         * Constructs a CellValueSplitter according to the supplied settings.
+         * 
+         * @param mode
+         *            whether to split by separator or fixed lengths
+         * @param separator
+         *            the separator to use (set to null if using lengths)
+         * @param regex
+         *            whether to interpret the separator as a regular expression
+         * @param fieldLengths
+         *            the lengths of the fields to extract (set to null if using a separator)
+         * @param maxColumns
+         *            the maximum number of values to extract (ignored for lengths)
+         */
+        public static CellValueSplitter construct(Mode mode, String separator, Boolean regex, int[] fieldLengths,
+                Integer maxColumns) {
+            if (Mode.Lengths.equals(mode)) {
+                return CellValueSplitter.splitByLengths(fieldLengths);
+            } else {
+                if (regex) {
+                    Pattern pattern = Pattern.compile(separator);
+                    return CellValueSplitter.splitByRegex(pattern, maxColumns == null ? 0 : maxColumns);
+                } else {
+                    return CellValueSplitter.splitBySeparator(separator, maxColumns == null ? 0 : maxColumns);
                 }
             }
         }
 
-        ColumnSplitChange change = new ColumnSplitChange(
-                columnName,
-                columnNames,
-                rowIndices,
-                tuples,
-                removeOriginalColumn,
+        public static CellValueSplitter splitByLengths(int[] lengths) {
+            return new CellValueSplitter() {
 
-                column,
-                columnIndex,
+                private static final long serialVersionUID = -8087516195285863794L;
 
-                firstNewCellIndex,
-                oldRows,
-                newRows);
+                @Override
+                public List<String> split(String source) {
+                    List<String> results = new ArrayList<>(lengths.length + 1);
 
-        return change;
+                    int lastIndex = 0;
+                    for (int length : lengths) {
+                        int from = lastIndex;
+                        int to = Math.min(from + length, source.length());
+
+                        results.add(source.substring(from, to));
+
+                        lastIndex = to;
+                    }
+
+                    return results;
+                }
+
+            };
+        }
+
+        public static CellValueSplitter splitBySeparator(String separator, int maxColumns) {
+            return new CellValueSplitter() {
+
+                private static final long serialVersionUID = 5678119132735565975L;
+
+                @Override
+                public List<String> split(String source) {
+                    return Arrays.asList(StringUtils.splitByWholeSeparatorPreserveAllTokens(source, separator, 0));
+                }
+
+            };
+        }
+
+        public static CellValueSplitter splitByRegex(Pattern regex, int maxColumns) {
+            return new CellValueSplitter() {
+
+                private static final long serialVersionUID = -6979838040900570895L;
+
+                @Override
+                public List<String> split(String source) {
+                    String[] split = regex.split(source);
+                    return Arrays.asList(split);
+                }
+
+            };
+
+        }
+    }
+
+    /**
+     * Aggregator to compute the maximum number of values generated by a splitting configuration
+     * 
+     * @author Antonin Delpeuch
+     *
+     */
+    protected static RowAggregator<Integer> buildAggregator(CellValueSplitter splitter, int columnIndex) {
+        return new RowAggregator<Integer>() {
+
+            private static final long serialVersionUID = -5885231185365433813L;
+
+            @Override
+            public Integer sum(Integer first, Integer second) {
+                return Math.max(first, second);
+            }
+
+            @Override
+            public Integer withRow(Integer state, long rowId, Row row) {
+                Object val = row.getCellValue(columnIndex);
+                if (!(val instanceof String)) {
+                    return state;
+                } else {
+                    List<String> splits = splitter.split((String) val);
+                    if (state < splits.size()) {
+                        return splits.size();
+                    } else {
+                        return state;
+                    }
+                }
+            }
+        };
     }
 }

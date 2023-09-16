@@ -35,10 +35,10 @@ package org.openrefine.browsing.filters;
 
 import java.util.List;
 
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.model.Record;
+import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 
 public class AllRowsRecordFilter implements RecordFilter {
 

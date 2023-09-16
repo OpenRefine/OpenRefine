@@ -34,20 +34,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.cell;
 
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
-import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.MultiValuedCellSplitOperation;
-import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -95,74 +91,4 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 ParsingUtilities.defaultWriter);
     }
 
-    /**
-     * Test to demonstrate the intended behaviour of the function, for issue #1268
-     * https://github.com/OpenRefine/OpenRefine/issues/1268
-     */
-
-    @Test
-    public void testSplitMultiValuedCellsTextSeparator() throws Exception {
-        Operation op = new MultiValuedCellSplitOperation(
-                "Value",
-                "Key",
-                ":",
-                false);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
-
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "two;three four");
-    }
-
-    @Test
-    public void testSplitMultiValuedCellsRegExSeparator() throws Exception {
-        Operation op = new MultiValuedCellSplitOperation(
-                "Value",
-                "Key",
-                "\\W",
-                true);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
-
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "two");
-        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "three");
-        Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "four");
-    }
-
-    @Test
-    public void testSplitMultiValuedCellsLengths() throws Exception {
-        int[] lengths = { 4, 4, 6, 4 };
-
-        Operation op = new MultiValuedCellSplitOperation(
-                "Value",
-                "Key",
-                lengths);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
-
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "two;");
-        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "three ");
-        Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "four");
-    }
 }

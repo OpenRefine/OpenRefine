@@ -38,12 +38,12 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 
 /**
  * Judge if a row matches by evaluating a given expression on the row, based on a particular column, and checking the

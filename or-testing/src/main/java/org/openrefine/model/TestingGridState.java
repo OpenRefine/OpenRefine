@@ -14,12 +14,8 @@ import java.util.zip.GZIPOutputStream;
 
 import org.testng.Assert;
 
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
-import org.openrefine.browsing.facets.AllFacetsAggregator;
-import org.openrefine.browsing.facets.Facet;
-import org.openrefine.browsing.facets.FacetResult;
-import org.openrefine.browsing.facets.FacetState;
+import org.openrefine.browsing.facets.RecordAggregator;
+import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 
@@ -194,83 +190,53 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public List<FacetResult> computeRowFacets(List<Facet> facets) {
-        List<FacetState> initialStates = facets
-                .stream().map(facet -> facet.getInitialFacetState())
-                .collect(Collectors.toList());
-
-        AllFacetsAggregator aggregator = new AllFacetsAggregator(facets
-                .stream().map(facet -> facet.getAggregator())
-                .collect(Collectors.toList()));
+    public <T> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
 
         // Artificially split the grid in two, in order to use the `sum` method
-        // of FacetAggregator.
+        // of RowAggregator.
         long split = rowCount() / 2;
-        List<FacetState> statesA = initialStates;
-        List<FacetState> statesB = initialStates;
+        T statesA = initialState;
+        T statesB = initialState;
         for (IndexedRow row : indexedRows()) {
             if (row.getIndex() < split) {
-                statesA = aggregator.increment(statesA, row.getIndex(), row.getRow());
+                statesA = aggregator.withRow(statesA, row.getIndex(), row.getRow());
             } else {
-                statesB = aggregator.increment(statesB, row.getIndex(), row.getRow());
+                statesB = aggregator.withRow(statesB, row.getIndex(), row.getRow());
             }
         }
 
-        List<FacetState> states = aggregator.sum(statesA, statesB);
-
-        List<FacetResult> facetResults = new ArrayList<>();
-        for (int i = 0; i != states.size(); i++) {
-            facetResults.add(facets.get(i).getFacetResult(states.get(i)));
-        }
-        return facetResults;
+        return aggregator.sum(statesA, statesB);
     }
 
     @Override
-    public List<FacetResult> computeRecordFacets(List<Facet> facets) {
-        List<FacetState> initialStates = facets
-                .stream().map(facet -> facet.getInitialFacetState())
-                .collect(Collectors.toList());
-
-        AllFacetsAggregator aggregator = new AllFacetsAggregator(facets
-                .stream().map(facet -> facet.getAggregator())
-                .collect(Collectors.toList()));
-
+    public <T> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
         // Artificially split the grid in two, in order to use the `sum` method
         // of FacetAggregator.
         long split = rowCount() / 2;
-        List<FacetState> statesA = initialStates;
-        List<FacetState> statesB = initialStates;
+        T statesA = initialState;
+        T statesB = initialState;
         for (Record record : records) {
             if (record.getStartRowId() < split) {
-                statesA = aggregator.increment(statesA, record);
+                statesA = aggregator.withRecord(statesA, record);
             } else {
-                statesB = aggregator.increment(statesB, record);
+                statesB = aggregator.withRecord(statesB, record);
             }
         }
 
-        List<FacetState> states = aggregator.sum(statesA, statesB);
-
-        List<FacetResult> facetResults = new ArrayList<>();
-        for (int i = 0; i != states.size(); i++) {
-            facetResults.add(facets.get(i).getFacetResult(states.get(i)));
-        }
-        return facetResults;
+        return aggregator.sum(statesA, statesB);
     }
 
     @Override
-    public GridState mapFilteredRows(RowFilter filter, RowMapper mapper, ColumnModel newColumnModel) {
-        // Check that the filter is serializable as it is required by the interface,
+    public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
+        // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        TestingDatamodelRunner.ensureSerializable(filter);
         TestingDatamodelRunner.ensureSerializable(mapper);
         List<Row> rows = new ArrayList<>(this.rows.size());
         for (IndexedRow indexedRow : indexedRows()) {
-            Row row = indexedRow.getRow();
-            if (filter.filterRow(indexedRow.getIndex(), row)) {
-                row = mapper.call(indexedRow.getIndex(), row);
-            }
+            Row row = mapper.call(indexedRow.getIndex(), indexedRow.getRow());
             if (row.getCells().size() != newColumnModel.getColumns().size()) {
-                Assert.fail("Row size inconsistent with supplied column model");
+                Assert.fail(String.format("Row size (%d) inconsistent with supplied column model (%s)",
+                        row.getCells().size(), newColumnModel.getColumns()));
             }
             rows.add(row);
         }
@@ -278,19 +244,13 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public GridState mapFilteredRecords(RecordFilter filter, RecordMapper mapper, ColumnModel newColumnModel) {
-        // Check that the filter is serializable as it is required by the interface,
+    public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
+        // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
-        TestingDatamodelRunner.ensureSerializable(filter);
         TestingDatamodelRunner.ensureSerializable(mapper);
         List<Row> rows = new ArrayList<>(this.rows.size());
         for (Record record : records) {
             List<Row> addedRows = mapper.call(record);
-            if (filter.filterRecord(record)) {
-                addedRows = mapper.call(record);
-            } else {
-                addedRows = record.getRows();
-            }
             for (Row row : addedRows) {
                 if (row.getCells().size() != newColumnModel.getColumns().size()) {
                     Assert.fail("Row size inconsistent with supplied column model");

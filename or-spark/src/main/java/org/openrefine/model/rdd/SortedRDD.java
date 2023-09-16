@@ -57,7 +57,7 @@ public class SortedRDD<K extends Comparable<K>, V> extends PartitionedRDD<K, V> 
             // casting directly to K[] can fail
             Object[] objects = (Object[]) parent.context().runJob(parent, new ExtractFirstRowId<K, V>(), partitionIdObjs, keyClassTag);
 
-            firstRowIds = new ArrayList<>();
+            firstRowIds = new ArrayList<>(objects.length);
             for (int i = 0; i != objects.length; i++) {
                 firstRowIds.add((K) objects[i]);
             }

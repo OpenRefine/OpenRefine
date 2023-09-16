@@ -20,6 +20,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -76,7 +77,7 @@ public class MassEditChangeTests extends RefineTest {
     }
 
     @Test
-    public void testSimpleReplace() {
+    public void testSimpleReplace() throws DoesNotApplyException {
         MassEditChange change = new MassEditChange(engineConfig, eval, "foo", Collections.singletonMap("v1", "v2"), "hey", null);
         GridState applied = change.apply(initialState);
         Row row0 = applied.getRow(0);
@@ -97,7 +98,7 @@ public class MassEditChangeTests extends RefineTest {
     }
 
     @Test
-    public void testRecordsMode() {
+    public void testRecordsMode() throws DoesNotApplyException {
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         MassEditChange change = new MassEditChange(engineConfig, eval, "foo", Collections.singletonMap("v1", "v2"), "hey", null);
         GridState applied = change.apply(initialState);

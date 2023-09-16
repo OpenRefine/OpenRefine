@@ -38,12 +38,12 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Project;
+import org.openrefine.expr.ParsingException;
+import org.openrefine.history.Change;
 import org.openrefine.model.changes.ColumnReorderChange;
-import org.openrefine.operations.Operation;
+import org.openrefine.operations.ImmediateOperation;
 
-public class ColumnReorderOperation extends Operation {
+public class ColumnReorderOperation extends ImmediateOperation {
 
     final protected List<String> _columnNames;
 
@@ -59,17 +59,12 @@ public class ColumnReorderOperation extends Operation {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Reorder columns";
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        return new HistoryEntry(
-                historyEntryID,
-                project,
-                "Reorder columns",
-                this,
-                new ColumnReorderChange(_columnNames));
+    public Change createChange() throws ParsingException {
+        return new ColumnReorderChange(_columnNames);
     }
 }
