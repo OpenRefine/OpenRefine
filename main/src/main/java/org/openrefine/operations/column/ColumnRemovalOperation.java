@@ -37,22 +37,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
-import org.openrefine.model.changes.RowMapChange;
-import org.openrefine.operations.ImmediateOperation;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
-public class ColumnRemovalOperation extends ImmediateOperation {
+public class ColumnRemovalOperation extends ImmediateRowMapOperation {
 
     final protected String _columnName;
 
     @JsonCreator
     public ColumnRemovalOperation(
             @JsonProperty("columnName") String columnName) {
+        super(EngineConfig.ALL_ROWS);
         _columnName = columnName;
     }
 
@@ -67,40 +66,16 @@ public class ColumnRemovalOperation extends ImmediateOperation {
     }
 
     @Override
-    public Change createChange() throws ParsingException {
-        return new ColumnRemovalChange();
+    public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+        ColumnModel model = state.getColumnModel();
+        int columnIndex = columnIndex(model, _columnName);
+        return model.removeColumn(columnIndex);
     }
 
-    /**
-     * Removes a column from the grid.
-     * 
-     * @author Antonin Delpeuch
-     *
-     */
-    public class ColumnRemovalChange extends RowMapChange {
-
-        public ColumnRemovalChange() {
-            super(EngineConfig.ALL_ROWS);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
-        @Override
-        public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
-            ColumnModel model = state.getColumnModel();
-            int columnIndex = columnIndex(model, _columnName);
-            return model.removeColumn(columnIndex);
-        }
-
-        @Override
-        public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
-            int columnIndex = columnIndex(state.getColumnModel(), _columnName);
-            return mapper(columnIndex);
-        }
-
+    @Override
+    public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+        int columnIndex = columnIndex(state.getColumnModel(), _columnName);
+        return mapper(columnIndex);
     }
 
     protected static RowMapper mapper(int columnIndex) {

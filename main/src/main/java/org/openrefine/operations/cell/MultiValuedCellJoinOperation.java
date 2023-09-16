@@ -48,7 +48,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
-import org.openrefine.operations.ImmediateOperation;
+import org.openrefine.operations.Operation;
 
 /**
  * Within a record, joins the non-blank cells of a column into the first cell, with the specified separator. The
@@ -58,7 +58,7 @@ import org.openrefine.operations.ImmediateOperation;
  * @author Antonin Delpeuch
  *
  */
-public class MultiValuedCellJoinOperation extends ImmediateOperation {
+public class MultiValuedCellJoinOperation implements Operation {
 
     final protected String _columnName;
     final protected String _keyColumnName;

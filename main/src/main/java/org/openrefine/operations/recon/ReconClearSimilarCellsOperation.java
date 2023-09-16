@@ -47,9 +47,9 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.ReconChange;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.operations.EngineDependentOperation;
 
-public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOperation {
+public class ReconClearSimilarCellsOperation extends EngineDependentOperation {
 
     final protected String _similarValue;
 
@@ -73,17 +73,14 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Clear recon data for cells containing \"" +
                 _similarValue + "\" in column " + _columnName;
     }
 
     @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-
-        return "Clear recon data for " + cellChanges.size() + " cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+    public Change createChange() {
+        return null;
     }
 
     @Override

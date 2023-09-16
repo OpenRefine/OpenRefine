@@ -40,18 +40,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
-import org.openrefine.model.changes.RowMapChange;
-import org.openrefine.operations.ImmediateOperation;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
-public class ColumnMoveOperation extends ImmediateOperation {
+public class ColumnMoveOperation extends ImmediateRowMapOperation {
 
     final protected String _columnName;
     final protected int _index;
@@ -60,6 +58,7 @@ public class ColumnMoveOperation extends ImmediateOperation {
     public ColumnMoveOperation(
             @JsonProperty("columnName") String columnName,
             @JsonProperty("index") int index) {
+        super(EngineConfig.ALL_ROWS);
         _columnName = columnName;
         _index = index;
     }
@@ -80,35 +79,17 @@ public class ColumnMoveOperation extends ImmediateOperation {
     }
 
     @Override
-    public Change createChange() throws ParsingException {
-        return new ColumnMoveChange();
+    public ColumnModel getNewColumnModel(GridState gridState) throws DoesNotApplyException {
+        ColumnModel columnModel = gridState.getColumnModel();
+        int fromIndex = columnIndex(columnModel, _columnName);
+        ColumnMetadata column = columnModel.getColumns().get(fromIndex);
+        return columnModel.removeColumn(fromIndex).insertUnduplicatedColumn(_index, column);
     }
 
-    public class ColumnMoveChange extends RowMapChange {
-
-        public ColumnMoveChange() {
-            super(EngineConfig.ALL_ROWS);
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
-        @Override
-        public ColumnModel getNewColumnModel(GridState gridState) throws DoesNotApplyException {
-            ColumnModel columnModel = gridState.getColumnModel();
-            int fromIndex = columnIndex(columnModel, _columnName);
-            ColumnMetadata column = columnModel.getColumns().get(fromIndex);
-            return columnModel.removeColumn(fromIndex).insertUnduplicatedColumn(_index, column);
-        }
-
-        @Override
-        public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
-            int fromIndex = columnIndex(state.getColumnModel(), _columnName);
-            return mapper(fromIndex, _index);
-        }
-
+    @Override
+    public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+        int fromIndex = columnIndex(state.getColumnModel(), _columnName);
+        return mapper(fromIndex, _index);
     }
 
     protected static RowMapper mapper(int fromIndex, int toIndex) {

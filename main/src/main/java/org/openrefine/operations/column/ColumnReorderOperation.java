@@ -43,24 +43,23 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
-import org.openrefine.model.changes.RowMapChange;
-import org.openrefine.operations.ImmediateOperation;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
-public class ColumnReorderOperation extends ImmediateOperation {
+public class ColumnReorderOperation extends ImmediateRowMapOperation {
 
     final protected List<String> _columnNames;
 
     @JsonCreator
     public ColumnReorderOperation(
             @JsonProperty("columnNames") List<String> columnNames) {
+        super(EngineConfig.ALL_ROWS);
         _columnNames = columnNames;
         Set<String> deduplicated = new HashSet<>(_columnNames);
         if (deduplicated.size() != _columnNames.size()) {
@@ -79,52 +78,28 @@ public class ColumnReorderOperation extends ImmediateOperation {
     }
 
     @Override
-    public Change createChange() throws ParsingException {
-        return new ColumnReorderChange();
+    public ColumnModel getNewColumnModel(GridState grid) throws DoesNotApplyException {
+        ColumnModel model = grid.getColumnModel();
+        List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
+        for (String columnName : _columnNames) {
+            ColumnMetadata meta = model.getColumnByName(columnName);
+            if (meta == null) {
+                throw new DoesNotApplyException(String.format("Column '%s' does not exist", columnName));
+            }
+            columns.add(meta);
+        }
+        return new ColumnModel(columns);
     }
 
-    public class ColumnReorderChange extends RowMapChange {
-
-        public ColumnReorderChange() {
-            super(EngineConfig.ALL_ROWS);
-
+    @Override
+    public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+        // Build a map from new indices to original ones
+        List<Integer> origIndex = new ArrayList<>(_columnNames.size());
+        for (int i = 0; i != _columnNames.size(); i++) {
+            origIndex.add(columnIndex(state.getColumnModel(), _columnNames.get(i)));
         }
 
-        @JsonProperty("columnNames")
-        public List<String> getColumnNames() {
-            return _columnNames;
-        }
-
-        @Override
-        public boolean isImmediate() {
-            return true;
-        }
-
-        @Override
-        public ColumnModel getNewColumnModel(GridState grid) throws DoesNotApplyException {
-            ColumnModel model = grid.getColumnModel();
-            List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
-            for (String columnName : _columnNames) {
-                ColumnMetadata meta = model.getColumnByName(columnName);
-                if (meta == null) {
-                    throw new DoesNotApplyException(String.format("Column '%s' does not exist", columnName));
-                }
-                columns.add(meta);
-            }
-            return new ColumnModel(columns);
-        }
-
-        @Override
-        public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
-            // Build a map from new indices to original ones
-            List<Integer> origIndex = new ArrayList<>(_columnNames.size());
-            for (int i = 0; i != _columnNames.size(); i++) {
-                origIndex.add(columnIndex(state.getColumnModel(), _columnNames.get(i)));
-            }
-
-            return mapper(origIndex);
-        }
-
+        return mapper(origIndex);
     }
 
     protected static RowMapper mapper(List<Integer> origIndex) {
