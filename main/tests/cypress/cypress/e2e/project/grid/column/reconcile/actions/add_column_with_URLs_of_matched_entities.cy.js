@@ -1,4 +1,4 @@
-/*describe('Add column with URLs of matched entities', () => {
+describe('Add column with URLs of matched entities', () => {
   afterEach(() => {
     cy.addProjectForDeletion();
   });
@@ -15,14 +15,23 @@
       'Reconcile',
       'Add column with URLs of matched entities',
     ]);
+
+    // check the dialog, enter a new column name "id_column"
+    cy.get('.dialog-container .dialog-header').should(
+      'to.contain',
+      'Add a name for the column containing URL of matched entities'
+    );
+    cy.get('.dialog-container .dialog-body input').type('Entity URL');
+    cy.get('.dialog-container .dialog-footer button').contains('OK').click();
     cy.assertNotificationContainingText(
       'Create new column Entity URL based on column Item by filling 1 rows with if(cell.recon.match!=null,"https://www.wikidata.org/wiki/{{id}}".replace("{{id}}",escape(cell.recon.match.id,"url")),null)',
     );
+
     cy.getCell(0, 'Entity URL').should('to.contain','https://www.wikidata.org/wiki/Q3938' );
     cy.assertCellEquals(1,'Entity URL','null');
     cy.assertCellEquals(2,'Entity URL','null');
     cy.assertCellEquals(3,'Entity URL','null');
 
   });
-});*/
+});
     
