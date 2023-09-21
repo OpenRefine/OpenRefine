@@ -487,6 +487,7 @@
     "core-views/collapse-white": "Rassembler les espaces consécutifs…",
     "core-views/collapse-white/header": "Rassembler les espaces consécutifs",
     "core-views/collapse-white/single": "Rassembler les espaces consécutifs",
+    "core-views/expand": "Élargir cette colonne",
     "core-views/fill-other": "Remplir les autres colonnes",
     "core-views/two-new-col": "Deux nouvelles colonnes",
     "core-views/collapse-other": "Masquer les autres colonnes",

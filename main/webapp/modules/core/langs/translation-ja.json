@@ -471,6 +471,7 @@
     "core-views/collapse-white": "連続した空白を縮める…",
     "core-views/collapse-white/header": "連続した空白を縮める",
     "core-views/collapse-white/single": "連続した空白を縮める",
+    "core-views/expand": "この列を展開",
     "core-views/fill-other": "変換対象ではないカラムは直上の値で満たす",
     "core-views/two-new-col": "２カラム化",
     "core-views/collapse-other": "これ以外のカラムをたたむ",

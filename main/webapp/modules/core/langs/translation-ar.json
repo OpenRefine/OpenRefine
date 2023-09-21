@@ -228,6 +228,7 @@
     "core-import-formats/text/xml/ods": "فتح Open Document Format spreadsheets (.ods)",
     "core-about/thanks": "شكر خاص",
     "core-views/column-join-replace-nulls": "استبدل nulls بقيمة اخري",
+    "core-views/expand": "قم بتوسيع هذا العمود",
     "core-buttons/refresh": "تحديث",
     "core-import-formats/binary/text/xml/xls/xlsx": "ملفات EXCEL",
     "core-buttons/next": "التالي",

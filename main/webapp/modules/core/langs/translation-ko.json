@@ -70,5 +70,6 @@
     "core-index-import/project-name": "프로젝트&nbsp;이름",
     "core-index-import/project-tags": "태그",
     "core-index-import/this-computer": "이 컴퓨터",
-    "core-index-import/clipboard": "클립보드"
+    "core-index-import/clipboard": "클립보드",
+    "core-views/expand": "이 열 확장"
 }

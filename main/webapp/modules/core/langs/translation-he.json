@@ -364,6 +364,7 @@
     "core-views/collapse-other": "כיווץ כל העמודות האחרות",
     "core-views/collapse-left": "כיווץ כל העמודות שמשמאל",
     "core-views/collapse-right": "כיווץ כל העמודות מימין",
+    "core-views/expand": "הרחב את העמודה הזו",
     "core-views/reconcile": "השלמה",
     "core-views/reverse": "היפוך",
     "core-views/remove-sort": "הסרת המיון",

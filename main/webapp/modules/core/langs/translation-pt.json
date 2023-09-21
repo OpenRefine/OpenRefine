@@ -219,6 +219,7 @@
     "core-views/collapse-white": "Contrair espaços em brancos consecutivos…",
     "core-views/collapse-white/header": "Contrair espaços em brancos consecutivos",
     "core-views/collapse-white/single": "Contrair espaços em brancos consecutivos",
+    "core-views/expand": "Expandir esta coluna",
     "core-recon/access-service": "Acessar API de serviço",
     "core-views/recon-stats": "$1% combinaram, $2% novos, $3% para ser reconciliados",
     "core-views/replacement-info": "Se a opção \"expressão regular\" estiver marcada e o modelo de busca contiver grupos delimitados por parênteses, $0 retornará a cadeia completa coincidindo com o modelo, e $1, $2… o 1º, 2º… grupo.",

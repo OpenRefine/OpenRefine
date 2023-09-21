@@ -409,6 +409,7 @@
     "core-views/collapse-other": "Kollapsa alla övriga kolumner",
     "core-views/collapse-left": "Kollapsa alla kolumner till vänster",
     "core-views/collapse-right": "Kollapsa alla kolumner till höger",
+    "core-views/expand": "Expandera den här kolumnen",
     "core-views/reconcile": "Förena",
     "core-views/reconcile-tooltip": "Matcha denna kolumns celler med värden i externa databaser",
     "core-views/reverse": "Omvänd",

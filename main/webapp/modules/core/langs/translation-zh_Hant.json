@@ -73,5 +73,6 @@
     "core-index-import/creating-proj": "創建項目…",
     "core-index-import/format": "格式",
     "core-index-import/unknown-err": "未知錯誤",
-    "core-index-import/sel-by-regex": "按文件名通過正則表達式選擇"
+    "core-index-import/sel-by-regex": "按文件名通過正則表達式選擇",
+    "core-views/expand": "展開這一列"
 }

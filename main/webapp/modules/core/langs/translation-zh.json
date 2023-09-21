@@ -364,6 +364,7 @@
     "core-views/collapse-other": "收起所有其他列",
     "core-views/collapse-left": "收起左侧列",
     "core-views/collapse-right": "收起右侧列",
+    "core-views/expand": "展开这一列",
     "core-views/reconcile": "搭配",
     "core-views/reverse": "反转",
     "core-views/remove-sort": "不排序",

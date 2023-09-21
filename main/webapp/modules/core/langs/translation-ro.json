@@ -206,5 +206,6 @@
     "core-dialogs/no-clustering-functions-and-distances": "Funcțiile de clustering și pentru distanțe nu pot fi încărcate.",
     "core-dialogs/try-another-method": "Încearcă selectarea unei alte metode de mai sus sau modifică-i parametrii",
     "core-dialogs/warning-check-boxes": "Ar trebui să bifezi căsuțe „Faci fuziune?” pentru ca editările să fie aplicate.",
-    "core-dialogs/cluster-descr": "Identifică grupuri de celule cu valori diferite care ar putea fi reprezentări diferite ale aceluiași lucru. De exemplu, „New York” și „new york” se referă cel mai sigur la același concept, fiind diferite prin majuscule, iar „Gödel” și „Godel” se referă la aceeași persoană mai mult ca sigur."
+    "core-dialogs/cluster-descr": "Identifică grupuri de celule cu valori diferite care ar putea fi reprezentări diferite ale aceluiași lucru. De exemplu, „New York” și „new york” se referă cel mai sigur la același concept, fiind diferite prin majuscule, iar „Gödel” și „Godel” se referă la aceeași persoană mai mult ca sigur.",
+    "core-views/expand": "Extindeți această coloană"
 }

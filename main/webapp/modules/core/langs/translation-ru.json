@@ -484,6 +484,7 @@
     "core-views/collapse-white": "Удалить лишние пробелы…",
     "core-views/collapse-white/header": "Удалить лишние пробелы",
     "core-views/collapse-white/single": "Удалить лишние пробелы",
+    "core-views/expand": "Расширить эту колонку",
     "core-views/fill-other": "Размножить в других колонках",
     "core-views/two-new-col": "Две новые колонки",
     "core-views/collapse-other": "Свернуть все остальные колонки",

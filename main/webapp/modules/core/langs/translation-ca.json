@@ -159,5 +159,6 @@
     "core-index-import/warning-clipboard": "Heu d'enganxar algunes dades a importar.",
     "core-index-import/uploading-pasted-data": "Pujar les dades enganxades…",
     "core-index-import/locate-files": "Localitzeu un o més arxius en el vostre ordinador per pujar:",
-    "core-index-import/remove-row": "Esborra aquesta fila"
+    "core-index-import/remove-row": "Esborra aquesta fila",
+    "core-views/expand": "Amplia aquesta columna"
 }

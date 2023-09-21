@@ -315,6 +315,7 @@
     "core-views/collapse-other": "Perluas semua kolom lainnya",
     "core-views/collapse-this": "Perluas kolom ini",
     "core-views/collapse-expand": "Perluas kolom untuk memudahkan peninjauan data",
+    "core-views/expand": "Perluas kolom ini",
     "core-views/sort": "Urutkan…",
     "core-views/sort/single": "Urutkan",
     "core-views/transpose": "Transpose",

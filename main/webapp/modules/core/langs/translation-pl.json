@@ -494,6 +494,7 @@
     "core-views/split-into-col": "Podziel na kilka kolumn…",
     "core-views/reorder-remove": "Zmień kolejność / usuń kolumny…",
     "core-views/collapse-all": "Zwiń wszystkie kolumny",
+    "core-views/expand": "Rozwiń tę kolumnę",
     "core-views/what-separator": "Jaki separator obecnie oddziela wartości?",
     "core-views/contain-names": "(zawierające oryginalne nazwy kolumn)",
     "core-views/cluster-edit": "Klastrowanie i edycja…",

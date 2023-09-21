@@ -261,6 +261,7 @@
     "core-views/collapse-other": "Alle andere kolommen inklappen",
     "core-views/collapse-left": "Alle kolommen links inklappen",
     "core-views/collapse-right": "Alle kolommen rechts inklappen",
+    "core-views/expand": "Breid deze kolom uit",
     "core-views/reverse": "Omgekeerd",
     "core-views/remove-sort": "Sortering verwijderen",
     "core-views/sort-by": "Sorteren op",
