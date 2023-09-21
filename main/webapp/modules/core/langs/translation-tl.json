@@ -555,7 +555,6 @@
     "core-views/split-col": "Ihiwalay ang kolum",
     "core-views/http-headers": "Ang mga header ng HTTP na pwedeng gamitin kapag mag-fetch ng mga URL:",
     "core-views/collapse-right": "I-collapse ang lahat ng kolum sa kanan",
-    "core-views/expand": "I-expand ang kolum na ito",
     "core-views/latest-first": "ang pinakabago muna",
     "core-views/guess-cell": "Ang tipo ng guess cell",
     "core-views/col-at-most": "ang kolum sa maramihan (mag-iwan ng blank para sa walang limitasyon)",

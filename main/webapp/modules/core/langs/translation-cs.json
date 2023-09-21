@@ -515,7 +515,6 @@
     "core-views/collapse-other": "Sbalit ostatní sloupce",
     "core-views/collapse-this": "Sbalit tento sloupec",
     "core-views/collapse-expand": "Sbalit/rozbalit sloupce a zobrazit data obvyklejším způsobem",
-    "core-views/expand": "Rozšířit tuto sloupec",
     "core-views/sort": "Seřadit…",
     "core-views/sort/single": "Seřadit",
     "core-views/transpose": "Překlopit",
