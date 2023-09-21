@@ -1,6 +1,6 @@
 name: openrefine
 base: core20
-version: "3.7.4"
+version: "3.7.5"
 summary: A free, open source, powerful tool for working with messy data
 description: |
   OpenRefine (previously Google Refine) is a powerful tool for working with messy data:
