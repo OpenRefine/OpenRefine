@@ -320,7 +320,7 @@ class ReconCellRenderer {
     }
     var suggest = elmts.input
     .val(cell.v)
-    .suggest(suggestOptions2);
+    .suggest(sanitizeSuggestOptions(suggestOptions2));
 
     suggest.on("fb-pane-show", function(e, data) {
       DialogSystem.pauseEscapeKeyHandling();

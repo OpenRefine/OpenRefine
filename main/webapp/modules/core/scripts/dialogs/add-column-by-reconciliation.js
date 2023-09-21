@@ -145,7 +145,6 @@ ExtendReconciledDataPreviewDialog.getAllProperties = function(url, typeID, onDon
     });
   }
 };
-
 ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
   this._level = DialogSystem.showDialog(this._dialog);
 
@@ -181,9 +180,7 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
   if (this._serviceMetadata.ui && this._serviceMetadata.ui.access) {
     suggestConfig.access = this._serviceMetadata.ui.access;
   }
-    
-
-  this._elmts.addPropertyInput.suggestP(suggestConfig).on("fb-select", function(evt, data) {
+  this._elmts.addPropertyInput.suggestP(sanitizeSuggestOptions(suggestConfig)).on("fb-select", function(evt, data) {
     self._addProperty({
       id : data.id,
       name: data.name,

@@ -246,7 +246,7 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
     if (this._service.ui && this._service.ui.access) {
       suggestOptions.access = this._service.ui.access;
     }
-    input.suggestT(suggestOptions);
+    input.suggestT(sanitizeSuggestOptions(suggestOptions));
   }
 
   input.on("bind fb-select", function(e, data) {
@@ -277,7 +277,7 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
     if (type) {
       suggestOptions.type = typeof type == "string" ? type : type.id;
     }
-    inputs.suggestP(suggestOptions);
+    inputs.suggestP(sanitizeSuggestOptions(suggestOptions));
   }
 };
 
