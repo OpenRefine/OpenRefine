@@ -66,20 +66,21 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         service = ReconciliationManager.getServiceFromUrl(serviceUrl);
       }
       if (service && service.view){
+        
         Refine.postCoreProcess
         (
-        "add-column",
-        {
-        baseColumnName: column.name,
-        newColumnName: columnName,
-        columnInsertIndex: columnIndex + 1,
-        onError: "set-to-blank"
-        },
-        { expression: 'if(cell.recon.match!=null,"' + service.view.url + '".replace("{{id}}",escape(cell.recon.match.id,"url")),null)' },
-        { modelsChanged: true },
-        { onDone: dismissDialog},
+          "add-column",
+          {
+            baseColumnName: column.name,
+            newColumnName: columnName,
+            columnInsertIndex: columnIndex + 1,
+            onError: "set-to-blank"
+          },
+          { expression: 'if(cell.recon.match!=null,"' + service.view.url + '".replace("{{id}}",escape(cell.recon.match.id,"url")),null)' },
+          { modelsChanged: true },
+          { onDone: dismissDialog},
         );
-        } else {
+      } else {
         alert($.i18n('core-views/service-does-not-associate-URLs-to-the-entities-it-contains'));
       }
     }
