@@ -19,7 +19,7 @@ describe('Add column with URLs of matched entities', () => {
     // check the dialog, enter a new column name "id_column"
     cy.get('.dialog-container .dialog-header').should(
       'to.contain',
-      'Add column with URL of matched entities'
+      'Add column with URL of matched entities...'
     );
     cy.get('.dialog-container .dialog-body input').type('Entity URL');
     cy.get('.dialog-container .dialog-footer button').contains('OK').click();
