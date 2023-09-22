@@ -580,7 +580,7 @@
     "core-views/add-id-column": "Add entity identifiers column…",
     "core-views/add-id-column2": "Add a column containing entity identifiers from items",
     "core-views/add-id-col": "Add column containing entity identifiers on \"$1\"",
-    "core-views/add-entity-URL-col":"Add a name for the column containing URL of matched entities",
+    "core-views/add-entity-URL-col":"Add column with URLs of matched entities",
     "core-views/duplicates-facet": "Duplicates facet",
     "core-views/numeric-log-facet": "Numeric log facet",
     "core-views/bounded-log-facet": "1-bounded numeric log facet",
