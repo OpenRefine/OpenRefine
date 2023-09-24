@@ -1,5 +1,5 @@
 name: openrefine
-base: core20
+base: core22
 version: "3.7.5"
 summary: A free, open source, powerful tool for working with messy data
 description: |
@@ -24,7 +24,7 @@ parts:
       - ca-certificates-java
     stage-packages:
       - curl
-      - default-jre
+      - openjdk-17-jre-headless
       - jython
       #      - libapache-jena-java
       - libapache-poi-java
@@ -86,9 +86,9 @@ apps:
   openrefine:
     command: ./refine
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/default-java
-      PATH: $JAVA_HOME/jre/bin:$PATH
-      _JAVA_OPTIONS: -Duser.home="${SNAP_USER_DATA}"
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-17-openjdk-amd64
+      PATH: $JAVA_HOME/bin:$PATH
+      _JAVA_OPTIONS: -Duser.home="${SNAP_USER_DATA}" -Djava.awt.headless=true
     plugs:
       - network
       - network-bind
