@@ -487,7 +487,7 @@ class RefineClient extends JFrame implements ActionListener {
     }
 
     private void openBrowser() {
-        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) || System.getenv("SNAP") != null) {
             try {
                 openBrowserFallback();
             } catch (IOException e) {

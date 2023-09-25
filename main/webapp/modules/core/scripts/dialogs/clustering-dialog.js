@@ -40,8 +40,13 @@ function ClusteringDialog(columnName, expression) {
 
     this._facets = [];
 
+    let checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
     this._createDialog();
-    this._cluster();
+    if (checkedValue === true) {
+        this._cluster();
+    } else {
+        this._addClusterMessage();
+    }
 }
 
 ClusteringDialog.prototype._createDialog = function() {
@@ -61,7 +66,6 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_ngramSize.html($.i18n('core-dialogs/ngram-size'));
     this._elmts.or_dialog_radius.html($.i18n('core-dialogs/ngram-radius'));
     this._elmts.or_dialog_blockChars.html($.i18n('core-dialogs/block-chars'));
-    this._elmts.clusterButton.html($.i18n('core-facets/cluster'));
     this._elmts.or_auto_update.html($.i18n('core-facets/auto-update'));
     this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
     this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
@@ -84,6 +88,24 @@ ClusteringDialog.prototype._createDialog = function() {
             self._elmts.distanceFunctionSelector.trigger('change');
         }
     });
+
+    ClusteringDialog.prototype._addClusterMessage = function () {
+        let self = this;
+        let container = self._elmts.tableContainer;
+        self._elmts.facetContainer.empty();
+        container.empty().html(
+            '<div style="display: flex; height: inherit; justify-content: center; align-items: center;">' + '<div>' +
+            $.i18n('core-dialogs/click-cluster', self._columnName) + '</div>' + '<div">' +
+            '<button class="button" bind="clusterButton" id="clusterButtonId" >' +
+            $.i18n('core-facets/cluster') + '</button>' + '</div></div>'
+        );
+        let elmts = DOM.bind(container);
+        elmts.clusterButton.html($.i18n('core-facets/cluster'));
+
+        elmts.clusterButton.on('click', function () {
+            self._cluster()
+        });
+    }
 
     var changer = function() {
         self._function = $(this).find("option:selected").val();
@@ -109,8 +131,11 @@ ClusteringDialog.prototype._createDialog = function() {
             }
             self._params[name] = value;
         });
-        if(document.getElementById("autoId").checked) {
+        self._elmts.resultSummary.empty();
+        if (document.getElementById("autoId").checked) {
             self._cluster();
+        } else {
+            self._addClusterMessage();
         }
     };
 
@@ -119,25 +144,24 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.ngramBlock.on('change',params_changer);
     this._elmts.autoCheckbox.on("change", function() {
         let checkbox = document.getElementById("autoId");
-        let button = document.getElementById("clusterButtonId");
-
         if (checkbox.checked) {
-            button.disabled = true;
+            Refine.setPreference("ui.clustering.auto-update", true);
             self._cluster();
         } else {
-            button.disabled = false;
+            Refine.setPreference("ui.clustering.auto-update", false);
         }
     });
 
     this._elmts.selectAllButton.on('click',function() { self._selectAll(); });
     this._elmts.deselectAllButton.on('click',function() { self._deselectAll(); });
-    this._elmts.clusterButton.on('click',function() { self._cluster(); });
     this._elmts.exportClusterButton.on('click',function() { self._onExportCluster(); });
     this._elmts.applyReClusterButton.on('click',function() { self._onApplyReCluster(); });
     this._elmts.applyCloseButton.on('click',function() { self._onApplyClose(); });
     this._elmts.closeButton.on('click',function() { self._dismiss(); });
 
     self._level = DialogSystem.showDialog(dialog);
+    var checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
+    document.getElementById("autoId").checked = checkedValue;
 
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
@@ -351,11 +375,6 @@ ClusteringDialog.prototype._cluster = function() {
             self._updateData(data);
             $(".clustering-dialog-facet").css("display","block");
             $('#cluster-and-edit-dialog :input').prop('disabled', false);
-            let checkbox = document.getElementById("autoId");
-            let button = document.getElementById("clusterButtonId");
-            if (checkbox.checked) {
-                button.disabled = true;
-            }
         },
         "json"
     );

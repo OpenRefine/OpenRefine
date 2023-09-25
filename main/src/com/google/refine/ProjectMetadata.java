@@ -137,6 +137,7 @@ public class ProjectMetadata {
 
     public ProjectMetadata(Instant created, Instant modified, String name) {
         this(created);
+        _modified = modified;
         _name = name;
     }
 

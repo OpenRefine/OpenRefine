@@ -59,5 +59,6 @@
     "database-source/alert-conn-name-invalid-character": "Error al introducir el nombre de la conexión: Carácter ilegal en la entrada. Sólo se permite [a-zA-Z0-9._-]",
     "database-source/alert-db-host-invalid-character": "Error de host de base de datos: Carácter ilegal en la entrada. Sólo se permiten caracteres alfanuméricos",
     "database-source/alert-db-user-invalid-character": "Error en usuario de base de datos: Carácter ilegal en la entrada. Sólo se permiten caracteres alfanuméricos",
-    "database-source/alert-db-port-invalid-character": "Error en el puerto de base de datos: Carácter ilegal en la entrada. Sólo se permiten valores numéricos."
+    "database-source/alert-db-port-invalid-character": "Error en el puerto de base de datos: Carácter ilegal en la entrada. Sólo se permiten valores numéricos.",
+    "database-parsing/limit-next": "Carga como máximo"
 }

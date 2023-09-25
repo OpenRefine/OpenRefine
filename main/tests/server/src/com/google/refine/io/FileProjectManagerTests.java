@@ -27,7 +27,6 @@
 
 package com.google.refine.io;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
 
@@ -56,7 +55,7 @@ public class FileProjectManagerTests {
     @BeforeMethod
     public void createDirectory() throws IOException {
         workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-        workspaceFile = File.createTempFile(workspaceDir.getPath(), "workspace.json");
+        workspaceFile = new File(workspaceDir, "workspace.json");
     }
 
     protected class FileProjectManagerStub extends FileProjectManager {
@@ -112,13 +111,13 @@ public class FileProjectManagerTests {
     @Test
     public void deleteProjectAndSaveWorkspace() throws IOException {
         FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
-        manager.saveToFile(workspaceFile);
+        manager.saveWorkspace();
         manager.deleteProject(5555);
-        manager.saveToFile(workspaceFile);
+        manager.saveWorkspace();
 
         InputStream inputStream = new FileInputStream(workspaceFile);
         JsonObject json = JSON.parse(inputStream);
-        assertTrue(json.get("projectIDs").getAsArray().isEmpty());
+        assertTrue(json.get("projectIDs").getAsArray().isEmpty(), "deleted project still in workspace.json");
     }
 
     /**
@@ -136,19 +135,22 @@ public class FileProjectManagerTests {
         manager.saveWorkspace();
         long idA = manager.getProjectID("A");
         long idB = manager.getProjectID("B");
-        Path pathA = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idA) + ".project", "metadata.json");
-        Path pathB = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idB) + ".project", "metadata.json");
+
+        Path pathA = Paths.get(manager.getProjectDir(idA).getAbsolutePath(), ProjectMetadata.DEFAULT_FILE_NAME);
+        Path pathB = Paths.get(manager.getProjectDir(idB).getAbsolutePath(), ProjectMetadata.DEFAULT_FILE_NAME);
         File metaAFile = pathA.toFile();
         File metaBFile = pathB.toFile();
         long timeBeforeA = metaAFile.lastModified();
         long timeBeforeB = metaBFile.lastModified();
+        // Reload fresh copy of the workspace
+        manager = new FileProjectManager(workspaceDir);
         Thread.sleep(1000);
         manager.getProjectMetadata(idA).setName("ModifiedA");
         manager.saveWorkspace();
         long timeAfterA = metaAFile.lastModified();
         long timeAfterB = metaBFile.lastModified();
-        assertEquals(timeBeforeB, timeAfterB);
-        assertNotEquals(timeBeforeA, timeAfterA);
+        assertEquals(timeBeforeB, timeAfterB, "Unmodified project written when it didn't need to be");
+        assertNotEquals(timeBeforeA, timeAfterA, "Modified project not written");
     }
 
     @Test
@@ -156,10 +158,8 @@ public class FileProjectManagerTests {
         FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
 
         File tempDir = TestUtils.createTempDirectory("openrefine-project-import-zip-slip-test");
-        try {
+        try (InputStream stream = FileProjectManagerTests.class.getClassLoader().getResourceAsStream("zip-slip.tar")) {
             File subDir = new File(tempDir, "dest");
-            InputStream stream = FileProjectManagerTests.class.getClassLoader().getResourceAsStream("zip-slip.tar");
-
             assertThrows(IllegalArgumentException.class, () -> manager.untar(subDir, stream));
         } finally {
             tempDir.delete();

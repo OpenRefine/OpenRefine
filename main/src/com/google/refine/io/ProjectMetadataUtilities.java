@@ -85,11 +85,8 @@ public class ProjectMetadataUtilities {
     }
 
     protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws IOException {
-        Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile), StandardCharsets.UTF_8);
-        try {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile), StandardCharsets.UTF_8)) {
             ParsingUtilities.saveWriter.writeValue(writer, projectMeta);
-        } finally {
-            writer.close();
         }
     }
 
@@ -167,6 +164,8 @@ public class ProjectMetadataUtilities {
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
         Reader reader = new InputStreamReader(new FileInputStream(metadataFile), StandardCharsets.UTF_8);
-        return ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
+        ProjectMetadata metadata = ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
+        metadata.setLastSave(); // No need to write it until it has been modified
+        return metadata;
     }
 }

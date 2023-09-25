@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import com.google.refine.util.LocaleUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -57,12 +56,14 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
+import com.google.refine.util.LocaleUtils;
 import com.google.refine.util.ParsingUtilities;
 
 public class FileProjectManager extends ProjectManager {
@@ -265,39 +266,50 @@ public class FileProjectManager extends ProjectManager {
     @Override
     protected void saveWorkspace() {
         synchronized (this) {
-            // TODO refactor this so that we check if the save is needed before writing to the file!
-            File tempFile = new File(_workspaceDir, "workspace.temp.json");
-            try {
-                if (!saveToFile(tempFile)) {
-                    // If the save wasn't really needed, just keep what we had
-                    tempFile.delete();
-                    logger.info("Skipping unnecessary workspace save");
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                logger.warn("Failed to save workspace");
+            List<Long> modified = getModifiedProjectIds();
+            boolean saveNeeded = (modified.size() > 0) || _preferenceStore.isDirty() || projectRemoved;
+            if (!saveNeeded) {
+                logger.info("Skipping unnecessary workspace save");
                 return;
             }
-            // set the workspace to owner-only readable, because it can contain credentials
-            tempFile.setReadable(false, false);
-            tempFile.setReadable(true, true);
+            File tempFile = saveWorkspaceToTempFile();
+            if (tempFile == null) return;
             File file = new File(_workspaceDir, "workspace.json");
             File oldFile = new File(_workspaceDir, "workspace.old.json");
 
             if (oldFile.exists()) {
-                oldFile.delete();
+                if (!oldFile.delete()) {
+                    logger.warn("Failed to delete previous backup workspace.old.json");
+                }
             }
 
             if (file.exists()) {
-                file.renameTo(oldFile);
+                if (!file.renameTo(oldFile)) {
+                    logger.error("Failed to rename workspace.json to workspace.old.json");
+                }
             }
 
-            tempFile.renameTo(file);
+            if (!tempFile.renameTo(file)) {
+                logger.error("Failed to rename new temp workspace file to workspace.json");
+            }
             projectRemoved = false;
             logger.info("Saved workspace");
         }
+    }
+
+    private File saveWorkspaceToTempFile() {
+        File tempFile = new File(_workspaceDir, "workspace.temp.json");
+        try {
+            saveToFile(tempFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.warn("Failed to save workspace");
+            return null;
+        }
+        // set the workspace to owner-only readable, because it can contain credentials
+        tempFile.setReadable(false, false);
+        tempFile.setReadable(true, true);
+        return tempFile;
     }
 
     protected List<Long> getModifiedProjectIds() {
@@ -319,18 +331,12 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
-    protected boolean saveToFile(File file) throws IOException {
-        OutputStream stream = new FileOutputStream(file);
-        List<Long> modified = getModifiedProjectIds();
-        boolean saveWasNeeded = (modified.size() > 0) || (_preferenceStore.isDirty());
-        try {
+    protected void saveToFile(File file) throws IOException {
+        try (OutputStream stream = new FileOutputStream(file)) {
             // writeValue(OutputStream) is documented to use JsonEncoding.UTF8
             ParsingUtilities.defaultWriter.writeValue(stream, this);
-            saveProjectMetadata(modified);
-        } finally {
-            stream.close();
+            saveProjectMetadata(getModifiedProjectIds());
         }
-        return saveWasNeeded;
     }
 
     @Override

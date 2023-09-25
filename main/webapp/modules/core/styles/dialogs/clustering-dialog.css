@@ -31,9 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#clusterButtonId[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
+#clusterButtonId {
+  margin-left: 0.5em;
 }
 
 .clustering-dialog-control-group {
