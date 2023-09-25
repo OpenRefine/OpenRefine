@@ -217,32 +217,11 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
     $(td0).attr("columnName", column.name).html(column.name);
     $(td1).data('id','property').css('position','relative');
 
-    let mappedColumn = $("<span>").addClass("mapped-column")
-        .css("display", "none")
-        .css("width","100%")
-        .css("padding","2px")
-        .css("position","absolute")
-        .css("top","0")
-        .css("left","0")
-        .css("background",'transparent');
+    let mappedColumn = $("<span>").addClass("mapped-column");
 
-    mappedColumn.append($("<a>").text("")
-        .css("margin-left", "0.2em")
-        .css("margin-right", "0.25em")
-        .css("white-space", "nowrap")
-        .css("overflow", "hidden")
-        .css("text-overflow", "ellipsis")
-        .css("max-width", "15ch")
-        .css("display", "inline-block")
-        .css("vertical-align", "middle"))
-        .append($("<span>")
-        .addClass("type-id").text("()")
-        .css("vertical-align", "middle"))
-        .append($("<a>")
-            .addClass("edit-mapped-column")
-            .text("edit")
-            .css("margin-right","0.5em")
-            .css("float", "right")
+    mappedColumn.append($("<a>").text(""))
+        .append($("<span>").addClass("type-id").text("()"))
+        .append($("<a>").addClass("edit-mapped-column").text("edit")
             .on('click', function() {
               $input = $(this).parent().siblings('input[name="property"]');
               $input.removeData('data.suggest');

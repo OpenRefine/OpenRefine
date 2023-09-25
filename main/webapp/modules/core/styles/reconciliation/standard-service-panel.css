@@ -31,6 +31,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+.edit-mapped-column {
+  margin-right: 0.5em;
+  float: right;
+}
+
+.mapped-column {
+  display: none;
+  width: 100%;
+  padding: 2px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: transparent;
+}
+
+.mapped-column a {
+  margin-left: 0.2em;
+  margin-right: 0.25em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 15ch;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.type-id {
+  vertical-align: middle;
+}
+
 .recon-dialog-standard-service-panel-message {
   text-align: center;
   font-size: 150%;
