@@ -127,7 +127,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
         assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
     }
 
-    @Test(enabled = false) // Vertical bars should be allowed
+    @Test
     public void testInvalidCharactersInFilenameVerticalBar() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("vertical bars (|) are not allowed.png")
@@ -137,7 +137,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
         assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
     }
 
-    @Test(enabled = false) // HTML escaped entities should be allowed
+    @Test
     public void testInvalidCharactersInFilenameHTMLEscaped() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("HTML escaped entities such as &nbsp; are not allowed.png")

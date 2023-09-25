@@ -20,7 +20,8 @@ public class FileNameScrutinizer extends EditScrutinizer {
 
     // see https://commons.wikimedia.org/wiki/Commons:File_naming
     public static final int maxFileNameBytes = 240;
-    public static final Pattern forbiddenFileNameChars = Pattern.compile(".*([\\p{Cc}]).*");
+    public static final Pattern forbiddenFileNameChars = Pattern.compile(
+            ".*([^ %!\"$&'()*,\\-./\\d:;=?@\\p{L}\\p{Mc}\\\\^_`~\\x80-\\xFF+]|%[0-9A-Fa-f]{2}|&[A-Za-z0-9\\x80-\\xff]+;|&#[0-9]+;|&#x[0-9A-Fa-f]+;).*");
 
     public static final String duplicateFileNamesInBatchType = "duplicate-file-names-in-batch";
     public static final String fileNamesAlreadyExistOnWikiType = "file-names-already-exist-on-wiki";
