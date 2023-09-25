@@ -191,6 +191,18 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
   this._facets.push({ elmt: elmt, facet: facet });
 
   ui.leftPanelTabs.tabs();
+  ui.leftPanelTabs.on( "tabsactivate", ( event, ui ) =>  {
+     let activeTabId = ui.newTab.children('a').attr("href");
+     if (activeTabId === '#refine-tabs-facets') {
+       for (let facet of this._facets) {
+         if (facet.facet.render) {
+           facet.facet.render();
+         } else if (facet.facet.checkInitialHeight) {
+           facet.facet.checkInitialHeight();
+         }
+       }
+     }
+  });
 
   Refine.update({ engineChanged: true });
 };

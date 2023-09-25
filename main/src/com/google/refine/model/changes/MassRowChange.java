@@ -46,6 +46,8 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
 
+// TODO: This replaces all rows in the project with a new set of rows, but if only a small percentage of the rows
+// are being changed, it'd be much more efficient to apply a change list of new/modified rows.
 public class MassRowChange implements Change {
 
     final protected List<Row> _newRows;
@@ -74,6 +76,9 @@ public class MassRowChange implements Change {
         synchronized (project) {
             project.rows.clear();
             project.rows.addAll(_oldRows);
+
+            project.columnModel.clearPrecomputes();
+            ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProject(project.id);
 
             project.update();
         }

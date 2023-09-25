@@ -373,7 +373,8 @@
     "core-recon/warning-type-sugg": "Lo sentimos, no podemos sugerir ninguna clase para sus datos. Especifique una clase abajo.",
     "core-recon/include": "¿Incluir",
     "core-recon/contact-service": "Contactando al servicio de cotejo",
-    "core-recon/enter-url": "Ingrese la uRL del servicio",
+    "core-recon/enter-url": "Ingrese la URL del servicio",
+    "core-recon/url-already-registered":"El servicio de cotejo que intenta agregar ya se encuentra registrado.",
     "core-util-enc/all": "Todas las codificaciones",
     "core-util-enc/months-ago": "meses atrás",
     "core-util-enc/working": "Trabajando",
@@ -805,5 +806,7 @@
     "core-views/edit-all-columns": "Editar todas las columnas",
     "core-index-import/invalid-url": "URL inválido",
     "core-index-import/blank-url": "URL en blanco",
-    "core-index-import/remove-row": "Remover esta fila"
+    "core-index-import/remove-row": "Remover esta fila",
+    "core-index/rows-loading-failed": "Error al cargar las filas.",
+    "core-index/navigate-home": "Navegar a la pantalla de inicio"
 }

@@ -83,7 +83,7 @@ public class StandardReconConfigTests extends RefineTest {
     private class StandardReconConfigStub extends StandardReconConfig {
 
         public StandardReconConfigStub() {
-            super("", "", "", "", "", false, new ArrayList<ColumnDetail>());
+            super("", "", "", "", "", false, 10, new ArrayList<ColumnDetail>());
         }
 
         public double wordDistanceTest(String s1, String s2) {
@@ -124,6 +124,7 @@ public class StandardReconConfigTests extends RefineTest {
                 "                \"name\": \"scientific article\"\n" +
                 "        },\n" +
                 "        \"autoMatch\": true,\n" +
+                "        \"batchSize\": 10,\n" +
                 "        \"columnDetails\": [\n" +
                 "           {\n" +
                 "             \"column\": \"organization_country\",\n" +
@@ -162,6 +163,28 @@ public class StandardReconConfigTests extends RefineTest {
         StandardReconConfig config = StandardReconConfig.reconstruct(json);
         assertNull(config.typeID);
         assertNull(config.typeName);
+    }
+
+    @Test
+    public void testGetBatchSize() throws IOException {
+
+        String json = "{\"mode\":\"standard-service\","
+                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+                + "\"type\":null,"
+                + "\"autoMatch\":true,"
+                + "\"batchSize\":50,"
+                + "\"columnDetails\":["
+                + "    {\"column\":\"_ - id\","
+                + "     \"property\":{\"id\":\"P3153\",\"name\":\"Crossref funder ID\"}}"
+                + "],"
+                + "\"limit\":0}";
+        StandardReconConfig c = StandardReconConfig.reconstruct(json);
+        assertEquals(c.getBatchSize(10), 10);
+        assertEquals(c.getBatchSize(120), 12);
+        assertEquals(c.getBatchSize(1200), 50);
+        assertEquals(c.getBatchSize(10000), 50);
     }
 
     @Test
@@ -243,6 +266,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "                \"name\": \"film\"\n" +
                     "        },\n" +
                     "        \"autoMatch\": true,\n" +
+                    "        \"batchSize\": 10,\n" +
                     "        \"columnDetails\": [\n" +
                     "           {\n" +
                     "             \"column\": \"director\",\n" +
@@ -349,6 +373,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "                \"name\": \"film\"\n" +
                     "        },\n" +
                     "        \"autoMatch\": true,\n" +
+                    "        \"batchSize\": 10,\n" +
                     "        \"columnDetails\": [\n" +
                     "           {\n" +
                     "             \"column\": \"director\",\n" +

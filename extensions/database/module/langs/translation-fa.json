@@ -12,6 +12,5 @@
     "database-source/form-validation-failure": "فرمت اتصال جدید  (New Connection) نامعتبر است!",
     "database-source/alert-port": "باید یک پورت پایگاه داده را مشخص کنید",
     "database-source/alert-initial-database": "‏باید یک پایگاه داده اصلی را مشخص کنید",
-    "database-source/alert-invalid-query-select": "عبارت پرس و جو باید با کلیدواژه SELECT شروع شود",
-    "database-source/alert-invalid-query-keyword": "‏عبارت پرس و جو نمی‌تواند دارای کلیدواژه‌های مدیریت داده‌ها باشد"
+    "database-source/alert-invalid-query-select": "عبارت پرس و جو باید با کلیدواژه SELECT شروع شود"
 }

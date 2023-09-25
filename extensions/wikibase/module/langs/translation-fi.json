@@ -31,7 +31,6 @@
     "wikibase-schema/warnings-tab-header": "Ongelmat",
     "wikibase-schema/schema-tab-header": "Skeema",
     "wikibase-schema/preview-explanation": "Tässä välilehdessä näytetään ensimmäiset muokkaukset (yhteensä $1 muokkauksesta), jotka tehdään, kun lataat muutokset projektiin <a href=\"$2\" target=\"_blank\">$3</a>. Fasetteja käyttämällä voit tutkia osajoukkoa muokkauksista.",
-    "wikibase-schema/dialog-explanation": "Työskentelet tällä hetkellä <a href=\"$1\" target=\"_blank\">$2</a> vastaan. Sinun tulisi ensin täsmäyttää tietosi täsmäytyspalveluihin, jotka on linkitetty $2:een. Alla oleva skeema määrittää, kuinka taulukkotietosi muunnetaan $2 muokkauksiksi. Voit vetää ja pudottaa alla olevia sarakkeiden nimiä useimmissa syöttökentissä: kullekin riville luodaan muokkaukset näiden sarakkeiden arvoilla.",
     "wikibase-extension/edit-wikibase-schema": "Muokkaa Wikibase-skeemaa",
     "wikibase-schema/dialog-header": "Sovita Wikidataan",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",

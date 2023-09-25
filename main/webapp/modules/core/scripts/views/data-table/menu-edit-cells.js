@@ -362,14 +362,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           return;
         }
       } else if (mode === "cases") {
-        if(elmts.reversTranistionCases[0].checked) {
+        if(elmts.reverseTransitionCases[0].checked) {
           config.separator = "(?<=\\p{Upper}|[\\p{Upper}][\\s])(?=\\p{Lower})";
         } else {
           config.separator = "(?<=\\p{Lower}|[\\p{Lower}][\\s])(?=\\p{Upper})";
         }
         config.regex = true;
       } else if (mode === "number") {
-        if(elmts.reversTranistionNumbers[0].checked) {
+        if(elmts.reverseTransitionNumbers[0].checked) {
           config.separator = "(?<=\\p{L}|[\\p{L}][\\s])(?=\\p{Digit})";
         } else {
           config.separator = "(?<=\\p{Digit}|[\\p{Digit}][\\s])(?=\\p{L})";

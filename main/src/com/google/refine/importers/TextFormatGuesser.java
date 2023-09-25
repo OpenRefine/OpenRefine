@@ -34,13 +34,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
 import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.CharMatcher;
 import com.google.refine.importing.FormatGuesser;
+import com.google.refine.importing.ImportingUtilities;
 
 public class TextFormatGuesser implements FormatGuesser {
 
@@ -51,7 +51,7 @@ public class TextFormatGuesser implements FormatGuesser {
     @Override
     public String guess(File file, String encoding, String seedFormat) {
         try (InputStream fis = new FileInputStream(file)) {
-            if (isCompressed(file)) {
+            if (ImportingUtilities.isCompressed(file)) {
                 return "binary";
             }
             ;
@@ -130,21 +130,6 @@ public class TextFormatGuesser implements FormatGuesser {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private boolean isCompressed(File file) throws IOException {
-        // Check for common compressed file types to protect ourselves from binary data
-        try (InputStream is = new FileInputStream(file)) {
-            byte[] magic = new byte[4];
-            int count = is.read(magic);
-            if (count == 4 && Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x03, 0x04 }) || // zip
-                    Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x07, 0x08 }) ||
-                    (magic[0] == 0x1F && magic[1] == (byte) 0x8B) // gzip
-            ) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

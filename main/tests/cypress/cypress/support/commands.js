@@ -9,7 +9,6 @@
 // ***********************************************
 
 import 'cypress-file-upload';
-import 'cypress-wait-until';
 
 // /**
 //  * Reconcile a column
@@ -380,7 +379,7 @@ Cypress.Commands.add('waitForProjectTable', (numRows) => {
   cy.get('#right-panel', { log: false }).should('be.visible');
   cy.get('#project-title').should('exist');
   cy.get(".data-table").find("tr").its('length').should('be.gte', 0);
-  if (arguments.length == 1) {
+  if (numRows) {
     cy.get('#summary-bar').should('to.contain', numRows+' rows');
   }
 });
@@ -418,7 +417,7 @@ Cypress.Commands.add(
   (projectName, fixture) => {
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('Clipboard')
       .click();
 

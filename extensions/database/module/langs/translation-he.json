@@ -48,7 +48,6 @@
     "database-source/alert-connection-edit": "החיבור נערך",
     "database-source/form-validation-failure": "טופס החיבור החדש שגוי!",
     "database-source/alert-invalid-query-select": "שאילתה חייבת להתחיל במילת המפתח SELECT (בחירה)",
-    "database-source/alert-invalid-query-keyword": "השאילתה לא יכולה להכיל מילת מפתח שמשנה נתונים:",
     "database-source/alert-query": "עליך לציין שאילתה תקפה",
     "database-source/alert-initial-database": "עליך לציין מסד נתונים ראשוני",
     "database-source/alert-connection-name": "עליך לציין שם לחיבור",

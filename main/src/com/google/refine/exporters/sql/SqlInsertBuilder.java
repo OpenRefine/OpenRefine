@@ -55,7 +55,7 @@ public class SqlInsertBuilder {
     private JsonNode options;
 
     /**
-     * 
+     *
      * @param table
      * @param columns
      * @param rows
@@ -72,7 +72,7 @@ public class SqlInsertBuilder {
 
     /**
      * Get Insert Sql
-     * 
+     *
      * @return
      */
     public String getInsertSQL() {
@@ -131,7 +131,7 @@ public class SqlInsertBuilder {
                     } else {// value not null
 
                         if (type.equals(SqlData.SQL_TYPE_NUMERIC)) {// test if number is numeric (decimal(p,s) number is
-                                                                    // valid)
+                            // valid)
 
                             if (!NumberUtils.isCreatable(val.getText())) {
                                 throw new SqlExporterException(
@@ -180,9 +180,10 @@ public class SqlInsertBuilder {
         }
 
         boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-        String colNamesWithSep = columns.stream().map(col -> col.replaceAll("[^a-zA-Z0-9_]", "_")).collect(Collectors.joining(","));
+        String colNamesWithSep = columns.stream().map(col -> SqlCreateBuilder.addQuotes(col.replaceAll("[^a-zA-Z0-9_]", "_")))
+                .collect(Collectors.joining(","));
         if (!trimColNames) {
-            colNamesWithSep = columns.stream().collect(Collectors.joining(","));
+            colNamesWithSep = columns.stream().map(col -> SqlCreateBuilder.addQuotes(col)).collect(Collectors.joining(","));
         }
 
         String valuesString = values.toString();
@@ -204,7 +205,7 @@ public class SqlInsertBuilder {
     }
 
     /**
-     * 
+     *
      * @param allowNullChkBox
      * @param defaultValue
      * @param nullValueNull

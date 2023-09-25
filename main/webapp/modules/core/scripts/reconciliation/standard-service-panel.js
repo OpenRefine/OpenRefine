@@ -55,7 +55,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
       if (data.code && data.code === 'ok') {
         self._types = data.types;
 
-        if (self._types.length === 0 && "defaultTypes" in self._service) {
+        if (self._types.length === 0 || "defaultTypes" in self._service) {
           var defaultTypes = {};
           $.each(self._service.defaultTypes, function() {
             defaultTypes[this.id] = this.name;
@@ -67,7 +67,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
             if (defaultTypes.hasOwnProperty(id)) {
               self._types.push({
                 id: id,
-                name: defaultTypes[id].name
+                name: defaultTypes[id]
               });
             }
           }
@@ -87,6 +87,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   var self = this;
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
+  this._elmts.or_proc_accessDocumentation.html($.i18n('core-recon/service-documentation'));
   this._elmts.automatchCheck[0].checked=JSON.parse(Refine.getPreference("ui.reconciliation.automatch", true));
   this._elmts.or_proc_access.html($.i18n('core-recon/access-service'));
   this._elmts.or_proc_cellType.html($.i18n('core-recon/cell-type'));
@@ -98,7 +99,13 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.typeInput.attr('aria-label',$.i18n('core-recon/type'))
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
-
+  this._elmts.documentationLink.css("display", "none");
+  if(this._service.documentation) {
+    this._elmts.documentationLink.attr("href", this._service.documentation);
+    // Show the documentation link if documentation is available
+    this._elmts.documentationLink.css("display", "block");
+  } 
+  
   this._elmts.againstType.on('change', function() {
     self._elmts.typeInput.trigger('focus').trigger('select');
   });
@@ -239,7 +246,7 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
     if (this._service.ui && this._service.ui.access) {
       suggestOptions.access = this._service.ui.access;
     }
-    input.suggestT(suggestOptions);
+    input.suggestT(sanitizeSuggestOptions(suggestOptions));
   }
 
   input.on("bind fb-select", function(e, data) {
@@ -270,7 +277,7 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
     if (type) {
       suggestOptions.type = typeof type == "string" ? type : type.id;
     }
-    inputs.suggestP(suggestOptions);
+    inputs.suggestP(sanitizeSuggestOptions(suggestOptions));
   }
 };
 
@@ -338,6 +345,7 @@ ReconStandardServicePanel.prototype.start = function() {
         schemaSpace: this._service.schemaSpace,
         type: (type) ? { id: type.id, name: type.name } : null,
         autoMatch: this._elmts.automatchCheck[0].checked,
+        batchSize: (Number.isInteger(this._service.batchSize) && this._service.batchSize > 0) ? this._service.batchSize : 10,
         columnDetails: columnDetails,
         limit: parseInt(this._elmts.maxCandidates[0].value) || 0
       })

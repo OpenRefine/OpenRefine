@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -68,7 +70,7 @@ public class ProjectMetadata {
     @JsonProperty("modified")
     private Instant _modified;
     @JsonIgnore
-    private Instant written = null;
+    private Instant lastSave = null;
     @JsonProperty("name")
     private String _name = "";
     @JsonProperty("password")
@@ -125,23 +127,22 @@ public class ProjectMetadata {
 
     protected ProjectMetadata(Instant date) {
         _created = date;
+        _modified = _created;
         preparePreferenceStore(_preferenceStore);
     }
 
     public ProjectMetadata() {
         this(Instant.now());
-        _modified = _created;
     }
 
     public ProjectMetadata(Instant created, Instant modified, String name) {
         this(created);
-        _modified = modified;
         _name = name;
     }
 
     @JsonIgnore
     public boolean isDirty() {
-        return written == null || _modified.isAfter(written);
+        return lastSave == null || _modified.isAfter(lastSave);
     }
 
     static protected void preparePreferenceStore(PreferenceStore ps) {
@@ -375,13 +376,27 @@ public class ProjectMetadata {
             Field metaField = metaClass.getDeclaredField("_" + metaName);
             if (metaName.equals("tags")) {
                 metaField.set(this, valueString.split(","));
+            } else if (metaName.equals("customMetadata")) {
+                ParsingUtilities.mapper.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature());
+                Map<String, Object> map = ParsingUtilities.mapper.readValue(valueString, HashMap.class);
+                metaField.set(this, map);
             } else {
                 metaField.set(this, valueString);
             }
+        } catch (JsonProcessingException e) {
+            String errorMessage = "Error reading JSON: " + e.getOriginalMessage();
+            logger.error(errorMessage);
+            throw new RuntimeException(errorMessage);
         } catch (NoSuchFieldException e) {
             updateUserMetadata(metaName, valueString);
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             logger.error(ExceptionUtils.getFullStackTrace(e));
+            throw new RuntimeException(e);
         }
+    }
+
+    @JsonIgnore
+    public void setLastSave() {
+        lastSave = Instant.now();
     }
 }

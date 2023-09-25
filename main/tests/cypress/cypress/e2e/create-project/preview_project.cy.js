@@ -67,7 +67,7 @@ describe(__filename, function () {
     cy.navigateTo('Import project');
     cy.get('#or-import-locate').should(
       'to.contain',
-      'Locate an existing Refine project file (.tar or .tar.gz)'
+      'Locate an existing Refine project file or use a URL (.tar or .tar.gz):'
     );
 
     cy.navigateTo('Create project');

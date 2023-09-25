@@ -372,7 +372,6 @@ function init() {
       "scripts/util/dom.js",
       "scripts/util/encoding.js",
       "scripts/util/sign.js",
-      "scripts/util/filter-lists.js",
 
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
@@ -514,7 +513,6 @@ function init() {
       "styles/theme.css",
       "styles/jquery-ui-overrides.css",
       "styles/common.css",
-      "styles/pure.css",
 
       "styles/util/menu.css",
       "styles/util/dialog.css",
@@ -564,7 +562,6 @@ function init() {
       "styles/theme.css",
       "styles/jquery-ui-overrides.css",
       "styles/common.css",
-      "styles/pure.css",
       "styles/util/dialog.css"
     ]
   );

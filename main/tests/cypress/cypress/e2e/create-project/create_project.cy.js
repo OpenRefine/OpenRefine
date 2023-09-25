@@ -6,7 +6,7 @@ describe(__filename, function () {
   it('Test the create project from this computer based on CSV', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('This Computer')
       .click();
     cy.get('.create-project-ui-source-selection-tab-body.selected').contains(
@@ -41,7 +41,7 @@ describe(__filename, function () {
   it('Test the create project from this computer based on TSV', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('This Computer')
       .click();
     cy.get('.create-project-ui-source-selection-tab-body.selected').contains(
@@ -76,7 +76,7 @@ describe(__filename, function () {
   it('Test the create project from clipboard based on CSV', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('Clipboard')
       .click();
     cy.get('#or-import-clipboard').should(
@@ -112,7 +112,7 @@ describe(__filename, function () {
   it('Test the create project from clipboard based on TSV', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('Clipboard')
       .click();
     cy.get('#or-import-clipboard').should(
@@ -200,7 +200,7 @@ describe(__filename, function () {
   it('Test the create project from Web URL based on CSV', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('Web Addresses (URLs)')
       .click();
     cy.get('#or-import-enterurl').should(
@@ -229,7 +229,7 @@ describe(__filename, function () {
   it('Test the create project from Multiple Web URLs based on CSV', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('Web Addresses (URLs)')
       .click();
     cy.get('#or-import-enterurl').should(

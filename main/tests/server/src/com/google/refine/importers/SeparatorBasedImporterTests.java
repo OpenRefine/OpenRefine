@@ -33,8 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -45,7 +52,10 @@ import org.testng.annotations.Test;
 
 import com.google.refine.util.ParsingUtilities;
 
-public class TsvCsvImporterTests extends ImporterTest {
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+
+public class SeparatorBasedImporterTests extends ImporterTest {
 
     @Override
     @BeforeTest
@@ -632,6 +642,33 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals((String) project.rows.get(0).cells.get(3).value, "data4");
     }
 
+    // ---------------------guess separators------------------------
+
+    @Test
+    public void testThatDefaultGuessIsATabSeparatorAndDefaultProcessQuotesToFalse() {
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
+        assertEquals("\\t", options.get("separator").textValue());
+        assertFalse(options.get("processQuotes").asBoolean());
+    }
+
+    @Test
+    public void testThatSeparatorIsGuessedCorrectlyForCSV() throws IOException {
+        List<ObjectNode> fileRecords = prepareFileRecords("food.small.csv");
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, fileRecords, "text/csv");
+        assertEquals(",", options.get("separator").textValue());
+    }
+
+    @Test
+    public void testThatSeparatorIsGuessedCorrectlyForTSVAndDefaultProcessQuotesToFalse() throws IOException {
+        List<ObjectNode> fileRecords = prepareFileRecords("movies-condensed.tsv");
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, fileRecords, "text/tsv");
+        assertEquals("\\t", options.get("separator").textValue());
+        assertFalse(options.get("processQuotes").asBoolean());
+    }
+
     // --helpers--
     /**
      * Used for parameterized testing for both SeparatorParser and TsvCsvParser.
@@ -685,5 +722,15 @@ public class TsvCsvImporterTests extends ImporterTest {
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
         whenGetArrayOption("columnNames", options, ParsingUtilities.evaluateJsonStringToArrayNode(columnNames));
         whenGetBooleanOption("includeArchiveFileName", options, includeArchiveFileName);
+    }
+
+    private List<ObjectNode> prepareFileRecords(final String FILE) throws IOException {
+        String filename = ClassLoader.getSystemResource(FILE).getPath();
+        // File is assumed to be in job.getRawDataDir(), so copy it there
+        FileUtils.copyFile(new File(filename), new File(job.getRawDataDir(), FILE));
+        List<ObjectNode> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
+                String.format("{\"location\": \"%s\"}", FILE)));
+        return fileRecords;
     }
 }
