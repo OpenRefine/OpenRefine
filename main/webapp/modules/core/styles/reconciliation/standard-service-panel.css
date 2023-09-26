@@ -34,6 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .edit-mapped-column {
   margin-right: 0.5em;
   float: right;
+  text-decoration: none;
+  color: var(--background-primary);
+  background-color: #8ae;
+  padding: 1px 3px;
+  border-radius: 3px;
+  font-weight: normal;
+  line-height: normal;
+  cursor: pointer;
 }
 
 .mapped-column {
@@ -66,17 +74,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-size: 150%;
   padding: 20px 0;
   color: #aaa;
-}
-
-.recon-dialog-standard-service-panel .edit-mapped-column {
-  text-decoration: none;
-  color: var(--background-primary);
-  background-color: #8ae;
-  padding: 1px 3px;
-  border-radius: 3px;
-  font-weight: normal;
-  line-height: normal;
-  cursor: pointer;
 }
 
 .recon-dialog-standard-service-panel .type-id {
