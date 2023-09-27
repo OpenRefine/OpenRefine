@@ -19,10 +19,6 @@
   height: 100%;
 }
 
-#schema-alignment-tab {
-  overflow: hidden;
-}
-
 .main-view-panel-tab-header {
   margin-top: 9px;
   margin-left: 7px;
@@ -46,8 +42,8 @@
 }
 
 .schema-alignment-dialog-canvas {
-  background: white;
   overflow-y: auto;
+  margin-bottom: 3em;
 }
 
 .schema-alignment-dialog-entity-edits-area {
@@ -58,6 +54,18 @@
   padding: 10px;
   max-width: 900px;
   overflow-y: auto;
+}
+
+.schema-alignment-header {
+  position: sticky;
+  top: 0;
+  padding-top: 1em;
+  background-color: var(--background-primary);
+  z-index: 1;
+}
+
+.schema-alignment-header .panel-explanation:first-child {
+  margin-top: 0;
 }
 
 .panel-explanation {
