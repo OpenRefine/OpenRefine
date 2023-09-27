@@ -121,7 +121,9 @@ public class LocalChangeData<T> implements ChangeData<T> {
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
-                }, "serialize");
+                }, "serialize")
+                .mapPartitions((index, iterator) -> iterator.concat(CloseableIterator.of(ChangeData.partitionEndMarker)),
+                        "add end marker", false);
 
         // we do not want to repartition while saving because the partitions should ideally correspond exactly
         // to those of the parent grid, for efficient joining.

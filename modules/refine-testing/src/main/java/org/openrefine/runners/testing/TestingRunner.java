@@ -144,7 +144,7 @@ public class TestingRunner implements Runner {
                     Iterator<String> iterator = ln.lines().iterator();
                     while (iterator.hasNext()) {
                         String line = iterator.next().trim();
-                        if (line.isEmpty()) {
+                        if (line.isEmpty() || line.startsWith(ChangeData.partitionEndMarker)) {
                             break;
                         }
                         IndexedData<T> indexedData = IndexedData.read(line, serializer);

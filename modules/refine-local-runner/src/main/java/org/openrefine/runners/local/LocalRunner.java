@@ -154,6 +154,9 @@ public class LocalRunner implements Runner {
         PairPLL<Long, IndexedData<T>> pll = pllContext
                 .textFile(path.getAbsolutePath(), GRID_ENCODING, !alreadyComplete)
                 .map(line -> {
+                    if (ChangeData.partitionEndMarker.equals(line.strip())) {
+                        return null;
+                    }
                     try {
                         return IndexedData.<T> read(line, serializer);
                     } catch (IOException e) {

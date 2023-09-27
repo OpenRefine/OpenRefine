@@ -21,6 +21,13 @@ import org.openrefine.util.CloseableIterable;
 public interface ChangeData<T> extends CloseableIterable<IndexedData<T>> {
 
     /**
+     * A marker at the end of the serialization of a partition of a change data, signalling that the end of the
+     * partition was reached. This is useful when iterating synchronously from a ChangeData object which is being
+     * written simultaneously.
+     */
+    public static final String partitionEndMarker = "end";
+
+    /**
      * Returns the change data at a given row. The data encapsulated in this {@link IndexedData} may be null, but not
      * the return value of this function itself.
      *

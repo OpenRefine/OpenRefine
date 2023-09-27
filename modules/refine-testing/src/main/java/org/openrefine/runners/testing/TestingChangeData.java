@@ -58,6 +58,7 @@ public class TestingChangeData<T> implements ChangeData<T> {
             for (IndexedData<T> row : iterator) {
                 row.write(writer, serializer);
             }
+            writer.write(ChangeData.partitionEndMarker);
         }
 
         File completionMarker = new File(file, Runner.COMPLETION_MARKER_FILE_NAME);
