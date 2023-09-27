@@ -11,6 +11,7 @@ import java.util.zip.ZipException;
 
 import com.google.common.io.CountingInputStream;
 import io.vavr.collection.Array;
+import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +23,9 @@ import org.openrefine.util.CloseableIterator;
 /**
  * A PLL whose contents are read from a set of text files. The text files are partitioned using a method similar to that
  * of Hadoop, using new lines as boundaries.
- * 
+ *
  * This class aims at producing a certain number of partitions determined by the default parallelism of the PLL context.
- * 
+ *
  * @author Antonin Delpeuch
  *
  */
@@ -85,6 +86,10 @@ public class TextFilePLL extends PLL<String> {
 
     private static boolean isGzipped(File file) {
         return file.getName().endsWith(".gz");
+    }
+
+    private static boolean isZstdCompressed(File file) {
+        return file.getName().endsWith(".zst");
     }
 
     private void addPartitionsForFile(File file) throws IOException {
@@ -176,12 +181,14 @@ public class TextFilePLL extends PLL<String> {
                                    // stream
             LineNumberReader lineNumberReader; // used when we do not need to keep track (faster)
 
-            if (isGzipped(textPartition.getPath())) {
+            boolean gzipped = isGzipped(textPartition.getPath());
+            boolean zstdCompressed = isZstdCompressed(textPartition.getPath());
+            if (gzipped || zstdCompressed) {
                 // if we decompress, we count the bytes before decompression (since that is how the file size was
                 // computed).
                 InputStream bufferedIs = new BufferedInputStream(stream);
                 countingIs = new CountingInputStream(bufferedIs);
-                bufferedIs = new GZIPInputStream(countingIs);
+                bufferedIs = gzipped ? new GZIPInputStream(countingIs) : new ZstdCompressorInputStream(countingIs);
                 if (ignoreEarlyEOF) {
                     bufferedIs = new NoEOFInputStream(bufferedIs);
                 }
@@ -309,7 +316,7 @@ public class TextFilePLL extends PLL<String> {
 
         /**
          * Represents a split in an uncompressed text file.
-         * 
+         *
          * @param path
          *            the path to the file being read
          * @param index

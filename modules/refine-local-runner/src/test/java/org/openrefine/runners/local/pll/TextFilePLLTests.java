@@ -177,10 +177,10 @@ public class TextFilePLLTests extends PLLTestsBase {
         future.onProgress(progressReporter);
         future.get();
         Assert.assertEquals(progressReporter.getPercentage(), 100);
-        Assert.assertTrue(new File(tempFile, "part-00000.gz").exists());
-        Assert.assertTrue(new File(tempFile, "part-00001.gz").exists());
-        Assert.assertTrue(new File(tempFile, "part-00002.gz").exists());
-        Assert.assertTrue(new File(tempFile, "part-00003.gz").exists());
+        Assert.assertTrue(new File(tempFile, "part-00000.zst").exists());
+        Assert.assertTrue(new File(tempFile, "part-00001.zst").exists());
+        Assert.assertTrue(new File(tempFile, "part-00002.zst").exists());
+        Assert.assertTrue(new File(tempFile, "part-00003.zst").exists());
     }
 
     @Test
@@ -229,14 +229,14 @@ public class TextFilePLLTests extends PLLTestsBase {
         pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false);
 
         // truncate various partitions at various sizes and remove the completion marker
-        truncateFile(new File(tempFile, "part-00001.gz"), 1);
-        truncateFile(new File(tempFile, "part-00002.gz"), 2);
-        truncateFile(new File(tempFile, "part-00003.gz"), 3);
-        truncateFile(new File(tempFile, "part-00004.gz"), 4);
-        truncateFile(new File(tempFile, "part-00005.gz"), 5);
-        truncateFile(new File(tempFile, "part-00006.gz"), 6);
-        truncateFile(new File(tempFile, "part-00007.gz"), 10);
-        truncateFile(new File(tempFile, "part-00008.gz"), 20);
+        truncateFile(new File(tempFile, "part-00001.zst"), 1);
+        truncateFile(new File(tempFile, "part-00002.zst"), 2);
+        truncateFile(new File(tempFile, "part-00003.zst"), 3);
+        truncateFile(new File(tempFile, "part-00004.zst"), 4);
+        truncateFile(new File(tempFile, "part-00005.zst"), 5);
+        truncateFile(new File(tempFile, "part-00006.zst"), 6);
+        truncateFile(new File(tempFile, "part-00007.zst"), 10);
+        truncateFile(new File(tempFile, "part-00008.zst"), 20);
         File successMarker = new File(tempFile, "_SUCCESS");
         successMarker.delete();
 

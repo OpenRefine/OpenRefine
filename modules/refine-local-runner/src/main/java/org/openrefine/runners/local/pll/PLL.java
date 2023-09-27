@@ -14,12 +14,12 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPOutputStream;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.vavr.collection.Array;
 import io.vavr.collection.Iterator;
+import org.apache.commons.compress.compressors.zstandard.ZstdCompressorOutputStream;
 import org.apache.commons.lang.Validate;
 
 import org.openrefine.model.Grid;
@@ -721,7 +721,7 @@ public abstract class PLL<T> {
     protected void writeOriginalPartition(Partition partition, File directory, Optional<TaskSignalling> taskSignalling,
             boolean flushRegularly)
             throws IOException {
-        String filename = String.format("part-%05d.gz", partition.getIndex());
+        String filename = String.format("part-%05d.zst", partition.getIndex());
         File partFile = new File(directory, filename);
         writePartition(partition.getIndex(), iterate(partition), partFile, taskSignalling, flushRegularly);
     }
@@ -729,7 +729,7 @@ public abstract class PLL<T> {
     protected void writePlannedPartition(PlannedPartition partition, File directory, Iterator<T> choppedIterator,
             Optional<TaskSignalling> taskSignalling, boolean flushRegularly)
             throws IOException {
-        String filename = String.format("part-%05d.gz", partition.index);
+        String filename = String.format("part-%05d.zst", partition.index);
         File partFile = new File(directory, filename);
         CloseableIterator<T> limitedIterator = CloseableIterator.wrapping(choppedIterator);
         writePartition(partition.index, limitedIterator, partFile, taskSignalling, flushRegularly);
@@ -739,7 +739,9 @@ public abstract class PLL<T> {
             boolean flushRegularly)
             throws IOException {
         try (FileOutputStream fos = new FileOutputStream(partFile);
-                GZIPOutputStream gos = new GZIPOutputStream(fos, 512, flushRegularly);
+                ZstdCompressorOutputStream gos = new ZstdCompressorOutputStream(fos); // TODO pass flushRegularly?
+                                                                                      // requires finding out which
+                                                                                      // level to use
                 Writer writer = new OutputStreamWriter(gos);
                 iterator) {
 
