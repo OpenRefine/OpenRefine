@@ -4,10 +4,7 @@ package org.openrefine.runners.testing;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.fail;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +22,7 @@ import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.testng.Assert;
+import org.testng.annotations.*;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -65,6 +63,7 @@ import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.StringCriterion;
 import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.CloseableIterator;
+import org.openrefine.util.IOUtils;
 import org.openrefine.util.TestUtils;
 
 /**
@@ -941,6 +940,31 @@ public abstract class RunnerTestBase {
     @Test(expectedExceptions = IOException.class)
     public void testLoadChangeDataDoesNotExist() throws IOException {
         SUT.loadChangeData(new File(tempDir, "doesNotExist"), stringSerializer);
+    }
+
+    @DataProvider(name = "supportedCompressionFormats")
+    public static Object[][] supportedCompressionFormats() {
+        return new Object[][] {
+                { "gz" }, { "zst" }
+        };
+    }
+
+    @Test(dataProvider = "supportedCompressionFormats")
+    public void testLoadCompressedChangeData(String format) throws IOException {
+        File tempFile = new File(tempDir, "test_" + format + "_change_data");
+        tempFile.mkdir();
+        try (InputStream stream = RunnerTestBase.class.getClassLoader().getResourceAsStream("sample-change-data." + format)) {
+            File subDir = new File(tempDir, "incomplete");
+            File partitionFile = new File(tempFile, "part-00000." + format);
+            IOUtils.copy(stream, partitionFile);
+        }
+
+        ChangeData<String> loaded = SUT.loadChangeData(tempFile, stringSerializer);
+
+        Assert.assertNotNull(loaded.getRunner());
+        Assert.assertFalse(loaded.isComplete()); // because the completion marker is missing
+        Assert.assertEquals(loaded.get(0L), new IndexedData(0L, "hey"));
+        Assert.assertEquals(loaded.get(3L), new IndexedData(3L, "bar"));
     }
 
     @Test

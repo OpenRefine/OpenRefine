@@ -115,6 +115,7 @@
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
     <mockito.version>5.9.0</mockito.version>
+    <zstd-jni.version>1.5.5-5</zstd-jni.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
