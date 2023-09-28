@@ -178,7 +178,7 @@ class ListFacet extends Facet {
       '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
         '<a bind="choiceCountContainer" class="action" href="javascript:{}"></a> ' +
         '<span class="facet-controls-sortControls" bind="sortGroup">'+$.i18n('core-facets/sort-by')+': ' +
-          '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n('core-facets/name')+'</a>' +
+          '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n('core-facets/name')+'</a> ' +
           '<a href="javascript:{}" bind="sortByCountLink">'+$.i18n('core-facets/count')+'</a>' +
         '</span>' +
         '<button bind="clusterLink" class="facet-controls-button button">'+$.i18n('core-facets/cluster')+'</button>' +
