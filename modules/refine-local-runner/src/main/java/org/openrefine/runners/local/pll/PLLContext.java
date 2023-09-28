@@ -71,9 +71,15 @@ public class PLLContext {
     /**
      * Loads a text file as a PLL.
      *
+     * @param path
+     *            the path to the directory or file to read
+     * @param encoding
+     *            the encoding in which the files should be read
+     * @param earlyEOF
+     *            what to do if the end of the file is reached prematurely
      */
-    public TextFilePLL textFile(String path, Charset encoding, boolean ignoreEarlyEOF) throws IOException {
-        return new TextFilePLL(this, path, encoding, ignoreEarlyEOF);
+    public TextFilePLL textFile(String path, Charset encoding, TextFilePLL.EarlyEOF earlyEOF) throws IOException {
+        return new TextFilePLL(this, path, encoding, earlyEOF);
     }
 
     /**

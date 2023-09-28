@@ -112,7 +112,7 @@ public class LocalRunner implements Runner {
 
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         PairPLL<Long, Row> rows = pllContext
-                .textFile(gridFile.getAbsolutePath(), GRID_ENCODING, false)
+                .textFile(gridFile.getAbsolutePath(), GRID_ENCODING, TextFilePLL.EarlyEOF.FAIL)
                 .mapToPair(s -> parseIndexedRow(s), "parse row from JSON");
         rows = PairPLL.assumeIndexed(rows, metadata.rowCount);
         return new LocalGrid(this, rows, metadata.columnModel, metadata.overlayModels, metadata.recordCount);
@@ -152,7 +152,7 @@ public class LocalRunner implements Runner {
         Callable<Boolean> isComplete = () -> completionMarker.exists();
         boolean alreadyComplete = completionMarker.exists();
         PairPLL<Long, IndexedData<T>> pll = pllContext
-                .textFile(path.getAbsolutePath(), GRID_ENCODING, !alreadyComplete)
+                .textFile(path.getAbsolutePath(), GRID_ENCODING, alreadyComplete ? TextFilePLL.EarlyEOF.FAIL : TextFilePLL.EarlyEOF.IGNORE)
                 .map(line -> {
                     if (ChangeData.partitionEndMarker.equals(line.strip())) {
                         return null;
@@ -262,7 +262,7 @@ public class LocalRunner implements Runner {
 
     @Override
     public Grid loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
-        TextFilePLL textPLL = pllContext.textFile(path, encoding, false);
+        TextFilePLL textPLL = pllContext.textFile(path, encoding, TextFilePLL.EarlyEOF.FAIL);
         textPLL.setProgressHandler(progress);
         PLL<Row> rows = textPLL
                 .map(s -> new Row(Arrays.asList(new Cell(s, null))), "wrap as row with single cell");
