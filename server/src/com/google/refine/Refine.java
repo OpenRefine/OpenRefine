@@ -37,13 +37,11 @@ import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -51,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Level;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -58,8 +57,9 @@ import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.webapp.WebAppContext;
+// TODO: Switch to ee10 for removal of deprecated features
+import org.eclipse.jetty.ee9.servlet.ServletHolder;
+import org.eclipse.jetty.ee9.webapp.WebAppContext;
 import org.eclipse.jetty.util.Scanner;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import com.google.util.threads.ThreadPoolExecutorAdapter;
@@ -269,18 +269,16 @@ class RefineServer extends Server {
     }
 
     static private void scanForUpdates(final File contextRoot, final WebAppContext context) {
-        List<File> scanList = new ArrayList<File>();
-
-        scanList.add(new File(contextRoot, "WEB-INF/web.xml"));
-        findFiles(".class", new File(contextRoot, "WEB-INF/classes"), scanList);
-        findFiles(".jar", new File(contextRoot, "WEB-INF/lib"), scanList);
 
         logger.info("Starting autoreloading scanner... ");
 
         Scanner scanner = new Scanner();
         scanner.setScanInterval(Configurations.getInteger("refine.scanner.period", 1));
-        scanner.setScanDirs(scanList);
         scanner.setReportExistingFilesOnStartup(false);
+
+        scanner.addFile(Path.of(contextRoot.getAbsolutePath(), "WEB-INF/web.xml"));
+        addFiles(scanner, new File(contextRoot, "WEB-INF/classes"), ".class");
+        addFiles(scanner, new File(contextRoot, "WEB-INF/lib"), ".jar");
 
         scanner.addListener(new Scanner.BulkListener() {
 
@@ -307,19 +305,11 @@ class RefineServer extends Server {
         }
     }
 
-    static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
-        baseDir.listFiles(new FileFilter() {
-
-            @Override
-            public boolean accept(File pathname) {
-                if (pathname.isDirectory()) {
-                    findFiles(extension, pathname, found);
-                } else if (pathname.getName().endsWith(extension)) {
-                    found.add(pathname);
-                }
-                return false;
-            }
-        });
+    static private void addFiles(Scanner scanner, File baseDir, final String extension) {
+        for (Iterator<File> it = FileUtils.iterateFiles(baseDir,
+                new String[]{ extension }, true); it.hasNext(); ) {
+            scanner.addFile(it.next().toPath());
+        }
     }
 
     // inject configuration parameters in the servlets

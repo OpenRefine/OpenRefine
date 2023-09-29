@@ -63,7 +63,7 @@
 
 
   <properties>
-    <java.minversion>11</java.minversion>
+    <java.minversion>17</java.minversion>
     <java.maxversion>20</java.maxversion>
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
@@ -77,7 +77,7 @@
     <butterfly.version>2.0.0-SNAPSHOT</butterfly.version>
     <slf4j.version>2.0.9</slf4j.version>
     <log4j.version>2.20.0</log4j.version>
-    <jetty.version>11.0.16</jetty.version>
+    <jetty.version>12.0.1</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
     <jena.version>4.8.0</jena.version>
     <poi.version>5.2.3</poi.version>
@@ -376,10 +376,10 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-      <repository>
-          <id>jenkins-repo</id>
-          <url>https://repo.jenkins-ci.org/releases/</url>
-      </repository>
+    <repository>
+      <id>jenkins-repo</id>
+      <url>https://repo.jenkins-ci.org/releases/</url>
+    </repository>
   </repositories>
 
     <pluginRepositories>
