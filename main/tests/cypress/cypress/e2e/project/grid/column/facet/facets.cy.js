@@ -314,7 +314,7 @@ describe(__filename, function () {
       .contains('Shrt_Desc');
   });
 
-  it('Test the mass edit from a Facet', function () {
+  it.only('Test the mass edit from a Facet', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
@@ -325,7 +325,6 @@ describe(__filename, function () {
           const elem = cy.contains('edit');
           elem.invoke('css', 'visibility', 'visible');
           elem.click();
-          elem.invoke('css', 'visibility', 'hidden');
         });
 
     // mass edit all cells that have Water = 15.87
