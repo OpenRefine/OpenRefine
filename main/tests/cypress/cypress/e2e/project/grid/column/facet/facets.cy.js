@@ -314,7 +314,7 @@ describe(__filename, function () {
       .contains('Shrt_Desc');
   });
 
-  it.only('Test the mass edit from a Facet', function () {
+  it('Test the mass edit from a Facet', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
