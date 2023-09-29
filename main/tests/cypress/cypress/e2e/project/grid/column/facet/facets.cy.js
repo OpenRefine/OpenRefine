@@ -328,8 +328,9 @@ describe(__filename, function () {
           elem.invoke('css', 'visibility', 'hidden');
         });
 
+
     // mass edit all cells that have Water = 15.87
-    cy.get('.data-table-cell-editor textarea').type(50);
+    cy.get('.data-table-cell-editor textarea').should('exist').type(50);
     cy.get('.data-table-cell-editor button').contains('Apply').click();
 
     // ensure rows has been modified
