@@ -6,7 +6,7 @@ import com.google.refine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 
 import static org.mockito.Mockito.when;

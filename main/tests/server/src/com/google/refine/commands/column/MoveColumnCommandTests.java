@@ -4,7 +4,7 @@ package com.google.refine.commands.column;
 import com.google.refine.commands.CommandTestBase;
 import java.io.IOException;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

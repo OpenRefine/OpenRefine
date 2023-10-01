@@ -3,7 +3,7 @@ package org.openrefine.wikibase.commands;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;

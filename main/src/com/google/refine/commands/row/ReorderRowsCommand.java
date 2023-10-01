@@ -35,7 +35,7 @@ package com.google.refine.commands.row;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;

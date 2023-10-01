@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.CharMatcher;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -391,7 +391,7 @@ public class ProjectMetadata {
         } catch (NoSuchFieldException e) {
             updateUserMetadata(metaName, valueString);
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            logger.error(ExceptionUtils.getFullStackTrace(e));
+            logger.error("Exception setting field " + metaName, e);
             throw new RuntimeException(e);
         }
     }

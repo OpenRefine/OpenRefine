@@ -35,7 +35,7 @@ package com.google.refine.commands.column;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.browsing.EngineConfig;

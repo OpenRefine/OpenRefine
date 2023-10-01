@@ -16,23 +16,9 @@
         | might require different parameters.
         +-->
     <context-param>
-        <param-name>org.mortbay.jetty.servlet.SessionPath</param-name>
+        <param-name>org.eclipse.jetty.servlet.SessionPath</param-name>
         <param-value>/</param-value>
     </context-param>
-	
-	<filter>
-      <filter-name>GzipFilter</filter-name>
-      <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
-      <init-param>
-        <param-name>mimeTypes</param-name>
-        <param-value>text/html,text/plain,text/xml,application/xhtml+xml,text/css,text/javascript,application/javascript,application/json,image/svg+xml</param-value>
-      </init-param>
-    </filter>
-    <filter-mapping>
-      <filter-name>GzipFilter</filter-name>
-      <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    
     <servlet>
         <servlet-name>refine</servlet-name>
         <servlet-class>com.google.refine.RefineServlet</servlet-class>
@@ -43,6 +29,10 @@
         <init-param>
             <param-name>refine.revision</param-name>
             <param-value>$REVISION</param-value>
+        </init-param>
+        <init-param>
+            <param-name>gzip</param-name>
+            <param-value>true</param-value>
         </init-param>
         <!-- added by Wikier, unused by us
         <init-param>
@@ -56,6 +46,5 @@
         <servlet-name>refine</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-        
 
 </web-app>

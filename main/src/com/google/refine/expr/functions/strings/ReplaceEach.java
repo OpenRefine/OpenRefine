@@ -55,7 +55,7 @@ public class ReplaceEach implements Function {
                     }
 
                     // replace each occurrence of search with corresponding element in replace
-                    return org.apache.commons.lang.StringUtils.replaceEachRepeatedly((String) args[0], search, replace);
+                    return org.apache.commons.lang3.StringUtils.replaceEachRepeatedly((String) args[0], search, replace);
                 } else {
                     // replacements must be equal to or less than the number of search strings.");
                     return new EvalError(

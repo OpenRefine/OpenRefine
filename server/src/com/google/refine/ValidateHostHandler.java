@@ -27,20 +27,26 @@
 
 package com.google.refine;
 
-import java.io.IOException;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.eclipse.jetty.server.handler.HandlerWrapper;
+
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.server.Handler.Wrapper;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.Callback;
 
 /**
  * Validate the Host header of the HTTP request to see if it matches either a loopback IP address, localhost or an
  * explicitly specified hostname. This is required to avoid DNS rebinding attacks against users running OpenRefine on
  * their desktop computers.
  */
-class ValidateHostHandler extends HandlerWrapper {
+class ValidateHostHandler extends Wrapper {
 
     /**
      * Matches: - addresses in the 127.0.0.0/8 subnet - IPv4-mapped addresses in the ::ffff:7f00:00/104 subnet -
@@ -84,16 +90,20 @@ class ValidateHostHandler extends HandlerWrapper {
     }
 
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        String host = request.getHeader("Host");
+    public boolean handle(Request request, Response response, Callback callback)
+            throws Exception {
+        String host = request.getHttpURI().getHost();
         if (isValidHost(host)) {
-            super.handle(target, baseRequest, request, response);
+            return super.handle(request, response, callback);
         } else {
             // Return HTTP 404 Not Found, since we are
             // not serving content for the requested URL
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid hostname");
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            // TODO: Do we want to return JSON here?
+            response.getHeaders().put(HttpHeader.CONTENT_TYPE, "text/plain");
+            response.write(false, UTF_8.encode("Invalid hostname"), callback);
         }
+        return false;
     }
 
 }
