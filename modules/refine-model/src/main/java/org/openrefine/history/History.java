@@ -50,6 +50,9 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.model.ColumnId;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -507,6 +510,73 @@ public class History {
     private boolean isChangeExpensive(int index) {
         long historyEntryId = _entries.get(index).getId();
         return !_dataStore.getChangeDataIds(historyEntryId).isEmpty();
+    }
+
+    /**
+     * Locates the earliest step in the history from which a {@link org.openrefine.model.changes.ChangeData} can be
+     * computed. This requires the following conditions:
+     * <ul>
+     * <li>the step must be at or before the step provided as argument;</li>
+     * <li>the grid at this step must contain all column dependencies supplied as second argument;</li>
+     * <li>all of the transformations between the two steps must preserve row ids. If the change is computed in records
+     * mode, then they must also preserve record ids.</li>
+     * </ul>
+     *
+     * @param beforeStepIndex
+     *            upper bound on the index to return, which must contain the column dependencies supplied. This means
+     *            that the grid at this step must be present (while not necessarily complete).
+     * @param dependencies
+     *            list of column dependencies, or null if dependencies could not be isolated, in which case the supplied
+     *            upper bound will be returned
+     * @param engineMode
+     *            the mode of the engine, determining the type of grid preservation to require
+     * @return the index of the step
+     */
+    protected int earliestStepContainingDependencies(int beforeStepIndex, List<ColumnId> dependencies, Engine.Mode engineMode) {
+        if (dependencies == null || beforeStepIndex == 0) {
+            return beforeStepIndex;
+        } else {
+            List<ColumnId> fullDependencies = dependencies;
+            if (engineMode == Engine.Mode.RecordBased) {
+                // check that the record key is listed as a dependency, and add it otherwise
+                Grid grid = _steps.get(beforeStepIndex).grid;
+                if (grid == null) {
+                    throw new IllegalStateException("The latest grid to apply the operation on is not computed yet");
+                }
+                ColumnModel originalColumnModel = grid.getColumnModel();
+                int keyColumnIndex = originalColumnModel.getKeyColumnIndex();
+                if (keyColumnIndex < 0 || keyColumnIndex >= originalColumnModel.getColumns().size()) {
+                    throw new IllegalStateException("Invalid key column index to run a record-based operation");
+                }
+                ColumnId keyColumnId = originalColumnModel.getColumnByIndex(keyColumnIndex).getColumnId();
+                if (!dependencies.contains(keyColumnId)) {
+                    fullDependencies = new ArrayList<>(dependencies.size() + 1);
+                    // add the key column in first position by convention
+                    fullDependencies.add(keyColumnId);
+                    fullDependencies.addAll(dependencies);
+                }
+            }
+            int currentIndex = beforeStepIndex - 1;
+            while (currentIndex >= 0 &&
+                    (_entries.get(currentIndex).getGridPreservation() != GridPreservation.NO_ROW_PRESERVATION) &&
+                    (engineMode == Engine.Mode.RowBased
+                            || _entries.get(currentIndex).getGridPreservation() == GridPreservation.PRESERVES_RECORDS)
+                    &&
+                    stepSatisfiesDependencies(currentIndex, fullDependencies)) {
+                currentIndex--;
+            }
+            return currentIndex + 1;
+        }
+    }
+
+    private boolean stepSatisfiesDependencies(int index, List<ColumnId> dependencies) {
+        Grid grid = _steps.get(index).grid;
+        if (grid == null) {
+            return false;
+        }
+        ColumnModel columnModel = grid.getColumnModel();
+        return dependencies.stream()
+                .allMatch(columnModel::hasColumnId);
     }
 
     public void refreshCurrentGrid() {

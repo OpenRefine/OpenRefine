@@ -55,7 +55,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.browsing.Engine;
 import org.openrefine.expr.ParsingException;
+import org.openrefine.model.ColumnId;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -82,6 +84,8 @@ public class HistoryTests {
     ChangeResult newResult;
 
     ColumnModel columnModel;
+    ColumnModel intermediateColumnModel;
+    ColumnModel finalColumnModel;
 
     long firstChangeId = 1234L;
     long secondChangeId = 5678L;
@@ -102,12 +106,21 @@ public class HistoryTests {
     public void setUp() throws OperationException, ParsingException, IOException {
         dataStore = mock(ChangeDataStore.class);
         gridStore = mock(GridCache.class);
+
         initialState = mock(Grid.class);
         intermediateState = mock(Grid.class);
         newState = mock(Grid.class);
         cachedIntermediateState = mock(Grid.class);
         finalState = mock(Grid.class);
+
         columnModel = new ColumnModel(Arrays.asList(new ColumnMetadata("foo")));
+        intermediateColumnModel = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("foo"),
+                new ColumnMetadata("bar", "bar", firstChangeId, null)));
+        finalColumnModel = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("foo"),
+                new ColumnMetadata("bar", "bar", secondChangeId, null)));
+
         firstOperation = mock(Operation.class);
         secondOperation = mock(Operation.class);
         newOperation = mock(Operation.class);
@@ -134,9 +147,10 @@ public class HistoryTests {
                 .thenThrow(new OperationException("some_error", "Some error occured"));
 
         when(initialState.getColumnModel()).thenReturn(columnModel);
-        when(intermediateState.getColumnModel()).thenReturn(columnModel);
+        when(intermediateState.getColumnModel()).thenReturn(intermediateColumnModel);
+        when(cachedIntermediateState.getColumnModel()).thenReturn(intermediateColumnModel);
         when(newState.getColumnModel()).thenReturn(columnModel);
-        when(finalState.getColumnModel()).thenReturn(columnModel);
+        when(finalState.getColumnModel()).thenReturn(finalColumnModel);
         when(initialState.rowCount()).thenReturn(8L);
         when(intermediateState.rowCount()).thenReturn(10L);
         when(finalState.rowCount()).thenReturn(12L);
@@ -459,6 +473,43 @@ public class HistoryTests {
         verify(intermediateState, times(1)).cache();
         verify(finalState, times(1)).cache();
         Assert.assertEquals(history.getCachedPosition(), 2);
+    }
+
+    @Test
+    public void testComputeEarliestStepContainingDependencies() throws OperationException {
+        List<ColumnId> noDeps = Collections.emptyList();
+        List<ColumnId> fooDep = Collections.singletonList(new ColumnId("foo", 0L));
+        List<ColumnId> barDep1 = Collections.singletonList(new ColumnId("bar", firstChangeId));
+        List<ColumnId> barDep2 = Collections.singletonList(new ColumnId("bar", secondChangeId));
+
+        History history = new History(initialState, dataStore, gridStore, entries, 2, 1234L);
+
+        Assert.assertEquals(history.earliestStepContainingDependencies(0, null, Engine.Mode.RowBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(0, null, Engine.Mode.RecordBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(1, null, Engine.Mode.RowBased), 1);
+        Assert.assertEquals(history.earliestStepContainingDependencies(1, null, Engine.Mode.RecordBased), 1);
+        Assert.assertEquals(history.earliestStepContainingDependencies(2, null, Engine.Mode.RowBased), 2);
+        Assert.assertEquals(history.earliestStepContainingDependencies(2, null, Engine.Mode.RecordBased), 2);
+
+        Assert.assertEquals(history.earliestStepContainingDependencies(0, noDeps, Engine.Mode.RowBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(0, noDeps, Engine.Mode.RecordBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(1, noDeps, Engine.Mode.RowBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(1, noDeps, Engine.Mode.RecordBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(2, noDeps, Engine.Mode.RowBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(2, noDeps, Engine.Mode.RecordBased), 2);
+
+        Assert.assertEquals(history.earliestStepContainingDependencies(0, fooDep, Engine.Mode.RowBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(0, fooDep, Engine.Mode.RecordBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(1, fooDep, Engine.Mode.RowBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(1, fooDep, Engine.Mode.RecordBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(2, fooDep, Engine.Mode.RowBased), 0);
+        Assert.assertEquals(history.earliestStepContainingDependencies(2, fooDep, Engine.Mode.RecordBased), 2);
+
+        Assert.assertEquals(history.earliestStepContainingDependencies(1, barDep1, Engine.Mode.RowBased), 1);
+        Assert.assertEquals(history.earliestStepContainingDependencies(1, barDep1, Engine.Mode.RecordBased), 1);
+
+        Assert.assertEquals(history.earliestStepContainingDependencies(2, barDep2, Engine.Mode.RowBased), 2);
+        Assert.assertEquals(history.earliestStepContainingDependencies(2, barDep2, Engine.Mode.RecordBased), 2);
     }
 
     @Test

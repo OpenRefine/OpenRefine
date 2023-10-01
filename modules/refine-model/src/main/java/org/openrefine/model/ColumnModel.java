@@ -332,6 +332,17 @@ public class ColumnModel implements Serializable {
         }
     }
 
+    /**
+     * Checks whether this column model contains a column with the sepecified id.
+     *
+     * @param columnId
+     *            the id of the column to lookup
+     * @return true if the column is present
+     */
+    public boolean hasColumnId(ColumnId columnId) {
+        return _idToPosition.containsKey(columnId);
+    }
+
     @JsonIgnore
     public List<String> getColumnNames() {
         return _columnNames;
