@@ -136,7 +136,7 @@ public class ReconOperation extends EngineDependentOperation {
                 changeData = context.getChangeData(_changeDataId, new CellListChangeDataSerializer(),
                         (grid, partialChangeData) -> {
                             Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
-                            return grid.mapRecords(engine.combinedRecordFilters(), producer, partialChangeData);
+                            return grid.mapRecords(localEngine.combinedRecordFilters(), producer, partialChangeData);
                         }, producer.getColumnDependencies(), Engine.Mode.RecordBased);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);

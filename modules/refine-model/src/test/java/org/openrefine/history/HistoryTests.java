@@ -430,6 +430,8 @@ public class HistoryTests {
         verify(intermediateState, times(0)).cache();
         Assert.assertEquals(history.getCachedPosition(), 0);
         Assert.assertEquals(history.getCurrentGrid(), intermediateState);
+        Assert.assertTrue(history.isFullyComputedAtStep(0));
+        Assert.assertFalse(history.isFullyComputedAtStep(1));
     }
 
     @Test

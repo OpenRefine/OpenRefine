@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.openrefine.history.History;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.process.ProgressingFuture;
@@ -87,7 +88,10 @@ public interface ChangeDataStore {
     public <T> ChangeData<T> retrieveOrCompute(
             ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer,
-            Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess, String description)
+            Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
+            String description,
+            History history,
+            int requiredStepIndex)
             throws IOException;
 
     /**

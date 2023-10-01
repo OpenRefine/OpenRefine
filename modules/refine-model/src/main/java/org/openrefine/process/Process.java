@@ -91,6 +91,11 @@ public abstract class Process {
         }
     }
 
+    /**
+     * Is this process ready to run, or is it waiting for the completion of other processes?
+     */
+    public abstract boolean hasSatisfiedDependencies();
+
     @JsonIgnore
     public boolean isCanceled() {
         return _canceled;

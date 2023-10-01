@@ -579,11 +579,30 @@ public class History {
                 .allMatch(columnModel::hasColumnId);
     }
 
+    /**
+     * Is the grid already fully computed at this step in the history?
+     *
+     * @param stepIndex
+     *            the 0-based index of the step of the request
+     */
+    public boolean isFullyComputedAtStep(int stepIndex) {
+        refreshGrid(stepIndex);
+        return !_steps.get(stepIndex).inProgress;
+    }
+
     public void refreshCurrentGrid() {
+        refreshGrid(_position);
+    }
+
+    /**
+     * Refresh a grid which can potentially need refreshing.
+     */
+    protected void refreshGrid(int position) {
+        Validate.isTrue(position < _steps.size() && _steps.get(position).grid != null);
         try {
-            getGrid(_position, true);
+            getGrid(position, true);
         } catch (OperationException e) {
-            throw new IllegalStateException("Recomputing the current grid failed", e);
+            throw new IllegalStateException("Recomputing an existing grid failed", e);
         }
     }
 

@@ -44,7 +44,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
-import org.openrefine.model.changes.ChangeDataId;
 import org.openrefine.process.Process.State;
 import org.openrefine.util.NamingThreadFactory;
 
@@ -122,29 +121,24 @@ public class ProcessManager {
         return processOptional.get();
     }
 
-    /**
-     * Gets any process that is fetching the supplied change data.
-     * 
-     * @return null if no such process can be found
-     */
-    public Process getProcess(ChangeDataId changeDataId) {
-        return _processes.stream()
-                .filter(process -> changeDataId.equals(process.getChangeDataId()))
-                .findAny()
-                .orElse(null);
-    }
-
     public void update() {
-        while (_processes.size() > 0) {
-            Process p = _processes.get(0);
-            State state = p.getState();
-            if (state == State.DONE || state == State.CANCELED) {
-                _processes.remove(0);
-            } else {
-                if (state == State.PENDING) {
-                    p.startPerforming(this);
-                }
-                break;
+        int index = 0;
+        while (index < _processes.size()) {
+            Process process = _processes.get(index);
+            State state = process.getState();
+            switch (state) {
+                case DONE:
+                case CANCELED:
+                    _processes.remove(index);
+                    break;
+                case PENDING:
+                    if (process.hasSatisfiedDependencies()) {
+                        process.startPerforming(this);
+                    }
+                case RUNNING:
+                case FAILED:
+                case PAUSED:
+                    index++;
             }
         }
     }

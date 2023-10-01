@@ -9,15 +9,21 @@ public class ProcessStub extends Process {
 
     Callable<ProgressingFuture<Void>> future;
     ChangeDataId changeDataId;
+    boolean satisfiedDependencies;
 
     protected ProcessStub(String description, ChangeDataId changeDataId, Callable<ProgressingFuture<Void>> future) {
         super(description);
         this.future = future;
         this.changeDataId = changeDataId;
+        this.satisfiedDependencies = false;
     }
 
     public void setException(Exception e) {
         this._exception = e;
+    }
+
+    public void setSatisfiedDependencies(boolean value) {
+        satisfiedDependencies = value;
     }
 
     @Override
@@ -31,6 +37,11 @@ public class ProcessStub extends Process {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Override
+    public boolean hasSatisfiedDependencies() {
+        return satisfiedDependencies;
     }
 
     @Override

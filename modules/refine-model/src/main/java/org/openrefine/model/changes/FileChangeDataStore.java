@@ -15,18 +15,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openrefine.history.History;
 import org.openrefine.model.Runner;
+import org.openrefine.process.*;
 import org.openrefine.process.Process;
-import org.openrefine.process.ProcessManager;
-import org.openrefine.process.ProgressReporter;
-import org.openrefine.process.ProgressingFuture;
 
 /**
  * A {@link ChangeDataStore} which stores change data on disk. This is the default one used in OpenRefine. <br>
@@ -36,9 +32,9 @@ import org.openrefine.process.ProgressingFuture;
  * <li>The incomplete directory, which is used as a temporary location when resuming the fetching of some change data
  * after an interruption.</li>
  * </ul>
- * When {@link #retrieveOrCompute(ChangeDataId, ChangeDataSerializer, Function, String)} finds an incomplete change data
- * is found in the base directory, it is moved to the incomplete directory. A new version of the change data, completed
- * using the completion process, is then saved again in the base directory.
+ * When {@link #retrieveOrCompute(ChangeDataId, ChangeDataSerializer, Function, String, History, int)} finds an
+ * incomplete change data is found in the base directory, it is moved to the incomplete directory. A new version of the
+ * change data, completed using the completion process, is then saved again in the base directory.
  */
 public class FileChangeDataStore implements ChangeDataStore {
 
@@ -127,7 +123,10 @@ public class FileChangeDataStore implements ChangeDataStore {
     public <T> ChangeData<T> retrieveOrCompute(
             ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer,
-            Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess, String description) throws IOException {
+            Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
+            String description,
+            History history,
+            int requiredStepIndex) throws IOException {
         File changeDataDir = idsToFile(changeDataId, false);
         registerId(changeDataId);
         File incompleteDir = null;
@@ -165,7 +164,9 @@ public class FileChangeDataStore implements ChangeDataStore {
                     this,
                     serializer,
                     completionProcess,
-                    incompleteDir));
+                    incompleteDir,
+                    history,
+                    requiredStepIndex));
             _toRefresh.add(changeDataId);
         } else if (storedChangeDataIsComplete) {
             _toRefresh.remove(changeDataId);
@@ -221,66 +222,6 @@ public class FileChangeDataStore implements ChangeDataStore {
     @Override
     public void dispose() {
         processManager.shutdown();
-    }
-
-    protected static class ChangeDataStoringProcess<T> extends Process {
-
-        final Optional<ChangeData<T>> storedChangeData;
-        final ChangeDataId changeDataId;
-        final ChangeDataStore changeDataStore;
-        final ChangeDataSerializer<T> serializer;
-        final Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess;
-        final File temporaryDirToDelete;
-
-        public ChangeDataStoringProcess(
-                String description,
-                Optional<ChangeData<T>> storedChangeData,
-                ChangeDataId changeDataId,
-                ChangeDataStore changeDataStore,
-                ChangeDataSerializer<T> serializer, Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
-                File temporaryDirToDelete) {
-            super(description);
-            this.storedChangeData = storedChangeData;
-            this.changeDataId = changeDataId;
-            this.changeDataStore = changeDataStore;
-            this.serializer = serializer;
-            this.completionProcess = completionProcess;
-            this.temporaryDirToDelete = temporaryDirToDelete;
-        }
-
-        @Override
-        protected ProgressingFuture<Void> getFuture() {
-            // TODO we might want to run the completionProcess in the future itself, just in case this is expensive
-            ChangeData<T> newChangeData = completionProcess.apply(storedChangeData);
-            ProgressingFuture<Void> future = changeDataStore.storeAsync(newChangeData, changeDataId, serializer);
-            FutureCallback<Void> callback = new FutureCallback<>() {
-
-                @Override
-                public void onSuccess(Void result) {
-                    if (temporaryDirToDelete != null && temporaryDirToDelete.exists()) {
-                        try {
-                            FileUtils.deleteDirectory(temporaryDirToDelete);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
-                    // failure is handled by the logic in Process already
-                }
-            };
-            Futures.addCallback(future, callback, MoreExecutors.directExecutor());
-            future.onProgress(_reporter);
-            return future;
-        }
-
-        @Override
-        public ChangeDataId getChangeDataId() {
-            return changeDataId;
-        }
-
     }
 
 }

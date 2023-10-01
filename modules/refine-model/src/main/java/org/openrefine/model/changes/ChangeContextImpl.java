@@ -57,8 +57,13 @@ public class ChangeContextImpl implements ChangeContext {
         int applicationIndex = _history.earliestStepContainingDependencies(_stepIndex, dependencies, mode);
         try {
             Grid grid = _history.getGrid(applicationIndex, false);
-            return _dataStore.retrieveOrCompute(new ChangeDataId(_historyEntryId, dataId), serializer,
-                    partialChangeData -> completionProcess.apply(grid, partialChangeData), _changeDescription);
+            return _dataStore.retrieveOrCompute(
+                    new ChangeDataId(_historyEntryId, dataId),
+                    serializer,
+                    partialChangeData -> completionProcess.apply(grid, partialChangeData),
+                    _changeDescription,
+                    _history,
+                    applicationIndex);
         } catch (OperationException e) {
             // unreachable since earliestStepContainingDependencies must return a grid that is already computed
             throw new RuntimeException(e);
