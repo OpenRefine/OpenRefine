@@ -27,9 +27,12 @@ public abstract class RowInRecordChangeDataProducer<T> implements RecordChangeDa
     /**
      * Maps a row, in the context of a record.
      *
-     * @param record      the record enclosing the row to map
-     * @param rowId       the global index of the row in the entire grid
-     * @param row         the row itself
+     * @param record
+     *            the record enclosing the row to map
+     * @param rowId
+     *            the global index of the row in the entire grid
+     * @param row
+     *            the row itself
      * @param columnModel
      */
     public abstract T call(Record record, long rowId, Row row, ColumnModel columnModel);

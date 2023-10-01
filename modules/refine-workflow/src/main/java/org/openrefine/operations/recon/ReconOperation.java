@@ -122,7 +122,10 @@ public class ReconOperation extends EngineDependentOperation {
             ChangeData<Cell> changeData = null;
             try {
                 changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer(),
-                        partialChangeData -> projectState.mapRows(engine.combinedRowFilters(), producer, partialChangeData));
+                        (grid, partialChangeData) -> {
+                            Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
+                            return grid.mapRows(localEngine.combinedRowFilters(), producer, partialChangeData);
+                        }, producer.getColumnDependencies(), Engine.Mode.RowBased);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -131,7 +134,10 @@ public class ReconOperation extends EngineDependentOperation {
             ChangeData<List<Cell>> changeData = null;
             try {
                 changeData = context.getChangeData(_changeDataId, new CellListChangeDataSerializer(),
-                        partialChangeData -> projectState.mapRecords(engine.combinedRecordFilters(), producer, partialChangeData));
+                        (grid, partialChangeData) -> {
+                            Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
+                            return grid.mapRecords(engine.combinedRecordFilters(), producer, partialChangeData);
+                        }, producer.getColumnDependencies(), Engine.Mode.RecordBased);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }

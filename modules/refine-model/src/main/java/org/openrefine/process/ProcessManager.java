@@ -56,6 +56,10 @@ public class ProcessManager {
     private ListeningExecutorService _executorService = MoreExecutors.listeningDecorator(
             Executors.newCachedThreadPool(new NamingThreadFactory("ProcessManager")));
 
+    public ProcessManager() {
+
+    }
+
     public static class ExceptionMessage {
 
         @JsonProperty("message")

@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -129,7 +129,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
          * that should not be fetched inside a given record.
          */
 
-        Engine engine = new Engine(projectState, _engineConfig, 1234L);
+        Engine engine = new Engine(projectState, _engineConfig, context.getProjectId());
         RowFilter rowFilter = RowFilter.ANY_ROW;
         if (Engine.Mode.RowBased.equals(engine.getMode())) {
             rowFilter = engine.combinedRowFilters();
@@ -137,12 +137,21 @@ public class ExtendDataOperation extends EngineDependentOperation {
         int baseColumnId = projectState.getColumnModel().getRequiredColumnIndex(_baseColumnName);
         ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(_extension, _endpoint, _identifierSpace, _schemaSpace);
         DataExtensionProducer producer = new DataExtensionProducer(job, baseColumnId, rowFilter);
-        Function<Optional<ChangeData<RecordDataExtension>>, ChangeData<RecordDataExtension>> changeDataCompletion = incompleteChangeData -> projectState
-                .mapRecords(engine.combinedRecordFilters(), producer, incompleteChangeData);
+        BiFunction<Grid, Optional<ChangeData<RecordDataExtension>>, ChangeData<RecordDataExtension>> changeDataCompletion = (grid,
+                incompleteChangeData) -> {
+            Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
+            return grid
+                    .mapRecords(localEngine.combinedRecordFilters(), producer, incompleteChangeData);
+        };
 
         ChangeData<RecordDataExtension> changeData;
         try {
-            changeData = context.getChangeData("extend", new DataExtensionSerializer(), changeDataCompletion);
+            changeData = context.getChangeData(
+                    "extend",
+                    new DataExtensionSerializer(),
+                    changeDataCompletion,
+                    producer.getColumnDependencies(), // TODO add dependencies from facets
+                    Engine.Mode.RecordBased);
         } catch (IOException e) {
             throw new IOOperationException(e);
         }

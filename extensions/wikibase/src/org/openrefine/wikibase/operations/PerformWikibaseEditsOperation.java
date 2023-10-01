@@ -162,7 +162,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
         ChangeData<RowEditingResults> changeData = null;
         try {
-            changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer(), existingChangeData -> {
+            changeData = context.getChangeData(changeDataId, new RowNewReconUpdateSerializer(), (grid, existingChangeData) -> {
                 // TODO resume from existing change data
                 NewEntityLibrary library = new NewEntityLibrary();
 
@@ -188,6 +188,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                     summary = summaryWithoutCommas + " " + this.editGroupsUrlSchema.replace("${batch_id}", editGroupId);
                 }
 
+                Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
                 RowEditingResultsProducer changeProducer = new RowEditingResultsProducer(
                         connection,
                         schema,
@@ -198,10 +199,10 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                         tags,
                         maxEditsPerMinute,
                         library);
-                ChangeData<RowEditingResults> newChangeData = projectState.mapRows(engine.combinedRowFilters(), changeProducer,
+                ChangeData<RowEditingResults> newChangeData = grid.mapRows(localEngine.combinedRowFilters(), changeProducer,
                         existingChangeData);
                 return newChangeData;
-            });
+            }, null, Engine.Mode.RowBased);
         } catch (IOException e) {
             throw new IOOperationException(e);
         }

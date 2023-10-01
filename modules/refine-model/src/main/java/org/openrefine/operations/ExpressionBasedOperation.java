@@ -112,10 +112,13 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
                 ChangeData<Cell> changeData = null;
                 try {
                     changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer(),
-                            partialChangeData -> {
-                                RowFilter filter = engine.combinedRowFilters();
-                                return projectState.mapRows(filter, producer, partialChangeData);
-                            });
+                            (grid, partialChangeData) -> {
+                                Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
+                                RowFilter filter = localEngine.combinedRowFilters();
+                                return grid.mapRows(filter, producer, partialChangeData);
+                            },
+                            producer.getColumnDependencies(), // TODO add dependencies from facets!
+                            Engine.Mode.RowBased);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -124,10 +127,13 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
                 ChangeData<List<Cell>> changeData = null;
                 try {
                     changeData = context.getChangeData(_changeDataId, new CellListChangeDataSerializer(),
-                            partialChangeData -> {
-                                RecordFilter filter = engine.combinedRecordFilters();
-                                return projectState.mapRecords(filter, producer, partialChangeData);
-                            });
+                            (grid, partialChangeData) -> {
+                                Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
+                                RecordFilter filter = localEngine.combinedRecordFilters();
+                                return grid.mapRecords(filter, producer, partialChangeData);
+                            },
+                            producer.getColumnDependencies(),
+                            Engine.Mode.RecordBased);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }

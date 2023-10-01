@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import org.apache.commons.lang3.Validate;
@@ -11,12 +12,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Translates column-dependent metadata to a reduced column model, which is tailored to the dependencies
- * of a particular expression or operation.
- * <br>
- * This is used to provide some isolation around operators like {@link RowMapper} or {@link org.openrefine.model.changes.RowChangeDataProducer}:
- * if they declare depending only on certain columns, this class can be used to feed them with reduced {@link Row}s or
- * {@link Record}s, which guarantee that they cannot rely on information from any other column.
+ * Translates column-dependent metadata to a reduced column model, which is tailored to the dependencies of a particular
+ * expression or operation. <br>
+ * This is used to provide some isolation around operators like {@link RowMapper} or
+ * {@link org.openrefine.model.changes.RowChangeDataProducer}: if they declare depending only on certain columns, this
+ * class can be used to feed them with reduced {@link Row}s or {@link Record}s, which guarantee that they cannot rely on
+ * information from any other column.
  */
 public class ColumnMapper implements Serializable {
 
@@ -28,25 +29,29 @@ public class ColumnMapper implements Serializable {
     /**
      * Constructor.
      *
-     * @param dependencies the list of columns depended on, or null if any columns can be potentially relied on
-     * @param newColumnModel the column model to be reduced, which must contain all the columns dependended on. All
-     *                       the columns not depended on will be stripped from the resulting column model (which
-     *                       can be obtained via {@link #getReducedColumnModel()}).
+     * @param dependencies
+     *            the list of columns depended on, or null if any columns can be potentially relied on
+     * @param newColumnModel
+     *            the column model to be reduced, which must contain all the columns dependended on. All the columns not
+     *            depended on will be stripped from the resulting column model (which can be obtained via
+     *            {@link #getReducedColumnModel()}).
      */
     public ColumnMapper(List<ColumnId> dependencies, ColumnModel newColumnModel) {
         this.dependencies = dependencies;
         this.newColumnModel = newColumnModel;
-        this.columnIndices = dependencies == null ? null : dependencies.stream()
-                .map(newColumnModel::getRequiredColumnIndex)
-                .collect(Collectors.toList());
-        this.reducedColumnModel = dependencies == null ? null : new ColumnModel(columnIndices.stream()
-                .map(index -> {
-                    ColumnMetadata column = newColumnModel.getColumnByIndex(index);
-                    return column.withName(column.getOriginalHeaderLabel());
-                })
-                .collect(Collectors.toList()),
-                columnIndices.indexOf(newColumnModel.getKeyColumnIndex()),
-                newColumnModel.hasRecords());
+        this.columnIndices = dependencies == null ? null
+                : dependencies.stream()
+                        .map(newColumnModel::getRequiredColumnIndex)
+                        .collect(Collectors.toList());
+        this.reducedColumnModel = dependencies == null ? null
+                : new ColumnModel(columnIndices.stream()
+                        .map(index -> {
+                            ColumnMetadata column = newColumnModel.getColumnByIndex(index);
+                            return column.withName(column.getOriginalHeaderLabel());
+                        })
+                        .collect(Collectors.toList()),
+                        columnIndices.indexOf(newColumnModel.getKeyColumnIndex()),
+                        newColumnModel.hasRecords());
     }
 
     public Row translateRow(Row row) {
@@ -78,10 +83,10 @@ public class ColumnMapper implements Serializable {
             return record;
         } else {
             // when mapping records we require that the key column index is included
-            Validate.isTrue(columnIndices.contains(newColumnModel.getKeyColumnIndex()), "key column not included as a dependency while we are mapping records");
+            Validate.isTrue(columnIndices.contains(newColumnModel.getKeyColumnIndex()),
+                    "key column not included as a dependency while we are mapping records");
             return new Record(record.getStartRowId(), record.getRows().stream().map(
-                    row -> new Row(columnIndices.stream().map(row::getCell).collect(Collectors.toList()))
-            ).collect(Collectors.toList()));
+                    row -> new Row(columnIndices.stream().map(row::getCell).collect(Collectors.toList()))).collect(Collectors.toList()));
         }
     }
 

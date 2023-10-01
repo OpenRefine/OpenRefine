@@ -27,7 +27,8 @@ public interface RecordChangeDataProducer<T> extends Serializable {
      * Compute the change data on a batch of consecutive records. This defaults to individual calls if the method is not
      * overridden.
      *
-     * @param records     the list of records to fetch change data on
+     * @param records
+     *            the list of records to fetch change data on
      * @param columnModel
      * @return a list of the same size
      */
@@ -53,8 +54,8 @@ public interface RecordChangeDataProducer<T> extends Serializable {
     }
 
     /**
-     * The columns this producer depends on. If null is returned, we assume that it can rely on any columns. If a set
-     * of columns is returned, the producer is only allowed to read columns that are listed in this set: the other columns
+     * The columns this producer depends on. If null is returned, we assume that it can rely on any columns. If a set of
+     * columns is returned, the producer is only allowed to read columns that are listed in this set: the other columns
      * it is fed with might not reflect the state of the grid on which the producer was meant to be applied.
      */
     public default List<ColumnId> getColumnDependencies() {

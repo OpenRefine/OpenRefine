@@ -1,20 +1,33 @@
 
 package org.openrefine.model.changes;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.history.History;
+import org.openrefine.model.ColumnId;
+import org.openrefine.model.Grid;
+import org.openrefine.operations.exceptions.OperationException;
+
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class ChangeContextImpl implements ChangeContext {
 
     private final long _historyEntryId;
     private final long _projectId;
+    private final int _stepIndex;
+    private final History _history;
     private final ChangeDataStore _dataStore;
     private final String _changeDescription;
 
-    public ChangeContextImpl(long historyEntryId, long projectId, ChangeDataStore dataStore, String description) {
+    public ChangeContextImpl(long historyEntryId, long projectId, int stepIndex, History history, ChangeDataStore dataStore,
+            String description) {
         _historyEntryId = historyEntryId;
         _projectId = projectId;
+        _stepIndex = stepIndex;
+        _history = history;
         _dataStore = dataStore;
         _changeDescription = description;
     }
@@ -35,9 +48,21 @@ public class ChangeContextImpl implements ChangeContext {
     }
 
     @Override
-    public <T> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer,
-            Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess) throws IOException {
-        return _dataStore.retrieveOrCompute(new ChangeDataId(_historyEntryId, dataId), serializer, completionProcess, _changeDescription);
+    public <T> ChangeData<T> getChangeData(
+            String dataId,
+            ChangeDataSerializer<T> serializer,
+            BiFunction<Grid, Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
+            List<ColumnId> dependencies,
+            Engine.Mode mode) throws IOException {
+        int applicationIndex = _history.earliestStepContainingDependencies(_stepIndex, dependencies, mode);
+        try {
+            Grid grid = _history.getGrid(applicationIndex, false);
+            return _dataStore.retrieveOrCompute(new ChangeDataId(_historyEntryId, dataId), serializer,
+                    partialChangeData -> completionProcess.apply(grid, partialChangeData), _changeDescription);
+        } catch (OperationException e) {
+            // unreachable since earliestStepContainingDependencies must return a grid that is already computed
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

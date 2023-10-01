@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import org.apache.commons.lang3.Validate;
@@ -6,10 +7,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * This class represents the state of a column at a particular point in the history.
- * If the column is not modified in the subsequent operations, its {@link ColumnMetadata}
- * is able to indicate so by retaining the history entry id as its {@link ColumnMetadata#getLastModified()}
- * field and the column name as its {@link ColumnMetadata#getOriginalHeaderLabel()}.
+ * This class represents the state of a column at a particular point in the history. If the column is not modified in
+ * the subsequent operations, its {@link ColumnMetadata} is able to indicate so by retaining the history entry id as its
+ * {@link ColumnMetadata#getLastModified()} field and the column name as its
+ * {@link ColumnMetadata#getOriginalHeaderLabel()}.
  */
 public class ColumnId implements Serializable {
 
@@ -29,7 +30,6 @@ public class ColumnId implements Serializable {
     public long getHistoryEntryId() {
         return historyEntryId;
     }
-
 
     @Override
     public boolean equals(Object o) {
