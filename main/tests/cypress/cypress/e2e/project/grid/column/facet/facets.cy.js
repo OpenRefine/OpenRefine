@@ -3,19 +3,24 @@
  * It's using "text facet" as it is the most simple facet
  */
 
-const clickFacetAction = (text, action, setVisibility = false) => {
-  cy.getFacetContainer('Shrt_Desc')
+/*
+   IMPORTANT: Any test reliant on Facet Actions (Edit,Include/Exclude) should wait 100 msec to ensure the event
+   handlers are setup, otherwise clicking on the action will do nothing.
+   Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
+ */
+const clickFacetAction = (facetType, text, action, setVisibility = false) => {
+  cy.getFacetContainer(facetType)
       .contains(text)
       .parent()
       .within(() => {
         const elem = cy.contains(action);
 
         if (setVisibility) {
-          elem.invoke('css', 'visibility', 'visible');
-        }
-        elem.click();
-        if (setVisibility) {
-          elem.invoke('css', 'visibility', 'hidden');
+          elem.invoke('css', 'visibility', 'visible')
+              .should('have.css', 'visibility', 'visible')
+              .click();
+        } else {
+          elem.click();
         }
       });
 };
@@ -219,20 +224,31 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
 
-    clickFacetAction('ALLSPICE,GROUND', 'include', true);
+    // Wait to ensure action click handler is setup
+    // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
+    cy.wait(100);
+    clickFacetAction('Shrt_Desc','ALLSPICE,GROUND', 'include', true);
     cy.getCell(0, 'Shrt_Desc').should('contain', 'ALLSPICE,GROUND');
     cy.get('#tool-panel').contains('1 matching rows');
 
-    clickFacetAction('ANISE SEED', 'include', true);
+    // Wait to ensure action click handler is setup
+    // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
+    cy.wait(100);
+    clickFacetAction('Shrt_Desc','ANISE SEED', 'include', true);
     cy.getCell(1, 'Shrt_Desc').should('contain', 'ANISE SEED');
     cy.get('#tool-panel').contains('2 matching rows');
 
-    clickFacetAction('BUTTER OIL,ANHYDROUS', 'include', true);
+    // Wait to ensure action click handler is setup
+    // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
+    cy.wait(100);
+    clickFacetAction('Shrt_Desc','BUTTER OIL,ANHYDROUS', 'include', true);
     cy.getCell(0, 'Shrt_Desc').should('contain', 'BUTTER OIL,ANHYDROUS');
     cy.get('#tool-panel').contains('3 matching rows');
 
+    // Wait to ensure action click handler is setup
+    // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
     cy.wait(100);
-    clickFacetAction('ALLSPICE,GROUND', 'exclude');
+    clickFacetAction('Shrt_Desc','ALLSPICE,GROUND', 'exclude');
     cy.get('#tool-panel').contains('2 matching rows');
   });
 
@@ -240,8 +256,11 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
 
+    // Wait to ensure action click handler is setup
+    // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
+    cy.wait(100);
     // do a basic facetting, expect 1 row
-    clickFacetAction('ALLSPICE,GROUND','include',true);
+    clickFacetAction('Shrt_Desc','ALLSPICE,GROUND','include',true);
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'ALLSPICE,GROUND');
     cy.get('#tool-panel').contains('1 matching rows');
 
@@ -264,8 +283,11 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
 
+    // Wait to ensure action click handler is setup
+    // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
+    cy.wait(100);
     // do a basic facetting, expect 1 row
-    clickFacetAction('ALLSPICE,GROUND','include',true);
+    clickFacetAction('Shrt_Desc','ALLSPICE,GROUND','include',true);
     cy.get('#tool-panel').contains('1 matching rows');
 
     // now reset, expect 199
@@ -318,6 +340,10 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
+    // Wait to ensure action click handler is setup
+    // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
+    cy.wait(100);
+
     cy.get('div.facet-body-inner > div:nth-child(8)')
         .contains('15.87')
         .parent()
@@ -325,20 +351,19 @@ describe(__filename, function () {
           const elem = cy.contains('edit');
           elem.invoke('css', 'visibility', 'visible');
           elem.click();
-          elem.invoke('css', 'visibility', 'hidden');
-        });
+        })
+        .root().then(() => {
+          // Mass edit all cells that have Water = 15.87
+          cy.get('.data-table-cell-editor textarea').should('exist').type(50);
+          cy.get('.data-table-cell-editor button').contains('Apply').click();
 
+          // Ensure rows have been modified
+          cy.getCell(0, 'Water').should('to.contain', 50);
+          cy.getCell(1, 'Water').should('to.contain', 50);
 
-    // mass edit all cells that have Water = 15.87
-    cy.get('.data-table-cell-editor textarea').should('exist').type(50);
-    cy.get('.data-table-cell-editor button').contains('Apply').click();
-
-    // ensure rows has been modified
-    cy.getCell(0, 'Water').should('to.contain', 50);
-    cy.getCell(1, 'Water').should('to.contain', 50);
-
-    // ensure modification is made only to the rows that had 15.87, not the others
-    cy.getCell(2, 'Water').should('to.contain', 0.24);
+          // Ensure modification is made only to the rows that had 15.87, not the others
+          cy.getCell(2, 'Water').should('to.contain', 0.24);
+      });
   });
 
   it('Test opening the clustering from a facet', function () {
