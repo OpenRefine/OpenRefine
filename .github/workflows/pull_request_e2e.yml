@@ -22,7 +22,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v3.8.1
         with:
@@ -38,7 +38,7 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.prepare_e2e_test_matrix.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up secrets
         run: |
