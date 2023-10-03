@@ -80,7 +80,7 @@
     <jetty.version>9.4.52.v20230823</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
     <jena.version>4.8.0</jena.version>
-    <poi.version>5.2.3</poi.version>
+    <poi.version>5.2.4</poi.version>
     <commons-lang3.version>3.13.0</commons-lang3.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
