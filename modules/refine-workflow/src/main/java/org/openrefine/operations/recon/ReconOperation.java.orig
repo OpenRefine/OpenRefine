@@ -110,9 +110,17 @@ public class ReconOperation extends EngineDependentOperation {
 
         Grid joined;
         Engine engine = new Engine(projectState, _engineConfig, context.getProjectId());
+<<<<<<< %X
         long rowCount = projectState.rowCount();
-        ReconChangeDataProducer producer = new ReconChangeDataProducer(_columnName, _reconConfig,
+        ReconChangeDataProducer producer = new ReconChangeDataProducer(_columnName, baseColumnIndex, _reconConfig,
                 context.getHistoryEntryId(), rowCount, columnModel);
+||||||| %S
+        ReconChangeDataProducer producer = new ReconChangeDataProducer(_columnName, baseColumnIndex, _reconConfig,
+                context.getHistoryEntryId(), columnModel);
+=======
+        ReconChangeDataProducer producer = new ReconChangeDataProducer(_columnName, _reconConfig,
+                context.getHistoryEntryId(), columnModel);
+>>>>>>> %Y
         if (Engine.Mode.RowBased.equals(_engineConfig.getMode())) {
             ChangeData<Cell> changeData = null;
             try {
@@ -219,20 +227,38 @@ public class ReconOperation extends EngineDependentOperation {
         private final ReconConfig reconConfig;
         private final String columnName;
         private final long historyEntryId;
+<<<<<<< %X
         private final long rowCountEstimate;
+        private final ColumnModel columnModel;
+||||||| %S
+        private final ColumnModel columnModel;
+=======
         private final ColumnModel originalColumnModel;
+>>>>>>> %Y
 
         protected ReconChangeDataProducer(
                 String columnName,
                 ReconConfig reconConfig,
                 long historyEntryId,
+<<<<<<< %X
                 long rowCountEstimate,
+                ColumnModel columnModel) {
+||||||| %S
+                ColumnModel columnModel) {
+=======
                 ColumnModel originalColumnModel) {
+>>>>>>> %Y
             this.reconConfig = reconConfig;
             this.columnName = columnName;
             this.historyEntryId = historyEntryId;
+<<<<<<< %X
             this.rowCountEstimate = rowCountEstimate;
+            this.columnModel = columnModel;
+||||||| %S
+            this.columnModel = columnModel;
+=======
             this.originalColumnModel = originalColumnModel;
+>>>>>>> %Y
         }
 
         private void initCache() {

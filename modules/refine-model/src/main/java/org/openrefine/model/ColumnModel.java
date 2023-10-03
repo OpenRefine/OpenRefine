@@ -82,7 +82,7 @@ public class ColumnModel implements Serializable {
         for (ColumnMetadata column : columns) {
             if (_nameToPosition.containsKey(column.getName())) {
                 throw new IllegalArgumentException(
-                        String.format("Duplicate columns for name %1", column.getName()));
+                        String.format("Duplicate columns for name %s", column.getName()));
             }
             _nameToPosition.put(column.getName(), index);
             _idToPosition.put(column.getColumnId(), index);

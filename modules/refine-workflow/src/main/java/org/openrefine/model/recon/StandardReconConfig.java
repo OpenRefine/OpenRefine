@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -646,6 +647,13 @@ public class StandardReconConfig extends ReconConfig {
     @Override
     public String getMode() {
         return "standard-service";
+    }
+
+    @Override
+    public List<String> getColumnDependencies() {
+        return columnDetails.stream()
+                .map(columnDetail -> columnDetail.columnName)
+                .collect(Collectors.toList());
     }
 
     public boolean equals(Object other) {

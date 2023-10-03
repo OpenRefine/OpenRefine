@@ -36,10 +36,7 @@ package org.openrefine.model.recon;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -130,4 +127,12 @@ abstract public class ReconConfig implements Serializable {
      */
     @JsonIgnore
     abstract public String getMode();
+
+    /**
+     * Returns the columns this recon config depends on, or null if dependencies cannot be identified.
+     */
+    @JsonIgnore
+    public List<String> getColumnDependencies() {
+        return null;
+    }
 }

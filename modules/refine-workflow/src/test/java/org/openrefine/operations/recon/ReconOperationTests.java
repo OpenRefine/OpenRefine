@@ -208,7 +208,7 @@ public class ReconOperationTests extends RefineTest {
                 new IndexedRow(3L, row3),
                 new IndexedRow(4L, row4));
 
-        ReconChangeDataProducer producer = new ReconChangeDataProducer("column", 0, reconConfig, 1234L, 100L project.getColumnModel());
+        ReconChangeDataProducer producer = new ReconChangeDataProducer("column", reconConfig, 1234L, 100L, project.getColumnModel());
         List<Cell> results1 = producer.callRowBatch(batch1, columnModel);
         List<Cell> results2 = producer.callRowBatch(batch2, columnModel);
 

@@ -37,10 +37,10 @@ public class ColumnMapper implements Serializable {
      *            {@link #getReducedColumnModel()}).
      */
     public ColumnMapper(List<ColumnId> dependencies, ColumnModel newColumnModel) {
-        this.dependencies = dependencies;
+        this.dependencies = dependencies == null ? null : dependencies.stream().distinct().collect(Collectors.toList());
         this.newColumnModel = newColumnModel;
         this.columnIndices = dependencies == null ? null
-                : dependencies.stream()
+                : this.dependencies.stream()
                         .map(newColumnModel::getRequiredColumnIndex)
                         .collect(Collectors.toList());
         this.reducedColumnModel = dependencies == null ? null
