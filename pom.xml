@@ -79,7 +79,7 @@
     <log4j.version>2.20.0</log4j.version>
     <jetty.version>10.0.16</jetty.version>
     <okhttp.version>4.10.0</okhttp.version>
-    <jena.version>4.8.0</jena.version>
+    <jena.version>4.9.0</jena.version>
     <poi.version>5.2.4</poi.version>
     <commons-lang3.version>3.13.0</commons-lang3.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
