@@ -226,9 +226,11 @@ public class ReconOperationTests extends RefineTest {
         ReconOperation operation = new ReconOperation(EngineConfig.ALL_ROWS, "column", reconConfig);
         OperationApplicationResult operationResults = project.getHistory().addEntry(operation);
 
+        long historyEntryId = operationResults.getHistoryEntry().getId();
         ColumnModel reconciledColumnModel = new ColumnModel(Collections.singletonList(
                 new ColumnMetadata("column")
-                        .withReconConfig(reconConfig)));
+                        .withReconConfig(reconConfig)
+                        .markAsModified(historyEntryId)));
 
         Grid expectedGrid = createGrid(
                 new String[] { "column" },

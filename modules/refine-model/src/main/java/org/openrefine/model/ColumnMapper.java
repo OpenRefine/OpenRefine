@@ -45,13 +45,10 @@ public class ColumnMapper implements Serializable {
                         .collect(Collectors.toList());
         this.reducedColumnModel = dependencies == null ? null
                 : new ColumnModel(columnIndices.stream()
-                        .map(index -> {
-                            ColumnMetadata column = newColumnModel.getColumnByIndex(index);
-                            return column.withName(column.getOriginalHeaderLabel());
-                        })
+                        .map(newColumnModel::getColumnByIndex)
                         .collect(Collectors.toList()),
                         columnIndices.indexOf(newColumnModel.getKeyColumnIndex()),
-                        newColumnModel.hasRecords());
+                        newColumnModel.hasRecords() && columnIndices.contains(newColumnModel.getKeyColumnIndex()));
     }
 
     public Row translateRow(Row row) {
@@ -62,19 +59,19 @@ public class ColumnMapper implements Serializable {
         }
     }
 
-    public List<IndexedRow> translateIndexedRowBatch(List<IndexedRow> next) {
-        if (dependencies == null) {
-            return next;
-        } else {
-            return next.stream().map(this::translateIndexedRow).collect(Collectors.toList());
-        }
-    }
-
     public IndexedRow translateIndexedRow(IndexedRow indexedRow) {
         if (dependencies == null) {
             return indexedRow;
         } else {
             return new IndexedRow(indexedRow.getIndex(), translateRow(indexedRow.getRow()));
+        }
+    }
+
+    public List<IndexedRow> translateIndexedRowBatch(List<IndexedRow> next) {
+        if (dependencies == null) {
+            return next;
+        } else {
+            return next.stream().map(this::translateIndexedRow).collect(Collectors.toList());
         }
     }
 

@@ -104,7 +104,8 @@ public class ReconOperation extends EngineDependentOperation {
         ColumnModel columnModel = projectState.getColumnModel();
         int baseColumnIndex = columnModel.getRequiredColumnIndex(_columnName);
         ColumnModel newColumnModel = columnModel
-                .withReconConfig(baseColumnIndex, _reconConfig);
+                .withReconConfig(baseColumnIndex, _reconConfig)
+                .markColumnAsModified(baseColumnIndex, context.getHistoryEntryId());
 
         Joiner joiner = new Joiner(baseColumnIndex);
 
@@ -319,24 +320,6 @@ public class ReconOperation extends EngineDependentOperation {
             return dependencies;
         }
 
-    }
-
-    /**
-     * Filter used to select only rows which have a non-blank value to reconcile.
-     */
-    protected static class NonBlankRowFilter implements RowFilter {
-
-        private static final long serialVersionUID = 6646807801184457426L;
-        private final int columnIndex;
-
-        protected NonBlankRowFilter(int columnIndex) {
-            this.columnIndex = columnIndex;
-        }
-
-        @Override
-        public boolean filterRow(long rowIndex, Row row) {
-            return !row.isCellBlank(columnIndex);
-        }
     }
 
 }

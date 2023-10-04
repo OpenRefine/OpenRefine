@@ -1132,10 +1132,13 @@ public abstract class RunnerTestBase {
 
         @Override
         public List<String> callRowBatch(List<IndexedRow> rows, ColumnModel columnModel) {
+            // this mapper should only be supplied with the column it declares a dependency on
+            Assert.assertEquals(columnModel, new ColumnModel(Arrays.asList(new ColumnMetadata("bar")), -1, false));
             String val = "";
             List<String> results = new ArrayList<>();
             for (IndexedRow ir : rows) {
-                val = val + "," + ir.getRow().getCellValue(1).toString();
+                Assert.assertEquals(ir.getRow().getCells().size(), 1);
+                val = val + "," + ir.getRow().getCellValue(0).toString();
                 results.add(val);
             }
             return results;
@@ -1144,6 +1147,11 @@ public abstract class RunnerTestBase {
         @Override
         public int getBatchSize() {
             return 2;
+        }
+
+        @Override
+        public List<ColumnId> getColumnDependencies() {
+            return Collections.singletonList(new ColumnId("bar", 0L));
         }
 
         @Override
@@ -1212,11 +1220,18 @@ public abstract class RunnerTestBase {
 
         @Override
         public String call(Record record, ColumnModel columnModel) {
+            int cellIndex = columnModel.getRequiredColumnIndex(new ColumnId("bar", 0L));
             StringBuilder builder = new StringBuilder();
             for (Row row : record.getRows()) {
-                builder.append(row.getCellValue(1).toString());
+                Assert.assertEquals(row.getCells().size(), 2);
+                builder.append(row.getCellValue(cellIndex).toString());
             }
             return builder.toString();
+        }
+
+        @Override
+        public List<ColumnId> getColumnDependencies() {
+            return Arrays.asList(new ColumnId("foo", 0L), new ColumnId("bar", 0L));
         }
 
     };

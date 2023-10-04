@@ -33,6 +33,7 @@ public class LocalGridTests {
                 return null;
             }
         };
+
         ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("column")));
         List<Tuple2<Long, Tuple2<IndexedRow, IndexedData<String>>>> batch = Arrays.asList(
                 Tuple2.of(3L, Tuple2.of(new IndexedRow(3L, new Row(Collections.singletonList(null))), new IndexedData<>(3L, "foo"))),
@@ -40,9 +41,10 @@ public class LocalGridTests {
         List<Tuple2<Long, IndexedData<String>>> expected = Arrays.asList(
                 Tuple2.of(3L, new IndexedData<>(3L, "foo")),
                 Tuple2.of(4L, new IndexedData<>(4L, null)));
+        ColumnMapper columnMapper = new ColumnMapper(Collections.singletonList(new ColumnId("column", 0L)), columnModel);
 
-        CloseableIterator<Tuple2<Long, IndexedData<String>>> result = applyRowChangeDataMapperWithIncompleteData(rowMapper, batch,
-                columnModel);
+        CloseableIterator<Tuple2<Long, IndexedData<String>>> result = applyRowChangeDataMapperWithIncompleteData(
+                rowMapper, columnMapper, batch, columnModel);
 
         List<Tuple2<Long, IndexedData<String>>> collected = result.collect(Collectors.toList());
         Assert.assertEquals(collected, expected);
