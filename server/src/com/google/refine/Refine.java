@@ -44,6 +44,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -218,7 +219,7 @@ class RefineServer extends Server {
         this.addBean(handler);
         // Tell the server we want to try and shutdown gracefully
         // this means that the server will stop accepting new connections
-        // right away but it will continue to process the ones that
+        // right away, but it will continue to process the ones that
         // are in execution for the given timeout before attempting to stop
         // NOTE: this is *not* a blocking method, it just sets a parameter
         // that _server.stop() will rely on
@@ -284,7 +285,7 @@ class RefineServer extends Server {
         scanner.addListener(new Scanner.BulkListener() {
 
             @Override
-            public void filesChanged(@SuppressWarnings("rawtypes") List changedFiles) {
+            public void filesChanged(Set<String> set) {
                 try {
                     logger.info("Stopping context: " + contextRoot.getAbsolutePath());
                     context.stop();

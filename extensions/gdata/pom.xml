@@ -55,7 +55,6 @@
                 <configuration>
                     <outputDirectory>module/MOD-INF/lib</outputDirectory>
                     <includeScope>runtime</includeScope>
-                    <excludeGroupIds>org.mortbay.jetty</excludeGroupIds>
                 </configuration>
                 </execution>
             </executions>
