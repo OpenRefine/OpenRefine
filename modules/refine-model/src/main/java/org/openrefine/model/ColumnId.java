@@ -43,4 +43,11 @@ public class ColumnId implements Serializable {
     public int hashCode() {
         return Objects.hash(columnName, historyEntryId);
     }
+
+    @Override
+    public String toString() {
+        return "ColumnId{" +
+                "'" + columnName + '\'' +
+                ", " + historyEntryId + '}';
+    }
 }

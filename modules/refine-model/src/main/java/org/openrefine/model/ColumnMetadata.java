@@ -123,7 +123,7 @@ public class ColumnMetadata implements Serializable {
     }
 
     public ColumnMetadata markAsModified(long historyEntryId) {
-        return new ColumnMetadata(_name, _name, _lastModified, _reconConfig);
+        return new ColumnMetadata(_name, _name, historyEntryId, _reconConfig);
     }
 
     /**
