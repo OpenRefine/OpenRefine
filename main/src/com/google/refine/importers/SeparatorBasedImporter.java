@@ -170,10 +170,11 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                             return Arrays.asList(record.toList().toArray());
                         } catch (UncheckedIOException e) {
                             // This is thrown by CSV parser when it encounters an incorrectly formatted input file, e.g.
-                            // UncheckedIOException - IOException reading next record: java.io.IOException: (line 1) invalid char between encapsulated token and delimiter
+                            // UncheckedIOException - IOException reading next record: java.io.IOException: (line 1)
+                            // invalid char between encapsulated token and delimiter
                             // Wrap it with an IOException, so it gets reported to the user
                             throw new IOException(e);
-                        } catch ( NoSuchElementException e) {
+                        } catch (NoSuchElementException e) {
                             return null; // our end of stream signal to caller
                         }
                     }
