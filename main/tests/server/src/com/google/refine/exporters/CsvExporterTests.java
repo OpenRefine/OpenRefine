@@ -221,7 +221,7 @@ public class CsvExporterTests extends RefineTest {
         Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
                 "row1cell0,,row1cell2\n" +
-                ",row2cell1,row2cell2\n");
+                "\"\",row2cell1,row2cell2\n");
     }
 
     // all date type cells are in unified format
