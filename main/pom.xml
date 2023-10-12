@@ -248,9 +248,9 @@
       <version>${jsoup.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>opencsv-multichar</artifactId>
-      <version>${opencsv-multichar.version}</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>${commons-csv.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>

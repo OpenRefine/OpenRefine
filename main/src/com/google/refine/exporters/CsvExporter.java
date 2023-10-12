@@ -37,7 +37,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +50,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
-
-import au.com.bytecode.opencsv.CSVWriter;
 
 public class CsvExporter implements WriterExporter {
 
@@ -67,7 +69,7 @@ public class CsvExporter implements WriterExporter {
         @JsonProperty("separator")
         protected String separator = null;
         @JsonProperty("lineSeparator")
-        protected String lineSeparator = CSVWriter.DEFAULT_LINE_END;
+        protected String lineSeparator = "\n"; // TODO: Should this be system default line ending?
         @JsonProperty("quoteAll")
         protected boolean quoteAll = false;
     }
@@ -98,34 +100,41 @@ public class CsvExporter implements WriterExporter {
                 ? Boolean.parseBoolean(params.getProperty("printColumnHeader"))
                 : true;
 
-        final CSVWriter csvWriter = new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
+        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+                .setDelimiter(separator.charAt(0))
+                .setRecordSeparator(lineSeparator)
+                .setQuoteMode(quoteAll ? QuoteMode.ALL : QuoteMode.MINIMAL)
+                .setEscape('"').build();
 
-        TabularSerializer serializer = new TabularSerializer() {
+        try (final CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
 
-            @Override
-            public void startFile(JsonNode options) {
-            }
+            TabularSerializer serializer = new TabularSerializer() {
 
-            @Override
-            public void endFile() {
-            }
-
-            @Override
-            public void addRow(List<CellData> cells, boolean isHeader) {
-                if (!isHeader || printColumnHeader) {
-                    String[] strings = new String[cells.size()];
-                    for (int i = 0; i < strings.length; i++) {
-                        CellData cellData = cells.get(i);
-                        strings[i] = (cellData != null && cellData.text != null) ? cellData.text : "";
-                    }
-                    csvWriter.writeNext(strings, quoteAll);
+                @Override
+                public void startFile(JsonNode options) {
                 }
-            }
-        };
 
-        CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
+                @Override
+                public void endFile() {
+                }
 
-        csvWriter.close();
+                @Override
+                public void addRow(List<CellData> cells, boolean isHeader) {
+                    if (!isHeader || printColumnHeader) {
+                        Stream<String> strings = cells.stream()
+                                .map(cellData -> (cellData != null && cellData.text != null) ? cellData.text : "");
+                        try {
+                            csvPrinter.printRecord(strings);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            };
+
+            CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
+        }
+
     }
 
     @Override

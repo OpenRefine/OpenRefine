@@ -34,64 +34,44 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions.strings;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
-
-import au.com.bytecode.opencsv.CSVParser;
 import com.google.refine.grel.FunctionDescription;
 
 public class SmartSplit implements Function {
 
-    static final protected CSVParser s_tabParser = new CSVParser(
-            '\t',
-            CSVParser.DEFAULT_QUOTE_CHARACTER,
-            CSVParser.DEFAULT_ESCAPE_CHARACTER,
-            CSVParser.DEFAULT_STRICT_QUOTES,
-            CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-            false);
+    static final protected CSVFormat s_tabParser = CSVFormat.TDF;
 
-    static final protected CSVParser s_commaParser = new CSVParser(
-            ',',
-            CSVParser.DEFAULT_QUOTE_CHARACTER,
-            CSVParser.DEFAULT_ESCAPE_CHARACTER,
-            CSVParser.DEFAULT_STRICT_QUOTES,
-            CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-            false);
+    static final protected CSVFormat s_commaParser = CSVFormat.EXCEL;
 
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 1 && args.length <= 2) {
-            CSVParser parser = null;
+            CSVFormat format = null;
 
             Object v = args[0];
             String s = v.toString();
 
             if (args.length > 1) {
                 String sep = args[1].toString();
-                parser = new CSVParser(
-                        sep,
-                        CSVParser.DEFAULT_QUOTE_CHARACTER,
-                        CSVParser.DEFAULT_ESCAPE_CHARACTER,
-                        CSVParser.DEFAULT_STRICT_QUOTES,
-                        CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-                        false);
+                format = CSVFormat.DEFAULT.builder().setDelimiter(sep).build();
             }
 
-            if (parser == null) {
-                int tab = s.indexOf('\t');
-                if (tab >= 0) {
-                    parser = s_tabParser;
-                } else {
-                    parser = s_commaParser;
-                }
+            if (format == null) {
+                format = s.contains("\t") ? s_tabParser : s_commaParser;
             }
 
             try {
-                return parser.parseLine(s);
+                List<String> cells = CSVParser.parse(s, format).getRecords().get(0).toList();
+                return cells.toArray(new String[cells.size()]);
             } catch (IOException e) {
                 return new EvalError(EvalErrorMessage.error(ControlFunctionRegistry.getFunctionName(this), e.getMessage()));
             }

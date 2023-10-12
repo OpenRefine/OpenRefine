@@ -46,10 +46,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import com.google.common.base.CharMatcher;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -58,8 +65,6 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
-
-import au.com.bytecode.opencsv.CSVParser;
 
 public class SeparatorBasedImporter extends TabularImportingParserBase {
 
@@ -78,7 +83,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
 
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", !nonNullSeparator.equals("\\t"));
-        JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
+        JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVFormat.DEFAULT.getQuoteCharacter()));
         JSONUtilities.safePut(options, "trimStrings", true);
 
         return options;
@@ -106,7 +111,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         if (options.has("columnNames")) {
             String[] strings = JSONUtilities.getStringArray(options, "columnNames");
             if (strings.length > 0) {
-                retrievedColumnNames = new ArrayList<Object>();
+                retrievedColumnNames = new ArrayList<>();
                 for (String s : strings) {
                     s = CharMatcher.whitespace().trimFrom(s);
                     if (!s.isEmpty()) {
@@ -124,56 +129,55 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
 
         final List<Object> columnNames = retrievedColumnNames;
 
-        Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
+        Character quote = CSVFormat.DEFAULT.getQuoteCharacter();
         String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
         if (quoteCharacter != null && CharMatcher.whitespace().trimFrom(quoteCharacter).length() == 1) {
             quote = CharMatcher.whitespace().trimFrom(quoteCharacter).charAt(0);
         }
 
-        final CSVParser parser = new CSVParser(
-                sep,
-                quote,
-                (char) 0, // we don't want escape processing
-                strictQuotes,
-                CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-                !processQuotes);
+        QuoteMode quoteMode = QuoteMode.NONE;
+        if (processQuotes) {
+            if (strictQuotes) {
+                quoteMode = QuoteMode.MINIMAL;
+            } else {
+                quoteMode = QuoteMode.NON_NUMERIC;
+            }
+        } else {
+            quote = (char) 0;
+        }
+
+        final CSVFormat format = CSVFormat.Builder.create().setDelimiter(sep).setQuote(quote).setEscape((char) 0)
+                .setQuoteMode(quoteMode).build();
 
         final LineNumberReader lnReader = new LineNumberReader(reader);
+        try (CSVParser parser = CSVParser.parse(lnReader, format)) {
 
-        TableDataReader dataReader = new TableDataReader() {
+            Iterator<CSVRecord> recordIterator = parser.stream().iterator();
 
-            boolean usedColumnNames = false;
+            TableDataReader dataReader = new TableDataReader() {
 
-            @Override
-            public List<Object> getNextRowOfCells() throws IOException {
-                if (columnNames != null && !usedColumnNames) {
-                    usedColumnNames = true;
-                    return columnNames;
-                } else {
-                    String line = lnReader.readLine();
-                    if (line == null) {
-                        return null;
+                boolean usedColumnNames = false;
+
+                @Override
+                public List<Object> getNextRowOfCells() throws IOException {
+                    if (columnNames != null && !usedColumnNames) {
+                        usedColumnNames = true;
+                        return columnNames;
                     } else {
-                        return getCells(line, parser, lnReader);
+                        try {
+                            CSVRecord record = recordIterator.next();
+                            return Arrays.asList(record.toList().toArray());
+                        } catch (NoSuchElementException e) {
+                            return null; // our end of stream signal to caller
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        TabularImportingParserBase.readTable(project, job, dataReader, limit, options, exceptions);
-    }
-
-    static protected ArrayList<Object> getCells(String line, CSVParser parser, LineNumberReader lnReader)
-            throws IOException {
-
-        ArrayList<Object> cells = new ArrayList<Object>();
-        String[] tokens = parser.parseLineMulti(line);
-        cells.addAll(Arrays.asList(tokens));
-        while (parser.isPending()) {
-            tokens = parser.parseLineMulti(lnReader.readLine());
-            cells.addAll(Arrays.asList(tokens));
+            TabularImportingParserBase.readTable(project, job, dataReader, limit, options, exceptions);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return cells;
     }
 
     static public String guessSeparator(ImportingJob job, List<ObjectNode> fileRecords) {
@@ -209,7 +213,6 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         return guessSeparator(file, encoding, false); // quotes off for backward compatibility
     }
 
-    // TODO: Move this to the CSV project?
     static public Separator guessSeparator(File file, String encoding, boolean handleQuotes) {
         try {
             InputStream is = new FileInputStream(file);
