@@ -173,6 +173,7 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
 
   let jsonFixture;
   let content;
+  let escapedFields = [];
   const csv = [];
 
   if (fixture.includes('.csv')) {
@@ -185,8 +186,12 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
     } else {
       jsonFixture = fixture;
     }
-    jsonFixture.forEach((item) => {
-      csv.push('"' + item.join('","') + '"');
+    jsonFixture.forEach((row) => {
+      escapedFields = [];
+      row.forEach((field) => {
+        escapedFields.push(field ? field.replaceAll('"','""') : field);
+      });
+      csv.push('"' + escapedFields.join('","') + '"');
     });
     content = csv.join('\n');
   }

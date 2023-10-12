@@ -366,7 +366,7 @@ Cypress.Commands.add('visitProject', (projectId) => {
 Cypress.Commands.add(
     'loadAndVisitProject',
     (fixture, projectName = Cypress.currentTest.title +'-'+Date.now()) => {
-      cy.loadProject(fixture, projectName).then((projectId) => {
+      cy.loadProject(fixture, projectName, "fooTag").then((projectId) => {
         cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
         cy.waitForProjectTable();
       });
