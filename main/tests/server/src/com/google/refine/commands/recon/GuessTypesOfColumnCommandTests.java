@@ -12,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -149,7 +148,7 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
             TestUtils.assertEqualAsJson(guessedTypes, writer.toString());
 
             RecordedRequest request = server.takeRequest();
-            Assert.assertEquals(request.getBody().readUtf8(), expectedQuery);
+            TestUtils.assertEqualAsQueries(request.getBody().readUtf8(), expectedQuery);
         }
     }
 }
