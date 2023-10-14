@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -148,7 +149,7 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
 
             TestUtils.assertEqualsAsJson(guessedTypes, writer.toString());
 
-            RecordedRequest request = server.takeRequest();
+            RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
             Assert.assertEquals(request.getBody().readUtf8(), expectedQuery);
         }
     }

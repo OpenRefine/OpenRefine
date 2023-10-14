@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -287,7 +288,7 @@ public class StandardReconConfigTests extends RefineTest {
             }
             Assert.assertFalse(process.isRunning());
 
-            RecordedRequest request1 = server.takeRequest();
+            RecordedRequest request1 = server.takeRequest(5, TimeUnit.SECONDS);
 
             assertNotNull(request1);
 
@@ -394,8 +395,8 @@ public class StandardReconConfigTests extends RefineTest {
             }
             Assert.assertFalse(process.isRunning());
 
-            server.takeRequest(); // ignore the first request which was a 503 error
-            RecordedRequest request1 = server.takeRequest();
+            server.takeRequest(5, TimeUnit.SECONDS); // ignore the first request which was a 503 error
+            RecordedRequest request1 = server.takeRequest(5, TimeUnit.SECONDS);
 
             assertNotNull(request1);
             String query = request1.getBody().readUtf8Line();
