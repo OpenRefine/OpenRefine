@@ -102,7 +102,8 @@ Refine.OpenProjectUI.refreshTagsListPanel = function() {
 };
 
 Refine.OpenProjectUI._filterTags = function(tag) {
-  window.history.pushState("", "", "?tag=" + tag + "#open-project");
+  // this function can run even if the open project UI is not visible to the user, so only update the URL if it is
+  if (window.hash === "#open-project") window.history.pushState("", "", "?tag=" + tag + "#open-project");
 
   $('#tagsUl').children().each(function() {
     $(this).removeClass('current');
