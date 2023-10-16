@@ -191,9 +191,27 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                 File file = new File(job.getRawDataDir(), location);
                 // Quotes are turned on by default, so use that for guessing
                 Separator separator = guessSeparator(file, encoding, true);
-                if (separator != null) {
-                    return StringEscapeUtils.escapeJava(Character.toString(separator.separator));
+                CsvFormat format = guessFormat(file, encoding);
+                if (format != null) {
+                    if (separator != null) {
+                        if (format.getDelimiter() == separator.separator) {
+                            // They both agree - yay!
+                            return StringEscapeUtils.escapeJava(Character.toString(separator.separator));
+                        } else {
+                            logger.warn("Delimiter guesses disagree - uniVocity: {} - internal: {}", format.getDelimiter(),
+                                    separator.separator);
+                        }
+                    } else {
+                        // We got a guess from CsvParser, but not ours, so let's use that
+                        return StringEscapeUtils.escapeJava(format.getDelimiterString());
+                    }
+                } else {
+                    if (separator != null) {
+                        // Our guesser worked when CsvParser's didn't
+                        return StringEscapeUtils.escapeJava(Character.toString(separator.separator));
+                    }
                 }
+
             }
         }
         return null;
@@ -208,6 +226,27 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
 
         double averagePerLine;
         double stddev;
+    }
+
+    static public CsvFormat guessFormat(File file, String encoding) {
+        try (InputStream is = new FileInputStream(file);
+                Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+                LineNumberReader lineNumberReader = new LineNumberReader(reader)) {
+            CsvParserSettings settings = new CsvParserSettings();
+            settings.detectFormatAutomatically();
+            settings.setFormatDetectorRowSampleCount(100);
+            CsvParser parser = new CsvParser(settings);
+            parser.beginParsing(lineNumberReader);
+            for (int i = 0; i < 20; i++) {
+                if (parser.parseNext() == null) {
+                    break;
+                }
+            }
+            return parser.getDetectedFormat();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     static public Separator guessSeparator(File file, String encoding) {
