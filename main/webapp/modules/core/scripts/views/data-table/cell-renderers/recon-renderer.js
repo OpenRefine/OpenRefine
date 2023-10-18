@@ -389,6 +389,7 @@ class ReconCellRenderer {
       .width(preview.width)
       .height(preview.height)
       .attr("src", url)
+      .attr("sandbox", "")
       .appendTo(fakeMenu);
     } else {
       return; // no preview service available
