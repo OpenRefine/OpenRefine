@@ -304,6 +304,24 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>net.revelc.code</groupId>
+        <artifactId>impsort-maven-plugin</artifactId>
+        <version>1.9.0</version>
+        <configuration>
+          <groups>java.,javax.,*,com.google.refine,org.openrefine</groups>
+          <staticGroups>java,*</staticGroups>
+          <removeUnused>true</removeUnused>
+        </configuration>
+        <executions>
+          <execution>
+            <id>sort-imports</id>
+            <goals>
+              <goal>sort</goal><!-- runs at process-sources phase by default -->
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>2.10</version>
