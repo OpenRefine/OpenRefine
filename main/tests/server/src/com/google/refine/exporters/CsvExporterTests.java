@@ -102,7 +102,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1\n" +
                 "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
     }
@@ -117,7 +117,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "row0cell0,row0cell1\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
 
         verify(options, times(2)).getProperty("printColumnHeader");
@@ -150,7 +150,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\"\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "\"column0\",\"column1\"\n" +
                 "\"row0cell0\",\"row0cell1\"\n" +
                 "\"row1cell0\",\"row1cell1\"\n");
     }
@@ -166,7 +166,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
                 "row1cell0,\"line\n\n\nbreak\",row1cell2\n" +
                 "row2cell0,row2cell1,row2cell2\n");
@@ -183,7 +183,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
                 "row1cell0,\"with, comma\",row1cell2\n" +
                 "row2cell0,row2cell1,row2cell2\n");
@@ -200,7 +200,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
                 "row1cell0,\"line has \"\"quote\"\"\",row1cell2\n" +
                 "row2cell0,row2cell1,row2cell2\n");
@@ -218,7 +218,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
                 "row1cell0,,row1cell2\n" +
                 ",row2cell1,row2cell2\n");
@@ -238,7 +238,7 @@ public class CsvExporterTests extends RefineTest {
      *       String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
      *       ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
      * 
-     *       Assert.assertEquals(writer.toString(), expectedOutput); }
+     *       assertEqualsSystemLineEnding(writer.toString(), expectedOutput); }
      */
     // helper methods
 

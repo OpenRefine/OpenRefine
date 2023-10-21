@@ -505,7 +505,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2\"");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
@@ -637,7 +637,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals((String) project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals((String) project.rows.get(0).cells.get(1).value, "data2");
+        Assert.assertEquals((String) project.rows.get(0).cells.get(1).value, "data2\"");
         Assert.assertEquals((String) project.rows.get(0).cells.get(2).value, "data3");
         Assert.assertEquals((String) project.rows.get(0).cells.get(3).value, "data4");
     }

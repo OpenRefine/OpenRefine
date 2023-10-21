@@ -391,4 +391,8 @@ public class RefineTest {
         }
         Assert.assertFalse(process.isRunning(), "Process failed to complete within timeout " + timeout);
     }
+
+    public static void assertEqualsSystemLineEnding(String actual, String expected) {
+        Assert.assertEquals(actual, expected.replaceAll("\n", System.lineSeparator()));
+    }
 }
