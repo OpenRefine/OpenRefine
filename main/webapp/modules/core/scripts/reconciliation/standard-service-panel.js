@@ -206,7 +206,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
 
   var detailTable = $(
       '<table>' +
-      '<tr><th>'+$.i18n('core-recon/column')+'</th><th>'+$.i18n('core-recon/include')+'?</th><th>'+$.i18n('core-recon/as-property')+'</th></tr>' +
+      '<tr><th>'+$.i18n('core-recon/column')+'</th><th>'+$.i18n('core-recon/as-property')+'</th></tr>' +
       '</table>'
   ).appendTo(detailTableContainer)[0];
 
@@ -214,15 +214,31 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
     var tr = detailTable.insertRow(detailTable.rows.length);
     var td0 = tr.insertCell(0);
     var td1 = tr.insertCell(1);
-    var td2 = tr.insertCell(2);
+    $(td0).attr("columnName", column.name).html(column.name);
+    $(td1).data('id','property').css('position','relative');
 
-    $(td0).html(column.name);
-    $('<input type="checkbox" name="include" />')
-    .attr("columnName", column.name)
-    .appendTo(td1);
-    $('<input size="25" name="property" />')
-    .attr("columnName", column.name)
-    .appendTo(td2);
+    let mappedColumn = $("<span>").addClass("mapped-column");
+
+    mappedColumn.append($("<a>").text(""))
+        .append($("<span>").addClass("type-id").text("()"))
+        .append($("<a>").addClass("edit-mapped-column").text("edit")
+            .on('click', function() {
+              $input = $(this).parent().siblings('input[name="property"]');
+              $input.removeData('data.suggest');
+              $label = $(this).parent().parent().find('.mapped-column > a:not(.edit-mapped-column)');
+              $input.val($label.text()).prop('disabled',false);
+              mappedColumn.toggle();
+              $input.focus();
+            }));
+
+    $(td1).append(mappedColumn)
+        .append(
+            $("<input>")
+                .attr("size", "25")
+                .attr("name", "property")
+                .attr("spellcheck", "false")
+                .data('columnName',column.name)
+        );
   }
   var columns = theProject.columnModel.columns;
   for (var i = 0; i < columns.length; i++) {
@@ -264,7 +280,6 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
   var inputs = this._panel
   .find('input[name="property"]')
   .off();
-
   if ("suggest" in this._service && "property" in this._service.suggest && this._service.suggest.property.service_url) {
     // Old style suggest API
     var suggestOptions = $.extend({}, this._service.suggest.property);
@@ -277,8 +292,16 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
     if (type) {
       suggestOptions.type = typeof type == "string" ? type : type.id;
     }
-    inputs.suggestP(sanitizeSuggestOptions(suggestOptions));
-  }
+    inputs.suggestP(sanitizeSuggestOptions(suggestOptions)).on("fb-select", function(e, data) {
+      let $input = $(e.currentTarget);
+      let $td = $input.parent();
+      let mapping = $input.data('data.suggest');
+      $td.children('.mapped-column').css('display', 'inline');
+      $td.children('input[name="property"]').val('').prop('disabled', true);
+      $td.find('.mapped-column > a:not(.edit-mapped-column)').text(mapping.name);
+      $td.find('.mapped-column > .type-id').text("(" + mapping.id + ")");
+    });
+    }
 };
 
 ReconStandardServicePanel.prototype.start = function() {
@@ -293,7 +316,6 @@ ReconStandardServicePanel.prototype.start = function() {
   }
 
   var choices = this._panel.find('input[name="type-choice"]:checked');
-  var include = this._panel.find('input[name="include"]');
   if (choices !== null && choices.length > 0) {
     if (choices[0].value == '-') { // TODO: This is the signal value for "no type", but don't think it's used anymore
       type = null;
@@ -306,32 +328,34 @@ ReconStandardServicePanel.prototype.start = function() {
   }
 
   var columnDetails = [];
+  var invalidState = false;
   $.each(
     this._panel.find('input[name="property"]'),
     function(index) {
-      var property = $(this).data("data.suggest");
-      if (property && property.id && include[index].checked) {
+      let property = $(this).data("data.suggest");
+      let hasSuggest = property && property.id && property.name;
+      if (hasSuggest) {
         columnDetails.push({
-          column: this.getAttribute("columnName"),
+          column: $(this).data("columnName"),
           property: {
             id: property.id,
             name: property.name
           }
         });
       } else {
-        var property = jQueryTrim(this.value);
-        if (property && include[index].checked) {
-          columnDetails.push({
-            column: this.getAttribute("columnName"),
-            property: {
-              id: property,
-              name: property
-            }
-          });
+        let value = jQueryTrim(this.value);
+        let hasValue = value && value.length > 0;
+        if (hasValue) {
+          alert('Column '+$(this).data("columnName")+' is not mapped.');
+          invalidState = true;
         }
       }
     }
-  );
+  )
+
+  if (invalidState) {
+    return false;
+  }
 
   Refine.postCoreProcess(
     "reconcile",
@@ -352,6 +376,8 @@ ReconStandardServicePanel.prototype.start = function() {
     },
     { cellsChanged: true, columnStatsChanged: true }
   );
+
+  return true;
 };
 
 ReconStandardServicePanel.prototype.showBusyReconciling = function(message) {

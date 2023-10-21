@@ -75,10 +75,11 @@ ReconDialog.prototype._onOK = function() {
   if (this._selectedServiceRecordIndex >= 0) {
     var record = this._serviceRecords[this._selectedServiceRecordIndex];
     if (record.handler) {
-      record.handler.start();
+      if (record.handler.start()) {
+        this._dismiss();
+      }
     }
   }
-  this._dismiss();
 };
 
 ReconDialog.prototype._dismiss = function() {
