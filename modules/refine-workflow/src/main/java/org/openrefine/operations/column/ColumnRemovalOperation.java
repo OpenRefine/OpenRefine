@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,13 +46,13 @@ import org.jsoup.helper.Validate;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.OperationException;
+import org.openrefine.overlay.OverlayModel;
 
 public class ColumnRemovalOperation extends RowMapOperation {
 
@@ -94,8 +95,9 @@ public class ColumnRemovalOperation extends RowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(Grid state, ChangeContext context) throws OperationException {
-        ColumnModel model = state.getColumnModel();
+    public ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+            throws OperationException {
+        ColumnModel model = columnModel;
         for (String columnName : _columnNames) {
             int columnIndex = model.getRequiredColumnIndex(columnName);
             model = model.removeColumn(columnIndex);
@@ -104,14 +106,15 @@ public class ColumnRemovalOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws OperationException {
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+            throws OperationException {
         List<Integer> columnIndices = new ArrayList<>(_columnNames.size());
         for (String columnName : _columnNames) {
-            int columnIndex = state.getColumnModel().getRequiredColumnIndex(columnName);
+            int columnIndex = columnModel.getRequiredColumnIndex(columnName);
             columnIndices.add(columnIndex);
         }
         columnIndices.sort(Comparator.<Integer> naturalOrder().reversed());
-        return mapper(columnIndices, state.getColumnModel().getKeyColumnIndex());
+        return mapper(columnIndices, columnModel.getKeyColumnIndex());
     }
 
     protected static RowInRecordMapper mapper(List<Integer> columnIndices, int keyColumnIndex) {

@@ -71,30 +71,26 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
      * on whether the expression is local or not (see {@link Evaluable#isLocal()}), this will either be used to build a
      * row / record mapper to apply the change lazily on the grid, or the results of the evaluation will be stored in a
      * {@link ChangeData} object which will then be joined by this joiner.
-     * 
-     * @param grid
-     *            the initial state of the grid
      */
-    protected abstract RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context)
+    protected abstract RowInRecordChangeDataJoiner changeDataJoiner(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            ChangeContext context)
             throws OperationException;
 
     /**
      * Returns the new column model after the operation has run.
      */
-    protected ColumnModel getNewColumnModel(Grid state, ChangeContext context, Evaluable eval) throws OperationException {
-        return getNewColumnModel(state, context);
+    protected ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context,
+            Evaluable eval) throws OperationException {
+        return columnModel;
     }
 
     /**
      * Returns the new overlay models after this change is applied.
      */
-    protected Map<String, OverlayModel> getNewOverlayModels(Grid state, ChangeContext context, Evaluable evaluable)
+    protected Map<String, OverlayModel> getNewOverlayModels(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            ChangeContext context, Evaluable evaluable)
             throws OperationException {
-        return getNewOverlayModels(state, context);
-    }
-
-    protected Grid postTransform(Grid state, ChangeContext context, Evaluable eval) throws OperationException {
-        return postTransform(state, context);
+        return overlayModels;
     }
 
     @Override
@@ -103,10 +99,11 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
         if (eval.isLocal() && !_forceEagerEvaluation) {
             return super.apply(projectState, context);
         } else {
-            RowInRecordChangeDataJoiner joiner = changeDataJoiner(projectState, context);
-            ColumnModel newColumnModel = getNewColumnModel(projectState, context, eval);
+            RowInRecordChangeDataJoiner joiner = changeDataJoiner(projectState.getColumnModel(), projectState.getOverlayModels(), context);
+            ColumnModel newColumnModel = getNewColumnModel(projectState.getColumnModel(), projectState.getOverlayModels(), context, eval);
             Engine engine = new Engine(projectState, _engineConfig, context.getProjectId());
-            RowInRecordChangeDataProducer<Cell> producer = getChangeDataProducer(projectState, context);
+            RowInRecordChangeDataProducer<Cell> producer = getChangeDataProducer(
+                    projectState.getColumnModel(), projectState.getOverlayModels(), context);
             Grid joined;
             if (Engine.Mode.RowBased.equals(_engineConfig.getMode())) {
                 ChangeData<Cell> changeData = null;
@@ -139,9 +136,10 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
                 }
                 joined = projectState.join(changeData, joiner, newColumnModel);
             }
-            Map<String, OverlayModel> newOverlayModels = getNewOverlayModels(projectState, context, eval);
+            Map<String, OverlayModel> newOverlayModels = getNewOverlayModels(projectState.getColumnModel(), projectState.getOverlayModels(),
+                    context, eval);
             return new ChangeResult(
-                    postTransform(joined.withOverlayModels(newOverlayModels), context),
+                    joined.withOverlayModels(newOverlayModels),
                     joiner.preservesRecordStructure() ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
         }
     }
@@ -158,25 +156,42 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
     }
 
     @Override
-    protected GridMap getGridMap(Grid state, ChangeContext context) throws OperationException {
+    protected final ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+            throws OperationException {
         Validate.notNull(_eval);
-        RowInRecordChangeDataJoiner joiner = changeDataJoiner(state, context);
-        PositiveRowMapper positiveMapper = new PositiveRowMapper(getChangeDataProducer(state, context), joiner, state.getColumnModel());
-        NegativeRowMapper negativeMapper = new NegativeRowMapper(joiner);
-        return new GridMap(
-                getNewColumnModel(state, context, _eval),
-                positiveMapper,
-                negativeMapper,
-                getNewOverlayModels(state, context, _eval));
+        return getNewColumnModel(columnModel, overlayModels, context, _eval);
     }
 
-    protected RowInRecordChangeDataProducer<Cell> getChangeDataProducer(Grid state, ChangeContext context)
+    @Override
+    protected final RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            ChangeContext context) throws OperationException {
+        Validate.notNull(_eval);
+        RowInRecordChangeDataJoiner joiner = changeDataJoiner(columnModel, overlayModels, context);
+        return new PositiveRowMapper(getChangeDataProducer(columnModel, overlayModels, context), joiner, columnModel);
+    }
+
+    @Override
+    protected final RowInRecordMapper getNegativeRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            ChangeContext context) throws OperationException {
+        Validate.notNull(_eval);
+        RowInRecordChangeDataJoiner joiner = changeDataJoiner(columnModel, overlayModels, context);
+        return new NegativeRowMapper(joiner);
+    }
+
+    @Override
+    protected final Map<String, OverlayModel> getNewOverlayModels(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            ChangeContext context) throws OperationException {
+        Validate.notNull(_eval);
+        return getNewOverlayModels(columnModel, overlayModels, context, _eval);
+    }
+
+    protected RowInRecordChangeDataProducer<Cell> getChangeDataProducer(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            ChangeContext context)
             throws OperationException {
-        ColumnModel columnModel = state.getColumnModel();
         try {
             return evaluatingChangeDataProducer(_baseColumnName, _onError,
                     _repeatCount, _eval,
-                    columnModel, state.getOverlayModels(), context.getProjectId());
+                    columnModel, overlayModels, context.getProjectId());
         } catch (ColumnDependencyException e) {
             throw new MissingColumnException(e.getId().getColumnName());
         }

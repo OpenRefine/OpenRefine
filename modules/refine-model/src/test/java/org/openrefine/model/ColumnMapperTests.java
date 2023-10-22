@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import org.openrefine.model.recon.ReconConfig;
@@ -28,11 +29,9 @@ public class ColumnMapperTests {
 
     Row emptyRow = new Row(Collections.emptyList());
     Row translatedRowA = new Row(
-            Arrays.asList(new Cell("b", null), new Cell("a", null))
-    );
+            Arrays.asList(new Cell("b", null), new Cell("a", null)));
     Row translatedRowB = new Row(
-            Arrays.asList(new Cell("g", null), null)
-    );
+            Arrays.asList(new Cell("g", null), null));
     Record record = new Record(379L, Arrays.asList(rowA, rowB));
     Record translatedRecord = new Record(379L, Arrays.asList(translatedRowA, translatedRowB));
 
@@ -121,7 +120,8 @@ public class ColumnMapperTests {
         assertEquals(noDepsSUT.getReducedColumnModel(), new ColumnModel(Collections.emptyList(), -1, false));
         assertEquals(twoDepsSUT.getReducedColumnModel(), new ColumnModel(
                 Arrays.asList(columnModel.getColumnByIndex(1),
-                        columnModel.getColumnByIndex(0)), 1, true));
+                        columnModel.getColumnByIndex(0)),
+                1, true));
     }
 
     @Test

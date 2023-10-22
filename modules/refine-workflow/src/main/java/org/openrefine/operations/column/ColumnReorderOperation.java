@@ -36,6 +36,7 @@ package org.openrefine.operations.column;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,6 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
@@ -55,6 +55,7 @@ import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.MissingColumnException;
 import org.openrefine.operations.exceptions.OperationException;
+import org.openrefine.overlay.OverlayModel;
 
 public class ColumnReorderOperation extends RowMapOperation {
 
@@ -82,8 +83,9 @@ public class ColumnReorderOperation extends RowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws OperationException {
-        ColumnModel model = grid.getColumnModel();
+    public ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+            throws OperationException {
+        ColumnModel model = columnModel;
         List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
         for (String columnName : _columnNames) {
             ColumnMetadata meta = model.getColumnByName(columnName);
@@ -96,14 +98,15 @@ public class ColumnReorderOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws OperationException {
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+            throws OperationException {
         // Build a map from new indices to original ones
         List<Integer> origIndex = new ArrayList<>(_columnNames.size());
         for (int i = 0; i != _columnNames.size(); i++) {
-            origIndex.add(state.getColumnModel().getRequiredColumnIndex(_columnNames.get(i)));
+            origIndex.add(columnModel.getRequiredColumnIndex(_columnNames.get(i)));
         }
 
-        int keyColumnIndex = state.getColumnModel().getKeyColumnIndex();
+        int keyColumnIndex = columnModel.getKeyColumnIndex();
         return mapper(origIndex, origIndex.isEmpty() || origIndex.get(keyColumnIndex) == keyColumnIndex);
     }
 

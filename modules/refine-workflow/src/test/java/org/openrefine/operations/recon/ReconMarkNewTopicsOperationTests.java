@@ -128,15 +128,18 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
         Grid expected = createGrid(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
-                        { "a", new Cell("b", reconConfig.createNewRecon(2891L)
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.New)
+                                .withJudgmentHistoryEntry(2891L)
                                 .withId(commonReconId)
                                 .withJudgmentAction("mass")
                                 .withJudgment(Judgment.New)) },
-                        { "c", new Cell("b", reconConfig.createNewRecon(2891L)
+                        { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.New)
+                                .withJudgmentHistoryEntry(2891L)
                                 .withId(commonReconId)
                                 .withJudgmentAction("mass")
                                 .withJudgment(Judgment.New)) },
-                        { "c", new Cell("d", reconConfig.createNewRecon(2891L)
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.New)
+                                .withJudgmentHistoryEntry(2891L)
                                 .withId(otherReconId)
                                 .withJudgmentAction("mass")
                                 .withJudgment(Judgment.New)) },

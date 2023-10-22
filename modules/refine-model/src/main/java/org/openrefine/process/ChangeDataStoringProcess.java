@@ -1,3 +1,4 @@
+
 package org.openrefine.process;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -32,16 +33,24 @@ public class ChangeDataStoringProcess<T> extends Process {
     /**
      * Constructor.
      *
-     * @param description          human-readable description of the process, shown to the user
-     * @param storedChangeData     any pre-existing change data which needs completing
-     * @param changeDataId         the id of the change data in the store
-     * @param changeDataStore      where to store the computed change data
-     * @param serializer           the serializer to use to persist the change data
-     * @param completionProcess    the process to use to compute the change data (or complete the existing one)
-     * @param temporaryDirToDelete a temporary directory to delete at the end of the process (or null)
-     * @param history              the history of the project this computation pertains to
-     * @param requiredStepIndex    the step in the history which must be fully computed as a prerequisite for
-     *                             this process to run
+     * @param description
+     *            human-readable description of the process, shown to the user
+     * @param storedChangeData
+     *            any pre-existing change data which needs completing
+     * @param changeDataId
+     *            the id of the change data in the store
+     * @param changeDataStore
+     *            where to store the computed change data
+     * @param serializer
+     *            the serializer to use to persist the change data
+     * @param completionProcess
+     *            the process to use to compute the change data (or complete the existing one)
+     * @param temporaryDirToDelete
+     *            a temporary directory to delete at the end of the process (or null)
+     * @param history
+     *            the history of the project this computation pertains to
+     * @param requiredStepIndex
+     *            the step in the history which must be fully computed as a prerequisite for this process to run
      */
     public ChangeDataStoringProcess(
             String description,

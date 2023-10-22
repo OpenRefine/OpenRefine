@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -47,20 +48,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
+import org.openrefine.model.RecordFilter;
+import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowInRecordMapper;
+import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.RowMapOperation;
+import org.openrefine.operations.ChangeResult;
+import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.operations.utils.CellValueSplitter;
+import org.openrefine.overlay.OverlayModel;
 
-public class ColumnSplitOperation extends RowMapOperation {
+public class ColumnSplitOperation extends EngineDependentOperation {
 
     public static enum Mode {
         @JsonProperty("lengths")
@@ -212,7 +220,7 @@ public class ColumnSplitOperation extends RowMapOperation {
     }
 
     @Override
-    public GridMap getGridMap(Grid state, ChangeContext context) throws OperationException {
+    public ChangeResult apply(Grid state, ChangeContext context) throws OperationException {
         ColumnModel origColumnModel = state.getColumnModel();
         int origColumnIdx = origColumnModel.getRequiredColumnIndex(_columnName);
 
@@ -242,13 +250,27 @@ public class ColumnSplitOperation extends RowMapOperation {
         List<ColumnMetadata> newColumns = new ArrayList<>(origColumns.subList(0, startColumnIdx));
         newColumns.addAll(columnNames.stream().map(n -> new ColumnMetadata(n)).collect(Collectors.toList()));
         newColumns.addAll(origColumns.subList(origColumnIdx + 1, origColumns.size()));
-        ColumnModel newColumnModel = new ColumnModel(newColumns);
 
-        return new GridMap(
-                newColumnModel,
-                mapper(getSplitter(), origColumnIdx, nbColumns, _removeOriginalColumn, _guessCellType, origColumnModel.getKeyColumnIndex()),
-                negativeMapper(origColumnIdx, nbColumns, _removeOriginalColumn, origColumnModel.getKeyColumnIndex()),
-                state.getOverlayModels());
+        ColumnModel newColumnModel = new ColumnModel(newColumns);
+        RowInRecordMapper positiveMapper = mapper(getSplitter(), origColumnIdx, nbColumns, _removeOriginalColumn, _guessCellType,
+                origColumnModel.getKeyColumnIndex());
+        RowInRecordMapper negativeMapper = negativeMapper(origColumnIdx, nbColumns, _removeOriginalColumn,
+                origColumnModel.getKeyColumnIndex());
+        Map<String, OverlayModel> newOverlayModels = state.getOverlayModels();
+        Grid mappedState;
+        if (Engine.Mode.RowBased.equals(engine.getMode())) {
+            RowFilter rowFilter = engine.combinedRowFilters();
+            mappedState = state.mapRows(RowMapper.conditionalMapper(rowFilter, positiveMapper, negativeMapper), newColumnModel);
+        } else {
+            RecordFilter recordFilter = engine.combinedRecordFilters();
+            mappedState = state.mapRecords(
+                    RecordMapper.conditionalMapper(recordFilter, positiveMapper, negativeMapper),
+                    newColumnModel);
+        }
+        boolean recordsPreserved = positiveMapper.preservesRecordStructure() && negativeMapper.preservesRecordStructure();
+        return new ChangeResult(
+                mappedState.withOverlayModels(newOverlayModels),
+                recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
     }
 
     // for visibility in tests

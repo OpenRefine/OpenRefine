@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -41,7 +43,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Grid;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
@@ -53,6 +55,7 @@ import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.operations.OperationDescription;
 import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.OperationException;
+import org.openrefine.overlay.OverlayModel;
 
 public class ReconJudgeSimilarCellsOperation extends RowMapOperation {
 
@@ -119,9 +122,10 @@ public class ReconJudgeSimilarCellsOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid grid, ChangeContext context) throws OperationException {
-        int columnIndex = grid.getColumnModel().getRequiredColumnIndex(_columnName);
-        ReconConfig reconConfig = grid.getColumnModel().getColumnByName(_columnName).getReconConfig();
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+            throws OperationException {
+        int columnIndex = columnModel.getRequiredColumnIndex(_columnName);
+        ReconConfig reconConfig = columnModel.getColumnByName(_columnName).getReconConfig();
         long historyEntryId = context.getHistoryEntryId();
 
         if (_shareNewTopics && _judgment == Judgment.New) {

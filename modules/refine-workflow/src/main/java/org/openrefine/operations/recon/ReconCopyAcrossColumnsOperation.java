@@ -45,22 +45,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
+import org.openrefine.model.RecordFilter;
+import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowInRecordMapper;
+import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.operations.ChangeResult;
+import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.OperationDescription;
-import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.OperationException;
 
-public class ReconCopyAcrossColumnsOperation extends RowMapOperation {
+public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
 
     final protected String _fromColumnName;
     final protected List<String> _toColumnNames;
@@ -102,6 +110,27 @@ public class ReconCopyAcrossColumnsOperation extends RowMapOperation {
     }
 
     @Override
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
+        Engine engine = getEngine(projectState, context.getProjectId());
+        RowInRecordMapper positiveMapper = getPositiveRowMapper(projectState, context);
+        RowInRecordMapper negativeMapper = RowInRecordMapper.IDENTITY;
+        ColumnModel newColumnModel = projectState.getColumnModel();
+        Grid mappedState;
+        if (Mode.RowBased.equals(engine.getMode())) {
+            RowFilter rowFilter = engine.combinedRowFilters();
+            mappedState = projectState.mapRows(RowMapper.conditionalMapper(rowFilter, positiveMapper, negativeMapper), newColumnModel);
+        } else {
+            RecordFilter recordFilter = engine.combinedRecordFilters();
+            mappedState = projectState.mapRecords(
+                    RecordMapper.conditionalMapper(recordFilter, positiveMapper, negativeMapper),
+                    newColumnModel);
+        }
+        boolean recordsPreserved = positiveMapper.preservesRecordStructure() && negativeMapper.preservesRecordStructure();
+        return new ChangeResult(
+                mappedState,
+                recordsPreserved ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
+    }
+
     public RowInRecordMapper getPositiveRowMapper(Grid projectState, ChangeContext context) throws OperationException {
         ColumnModel columnModel = projectState.getColumnModel();
         int columnIndex = columnModel.getRequiredColumnIndex(_fromColumnName);

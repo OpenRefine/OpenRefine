@@ -40,6 +40,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -56,7 +57,6 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -68,6 +68,7 @@ import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
 import org.openrefine.operations.exceptions.DuplicateColumnException;
 import org.openrefine.operations.exceptions.OperationException;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.HttpClient;
 
 /**
@@ -140,21 +141,24 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
     }
 
     @Override
-    protected RowInRecordChangeDataProducer<Cell> getChangeDataProducer(Grid state, ChangeContext context)
+    protected RowInRecordChangeDataProducer<Cell> getChangeDataProducer(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            ChangeContext context)
             throws OperationException {
-        RowInRecordChangeDataProducer<Cell> evaluatingProducer = super.getChangeDataProducer(state, context);
+        RowInRecordChangeDataProducer<Cell> evaluatingProducer = super.getChangeDataProducer(columnModel, overlayModels, context);
         return new URLFetchingChangeProducer(_onError, _httpHeadersJson, _cacheResponses, _delay, evaluatingProducer);
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws OperationException {
-        return new ColumnAdditionOperation.Joiner(_columnInsertIndex, grid.getColumnModel().getKeyColumnIndex());
+    protected RowInRecordChangeDataJoiner changeDataJoiner(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            ChangeContext context) throws OperationException {
+        return new ColumnAdditionOperation.Joiner(_columnInsertIndex, columnModel.getKeyColumnIndex());
     }
 
     @Override
-    protected ColumnModel getNewColumnModel(Grid grid, ChangeContext context, Evaluable evaluable) throws OperationException {
+    protected ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context,
+            Evaluable evaluable) throws OperationException {
         try {
-            return grid.getColumnModel().insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
+            return columnModel.insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
         } catch (ModelException e) {
             throw new DuplicateColumnException(_newColumnName);
         }

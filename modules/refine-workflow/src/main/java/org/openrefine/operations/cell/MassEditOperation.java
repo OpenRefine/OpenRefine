@@ -49,7 +49,6 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.IndexedData;
@@ -57,6 +56,7 @@ import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
 import org.openrefine.operations.exceptions.OperationException;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.StringUtils;
 
@@ -149,7 +149,8 @@ public class MassEditOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(Grid grid, ChangeContext context) throws OperationException {
+    protected RowInRecordChangeDataJoiner changeDataJoiner(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            ChangeContext context) throws OperationException {
         Map<String, Serializable> fromTo = new HashMap<>();
         Serializable fromBlankTo = null;
         Serializable fromErrorTo = null;
@@ -167,7 +168,6 @@ public class MassEditOperation extends ExpressionBasedOperation {
                 fromErrorTo = edit.to;
             }
         }
-        ColumnModel columnModel = grid.getColumnModel();
         int columnIdx = columnModel.getRequiredColumnIndex(_baseColumnName);
         return new Joiner(columnIdx, columnModel.getKeyColumnIndex(), fromTo, fromBlankTo, fromErrorTo);
     }

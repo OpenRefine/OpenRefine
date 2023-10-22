@@ -1,3 +1,4 @@
+
 package org.openrefine.process;
 
 import org.openrefine.history.History;
@@ -34,6 +35,7 @@ public class ChangeDataStoringProcessTests {
         changeDataId = new ChangeDataId(1234L, "subdir");
         completionProcess = incompleteChangeData -> null;
         serializer = new ChangeDataSerializer<String>() {
+
             @Override
             public String serialize(String changeDataItem) {
                 return changeDataItem;

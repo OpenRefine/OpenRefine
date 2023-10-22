@@ -35,6 +35,7 @@ package org.openrefine.operations.column;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,13 +45,13 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Grid;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.OperationException;
+import org.openrefine.overlay.OverlayModel;
 
 public class ColumnMoveOperation extends RowMapOperation {
 
@@ -82,17 +83,18 @@ public class ColumnMoveOperation extends RowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(Grid grid, ChangeContext context) throws OperationException {
-        ColumnModel columnModel = grid.getColumnModel();
+    public ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+            throws OperationException {
         int fromIndex = columnModel.getRequiredColumnIndex(_columnName);
         ColumnMetadata column = columnModel.getColumns().get(fromIndex);
         return columnModel.removeColumn(fromIndex).insertUnduplicatedColumn(_index, column);
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(Grid state, ChangeContext context) throws OperationException {
-        int fromIndex = state.getColumnModel().getRequiredColumnIndex(_columnName);
-        return mapper(fromIndex, _index, state.getColumnModel().getKeyColumnIndex());
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+            throws OperationException {
+        int fromIndex = columnModel.getRequiredColumnIndex(_columnName);
+        return mapper(fromIndex, _index, columnModel.getKeyColumnIndex());
     }
 
     protected static RowInRecordMapper mapper(int fromIndex, int toIndex, int keyColumnIndex) {
