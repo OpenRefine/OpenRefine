@@ -159,7 +159,7 @@ public class LocalRunnerTests extends RunnerTestBase {
             }
         };
 
-        ChangeData<String> changeData = getDatamodelRunner().changeDataFromList(Arrays.asList(
+        ChangeData<String> changeData = getDatamodelRunner().changeDataFromList(Arrays.<IndexedData<String>> asList(
                 new IndexedData(0L, "foo")));
         LocalGrid joined = (LocalGrid) initial.join(changeData, joiner, initial.getColumnModel());
         Assert.assertFalse(joined.constructedFromRows);
