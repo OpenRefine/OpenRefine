@@ -27,6 +27,8 @@
 
 package com.google.refine.model.recon;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -35,9 +37,13 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.model.changes.CellChange;
+import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -411,6 +417,161 @@ public class StandardReconConfigTests extends RefineTest {
             assertNotNull(cell.recon);
             assertEquals(cell.recon.service, url.toString());
             assertEquals(cell.recon.getBestCandidate().types[0], "Q24862");
+        }
+    }
+
+    @Test
+    public void BatchReconTest() throws Exception {
+
+        String reconResponse = "{\n" +
+                "q0: {\n" +
+                "  result: [\n" +
+                "    {\n" +
+                "    P57: {\n" +
+                "score: 100,\n" +
+                "weighted: 40\n" +
+                "},\n" +
+                "all_labels: {\n" +
+                "score: 59,\n" +
+                "weighted: 59\n" +
+                "},\n" +
+                "score: 70.71428571428572,\n" +
+                "id: \"Q3989262\",\n" +
+                "name: \"The Short Films of David Lynch\",\n" +
+                "type: [\n" +
+                "{\n" +
+                "id: \"Q24862\",\n" +
+                "name: \"short film\"\n" +
+                "},\n" +
+                "{\n" +
+                "id: \"Q202866\",\n" +
+                "name: \"animated film\"\n" +
+                "}\n" +
+                "],\n" +
+                "match: false\n" +
+                "},\n" +
+                "{\n" +
+                "P57: {\n" +
+                "score: 100,\n" +
+                "weighted: 40\n" +
+                "},\n" +
+                "all_labels: {\n" +
+                "score: 44,\n" +
+                "weighted: 44\n" +
+                "},\n" +
+                "score: 60.00000000000001,\n" +
+                "id: \"Q83365219\",\n" +
+                "name: \"What Did Jack Do?\",\n" +
+                "type: [\n" +
+                "{\n" +
+                "id: \"Q24862\",\n" +
+                "name: \"short film\"\n" +
+                "}\n" +
+                "],\n" +
+                "match: false\n" +
+                "    }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}\n";
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
+            server.enqueue(new MockResponse());
+
+            String configJson = " {\n" +
+                    "        \"mode\": \"standard-service\",\n" +
+                    "        \"service\": \"" + url + "\",\n" +
+                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+                    "        \"type\": {\n" +
+                    "                \"id\": \"Q11424\",\n" +
+                    "                \"name\": \"film\"\n" +
+                    "        },\n" +
+                    "        \"autoMatch\": true,\n" +
+                    "        \"columnDetails\": [\n" +
+                    "           {\n" +
+                    "             \"column\": \"director\",\n" +
+                    "             \"propertyName\": \"Director\",\n" +
+                    "             \"propertyID\": \"P57\"\n" +
+                    "           }\n" +
+                    "        ]}";
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+            StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
+            job.text = "david lynch";
+            job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+            List<ReconJob> jobList = new ArrayList<ReconJob>();
+            jobList.add(job);
+            List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
+            RecordedRequest request1 = server.takeRequest();
+
+            assertNotNull(request1);
+            String query = request1.getBody().readUtf8Line();
+            String expected = "queries=" + URLEncoder.encode(
+                    "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
+                    "UTF-8");
+            assertEquals(query, expected);
+            assertNotNull(returnReconList);
+            assertEquals(returnReconList.get(0).getBestCandidate().types[0], "Q24862");
+        }
+    }
+
+    @Test
+    public void BatchReconTestError() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            server.enqueue(new MockResponse().setResponseCode(500));
+
+            String configJson = " {\n" +
+                    "        \"mode\": \"standard-service\",\n" +
+                    "        \"service\": \"" + url + "\",\n" +
+                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+                    "        \"type\": {\n" +
+                    "                \"id\": \"Q11424\",\n" +
+                    "                \"name\": \"film\"\n" +
+                    "        },\n" +
+                    "        \"autoMatch\": true,\n" +
+                    "        \"columnDetails\": [\n" +
+                    "           {\n" +
+                    "             \"column\": \"director\",\n" +
+                    "             \"propertyName\": \"Director\",\n" +
+                    "             \"propertyID\": \"P57\"\n" +
+                    "           }\n" +
+                    "        ]}";
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+            StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
+            job.text = "david lynch";
+            job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+            List<ReconJob> jobList = new ArrayList<ReconJob>();
+            jobList.add(job);
+
+            // calling the batchRecon
+            List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
+
+            RecordedRequest request1 = server.takeRequest();
+            assertNotNull(request1);
+            String query = request1.getBody().readUtf8Line();
+            String expected = "queries=" + URLEncoder.encode(
+                    "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
+                    "UTF-8");
+
+            // assertions
+
+            assertEquals(query, expected);
+            assertNotNull(returnReconList);
+            assertNotNull(returnReconList.get(0));
+            assertNotNull(returnReconList.get(0).error);
+            // checking for error due to missing result field
+            String reconResponse = "{\n" +
+                    "q0: {\n" +
+                    "  }\n" +
+                    "}\n";
+            server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
+            returnReconList = config.batchRecon(jobList, 1000000000);
+            assertNotNull(returnReconList.get(0));
+            assertNotNull(returnReconList.get(0).error);
         }
     }
 

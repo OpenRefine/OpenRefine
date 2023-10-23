@@ -348,6 +348,8 @@ public class StandardReconConfig extends ReconConfig {
         public double score;
         @JsonProperty("match")
         public boolean match = false;
+        @JsonProperty("error")
+        public ReconCandidate error = null;
 
         @JsonIgnore
         public ReconCandidate toCandidate() {
@@ -478,12 +480,12 @@ public class StandardReconConfig extends ReconConfig {
 
                             recon = createReconServiceResults(text, results, historyEntryID);
                         } else {
-                            // TODO: better error reporting
-                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
+                            recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                            recon.error = o2.toString();
                         }
                     } else {
-                        // TODO: better error reporting
-                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o.toString());
+                        recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                        recon.error = o.toString();
                     }
 
                     if (recon != null) {
@@ -493,7 +495,9 @@ public class StandardReconConfig extends ReconConfig {
                 }
             }
         } catch (IOException e) {
-            logger.error("Failed to batch recon with load:\n" + queriesString, e);
+            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+            recon.error = e.toString();
+            recons.add(recon);
         }
 
         while (recons.size() < jobs.size()) {
