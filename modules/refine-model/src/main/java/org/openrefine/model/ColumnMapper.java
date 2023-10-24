@@ -32,7 +32,7 @@ public class ColumnMapper implements Serializable {
      * @param dependencies
      *            the list of columns depended on, or null if any columns can be potentially relied on
      * @param newColumnModel
-     *            the column model to be reduced, which must contain all the columns dependended on. All the columns not
+     *            the column model to be reduced, which must contain all the columns depended on. All the columns not
      *            depended on will be stripped from the resulting column model (which can be obtained via
      *            {@link #getReducedColumnModel()}).
      */
@@ -119,5 +119,33 @@ public class ColumnMapper implements Serializable {
 
     public List<ColumnId> getDependencies() {
         return dependencies;
+    }
+
+    /**
+     * Given a mapper that expects to be fed only with the columns it depends on, translate it to a new mapper which
+     * accepts the original row/records.
+     * 
+     * @param mapper
+     *            the original mapper
+     * @return a mapper that accepts the entire row/record
+     */
+    public RowInRecordMapper translateRowInRecordMapper(RowInRecordMapper mapper) {
+        if (dependencies == null) {
+            return mapper;
+        }
+        return new RowInRecordMapper() {
+
+            private static final long serialVersionUID = -4213621327052918146L;
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return mapper.preservesRecordStructure();
+            }
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                return mapper.call(record == null ? null : translateRecord(record), rowId, translateRow(row));
+            }
+        };
     }
 }

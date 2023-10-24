@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.testng.Assert.*;
 
 public class ColumnMapperTests {
@@ -131,5 +134,20 @@ public class ColumnMapperTests {
         assertEquals(twoDepsSUT.getDependencies(), Arrays.asList(
                 new ColumnId("origBar", 5678L),
                 new ColumnId("origFoo", 1234L)));
+    }
+
+    @Test
+    public void testTranslateMapper() {
+        RowInRecordMapper mapper = mock(RowInRecordMapper.class);
+        when(mapper.call(translatedRecord, 379L, translatedRowA)).thenReturn(translatedRowA);
+        when(mapper.preservesRecordStructure()).thenReturn(true);
+
+        assertEquals(nullDepsSUT.translateRowInRecordMapper(mapper), mapper);
+
+        RowInRecordMapper translatedMapper = twoDepsSUT.translateRowInRecordMapper(mapper);
+        assertEquals(translatedMapper.call(record, 379L, rowA), translatedRowA);
+        verify(mapper, times(1)).call(translatedRecord, 379L, translatedRowA);
+        assertTrue(translatedMapper.preservesRecordStructure());
+        verify(mapper, times(1)).preservesRecordStructure();
     }
 }

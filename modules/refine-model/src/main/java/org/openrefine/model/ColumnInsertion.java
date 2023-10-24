@@ -1,0 +1,105 @@
+
+package org.openrefine.model;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.Validate;
+
+/**
+ * Represents a column written to by a row- or record-wise operation. This holds information about where the column
+ * should be inserted, whether it is obtained by copying another column and how the new column should be named. <br>
+ * This class is also able to represent overwriting columns, by marking the original column as deleted by the operation.
+ * The {@link #getInsertAt()} field is then set to the original column name.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
+public class ColumnInsertion implements Serializable {
+
+    private static final long serialVersionUID = 2912933886003703674L;
+    private final String name;
+    private final String insertAt;
+    private final boolean replace;
+    private final String copiedFrom;
+
+    @JsonCreator
+    public ColumnInsertion(
+            @JsonProperty("name") String name,
+            @JsonProperty("insertAt") String insertAt,
+            @JsonProperty("replace") boolean replace,
+            @JsonProperty("copiedFrom") String copiedFrom) {
+        Validate.notNull(name, "no name provided for column to insert");
+        this.name = name;
+        this.insertAt = insertAt;
+        this.replace = replace;
+        this.copiedFrom = copiedFrom;
+    }
+
+    /**
+     * The name of the inserted column after the operation was run.
+     */
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * The name of the column after which this column should be inserted.
+     * <ul>
+     * <li>If this is null, the column is inserted at the beginning of the table</li>
+     * <li>If this does not correspond to any previously existing column, then the column is inserted at the end of the
+     * table</li>
+     * </ul>
+     */
+    @JsonProperty("insertAt")
+    @JsonInclude(Include.NON_NULL)
+    public String getInsertAt() {
+        return insertAt;
+    }
+
+    @JsonProperty("replace")
+    public boolean isReplace() {
+        return replace;
+    }
+
+    /**
+     * The name of the column this column was copied from. This means that for all filtered rows/records, the value of
+     * the inserted column in this row/record is identical to that from the original column. <br>
+     * If there is no such column (meaning that the values stored in this new column are actually computed by the
+     * operation) then this is set to null.
+     */
+    @JsonProperty("copiedFrom")
+    @JsonInclude(Include.NON_NULL)
+    public String getCopiedFrom() {
+        return copiedFrom;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(copiedFrom, insertAt, name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ColumnInsertion other = (ColumnInsertion) obj;
+        return Objects.equals(copiedFrom, other.copiedFrom) && Objects.equals(insertAt, other.insertAt)
+                && replace == other.replace && Objects.equals(name, other.name);
+    }
+
+    @Override
+    public String toString() {
+        return "ColumnInsertion [name=" + name + ", insertAt=" + insertAt + ", replace=" + replace + ", copiedFrom=" + copiedFrom + "]";
+    }
+
+}
