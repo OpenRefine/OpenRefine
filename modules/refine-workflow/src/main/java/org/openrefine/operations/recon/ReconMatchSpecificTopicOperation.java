@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -41,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -110,14 +113,23 @@ public class ReconMatchSpecificTopicOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
-            throws MissingColumnException {
-        int columnIndex = columnModel.getRequiredColumnIndex(columnName);
-        long historyEntryId = context.getHistoryEntryId();
-        return rowMapper(columnIndex, match.getCandidate(), historyEntryId, identifierSpace, schemaSpace);
+    public List<String> getColumnDependencies() {
+        return Collections.singletonList(columnName);
     }
 
-    protected static RowInRecordMapper rowMapper(int columnIndex, ReconCandidate match, long historyEntryId, String identifierSpace,
+    @Override
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(new ColumnInsertion(columnName, columnName, true, null));
+    }
+
+    @Override
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+            throws MissingColumnException {
+        long historyEntryId = context.getHistoryEntryId();
+        return rowMapper(match.getCandidate(), historyEntryId, identifierSpace, schemaSpace);
+    }
+
+    protected static RowInRecordMapper rowMapper(ReconCandidate match, long historyEntryId, String identifierSpace,
             String schemaSpace) {
         return new RowInRecordMapper() {
 
@@ -125,7 +137,7 @@ public class ReconMatchSpecificTopicOperation extends RowMapOperation {
 
             @Override
             public Row call(Record record, long rowId, Row row) {
-                Cell cell = row.getCell(columnIndex);
+                Cell cell = row.getCell(0);
                 if (cell != null && !cell.isPending()) {
                     Recon newRecon = cell.recon != null ? cell.recon.dup(historyEntryId)
                             : new Recon(
@@ -142,7 +154,7 @@ public class ReconMatchSpecificTopicOperation extends RowMapOperation {
                             cell.value,
                             newRecon);
 
-                    return row.withCell(columnIndex, newCell);
+                    return row.withCell(0, newCell);
                 }
                 return row;
             }

@@ -68,6 +68,12 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
         String json = "{\n" +
                 "    \"op\": \"core/recon-match-specific-topic-to-cells\",\n" +
                 "    \"description\": \"Match specific item Gangnam (Q489941) to cells in column researcher\",\n" +
+                "    \"columnDependencies\" : [ \"researcher\" ],\n" +
+                "    \"columnInsertions\" : [ {\n" +
+                "      \"insertAt\" : \"researcher\",\n" +
+                "      \"name\" : \"researcher\",\n" +
+                "      \"replace\" : true\n" +
+                "    } ],\n" +
                 "    \"engineConfig\": {\n" +
                 "      \"mode\": \"record-based\",\n" +
                 "      \"facets\": []\n" +
