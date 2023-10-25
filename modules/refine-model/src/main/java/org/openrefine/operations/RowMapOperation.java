@@ -28,6 +28,7 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.exceptions.DuplicateColumnException;
 import org.openrefine.operations.exceptions.MissingColumnException;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.overlay.OverlayModel;
@@ -60,10 +61,10 @@ abstract public class RowMapOperation extends EngineDependentOperation {
         RowInRecordMapper positiveMapper;
         RowInRecordMapper negativeMapper;
 
-        // Isolate mappers so that they only read the dependencies that they declare
         List<String> dependencies = getColumnDependencies();
         List<ColumnId> dependencyIds = null;
         if (dependencies != null) {
+            // Isolate mappers so that they only read the dependencies that they declare
             dependencyIds = new ArrayList<>(dependencies.size());
             for (String columnName : dependencies) {
                 ColumnMetadata metadata = columnModel.getColumnByName(columnName);
@@ -117,30 +118,50 @@ abstract public class RowMapOperation extends EngineDependentOperation {
                 int insertionIndex = insertion.getInsertAt() != null ? (newColumnNames.indexOf(insertion.getInsertAt()) + 1)
                         : newColumnNames.size();
 
+                int sourceColumnIndex;
+                if (insertion.getCopiedFrom() == null) {
+                    sourceColumnIndex = -(mapperColumnIndex + 1);
+                    mapperColumnIndex++;
+                } else {
+                    sourceColumnIndex = columnModel.getRequiredColumnIndex(insertion.getCopiedFrom());
+                }
+
                 if (insertion.isReplace()) {
                     int replacingIndex = insertionIndex - 1;
                     if (replacingIndex == -1) {
                         throw new MissingColumnException(insertion.getInsertAt());
                     }
-                    indicesMap.set(replacingIndex, -(mapperColumnIndex + 1));
-                    newColumnNames.set(replacingIndex, insertion.getName()); // TODO detect conflicts
+                    int existingName = newColumnNames.indexOf(insertion.getName());
+                    if (existingName != -1 && existingName != replacingIndex) {
+                        throw new DuplicateColumnException(insertion.getName());
+                    }
+                    indicesMap.set(replacingIndex, sourceColumnIndex);
+                    newColumnNames.set(replacingIndex, insertion.getName());
                 } else {
-                    indicesMap.add(insertionIndex, -(mapperColumnIndex + 1));
-                    newColumnNames.add(insertionIndex, insertion.getName()); // TODO detect conflicts
+                    int existingName = newColumnNames.indexOf(insertion.getName());
+                    if (existingName != -1) {
+                        throw new DuplicateColumnException(insertion.getName());
+                    }
+                    indicesMap.add(insertionIndex, sourceColumnIndex);
+                    newColumnNames.add(insertionIndex, insertion.getName());
                 }
-                mapperColumnIndex++;
+
             }
 
             // derive new column model and mappers
             ColumnModel columnModelFromMapper = newColumnModel;
-            List<ColumnMetadata> fullColumns = indicesMap.stream().map(i -> {
-                if (i >= 0) {
-                    return columnModel.getColumnByIndex(i);
+            List<ColumnMetadata> fullColumns = IntStream.range(0, indicesMap.size()).mapToObj(newIndex -> {
+                int origIndex = indicesMap.get(newIndex);
+                ColumnMetadata column;
+                if (origIndex >= 0) {
+                    column = columnModel.getColumnByIndex(origIndex);
                 } else {
-                    return columnModelFromMapper.getColumnByIndex(-(i + 1))
+                    column = columnModelFromMapper.getColumnByIndex(-(origIndex + 1))
                             .withLastModified(context.getHistoryEntryId());
                 }
+                return column.withName(newColumnNames.get(newIndex));
             }).collect(Collectors.toList());
+
             ColumnModel fullColumnModel = new ColumnModel(fullColumns, columnModel.getKeyColumnIndex(),
                     columnModel.hasRecords() && positiveMapper.preservesRecordStructure());
             newColumnModel = fullColumnModel;
