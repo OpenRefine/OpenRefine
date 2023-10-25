@@ -31,10 +31,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ReconDialog(column, types) {
+function ReconDialog(column) {
   this._column = column;
   this._serviceRecords = [];
   this._selectedServiceRecordIndex = -1;
+  this._record=null;
 
   this._createDialog();
 }
@@ -45,42 +46,27 @@ ReconDialog.prototype._createDialog = function() {
 
   this._elmts = DOM.bind(dialog);
   this._elmts.dialogHeader.text($.i18n('core-recon/recon-col')+' "' + this._column.name + '"');
-  
+
   this._elmts.servicePanelMessage.html($.i18n('core-recon/pick-service'));
-  this._elmts.serviceListTitle.html($.i18n('core-recon/service-title'));
   this._elmts.addStandardServiceButton.html($.i18n('core-buttons/add-std-svc')+"...");
-  this._elmts.reconcileButton.html($.i18n('core-buttons/start-recon'));
   this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   this._elmts.discoverServicesButton.html($.i18n('core-buttons/discover-services'));
+  this._elmts.nextButton.html($.i18n('core-buttons/next-dialog'));
 
   this._elmts.addStandardServiceButton.on('click',function() { self._onAddStandardService(); });
 
-  this._elmts.reconcileButton.on('click',function() { self._onOK(); });
   this._elmts.cancelButton.on('click',function() { self._dismiss(); });
+  this._elmts.nextButton.on('click',function() { self._nextDialog(self._column,self._selectedServiceRecordIndex,self._serviceRecords,self._record); });
 
   this._level = DialogSystem.showDialog(dialog);
   this._populateDialog();
-  this._registerDialogServiceOpener();
+
 };
 
-ReconDialog.prototype._registerDialogServiceOpener = function() {
-  var self = this;
-
-  $('.recon-dialog-service-opener').on('click',function() {
-    self._toggleServices();
-  });
+ReconDialog.prototype._nextDialog = function(column,selectedServiceRecordindex,serviceRecords,record) {
+  this._dismiss();
+  new ReconDialog2(column,selectedServiceRecordindex,serviceRecords,record);
 }
-
-ReconDialog.prototype._onOK = function() {
-  if (this._selectedServiceRecordIndex >= 0) {
-    var record = this._serviceRecords[this._selectedServiceRecordIndex];
-    if (record.handler) {
-      if (record.handler.start()) {
-        this._dismiss();
-      }
-    }
-  }
-};
 
 ReconDialog.prototype._dismiss = function() {
   for (var i = 0; i < this._serviceRecords.length; i++) {
@@ -108,29 +94,49 @@ ReconDialog.prototype._cleanDialog = function() {
 
 ReconDialog.prototype._populateDialog = function() {
   var self = this;
+  self._elmts.serviceList.empty();
 
   var services = ReconciliationManager.getAllServices();
   if (services.length > 0) {
+    
     var renderService = function(service) {
       var record = {
           service: service,
           handler: null
       };
 
-      record.selector = $('<a>')
-      .attr("href", "javascript:{}")
-      .addClass("recon-dialog-service-selector")
-      .text(service.name)
-      .appendTo(self._elmts.serviceList)
-      .on('click',function() {
-    	self._toggleServices();
-        self._selectService(record);
-      });
+      var label = $('<label>')
+        .addClass('recon-dialog-service-list-element')
+        .appendTo(self._elmts.serviceList);
+
+      record.selector = $('<input type="radio" name="service-choice">')
+        .addClass("recon-dialog-service-selector")
+        .val(service.name) 
+        .appendTo(label)
+
+      var mainSpan=$('<span>')
+        .addClass("recon-service-entry")
+        .appendTo(label);
+
+      var divElement=$('<div>')
+        .text(service.name)
+        .appendTo(mainSpan);
+
+      var divElementURL = $('<div>')
+        .css('color','lightgrey')
+        .text(service.url)
+        .appendTo(mainSpan);
+      
+       label.on('click', function() {
+
+      self._record=record;
+      
+});
 
       $('<a>')
       .html("&nbsp;")
       .addClass("recon-dialog-service-selector-remove")
-      .prependTo(record.selector)
+      .prependTo(label)
       .on('click',function(event) {
         ReconciliationManager.unregisterService(service, function() {
           self._refresh(-1);
@@ -139,69 +145,20 @@ ReconDialog.prototype._populateDialog = function() {
       });
 
       self._serviceRecords.push(record);
+      
     };
 
     for (var i = 0; i < services.length; i++) {
       renderService(services[i]);
     }
+    
   }
 };
 
-ReconDialog.prototype._toggleServices = function() {
-  var self = this;
-  self._toggleServiceTitle(500);
-  self._toggleServiceList(500);
-};
-
-ReconDialog.prototype._toggleServiceTitle = function(duration) {
-  var title = $('.recon-dialog-service-opener-title');
-  title.animate({
-	width : 'toggle'
-	}, duration, 'swing', function() {
-  });
-};
-
-ReconDialog.prototype._toggleServiceList = function(duration) {
-  $(".recon-dialog-service-list").toggle("slide", duration);
-};
-
-ReconDialog.prototype._selectService = function(record) {
-  for (var i = 0; i < this._serviceRecords.length; i++) {
-    if (record === this._serviceRecords[i]) {
-      if (i !== this._selectedServiceRecordIndex) {
-        if (this._selectedServiceRecordIndex >= 0) {
-          var oldRecord = this._serviceRecords[this._selectedServiceRecordIndex];
-          if (oldRecord.handler) {
-            oldRecord.selector.removeClass("selected");
-            oldRecord.handler.deactivate();
-          }
-        }
-
-        this._elmts.servicePanelMessage.hide();
-
-        record.selector.addClass("selected");
-        if (record.handler) {
-          record.handler.activate();
-        } else {
-          var handlerConstructor = eval(record.service.ui.handler);
-
-          record.handler = new handlerConstructor(
-              this._column, record.service, this._elmts.servicePanelContainer);
-        }
-
-        this._selectedServiceRecordIndex = i;
-        return;
-      }
-    }
-  }
-};
 
 ReconDialog.prototype._refresh = function(newSelectIndex) {
   this._cleanDialog();
   this._populateDialog();
-  if (newSelectIndex >= 0) {
-    this._selectService(this._serviceRecords[newSelectIndex]);
-  }
 };
 
 ReconDialog.prototype._onAddStandardService = function() {

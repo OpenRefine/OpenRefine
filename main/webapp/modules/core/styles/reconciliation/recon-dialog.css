@@ -32,87 +32,53 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 .recon-dialog-service {
-  padding: 0 0 10px;
+  padding: 0 10px 10px;
 }
 
 .recon-dialog-service-list-container {
-  position: absolute;
+
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-height: 470px;
+  height: 470px !important;
   z-index: 10;
 }
 
 .recon-dialog-service-list {
-  background: none repeat scroll 0 0 #FFFFFF;
-  border: 1px solid #AAAAAA;
-  height: 470px;
-  margin-left: 10px;
-  overflow: auto;
-  padding: 1px;
-  width: 200px;
+padding:1px;
+padding-bottom:10px ;
+height: 10px ;
+max-height: 100px;
+display: block;
 }
 
-.recon-dialog-service-opener {
-  height: 25px;
-  margin-left: -5px;
-}
 
-.recon-dialog-service-opener:hover {
-  cursor: pointer;
-}
-
-.recon-dialog-service-opener-title {
-  background: none repeat scroll 0 0 #E0EDFE;
-  float: left;
-  font-size: 18px;
-  height: 100%;
-  text-align: center;
-  width: 220px;
-}
-
-.recon-dialog-service-opener-img {
-  background: none repeat scroll 0 0 #E0EDFE;
-  border-bottom-right-radius: 12px;
-  border-top-right-radius: 12px;
-  padding: 4px 2px;
-}
-
-.recon-dialog-service-opener-img:hover {
-  background: none repeat scroll 0 0 #BFDBFF;
-}
-
-.recon-dialog-service-panel-container {
-  float: left;
-  min-height: 500px;
-  margin-left: 20px;
-  width: 850px;
-}
-
-a.recon-dialog-service-selector {
-  display: block;
+a.recon-dialog-service-list-container {
+  border: 1px solid #ccc;
   padding: 10px;
-  text-decoration: none;
-  color: var(--text-primary);
+  max-height: 100px;
+  height: 100px !important;
 }
 
-a.recon-dialog-service-selector:hover {
+a.recon-dialog-service-list-container {
   background: #eee;
 }
 
-a.recon-dialog-service-selector.selected {
+a.recon-dialog-service-list-container.selected {
   background: #eee;
   font-weight: bold;
 }
 
 .recon-dialog-service-panel-message {
-  text-align: center;
-  font-size: 200%;
-  padding: 50px 0;
-  color: #aaa;
+    text-align: left;
+    font-size: 100%;
+    padding: 10px 0;
+    color:black;
 }
-
 a.recon-dialog-service-selector-remove {
   float: right;
   position: relative;
-  top: -5px;
+  top: 5px;
   left: 5px;
   width: 12px;
   height: 12px;
@@ -121,7 +87,26 @@ a.recon-dialog-service-selector-remove {
   background-repeat: no-repeat;
   background-position: 0px 0px;
 }
-
-a.recon-dialog-service-selector-remove:hover {
-  background-position: -12px 0px;
+.dialog-footer {
+  display: flex;
+  justify-content: space-between;
 }
+
+.button-left {
+  display: flex;
+}
+
+.button-right {
+  display: flex;
+  gap: 10px; 
+}
+.recon-service-entry{
+  display:inline-block;
+
+}
+.recon-dialog-service-list-element{
+  display:block;
+  margin-bottom: 0.5em ;
+
+}
+

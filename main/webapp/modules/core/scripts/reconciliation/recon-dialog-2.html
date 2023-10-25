@@ -3,24 +3,20 @@
 	<div class="dialog-body" bind="dialogBody">
 		<div class="grid-layout layout-normal layout-full grid-layout-for-ui">
 			<div class="recon-dialog-service">
-                <div class="recon-dialog-service-panel-container"
+				<div class="recon-dialog-service-panel-container"
 					bind="servicePanelContainer">
 					<div class="recon-dialog-service-panel-message"
 						bind="servicePanelMessage"></div>
-					</div>
-                <div class="recon-dialog-service-list-container">
-					<div class="recon-dialog-service-list" input type="radio" name="service-choice" bind="serviceList"></div>
-				</div>
+                </div>
 			</div>
 		</div>
 	</div>
 	<div class="dialog-footer" bind="dialogFooter" style="justify-content: space-between">
 		<div class="dialog-footer-bg">
-			<button class="button" bind="addStandardServiceButton"></button>
-			<a class="button" bind="discoverServicesButton" href="https://reconciliation-api.github.io/testbench" target="_blank" ></a>
+            <button class="button" bind="backButton"></button>
 		</div>
 		<div class="dialog-footer-bg">
-			<button class="button" style="font-weight: bold;" bind="nextButton"></button>
+            <button class="button" bind="reconcileButton"></button>
 			<button class="button" bind="cancelButton"></button>
 		</div>
 	</div>
