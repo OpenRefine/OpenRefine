@@ -42,6 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   max-height: 470px;
   height: 470px !important;
   z-index: 10;
+  overflow: auto;
 }
 
 .recon-dialog-service-list {
@@ -50,6 +51,7 @@ padding-bottom:10px ;
 height: 10px ;
 max-height: 100px;
 display: block;
+
 }
 
 
