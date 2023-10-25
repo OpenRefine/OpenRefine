@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -40,13 +42,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.ModelException;
 import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OperationDescription;
 import org.openrefine.operations.RowMapOperation;
-import org.openrefine.operations.exceptions.DuplicateColumnException;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.overlay.OverlayModel;
 
@@ -80,15 +81,13 @@ public class ColumnRenameOperation extends RowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
-            throws OperationException {
-        ColumnModel model = columnModel;
-        int index = model.getRequiredColumnIndex(_oldColumnName);
-        try {
-            return model.renameColumn(index, _newColumnName);
-        } catch (ModelException e) {
-            throw new DuplicateColumnException(_newColumnName);
-        }
+    public List<String> getColumnDependencies() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(new ColumnInsertion(_newColumnName, _oldColumnName, true, _oldColumnName));
     }
 
     @Override

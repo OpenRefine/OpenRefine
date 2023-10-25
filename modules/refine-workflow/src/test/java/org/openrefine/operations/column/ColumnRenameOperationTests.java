@@ -82,9 +82,17 @@ public class ColumnRenameOperationTests extends RefineTest {
     @Test
     public void serializeColumnRenameOperation() throws Exception {
         String json = "{\"op\":\"core/column-rename\","
-                + "\"description\":\"Rename column old name to new name\","
-                + "\"oldColumnName\":\"old name\","
-                + "\"newColumnName\":\"new name\"}";
+                + "  \"description\":\"Rename column old name to new name\","
+                + "  \"oldColumnName\":\"old name\","
+                + "  \"newColumnName\":\"new name\","
+                + "  \"columnDependencies\" : [ ],"
+                + "  \"columnInsertions\" : [ {"
+                + "    \"copiedFrom\" : \"old name\","
+                + "    \"insertAt\" : \"old name\","
+                + "    \"name\" : \"new name\","
+                + "    \"replace\" : true"
+                + "  } ]"
+                + "}";
         Operation op = ParsingUtilities.mapper.readValue(json, Operation.class);
         TestUtils.isSerializedTo(op, json, ParsingUtilities.defaultWriter);
     }
