@@ -66,7 +66,8 @@ ReconDialog.prototype._createDialog = function() {
 
 };
 
-ReconDialog.prototype._nextDialog = function(column,selectedServiceRecordindex,serviceRecords,record) {
+
+ReconDialog.prototype._nextDialog = function(column, selectedServiceRecordindex, serviceRecords, record) {
   this._dismiss();
   new ReconDialog2(column, selectedServiceRecordindex, serviceRecords, record);
 }
