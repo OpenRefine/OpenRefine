@@ -3,6 +3,8 @@ package com.google.refine.commands;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,9 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.testng.annotations.BeforeMethod;
 
+import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
-public class CommandTestBase {
+public class CommandTestBase extends RefineTest {
 
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
@@ -39,5 +42,14 @@ public class CommandTestBase {
      */
     protected void assertCSRFCheckFailed() {
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
+    }
+
+    /**
+     * Convenience method to check that CSRF protection was NOT triggered
+     */
+    protected void assertErrorNotCSRF() {
+        String response = writer.toString();
+        assertTrue(response.contains("\"code\":\"error\""));
+        assertFalse(response.contains("Missing or invalid csrf_token parameter"));
     }
 }

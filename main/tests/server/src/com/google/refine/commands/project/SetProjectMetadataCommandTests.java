@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.project;
 
+import static com.google.refine.util.TestUtils.assertEqualsAsJson;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -59,12 +61,12 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.CommandTestBase;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
-public class SetProjectMetadataCommandTests extends RefineTest {
+public class SetProjectMetadataCommandTests extends CommandTestBase {
 
     @Override
     @BeforeTest
@@ -77,22 +79,19 @@ public class SetProjectMetadataCommandTests extends RefineTest {
 
     // variables
     long PROJECT_ID_LONG = 1234;
-    String PROJECT_ID = "1234";
+    String PROJECT_ID = Long.toString(PROJECT_ID_LONG);
     String SUBJECT = "subject for project";
 
     // mocks
-    HttpServletRequest request = null;
-    HttpServletResponse response = null;
     ProjectManager projMan = null;
     Project proj = null;
-    PrintWriter pw = null;
 
     @BeforeMethod
     public void SetUp() throws IOException {
         projMan = mock(ProjectManager.class);
         ProjectManager.singleton = projMan;
         proj = mock(Project.class);
-        pw = mock(PrintWriter.class);
+        writer = new StringWriter();
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -108,7 +107,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         when(proj.getMetadata()).thenReturn(metadata);
 
         try {
-            when(response.getWriter()).thenReturn(pw);
+            when(response.getWriter()).thenReturn(new PrintWriter(writer));
         } catch (IOException e1) {
             Assert.fail();
         }
@@ -121,7 +120,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         projMan = null;
         ProjectManager.singleton = null;
         proj = null;
-        pw = null;
+        writer = null;
         request = null;
         response = null;
     }
@@ -155,15 +154,13 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
+        assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
 
         Assert.assertEquals(proj.getMetadata().getSubject(), SUBJECT);
     }
 
     /**
      * set a user defined metadata field
-     * 
-     * @throws JSONException
      */
     @Test
     public void setUserMetadataFieldTest() {
@@ -191,7 +188,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
+        assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
 
         ObjectNode obj = (ObjectNode) proj.getMetadata().getUserMetadata().get(0);
         Assert.assertEquals(obj.get("name").asText(), "clientID");
@@ -233,6 +230,20 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         ProjectMetadata meta = proj.getMetadata();
 
         Assert.assertThrows(() -> meta.setAnyField("customMetadata", customMetadata));
+    }
+
+    @Test
+    public void testCSRFProtection() throws ServletException, IOException {
+        when(request.getParameter("csrf_token")).thenReturn("");
+        SUT.doPost(request, response);
+        assertCSRFCheckFailed();
+    }
+
+    @Test
+    public void testNoProjectId() throws ServletException, IOException {
+        when(request.getParameter("project")).thenReturn(null);
+        SUT.doPost(request, response);
+        assertErrorNotCSRF();
     }
 
     private String getValidCustomMetadata() {
