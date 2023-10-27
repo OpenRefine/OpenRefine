@@ -120,7 +120,7 @@
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <surefire.version>3.1.2</surefire.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-    <maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
+    <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
     <license-plugin.version>2.0.0</license-plugin.version>
