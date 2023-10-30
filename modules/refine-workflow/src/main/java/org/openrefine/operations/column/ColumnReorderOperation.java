@@ -98,7 +98,7 @@ public class ColumnReorderOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
             throws OperationException {
         // Build a map from new indices to original ones
         List<Integer> origIndex = new ArrayList<>(_columnNames.size());

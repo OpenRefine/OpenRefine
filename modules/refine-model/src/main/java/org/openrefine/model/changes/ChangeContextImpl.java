@@ -1,17 +1,16 @@
 
 package org.openrefine.model.changes;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiFunction;
+
 import org.openrefine.browsing.Engine;
 import org.openrefine.history.History;
 import org.openrefine.model.ColumnId;
 import org.openrefine.model.Grid;
 import org.openrefine.operations.exceptions.OperationException;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class ChangeContextImpl implements ChangeContext {
 

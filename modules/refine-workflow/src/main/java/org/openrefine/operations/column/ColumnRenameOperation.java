@@ -87,12 +87,18 @@ public class ColumnRenameOperation extends RowMapOperation {
 
     @Override
     public List<ColumnInsertion> getColumnInsertions() {
-        return Collections.singletonList(new ColumnInsertion(_newColumnName, _oldColumnName, true, _oldColumnName));
+        return Collections.singletonList(
+                ColumnInsertion.builder()
+                        .withName(_newColumnName)
+                        .withInsertAt(_oldColumnName)
+                        .withReplace(true)
+                        .withCopiedFrom(_oldColumnName)
+                        .build());
     }
 
     @Override
     protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context) throws OperationException {
+            long estimatedRowCount, ChangeContext context) throws OperationException {
         return RowInRecordMapper.IDENTITY;
     }
 

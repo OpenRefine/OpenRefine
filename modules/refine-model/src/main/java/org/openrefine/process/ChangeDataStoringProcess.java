@@ -1,20 +1,21 @@
 
 package org.openrefine.process;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Function;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.commons.io.FileUtils;
+
 import org.openrefine.history.History;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataId;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.ChangeDataStore;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * A process which computes and stores the contents of a change data object to the store.

@@ -142,7 +142,7 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                                 .withJudgmentAction("mass")
                                 .withJudgment(Recon.Judgment.Matched)) }
                 });
-
+        expected = markAsModified(expected, "bar", context.getHistoryEntryId());
         assertGridEquals(applied, expected);
     }
 }

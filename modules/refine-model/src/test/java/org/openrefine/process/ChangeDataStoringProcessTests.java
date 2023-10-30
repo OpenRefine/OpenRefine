@@ -1,22 +1,23 @@
 
 package org.openrefine.process;
 
-import org.openrefine.history.History;
-import org.openrefine.model.changes.ChangeData;
-import org.openrefine.model.changes.ChangeDataId;
-import org.openrefine.model.changes.ChangeDataSerializer;
-import org.openrefine.model.changes.ChangeDataStore;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import org.openrefine.history.History;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataId;
+import org.openrefine.model.changes.ChangeDataSerializer;
+import org.openrefine.model.changes.ChangeDataStore;
 
 public class ChangeDataStoringProcessTests {
 

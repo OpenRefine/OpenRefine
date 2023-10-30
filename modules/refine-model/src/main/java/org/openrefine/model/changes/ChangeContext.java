@@ -1,16 +1,15 @@
 
 package org.openrefine.model.changes;
 
-import org.openrefine.browsing.Engine;
-import org.openrefine.history.History;
-import org.openrefine.model.ColumnId;
-import org.openrefine.model.Grid;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Function;
+
+import org.openrefine.browsing.Engine;
+import org.openrefine.history.History;
+import org.openrefine.model.ColumnId;
+import org.openrefine.model.Grid;
 
 /**
  * Stores information that changes can rely on when modifying the project grid.

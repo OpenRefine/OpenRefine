@@ -5,10 +5,13 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.Validate;
+
+import org.openrefine.model.recon.ReconConfig;
 
 /**
  * Represents a column written to by a row- or record-wise operation. This holds information about where the column
@@ -26,18 +29,40 @@ public class ColumnInsertion implements Serializable {
     private final String insertAt;
     private final boolean replace;
     private final String copiedFrom;
+    private final ReconConfig reconConfig;
 
     @JsonCreator
     public ColumnInsertion(
             @JsonProperty("name") String name,
             @JsonProperty("insertAt") String insertAt,
             @JsonProperty("replace") boolean replace,
-            @JsonProperty("copiedFrom") String copiedFrom) {
+            @JsonProperty("copiedFrom") String copiedFrom,
+            @JsonProperty("reconConfig") ReconConfig reconConfig) {
         Validate.notNull(name, "no name provided for column to insert");
         this.name = name;
         this.insertAt = insertAt;
         this.replace = replace;
         this.copiedFrom = copiedFrom;
+        this.reconConfig = reconConfig;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Short-hand form for creating a column insertion which just replaces an existing column by computing its new
+     * values.
+     * 
+     * @param name
+     *            the name of the column to replace
+     */
+    public static ColumnInsertion replacement(String name) {
+        return builder()
+                .withName(name)
+                .withInsertAt(name)
+                .withReplace(true)
+                .build();
     }
 
     /**
@@ -79,6 +104,14 @@ public class ColumnInsertion implements Serializable {
         return copiedFrom;
     }
 
+    /**
+     * The recon config to set on the column. If null, it is not touched.
+     */
+    @JsonIgnore
+    public ReconConfig getReconConfig() {
+        return reconConfig;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(copiedFrom, insertAt, name);
@@ -94,12 +127,56 @@ public class ColumnInsertion implements Serializable {
             return false;
         ColumnInsertion other = (ColumnInsertion) obj;
         return Objects.equals(copiedFrom, other.copiedFrom) && Objects.equals(insertAt, other.insertAt)
-                && replace == other.replace && Objects.equals(name, other.name);
+                && replace == other.replace && Objects.equals(name, other.name) && Objects.equals(reconConfig, other.reconConfig);
     }
 
     @Override
     public String toString() {
-        return "ColumnInsertion [name=" + name + ", insertAt=" + insertAt + ", replace=" + replace + ", copiedFrom=" + copiedFrom + "]";
+        return "ColumnInsertion [name=" + name + ", insertAt=" + insertAt +
+                ", replace=" + replace + ", copiedFrom=" + copiedFrom + ", reconConfig=" + reconConfig + "]";
+    }
+
+    public static final class Builder {
+
+        private String name = null;
+        private String insertAt = null;
+        private boolean replace = false;
+        private String copiedFrom = null;
+        private ReconConfig reconConfig = null;
+
+        private Builder() {
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withInsertAt(String insertAt) {
+            this.insertAt = insertAt;
+            return this;
+        }
+
+        public Builder withReplace(boolean replace) {
+            this.replace = replace;
+            return this;
+        }
+
+        public Builder withCopiedFrom(String copiedFrom) {
+            this.copiedFrom = copiedFrom;
+            return this;
+        }
+
+        public Builder withReconConfig(ReconConfig reconConfig) {
+            this.reconConfig = reconConfig;
+            return this;
+        }
+
+        public ColumnInsertion build() {
+            return new ColumnInsertion(
+                    this.name, this.insertAt, this.replace,
+                    this.copiedFrom, this.reconConfig);
+        }
     }
 
 }

@@ -36,6 +36,7 @@ package org.openrefine.operations.cell;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +49,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.IndexedData;
-import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
 import org.openrefine.operations.exceptions.OperationException;
@@ -149,8 +151,20 @@ public class MassEditOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context) throws OperationException {
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(
+                ColumnInsertion.replacement(_baseColumnName));
+    }
+
+    @Override
+    protected boolean preservesRecordStructure(ColumnModel columnModel) {
+        return columnModel.getKeyColumnIndex() != columnModel.getColumnIndexByName(_baseColumnName);
+    }
+
+    @Override
+    protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            long estimatedRowCount, ChangeContext context) throws OperationException {
+        int baseColumnIndex = columnModel.getColumnIndexByName(_baseColumnName);
         Map<String, Serializable> fromTo = new HashMap<>();
         Serializable fromBlankTo = null;
         Serializable fromErrorTo = null;
@@ -168,42 +182,38 @@ public class MassEditOperation extends ExpressionBasedOperation {
                 fromErrorTo = edit.to;
             }
         }
-        int columnIdx = columnModel.getRequiredColumnIndex(_baseColumnName);
-        return new Joiner(columnIdx, columnModel.getKeyColumnIndex(), fromTo, fromBlankTo, fromErrorTo);
+        return new Joiner(super.getPositiveRowMapper(columnModel, overlayModels, estimatedRowCount, context),
+                baseColumnIndex, fromTo, fromBlankTo, fromErrorTo);
     }
 
-    private static class Joiner extends RowInRecordChangeDataJoiner {
+    private static class Joiner extends RowInRecordMapper {
 
         private static final long serialVersionUID = 749899770859402444L;
 
-        private final int columnIdx;
-        private final boolean preservesRecords;
+        private final RowInRecordMapper parentMapper;
+        private final int baseColumnIndex;
         private final Map<String, Serializable> fromTo;
         private final Serializable fromBlankTo;
         private final Serializable fromErrorTo;
 
-        public Joiner(int columnIndex, int keyColumnIndex, Map<String, Serializable> fromTo, Serializable fromBlankTo,
+        public Joiner(RowInRecordMapper parentMapper, int baseColumnIndex, Map<String, Serializable> fromTo, Serializable fromBlankTo,
                 Serializable fromErrorTo) {
-            this.columnIdx = columnIndex;
+            this.baseColumnIndex = baseColumnIndex;
+            this.parentMapper = parentMapper;
             this.fromTo = fromTo;
             this.fromBlankTo = fromBlankTo;
             this.fromErrorTo = fromErrorTo;
-            // TODO we could be more precise: if blanks are preserved and cells are never blanked,
-            // then the record structure is also preserved.
-            this.preservesRecords = columnIndex != keyColumnIndex;
         }
 
         @Override
-        public Row call(Row row, IndexedData<Cell> indexedData) {
-            if (indexedData.getData() == null) {
+        public Row call(Record record, long rowId, Row row) {
+            Row evaluated = parentMapper.call(record, rowId, row);
+            Cell cell = evaluated.getCell(0);
+            if (cell != null && cell.isPending()) {
                 return row;
             }
-            if (indexedData.isPending() || (indexedData.getData() != null && indexedData.getData().isPending())) {
-                return row.withCell(columnIdx, Cell.PENDING_NULL);
-            }
-            Cell cell = indexedData.getData();
-            Cell newCell = row.getCell(columnIdx);
-            Object v = cell.getValue();
+            Cell newCell = baseColumnIndex == -1 ? Cell.NULL : row.getCell(baseColumnIndex);
+            Object v = cell == null ? null : cell.getValue();
             if (ExpressionUtils.isError(v)) {
                 if (fromErrorTo != null) {
                     newCell = new Cell(fromErrorTo, (cell != null) ? cell.recon : null);
@@ -219,12 +229,12 @@ public class MassEditOperation extends ExpressionBasedOperation {
                     newCell = new Cell(fromBlankTo, (cell != null) ? cell.recon : null);
                 }
             }
-            return row.withCell(columnIdx, newCell);
+            return new Row(Collections.singletonList(newCell), row.flagged, row.starred);
         }
 
         @Override
         public boolean preservesRecordStructure() {
-            return preservesRecords;
+            return parentMapper.preservesRecordStructure();
         }
 
     }

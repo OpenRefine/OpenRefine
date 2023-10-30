@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,35 +51,32 @@ import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.browsing.facets.ListFacet;
 import org.openrefine.browsing.facets.RangeFacet;
-import org.openrefine.history.GridPreservation;
 import org.openrefine.messages.OpenRefineMessage;
-import org.openrefine.model.*;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
-import org.openrefine.model.changes.CellChangeDataSerializer;
-import org.openrefine.model.changes.CellListChangeDataSerializer;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.ChangeData;
-import org.openrefine.model.changes.IndexedData;
-import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
-import org.openrefine.model.changes.RowInRecordChangeDataProducer;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
-import org.openrefine.operations.ChangeResult;
-import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.OperationException;
+import org.openrefine.overlay.OverlayModel;
 
 /**
  * Runs reconciliation on a column.
  * <p>
  * TODO restore records mode
  */
-public class ReconOperation extends EngineDependentOperation {
+public class ReconOperation extends RowMapOperation {
 
     final static Logger logger = LoggerFactory.getLogger("recon-operation");
 
@@ -100,47 +95,29 @@ public class ReconOperation extends EngineDependentOperation {
     }
 
     @Override
-    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
-        ColumnModel columnModel = projectState.getColumnModel();
-        int baseColumnIndex = columnModel.getRequiredColumnIndex(_columnName);
-        ColumnModel newColumnModel = columnModel
-                .withReconConfig(baseColumnIndex, _reconConfig)
-                .markColumnAsModified(baseColumnIndex, context.getHistoryEntryId());
-
-        Joiner joiner = new Joiner(baseColumnIndex);
-
-        Grid joined;
-        Engine engine = new Engine(projectState, _engineConfig, context.getProjectId());
-        long rowCount = projectState.rowCount();
-        ReconChangeDataProducer producer = new ReconChangeDataProducer(_columnName, _reconConfig,
-                context.getHistoryEntryId(), rowCount, columnModel);
-        if (Engine.Mode.RowBased.equals(_engineConfig.getMode())) {
-            ChangeData<Cell> changeData = null;
-            try {
-                changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer(),
-                        (grid, partialChangeData) -> {
-                            Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
-                            return grid.mapRows(localEngine.combinedRowFilters(), producer, partialChangeData);
-                        }, producer.getColumnDependencies(), // TODO add dependencies from facets
-                        Engine.Mode.RowBased);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
+    public List<String> getColumnDependencies() {
+        List<String> dependencies = new ArrayList<>();
+        dependencies.add(_columnName);
+        List<String> depNames = _reconConfig.getColumnDependencies();
+        if (depNames != null) {
+            for (String depName : depNames) {
+                if (dependencies.indexOf(depName) == -1) {
+                    dependencies.add(depName);
+                }
             }
-            joined = projectState.join(changeData, joiner, newColumnModel);
+            return dependencies;
         } else {
-            ChangeData<List<Cell>> changeData = null;
-            try {
-                changeData = context.getChangeData(_changeDataId, new CellListChangeDataSerializer(),
-                        (grid, partialChangeData) -> {
-                            Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
-                            return grid.mapRecords(localEngine.combinedRecordFilters(), producer, partialChangeData);
-                        }, producer.getColumnDependencies(), Engine.Mode.RecordBased);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-            joined = projectState.join(changeData, joiner, newColumnModel);
+            return null;
         }
+    }
 
+    @Override
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(new ColumnInsertion(_columnName, _columnName, true, null, _reconConfig));
+    }
+
+    @Override
+    public List<FacetConfig> getCreatedFacets() {
         // add facets after applying the operation
         ListFacet.ListFacetConfig judgmentFacet = new ListFacet.ListFacetConfig(
                 _columnName + ": " + OpenRefineMessage.recon_operation_judgement_facet_name(),
@@ -156,13 +133,9 @@ public class ReconOperation extends EngineDependentOperation {
                 null,
                 null,
                 null);
-        List<FacetConfig> createdFacets = Arrays.asList(
+        return Arrays.asList(
                 judgmentFacet,
                 scoreFacet);
-
-        return new ChangeResult(joined,
-                GridPreservation.PRESERVES_ROWS, // TODO add record preservation metadata on Joiner
-                createdFacets);
     }
 
     @Override
@@ -180,40 +153,13 @@ public class ReconOperation extends EngineDependentOperation {
         return _columnName;
     }
 
-    protected static class Joiner extends RowInRecordChangeDataJoiner {
-
-        private static final long serialVersionUID = 5848902684901514597L;
-        private final int _columnIndex;
-
-        public Joiner(int columnIndex) {
-            _columnIndex = columnIndex;
-        }
-
-        @Override
-        public Row call(Row row, IndexedData<Cell> indexedData) {
-            Cell cell = indexedData.getData();
-            if (indexedData.isPending()) {
-                Cell currentCell = row.getCell(_columnIndex);
-                cell = new Cell(
-                        currentCell == null ? null : currentCell.value,
-                        currentCell == null ? null : currentCell.recon,
-                        true);
-            }
-            if (cell != null) {
-                return row.withCell(_columnIndex, cell);
-            } else {
-                return row;
-            }
-        }
-
-        @Override
-        public boolean preservesRecordStructure() {
-            return true; // blank cells are preserved
-        }
-
+    @Override
+    protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            long estimatedRowCount, ChangeContext context) throws OperationException {
+        return new Mapper(_columnName, _reconConfig, context.getHistoryEntryId(), estimatedRowCount, columnModel);
     }
 
-    protected static class ReconChangeDataProducer extends RowInRecordChangeDataProducer<Cell> {
+    protected static class Mapper extends RowInRecordMapper {
 
         private static final long serialVersionUID = 881447948869363218L;
         transient private LoadingCache<ReconJob, Cell> cache = null;
@@ -221,19 +167,19 @@ public class ReconOperation extends EngineDependentOperation {
         private final String columnName;
         private final long historyEntryId;
         private final long rowCountEstimate;
-        private final ColumnModel originalColumnModel;
+        private final ColumnModel columnModel;
 
-        protected ReconChangeDataProducer(
+        protected Mapper(
                 String columnName,
                 ReconConfig reconConfig,
                 long historyEntryId,
                 long rowCountEstimate,
-                ColumnModel originalColumnModel) {
+                ColumnModel columnModel) {
             this.reconConfig = reconConfig;
             this.columnName = columnName;
             this.historyEntryId = historyEntryId;
             this.rowCountEstimate = rowCountEstimate;
-            this.originalColumnModel = originalColumnModel;
+            this.columnModel = columnModel;
         }
 
         private void initCache() {
@@ -262,12 +208,12 @@ public class ReconOperation extends EngineDependentOperation {
         }
 
         @Override
-        public Cell call(Record record, long rowId, Row row, ColumnModel columnModel) {
-            return callRowBatch(Collections.singletonList(new IndexedRow(rowId, row)), columnModel).get(0);
+        public Row call(Record record, long rowId, Row row) {
+            return callRowBatch(Collections.singletonList(record), Collections.singletonList(new IndexedRow(rowId, row))).get(0);
         }
 
         @Override
-        public List<Cell> callRowBatch(List<IndexedRow> rows, ColumnModel columnModel) {
+        public List<Row> callRowBatch(List<Record> records, List<IndexedRow> rows) {
             if (cache == null) {
                 initCache();
             }
@@ -289,7 +235,12 @@ public class ReconOperation extends EngineDependentOperation {
             }
             try {
                 Map<ReconJob, Cell> results = cache.getAll(reconJobs.stream().filter(r -> r != null).collect(Collectors.toList()));
-                return reconJobs.stream().map(job -> results.get(job)).collect(Collectors.toList());
+                List<Row> rowsResult = new ArrayList<>(results.size());
+                for (int i = 0; i != reconJobs.size(); i++) {
+                    Row oldRow = rows.get(i).getRow();
+                    rowsResult.add(new Row(Collections.singletonList(results.get(reconJobs.get(i))), oldRow.flagged, oldRow.starred));
+                }
+                return rowsResult;
             } catch (ExecutionException e) {
                 // the `batchRecon` method should throw IOException, it currently does not.
                 // Once that is fixed, we should do a couple of retries here before failing
@@ -308,16 +259,13 @@ public class ReconOperation extends EngineDependentOperation {
         }
 
         @Override
-        public List<ColumnId> getColumnDependencies() {
-            List<ColumnId> dependencies = new ArrayList<>();
-            dependencies.add(originalColumnModel.getColumnByName(columnName).getColumnId());
-            List<String> depNames = reconConfig.getColumnDependencies();
-            if (depNames != null) {
-                dependencies.addAll(depNames.stream()
-                        .map(depName -> originalColumnModel.getColumnByName(depName).getColumnId())
-                        .collect(Collectors.toList()));
-            }
-            return dependencies;
+        public boolean preservesRecordStructure() {
+            return true; // blank cells are preserved
+        }
+
+        @Override
+        public boolean persistResults() {
+            return true;
         }
 
     }

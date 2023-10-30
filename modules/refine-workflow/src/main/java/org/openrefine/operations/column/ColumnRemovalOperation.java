@@ -106,7 +106,7 @@ public class ColumnRemovalOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
             throws OperationException {
         List<Integer> columnIndices = new ArrayList<>(_columnNames.size());
         for (String columnName : _columnNames) {

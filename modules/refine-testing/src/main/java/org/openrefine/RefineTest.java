@@ -58,6 +58,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
+import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.Runner;
@@ -197,6 +198,19 @@ public class RefineTest {
     protected Grid createGridWithRecords(String[] columns, Serializable[][] rows) {
         Grid grid = createGrid(columns, rows);
         return grid.withColumnModel(grid.getColumnModel().withHasRecords(true));
+    }
+
+    protected Grid markAsModified(Grid grid, String columnName, long historyEntryId) {
+        ColumnModel columnModel = grid.getColumnModel();
+        int columnIndex = columnModel.getColumnIndexByName(columnName);
+        ColumnMetadata column = columnModel.getColumnByIndex(columnIndex)
+                .withLastModified(historyEntryId);
+        try {
+            return grid.withColumnModel(columnModel.replaceColumn(columnIndex, column));
+        } catch (ModelException e) {
+            // unreachable
+            throw new IllegalStateException();
+        }
     }
 
     @Deprecated

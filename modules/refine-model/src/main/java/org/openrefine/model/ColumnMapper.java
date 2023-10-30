@@ -1,15 +1,13 @@
 
 package org.openrefine.model;
 
-import org.apache.commons.lang3.Validate;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.operations.exceptions.MissingColumnException;
-import org.openrefine.overlay.OverlayModel;
-import org.openrefine.util.ColumnDependencyException;
-
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.Validate;
+
+import org.openrefine.overlay.OverlayModel;
 
 /**
  * Translates column-dependent metadata to a reduced column model, which is tailored to the dependencies of a particular
@@ -76,7 +74,7 @@ public class ColumnMapper implements Serializable {
     }
 
     public Record translateRecord(Record record) {
-        if (dependencies == null) {
+        if (dependencies == null || record == null) {
             return record;
         } else {
             // when mapping records we require that the key column index is included
@@ -143,9 +141,30 @@ public class ColumnMapper implements Serializable {
             }
 
             @Override
+            public boolean persistResults() {
+                return mapper.persistResults();
+            }
+
+            @Override
+            public int getBatchSize() {
+                return mapper.getBatchSize();
+            }
+
+            @Override
+            public int getMaxConcurrency() {
+                return mapper.getMaxConcurrency();
+            }
+
+            @Override
             public Row call(Record record, long rowId, Row row) {
                 return mapper.call(record == null ? null : translateRecord(record), rowId, translateRow(row));
             }
+
+            @Override
+            public List<Row> callRowBatch(List<Record> records, List<IndexedRow> indexedRows) {
+                return mapper.callRowBatch(translateRecordBatch(records), translateIndexedRowBatch(indexedRows));
+            }
+
         };
     }
 }

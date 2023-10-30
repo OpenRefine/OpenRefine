@@ -92,7 +92,7 @@ public class RowStarOperation extends RowMapOperation {
 
     @Override
     protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context) throws OperationException {
+            long estimatedRowCount, ChangeContext context) throws OperationException {
         return rowMapper(_starred);
     }
 }

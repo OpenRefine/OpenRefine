@@ -3,12 +3,12 @@ package org.openrefine.model;
 
 import static org.testng.Assert.assertEquals;
 
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.testng.annotations.Test;
+
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
 
 public class ColumnInsertionTests {
 
@@ -21,7 +21,7 @@ public class ColumnInsertionTests {
                 + "  \"name\" : \"foo\""
                 + "}";
 
-        ColumnInsertion SUT = new ColumnInsertion("foo", "bar", true, "original");
+        ColumnInsertion SUT = new ColumnInsertion("foo", "bar", true, "original", null);
 
         TestUtils.isSerializedTo(SUT, json, ParsingUtilities.defaultWriter);
         assertEquals(ParsingUtilities.mapper.readValue(json, ColumnInsertion.class), SUT);
@@ -31,7 +31,7 @@ public class ColumnInsertionTests {
     public void testSerializeMinimal() throws JsonMappingException, JsonProcessingException {
         String json = "{\"name\":\"foo\", \"replace\": false}";
 
-        ColumnInsertion SUT = new ColumnInsertion("foo", null, false, null);
+        ColumnInsertion SUT = new ColumnInsertion("foo", null, false, null, null);
 
         TestUtils.isSerializedTo(SUT, json, ParsingUtilities.defaultWriter);
         assertEquals(ParsingUtilities.mapper.readValue(json, ColumnInsertion.class), SUT);

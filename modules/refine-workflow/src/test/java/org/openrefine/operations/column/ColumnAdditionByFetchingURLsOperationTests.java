@@ -92,7 +92,14 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             + "    {\"name\":\"authorization\",\"value\":\"\"},"
             + "    {\"name\":\"user-agent\",\"value\":\"OpenRefine 3.0 rc.1 [TRUNK]\"},"
             + "    {\"name\":\"accept\",\"value\":\"application/json\"}"
-            + "]}";
+            + "],"
+            + "\"columnDependencies\" : [ \"orcid\" ],"
+            + "\"columnInsertions\" : [ {"
+            + "  \"insertAt\" : \"orcid\","
+            + "  \"name\" : \"employments\","
+            + "  \"replace\" : false"
+            + "} ]"
+            + "}";
 
     private String processJson = ""
             + "{\n" +

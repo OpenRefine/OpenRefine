@@ -1,9 +1,8 @@
 
 package org.openrefine.operations;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.io.UncheckedIOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -12,27 +11,24 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
 
-import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.expr.WrappedCell;
-import org.openrefine.history.GridPreservation;
-import org.openrefine.model.*;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
-import org.openrefine.model.changes.CellChangeDataSerializer;
-import org.openrefine.model.changes.CellListChangeDataSerializer;
+import org.openrefine.model.RecordMapper;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowInRecordMapper;
+import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeData;
-import org.openrefine.model.changes.IndexedData;
-import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
-import org.openrefine.model.changes.RowInRecordChangeDataProducer;
-import org.openrefine.operations.exceptions.MissingColumnException;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.overlay.OverlayModel;
-import org.openrefine.util.ColumnDependencyException;
 
 /**
  * Base class for an operation which evaluates an expression on rows or records, and then uses it to derive the new
@@ -56,6 +52,7 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
 
     // initialized lazily
     protected Evaluable _eval = null;
+    protected List<String> _orderedDependencies = null;
 
     protected ExpressionBasedOperation(EngineConfig engineConfig, String expression, String baseColumnName, OnError onError,
             int repeatCount) {
@@ -66,15 +63,8 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
         _repeatCount = repeatCount;
     }
 
-    /**
-     * Returns the joiner used to insert the result of the evaluation of the expression into a row or record. Depending
-     * on whether the expression is local or not (see {@link Evaluable#isLocal()}), this will either be used to build a
-     * row / record mapper to apply the change lazily on the grid, or the results of the evaluation will be stored in a
-     * {@link ChangeData} object which will then be joined by this joiner.
-     */
-    protected abstract RowInRecordChangeDataJoiner changeDataJoiner(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context)
-            throws OperationException;
+    // TODO to be handled by RowMapOperation instead
+    protected abstract boolean preservesRecordStructure(ColumnModel columnModel);
 
     /**
      * Returns the new column model after the operation has run.
@@ -93,57 +83,6 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
         return overlayModels;
     }
 
-    @Override
-    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
-        Evaluable eval = getEvaluable();
-        if (eval.isLocal() && !_forceEagerEvaluation) {
-            return super.apply(projectState, context);
-        } else {
-            RowInRecordChangeDataJoiner joiner = changeDataJoiner(projectState.getColumnModel(), projectState.getOverlayModels(), context);
-            ColumnModel newColumnModel = getNewColumnModel(projectState.getColumnModel(), projectState.getOverlayModels(), context, eval);
-            Engine engine = new Engine(projectState, _engineConfig, context.getProjectId());
-            RowInRecordChangeDataProducer<Cell> producer = getChangeDataProducer(
-                    projectState.getColumnModel(), projectState.getOverlayModels(), context);
-            Grid joined;
-            if (Engine.Mode.RowBased.equals(_engineConfig.getMode())) {
-                ChangeData<Cell> changeData = null;
-                try {
-                    changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer(),
-                            (grid, partialChangeData) -> {
-                                Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
-                                RowFilter filter = localEngine.combinedRowFilters();
-                                return grid.mapRows(filter, producer, partialChangeData);
-                            },
-                            producer.getColumnDependencies(), // TODO add dependencies from facets!
-                            Engine.Mode.RowBased);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-                joined = projectState.join(changeData, joiner, newColumnModel);
-            } else {
-                ChangeData<List<Cell>> changeData = null;
-                try {
-                    changeData = context.getChangeData(_changeDataId, new CellListChangeDataSerializer(),
-                            (grid, partialChangeData) -> {
-                                Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
-                                RecordFilter filter = localEngine.combinedRecordFilters();
-                                return grid.mapRecords(filter, producer, partialChangeData);
-                            },
-                            producer.getColumnDependencies(),
-                            Engine.Mode.RecordBased);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-                joined = projectState.join(changeData, joiner, newColumnModel);
-            }
-            Map<String, OverlayModel> newOverlayModels = getNewOverlayModels(projectState.getColumnModel(), projectState.getOverlayModels(),
-                    context, eval);
-            return new ChangeResult(
-                    joined.withOverlayModels(newOverlayModels),
-                    joiner.preservesRecordStructure() ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS);
-        }
-    }
-
     protected Evaluable getEvaluable() throws OperationException {
         if (_eval == null) {
             try {
@@ -156,26 +95,45 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
     }
 
     @Override
-    protected final ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+    public List<String> getColumnDependencies() {
+        if (_orderedDependencies == null) {
+            try {
+                Set<String> columnDependencies = getEvaluable().getColumnDependencies(_baseColumnName);
+                _orderedDependencies = columnDependencies == null ? null
+                        : columnDependencies
+                                .stream()
+                                .collect(Collectors.toList());
+            } catch (OperationException e) {
+                // to make sure that we can re-serialize an operation even if its expression could not be parsed
+                _orderedDependencies = null;
+            }
+        }
+        return _orderedDependencies;
+    }
+
+    @Override
+    protected ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
             throws OperationException {
         Validate.notNull(_eval);
         return getNewColumnModel(columnModel, overlayModels, context, _eval);
     }
 
     @Override
-    protected final RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context) throws OperationException {
+    protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            long estimatedRowCount, ChangeContext context) throws OperationException {
         Validate.notNull(_eval);
-        RowInRecordChangeDataJoiner joiner = changeDataJoiner(columnModel, overlayModels, context);
-        return new PositiveRowMapper(getChangeDataProducer(columnModel, overlayModels, context), joiner, columnModel);
+        boolean preservesRecordStructure = preservesRecordStructure(columnModel);
+        List<ColumnInsertion> insertions = getColumnInsertions();
+        boolean replaceMode = insertions != null && insertions.size() >= 1 && insertions.get(0).isReplace();
+        return positiveRowMapper(_baseColumnName, _onError, _repeatCount, _eval,
+                columnModel, overlayModels, context.getProjectId(), preservesRecordStructure, replaceMode);
     }
 
     @Override
     protected final RowInRecordMapper getNegativeRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context) throws OperationException {
-        Validate.notNull(_eval);
-        RowInRecordChangeDataJoiner joiner = changeDataJoiner(columnModel, overlayModels, context);
-        return new NegativeRowMapper(joiner);
+            long estimatedRowCount, ChangeContext context) throws OperationException {
+        boolean preservesRecordStructure = preservesRecordStructure(columnModel);
+        return new NegativeRowMapper(preservesRecordStructure);
     }
 
     @Override
@@ -185,101 +143,48 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
         return getNewOverlayModels(columnModel, overlayModels, context, _eval);
     }
 
-    protected RowInRecordChangeDataProducer<Cell> getChangeDataProducer(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context)
-            throws OperationException {
-        try {
-            return evaluatingChangeDataProducer(_baseColumnName, _onError,
-                    _repeatCount, _eval,
-                    columnModel, overlayModels, context.getProjectId());
-        } catch (ColumnDependencyException e) {
-            throw new MissingColumnException(e.getId().getColumnName());
-        }
-    }
-
-    /**
-     * Row mapper which calls a change data producer (to evaluate the expression) and directly calls the corresponding
-     * change data joiner (to insert the results in the row). This should only be used with expressions which are local
-     * and therefore cheap to evaluate.
-     */
-    protected static class PositiveRowMapper extends RowInRecordMapper {
-
-        private static final long serialVersionUID = 696902213789742840L;
-        RowInRecordChangeDataProducer<Cell> producer;
-        RowInRecordChangeDataJoiner joiner;
-        ColumnModel columnModel; // TODO: delete once RowMapper is migrated to a similar signature
-
-        public PositiveRowMapper(RowInRecordChangeDataProducer<Cell> producer, RowInRecordChangeDataJoiner joiner,
-                ColumnModel columnModel) {
-            this.producer = producer;
-            this.joiner = joiner;
-            this.columnModel = columnModel;
-        }
-
-        @Override
-        public Row call(Record record, long rowId, Row row) {
-            IndexedData<Cell> indexedData = null;
-            Cell producedCell = producer.call(record, rowId, row, columnModel);
-            if (producedCell != null && producedCell.isPending()) {
-                indexedData = new IndexedData<>(rowId);
-            } else {
-                indexedData = new IndexedData<>(rowId, producedCell);
-            }
-            return joiner.call(row, indexedData);
-        }
-
-        @Override
-        public boolean preservesRecordStructure() {
-            return joiner.preservesRecordStructure();
-        }
-    }
-
     protected static class NegativeRowMapper extends RowInRecordMapper {
 
         private static final long serialVersionUID = -2790780327244338473L;
-        RowInRecordChangeDataJoiner joiner;
+        boolean preservesRecordStructure;
 
-        public NegativeRowMapper(RowInRecordChangeDataJoiner joiner) {
-            this.joiner = joiner;
+        public NegativeRowMapper(boolean preservesRecordStructure) {
+            this.preservesRecordStructure = preservesRecordStructure;
         }
 
         @Override
         public Row call(Record record, long rowId, Row row) {
-            return joiner.call(row, new IndexedData<>(rowId, null));
+            return new Row(Collections.singletonList(null), row.flagged, row.starred);
         }
 
         @Override
         public boolean preservesRecordStructure() {
-            return joiner.preservesRecordStructure();
+            return preservesRecordStructure;
         }
     }
 
-    public static RowInRecordChangeDataProducer<Cell> evaluatingChangeDataProducer(
+    public static RowInRecordMapper positiveRowMapper(
             String baseColumnName,
             OnError onError,
             int repeatCount,
             Evaluable eval,
             ColumnModel columnModel,
             Map<String, OverlayModel> overlayModels,
-            long projectId) {
-        Set<String> columnNames = eval.getColumnDependencies(baseColumnName);
-        List<ColumnId> dependencies = columnNames == null ? null
-                : columnNames.stream()
-                        .map(name -> columnModel.getColumnByName(name).getColumnId())
-                        .collect(Collectors.toList());
+            long projectId,
+            boolean preservesRecordStructure,
+            boolean replaceMode) {
+        int columnIndex = columnModel.getColumnIndexByName(baseColumnName);
+        return new RowInRecordMapper() {
 
-        return new RowInRecordChangeDataProducer<Cell>() {
-
-            private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 276517207226047737L;
 
             @Override
-            public List<ColumnId> getColumnDependencies() {
-                return dependencies;
+            public Row call(Record translatedRecord, long rowId, Row translatedRow) {
+                return new Row(Collections.singletonList(makeCell(translatedRecord, rowId, translatedRow)), translatedRow.flagged,
+                        translatedRow.starred);
             }
 
-            @Override
-            public Cell call(Record translatedRecord, long rowId, Row translatedRow, ColumnModel columnModel) {
-                int columnIndex = columnModel.getColumnIndexByName(baseColumnName);
+            public Cell makeCell(Record translatedRecord, long rowId, Row translatedRow) {
                 Cell cell = columnIndex == -1 ? null : translatedRow.getCell(columnIndex);
                 Cell newCell = null;
 
@@ -289,7 +194,11 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
                 // this should only happen when we are actually called by a row mapper and
                 // not within the context of change data production
                 if (ExpressionUtils.dependsOnPendingValues(eval, baseColumnName, columnModel, translatedRow, translatedRecord)) {
-                    return Cell.PENDING_NULL;
+                    if (replaceMode) {
+                        return new Cell(cell == null ? null : cell.value, null, true);
+                    } else {
+                        return Cell.PENDING_NULL;
+                    }
                 }
 
                 Object o = eval.evaluate(bindings);
@@ -331,6 +240,16 @@ public abstract class ExpressionBasedOperation extends RowMapOperation {
                     newCell = Cell.NULL;
                 }
                 return newCell;
+            }
+
+            @Override
+            public boolean persistResults() {
+                return !eval.isLocal();
+            }
+
+            @Override
+            public boolean preservesRecordStructure() {
+                return preservesRecordStructure;
             }
 
         };

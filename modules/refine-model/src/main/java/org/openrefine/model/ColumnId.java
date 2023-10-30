@@ -1,10 +1,10 @@
 
 package org.openrefine.model;
 
-import org.apache.commons.lang3.Validate;
-
 import java.io.Serializable;
 import java.util.Objects;
+
+import org.apache.commons.lang3.Validate;
 
 /**
  * This class represents the state of a column at a particular point in the history. If the column is not modified in

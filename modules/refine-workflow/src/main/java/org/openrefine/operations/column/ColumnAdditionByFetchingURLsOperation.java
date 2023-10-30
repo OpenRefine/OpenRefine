@@ -53,20 +53,17 @@ import org.apache.hc.core5.http.message.BasicHeader;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.Evaluable;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.ModelException;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.CellAtRow;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
-import org.openrefine.model.changes.RowInRecordChangeDataProducer;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
-import org.openrefine.operations.exceptions.DuplicateColumnException;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.HttpClient;
@@ -141,27 +138,20 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
     }
 
     @Override
-    protected RowInRecordChangeDataProducer<Cell> getChangeDataProducer(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context)
-            throws OperationException {
-        RowInRecordChangeDataProducer<Cell> evaluatingProducer = super.getChangeDataProducer(columnModel, overlayModels, context);
-        return new URLFetchingChangeProducer(_onError, _httpHeadersJson, _cacheResponses, _delay, evaluatingProducer);
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(
+                ColumnInsertion.builder()
+                        .withName(_newColumnName)
+                        .withInsertAt(_baseColumnName)
+                        .build());
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context) throws OperationException {
-        return new ColumnAdditionOperation.Joiner(_columnInsertIndex, columnModel.getKeyColumnIndex());
-    }
+    protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+            long estimatedRowCount, ChangeContext context) throws OperationException {
+        RowInRecordMapper parentMapper = super.getPositiveRowMapper(columnModel, overlayModels, estimatedRowCount, context);
 
-    @Override
-    protected ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context,
-            Evaluable evaluable) throws OperationException {
-        try {
-            return columnModel.insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
-        } catch (ModelException e) {
-            throw new DuplicateColumnException(_newColumnName);
-        }
+        return new URLFetchingChangeProducer(_onError, _httpHeadersJson, _cacheResponses, _delay, parentMapper);
     }
 
     @JsonProperty("newColumnName")
@@ -219,14 +209,14 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
                 " and formulated as " + _urlExpression;
     }
 
-    protected static class URLFetchingChangeProducer extends RowInRecordChangeDataProducer<Cell> {
+    protected static class URLFetchingChangeProducer extends RowInRecordMapper {
 
         private static final long serialVersionUID = 131571544240263338L;
         final protected OnError _onError;
         final protected List<HttpHeader> _httpHeaders;
         final protected boolean _cacheResponses;
         final protected int _delay;
-        final protected RowInRecordChangeDataProducer<Cell> _evaluatingChangeDataProducer;
+        final protected RowInRecordMapper _evaluatingMapper;
         // initialized lazily for serializability
         transient private LoadingCache<String, Serializable> _urlCache;
         transient private HttpClient _httpClient;
@@ -237,14 +227,19 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
                 List<HttpHeader> httpHeaders,
                 boolean cacheResponses,
                 int delay,
-                RowInRecordChangeDataProducer<Cell> evaluatingChangeDataProducer) {
+                RowInRecordMapper evaluatingMapper) {
             _onError = onError;
             _cacheResponses = cacheResponses;
             _httpHeaders = httpHeaders != null ? httpHeaders : Collections.emptyList();
             _delay = delay;
-            _evaluatingChangeDataProducer = evaluatingChangeDataProducer;
+            _evaluatingMapper = evaluatingMapper;
             _headers = null;
             _httpClient = null;
+        }
+
+        @Override
+        public boolean persistResults() {
+            return true;
         }
 
         protected HttpClient getHttpClient() {
@@ -273,9 +268,12 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
         }
 
         @Override
-        public Cell call(Record record, long rowId, Row row, ColumnModel columnModel) {
+        public Row call(Record record, long rowId, Row row) {
+            return new Row(Collections.singletonList(computeCell(record, rowId, row)), row.flagged, row.starred);
+        }
 
-            Cell urlCell = _evaluatingChangeDataProducer.call(record, rowId, row, columnModel);
+        public Cell computeCell(Record record, long rowId, Row row) {
+            Cell urlCell = _evaluatingMapper.call(record, rowId, row).getCell(0);
             if (urlCell == null || urlCell.value instanceof EvalError || urlCell.value == null) {
                 return urlCell;
             }
@@ -350,6 +348,16 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
             }
         }
 
+        @Override
+        public boolean preservesRecordStructure() {
+            return _evaluatingMapper.preservesRecordStructure();
+        }
+
+    }
+
+    @Override
+    protected boolean preservesRecordStructure(ColumnModel columnModel) {
+        return true;
     }
 
 }

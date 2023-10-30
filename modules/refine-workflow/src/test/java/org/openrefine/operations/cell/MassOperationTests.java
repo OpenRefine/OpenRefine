@@ -82,7 +82,14 @@ public class MassOperationTests extends RefineTest {
                 + "\"edits\":["
                 + "{\"fromBlank\":false,\"fromError\":false,\"from\":[\"String\"],\"to\":\"newString\"},"
                 + "{\"fromBlank\":false,\"fromError\":false,\"from\":[\"other string\"],\"to\":\"2017-03-04T04:05:06Z\",\"type\":\"date\"}"
-                + "]}";
+                + "],"
+                + "\"columnDependencies\" : [ \"my column\" ],"
+                + "\"columnInsertions\" : [ {"
+                + "  \"insertAt\" : \"my column\","
+                + "  \"name\" : \"my column\","
+                + "  \"replace\" : true"
+                + "} ]"
+                + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MassEditOperation.class), json, ParsingUtilities.defaultWriter);
     }
 

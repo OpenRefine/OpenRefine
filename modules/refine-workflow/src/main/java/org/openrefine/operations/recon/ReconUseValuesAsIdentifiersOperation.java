@@ -95,7 +95,7 @@ public class ReconUseValuesAsIdentifiersOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
             throws MissingColumnException {
         int columnIndex = columnModel.getRequiredColumnIndex(columnName);
         long historyEntryId = context.getHistoryEntryId();

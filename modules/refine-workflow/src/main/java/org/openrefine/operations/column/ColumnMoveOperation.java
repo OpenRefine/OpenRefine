@@ -91,7 +91,7 @@ public class ColumnMoveOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
             throws OperationException {
         int fromIndex = columnModel.getRequiredColumnIndex(_columnName);
         return mapper(fromIndex, _index, columnModel.getKeyColumnIndex());

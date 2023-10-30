@@ -33,28 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.IndexedData;
-import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
-import org.openrefine.operations.exceptions.DuplicateColumnException;
-import org.openrefine.operations.exceptions.OperationException;
-import org.openrefine.overlay.OverlayModel;
 
 /**
  * Adds a new column by evaluating an expression, based on a given column.
@@ -65,7 +54,6 @@ import org.openrefine.overlay.OverlayModel;
 public class ColumnAdditionOperation extends ExpressionBasedOperation {
 
     final protected String _newColumnName;
-    final protected int _columnInsertIndex;
 
     @JsonCreator
     public ColumnAdditionOperation(
@@ -73,22 +61,15 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
             @JsonProperty("baseColumnName") String baseColumnName,
             @JsonProperty("expression") String expression,
             @JsonProperty("onError") OnError onError,
-            @JsonProperty("newColumnName") String newColumnName,
-            @JsonProperty("columnInsertIndex") int columnInsertIndex) {
+            @JsonProperty("newColumnName") String newColumnName) {
         super(engineConfig, expression, baseColumnName, onError, 0);
 
         _newColumnName = newColumnName;
-        _columnInsertIndex = columnInsertIndex;
     }
 
     @JsonProperty("newColumnName")
     public String getNewColumnName() {
         return _newColumnName;
-    }
-
-    @JsonProperty("columnInsertIndex")
-    public int getColumnInsertIndex() {
-        return _columnInsertIndex;
     }
 
     @JsonProperty("baseColumnName")
@@ -109,73 +90,24 @@ public class ColumnAdditionOperation extends ExpressionBasedOperation {
     @Override
     public String getDescription() {
         return "Create column " + _newColumnName +
-                " at index " + _columnInsertIndex +
                 " based on column " + _baseColumnName +
                 " using expression " + _expression;
     }
 
     @Override
-    protected ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context,
-            Evaluable eval) throws OperationException {
-        try {
-            return columnModel.insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
-        } catch (ModelException e) {
-            throw new DuplicateColumnException(_newColumnName);
-        }
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(
+                ColumnInsertion.builder()
+                        .withName(_newColumnName)
+                        .withInsertAt(_baseColumnName)
+                        .build());
+
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context) throws OperationException {
-        return new Joiner(_columnInsertIndex, columnModel.getKeyColumnIndex());
-    }
-
-    public static class Joiner extends RowInRecordChangeDataJoiner {
-
-        private static final long serialVersionUID = 5279645865937629998L;
-        final int _columnIndex;
-        final boolean _preservesRecords;
-
-        public Joiner(int columnIndex, int keyColumnIndex) {
-            _columnIndex = columnIndex;
-            // TODO: if the key column index is not 0, it probably
-            // needs shifting in the new grid if we are inserting the new column before it
-            _preservesRecords = columnIndex > keyColumnIndex;
-        }
-
-        @Override
-        public Row call(Row row, IndexedData<Cell> indexedData) {
-            Cell cell = indexedData.getData();
-            if (indexedData.isPending()) {
-                cell = new Cell(null, null, true);
-            }
-            return row.insertCell(_columnIndex, cell);
-        }
-
-        @Override
-        public boolean preservesRecordStructure() {
-            return _preservesRecords;
-        }
-
-    }
-
-    protected static RowInRecordMapper negativeMapper(int columnInsertIndex, int keyColumnIndex) {
-        return new RowInRecordMapper() {
-
-            private static final long serialVersionUID = -4885450470285627722L;
-
-            @Override
-            public Row call(Record record, long rowId, Row row) {
-                return row.insertCell(columnInsertIndex, null);
-            }
-
-            @Override
-            public boolean preservesRecordStructure() {
-                // TODO: if the key column index is not 0, it probably
-                // needs shifting in the new grid if we are inserting the new column before it
-                return columnInsertIndex > keyColumnIndex;
-            }
-        };
+    protected boolean preservesRecordStructure(ColumnModel columnModel) {
+        int baseColumnIndex = columnModel.getColumnIndexByName(_baseColumnName);
+        return columnModel.getKeyColumnIndex() <= baseColumnIndex;
     }
 
 }

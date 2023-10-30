@@ -119,11 +119,11 @@ public class ReconMatchSpecificTopicOperation extends RowMapOperation {
 
     @Override
     public List<ColumnInsertion> getColumnInsertions() {
-        return Collections.singletonList(new ColumnInsertion(columnName, columnName, true, null));
+        return Collections.singletonList(ColumnInsertion.replacement(columnName));
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
             throws MissingColumnException {
         long historyEntryId = context.getHistoryEntryId();
         return rowMapper(match.getCandidate(), historyEntryId, identifierSpace, schemaSpace);

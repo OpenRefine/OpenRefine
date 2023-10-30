@@ -87,7 +87,7 @@ public class ReconDiscardJudgmentsOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
             throws OperationException {
         int columnIndex = columnModel.getRequiredColumnIndex(_columnName);
         return rowMapper(columnIndex, _clearData, context.getHistoryEntryId());

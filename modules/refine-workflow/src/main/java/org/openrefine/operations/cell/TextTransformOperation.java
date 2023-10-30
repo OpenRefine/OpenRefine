@@ -33,22 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Row;
-import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.model.changes.IndexedData;
-import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
-import org.openrefine.operations.exceptions.OperationException;
-import org.openrefine.overlay.OverlayModel;
 
 public class TextTransformOperation extends ExpressionBasedOperation {
 
@@ -113,46 +108,14 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     }
 
     @Override
-    protected RowInRecordChangeDataJoiner changeDataJoiner(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context) throws OperationException {
-        int baseColumnIndex = columnModel.getRequiredColumnIndex(_baseColumnName);
-        return new Joiner(baseColumnIndex, columnModel.getKeyColumnIndex());
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(
+                ColumnInsertion.replacement(_baseColumnName));
     }
 
-    public static class Joiner extends RowInRecordChangeDataJoiner {
-
-        private static final long serialVersionUID = 5279645865937629998L;
-        final int _columnIndex;
-        final boolean _preservesRecords;
-
-        public Joiner(int columnIndex, int keyColumnIndex) {
-            _columnIndex = columnIndex;
-            // TODO: if the key column index is not 0, it probably
-            // needs shifting in the new grid if we are inserting the new column before it
-            _preservesRecords = columnIndex > keyColumnIndex;
-        }
-
-        @Override
-        public Row call(Row row, IndexedData<Cell> indexedData) {
-            Cell cell = indexedData.getData();
-            if (indexedData.isPending()) {
-                Cell currentCell = row.getCell(_columnIndex);
-                cell = new Cell(
-                        currentCell == null ? null : currentCell.value,
-                        currentCell == null ? null : currentCell.recon,
-                        true);
-            }
-            if (cell != null) {
-                return row.withCell(_columnIndex, cell);
-            } else {
-                return row;
-            }
-        }
-
-        @Override
-        public boolean preservesRecordStructure() {
-            return _preservesRecords;
-        }
+    @Override
+    protected boolean preservesRecordStructure(ColumnModel columnModel) {
+        return columnModel.getKeyColumnIndex() != columnModel.getColumnIndexByName(_baseColumnName);
     }
 
 }

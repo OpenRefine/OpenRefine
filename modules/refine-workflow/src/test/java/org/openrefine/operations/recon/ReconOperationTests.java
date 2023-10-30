@@ -61,14 +61,13 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ReconOperation.ReconChangeDataProducer;
+import org.openrefine.operations.recon.ReconOperation.Mapper;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -89,7 +88,14 @@ public class ReconOperationTests extends RefineTest {
             + "   \"columnDetails\":[],"
             + "   \"limit\":0"
             + "},"
-            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+            + "\"columnDependencies\" : [ \"researcher\" ],"
+            + "\"columnInsertions\" : [ {"
+            + "  \"insertAt\" : \"researcher\","
+            + "  \"name\" : \"researcher\","
+            + "  \"replace\" : true"
+            + "} ]"
+            + "}";
     private String identifierSpace = "http://www.wikidata.org/entity/";
     private String schemaSpace = "http://www.wikidata.org/prop/direct/";
 
@@ -208,14 +214,20 @@ public class ReconOperationTests extends RefineTest {
                 new IndexedRow(3L, row3),
                 new IndexedRow(4L, row4));
 
-        ReconChangeDataProducer producer = new ReconChangeDataProducer("column", reconConfig, 1234L, 100L, project.getColumnModel());
-        List<Cell> results1 = producer.callRowBatch(batch1, columnModel);
-        List<Cell> results2 = producer.callRowBatch(batch2, columnModel);
+        Mapper producer = new ReconOperation.Mapper("column", reconConfig, 1234L, 100L, project.getColumnModel());
+        List<Row> results1 = producer.callRowBatch(batch1, columnModel);
+        List<Row> results2 = producer.callRowBatch(batch2, columnModel);
 
-        Assert.assertEquals(results1, Arrays.asList(new Cell("value1", recon1), new Cell("value2", recon2)));
-        Assert.assertEquals(results2, Arrays.asList(new Cell("value1", recon1), new Cell("value3", recon3), null));
+        Assert.assertEquals(results1, Arrays.asList(
+                new Row(Collections.singletonList(new Cell("value1", recon1))),
+                new Row(Collections.singletonList(new Cell("value2", recon2)))));
+        Assert.assertEquals(results2, Arrays.asList(
+                new Row(Collections.singletonList(new Cell("value1", recon1))),
+                new Row(Collections.singletonList(new Cell("value3", recon3))),
+                new Row(Collections.singletonList(null))));
         Assert.assertEquals(producer.getBatchSize(), 2);
-        Assert.assertEquals(producer.call(0L, batch1.get(0).getRow(), columnModel), new Cell("value1", recon1));
+        Assert.assertEquals(producer.call(0L, batch1.get(0).getRow(), columnModel),
+                new Row(Collections.singletonList(new Cell("value1", recon1))));
 
         verify(reconConfig, times(1)).batchRecon(Arrays.asList(job1, job2), 1234L);
         verify(reconConfig, times(1)).batchRecon(Arrays.asList(job3), 1234L);
@@ -297,16 +309,6 @@ public class ReconOperationTests extends RefineTest {
         Assert.assertNull(grid.getRow(0).getCell(0).recon);
         Assert.assertNull(grid.getRow(1).getCell(0).recon);
         Assert.assertNull(grid.getRow(2).getCell(0).recon);
-    }
-
-    @Test
-    public void testJoinerReplaceNull() {
-        // this behaviour is important to make sure reconciling only a subset of a column does not blank out
-        // the cells outside the subset
-        ReconOperation.Joiner joiner = new ReconOperation.Joiner(0);
-        Row row1 = new Row(Arrays.asList(new Cell(1, null), new Cell(2, null)));
-        Row row = joiner.call(row1, new IndexedData<>(4, null));
-        Assert.assertEquals(row, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null))));
     }
 
 }

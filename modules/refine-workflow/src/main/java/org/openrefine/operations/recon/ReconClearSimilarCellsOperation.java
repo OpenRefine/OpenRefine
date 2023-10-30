@@ -82,7 +82,7 @@ public class ReconClearSimilarCellsOperation extends RowMapOperation {
 
     @Override
     protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            ChangeContext context) throws OperationException {
+            long estimatedRowCount, ChangeContext context) throws OperationException {
         int cellIndex = columnModel.getRequiredColumnIndex(_columnName);
         return rowMapper(cellIndex, _similarValue);
     }

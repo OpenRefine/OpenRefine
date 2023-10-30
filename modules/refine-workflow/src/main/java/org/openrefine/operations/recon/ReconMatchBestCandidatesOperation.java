@@ -76,7 +76,7 @@ public class ReconMatchBestCandidatesOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
             throws MissingColumnException {
         int columnIndex = columnModel.getRequiredColumnIndex(_columnName);
         long historyEntryId = context.getHistoryEntryId();
