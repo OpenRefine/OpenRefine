@@ -28,9 +28,11 @@
 package org.openrefine.operations.column;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.testng.Assert;
@@ -45,6 +47,7 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
@@ -117,5 +120,18 @@ public class ColumnRenameOperationTests extends RefineTest {
     public void testNameConflict() throws OperationException, ParsingException {
         Operation SUT = new ColumnRenameOperation("foo", "bar");
         SUT.apply(initialState, mock(ChangeContext.class));
+    }
+
+    @Test
+    public void testColumnarMetadata() {
+        ColumnRenameOperation SUT = new ColumnRenameOperation("foo", "newfoo");
+
+        assertEquals(SUT.getColumnDependencies(), Collections.emptyList());
+        assertEquals(SUT.getColumnInsertions(), Arrays.asList(ColumnInsertion.builder()
+                .withName("newfoo")
+                .withInsertAt("foo")
+                .withCopiedFrom("foo")
+                .withReplace(true)
+                .build()));
     }
 }

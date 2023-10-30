@@ -287,6 +287,18 @@ public class RowMapOperationTests {
         Grid grid = mock(Grid.class);
         when(grid.getColumnModel()).thenReturn(columnModel);
 
+        assertThrows(MissingColumnException.class, () -> SUT_rowsEager.apply(grid, changeContext));
+    }
+
+    @Test
+    public void testMissingDeletedColumn() {
+        ColumnModel columnModel = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("A"),
+                new ColumnMetadata("B"),
+                new ColumnMetadata("D")));
+        Grid grid = mock(Grid.class);
+        when(grid.getColumnModel()).thenReturn(columnModel);
+
         assertThrows(MissingColumnException.class, () -> SUT_rowsLazy.apply(grid, changeContext));
     }
 
@@ -449,7 +461,7 @@ public class RowMapOperationTests {
 
         @Override
         public List<String> getColumnDependencies() {
-            return Arrays.asList("A", "C");
+            return Arrays.asList("A", "D");
         }
 
         @Override

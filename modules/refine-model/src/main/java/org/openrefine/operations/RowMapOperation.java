@@ -127,7 +127,9 @@ abstract public class RowMapOperation extends EngineDependentOperation {
 
     /**
      * Returns the row mapper applied to the rows matched by the filter.
-     * @param estimatedRowCount TODO
+     * 
+     * @param estimatedRowCount
+     *            TODO
      */
     protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
             long estimatedRowCount, ChangeContext context) throws OperationException {
@@ -136,7 +138,9 @@ abstract public class RowMapOperation extends EngineDependentOperation {
 
     /**
      * Returns the row mapper applied to the rows not matched by the filter.
-     * @param estimatedRowCount TODO
+     * 
+     * @param estimatedRowCount
+     *            TODO
      */
     protected RowInRecordMapper getNegativeRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
             long estimatedRowCount, ChangeContext context) throws OperationException {
@@ -228,6 +232,8 @@ abstract public class RowMapOperation extends EngineDependentOperation {
                     negativeIndicesMap.remove(index);
                     newColumnNames.remove(index);
                     newColumnMetadata.remove(index);
+                } else {
+                    throw new MissingColumnException(deletedColumn);
                 }
             }
 

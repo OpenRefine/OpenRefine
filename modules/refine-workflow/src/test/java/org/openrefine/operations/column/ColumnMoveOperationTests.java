@@ -80,18 +80,37 @@ public class ColumnMoveOperationTests extends RefineTest {
     }
 
     @Test
-    public void serializeColumnMoveOperation() throws Exception {
+    public void serializeColumnMoveOperationWithIndex() throws Exception {
         String json = "{\"op\":\"core/column-move\","
-                + "\"description\":\"Move column my column to position 3\","
+                + "\"description\":\"Move column \\\"my column\\\" to position 3\","
                 + "\"columnName\":\"my column\","
                 + "\"index\":3}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnMoveOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
     @Test
+    public void serializeColumnMoveOperationWithAfterColumn() throws Exception {
+        String json = "{\"op\":\"core/column-move\","
+                + "\"description\":\"Move column \\\"my column\\\" to after column \\\"my other column\\\"\","
+                + "\"columnName\":\"my column\","
+                + "\"afterColumn\":\"my other column\","
+                + "\"columnDeletions\" : [ \"my column\" ],"
+                + "\"columnInsertions\" : [ {"
+                + "  \"copiedFrom\" : \"my column\","
+                + "  \"insertAt\" : \"my other column\","
+                + "  \"name\" : \"my column\","
+                + "  \"replace\" : false"
+                + "} ]"
+                + "}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnMoveOperation.class), json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
     public void testForward() throws OperationException, ParsingException {
-        Operation operation = new ColumnMoveOperation("foo", 1);
+        Operation operation = new ColumnMoveOperation("foo", 1, null);
+
         ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
         Grid applied = changeResult.getGrid();
         List<IndexedRow> rows = applied.collectRows();
@@ -103,8 +122,10 @@ public class ColumnMoveOperationTests extends RefineTest {
 
     @Test
     public void testSamePosition() throws OperationException, ParsingException {
-        Operation SUT = new ColumnMoveOperation("bar", 1);
+        Operation SUT = new ColumnMoveOperation("bar", 1, null);
+
         ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
         List<IndexedRow> rows = applied.collectRows();
@@ -116,8 +137,10 @@ public class ColumnMoveOperationTests extends RefineTest {
 
     @Test
     public void testBackward() throws OperationException, ParsingException {
-        ColumnMoveOperation SUT = new ColumnMoveOperation("hello", 1);
+        ColumnMoveOperation SUT = new ColumnMoveOperation("hello", 1, null);
+
         ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+
         Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
         Grid applied = changeResult.getGrid();
         List<IndexedRow> rows = applied.collectRows();
@@ -127,9 +150,54 @@ public class ColumnMoveOperationTests extends RefineTest {
                 Arrays.asList(new Cell("v1", null), new Cell("d", null), new Cell("a", null)));
     }
 
+    @Test
+    public void testForwardWithAfterColumn() throws OperationException, ParsingException {
+        Operation operation = new ColumnMoveOperation("foo", null, "bar");
+
+        ChangeResult changeResult = operation.apply(initialState, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+        Grid applied = changeResult.getGrid();
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("foo"), new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("a", null), new Cell("v1", null), new Cell("d", null)));
+    }
+
+    @Test
+    public void testSamePositionWithAfterColumn() throws OperationException, ParsingException {
+        Operation SUT = new ColumnMoveOperation("bar", null, "foo");
+
+        ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        Grid applied = changeResult.getGrid();
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("bar"), new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("v1", null), new Cell("a", null), new Cell("d", null)));
+    }
+
+    @Test
+    public void testFirstColumn() throws OperationException, ParsingException {
+        ColumnMoveOperation SUT = new ColumnMoveOperation("bar", null, null);
+
+        ChangeResult changeResult = SUT.apply(initialState, mock(ChangeContext.class));
+
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
+        Grid applied = changeResult.getGrid();
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("foo"), new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("a", null), new Cell("v1", null), new Cell("d", null)));
+    }
+
     @Test(expectedExceptions = OperationException.class)
     public void testColumnDoesNotExist() throws OperationException, ParsingException {
-        Operation SUT = new ColumnMoveOperation("not_found", 1);
+        Operation SUT = new ColumnMoveOperation("not_found", 1, null);
         SUT.apply(initialState, mock(ChangeContext.class));
     }
 }

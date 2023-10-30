@@ -34,15 +34,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.column;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
@@ -53,18 +58,30 @@ import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.overlay.OverlayModel;
 
+/**
+ * Moves a column to a different position. The new position of the column can either be specified by giving the name of
+ * the column to insert it after, or by an explicit insertion index. The latter is preserved for backwards-compatibility
+ * purposes, to be able to interpret operations executed up to OpenRefine 3.x, but is discouraged because it does not
+ * generalize as well.
+ */
 public class ColumnMoveOperation extends RowMapOperation {
 
     final protected String _columnName;
-    final protected int _index;
+    final protected Integer _index;
+    final protected String _afterColumn;
 
     @JsonCreator
     public ColumnMoveOperation(
             @JsonProperty("columnName") String columnName,
-            @JsonProperty("index") int index) {
+            @JsonProperty("index") Integer index,
+            @JsonProperty("afterColumn") String afterColumn) {
         super(EngineConfig.ALL_ROWS);
         _columnName = columnName;
-        _index = index;
+        _index = index != null && index == 0 ? null : index;
+        _afterColumn = afterColumn;
+        if (_index != null && _afterColumn != null) {
+            throw new IllegalArgumentException("At most one of 'index' and 'afterColumn' must be provided");
+        }
     }
 
     @JsonProperty("columnName")
@@ -73,28 +90,73 @@ public class ColumnMoveOperation extends RowMapOperation {
     }
 
     @JsonProperty("index")
-    public int getIndex() {
+    @JsonInclude(Include.NON_NULL)
+    public Integer getIndex() {
         return _index;
+    }
+
+    @JsonProperty("afterColumn")
+    @JsonInclude(Include.NON_NULL)
+    public String getAfterColumn() {
+        return _afterColumn;
     }
 
     @Override
     public String getDescription() {
-        return "Move column " + _columnName + " to position " + _index;
+        if (_index != null) {
+            return "Move column \"" + _columnName + "\" to position " + _index;
+        } else if (_afterColumn != null) {
+            return "Move column \"" + _columnName + "\" to after column \"" + _afterColumn + "\"";
+        } else {
+            return "Move column \"" + _columnName + "\" in first position";
+        }
+    }
+
+    @Override
+    public List<ColumnInsertion> getColumnInsertions() {
+        if (_index == null) {
+            return Collections.singletonList(
+                    ColumnInsertion.builder()
+                            .withName(_columnName)
+                            .withCopiedFrom(_columnName)
+                            .withInsertAt(_afterColumn)
+                            .build());
+        } else {
+            return super.getColumnInsertions();
+        }
+    }
+
+    @Override
+    public Set<String> getColumnDeletions() {
+        if (_index == null) {
+            return Collections.singleton(_columnName);
+        } else {
+            return super.getColumnDeletions();
+        }
     }
 
     @Override
     public ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
             throws OperationException {
-        int fromIndex = columnModel.getRequiredColumnIndex(_columnName);
-        ColumnMetadata column = columnModel.getColumns().get(fromIndex);
-        return columnModel.removeColumn(fromIndex).insertUnduplicatedColumn(_index, column);
+        if (_index == null) {
+            return super.getNewColumnModel(columnModel, overlayModels, context);
+        } else {
+            int fromIndex = columnModel.getRequiredColumnIndex(_columnName);
+            ColumnMetadata column = columnModel.getColumns().get(fromIndex);
+            return columnModel.removeColumn(fromIndex).insertUnduplicatedColumn(_index, column);
+        }
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount,
+            ChangeContext context)
             throws OperationException {
-        int fromIndex = columnModel.getRequiredColumnIndex(_columnName);
-        return mapper(fromIndex, _index, columnModel.getKeyColumnIndex());
+        if (_index == null) {
+            return super.getPositiveRowMapper(columnModel, overlayModels, estimatedRowCount, context);
+        } else {
+            int fromIndex = columnModel.getRequiredColumnIndex(_columnName);
+            return mapper(fromIndex, _index, columnModel.getKeyColumnIndex());
+        }
     }
 
     protected static RowInRecordMapper mapper(int fromIndex, int toIndex, int keyColumnIndex) {

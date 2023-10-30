@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -35,7 +35,6 @@ package org.openrefine.operations.column;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,13 +42,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnInsertion;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OperationDescription;
 import org.openrefine.operations.RowMapOperation;
-import org.openrefine.operations.exceptions.OperationException;
-import org.openrefine.overlay.OverlayModel;
 
 public class ColumnRenameOperation extends RowMapOperation {
 
@@ -94,12 +88,6 @@ public class ColumnRenameOperation extends RowMapOperation {
                         .withReplace(true)
                         .withCopiedFrom(_oldColumnName)
                         .build());
-    }
-
-    @Override
-    protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-            long estimatedRowCount, ChangeContext context) throws OperationException {
-        return RowInRecordMapper.IDENTITY;
     }
 
     // engine config is never useful, so we remove it from the JSON serialization
