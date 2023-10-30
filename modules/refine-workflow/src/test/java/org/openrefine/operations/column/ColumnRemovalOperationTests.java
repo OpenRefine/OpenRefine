@@ -82,9 +82,13 @@ public class ColumnRemovalOperationTests extends RefineTest {
 
     @Test
     public void serializeColumnRemovalOperation() throws Exception {
-        String json = "{\"op\":\"core/column-removal\","
+        String json = "{"
+                + "\"op\":\"core/column-removal\","
                 + "\"description\":\"Remove columns my column 1, my column 2\","
-                + "\"columnNames\":[\"my column 1\", \"my column 2\"]}";
+                + "\"columnNames\":[\"my column 1\", \"my column 2\"],"
+                + "\"columnDeletions\" : [ \"my column 1\", \"my column 2\" ],"
+                + "\"columnInsertions\" : [ ]"
+                + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json,
                 ParsingUtilities.defaultWriter);
     }
@@ -96,6 +100,8 @@ public class ColumnRemovalOperationTests extends RefineTest {
                 + "\"columnName\":\"my column\"}";
         String normalized = "{\"op\":\"core/column-removal\","
                 + "\"description\":\"Remove column my column\","
+                + "\"columnDeletions\" : [ \"my column\" ],"
+                + "\"columnInsertions\" : [ ],"
                 + "\"columnNames\":[\"my column\"]}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), normalized,
                 ParsingUtilities.defaultWriter);
