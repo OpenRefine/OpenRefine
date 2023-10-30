@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import java.util.List;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -44,6 +45,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * values.
  */
 public interface Function {
+
+    String[] transformMany(String[] values);
+
+    String[] transformMany(List<String> values);
 
     public Object call(Properties bindings, Object[] args);
 

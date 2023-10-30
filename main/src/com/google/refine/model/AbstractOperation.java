@@ -88,4 +88,6 @@ abstract public class AbstractOperation {
     public String getJsonDescription() {
         return getBriefDescription(null);
     }
+
+    protected abstract String createDescription(Column column);
 }
