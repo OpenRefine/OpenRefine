@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ReconDialog2(column,selectedServiceRecordindex,serviceRecords,record) {
+function ReconDialog2(column, selectedServiceRecordindex, serviceRecords, record) {
   this._column = column;
   this._serviceRecords = serviceRecords;
   this._selectedServiceRecordIndex = selectedServiceRecordindex;
@@ -45,10 +45,10 @@ ReconDialog2.prototype._createDialog = function() {
   var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/recon-dialog-2.html"));
 
   this._elmts = DOM.bind(dialog);
-  this._elmts.dialogHeader.text($.i18n('core-recon/recon-col')+' "' + this._column.name + '"');
+  this._elmts.dialogHeader.text($.i18n('core-recon/recon-col',this._column.name ));
   this._elmts.reconcileButton.html($.i18n('core-buttons/start-recon'));
   this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
-  this._elmts.backButton.html($.i18n('core-buttons/previous-dialog'));
+  this._elmts.backButton.html($.i18n('core-buttons/previous'));
 
   this._elmts.reconcileButton.on('click',function() { self._onOK(); });
   this._elmts.cancelButton.on('click',function() { self._dismiss(); });

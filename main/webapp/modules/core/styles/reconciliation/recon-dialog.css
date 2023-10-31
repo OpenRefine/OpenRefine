@@ -77,6 +77,20 @@ a.recon-dialog-service-list-container.selected {
     padding: 10px 0;
     color:black;
 }
+.recon-service-entry{
+  margin-left: 0.2em;
+  margin-right: 0.25em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 15ch;
+  display: inline-block;
+  vertical-align: middle 
+
+}
+
+.recon-dialog-url-element{
+  color:var(--light-grey);
+}
 a.recon-dialog-service-selector-remove {
   float: right;
   position: relative;
@@ -84,6 +98,7 @@ a.recon-dialog-service-selector-remove {
   left: 5px;
   width: 12px;
   height: 12px;
+  margin-right: 10px;
   text-decoration: none;
   background-image: url(../../images/close-map.png);
   background-repeat: no-repeat;

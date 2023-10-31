@@ -45,18 +45,21 @@ ReconDialog.prototype._createDialog = function() {
   var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/recon-dialog.html"));
 
   this._elmts = DOM.bind(dialog);
-  this._elmts.dialogHeader.text($.i18n('core-recon/recon-col')+' "' + this._column.name + '"');
+  this._elmts.dialogHeader.text($.i18n('core-recon/recon-col',this._column.name));
 
   this._elmts.servicePanelMessage.html($.i18n('core-recon/pick-service'));
   this._elmts.addStandardServiceButton.html($.i18n('core-buttons/add-std-svc')+"...");
   this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   this._elmts.discoverServicesButton.html($.i18n('core-buttons/discover-services'));
-  this._elmts.nextButton.html($.i18n('core-buttons/next-dialog'));
+  this._elmts.nextButton.html($.i18n('core-buttons/next'));
 
   this._elmts.addStandardServiceButton.on('click',function() { self._onAddStandardService(); });
 
   this._elmts.cancelButton.on('click',function() { self._dismiss(); });
-  this._elmts.nextButton.on('click',function() { self._nextDialog(self._column,self._selectedServiceRecordIndex,self._serviceRecords,self._record); });
+  this._elmts.nextButton.on('click',function() { 
+    if(self._record)
+    self._nextDialog(self._column,self._selectedServiceRecordIndex,self._serviceRecords,self._record);
+   });
 
   this._level = DialogSystem.showDialog(dialog);
   this._populateDialog();
@@ -65,7 +68,7 @@ ReconDialog.prototype._createDialog = function() {
 
 ReconDialog.prototype._nextDialog = function(column,selectedServiceRecordindex,serviceRecords,record) {
   this._dismiss();
-  new ReconDialog2(column,selectedServiceRecordindex,serviceRecords,record);
+  new ReconDialog2(column, selectedServiceRecordindex, serviceRecords, record);
 }
 
 ReconDialog.prototype._dismiss = function() {
@@ -123,7 +126,7 @@ ReconDialog.prototype._populateDialog = function() {
         .appendTo(mainSpan);
 
       var divElementURL = $('<div>')
-        .css('color','lightgrey')
+        .addClass("recon-dialog-url-element")
         .text(service.url)
         .appendTo(mainSpan);
       
