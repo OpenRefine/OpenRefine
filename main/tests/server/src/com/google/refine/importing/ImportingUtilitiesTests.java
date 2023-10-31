@@ -37,6 +37,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -323,7 +326,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     /**
      * This tests both exploding a zip archive into it's constituent files as well as importing them all (both) and
      * making sure that the recording of archive names and file names works correctly.
-     *
+     * <p>
      * It's kind of a lot to have in one test, but it's a sequence of steps that need to be done in order.
      *
      * @throws IOException
@@ -447,26 +450,26 @@ public class ImportingUtilitiesTests extends ImporterTest {
     }
 
     @Test
-    public void testImportGZipCompressedFiles() throws IOException {
-        String[] filenames = { "persons", "persons.csv.gz" };
+    public void testImportCompressedFiles() throws IOException {
+        final String FILENAME_BASE = "persons";
+        final int LINES = 4;
+        String[] suffixes = { "", ".csv.gz", ".csv.bz2" };
         InputStreamReader reader = null;
-        for (String filename : filenames) {
-            String filePathNoExtension = ClassLoader.getSystemResource(filename).getPath();
+        for (String suffix : suffixes) {
+            String filename = FILENAME_BASE + suffix;
+            String filePath = ClassLoader.getSystemResource(filename).getPath();
 
-            File tmp = File.createTempFile("openrefine-test-" + filename.split("\\.")[0], "", job.getRawDataDir());
+            File tmp = File.createTempFile("openrefine-test-" + FILENAME_BASE, suffix, job.getRawDataDir());
             tmp.deleteOnExit();
-            FileUtils.copyFile(new File(filePathNoExtension), tmp);
+            FileUtils.copyFile(new File(filePath), tmp);
 
             InputStream is = ImportingUtilities.tryOpenAsCompressedFile(tmp, null, null);
-            // assert input stream is not null
-            Assert.assertNotNull(is);
+            Assert.assertNotNull(is, "Failed to open compressed file: " + filename);
 
             reader = new InputStreamReader(is);
-            Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader()
-                    .withIgnoreHeaderCase().withTrim().parse(reader);
+            Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
-            // assert size of iterable is same as number of rows in csv file without header
-            Assert.assertEquals(IterableUtils.size(records), 3);
+            Assert.assertEquals(IterableUtils.size(records), LINES, "row count mismatch for " + filename);
         }
         reader.close();
     }

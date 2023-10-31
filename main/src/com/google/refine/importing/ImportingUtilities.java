@@ -805,15 +805,10 @@ public class ImportingUtilities {
                 return new GZIPInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".bz2")
                     || "application/x-bzip2".equals(mimeType)) {
-                InputStream is = new FileInputStream(file);
-                is.mark(4);
-                if (!(is.read() == 'B' && is.read() == 'Z')) {
-                    // No BZ prefix as appended by command line tools. Reset and hope for the best
-                    is.reset();
-                }
-                return new BZip2CompressorInputStream(is);
+                return new BZip2CompressorInputStream(new FileInputStream(file));
             }
         } catch (IOException e) {
+            // TODO: We need to get this error back to the user
             logger.warn("Something that looked like a compressed file gave an error on open: " + file, e);
         }
         return null;
@@ -898,7 +893,7 @@ public class ImportingUtilities {
             }
         });
 
-        // Default to "text" to to avoid parsing as "binary/excel".
+        // Default to "text" to avoid parsing as "binary/excel".
         // "text" is more general than "text/line-based", so a better starting point
         String bestFormat = formats.size() > 0 ? formats.get(0) : "text";
         if (JSONUtilities.getInt(retrievalRecord, "archiveCount", 0) == 0) {
