@@ -806,7 +806,7 @@ public class ImportingUtilities {
                 return new GZIPInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".bz2")
                     || "application/x-bzip2".equals(mimeType)) {
-                return new BZip2CompressorInputStream(new FileInputStream(file));
+                return new BZip2CompressorInputStream(new FileInputStream(file), true);
             }
         } catch (IOException e) {
             // TODO: We need to get this error back to the user

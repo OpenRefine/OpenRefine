@@ -37,6 +37,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -458,7 +461,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
             File tmp = File.createTempFile("openrefine-test-" + FILENAME_BASE, suffix, job.getRawDataDir());
             tmp.deleteOnExit();
-            FileUtils.copyFile(new File(filePath), tmp);
+            byte[] contents = Files.readAllBytes(Path.of(filePath));
+            Files.write(tmp.toPath(), contents);
+            // Write two copies of the data to test reading concatenated streams
+            Files.write(tmp.toPath(), contents, StandardOpenOption.APPEND);
 
             InputStream is = ImportingUtilities.tryOpenAsCompressedFile(tmp, null, null);
             Assert.assertNotNull(is, "Failed to open compressed file: " + filename);
@@ -466,7 +472,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
             reader = new InputStreamReader(is);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
-            Assert.assertEquals(IterableUtils.size(records), LINES, "row count mismatch for " + filename);
+            Assert.assertEquals(IterableUtils.size(records), LINES * 2, "row count mismatch for " + filename);
         }
         reader.close();
     }
