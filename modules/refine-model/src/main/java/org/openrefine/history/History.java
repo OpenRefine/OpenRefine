@@ -112,6 +112,7 @@ public class History {
     protected static class Step {
 
         protected Grid grid;
+        protected ChangeResult changeResult;
         // stores whether the grid at the same index is read directly from disk or not
         protected boolean cachedOnDisk;
         // stores whether the grid depends on change data being fetched, and is therefore worth refreshing regularly
@@ -119,6 +120,13 @@ public class History {
 
         protected Step(Grid grid, boolean cachedOnDisk, boolean inProgress) {
             this.grid = grid;
+            this.cachedOnDisk = cachedOnDisk;
+            this.inProgress = inProgress;
+        }
+
+        protected Step(Grid grid, ChangeResult changeResult, boolean cachedOnDisk, boolean inProgress) {
+            this.grid = grid;
+            this.changeResult = changeResult;
             this.cachedOnDisk = cachedOnDisk;
             this.inProgress = inProgress;
         }
@@ -260,12 +268,16 @@ public class History {
             HistoryEntry entry = _entries.get(position - 1);
             ChangeContext context = ChangeContext.create(entry.getId(), _projectId, position - 1, this, _dataStore, entry.getDescription());
             Operation operation = entry.getOperation();
-            Grid newState;
-            newState = operation.apply(previous, context).getGrid();
-            step.grid = newState;
+            ChangeResult changeResult = operation.apply(previous, context);
+            if (changeResult.getGridPreservation() != entry.getGridPreservation()) {
+                _entries.set(position - 1, new HistoryEntry(
+                        entry.getId(), entry.getOperation(), entry.getTime(), changeResult.getGridPreservation()));
+            }
+            step.grid = changeResult.getGrid();
+            step.changeResult = changeResult;
             step.inProgress = _steps.get(position - 1).inProgress || _dataStore.needsRefreshing(entry.getId());
             step.cachedOnDisk = false;
-            return newState;
+            return step.grid;
         }
     }
 
@@ -330,22 +342,19 @@ public class History {
         // Any new change will clear all future entries.
         deleteFutureEntries();
 
-        // TODO refactor this so that it does not duplicate the logic of getGrid
-        ChangeContext context = ChangeContext.create(id, _projectId, _position, this, _dataStore, operation.getDescription());
-        ChangeResult changeResult = null;
+        HistoryEntry entry = new HistoryEntry(id, operation, null);
+        _entries.add(entry);
+        _steps.add(new Step(null, false, false));
+        _position++;
         try {
-            changeResult = operation.apply(getCurrentGrid(), context);
+            // compute the grid at the new position (this applies the operation properly speaking)
+            getGrid(_position, false);
+            updateCachedPosition();
+            updateModified();
+            return new OperationApplicationResult(entry, _steps.get(_position).changeResult);
         } catch (OperationException e) {
             return new OperationApplicationResult(e);
         }
-        Grid newState = changeResult.getGrid();
-        HistoryEntry entry = new HistoryEntry(id, operation, changeResult.getGridPreservation());
-        _steps.add(new Step(newState, false, _steps.get(_position).inProgress || _dataStore.needsRefreshing(entry.getId())));
-        _entries.add(entry);
-        _position++;
-        updateCachedPosition();
-        updateModified();
-        return new OperationApplicationResult(entry, changeResult);
     }
 
     /**

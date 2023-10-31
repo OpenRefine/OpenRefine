@@ -125,23 +125,26 @@ public class HistoryTests {
         secondOperation = mock(Operation.class);
         newOperation = mock(Operation.class);
         failingOperation = mock(Operation.class);
-        firstEntry = mock(HistoryEntry.class);
-        secondEntry = mock(HistoryEntry.class);
-        newEntry = mock(HistoryEntry.class);
+        firstEntry = new HistoryEntry(firstChangeId, firstOperation, GridPreservation.PRESERVES_RECORDS);
+        secondEntry = new HistoryEntry(secondChangeId, secondOperation, GridPreservation.PRESERVES_ROWS);
+        newEntry = new HistoryEntry(newChangeId, newOperation, GridPreservation.NO_ROW_PRESERVATION);
         intermediateResult = mock(ChangeResult.class);
         finalResult = mock(ChangeResult.class);
         newResult = mock(ChangeResult.class);
 
         when(firstOperation.apply(eq(initialState), any())).thenReturn(intermediateResult);
         when(intermediateResult.getGrid()).thenReturn(intermediateState);
+        when(intermediateResult.getGridPreservation()).thenReturn(GridPreservation.PRESERVES_RECORDS);
         when(firstOperation.isReproducible()).thenReturn(false);
         when(secondOperation.apply(eq(intermediateState), any())).thenReturn(finalResult);
         when(secondOperation.apply(eq(cachedIntermediateState), any())).thenReturn(finalResult);
         when(finalResult.getGrid()).thenReturn(finalState);
+        when(finalResult.getGridPreservation()).thenReturn(GridPreservation.PRESERVES_ROWS);
         when(secondOperation.isReproducible()).thenReturn(true);
         when(newOperation.apply(eq(intermediateState), any())).thenReturn(newResult);
         when(newOperation.apply(eq(cachedIntermediateState), any())).thenReturn(newResult);
         when(newResult.getGrid()).thenReturn(newState);
+        when(newResult.getGridPreservation()).thenReturn(GridPreservation.NO_ROW_PRESERVATION);
         when(newOperation.isReproducible()).thenReturn(true);
         when(failingOperation.apply(eq(intermediateState), any()))
                 .thenThrow(new OperationException("some_error", "Some error occured"));
@@ -155,18 +158,6 @@ public class HistoryTests {
         when(intermediateState.rowCount()).thenReturn(10L);
         when(finalState.rowCount()).thenReturn(12L);
         when(newState.rowCount()).thenReturn(10000000L);
-
-        when(firstEntry.getId()).thenReturn(firstChangeId);
-        when(secondEntry.getId()).thenReturn(secondChangeId);
-        when(newEntry.getId()).thenReturn(newChangeId);
-
-        when(firstEntry.getOperation()).thenReturn(firstOperation);
-        when(secondEntry.getOperation()).thenReturn(secondOperation);
-        when(newEntry.getOperation()).thenReturn(newOperation);
-
-        when(firstEntry.getGridPreservation()).thenReturn(GridPreservation.PRESERVES_RECORDS);
-        when(secondEntry.getGridPreservation()).thenReturn(GridPreservation.PRESERVES_ROWS);
-        when(newEntry.getGridPreservation()).thenReturn(GridPreservation.NO_ROW_PRESERVATION);
 
         when(dataStore.getChangeDataIds(firstChangeId))
                 .thenReturn(Collections.singletonList(new ChangeDataId(firstChangeId, "data")));
