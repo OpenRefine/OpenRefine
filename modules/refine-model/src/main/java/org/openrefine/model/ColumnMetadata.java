@@ -95,7 +95,7 @@ public class ColumnMetadata implements Serializable {
     }
 
     @JsonProperty("originalName")
-    public String getOriginalHeaderLabel() {
+    public String getOriginalName() {
         return _originalName;
     }
 
@@ -118,10 +118,20 @@ public class ColumnMetadata implements Serializable {
         return _reconConfig;
     }
 
+    /**
+     * Updates the {@link #getLastModified()} field to a new value.
+     * 
+     * @return a copy of this object with the modified field.
+     */
     public ColumnMetadata withLastModified(long historyEntryId) {
         return new ColumnMetadata(_originalName, _name, historyEntryId, _reconConfig);
     }
 
+    /**
+     * Returns a new version of this column metadata, which reflects the fact that the column has been modified. Not
+     * only this sets the new history entry id in it, but it also sets the {@link #getOriginalName()} field to the
+     * current name.
+     */
     public ColumnMetadata markAsModified(long historyEntryId) {
         return new ColumnMetadata(_name, _name, historyEntryId, _reconConfig);
     }
@@ -167,7 +177,7 @@ public class ColumnMetadata implements Serializable {
         }
         ColumnMetadata metadata = (ColumnMetadata) other;
         return (_name.equals(metadata.getName()) &&
-                _originalName.equals(metadata.getOriginalHeaderLabel()) &&
+                _originalName.equals(metadata.getOriginalName()) &&
                 _lastModified == metadata.getLastModified() &&
                 ((_reconConfig == null && metadata.getReconConfig() == null)
                         || (_reconConfig != null && _reconConfig.equals(metadata.getReconConfig()))));

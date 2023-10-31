@@ -9,23 +9,25 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.Runner;
-import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
-import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
+import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.process.ProgressingFuture;
@@ -41,22 +43,26 @@ public class HistoryEntryManagerTests {
 
     static RowMapper mapper = mock(RowMapper.class);
 
-    public static class MyOperation implements Operation {
+    public static class MyOperation extends RowMapOperation {
+
+        protected MyOperation() {
+            super(EngineConfig.ALL_ROWS);
+        }
 
         // Deletes the first column of the table
         @Override
-        public ChangeResult apply(Grid projectState, ChangeContext context) {
-            List<ColumnMetadata> columns = projectState.getColumnModel().getColumns();
-            List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
+        public List<ColumnInsertion> getColumnInsertions() {
+            return Collections.emptyList();
+        }
 
-            return new ChangeResult(
-                    projectState.mapRows(mapper, new ColumnModel(newColumns)),
-                    GridPreservation.PRESERVES_ROWS);
+        @Override
+        public Set<String> getColumnDeletions() {
+            return Collections.singleton("a");
         }
 
         @Override
         public String getDescription() {
-            return "remove the first column";
+            return "remove column \"a\"";
         }
     };
 
@@ -75,6 +81,7 @@ public class HistoryEntryManagerTests {
         Grid secondState = mock(Grid.class);
         when(secondState.getColumnModel()).thenReturn(new ColumnModel(columnModel.getColumns().subList(1, 3)));
         when(grid.mapRows((RowMapper) Mockito.any(), Mockito.any())).thenReturn(secondState);
+        when(secondState.withOverlayModels(Mockito.any())).thenReturn(secondState);
         when(grid.saveToFileAsync(Mockito.any())).thenReturn(saveFuture);
         Operation operation = new MyOperation();
         gridStore = mock(GridCache.class);

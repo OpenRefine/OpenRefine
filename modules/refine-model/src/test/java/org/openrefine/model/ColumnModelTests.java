@@ -27,10 +27,11 @@
 
 package org.openrefine.model;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.util.ParsingUtilities;
@@ -83,7 +84,7 @@ public class ColumnModelTests {
                         new ColumnMetadata("a", "b", 1234L, null),
                         new ColumnMetadata("c", "d", 5678L, null)));
 
-        Assert.assertEquals(SUT.merge(columnModelB), expected);
+        assertEquals(SUT.merge(columnModelB), expected);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
@@ -91,5 +92,17 @@ public class ColumnModelTests {
         ColumnModel columnModel = new ColumnModel(
                 Arrays.asList(new ColumnMetadata("a", "b", 1234L, null)));
         SUT.merge(columnModel);
+    }
+
+    @Test
+    public void testMarkColumnsAsModified() {
+        ColumnModel actual = SUT.markColumnsAsModified(1010L);
+
+        ColumnModel expected = new ColumnModel(
+                Arrays.asList(
+                        new ColumnMetadata("b", "b", 1010L, null),
+                        new ColumnMetadata("d", "d", 1010L, null)));
+
+        assertEquals(actual, expected);
     }
 }

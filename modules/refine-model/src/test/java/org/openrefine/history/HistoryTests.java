@@ -66,6 +66,7 @@ import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
 import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.OperationException;
 
 public class HistoryTests {
@@ -77,6 +78,7 @@ public class HistoryTests {
     Grid intermediateState;
     Grid finalState;
     Grid newState;
+    Grid newStateModified;
     Grid cachedIntermediateState;
 
     ChangeResult intermediateResult;
@@ -86,13 +88,14 @@ public class HistoryTests {
     ColumnModel columnModel;
     ColumnModel intermediateColumnModel;
     ColumnModel finalColumnModel;
+    ColumnModel columnModelModified;
 
     long firstChangeId = 1234L;
     long secondChangeId = 5678L;
     long newChangeId = 9012L;
 
-    Operation firstOperation;
-    Operation secondOperation;
+    RowMapOperation firstOperation;
+    RowMapOperation secondOperation;
     Operation newOperation;
     Operation failingOperation;
 
@@ -110,6 +113,7 @@ public class HistoryTests {
         initialState = mock(Grid.class);
         intermediateState = mock(Grid.class);
         newState = mock(Grid.class);
+        newStateModified = mock(Grid.class);
         cachedIntermediateState = mock(Grid.class);
         finalState = mock(Grid.class);
 
@@ -120,9 +124,10 @@ public class HistoryTests {
         finalColumnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("foo"),
                 new ColumnMetadata("bar", "bar", secondChangeId, null)));
+        columnModelModified = columnModel.markColumnsAsModified(newChangeId);
 
-        firstOperation = mock(Operation.class);
-        secondOperation = mock(Operation.class);
+        firstOperation = mock(RowMapOperation.class);
+        secondOperation = mock(RowMapOperation.class);
         newOperation = mock(Operation.class);
         failingOperation = mock(Operation.class);
         firstEntry = new HistoryEntry(firstChangeId, firstOperation, GridPreservation.PRESERVES_RECORDS);
@@ -153,6 +158,8 @@ public class HistoryTests {
         when(intermediateState.getColumnModel()).thenReturn(intermediateColumnModel);
         when(cachedIntermediateState.getColumnModel()).thenReturn(intermediateColumnModel);
         when(newState.getColumnModel()).thenReturn(columnModel);
+        when(newState.withColumnModel(columnModelModified)).thenReturn(newStateModified);
+        when(newStateModified.getColumnModel()).thenReturn(columnModelModified);
         when(finalState.getColumnModel()).thenReturn(finalColumnModel);
         when(initialState.rowCount()).thenReturn(8L);
         when(intermediateState.rowCount()).thenReturn(10L);
@@ -274,7 +281,7 @@ public class HistoryTests {
     @Test
     public void testConstructWithCachedGrids() throws OperationException, IOException, ParsingException {
         HistoryEntry thirdEntry = mock(HistoryEntry.class);
-        Operation thirdChange = mock(Operation.class);
+        Operation thirdChange = mock(RowMapOperation.class);
         Grid thirdState = mock(Grid.class);
         Grid fourthState = mock(Grid.class);
         ChangeResult changeResult = mock(ChangeResult.class);
@@ -327,7 +334,7 @@ public class HistoryTests {
         history.addEntry(newEntry.getId(), newEntry.getOperation());
 
         Assert.assertEquals(history.getPosition(), 2);
-        Assert.assertEquals(history.getCurrentGrid(), newState);
+        Assert.assertEquals(history.getCurrentGrid(), newStateModified);
         Assert.assertEquals(history.getEntries().size(), 2);
         verify(dataStore, times(1)).discardAll(secondChangeId);
     }
@@ -503,6 +510,33 @@ public class HistoryTests {
 
         Assert.assertEquals(history.earliestStepContainingDependencies(2, barDep2, Engine.Mode.RowBased), 2);
         Assert.assertEquals(history.earliestStepContainingDependencies(2, barDep2, Engine.Mode.RecordBased), 2);
+    }
+
+    @Test
+    public void testMarkColumnsAsModified() {
+        long historyEntryId = 7979L;
+        ChangeResult changeResult = mock(ChangeResult.class);
+
+        RowMapOperation rowMapOperation = mock(RowMapOperation.class);
+        Operation opaqueOperation = mock(Operation.class);
+
+        Grid grid = mock(Grid.class);
+        Grid modifiedGrid = mock(Grid.class);
+        when(changeResult.getGrid()).thenReturn(grid);
+        ColumnModel columnModel = mock(ColumnModel.class);
+        when(grid.getColumnModel()).thenReturn(columnModel);
+        ColumnModel modifiedColumnModel = mock(ColumnModel.class);
+        when(modifiedGrid.getColumnModel()).thenReturn(modifiedColumnModel);
+        when(columnModel.markColumnsAsModified(historyEntryId)).thenReturn(modifiedColumnModel);
+        when(grid.withColumnModel(modifiedColumnModel)).thenReturn(modifiedGrid);
+
+        Grid actual = History.markColumnsAsModified(changeResult, opaqueOperation, historyEntryId);
+
+        Assert.assertEquals(actual, modifiedGrid);
+
+        Grid notModified = History.markColumnsAsModified(changeResult, rowMapOperation, historyEntryId);
+
+        Assert.assertEquals(notModified, grid);
     }
 
     @Test

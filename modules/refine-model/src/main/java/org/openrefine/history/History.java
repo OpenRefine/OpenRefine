@@ -59,6 +59,7 @@ import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.GridCache;
 import org.openrefine.operations.ChangeResult;
 import org.openrefine.operations.Operation;
+import org.openrefine.operations.RowMapOperation;
 import org.openrefine.operations.exceptions.OperationException;
 import org.openrefine.util.NamingThreadFactory;
 
@@ -123,13 +124,6 @@ public class History {
             this.cachedOnDisk = cachedOnDisk;
             this.inProgress = inProgress;
         }
-
-        protected Step(Grid grid, ChangeResult changeResult, boolean cachedOnDisk, boolean inProgress) {
-            this.grid = grid;
-            this.changeResult = changeResult;
-            this.cachedOnDisk = cachedOnDisk;
-            this.inProgress = inProgress;
-        }
     }
 
     /**
@@ -177,6 +171,7 @@ public class History {
             long projectId) throws OperationException {
         this(initialGrid, dataStore, gridStore, projectId);
         Set<Long> availableCachedStates = gridStore.listCachedGridIds();
+        _position = 0;
         for (HistoryEntry entry : entries) {
             Grid grid = null;
             if (availableCachedStates.contains(entry.getId())) {
@@ -273,11 +268,29 @@ public class History {
                 _entries.set(position - 1, new HistoryEntry(
                         entry.getId(), entry.getOperation(), entry.getTime(), changeResult.getGridPreservation()));
             }
-            step.grid = changeResult.getGrid();
+            step.grid = markColumnsAsModified(changeResult, operation, entry.getId());
             step.changeResult = changeResult;
             step.inProgress = _steps.get(position - 1).inProgress || _dataStore.needsRefreshing(entry.getId());
             step.cachedOnDisk = false;
             return step.grid;
+        }
+    }
+
+    /**
+     * Updates the column model of a grid computed by an operation to make sure that the columns are all marked as
+     * modified unless the operation was able to precisely isolate the columns it modified.
+     *
+     * @param changeResult
+     *            the outcome of running the operation
+     * @return a copy of the grid with updated columns
+     */
+    protected static Grid markColumnsAsModified(ChangeResult changeResult, Operation operation, long historyEntryId) {
+        if (operation instanceof RowMapOperation) {
+            return changeResult.getGrid();
+        } else {
+            Grid grid = changeResult.getGrid();
+            ColumnModel columnModel = grid.getColumnModel();
+            return grid.withColumnModel(columnModel.markColumnsAsModified(historyEntryId));
         }
     }
 
@@ -345,16 +358,17 @@ public class History {
         HistoryEntry entry = new HistoryEntry(id, operation, null);
         _entries.add(entry);
         _steps.add(new Step(null, false, false));
-        _position++;
         try {
             // compute the grid at the new position (this applies the operation properly speaking)
-            getGrid(_position, false);
+            getGrid(_position + 1, false);
+            _position++;
             updateCachedPosition();
             updateModified();
             return new OperationApplicationResult(entry, _steps.get(_position).changeResult);
         } catch (OperationException e) {
             return new OperationApplicationResult(e);
         }
+
     }
 
     /**

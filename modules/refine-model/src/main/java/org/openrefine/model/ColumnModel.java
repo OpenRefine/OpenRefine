@@ -35,6 +35,7 @@ package org.openrefine.model;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -160,6 +161,18 @@ public class ColumnModel implements Serializable {
         } catch (ModelException e) {
             return null; // unreachable
         }
+    }
+
+    /**
+     * Updates the last modification field of all columns to a newer history entry id.
+     * 
+     * @return a modified copy of this column model
+     */
+    public ColumnModel markColumnsAsModified(long historyEntryId) {
+        List<ColumnMetadata> columns = getColumns().stream()
+                .map(column -> column.markAsModified(historyEntryId))
+                .collect(Collectors.toList());
+        return new ColumnModel(columns, getKeyColumnIndex(), hasRecords());
     }
 
     /**

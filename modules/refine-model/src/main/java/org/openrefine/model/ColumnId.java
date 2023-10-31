@@ -9,8 +9,7 @@ import org.apache.commons.lang3.Validate;
 /**
  * This class represents the state of a column at a particular point in the history. If the column is not modified in
  * the subsequent operations, its {@link ColumnMetadata} is able to indicate so by retaining the history entry id as its
- * {@link ColumnMetadata#getLastModified()} field and the column name as its
- * {@link ColumnMetadata#getOriginalHeaderLabel()}.
+ * {@link ColumnMetadata#getLastModified()} field and the column name as its {@link ColumnMetadata#getOriginalName()}.
  */
 public class ColumnId implements Serializable {
 
