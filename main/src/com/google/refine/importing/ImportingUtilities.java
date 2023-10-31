@@ -716,7 +716,8 @@ public class ImportingUtilities {
             int count = is.read(magic);
             if (count == 4 && Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x03, 0x04 }) || // zip
                     Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x07, 0x08 }) ||
-                    (magic[0] == 0x1F && magic[1] == (byte) 0x8B) // gzip
+                    (magic[0] == 0x1F && magic[1] == (byte) 0x8B) || // gzip
+                    (magic[0] == 'B' && magic[1] == 'Z' && magic[2] == 'h') // bzip2
             ) {
                 return true;
             }

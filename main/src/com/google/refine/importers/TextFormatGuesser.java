@@ -54,7 +54,6 @@ public class TextFormatGuesser implements FormatGuesser {
             if (ImportingUtilities.isCompressed(file)) {
                 return "binary";
             }
-            ;
 
             InputStream bis = new BoundedInputStream(fis, 64 * 1024); // TODO: This seems like a lot
             try (BufferedReader reader = new BufferedReader(

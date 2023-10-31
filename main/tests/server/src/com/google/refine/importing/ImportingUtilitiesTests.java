@@ -37,9 +37,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -472,6 +469,22 @@ public class ImportingUtilitiesTests extends ImporterTest {
             Assert.assertEquals(IterableUtils.size(records), LINES, "row count mismatch for " + filename);
         }
         reader.close();
+    }
+
+    @Test
+    public void testIsCompressedFile() throws IOException {
+        Object[][] cases = {
+                { "movies.tsv", false },
+                { "persons.csv", false },
+                { "persons.csv.gz", true },
+                { "persons.csv.bz2", true },
+                { "unsupportedPPMD.zip", true },
+        };
+        for (Object[] test : cases) {
+            assertEquals(ImportingUtilities.isCompressed(new File(ClassLoader.getSystemResource((String) test[0]).getFile())), test[1],
+                    "Wrong value for isCompressed of: " + test);
+        }
+
     }
 
 }
