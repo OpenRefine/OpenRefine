@@ -31,12 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ReconDialog(column) {
+function ReconDialog(column,previousServiceName) {
   this._column = column;
   this._serviceRecords = [];
   this._selectedServiceRecordIndex = -1;
   this._record=null;
-
+  this.previousRecord=previousServiceName;
   this._createDialog();
 }
 
@@ -113,10 +113,15 @@ ReconDialog.prototype._populateDialog = function() {
         .addClass('recon-dialog-service-list-element')
         .appendTo(self._elmts.serviceList);
 
+        
       record.selector = $('<input type="radio" name="service-choice">')
         .addClass("recon-dialog-service-selector")
         .val(service.name) 
-        .appendTo(label)
+        .appendTo(label);
+
+      if (self.previousRecord === service.name) {
+          record.selector.prop('checked', true);
+      }
 
       var mainSpan=$('<span>')
         .addClass("recon-service-entry")
@@ -132,8 +137,7 @@ ReconDialog.prototype._populateDialog = function() {
         .appendTo(mainSpan);
       
        label.on('click', function() {
-
-      self._record=record;
+       self._record=record;
       
 });
 
