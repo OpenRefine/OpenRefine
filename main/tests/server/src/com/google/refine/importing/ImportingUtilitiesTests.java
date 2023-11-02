@@ -37,8 +37,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -450,18 +452,18 @@ public class ImportingUtilitiesTests extends ImporterTest {
     }
 
     @Test
-    public void testImportCompressedFiles() throws IOException {
+    public void testImportCompressedFiles() throws IOException, URISyntaxException {
         final String FILENAME_BASE = "persons";
         final int LINES = 4;
         String[] suffixes = { "", ".csv.gz", ".csv.bz2" };
         InputStreamReader reader = null;
         for (String suffix : suffixes) {
             String filename = FILENAME_BASE + suffix;
-            String filePath = ClassLoader.getSystemResource(filename).getPath();
+            Path filePath = Paths.get(ClassLoader.getSystemResource(filename).toURI());
 
             File tmp = File.createTempFile("openrefine-test-" + FILENAME_BASE, suffix, job.getRawDataDir());
             tmp.deleteOnExit();
-            byte[] contents = Files.readAllBytes(Path.of(filePath));
+            byte[] contents = Files.readAllBytes(filePath);
             Files.write(tmp.toPath(), contents);
             // Write two copies of the data to test reading concatenated streams
             Files.write(tmp.toPath(), contents, StandardOpenOption.APPEND);
