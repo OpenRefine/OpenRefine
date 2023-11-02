@@ -42,12 +42,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     service = ReconciliationManager.getServiceFromUrl(serviceUrl);
   }
   var doReconcile = function() {
-    if(service){
-      new ReconDialog(column,service.name);
-    }
-    else{
-      new ReconDialog(column,null);
-    }
+      new ReconDialog(column, service);
   };
 
   var doReconDiscardJudgments = function() {

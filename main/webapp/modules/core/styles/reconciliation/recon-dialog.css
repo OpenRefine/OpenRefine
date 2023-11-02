@@ -127,3 +127,15 @@ a.recon-dialog-service-selector-remove {
 
 }
 
+.popup-message {
+  position: absolute;
+  background-color: white;
+  color: black;
+  padding: 5px;
+  display: none; 
+  top:570px;
+}
+
+.popup-message.show {
+  display: block; 
+}

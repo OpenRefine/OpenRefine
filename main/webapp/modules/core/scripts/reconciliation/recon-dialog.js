@@ -31,12 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ReconDialog(column,previousServiceName) {
+function ReconDialog(column, previousService) {
   this._column = column;
   this._serviceRecords = [];
   this._selectedServiceRecordIndex = -1;
-  this._record=null;
-  this.previousRecord=previousServiceName;
+  this._record = null;
+  this.previousRecord = previousService;
   this._createDialog();
 }
 
@@ -57,8 +57,17 @@ ReconDialog.prototype._createDialog = function() {
 
   this._elmts.cancelButton.on('click',function() { self._dismiss(); });
   this._elmts.nextButton.on('click',function() { 
-    if(self._record)
+    if(self._record){
     self._nextDialog(self._column,self._selectedServiceRecordIndex,self._serviceRecords,self._record);
+    }
+    else{
+      var message = document.getElementById('popup-message');
+        message.classList.add('show');
+        setTimeout(function() {
+            message.classList.remove('show');
+        }, 2000); // Adjust the delay in milliseconds as needed
+
+    }
    });
 
   this._level = DialogSystem.showDialog(dialog);
@@ -119,7 +128,7 @@ ReconDialog.prototype._populateDialog = function() {
         .val(service.name) 
         .appendTo(label);
 
-      if (self.previousRecord === service.name) {
+      if (self.previousRecord === service) {
           record.selector.prop('checked', true);
       }
 
@@ -137,7 +146,7 @@ ReconDialog.prototype._populateDialog = function() {
         .appendTo(mainSpan);
       
        label.on('click', function() {
-       self._record=record;
+       self._record = record;
       
 });
 
