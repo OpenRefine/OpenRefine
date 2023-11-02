@@ -159,6 +159,7 @@ ReconDialog.prototype._populateDialog = function() {
       .prependTo(label)
       .on('click',function(event) {
         ReconciliationManager.unregisterService(service, function() {
+          self._record = null;
           self._refresh(this._selectedServiceRecordIndex);
         });
         event.stopImmediatePropagation();
