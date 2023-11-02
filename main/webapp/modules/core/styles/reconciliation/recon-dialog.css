@@ -127,7 +127,7 @@ a.recon-dialog-service-selector-remove {
 
 }
 
-.popup-message {
+.pop-up-message {
   position: absolute;
   background-color: white;
   color: black;
@@ -136,6 +136,6 @@ a.recon-dialog-service-selector-remove {
   top:570px;
 }
 
-.popup-message.show {
+.pop-up-message.show {
   display: block; 
 }

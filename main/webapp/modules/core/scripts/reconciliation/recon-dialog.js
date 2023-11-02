@@ -52,6 +52,7 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   this._elmts.discoverServicesButton.html($.i18n('core-buttons/discover-services'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
+  this._elmts.popUpMessage.html($.i18n('core-recon/disable-next-button'));
 
   this._elmts.addStandardServiceButton.on('click',function() { self._onAddStandardService(); });
 
@@ -65,7 +66,7 @@ ReconDialog.prototype._createDialog = function() {
         message.classList.add('show');
         setTimeout(function() {
             message.classList.remove('show');
-        }, 2000); // Adjust the delay in milliseconds as needed
+        }, 1000); 
 
     }
    });
