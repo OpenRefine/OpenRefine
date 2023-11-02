@@ -2,7 +2,7 @@
 package com.google.refine.extension.gdata;
 
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 

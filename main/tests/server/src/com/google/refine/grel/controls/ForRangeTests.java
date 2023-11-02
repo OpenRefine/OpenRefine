@@ -35,7 +35,10 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.expr.*;
+import com.google.refine.expr.EvalError;
+import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.util.TestUtils;
 
 public class ForRangeTests extends RefineTest {

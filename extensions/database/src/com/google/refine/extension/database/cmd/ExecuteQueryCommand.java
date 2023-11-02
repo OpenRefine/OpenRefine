@@ -42,7 +42,6 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import com.google.refine.ProjectManager;
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;

@@ -32,7 +32,6 @@ import org.apache.commons.io.IOUtils;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-//import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;

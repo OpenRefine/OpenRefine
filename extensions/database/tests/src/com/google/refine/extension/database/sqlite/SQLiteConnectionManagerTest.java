@@ -35,7 +35,11 @@ import java.sql.SQLException;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.DatabaseConfiguration;

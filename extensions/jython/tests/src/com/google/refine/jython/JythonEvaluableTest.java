@@ -3,7 +3,7 @@ package com.google.refine.jython;
 
 import java.util.Properties;
 
-import org.python.core.*;
+import org.python.core.PyObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

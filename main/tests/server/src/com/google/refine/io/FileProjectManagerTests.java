@@ -28,7 +28,10 @@
 package com.google.refine.io;
 
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertThrows;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
