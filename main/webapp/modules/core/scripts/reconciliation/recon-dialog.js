@@ -37,6 +37,7 @@ function ReconDialog(column, previousService) {
   this._selectedServiceRecordIndex = -1;
   this._record = null;
   this.previousRecord = previousService;
+
   this._createDialog();
 }
 
@@ -59,7 +60,7 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.cancelButton.on('click',function() { self._dismiss(); });
   this._elmts.nextButton.on('click',function() { 
     if(self._record){
-    self._nextDialog(self._column,self._selectedServiceRecordIndex,self._serviceRecords,self._record);
+    self._nextDialog(self._column, self._selectedServiceRecordIndex, self._serviceRecords, self._record, self.previousRecord);
     }
     else{
       var message = document.getElementById('popup-message');
@@ -77,9 +78,9 @@ ReconDialog.prototype._createDialog = function() {
 };
 
 
-ReconDialog.prototype._nextDialog = function(column, selectedServiceRecordindex, serviceRecords, record) {
+ReconDialog.prototype._nextDialog = function(column, selectedServiceRecordIndex, serviceRecords, record, previousService) {
   this._dismiss();
-  new ReconDialog2(column, selectedServiceRecordindex, serviceRecords, record);
+  new ReconDialog2(column, selectedServiceRecordIndex, serviceRecords, record, previousService);
 }
 
 ReconDialog.prototype._dismiss = function() {
@@ -131,6 +132,7 @@ ReconDialog.prototype._populateDialog = function() {
 
       if (self.previousRecord === service) {
           record.selector.prop('checked', true);
+          self._record = record;
       }
 
       var mainSpan=$('<span>')
@@ -157,7 +159,7 @@ ReconDialog.prototype._populateDialog = function() {
       .prependTo(label)
       .on('click',function(event) {
         ReconciliationManager.unregisterService(service, function() {
-          self._refresh(-1);
+          self._refresh(this._selectedServiceRecordIndex);
         });
         event.stopImmediatePropagation();
       });

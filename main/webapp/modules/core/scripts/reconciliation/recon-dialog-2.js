@@ -31,11 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ReconDialog2(column, selectedServiceRecordindex, serviceRecords, record) {
+function ReconDialog2(column, selectedServiceRecordindex, serviceRecords, record, previousService) {
   this._column = column;
   this._serviceRecords = serviceRecords;
   this._selectedServiceRecordIndex = selectedServiceRecordindex;
-  this._record=record;
+  this._previousService = previousService;
+  this._record = record;
 
   this._createDialog();
 }
@@ -52,7 +53,7 @@ ReconDialog2.prototype._createDialog = function() {
 
   this._elmts.reconcileButton.on('click',function() { self._onOK(); });
   this._elmts.cancelButton.on('click',function() { self._dismiss(); });
-  this._elmts.backButton.on('click',function() { self._previousDialog(self._column); });
+  this._elmts.backButton.on('click',function() { self._previousDialog(self._column, self._previousService); });
 
 
   this._level = DialogSystem.showDialog(dialog);
@@ -60,9 +61,9 @@ ReconDialog2.prototype._createDialog = function() {
 };
 
 
-ReconDialog2.prototype._previousDialog = function(column) {
+ReconDialog2.prototype._previousDialog = function(column, previousService) {
   this._dismiss();
-  new ReconDialog(column);
+  new ReconDialog(column, previousService);
 }
 
 
