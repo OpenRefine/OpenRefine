@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,17 +36,13 @@ package com.google.refine.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -84,16 +80,13 @@ public class ProjectMetadataUtilities {
                 file.delete();
             }
         }
-
+        projectMeta.setLastSave();
         tempFile.renameTo(file);
     }
 
     protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws IOException {
-        Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile), StandardCharsets.UTF_8);
-        try {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile), StandardCharsets.UTF_8)) {
             ParsingUtilities.saveWriter.writeValue(writer, projectMeta);
-        } finally {
-            writer.close();
         }
     }
 
@@ -136,7 +129,6 @@ public class ProjectMetadataUtilities {
      *            the project directory
      * @param id
      *            the project id
-     * @return
      */
     static public ProjectMetadata recover(File projectDir, long id) {
         ProjectMetadata pm = null;
@@ -162,8 +154,8 @@ public class ProjectMetadataUtilities {
                     mtime = Math.max(mtime, time);
                 }
             }
-            pm = new ProjectMetadata(LocalDateTime.ofInstant(Instant.ofEpochMilli(ctime), ZoneId.systemDefault()),
-                    LocalDateTime.ofInstant(Instant.ofEpochMilli(mtime), ZoneId.systemDefault()),
+            pm = new ProjectMetadata(Instant.ofEpochMilli(ctime),
+                    Instant.ofEpochMilli(mtime),
                     tempName);
             logger.error("Partially recovered missing metadata project in directory " + projectDir + " - " + tempName);
         }
@@ -172,6 +164,8 @@ public class ProjectMetadataUtilities {
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
         Reader reader = new InputStreamReader(new FileInputStream(metadataFile), StandardCharsets.UTF_8);
-        return ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
+        ProjectMetadata metadata = ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
+        metadata.setLastSave(); // No need to write it until it has been modified
+        return metadata;
     }
 }

@@ -37,7 +37,7 @@ DialogSystem = {
 
 var escapeKey = function(event) {
   var level = DialogSystem._layers.length;
-  if (event.keyCode == 27) {
+  if (event.key == "Escape") {
       DialogSystem.dismissUntil(level - 1);
   }
 }
@@ -63,7 +63,7 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   container.css("top", Math.round((top < 0 ) ? 5 : top) + "px");
   elmt.css("visibility", "visible");
 
-  container.draggable({ handle: '.dialog-header', cursor: 'move' });
+  container.draggable({ handle: '.dialog-header', containment: [ -32768, 0, 32768, 32768 ], cursor: 'move' });
 
   var layer = {
     overlay: overlay,
@@ -75,6 +75,15 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   var level = DialogSystem._layers.length;
 
   DialogSystem.setupEscapeKeyHandling();
+
+  elmt.attr("aria-role", "dialog");
+  var dialogHeader = elmt.find(".dialog-header");
+  if (dialogHeader.length && dialogHeader[0].id) {
+    elmt.attr("aria-labeledby", dialogHeader[0].id);
+  }
+
+  elmt.attr("tabindex", -1);
+  elmt.focus();
 
   return level;
 };

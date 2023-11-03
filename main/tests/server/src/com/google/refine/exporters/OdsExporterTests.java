@@ -57,13 +57,11 @@ import org.testng.annotations.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class OdsExporterTests extends RefineTest {
 

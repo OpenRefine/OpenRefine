@@ -10,7 +10,6 @@
     "database-source/alert-connection-name": "connection nameを指定してください",
     "database-source/alert-initial-database": "最初のデータベースを指定してください",
     "database-source/alert-query": "有効なクエリーを設定してください",
-    "database-source/alert-invalid-query-keyword": "クエリーにデータ操作語があります:",
     "database-source/alert-invalid-query-select": "クエリーはSELECTで始まります",
     "database-source/form-validation-failure": "接続フォームが無効です!",
     "database-source/alert-connection-edit": "接続の設定に成功しました",

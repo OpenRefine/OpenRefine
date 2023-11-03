@@ -35,6 +35,12 @@ package com.google.refine.model;
 
 public class ProjectStub extends Project {
 
+    /**
+     * Public version of protected constructor in the super class for testing purposes only.
+     *
+     * @param id
+     *            create project with the given ID rather than generating a new one.
+     */
     public ProjectStub(long id) {
         super(id);
     }

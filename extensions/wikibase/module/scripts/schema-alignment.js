@@ -120,9 +120,6 @@ SchemaAlignment._rerenderTabs = function() {
   var schemaTab = $(DOM.loadHTML("wikidata", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
   schemaElmts.targetWikibaseLabel.text($.i18n('wikibase-schema/target-wikibase-instance'));
-  schemaElmts.dialogExplanation.html($.i18n('wikibase-schema/dialog-explanation',
-      WikibaseManager.getSelectedWikibaseMainPage(),
-      WikibaseManager.getSelectedWikibaseName()));
   let editableEntityTypes = WikibaseManager.getSelectedWikibaseEditableEntityTypes();
   for (let entityType of editableEntityTypes) {
     let addButton = $('<div></div>').addClass("wbs-toolbar");
@@ -312,18 +309,6 @@ SchemaAlignment.switchTab = function(targetTab) {
 
   if (targetTab === "#view-panel") {
     ui.dataTableView.render();
-  }
-};
-
-SchemaAlignment.resize = function() {
-  if (this._viewPanel) {
-    var panelHeight = this._viewPanel.height();
-    this._schemaPanel.height(panelHeight);
-    this._issuesPanel.height(panelHeight);
-    this._previewPanel.height(panelHeight);
-    // Resize the inside of the schema panel
-    var headerHeight = this._schemaElmts.schemaHeader.outerHeight();
-    this._schemaElmts.canvas.height(panelHeight - headerHeight - 10);
   }
 };
 
@@ -1662,6 +1647,7 @@ SchemaAlignment.updateNbEdits = function(nb_edits) {
 
 SchemaAlignment.preview = function() {
   var self = this;
+  var countsElem = this.issuesTabCount;
 
   $('.invalid-schema-warning').hide();
   self.schemaValidationErrorsInPreview.empty();
@@ -1689,11 +1675,21 @@ SchemaAlignment.preview = function() {
         self.updateNbEdits(data["edit_count"]);
       }
 
-      if (data.warnings) {
-          self._updateWarnings(data.warnings, data.nb_warnings);
-      } else {
-          self._updateWarnings([], 0);
-      }
+      // update the counts in the issues tab
+     var numWarnings = data.warnings ? data.nb_warnings : 0;
+     var numErrors = data.errors ? data.errors.length : 0;
+     var totalCount = numErrors + numWarnings;
+     countsElem.hide();
+     if (totalCount) {
+       countsElem.text(totalCount);
+       countsElem.show();
+     }
+
+     if (data.warnings) {
+         self._updateWarnings(data.warnings);
+     } else {
+         self._updateWarnings([]);
+     }
 
       if ("code" in data && data.code === "error" && data.reason == 'invalid-schema') {
          $('.invalid-schema-warning').show();
@@ -1730,25 +1726,17 @@ SchemaAlignment.onProjectUpdate = function(options) {
  * WARNINGS RENDERING *
  *************************/
 
-SchemaAlignment._updateWarnings = function(warnings, totalCount) {
+SchemaAlignment._updateWarnings = function(warnings) {
    var self = this;
-   var countsElem = this.issuesTabCount;
-
-   // clear everything
-   countsElem.hide();
+   
    self._issuesElmts.warningsArea.empty();
-
+   
    var table = $('<table></table>').appendTo(self._issuesElmts.warningsArea);
    for (var i = 0; i != warnings.length; i++) {
       var rendered = WarningsRenderer._renderWarning(warnings[i]);
       rendered.appendTo(table);
    }   
 
-   // update the counts
-   if (totalCount) {
-        countsElem.text(totalCount);
-        countsElem.show();
-   }
 };
 
 /************************************

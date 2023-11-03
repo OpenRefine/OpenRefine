@@ -1,0 +1,108 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+.ui-tabs {
+  padding: 0;
+}
+
+.ui-widget-content, .ui-tabs .ui-widget-header {
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+.ui-tabs-tab:focus {
+  outline: #86A8DF auto 5px; /* color of native browser outlines */
+}
+
+.ui-tabs .ui-tabs-nav {
+  padding: 0 var(--padding-normal);
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+  padding: 0.5em 0.8em;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+  padding: 4px 10px;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-default,
+.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-default {
+  background: none;
+  border: 1px solid transparent;
+  border-bottom: 0;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-default a,
+.ui-tabs .ui-tabs-nav .ui-state-default a:link,
+.ui-tabs .ui-tabs-nav .ui-state-default a:visited {
+  color: var(--link-primary);
+  font-weight: normal;
+}
+
+.ui-tabs .ui-tabs-nav li a span.count {
+  color: #666;
+  font-weight: normal;
+  font-size: 80%;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-active,
+.ui-tabs .ui-tabs-nav .ui-widget-content .ui-state-active {
+  border: 1px solid var(--chrome-primary);
+  border-bottom: none;
+  background: var(--background-primary);
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-active a,
+.ui-tabs .ui-tabs-nav .ui-state-active a:link,
+.ui-tabs .ui-tabs-nav .ui-state-active a:visited {
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+.ui-tabs .ui-corner-top, .ui-tabs .ui-corner-top {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.ui-tabs .ui-tabs-panel {
+  margin: 0;
+  padding: var(--padding-normal);
+  border: 1px solid var(--chrome-primary);
+  background: var(--background-primary);
+}
+
+.ui-widget-content a {
+  color: var(--link-primary);
+}

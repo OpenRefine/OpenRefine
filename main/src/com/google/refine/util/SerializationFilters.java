@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, OpenRefine contributors
+ * Copyright (C) 2018, 2022 OpenRefine contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
 package com.google.refine.util;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
@@ -156,6 +157,35 @@ public class SerializationFilters {
         public void serialize(LocalDateTime arg0, JsonGenerator gen, SerializerProvider s)
                 throws IOException {
             gen.writeString(ParsingUtilities.localDateToString(arg0));
+        }
+    }
+
+    public static class InstantSerializer extends StdSerializer<Instant> {
+
+        private static final long serialVersionUID = 93872874L;
+
+        public InstantSerializer() {
+            super(Instant.class);
+        }
+
+        public void serialize(Instant arg0, JsonGenerator gen, SerializerProvider s)
+                throws IOException {
+            gen.writeString(arg0.toString());
+        }
+    }
+
+    public static class InstantDeserializer extends StdDeserializer<Instant> {
+
+        private static final long serialVersionUID = 93872874L;
+
+        public InstantDeserializer() {
+            super(Instant.class);
+        }
+
+        @Override
+        public Instant deserialize(JsonParser p, DeserializationContext ctxt)
+                throws IOException {
+            return Instant.parse(p.getValueAsString());
         }
     }
 

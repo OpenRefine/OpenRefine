@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.7-SNAPSHOT</version>
+    <version>3.8-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -248,9 +248,9 @@
       <version>${jsoup.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>opencsv-multichar</artifactId>
-      <version>${opencsv-multichar.version}</version>
+      <groupId>com.univocity</groupId>
+      <artifactId>univocity-parsers</artifactId>
+      <version>${univocity-csv.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>

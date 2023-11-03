@@ -336,7 +336,7 @@
     "core-dialogs/expression": "Výraz",
     "core-dialogs/from": "Od",
     "core-dialogs/returns": "vrací",
-    "core-dialogs/record-fields": "jeden nebo více řádků tvořících záznam; objekt má více polí, detaily viz <a href=\"https://docs.openrefine.org/manual/expressions#record\">Záznamy</a>",
+    "core-dialogs/record-fields": "jeden nebo více řádků tvořících záznam; objekt má více polí, detaily viz <a href=\"https://openrefine.org/docs/manual/expressions#record\">Záznamy</a>",
     "core-dialogs/cells-of-row": "Buňky aktuálního řádku. Zkratka pro 'row.cells'. konkrétní buňmku můžete získat pomocí 'cells.&lt;nazev-sloupce>, je-li &lt;nazev-sloupce> jedno slovo, v opačeném případě pomocí 'cells[\"&lt;nazev sloupce>\"].",
     "core-dialogs/row-index": "Index aktuálního řádku. Zkratka pro 'row.index'.",
     "core-dialogs/row-fields": "Aktuální řádek. Má 5 polí: flagged', 'starred', 'index', 'cells' a 'record'.",

@@ -1,15 +1,20 @@
 {
+  "engines": {
+    "node": ">=14.0.0",
+    "npm":  ">=8.11.0",
+    "yarn": ">=1.22.15"
+  },
   "scripts": {
     "postinstall": "node copy-dependencies.js"
   },
   "name": "open-refine-webapp",
   "type": "module",
   "dependencies": {
-    "@wikimedia/jquery.i18n": "1.0.7",
+    "@wikimedia/jquery.i18n": "1.0.9",
     "datejs-coolite": "1.0.0",
-    "jquery": "3.6.1",
-    "jquery-migrate": "3.4.0",
-    "js-cookie": "3.0.1",
+    "jquery": "3.7.1",
+    "jquery-migrate": "3.4.1",
+    "js-cookie": "3.0.5",
     "moment": "2.29.4",
     "select2": "4.1.0-rc.0",
     "tablesorter": "2.31.3",

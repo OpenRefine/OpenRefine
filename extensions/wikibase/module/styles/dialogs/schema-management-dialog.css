@@ -1,0 +1,31 @@
+.schema-template-list {
+  list-style: decimal;
+  list-style-position: inside;
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+.schema-template-list-wrapper {
+  margin-bottom: 1em;
+}
+
+.schema-template-list li {
+  padding: .5em;
+  display: list-item;
+}
+
+.schema-template-list li:nth-child(odd) {
+  background: #f2f2f2;
+}
+
+.wikibase-import-template-error {
+  color: red;
+}
+
+.wikibase-import-template-label {
+  padding-right: 1em;
+}
+
+.wikibase-template-info, .wikibase-template-actions {
+  display: inline-block;
+}

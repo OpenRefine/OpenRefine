@@ -78,16 +78,6 @@ public class TestUtils {
 
     /**
      * Assert that two JSON strings are equal as JSON objects.
-     *
-     * @deprecated for 3.5 by Tom Morris Use the method with the same parameter order as the rest of the assert
-     *             methods{@link #assertEqualsAsJson(String, String)}
-     */
-    public static void assertEqualAsJson(String expected, String actual) {
-        assertEqualsAsJson(actual, expected);
-    }
-
-    /**
-     * Assert that two JSON strings are equal as JSON objects.
      */
     public static void assertEqualsAsJson(String actual, String expected) {
         try {
@@ -193,6 +183,6 @@ public class TestUtils {
         String expected[] = URLDecoder.decode(expectedQuery, "UTF-8").split("=");
 
         Assert.assertEquals(actualResponse[0], expected[0]);
-        TestUtils.assertEqualAsJson(actualResponse[1], expected[1]);
+        TestUtils.assertEqualsAsJson(actualResponse[1], expected[1]);
     }
 }

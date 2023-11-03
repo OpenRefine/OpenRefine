@@ -191,6 +191,18 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
   this._facets.push({ elmt: elmt, facet: facet });
 
   ui.leftPanelTabs.tabs();
+  ui.leftPanelTabs.on( "tabsactivate", ( event, ui ) =>  {
+     let activeTabId = ui.newTab.children('a').attr("href");
+     if (activeTabId === '#refine-tabs-facets') {
+       for (let facet of this._facets) {
+         if (facet.facet.render) {
+           facet.facet.render();
+         } else if (facet.facet.checkInitialHeight) {
+           facet.facet.checkInitialHeight();
+         }
+       }
+     }
+  });
 
   Refine.update({ engineChanged: true });
 };
@@ -240,7 +252,7 @@ BrowsingEngine.prototype.update = function(onDone) {
   this._elmts.help.hide();
 
   this._elmts.header.show();
-  this._elmts.controls.css("visibility", "hidden");
+  this._elmts.controls.css("display", "none");
   this._elmts.indicator.css("display", "block");
 
   $.post(
@@ -268,7 +280,7 @@ BrowsingEngine.prototype.update = function(onDone) {
       self._elmts.errors.css("display", "none");
       if (self._facets.length > 0) {
         self._elmts.header.show();
-        self._elmts.controls.css("visibility", "visible");
+        self._elmts.controls.css("display", "block");
 
         self.resize();
       } else {

@@ -33,8 +33,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingNoValueSnak;
+import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingSomeValueSnak;
+import org.openrefine.wikibase.schema.entityvalues.FullyPropertySerializingValueSnak;
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikibase.schema.exceptions.SpecialValueNoValueException;
+import org.openrefine.wikibase.schema.exceptions.SpecialValueSomeValueException;
 import org.openrefine.wikibase.schema.strategies.PropertyOnlyStatementMerger;
 import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
 import org.openrefine.wikibase.schema.strategies.StatementMerger;
@@ -151,8 +156,14 @@ public class WbStatementExpr {
             throws SkipSchemaExpressionException, QAWarningException {
         Snak mainSnak = null;
         if (mainSnakValueExpr != null) {
-            Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
-            mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
+            try {
+                Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
+                mainSnak = new FullyPropertySerializingValueSnak(propertyId, mainSnakValue);
+            } catch (SpecialValueNoValueException e) {
+                mainSnak = new FullyPropertySerializingNoValueSnak(propertyId);
+            } catch (SpecialValueSomeValueException e) {
+                mainSnak = new FullyPropertySerializingSomeValueSnak(propertyId);
+            }
         } else {
             // hack to make sure we have a non-null snak
             mainSnak = Datamodel.makeNoValueSnak(propertyId);

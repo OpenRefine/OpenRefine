@@ -129,6 +129,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                         _schemaSpace,
                         null,
                         false,
+                        10,
                         Collections.emptyList(),
                         0);
     }

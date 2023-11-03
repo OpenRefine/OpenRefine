@@ -143,6 +143,8 @@ public class StandardReconConfig extends ReconConfig {
     final public String typeName;
     @JsonProperty("autoMatch")
     final public boolean autoMatch;
+    @JsonProperty("batchSize")
+    final public int batchSize;
     @JsonProperty("columnDetails")
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
@@ -158,12 +160,13 @@ public class StandardReconConfig extends ReconConfig {
             @JsonProperty("schemaSpace") String schemaSpace,
             @JsonProperty("type") ReconType type,
             @JsonProperty("autoMatch") boolean autoMatch,
+            @JsonProperty("batchSize") int batchSize,
             @JsonProperty("columnDetails") List<ColumnDetail> columnDetails,
             @JsonProperty("limit") int limit) {
         this(service, identifierSpace, schemaSpace,
                 type != null ? type.id : null,
                 type != null ? type.name : null,
-                autoMatch, columnDetails, limit);
+                autoMatch, batchSize, columnDetails, limit);
     }
 
     public StandardReconConfig(
@@ -174,8 +177,9 @@ public class StandardReconConfig extends ReconConfig {
             String typeID,
             String typeName,
             boolean autoMatch,
+            int batchSize,
             List<ColumnDetail> columnDetails) {
-        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, columnDetails, 0);
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, batchSize, columnDetails, 0);
     }
 
     /**
@@ -196,6 +200,7 @@ public class StandardReconConfig extends ReconConfig {
             String typeID,
             String typeName,
             boolean autoMatch,
+            int batchSize,
             List<ColumnDetail> columnDetails,
             int limit) {
         this.service = service;
@@ -205,6 +210,7 @@ public class StandardReconConfig extends ReconConfig {
         this.typeID = typeID;
         this.typeName = typeName;
         this.autoMatch = autoMatch;
+        this.batchSize = batchSize;
         this.columnDetails = columnDetails;
         this.limit = limit;
     }
@@ -220,8 +226,8 @@ public class StandardReconConfig extends ReconConfig {
 
     @Override
     @JsonIgnore
-    public int getBatchSize() {
-        return 10;
+    public int getBatchSize(int rowCount) {
+        return Math.min(Math.max(rowCount / 10, 10), batchSize);
     }
 
     @Override
@@ -342,6 +348,8 @@ public class StandardReconConfig extends ReconConfig {
         public double score;
         @JsonProperty("match")
         public boolean match = false;
+        @JsonProperty("error")
+        public ReconCandidate error = null;
 
         @JsonIgnore
         public ReconCandidate toCandidate() {
@@ -472,12 +480,12 @@ public class StandardReconConfig extends ReconConfig {
 
                             recon = createReconServiceResults(text, results, historyEntryID);
                         } else {
-                            // TODO: better error reporting
-                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
+                            recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                            recon.error = o2.toString();
                         }
                     } else {
-                        // TODO: better error reporting
-                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
+                        recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                        recon.error = o.toString();
                     }
 
                     if (recon != null) {
@@ -487,7 +495,9 @@ public class StandardReconConfig extends ReconConfig {
                 }
             }
         } catch (IOException e) {
-            logger.error("Failed to batch recon with load:\n" + queriesString, e);
+            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+            recon.error = e.toString();
+            recons.add(recon);
         }
 
         while (recons.size() < jobs.size()) {

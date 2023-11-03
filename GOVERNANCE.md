@@ -16,7 +16,7 @@ Users are community members who have a need for the project. Through their usage
 Users can help the project by:
 
 - Advertising and advocating for the project
-- Informing developers of strengths and weaknesses of the tool through the [user discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)
+- Informing developers of strengths and weaknesses of the tool through the [user discussion list](https://forum.openrefine.org/) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)
 - Providing moral support (a ‘thank you’ goes a long way)
 - Writing tutorials
 
@@ -25,10 +25,10 @@ How to become an OpenRefine user? [Download OpenRefine](http://openrefine.org/do
 ### Contributors
 Contributors are users getting involved in the project more closely. Contributions can take many forms:
 
-- Supporting new users via the [user discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine)
+- Supporting new users via the [user discussion list](https://forum.openrefine.org/c/support/12)
 - Submitting patches to fix bugs or add features via pull requests
 - Maintaining and improving the [website](https://openrefine.org/)
-- Writing and maintaining the [documentation](https://github.com/OpenRefine/OpenRefine/tree/master/docs)
+- Writing and maintaining the [documentation](https://github.com/OpenRefine/openrefine.org/tree/master/docs)
 
 How to become an OpenRefine contributor? You will find more details in our [contributing guideline](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md)
 
@@ -38,7 +38,7 @@ If you make regular contribution to OpenRefine, you will most likely become a Co
 Committers have earned enough trust from the community to review and merge pull requests.
 
 Therefore Committers:
-- Help contributors via the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev).
+- Help contributors via the [developer discussion list](https://forum.openrefine.org/c/dev/8).
 - Triage issues, pull requests and [projects](https://github.com/OpenRefine/OpenRefine/projects)
 - Have direct access to the code base to create new branches
 - Organize the wiki
@@ -47,7 +47,7 @@ Therefore Committers:
 
 #### How to become a Committer?  
 
-Be a contributor and be nominated as a Committer. Current Committers select and elect new Committers. You may nominate yourself. Nomination should be sent to the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev)
+Be a contributor and be nominated as a Committer. Current Committers select and elect new Committers. You may nominate yourself. Nomination should be sent to the [developer discussion list](https://forum.openrefine.org/c/dev/8)
 
 #### Current list of Committers
 The list is available here: https://github.com/orgs/OpenRefine/people.
@@ -72,15 +72,7 @@ The steering committee oversees the general direction of the project and initiat
 Steering Committee members are invited by OpenRefine's Advisory Committee
 
 #### Current list of Steering Committee members
-* Chris Erdmann (University of North Carolina, RENCI)
-* Alicia Fagerving (Wikimedia Sverige)
-* Sandra Fauconnier (Wikimedia Foundation)
-* Rufus Pollock (Datopian, Open Knowledge Foundation)
-* Simon Rogers (Google News Initiative)
-* Lozana Rossenova (Rhizome)
-* Juliane Schneider (Harvard Catalyst, Clinical and Translational Science Center)
-* Wesley Sherperd (Unifyd Insights)
-* Fabio Tacchelli (Siren Solutions)
+There is currently no Steering Committee as the project is looking for a better format. See discussion [Fwd: Steering committee being disbanded?](https://forum.openrefine.org/t/fwd-steering-committee-being-disbanded/430/) and [Proposition to create OpenRefine Ambassador Council](https://forum.openrefine.org/t/proposition-to-create-openrefine-ambassador-council/462)
 
 ### Advisory Committee
 The Advisory Committee runs the administrative aspect of the project on a day to day basis with the support of Code for Science and Society (CS&S). Its member are bound by the  fiscal sponsorship agreement with Code for Science and Society. They meet once per month with Code for Science and Society.
@@ -101,21 +93,20 @@ Advisory Committee members:
 In the event of any conflict of interest (a Committee Member, their family member, or someone with whom the Committee Member has a close academic or employment relationship is involved in a decision), the Committee Member must immediately notify other Committee Members. The Committee Member will be asked to recuse themselves from ongoing conversations, and decision process regarding the Transaction.  
 
 #### Current list of Advisory Committee members
-* Martin Magdinier
 * Jan Ainali
 * Antonin Delpeuch
+* [Open Position]
 
-### Project Director
-OpenRefine's Project Director (paid position) works closely with OpenRefine’s advisory and steering committees, and with its communities of users and contributors.
+### Project Manager
+OpenRefine's Project Manager (paid position) works closely with OpenRefine’s advisory and steering committees, and with its communities of users and contributors.
 
-The Project Director:
+The Project Manager:
 * Helps to improve OpenRefine's governance and community diversity
 * Helps build community-driven structures to formalize OpenRefine’s roadmap and keep it up to date
 * Assists in finding and secure new sources of funding
 * Supports the Advisory Committee in OpenRefine’s day-to-day operations.
 
-The current Project Director is [Sandra Fauconnier](https://github.com/trnstlntk).
-
+The current Project Manager is [Martin Magdinier](https://forum.openrefine.org/u/Martin/summary)
 ## Fiscal sponsorship: Code For Science and Society
 
 Since January 2020, OpenRefine is a member project of [Code For Science and Society](https://codeforscience.org/) (CS&S).

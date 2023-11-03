@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,11 +36,9 @@ package com.google.refine;
 import com.google.refine.util.GetProjectIDException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,16 +70,16 @@ public abstract class ProjectManager {
     static public final int EXPRESSION_HISTORY_MAX = 100;
 
     // If a project has been idle this long, flush it from memory
-    static protected final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15 minutes
+    static protected final Duration PROJECT_FLUSH_DELAY = Duration.ofMinutes(15);
 
     // Don't spend more than this much time saving projects if doing a quick save
-    static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
+    static protected final Duration QUICK_SAVE_MAX_TIME = Duration.ofSeconds(30);
 
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected Map<String, Integer> _projectsTags;// TagName, number of projects having that tag
     protected PreferenceStore _preferenceStore;
 
-    final static Logger logger = LoggerFactory.getLogger("ProjectManager");
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * What caches the lookups of projects.
@@ -132,10 +130,12 @@ public abstract class ProjectManager {
      */
     public void registerProject(Project project, ProjectMetadata projectMetadata) {
         synchronized (this) {
+            // Row count is duplicated in metadata, so make sure it is up-to-date
+            projectMetadata.setRowCount(project.rows.size());
             _projects.put(project.id, project);
             _projectsMetadata.put(project.id, projectMetadata);
             if (_projectsTags == null)
-                _projectsTags = new HashMap<String, Integer>();
+                _projectsTags = new HashMap<>();
             String[] tags = projectMetadata.getTags();
             if (tags != null) {
                 for (String tag : tags) {
@@ -196,7 +196,7 @@ public abstract class ProjectManager {
                 try {
                     saveMetadata(metadata, id);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Error saving project metadata", e);
                 }
             } // FIXME what should be the behaviour if metadata is null? i.e. not found
 
@@ -205,7 +205,7 @@ public abstract class ProjectManager {
                 try {
                     saveProject(project);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Error saving project ", e);
                 }
             } // FIXME what should be the behaviour if project is null? i.e. not found or loaded.
               // FIXME what should happen if the metadata is found, but not the project? or vice versa?
@@ -268,8 +268,9 @@ public abstract class ProjectManager {
      * @param allModified
      */
     protected void saveProjects(boolean allModified) {
-        List<SaveRecord> records = new ArrayList<SaveRecord>();
-        LocalDateTime startTimeOfSave = LocalDateTime.now();
+        List<SaveRecord> records = new ArrayList<>();
+        Instant startTimeOfSave = Instant.now();
+        Instant quicksaveDeadline = startTimeOfSave.plus(QUICK_SAVE_MAX_TIME);
 
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
@@ -277,25 +278,22 @@ public abstract class ProjectManager {
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
 
                 if (project != null) {
-                    boolean hasUnsavedChanges = metadata.getModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() >= project
-                            .getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    // We use >= instead of just > to avoid the case where a newly created project
+                    // We use after or equals to avoid the case where a newly created project
                     // has the same modified and last save times, resulting in the project not getting
                     // saved at all.
+                    boolean hasUnsavedChanges = metadata.getModified().isAfter(project.getLastSave())
+                            || metadata.getModified().equals(project.getLastSave());
 
                     if (hasUnsavedChanges) {
-                        long msecsOverdue = startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                                - project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
+                        long msecsOverdue = Duration.between(startTimeOfSave, project.getLastSave()).toMillis();
                         records.add(new SaveRecord(project, msecsOverdue));
 
                     } else if (!project.getProcessManager().hasPending()
-                            && startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - project.getLastSave()
-                                    .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() > PROJECT_FLUSH_DELAY) {
+                            && project.getLastSave().plus(PROJECT_FLUSH_DELAY).isBefore(startTimeOfSave)) {
 
                         /*
-                         * It's been a while since the project was last saved and it hasn't been modified. We can safely
-                         * remove it from the cache to save some memory.
+                         * It's been a while since the project was last saved, and it hasn't been modified. We can
+                         * safely remove it from the cache to save some memory.
                          */
                         _projects.remove(id).dispose();
                     }
@@ -304,30 +302,20 @@ public abstract class ProjectManager {
         }
 
         if (records.size() > 0) {
-            Collections.sort(records, new Comparator<SaveRecord>() {
-
-                @Override
-                public int compare(SaveRecord o1, SaveRecord o2) {
-                    if (o1.overdue < o2.overdue) {
-                        return 1;
-                    } else if (o1.overdue > o2.overdue) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
+            // Save most overdue projects first
+            records.sort((o1, o2) -> Long.compare(o2.overdue, o1.overdue));
 
             logger.info(allModified ? "Saving all modified projects ..." : "Saving some modified projects ...");
 
-            for (int i = 0; i < records.size() &&
-                    (allModified || (LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() -
-                            startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < QUICK_SAVE_MAX_TIME)); i++) {
-
+            for (SaveRecord record : records) {
+                // If we've run out of time, bail out, unless we've been asked to save all modified projects
+                if (!allModified && Instant.now().isAfter(quicksaveDeadline)) {
+                    break;
+                }
                 try {
-                    saveProject(records.get(i).project);
+                    saveProject(record.project);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Error when saving projects. Attempting to free memory", e);
                     // In case we're running low on memory, free as much as we can
                     disposeUnmodifiedProjects();
                 }
@@ -344,8 +332,7 @@ public abstract class ProjectManager {
                 ProjectMetadata metadata = getProjectMetadata(id);
                 Project project = _projects.get(id);
                 if (project != null && !project.getProcessManager().hasPending()
-                        && metadata.getModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < project.getLastSave()
-                                .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) {
+                        && project.getLastSave().isAfter(metadata.getModified())) {
                     _projects.remove(id).dispose();
                 }
             }
@@ -586,13 +573,11 @@ public abstract class ProjectManager {
         if (_projects.containsKey(projectID)) {
             _projects.remove(projectID).dispose();
         }
-        if (_projectsMetadata.containsKey(projectID)) {
-            _projectsMetadata.remove(projectID);
-        }
+        _projectsMetadata.remove(projectID);
     }
 
     /**
-     * Sets the flag for long running operations. This will prevent workspace saves from happening while it's set.
+     * Sets the flag for long-running operations. This will prevent workspace saves from happening while it's set.
      * 
      * @param busy
      */

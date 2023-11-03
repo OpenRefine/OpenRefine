@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ package com.google.refine;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -64,11 +66,11 @@ public class ProjectMetadata {
     public final static String OLD_FILE_NAME = "metadata.old.json";
 
     @JsonProperty("created")
-    private final LocalDateTime _created;
+    private final Instant _created;
     @JsonProperty("modified")
-    private LocalDateTime _modified;
+    private Instant _modified;
     @JsonIgnore
-    private LocalDateTime written = null;
+    private Instant lastSave = null;
     @JsonProperty("name")
     private String _name = "";
     @JsonProperty("password")
@@ -123,17 +125,17 @@ public class ProjectMetadata {
 
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
-    protected ProjectMetadata(LocalDateTime date) {
+    protected ProjectMetadata(Instant date) {
         _created = date;
+        _modified = _created;
         preparePreferenceStore(_preferenceStore);
     }
 
     public ProjectMetadata() {
-        this(LocalDateTime.now());
-        _modified = _created;
+        this(Instant.now());
     }
 
-    public ProjectMetadata(LocalDateTime created, LocalDateTime modified, String name) {
+    public ProjectMetadata(Instant created, Instant modified, String name) {
         this(created);
         _modified = modified;
         _name = name;
@@ -141,7 +143,7 @@ public class ProjectMetadata {
 
     @JsonIgnore
     public boolean isDirty() {
-        return written == null || _modified.isAfter(written);
+        return lastSave == null || _modified.isAfter(lastSave);
     }
 
     static protected void preparePreferenceStore(PreferenceStore ps) {
@@ -150,7 +152,7 @@ public class ProjectMetadata {
     }
 
     @JsonIgnore
-    public LocalDateTime getCreated() {
+    public Instant getCreated() {
         return _created;
     }
 
@@ -233,13 +235,13 @@ public class ProjectMetadata {
     }
 
     @JsonIgnore
-    public LocalDateTime getModified() {
+    public Instant getModified() {
         return _modified;
     }
 
     @JsonIgnore
     public void updateModified() {
-        _modified = LocalDateTime.now();
+        _modified = Instant.now();
     }
 
     @JsonIgnore
@@ -328,8 +330,16 @@ public class ProjectMetadata {
 
     @JsonIgnore
     public void setRowCount(int rowCount) {
-        this._rowCount = rowCount;
+        setRowCountInternal(rowCount);
         updateModified();
+    }
+
+    /**
+     * Set row count without updating the last modified time. Internal use only!
+     */
+    @JsonIgnore
+    public void setRowCountInternal(int rowCount) {
+        this._rowCount = rowCount;
     }
 
     @JsonIgnore
@@ -349,6 +359,7 @@ public class ProjectMetadata {
     @JsonIgnore
     public void setUserMetadata(ArrayNode userMetadata) {
         this._userMetadata = userMetadata;
+        updateModified();
     }
 
     private void updateUserMetadata(String metaName, String valueString) {
@@ -366,13 +377,27 @@ public class ProjectMetadata {
             Field metaField = metaClass.getDeclaredField("_" + metaName);
             if (metaName.equals("tags")) {
                 metaField.set(this, valueString.split(","));
+            } else if (metaName.equals("customMetadata")) {
+                ParsingUtilities.mapper.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature());
+                Map<String, Object> map = ParsingUtilities.mapper.readValue(valueString, HashMap.class);
+                metaField.set(this, map);
             } else {
                 metaField.set(this, valueString);
             }
+        } catch (JsonProcessingException e) {
+            String errorMessage = "Error reading JSON: " + e.getOriginalMessage();
+            logger.error(errorMessage);
+            throw new RuntimeException(errorMessage);
         } catch (NoSuchFieldException e) {
             updateUserMetadata(metaName, valueString);
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             logger.error(ExceptionUtils.getFullStackTrace(e));
+            throw new RuntimeException(e);
         }
+    }
+
+    @JsonIgnore
+    public void setLastSave() {
+        lastSave = Instant.now();
     }
 }

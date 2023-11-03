@@ -178,8 +178,8 @@ public class RefineTest {
 
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
-        project.update();
         ProjectManager.singleton.registerProject(project, metadata);
+        project.update();
 
         projects.add(project);
         importingJobs.add(job);
@@ -390,5 +390,9 @@ public class RefineTest {
             Assert.fail("Test interrupted");
         }
         Assert.assertFalse(process.isRunning(), "Process failed to complete within timeout " + timeout);
+    }
+
+    public static void assertEqualsSystemLineEnding(String actual, String expected) {
+        Assert.assertEquals(actual, expected.replaceAll("\n", System.lineSeparator()));
     }
 }

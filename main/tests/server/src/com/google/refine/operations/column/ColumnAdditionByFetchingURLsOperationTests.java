@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -255,7 +256,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             runAndWait(op, 3000);
 
-            RecordedRequest request = server.takeRequest();
+            RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
             Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);
             Assert.assertEquals(request.getHeader("authorization"), authorizationValue);
             Assert.assertEquals(request.getHeader("accept"), acceptValue);

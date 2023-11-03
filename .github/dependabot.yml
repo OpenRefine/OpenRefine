@@ -8,15 +8,16 @@ updates:
   directory: "/"
   schedule:
     interval: daily
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 15
   ignore:
   - dependency-name: com.thoughtworks.xstream:xstream
     versions:
     - "> 1.4.12"
     - "< 2"
-  - dependency-name: "jetty-*"
+  - dependency-name: "org.eclipse.jetty:jetty-*"
     versions:
       - ">= 10.0.0"
+  - dependency-name: "formatter-maven-plugin"
   target-branch: "master"
     
 # For main webapp
@@ -39,8 +40,3 @@ updates:
   directory: "main/tests/cypress"
   schedule:
     interval: "daily"
-  ignore:
-# Ignore cypress updates until interactive 'Run all specs' fixed https://github.com/cypress-io/cypress/discussions/21628
-  - dependency-name: cypress
-    versions:
-    - ">= 10.0.0"

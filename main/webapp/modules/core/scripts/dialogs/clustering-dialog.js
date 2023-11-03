@@ -40,8 +40,13 @@ function ClusteringDialog(columnName, expression) {
 
     this._facets = [];
 
+    let checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
     this._createDialog();
-    this._cluster();
+    if (checkedValue === true) {
+        this._cluster();
+    } else {
+        this._addClusterMessage();
+    }
 }
 
 ClusteringDialog.prototype._createDialog = function() {
@@ -61,6 +66,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_ngramSize.html($.i18n('core-dialogs/ngram-size'));
     this._elmts.or_dialog_radius.html($.i18n('core-dialogs/ngram-radius'));
     this._elmts.or_dialog_blockChars.html($.i18n('core-dialogs/block-chars'));
+    this._elmts.or_auto_update.html($.i18n('core-facets/auto-update'));
     this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
     this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
     this._elmts.exportClusterButton.html($.i18n('core-buttons/export-cluster'));
@@ -82,6 +88,24 @@ ClusteringDialog.prototype._createDialog = function() {
             self._elmts.distanceFunctionSelector.trigger('change');
         }
     });
+
+    ClusteringDialog.prototype._addClusterMessage = function () {
+        let self = this;
+        let container = self._elmts.tableContainer;
+        self._elmts.facetContainer.empty();
+        container.empty().html(
+            '<div style="display: flex; height: inherit; justify-content: center; align-items: center;">' + '<div>' +
+            $.i18n('core-dialogs/click-cluster', self._columnName) + '</div>' + '<div">' +
+            '<button class="button" bind="clusterButton" id="clusterButtonId" >' +
+            $.i18n('core-facets/cluster') + '</button>' + '</div></div>'
+        );
+        let elmts = DOM.bind(container);
+        elmts.clusterButton.html($.i18n('core-facets/cluster'));
+
+        elmts.clusterButton.on('click', function () {
+            self._cluster()
+        });
+    }
 
     var changer = function() {
         self._function = $(this).find("option:selected").val();
@@ -107,12 +131,26 @@ ClusteringDialog.prototype._createDialog = function() {
             }
             self._params[name] = value;
         });
-        self._cluster();
+        self._elmts.resultSummary.empty();
+        if (document.getElementById("autoId").checked) {
+            self._cluster();
+        } else {
+            self._addClusterMessage();
+        }
     };
 
     this._elmts.ngramSize.on('change',params_changer);
     this._elmts.radius.on('change',params_changer);
     this._elmts.ngramBlock.on('change',params_changer);
+    this._elmts.autoCheckbox.on("change", function() {
+        let checkbox = document.getElementById("autoId");
+        if (checkbox.checked) {
+            Refine.setPreference("ui.clustering.auto-update", true);
+            self._cluster();
+        } else {
+            Refine.setPreference("ui.clustering.auto-update", false);
+        }
+    });
 
     this._elmts.selectAllButton.on('click',function() { self._selectAll(); });
     this._elmts.deselectAllButton.on('click',function() { self._deselectAll(); });
@@ -122,6 +160,8 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.closeButton.on('click',function() { self._dismiss(); });
 
     self._level = DialogSystem.showDialog(dialog);
+    var checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
+    document.getElementById("autoId").checked = checkedValue;
 
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
@@ -217,7 +257,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             var choices = cluster.choices;
             var onClick = function() {
               var parent = $(this).closest("tr");
-              var value = $(this).text();
+              var value = $(this).attr('data-value');
               cluster.value = value;
 
               parent.find("input[type='text']").val(value);
@@ -230,6 +270,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 var li = document.createElement('li');
                 var entry = entryTemplate.cloneNode();
                 entry.textContent = choice.v.toString().replaceAll(' ', '\xa0');
+                entry.setAttribute('data-value', choice.v.toString());
                 entry.addEventListener('click', onClick);
                 li.append(entry);
                 if (choice.c > 1) {
@@ -283,8 +324,10 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             return choices.length;
         };
 
-        // TODO: Make this a preference "ui.clustering.choices.limit"
-        var maxRenderRows = 5000;
+        var maxRenderRows = parseInt(
+            Refine.getPreference("ui.clustering.choices.limit", 5000)
+        );
+        maxRenderRows = isNaN(maxRenderRows) || maxRenderRows <= 0 ? 5000 : maxRenderRows;
         var totalRows = 0;
         for (var clusterIndex = 0; clusterIndex < clusters.length && totalRows < maxRenderRows; clusterIndex++) {
             totalRows += renderCluster(clusters[clusterIndex], clusterIndex);

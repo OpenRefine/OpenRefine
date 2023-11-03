@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +57,7 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
     @Test
     public void testCSRFProtection() throws ServletException, IOException {
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }
 
     @Test
@@ -145,9 +146,9 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
 
             command.doPost(request, response);
 
-            TestUtils.assertEqualAsJson(guessedTypes, writer.toString());
+            TestUtils.assertEqualsAsJson(guessedTypes, writer.toString());
 
-            RecordedRequest request = server.takeRequest();
+            RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
             TestUtils.assertEqualAsQueries(request.getBody().readUtf8(), expectedQuery);
         }
     }

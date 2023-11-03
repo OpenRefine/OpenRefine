@@ -145,12 +145,12 @@ public class LookupCacheManager {
         }
 
         public HasFieldsListImpl getRows(Object value) {
-            if (!ExpressionUtils.isNonBlankData(value)) return null;
+            HasFieldsListImpl rows = new HasFieldsListImpl();
+            if (!ExpressionUtils.isNonBlankData(value)) return rows;
             String valueStr = value.toString();
             if (valueToRowIndices.containsKey(valueStr)) {
                 Project targetProject = ProjectManager.singleton.getProject(targetProjectID);
                 if (targetProject != null) {
-                    HasFieldsListImpl rows = new HasFieldsListImpl();
                     for (Integer r : valueToRowIndices.get(valueStr)) {
                         Row row = targetProject.rows.get(r);
                         rows.add(new WrappedRow(targetProject, r, row));
@@ -159,7 +159,7 @@ public class LookupCacheManager {
                     return rows;
                 }
             }
-            return null;
+            return rows;
         }
     }
 }

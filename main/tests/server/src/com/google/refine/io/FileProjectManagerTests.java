@@ -27,14 +27,17 @@
 
 package com.google.refine.io;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import com.google.refine.model.Project;
+import com.google.refine.util.GetProjectIDException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.jena.atlas.json.JSON;
 import org.apache.jena.atlas.json.JsonObject;
@@ -52,7 +55,7 @@ public class FileProjectManagerTests {
     @BeforeMethod
     public void createDirectory() throws IOException {
         workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-        workspaceFile = File.createTempFile(workspaceDir.getPath(), "workspace.json");
+        workspaceFile = new File(workspaceDir, "workspace.json");
     }
 
     protected class FileProjectManagerStub extends FileProjectManager {
@@ -108,12 +111,58 @@ public class FileProjectManagerTests {
     @Test
     public void deleteProjectAndSaveWorkspace() throws IOException {
         FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
-        manager.saveToFile(workspaceFile);
+        manager.saveWorkspace();
         manager.deleteProject(5555);
-        manager.saveToFile(workspaceFile);
+        manager.saveWorkspace();
 
         InputStream inputStream = new FileInputStream(workspaceFile);
         JsonObject json = JSON.parse(inputStream);
-        assertTrue(json.get("projectIDs").getAsArray().isEmpty());
+        assertTrue(json.get("projectIDs").getAsArray().isEmpty(), "deleted project still in workspace.json");
+    }
+
+    /**
+     * Tests whether only meta files of modified projects will be updated locally.
+     */
+    @Test
+    public void metaFileUpdateTest() throws GetProjectIDException, InterruptedException {
+        FileProjectManager manager = new FileProjectManager(workspaceDir);
+        ProjectMetadata metaA = new ProjectMetadata();
+        ProjectMetadata metaB = new ProjectMetadata();
+        metaA.setName("A");
+        metaB.setName("B");
+        manager.registerProject(new Project(), metaA);
+        manager.registerProject(new Project(), metaB);
+        manager.saveWorkspace();
+        long idA = manager.getProjectID("A");
+        long idB = manager.getProjectID("B");
+
+        Path pathA = Paths.get(manager.getProjectDir(idA).getAbsolutePath(), ProjectMetadata.DEFAULT_FILE_NAME);
+        Path pathB = Paths.get(manager.getProjectDir(idB).getAbsolutePath(), ProjectMetadata.DEFAULT_FILE_NAME);
+        File metaAFile = pathA.toFile();
+        File metaBFile = pathB.toFile();
+        long timeBeforeA = metaAFile.lastModified();
+        long timeBeforeB = metaBFile.lastModified();
+        // Reload fresh copy of the workspace
+        manager = new FileProjectManager(workspaceDir);
+        Thread.sleep(1000);
+        manager.getProjectMetadata(idA).setName("ModifiedA");
+        manager.saveWorkspace();
+        long timeAfterA = metaAFile.lastModified();
+        long timeAfterB = metaBFile.lastModified();
+        assertEquals(timeBeforeB, timeAfterB, "Unmodified project written when it didn't need to be");
+        assertNotEquals(timeBeforeA, timeAfterA, "Modified project not written");
+    }
+
+    @Test
+    public void testUntarZipSlip() throws IOException {
+        FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
+
+        File tempDir = TestUtils.createTempDirectory("openrefine-project-import-zip-slip-test");
+        try (InputStream stream = FileProjectManagerTests.class.getClassLoader().getResourceAsStream("zip-slip.tar")) {
+            File subDir = new File(tempDir, "dest");
+            assertThrows(IllegalArgumentException.class, () -> manager.untar(subDir, stream));
+        } finally {
+            tempDir.delete();
+        }
     }
 }

@@ -31,7 +31,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -->
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,7 +43,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <a id="app-home-button" href="./"><img alt="OpenRefine" src="images/logo-openrefine-550.png" height="29" /></a>
+    <a id="app-home-button" href="./">
+      <img aria-hidden="true" src="images/logo-gem-126.png" width="30" />
+      <h1>OpenRefine</h1>
+    </a>
   </div>
 
   <div id="body-info">

@@ -733,7 +733,7 @@
     "core-views/judg-actions": "Typ działania rozstrzygnięcia",
     "core-views/judg-actions2": "$1:typ działania rozstrzygnięcia",
     "core-views/col-at-most": "kolumn maksymalnie (pozostaw puste, jeśli bez limitu)",
-    "core-dialogs/record-fields": "Jeden lub więcej wierszy zgrupowanych razem w celu utworzenia rekordu; obiekt ma więcej pól, szczegóły na <a href=\"https://docs.openrefine.org/manual/expressions#record\">Rekordy</a>",
+    "core-dialogs/record-fields": "Jeden lub więcej wierszy zgrupowanych razem w celu utworzenia rekordu; obiekt ma więcej pól, szczegóły na <a href=\"https://openrefine.org/docs/manual/expressions#record\">Rekordy</a>",
     "core-views/cell-edit-date-help": "Wprowadź w formacie daty ISO 8601, np. 1987-03-04T03:43:30Z",
     "core-recon/cell-type": "Uzgodnij każdą komórkę z encją jednego z tych typów:",
     "core-views/extend-not-supported": "Ta usługa uzgadniania nie obsługuje rozszerzenia danych. Spróbuj usunąć usługę i dodać ją ponownie. Jeśli problem nadal występuje, skontaktuj się z dostawcą usługi.",
@@ -824,5 +824,17 @@
     "core-views/unescape-html/header": "Uwolnij encje HTML",
     "core-views/unescape-html/single": "Uwolnij encje HTML",
     "core-views/log-length-facet": "",
-    "core-index-parser/escape": "Ucieczka od znaków specjalnych za pomocą \\"
+    "core-index-parser/escape": "Ucieczka od znaków specjalnych za pomocą \\",
+    "core-index-parser/row-separator": "Wiersze są rozdzielane za pomocą:",
+    "core-index-parser/row-separator-regex": "niestandardowe wyrażenie regularne",
+    "core-index/hide-panel": "Ukryj panel",
+    "core-index/show-panel": "Pokaż panel",
+    "core-dialogs/template-preview": "Podgląd szablonu",
+    "core-views/item-to-match": "Element do dopasowania",
+    "core-views/new-topic/header": "Utwórz nowy element dla każdej komórki",
+    "core-views/one-topic/header": "Utwórz jeden nowy element dla podobnych komórek",
+    "core-index-parser/row-separator-newline": "nowy wiersz (\\n lub \\r\\n)",
+    "core-index/navigate-home": "Przejdź do ekranu głównego",
+    "core-index-parser/force-text": "Importuj wszystkie komórki jako tekst",
+    "core-views/new-column-name": "Nowa nazwa kolumny"
 }

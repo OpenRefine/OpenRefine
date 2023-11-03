@@ -50,6 +50,7 @@ class ListFacet extends Facet {
 
     this._data = null;
 
+    this._initialHeightSet = false;
     this._initializeUI();
     this._update();
   };
@@ -122,6 +123,23 @@ class ListFacet extends Facet {
     this._update();
   };
 
+  checkInitialHeight() {
+    if (this._elmts) {
+      let innerList = this._elmts.bodyInnerDiv[0];
+      if (!this._initialHeightSet && innerList.offsetHeight !== 0) {
+        let innerHeight = innerList.offsetHeight;
+        let defaultMaxHeight = 17 * 13;
+
+        if (innerHeight > defaultMaxHeight) {
+          this._elmts.bodyDiv.height(defaultMaxHeight + 'px');
+        } else {
+          this._elmts.bodyDiv.height((innerHeight + 1) + 'px');
+        }
+        this._initialHeightSet = true;
+      }
+    }
+  }
+
   _reSortChoices() {
     this._data.choices.sort(this._options.sort === "name" ?
         function(a, b) {
@@ -160,7 +178,7 @@ class ListFacet extends Facet {
       '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
         '<a bind="choiceCountContainer" class="action" href="javascript:{}"></a> ' +
         '<span class="facet-controls-sortControls" bind="sortGroup">'+$.i18n('core-facets/sort-by')+': ' +
-          '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n('core-facets/name')+'</a>' +
+          '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n('core-facets/name')+'</a> ' +
           '<a href="javascript:{}" bind="sortByCountLink">'+$.i18n('core-facets/count')+'</a>' +
         '</span>' +
         '<button bind="clusterLink" class="facet-controls-button button">'+$.i18n('core-facets/cluster')+'</button>' +
@@ -222,7 +240,7 @@ class ListFacet extends Facet {
   _copyChoices() {
     var self = this;
     var frame = DialogSystem.createDialog();
-    frame.width("600px");
+    frame.css({"min-width" : "600px"});
 
     var header = $('<div></div>').addClass("dialog-header").text($.i18n('core-facets/facet-choices')).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
@@ -400,6 +418,8 @@ class ListFacet extends Facet {
     this._elmts.bodyInnerDiv.html(html.join(''));
     this._renderBodyControls();
     this._elmts.bodyInnerDiv[0].scrollTop = scrollTop;
+
+    this.checkInitialHeight();
 
     var getChoice = function(elmt) {
       var index = parseInt(elmt.attr("choiceIndex"),10);
@@ -600,9 +620,9 @@ class ListFacet extends Facet {
     .text(originalContent)
     .on('keydown',function(evt) {
       if (!evt.shiftKey) {
-        if (evt.keyCode === 13) {
+        if (evt.key === "Enter") {
           commit();
-        } else if (evt.keyCode === 27) {
+        } else if (evt.key === "Escape") {
           MenuSystem.dismissAll();
         }
       }

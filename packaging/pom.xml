@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.7-SNAPSHOT</version>
+    <version>3.8-SNAPSHOT</version>
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
@@ -310,14 +310,64 @@
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/Resources/webapp/WEB-INF/&quot;" />
                 </exec>
 
+                <!-- remove any existing DMG (hdiutil fails otherwise) -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
+                    <arg value="-f"/>
+                    <arg value="${mac.dmg.path}"/>
+		</exec>
+
+                <!-- Remove quarantine bit set recursively on JRE -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
+                    <arg line="-rd"/>
+                    <arg line="com.apple.quarantine"/>
+                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns&quot;"/>
+                </exec>
+
+                <!-- Codesign JRE -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                    <arg value="--entitlements" />
+                    <arg value="../Entitlements.plist" />
+                    <arg value="--sign"/>
+                    <arg value="${mac.signing.identity}"/>
+                    <arg value="--deep"/>
+                    <arg value="--force"/>
+                    <arg value="--timestamp"/>
+                    <arg value="--options"/>
+                    <arg value="runtime"/>
+                    <arg value="${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/lib/jli/libjli.dylib" />
+                </exec>
+
+                <!-- Codesign jars with native code in them -->
+                <exec executable="/bin/bash" os="Mac OS X" dir="${project.build.directory}/${mac.build.directory}">
+                    <arg value="${basedir}/apple_certs/codesign.sh" />
+                    <arg value="OpenRefine.app" />
+                    <arg value="${mac.signing.identity}" />
+                    <arg value="../../Entitlements.plist" />
+                </exec>
+
+                <!-- Codesign app -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                    <arg value="--entitlements" />
+                    <arg value="../Entitlements.plist" />
+                    <arg value="--sign"/>
+                    <arg value="${mac.signing.identity}"/>
+                    <arg value="--deep"/>
+                    <arg value="--force"/>
+                    <arg value="--timestamp"/>
+                    <arg value="--options"/>
+                    <arg value="runtime"/>
+                    <arg value="${mac.build.directory}/OpenRefine.app"/>
+                </exec>
+
                 <!-- Create DMG (Mac OS X) -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil">
-                    <arg value="create"/>
-                    <arg value="-noanyowners"/>
-                    <arg value="-imagekey"/>
-                    <arg value="zlib-level=9"/>
-                    <arg value="-srcfolder"/>
-                    <arg value="${mac.build.directory}"/>
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="python3">
+                    <arg value="-m"/>
+                    <arg value="dmgbuild"/>
+                    <arg value="-s"/>
+                    <arg value="../dmg_settings.py"/>
+                    <arg value="-D"/>
+                    <arg value="app=${mac.build.directory}/OpenRefine.app"/>
+                    <arg value="OpenRefine"/>
                     <arg value="${mac.dmg.path}"/>
                 </exec>
 
@@ -340,6 +390,28 @@
                     <arg value="${mac.build.directory}"/>
                 </exec>
 
+                <!-- Send DMG file to Apple's notarization service -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="notarytool"/>
+                    <arg value="submit"/>
+                    <arg value="${mac.dmg.path}"/>
+                    <arg value="--apple-id"/>
+                    <arg value="${apple.notarization.username}"/>
+                    <arg value="--password"/>
+                    <arg value="${apple.notarization.password}"/>
+                    <arg value="--team-id"/>
+                    <arg value="${apple.notarization.team.id}"/>
+                    <arg value="--wait"/>
+                    <arg value="--timeout"/>
+                    <arg value="${apple.notarization.timeout}"/>
+                </exec>
+
+                <!-- Staple the notarization ticket to the DMG bundle -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="stapler"/>
+                    <arg value="staple"/>
+                    <arg value="${mac.dmg.path}"/>
+                </exec>
               </target>
             </configuration>
           </execution>
@@ -349,26 +421,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.1.3</version>
-
-            <!-- This is a clean snapshot of launch4j's master branch,
-                which includes fixes to Java discovery that we need
-                to support recent versions of Java.
-                When the maven plugin is updated to use launch4j-3.13,
-                this can be removed. -->
-        <dependencies>
-          <dependency>
-            <groupId>net.sf.launch4j</groupId>
-            <artifactId>launch4j</artifactId>
-            <classifier>core</classifier>
-            <version>3.14</version>
-          </dependency>
-          <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-          <version>1.4.19</version>
-        </dependency>
-        </dependencies>
+        <version>2.3.2</version>
         <executions>
           <execution>
             <id>l4j-clui-without-jre</id>
@@ -381,7 +434,7 @@
               <dontWrapJar>true</dontWrapJar>
               <saveConfig>true</saveConfig>
               <icon>openrefine.ico</icon>
-              <downloadUrl>https://docs.openrefine.org/manual/installing#java</downloadUrl>
+              <downloadUrl>https://openrefine.org/docs/manual/installing#java</downloadUrl>
               <classPath>
                 <mainClass>com.google.refine.Refine</mainClass>
                 <jarLocation>server/target/lib/</jarLocation>
@@ -390,8 +443,6 @@
               <jre>
                 <path>%JAVA_HOME%;%PATH%</path>
                 <minVersion>${java.minversion}</minVersion>
-                <maxVersion>${java.maxversion}</maxVersion>
-                <bundledJreAsFallback>false</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
@@ -457,12 +508,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>3.1.2</version>
         <configuration>
           <skip>true</skip>
         </configuration>
       </plugin>
-
     </plugins>
     <pluginManagement>
     	<plugins>
@@ -498,7 +548,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.4.2</version>
+          <version>3.6.0</version>
           <executions>
             <execution>
               <id>package-distributions</id>
@@ -524,7 +574,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.5.0</version>
+              <version>4.8.0</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>

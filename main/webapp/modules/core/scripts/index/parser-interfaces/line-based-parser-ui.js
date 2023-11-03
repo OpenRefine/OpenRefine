@@ -67,6 +67,14 @@ Refine.LineBasedParserUI.prototype.getOptions = function() {
     recordPath: this._config.recordPath
   };
 
+  switch (this._optionContainer.find("input[name='row-separator']:checked")[0].value) {
+    case 'newline':
+      options.separator = "\\r?\\n";
+      break;
+    default:
+      options.separator = this._optionContainerElmts.rowSeparatorInput[0].value;
+  }
+
   var parseIntDefault = function(s, def) {
     try {
       var n = parseInt(s,10);
@@ -130,7 +138,10 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
   $('#or-import-rows').text($.i18n('core-index-parser/rows-data'));
   $('#or-import-load').text($.i18n('core-index-parser/load-at-most'));
   $('#or-import-rows2').text($.i18n('core-index-parser/rows-data'));
-  
+  $('#or-row-separator').text($.i18n('core-index-parser/row-separator'));
+  $('#or-row-separator-newline').text($.i18n('core-index-parser/row-separator-newline'));
+  $('#or-row-separator-regex').text($.i18n('core-index-parser/row-separator-regex'));
+
   this._optionContainerElmts.encodingInput
     .val(this._config.encoding || '')
     .on('click',function() {
@@ -138,6 +149,12 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
         self._updatePreview();
       });
     });
+
+
+  var rowSeparatorValue = (this._config.separator == "\\r?\\n") ? 'newline' : 'custom';
+  this._optionContainer.find(
+      "input[name='row-separator'][value='" + rowSeparatorValue + "']").prop("checked", true);
+  this._optionContainerElmts.rowSeparatorInput[0].value = this._config.separator;
 
   this._optionContainerElmts.linesPerRowInput[0].value =
     this._config.linesPerRow.toString();

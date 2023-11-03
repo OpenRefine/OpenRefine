@@ -33,10 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.history;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -98,9 +95,10 @@ public class HistoryTests extends RefineTest {
 
         SUT.addEntry(entry);
 
-        verify(projectManager, times(1)).getProject(Mockito.anyLong());
+        verify(projectManager, atLeastOnce()).getProject(Mockito.anyLong());
         verify(entry, times(1)).apply(proj);
-        verify(projectMetadata, times(1)).updateModified();
+        verify(projectMetadata, atLeastOnce()).setRowCount(0);
+        verify(projectMetadata, atLeastOnce()).updateModified();
         Assert.assertEquals(SUT.getLastPastEntries(1).get(0), entry);
     }
 

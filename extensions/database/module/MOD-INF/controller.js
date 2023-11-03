@@ -106,9 +106,7 @@ function init() {
     module,
     [
       "styles/jquery.contextMenu.css",
-        "styles/pure.css",
-        "styles/bootstrap.css",
-      "styles/database-import.less"
+      "styles/database-import.css"
 
     ]
   );

@@ -1,0 +1,16 @@
+{
+    "database-import/importer-name": "پایگاه داده",
+    "database-import/title": "سرویس دهندگان پایگاه داده",
+    "database-import/preparing": "در حال تهیه خروجی…",
+    "database-import/checking": "اعتبارسنجی پرس و جو …",
+    "database-import/creating": "در حال ایجاد پروژه …",
+    "database-source/alert-host": "باید یک هاست پایگاه داده را مشخص کنید",
+    "database-source/alert-user": "‏باید یک کاربر پایگاه داده را مشخص کنید",
+    "database-source/alert-password": "‏باید یک کلمه عبور پایگاه داده را مشخص کنید",
+    "database-source/alert-connection-name": "‏باید یک نام برای اتصال (connection ) مشخص کنید",
+    "database-source/alert-query": "‏باید یک پرس و جوی معتبر تعریف کنید",
+    "database-source/form-validation-failure": "فرمت اتصال جدید  (New Connection) نامعتبر است!",
+    "database-source/alert-port": "باید یک پورت پایگاه داده را مشخص کنید",
+    "database-source/alert-initial-database": "‏باید یک پایگاه داده اصلی را مشخص کنید",
+    "database-source/alert-invalid-query-select": "عبارت پرس و جو باید با کلیدواژه SELECT شروع شود"
+}

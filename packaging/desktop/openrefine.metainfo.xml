@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2021 Markus Koschany <apo@debian.org> -->
+<component type="desktop-application">
+  <id>org.openrefine.openrefine</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>BSD-3-clause</project_license>
+  <name>OpenRefine</name>
+  <summary>powerful tool for working with messy data</summary>
+
+  <description>
+    <p>
+        OpenRefine is a power tool for working with messy data. Use it to
+        improve data consistency, link it to data registries like Wikidata,
+        augment it with data from other sources, transform it into different
+        formats for other tools to consume, and contribute it back to the
+        original sources. OpenRefine is not a web service but a desktop app
+        that runs on your own computer, so you can process sensitive data with
+        privacy.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">org.openrefine.openrefine.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Transforming data in in an OpenRefine project</caption>
+      <image>https://upload.wikimedia.org/wikipedia/commons/8/83/OpenRefine_Commons_reconciled_with_Wikidata.png</image>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://openrefine.org/</url>
+
+  <provides>
+    <binary>openrefine</binary>
+  </provides>
+
+</component>
+
+

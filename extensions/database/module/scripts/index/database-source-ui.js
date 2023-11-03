@@ -191,45 +191,14 @@ Refine.DatabaseSourceUI.prototype.focus = function() {
 };
 
 Refine.DatabaseSourceUI.prototype.validateQuery = function(query) {
-     //alert("query::" + query);
      if(!query || query.length <= 0 ) {
          window.alert($.i18n('database-source/alert-query'));
          return false;
      }
-    
-     var allCapsQuery = query.toUpperCase();
-    
-     if(allCapsQuery.indexOf('DROP') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " DROP");
-         return false;
-     }else if(allCapsQuery.indexOf('TRUNCATE') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " TRUNCATE");
-         return false;
-     }else if(allCapsQuery.indexOf('DELETE') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " DELETE");
-         return false;
-     }else if(allCapsQuery.indexOf('ROLLBACK') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " ROLLBACK");
-         return false;
-     }else if(allCapsQuery.indexOf('SHUTDOWN') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " SHUTDOWN");
-         return false;
-     }else if(allCapsQuery.indexOf('INSERT') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " INSERT");
-         return false;
-     }else if(allCapsQuery.indexOf('ALTER') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " ALTER");
-         return false;
-     }else if(allCapsQuery.indexOf('UPDATE') > -1){
-         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " UPDATE");
-         return false;
-     }
-
-     if(!allCapsQuery.startsWith('SELECT')) {
+     if(!query.toUpperCase().startsWith('SELECT')) {
          window.alert($.i18n('database-source/alert-invalid-query-select'));
          return false;
      }
-
      return true;
 };
 
@@ -257,8 +226,8 @@ Refine.DatabaseSourceUI.prototype._updateDatabaseType = function(databaseType) {
       databaseType = "mysql";
   }
   
-  $("div.pure-control-group.dbtype-options").hide();
-  $("div.pure-control-group.dbtype-options.dbt-"+databaseType).show();
+  $("div.dbtype-options").hide();
+  $("div.dbtype-options.dbt-"+databaseType).show();
   
   if (databaseType == "sqlite") {
     $('#databaseNameLabel').text($.i18n('database-source/databaseFileNameLabel'));
@@ -285,8 +254,8 @@ Refine.DatabaseSourceUI.prototype._editConnection = function(connectionInfo) {
               var items = [];
               $.each(settings.savedConnections,function(index,savedConnection){
 
-                 var li = $('<li class="pure-menu-item sc-list"></li>').appendTo(menuList);
-                 var a = $('<a href="#" class="pure-menu-link context-menu-one"></a>').appendTo(li);
+                 var li = $('<li class="sc-list"></li>').appendTo(menuList);
+                 var a = $('<a href="#" class="database-menu-item context-menu-one"></a>').appendTo(li);
                  $('<span class="context-menu-text"></span>').text(savedConnection.connectionName)
                       .appendTo(a);
                  $('<span class="sc-context-more-vert pull-right"> </span>').appendTo(a);
@@ -338,7 +307,7 @@ Refine.DatabaseSourceUI.prototype._saveConnection = function(jdbcConnectionInfo)
               var items = [];
               $.each(settings.savedConnections,function(index,savedConnection){
              
-                  items.push('<li class="pure-menu-item sc-list"><a href="#" class="pure-menu-link context-menu-one">'
+                  items.push('<li class="sc-list"><a href="#" class="database-menu-item context-menu-one">'
                     + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
                     + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
                })
@@ -367,7 +336,7 @@ Refine.DatabaseSourceUI.prototype._loadSavedConnections = function() {
               var items = [];
               $.each(settings.savedConnections,function(index,savedConnection){
                   
-                  items.push('<li class="pure-menu-item sc-list"><a href="#" class="pure-menu-link context-menu-one">'
+                  items.push('<li class="sc-list"><a href="#" class="database-menu-item context-menu-one">'
                     + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
                     + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
 

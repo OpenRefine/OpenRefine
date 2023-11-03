@@ -38,8 +38,6 @@ import java.io.InputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 

@@ -1,0 +1,83 @@
+/*
+
+Copyright 2011, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+.default-importing-file-selection-control-panel {
+  font-size: 1.3em;
+  position: absolute;
+  background: var(--chrome-secondary);
+  padding: var(--padding-looser);
+  border-right: 1px solid var(--chrome-primary);
+  height: 100%;
+  width: calc(350px - (var(--padding-looser) * 2));
+}
+
+.default-importing-file-selection-file-panel {
+  font-size: 1.3em;
+  position: absolute;
+  height: 100%;
+  right: 0;
+  background: var(--background-primary);
+  overflow: auto;
+  width: calc(100% - 350px);
+}
+
+.default-importing-file-selection-file-panel>table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.default-importing-file-selection-file-panel>table>tbody>tr>th {
+  text-align: left;
+  padding: var(--padding-tight) var(--padding-normal);
+  background: var(--chrome-secondary);
+}
+
+.default-importing-file-selection-file-panel>table>tbody>tr>td {
+  padding: 0;
+  border-bottom: 1px solid var(--chrome-secondary);
+}
+
+.default-importing-file-selection-file-panel>table>tbody>tr>td>label {
+  display: block;
+  padding: var(--padding-tight) var(--padding-normal);
+}
+
+.default-importing-file-selection-control-panel h2 {
+  font-size: 110%;
+  margin-top: 3em;
+  margin-bottom: 0.75em;
+}
+
+.default-importing-file-selection-file-panel>table>tbody>tr>td.default-importing-file-selection-filename.highlighted {
+  background: var(--fill-editable);
+}

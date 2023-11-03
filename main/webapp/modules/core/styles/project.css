@@ -1,0 +1,130 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+#body {
+  display: none;
+}
+
+#project-title {
+  font-size: 1.6em;
+}
+
+#project-controls {
+  margin-left: auto;
+  font-size: 1.3em;
+}
+
+#project-name-button {
+  padding: 3px;
+  border: 1px solid transparent;
+  background: none;
+  font-size: 100%;
+  font-family: Arial, sans-serif;
+}
+
+#project-name-button:hover,
+#project-name-button:focus {
+  background: var(--fill-editable);
+  border: 1px solid #ccc;
+  border-top: 1px solid #aaa;
+}
+
+#project-permalink-button {
+  padding: 0 4px;
+  font-size: 0.7em;
+}
+
+#left-panel {
+  position: fixed;
+  overflow: hidden;
+  padding: 0px;
+  padding-top: 0px;
+  font-size: 1.3em;
+  background: var(--chrome-secondary);
+  border-top-right-radius: 7px;
+}
+
+#left-panel .ui-tabs .ui-tabs-panel {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  padding: 0;
+}
+
+#right-panel {
+  position: fixed;
+  overflow: hidden;
+  padding: 0px;
+  padding-left: var(--padding-tight);
+  background: var(--chrome-primary);
+  border-top-left-radius: 7px;
+}
+
+#tool-panel {
+  position: relative;
+  height: 32px;
+}
+
+#summary-bar {
+  display: inline-block;
+  margin: 7px 0px 0px 4px;
+  font-size: 1.8em;
+  font-weight: bold;
+}
+
+#summary-total {
+  font-size: 0.8em;
+  font-weight: normal;
+}
+
+#extension-bar {
+  position: absolute;
+  top: 0px;
+  right: var(--padding-loose);
+  white-space: nowrap;
+  font-size: 1.3em;
+  padding: var(--padding-tight) 0;
+}
+
+#extension-bar .secondary {
+  font-size: 0.85em;
+}
+
+#view-panel {
+  background: var(--background-primary);
+  overflow: hidden;
+}
+
+#facet-panel, #history-panel {
+  overflow: auto;
+}

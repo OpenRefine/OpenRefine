@@ -125,7 +125,7 @@ DatabaseExtension.handleDeleteConnectionClicked = function(connectionName) {
                   $( "#menuListUl" ).empty();
                   var items = [];
                   $.each(settings.savedConnections,function(index,savedConnection){					  
-                      items.push('<li class="pure-menu-item sc-list"><a href="#" class="pure-menu-link context-menu-one">'
+                      items.push('<li class="sc-list"><a href="#" class="database-menu-item context-menu-one">'
                         + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
                         + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
                    })

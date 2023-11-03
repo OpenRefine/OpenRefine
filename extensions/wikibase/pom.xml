@@ -11,11 +11,11 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.7-SNAPSHOT</version>
+    <version>3.8-SNAPSHOT</version>
   </parent>
 
   <properties>
-    <wdtk.version>0.14.1</wdtk.version>
+    <wdtk.version>0.14.6</wdtk.version>
   </properties>
 
   <build>

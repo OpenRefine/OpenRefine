@@ -1,0 +1,110 @@
+/*
+
+Copyright 2011, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+.gdata-panel {
+  margin-bottom: 2em;
+}
+
+.gdata-panel>h1 {
+  font-size: 130%;
+  margin-bottom: 0.5em;
+}
+
+.gdata-extension-signin-iframe {
+  border: 1px solid #aaa;
+  width: 100%;
+  height: 500px;
+}
+
+.gdata-document-container>table {
+  color: var(--text-tertiary);
+}
+
+a.gdata-doc-title {
+  color: var(--link-primary);
+  text-decoration: none;
+}
+
+a.gdata-doc-title:hover {
+  text-decoration: underline;
+}
+
+a.gdata-doc-title.gdata-doc-unread {
+  font-weight: bold;
+}
+
+a.gdata-doc-preview {
+  font-size: 80%;
+  text-decoration: none;
+  vertical-align: super;
+  color: var(--link-secondary);
+  margin-left: 0.5em;
+}
+
+a.gdata-doc-preview:hover {
+  text-decoration: underline;
+}
+
+.gdata-doc-authors {}
+
+.gdata-doc-date {}
+
+.gdata-importing-wizard-header {
+  font-size: 1.3em;
+  background: var(--chrome-primary);
+  padding: var(--padding-tight);
+}
+
+.gdata-importing-parsing-data-panel {
+  font-size: 1.1em;
+  position: absolute;
+  overflow: auto;
+}
+
+.gdata-importing-progress-data-panel {
+  position: absolute;
+  overflow: auto;
+  font-size: 200%;
+  padding: 3em;
+  background: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.gdata-importing-parsing-control-panel {
+  font-size: 1.3em;
+  position: absolute;
+  overflow: auto;
+  border-top: 5px solid var(--chrome-primary);
+  background: var(--background-primary);
+  padding: var(--padding-looser);
+}

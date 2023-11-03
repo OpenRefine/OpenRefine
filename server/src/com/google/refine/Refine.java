@@ -44,6 +44,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -64,8 +65,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.refine.Configurations;
 
 /**
  * Main class for Refine server application. Starts an instance of the Jetty HTTP server / servlet container (inner
@@ -173,7 +172,7 @@ class RefineServer extends Server {
 
         String memory = Configurations.get("refine.memory");
         if (memory != null) {
-            logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory());
+            logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory() + " bytes");
         }
 
         HttpConfiguration httpConfig = new HttpConfiguration();
@@ -220,7 +219,7 @@ class RefineServer extends Server {
         this.addBean(handler);
         // Tell the server we want to try and shutdown gracefully
         // this means that the server will stop accepting new connections
-        // right away but it will continue to process the ones that
+        // right away, but it will continue to process the ones that
         // are in execution for the given timeout before attempting to stop
         // NOTE: this is *not* a blocking method, it just sets a parameter
         // that _server.stop() will rely on
@@ -286,7 +285,7 @@ class RefineServer extends Server {
         scanner.addListener(new Scanner.BulkListener() {
 
             @Override
-            public void filesChanged(@SuppressWarnings("rawtypes") List changedFiles) {
+            public void filesChanged(Set<String> set) {
                 try {
                     logger.info("Stopping context: " + contextRoot.getAbsolutePath());
                     context.stop();
@@ -334,14 +333,6 @@ class RefineServer extends Server {
             servlet.setInitParameter("butterfly.modules.path", getDataDir() + "/extensions");
             servlet.setInitParameter("refine.autosave", Configurations.get("refine.autosave", "5")); // default: 5
                                                                                                      // minutes
-            servlet.setInitOrder(1);
-            servlet.doStart();
-        }
-
-        servlet = context.getServletHandler().getServlet("refine-broker");
-        if (servlet != null) {
-            servlet.setInitParameter("refine.data", getDataDir() + "/broker");
-            servlet.setInitParameter("refine.development", Configurations.get("refine.development", "false"));
             servlet.setInitOrder(1);
             servlet.doStart();
         }
@@ -497,7 +488,7 @@ class RefineClient extends JFrame implements ActionListener {
     }
 
     private void openBrowser() {
-        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) || System.getenv("SNAP") != null) {
             try {
                 openBrowserFallback();
             } catch (IOException e) {
@@ -516,11 +507,11 @@ class RefineClient extends JFrame implements ActionListener {
         Runtime rt = Runtime.getRuntime();
 
         if (SystemUtils.IS_OS_WINDOWS) {
-            rt.exec("rundll32 url.dll,FileProtocolHandler " + uri);
+            rt.exec(new String[] { "rundll32 ", "url.dll,FileProtocolHandler ", String.valueOf(uri) });
         } else if (SystemUtils.IS_OS_MAC_OSX) {
-            rt.exec("open " + uri);
+            rt.exec(new String[] { "open ", String.valueOf(uri) });
         } else if (SystemUtils.IS_OS_LINUX) {
-            rt.exec("xdg-open " + uri);
+            rt.exec(new String[] { "xdg-open", String.valueOf(uri) });
         } else {
             logger.warn("Java Desktop class not supported on this platform. Please open %s in your browser", uri.toString());
         }

@@ -32,6 +32,8 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -90,7 +92,7 @@ public class NewEntityScrutinizer extends EditScrutinizer {
             } else if (enableSlowChecks) {
                 // check that the file exists.
                 File file = new File(update.getFilePath());
-                if (!file.exists()) {
+                if (!file.exists() && !isValidURL(update.getFilePath())) {
                     QAWarning issue = new QAWarning(invalidFilePathType, null, QAWarning.Severity.CRITICAL, 1);
                     issue.setFacetable(false); // for now
                     issue.setProperty("example_path", update.getFilePath());
@@ -103,6 +105,25 @@ public class NewEntityScrutinizer extends EditScrutinizer {
                 issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
+        }
+    }
+
+    /**
+     * Check if a URL looks legitimate for upload. TODO we could potentially do a HEAD request to check it already
+     * exists, but perhaps that's too slow even for the slow mode.
+     *
+     * @param url
+     *            the URL to check
+     * @return whether the URL is syntactically correct
+     */
+    protected static boolean isValidURL(String url) {
+        try {
+            URI uri = new URI(url);
+            // we need to check that we do have a protocol, otherwise invalid local paths (such as "/foo/bar") could
+            // be understood as URIs
+            return uri.getScheme() != null && uri.getScheme().startsWith("http");
+        } catch (URISyntaxException e) {
+            return false;
         }
     }
 

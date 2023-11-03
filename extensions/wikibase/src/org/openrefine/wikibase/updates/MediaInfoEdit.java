@@ -246,6 +246,8 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             response = mediaFileUtils.uploadRemoteFile(url, fileName, wikitext, summary, tags);
         }
 
+        response.checkForErrors();
+
         // Upload the structured data
         ReconEntityIdValue reconEntityIdValue = (ReconEntityIdValue) id;
         MediaInfoIdValue mid = response.getMid(mediaFileUtils.getApiConnection(), reconEntityIdValue.getRecon().identifierSpace);

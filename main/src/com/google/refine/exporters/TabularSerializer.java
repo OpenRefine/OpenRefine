@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public interface TabularSerializer {
 
-    static public class CellData {
+    class CellData {
 
         final public String columnName;
         final public Object value;
@@ -53,9 +53,10 @@ public interface TabularSerializer {
         }
     }
 
-    public void startFile(JsonNode options);
+    void startFile(JsonNode options);
 
-    public void endFile();
+    void endFile();
 
-    public void addRow(List<CellData> cells, boolean isHeader);
+    // FIXME: This needs a way to signal errors to the caller
+    void addRow(List<CellData> cells, boolean isHeader);
 }

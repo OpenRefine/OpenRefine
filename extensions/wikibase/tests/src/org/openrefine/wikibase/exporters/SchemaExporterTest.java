@@ -25,8 +25,8 @@ public class SchemaExporterTest extends WikidataRefineTest {
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
         exporter.export(project, properties, engine, writer);
-        TestUtils.assertEqualAsJson("{\"entityEdits\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}",
-                writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(),
+                "{\"entityEdits\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}");
     }
 
 }

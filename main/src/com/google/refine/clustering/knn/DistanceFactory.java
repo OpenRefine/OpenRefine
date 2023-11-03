@@ -33,12 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import edu.mit.simile.vicino.distances.BZip2Distance;
-import edu.mit.simile.vicino.distances.GZipDistance;
-import edu.mit.simile.vicino.distances.JaccardDistance;
-import edu.mit.simile.vicino.distances.JaroDistance;
-import edu.mit.simile.vicino.distances.JaroWinklerDistance;
-import edu.mit.simile.vicino.distances.JaroWinklerTFIDFDistance;
 import edu.mit.simile.vicino.distances.LevenshteinDistance;
 import edu.mit.simile.vicino.distances.PPMDistance;
 

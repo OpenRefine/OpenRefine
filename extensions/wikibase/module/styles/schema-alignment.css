@@ -1,0 +1,666 @@
+.main-view-panel-tab-header#summary-bar {
+  font-size: 1.3em;
+  font-weight: normal;
+  position: initial;
+}
+
+#wikibase-schema-panel, #wikibase-issues-panel, #wikibase-preview-panel {
+  display: block;
+  overflow: hidden;
+  height: 100%;
+  background-color: var(--background-primary);
+  font-size: 1.2em;
+}
+
+#schema-preview-tab, #schema-issues-tab, #schema-alignment-tab {
+  overflow: auto;
+  height: 100%;
+}
+
+.schema-alignment-tab-content {
+  max-width: 70em;
+}
+
+.main-view-panel-tab-header {
+  margin-top: 9px;
+  margin-left: 7px;
+  font-size: 1.3em;
+  display: inline-block;
+  background-color: transparent;
+  color: #11c;
+  padding: 3px 7px;
+  cursor: pointer;
+}
+
+.main-view-panel-tab-header.active {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  border: 1px solid #818fb7;
+  border-bottom: none;
+}
+
+.main-view-panel-tab-header.active:first-child {
+  background-color: #f2f2f2;
+}
+
+.schema-alignment-dialog-canvas {
+  overflow-y: auto;
+  margin-bottom: 3em;
+}
+
+.schema-alignment-dialog-statements-area {
+  padding: 10px;
+  max-width: 900px;
+  overflow-y: auto;
+}
+
+.panel-explanation {
+  margin: 1em;
+}
+
+.invalid-schema-warning {
+  margin: 1em;
+}
+
+.schema-alignment-header {
+  position: sticky;
+  top: 0;
+  padding-top: 1em;
+  background-color: var(--background-primary);
+  z-index: 1;
+}
+
+.schema-alignment-header .panel-explanation:first-child {
+  margin-top: 0;
+}
+
+.float-apart {
+  display: flex;
+  justify-content: space-between;
+}
+
+.schema-alignment-footer {
+  padding: 1em;
+}
+
+.schema-alignment-footer button:disabled {
+  color: grey;
+  cursor: not-allowed;
+}
+
+.schema-alignment-dialog-columns-area {
+  border: 1px solid #bcf;
+  border-left: 0;
+  border-right: 0;
+  padding: 5px 1em;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.wbs-draggable-column {
+  border: 1px solid #aaa;
+  padding: 2px;
+  margin: 2px;
+  background-color: #eee;
+  display: inline-block;
+  padding-bottom: 3px;
+  max-width: 95%;
+}
+
+.ui-droppable .wbs-draggable-column {
+  margin: 0px;
+  padding: 0px;
+  padding-left: 2px;
+}
+
+.wbs-reconciled-column {
+  border-bottom: 3px solid #282;
+  padding-bottom: 1px;
+}
+
+.wbs-restricted-column-name {
+  max-width: -moz-calc(100% - 20px);
+  max-width: -webkit-calc(100% - 20px);
+  max-width: -o-calc(100% - 20px);
+  max-width: calc(100% - 20px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.wbs-draggable-column .wbs-remove {
+  float: right;
+}
+
+.wbs-accepting-input {
+  box-shadow: inset 0 0 10px #a7cdff;
+}
+
+.wbs-validated-input {
+  border: 1px solid green !important;
+}
+
+.wbs-unvalidated-input {
+  border: 1px solid red !important;
+  background-color: #ffbfbf;
+}
+
+.wbs-icon {
+  background-position: center;
+  background-size: 20px 20px;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  opacity: 0.7;
+}
+
+
+.wbs-remove .wbs-icon {
+  background-image: linear-gradient(transparent, transparent), url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2224%22%20height=%2224%22%20viewBox=%220%200%2024%2024%22%3E%20%3Cg%20id=%22remove%22%3E%20%3Cpath%20id=%22trash-can%22%20d=%22M12%2010h-1v6h1v-6zm-2%200H9v6h1v-6zm4%200h-1v6h1v-6zm0-4V5H9v1H6v3h1v7.966l1%201.03v-.073V18h6.984l.016-.018v.015l1-1.03V9h1V6h-3zm1%2011H8V9h7v8zm1-9H7V7h9v1z%22/%3E%20%3C/g%3E%20%3C/svg%3E");
+}
+
+.wbs-remove span:last-child:hover {
+  text-decoration: underline;
+}
+
+.wbs-configure .wbs-icon {
+  background-image: url("data:image/svg+xml,%3Csvg%20width=%2224%22%20height=%2224%22%20xml:space=%22preserve%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath%20d=%22m11.254%205.522-.24%201.443a4.83%204.83%200%200%200-1.24.516L8.58%206.629%207.182%208.027l.853%201.194a4.84%204.84%200%200%200-.515%201.24l-1.445.24v1.977l1.445.242c.113.434.286.85.515%201.24l-.853%201.194%201.398%201.398%201.194-.853c.39.23.806.402%201.24.515l.24%201.445h1.979l.24-1.445a4.83%204.83%200%200%200%201.24-.515l1.194.853%201.398-1.398-.852-1.194c.23-.39.403-.806.516-1.24l1.443-.242V10.7l-1.443-.24a4.839%204.839%200%200%200-.516-1.24l.852-1.194-1.398-1.398-1.194.852a4.83%204.83%200%200%200-1.24-.516l-.24-1.443h-1.979zm1.004%203.183a3.05%203.05%200%200%201%203.049%203.051%203.05%203.05%200%200%201-3.049%203.049%203.05%203.05%200%200%201-3.05-3.049%203.05%203.05%200%200%201%203.05-3.05z%22%20stroke=%22%23000%22%20stroke-width=%22.097%22/%3E%3C/svg%3E%0A");
+}
+
+.wbs-configure span:last-child:hover {
+  text-decoration: underline;
+}
+
+.wbs-rank-selector-icon {
+  background-position: -36px;
+  width: 8px;
+  flex: 0 0 8px;
+  height: 20px;
+  margin-right: 2px;
+  background-image: linear-gradient(transparent, transparent), url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20xmlns:xlink=%22http://www.w3.org/1999/xlink%22%20width=%22107%22%20height=%2220%22%3E%20%3Cdefs%3E%20%3Cpath%20d=%22M3.1%2C0%200%2C3.8%200%2C6%208%2C6%208%2C3.8%204.9%2C0zm8.2%2C7%20-2.3%2C2%200%2C2%202.3%2C2%203.4%2C0%202.3%2C-2%200%2C-2%20-2.3%2C-2zm6.7%2C7%200%2C2.2%203.1%2C3.8%201.8%2C0%203.1%2C-3.8%200%2C-2.2z%22%20id=%22a%22/%3E%20%3Cpath%20d=%22m18.5%2C10.75%200%2C-1.5%202%2C-1.75%203%2C0%202%2C1.75%200%2C1.5%20-2%2C1.75%20-3%2C0zm0%2C-6.75%200%2C1.5%207%2C0%200%2C-1.5%20-2.875%2C-3.5%20-1.25%2C0zm-9%2C12%200%2C-1.5%207%2C0%200%2C1.5%20-2.875%2C3.5%20-1.25%2C0zm0%2C-12%200%2C1.5%207%2C0%200%2C-1.5%20-2.875%2C-3.5%20-1.25%2C0zm-9%2C12%200%2C-1.5%207%2C0%200%2C1.5%20-2.875%2C3.5%20-1.25%2C0zm0%2C-5.25%200%2C-1.5%202%2C-1.75%203%2C0%202%2C1.75%200%2C1.5%20-2%2C1.75%20-3%2C0z%22%20id=%22b%22%20fill=%22none%22/%3E%20%3C/defs%3E%20%3Cuse%20fill=%22%23000%22%20x=%220%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%23000%22%20x=%220%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3Cuse%20fill=%22%2372777d%22%20x=%2227%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%2372777d%22%20x=%2227%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3Cuse%20fill=%22%2336c%22%20x=%2254%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%2336c%22%20x=%2254%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3Cuse%20fill=%22%23447ff5%22%20x=%2281%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%23447ff5%22%20x=%2281%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3C/svg%3E");
+}
+
+.wbs-entity-input, .wbs-prop-input, .wbs-target-input {
+  width: 250px;
+  min-height: 20px;
+  display: inline-block;
+  margin: 5px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.wbs-target-input {
+  display: inline-flex;
+}
+
+.wbs-prop-input {
+  width: 120px;
+}
+
+.wbs-qualifier .wbs-prop-input {
+  width: 85px;
+}
+
+.wbs-qualifier .wbs-target-input {
+  width: 120px;
+}
+
+.wbs-mediainfo-file-fields {
+  display: grid;
+  grid-template-columns: max-content min(450px, 50%) max-content;
+  grid-gap: 0.8em;
+  align-items: center;
+  margin: 1em 0em;
+}
+
+.schema-alignment-dialog-preview .wbs-mediainfo-file-fields {
+  grid-template-columns: max-content min(450px, 50%);
+}
+
+/* Fix input rendering for Firefox */
+
+.wbs-entity-input input, .wbs-prop-input input, .wbs-target-input input,
+.wbs-monolingual-container input, .wbs-mediainfo-file-fields input {
+  width: 100%;
+  border: solid #b5b5b5 1px;
+  padding: 2px;
+}
+
+/* fix rendering of checkbox */
+
+input[type="checkbox"].wbs-wikitext-override {
+  width: auto;
+  vertical-align: middle;
+}
+
+
+
+.wbs-draggable-column img {
+  float: right;
+}
+
+.wbs-toolbar {
+  float: right;
+  width: 100px;
+  padding: 2px;
+}
+
+.wbs-toolbar a {
+  cursor: pointer;
+}
+
+.wbs-remove, .wbs-configure,
+.wbs-add-entity, .wbs-add-statement-group, .wbs-add-statement,
+.wbs-add-qualifier, .wbs-add-reference, .wbs-add-namedesc,
+.wbs-copy-reference-button, .wbs-paste-reference-button {
+  color: #0645ad !important;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.wbs-add-entity:hover, .wbs-add-statement-group:hover, .wbs-add-statement:hover,
+.wbs-add-qualifier:hover, .wbs-add-reference:hover, .wbs-add-namedesc:hover {
+  text-decoration: none;
+}
+
+.wbs-add-entity span:hover, .wbs-add-statement-group span:hover, .wbs-add-statement span:hover,
+.wbs-add-qualifier span:hover, .wbs-add-reference span:hover, .wbs-add-namedesc span:hover {
+  text-decoration: underline;
+}
+
+.wbs-remove {
+  display: inline-block;
+}
+
+.wbs-entity-contents {
+  padding-left: 10px;
+  margin-left: 20px;
+  border-left: 3px solid gray;
+}
+
+.wbs-add-entity b, .wbs-add-statement-group b, .wbs-add-statement b,
+.wbs-add-qualifier b, .wbs-add-reference b, .wbs-add-namedesc b {
+  font-size: 1em;
+  color: grey;
+  width: 20px;
+  height: 20px;
+}
+
+.wbs-statement-group-container:empty:before {
+  content: attr(data-emptyplaceholder);
+  color: gray;
+}
+
+.schema-alignment-dialog-preview .wbs-prop-input {
+  float: left;
+}
+
+.schema-alignment-dialog-preview .wbs-qualifier .wbs-statement-container {
+  display: table-cell;
+  vertical-align: bottom;
+  padding-left: 10px;
+  height: 20px;
+}
+
+.wbs-statement-group-container, .wbs-statement-container, .wbs-qualifier-container, .wbs-reference-container {
+  width: 100%;
+  display: block;
+  overflow: auto;
+}
+
+.wbs-entity, .wbs-statement-group, .wbs-statement, .wbs-qualifier, .wbs-reference {
+  display: block;
+  overflow: auto;
+}
+
+.wbs-entity {
+  margin-bottom: 5px;
+  padding-right: 5px;
+  padding: 10px;
+  border-bottom: 1px solid #d3deff;
+}
+
+.wbs-statement-group {
+  background: #eaecf0;
+  margin-bottom: 5px;
+  border: 1px solid #c8ccd1;
+}
+
+.wbs-statement {
+  background: var(--background-primary);
+  border-bottom: 1px solid #eaecf0;
+}
+
+.wbs-statement-mode-delete {
+  background: #cecece;
+}
+
+/* Hide unrelevant sections of statements in delete mode */
+.wbs-statement-mode-delete .wbs-references-section {
+  display: none;
+}
+
+.wbs-statement-mode-delete.wbs-statement-strategy-property .wbs-qualifiers-section,
+.wbs-statement-mode-delete.wbs-statement-strategy-snak .wbs-qualifiers-section,
+.wbs-statement-mode-delete.wbs-statement-strategy-property .wbs-mainsnak-input {
+  display: none;
+}
+
+.wbs-statement .wbs-value-placeholder {
+  display: none;
+}
+
+.wbs-statement.wbs-statement-mode-delete.wbs-statement-strategy-property .wbs-value-placeholder {
+  display: initial;
+}
+
+.wbs-statement:last-child {
+  border-bottom: 0;
+}
+
+.wbs-right {
+  float: right;
+  width: 85%;
+}
+
+.wbs-statement-group .wbs-right {
+  width: 75%;
+}
+
+.wbs-statement .wbs-right {
+  width: 90%;
+}
+
+.wbs-qualifier, .wbs-reference {
+  position: relative;
+  overflow: hidden;
+}
+
+.wbs-qualifier .wbs-right {
+  width: auto;
+  position: absolute;
+  top: 0px;
+  margin-left: 100px;
+}
+
+.wbs-reference>.wbs-right {
+  width: 100%;
+}
+
+.wbs-references-toggle {
+  margin: 5px;
+  margin-right: 0px;
+}
+
+.wbs-references-toggle a {
+  color: #0645ad !important;
+}
+
+.wbs-copy-reference {
+  float: left;
+  padding: 2px;
+}
+
+.wbs-copied-reference {
+  opacity: 0.6;
+}
+
+.wbs-copied-reference .wbs-copy-reference-button {
+  color: black !important;
+  cursor: default;
+}
+
+.wbs-copied-reference span:hover {
+  text-decoration: none;
+}
+
+.wbs-paste-reference .wbs-icon,
+.wbs-copy-reference .wbs-icon {
+  height: 13px;
+  width: 13px;
+  background-size: 13px 13px;
+  opacity: 0.6;
+  margin-right: 2px;
+}
+
+/* source: Font Awesome by Dave Gandy. https://commons.wikimedia.org/wiki/File:Paste_font_awesome.svg */
+.wbs-paste-reference .wbs-icon {
+  background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg version='1.1' viewBox='0 -256 1900 1900' xmlns='http://www.w3.org/2000/svg' xmlns:cc='http://creativecommons.org/ns%23' xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns%23'%3E%3Cmetadata%3E%3Crdf:RDF%3E%3Ccc:Work rdf:about=''%3E%3Cdc:format%3Eimage/svg+xml%3C/dc:format%3E%3Cdc:type rdf:resource='http://purl.org/dc/dcmitype/StillImage'/%3E%3C/cc:Work%3E%3C/rdf:RDF%3E%3C/metadata%3E%3Cg transform='matrix(1 0 0 -1 53.153 1325.1)'%3E%3Cpath d='m768-128h896v640h-416q-40 0-68 28t-28 68v416h-384v-1152zm256 1440v64q0 13-9.5 22.5t-22.5 9.5h-704q-13 0-22.5-9.5t-9.5-22.5v-64q0-13 9.5-22.5t22.5-9.5h704q13 0 22.5 9.5t9.5 22.5zm256-672h299l-299 299v-299zm512-128v-672q0-40-28-68t-68-28h-960q-40 0-68 28t-28 68v160h-544q-40 0-68 28t-28 68v1344q0 40 28 68t68 28h1088q40 0 68-28t28-68v-328q21-13 36-28l408-408q28-28 48-76t20-88z' fill='currentColor'/%3E%3C/g%3E%3C/svg%3E%0A");
+}
+
+/* source: Font Awesome by Dave Gandy. https://commons.wikimedia.org/wiki/File:Copy_font_awesome.svg */
+.wbs-copy-reference .wbs-icon {
+  background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg version='1.1' viewBox='0 -256 1850 1850' xmlns='http://www.w3.org/2000/svg' xmlns:cc='http://creativecommons.org/ns%23' xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns%23'%3E%3Cmetadata%3E%3Crdf:RDF%3E%3Ccc:Work rdf:about=''%3E%3Cdc:format%3Eimage/svg+xml%3C/dc:format%3E%3Cdc:type rdf:resource='http://purl.org/dc/dcmitype/StillImage'/%3E%3C/cc:Work%3E%3C/rdf:RDF%3E%3C/metadata%3E%3Cg transform='matrix(1 0 0 -1 37.966 1305.5)'%3E%3Cpath d='m1696 1152q40 0 68-28t28-68v-1216q0-40-28-68t-68-28h-960q-40 0-68 28t-28 68v288h-544q-40 0-68 28t-28 68v672q0 40 20 88t48 76l408 408q28 28 76 48t88 20h416q40 0 68-28t28-68v-328q68 40 128 40h416zm-544-213-299-299h299v299zm-640 384-299-299h299v299zm196-647 316 316v416h-384v-416q0-40-28-68t-68-28h-416v-640h512v256q0 40 20 88t48 76zm956-804v1152h-384v-416q0-40-28-68t-68-28h-416v-640h896z' fill='currentColor'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.wbs-references-toggle .triangle-icon {
+  background: transparent url(data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%20standalone%3D%22no%22%3F%3E%0A%3Csvg%0A%20%20%20xmlns%3Adc%3D%22http%3A//purl.org/dc/elements/1.1/%22%0A%20%20%20xmlns%3Acc%3D%22http%3A//creativecommons.org/ns%23%22%0A%20%20%20xmlns%3Ardf%3D%22http%3A//www.w3.org/1999/02/22-rdf-syntax-ns%23%22%0A%20%20%20xmlns%3Asvg%3D%22http%3A//www.w3.org/2000/svg%22%0A%20%20%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%0A%20%20%20id%3D%22svg8%22%0A%20%20%20version%3D%221.1%22%0A%20%20%20viewBox%3D%220%200%202.6458332%202.6458332%22%0A%20%20%20height%3D%2210%22%0A%20%20%20width%3D%2210%22%3E%0A%20%20%3Cdefs%0A%20%20%20%20%20id%3D%22defs2%22%20/%3E%0A%20%20%3Cmetadata%0A%20%20%20%20%20id%3D%22metadata5%22%3E%0A%20%20%20%20%3Crdf%3ARDF%3E%0A%20%20%20%20%20%20%3Ccc%3AWork%0A%20%20%20%20%20%20%20%20%20rdf%3Aabout%3D%22%22%3E%0A%20%20%20%20%20%20%20%20%3Cdc%3Aformat%3Eimage/svg+xml%3C/dc%3Aformat%3E%0A%20%20%20%20%20%20%20%20%3Cdc%3Atype%0A%20%20%20%20%20%20%20%20%20%20%20rdf%3Aresource%3D%22http%3A//purl.org/dc/dcmitype/StillImage%22%20/%3E%0A%20%20%20%20%20%20%20%20%3Cdc%3Atitle%3E%3C/dc%3Atitle%3E%0A%20%20%20%20%20%20%3C/cc%3AWork%3E%0A%20%20%20%20%3C/rdf%3ARDF%3E%0A%20%20%3C/metadata%3E%0A%20%20%3Cg%0A%20%20%20%20%20transform%3D%22translate%280%2C-294.35416%29%22%0A%20%20%20%20%20id%3D%22layer1%22%3E%0A%20%20%20%20%3Cpath%0A%20%20%20%20%20%20%20id%3D%22path12%22%0A%20%20%20%20%20%20%20d%3D%22m%200.21601809%2C294.5035%202.28763941%2C1.14744%20-2.29850705%2C1.20871%20z%22%0A%20%20%20%20%20%20%20style%3D%22fill%3A%23645eea%3Bfill-opacity%3A1%3Bfill-rule%3Aevenodd%3Bstroke%3A%23645eea%3Bstroke-width%3A0.06161711px%3Bstroke-linecap%3Abutt%3Bstroke-linejoin%3Amiter%3Bstroke-opacity%3A1%22%20/%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E%0A) no-repeat center center;
+  background-size: 100% auto;
+  height: 8px;
+  width: 8px;
+  margin-right: 4px;
+  display: inline-block;
+}
+
+.pointing-right {
+  transform: rotate(0deg);
+  transition: .3s cubic-bezier(.17, .67, .21, 1.69);
+}
+
+.pointing-down {
+  transform: rotate(90deg);
+  transition: .3s cubic-bezier(.17, .67, .21, 1.69);
+}
+
+.wbs-qualifier .wbs-statement {
+  overflow: hidden;
+  background: transparent;
+}
+
+.wbs-monolingual-container, .wbs-quantity-container {
+  display: inline-block;
+}
+
+.wbs-reference-header {
+  height: 22px;
+  overflow: hidden;
+  display: block;
+  background-color: #b6c8ec;
+}
+
+.wbs-reference {
+  background-color: #eaf3ff;
+  margin-bottom: 5px;
+}
+
+.wbs-reference .wbs-statement {
+  background-color: #eaf3ff;
+}
+
+.wbs-namedesc-header, .wbs-statements-header {
+  font-size: 1.2em;
+}
+
+.wbs-namedesc {
+  border-left: 1px solid #c8ccd1;
+  border-right: 1px solid #c8ccd1;
+}
+
+.wbs-namedesc:first-child {
+  border-top: 1px solid #c8ccd1;
+}
+
+.wbs-namedesc:last-child {
+  border-bottom: 1px solid #c8ccd1;
+}
+
+
+.wbs-namedesc-container:empty:before {
+  content: attr(data-emptyplaceholder);
+  color: gray;
+  padding: 5px;
+  border: none;
+}
+
+.wbs-namedesc {
+  background-color: #eaecf0;
+  padding: 5px;
+}
+
+.wbs-namedesc-type, .wbs-namedesc-value {
+  display: inline-block;
+}
+
+.wbs-namedesc-value {
+  padding-left: 20px;
+  width: 300px;
+}
+
+.wbs-namedesc-override {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.wbs-namedesc-override input {
+  vertical-align: middle;
+}
+
+/* do not let users pick a term type for mediainfo entities as only labels are supported */
+#schema-alignment-entity-edits-container .wbs-mediainfo .wbs-namedesc-type {
+  display: none;
+}
+
+.wbs-language-input {
+  width: 100%;
+}
+
+.schema-alignment-columns-header {
+  margin-bottom: 0.3em;
+}
+
+/*** Warnings rendering ****/
+
+#wikibase-issues-panel table {
+  width: 100%;
+}
+
+.wb-warning h1 {
+  font-size: 1.2em;
+}
+
+.schema-issues-area table,
+.perform-edits-warnings-area table {
+  width: 100%;
+}
+
+tr.wb-warning:nth-of-type(odd) {
+  background-color: #f2f2f2;
+}
+
+.wb-warning-count span,
+.schema-alignment-total-warning-count {
+  color: var(--background-primary);
+  background-color: #777;
+  padding: 0px 5px;
+  border-radius: 0.5em;
+}
+
+.wb-warning-severity {
+  width: 60px;
+  height: 60px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.wb-warning-severity-INFO {
+  background-image: url('../images/Information.png');
+}
+
+.wb-warning-severity-WARNING {
+  background-image: url('../images/Warning.png');
+}
+
+.wb-warning-severity-IMPORTANT {
+  background-image: url('../images/Important.png');
+}
+
+.wb-warning-severity-CRITICAL {
+  background-image: url('../images/Critical.png');
+}
+
+.wb-warning-body {
+  padding: 5px;
+  vertical-align: top;
+}
+
+.wb-warning-count {
+  padding: 5px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.wb-warning-end {
+  float: unset;
+}
+
+.wb-issue-preformat {
+  border: 1px solid #eaecf0;
+  background-color: #f8f9fa;
+  padding: 1px 3px;
+  border-radius: 2px;
+  font-family: monospace;
+}
+
+.wb-preview-new-entity {
+  color: #11c;
+}
+
+/*** QuickStatements Preview ***/
+
+div.schema-alignment-dialog-preview {
+  min-height: 340px;
+  max-width: 900px;
+  overflow: auto;
+  background: var(--background-primary);
+  padding: 10px;
+  margin-top: 3px;
+  white-space: pre;
+  font-size: 9pt;
+}
+
+.schema-alignment-dialog-columns-area div:hover {
+  cursor: grabbing;
+}
+
+/** Errors in schema validation **/
+
+.schema-validation-errors {
+  margin-left: 1em;
+}
+
+.schema-validation-path-element {
+  border: 1px solid #bcf;
+  border-radius: 3px;
+  background: #ebeef8;
+  padding: 2px;
+  margin: 2px;
+  display: inline-block;
+}
+
+.schema-validation-error {
+  margin-left: 2px;
+}
+
+/** Template selection **/
+
+select:focus option.placeholder {
+  display: none;
+}
+
+#wikibase-template-select {
+  max-width: 200px;
+}

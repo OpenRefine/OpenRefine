@@ -1,0 +1,253 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+.browsing-panel-header {
+  position: relative;
+  display: none;
+}
+
+.browsing-panel-errors {
+  display: none;
+  position: relative;
+  height: auto;
+  margin: 5px;
+  text-align: center;
+  background: #fff0f4;
+  color: #c51244;
+  padding: 4px 4px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.browsing-panel-indicator {
+  display: none;
+  position: relative;
+  margin: 5px;
+  top: 0;
+  text-align: center;
+  background-color: var(--background-primary);
+  padding: 5px 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.browsing-panel-indicator img {
+  vertical-align: text-top;
+}
+
+.browsing-panel-controls {
+  position: relative;
+  padding: var(--padding-normal);
+  text-align: right;
+}
+
+.browsing-panel-controls-refresh {
+  position: absolute;
+  top: var(--padding-normal);
+  left: var(--padding-normal);
+}
+
+.browsing-panel-help, .history-panel-help {
+  margin: 1em;
+  padding: 0 0 13px 0;
+  background: var(--fill-primary);
+  border: 1px solid var(--chrome-primary);
+  color: var(--text-quarternary);
+  border-radius: var(--rounded-corners-radius);
+}
+
+.browsing-panel-help h1, .history-panel-help h1 {
+  margin: 10px;
+  padding: 20px 0 0 10px;
+  font-size: 1.15em;
+  font-weight: bold;
+  background: url(../../images/logo-gem-126.png) no-repeat top right;
+  background-size: 43px;
+}
+
+.browsing-panel-help p, .history-panel-help p {
+  padding: 7px 20px;
+  line-height: 1.3;
+}
+
+.visibility-panel-button {
+  width: 17px;
+  height: 19px;
+  background-image: url(../../images/leftpanel-showhide.png);
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  border: none;
+}
+
+.hide-left-panel #left-panel {
+  display: none;
+}
+
+#show-left-panel-button {
+  margin: 0px 7px 0px 0px;
+  padding: 7px 0px 0px 0px;
+  display: none;
+}
+
+.hide-left-panel #show-left-panel-button {
+  background-position: -34px 0px;
+  display: inline-block;
+}
+
+.hide-left-panel #show-left-panel-button:hover {
+  background-position: -51px 0px;
+}
+
+#left-panel #hide-left-panel-button {
+  float: right;
+  margin: 5px 2px 0 0;
+  padding: 0px 0px 0px 0px;
+}
+
+#left-panel #hide-left-panel-button:hover {
+  background-position: -17px 0px;
+}
+
+a.history-entry {
+  display: block;
+  position: relative;
+  padding: var(--padding-normal);
+  padding-left: calc(var(--padding-normal) + 30px);
+  text-decoration: none;
+  color: var(--text-primary);
+  border-bottom: 1px dotted #ddd;
+}
+
+.history-entry-index {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 30px;
+  text-align: right;
+  font-size: 80%;
+  padding: 2px 0px;
+}
+
+a.history-entry.filtered-out {
+  height: 1px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+a.history-entry.filtered-out>* {
+  display: none;
+}
+
+.history-panel-controls {
+  padding: var(--padding-normal);
+  text-align: right;
+}
+
+.history-panel-filter {
+  padding: var(--padding-tighter) var(--padding-normal);
+  background: var(--chrome-secondary);
+  border: 1px solid var(--chrome-primary);
+  border-left: 0;
+  border-right: 0;
+}
+
+.history-panel-filter span {
+  padding-right: .25em;
+}
+
+.history-panel-body {
+  background: var(--chrome-secondary);
+  overflow: auto;
+}
+
+.history-past {
+  position: relative;
+  background: var(--background-primary);
+}
+
+.history-now {
+  background: var(--selected-primary);
+}
+
+.history-future {
+  position: relative;
+  padding-bottom: var(--padding-loose);
+}
+
+.history-highlight {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  display: none;
+}
+
+.history-past .history-highlight {
+  background: var(--chrome-secondary);
+  bottom: 0;
+}
+
+.history-future .history-highlight {
+  background: var(--background-primary);
+  top: 0;
+}
+
+.history-future a.history-entry, .history-future a.history-entry-index {
+  color: var(--light-grey);
+}
+
+.history-now a.history-entry, .history-now a.history-entry-index {
+  color: #fff;
+}
+
+.history-past a.history-entry:hover, .history-future a.history-entry:hover {
+  border-bottom: 1px solid var(--selected-primary);
+}
+
+.history-extract-dialog-panel {
+  border: 1px solid var(--chrome-primary);
+  height: 400px;
+  overflow: auto;
+}
+
+table.history-extract-dialog-entries {
+  border-collapse: separate;
+  border-spacing: var(--padding-tight);
+  word-break: break-all;
+}
+
+textarea.history-operation-json {
+  white-space: pre;
+  font-family: monospace;
+  min-height: 450px;
+  min-width: 374px;
+}

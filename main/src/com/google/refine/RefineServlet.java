@@ -65,7 +65,7 @@ import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
 
-    static private String ASSIGNED_VERSION = "3.7-SNAPSHOT";
+    static private String ASSIGNED_VERSION = "3.8-SNAPSHOT";
 
     static public String VERSION = "";
     static public String REVISION = "";
@@ -202,6 +202,13 @@ public class RefineServlet extends Butterfly {
                     logger.trace("> DELETE {}", commandKey);
                     command.doDelete(request, response);
                     logger.trace("< DELETE {}", commandKey);
+                } else if (request.getMethod().equals("HEAD")) {
+                    if (!logger.isTraceEnabled() && command.logRequests()) {
+                        logger.info("HEAD {}", request.getPathInfo());
+                    }
+                    logger.trace("> HEAD {}", commandKey);
+                    command.doHead(request, response);
+                    logger.trace("< HEAD {}", commandKey);
                 } else {
                     response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
                 }

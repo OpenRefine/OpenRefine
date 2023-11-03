@@ -15,13 +15,7 @@ server/classes/
 main/webapp/WEB-INF/classes/
 main/tests/server/classes/
 main/test-output/
-appengine/classes/
 tools/
-broker/appengine/module/MOD-INF/classes/
-broker/core/module/MOD-INF/classes/
-broker/core/WEB-INF/lib/
-broker/core/data/
-broker/core/test-output/
 tmp/
 /test-output
 test-out/
@@ -74,3 +68,11 @@ node_modules/
 
 # Ignore the node_modules folder as they are dependencies to be installed by end-user
 main/webapp/node_modules
+
+# Yarn internal files
+**/.yarn
+**/.yarnrc.yml
+
+# Ignore .gitignore among extensions as it can be used to ignore custom extensions
+
+extensions/.gitignore

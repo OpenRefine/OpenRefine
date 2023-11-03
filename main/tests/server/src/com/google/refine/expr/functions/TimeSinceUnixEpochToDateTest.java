@@ -11,7 +11,7 @@ import com.google.refine.expr.EvalError;
 
 public class TimeSinceUnixEpochToDateTest extends RefineTest {
 
-    long epoch = 1650547184707L; // 2022-04-21T13:19:44Z
+    long epoch = 1650547184707L; // 2022-04-21T13:19:44.707Z
     static Properties bindings = new Properties();
 
     @Test
@@ -25,11 +25,11 @@ public class TimeSinceUnixEpochToDateTest extends RefineTest {
     public void testTimeSinceUnixEpochToDateTwoParam() {
         long epochSecond = epoch / 1000;
         long epochMilliSecond = epoch;
-        long epochMicroSecond = epoch * 1000;
+        long epochMicroSecond = epoch * 1000 + 123;
         TimeSinceUnixEpochToDate etd = new TimeSinceUnixEpochToDate();
         assertEquals(etd.call(bindings, new Object[] { epochSecond, "second" }).toString(), "2022-04-21T13:19:44Z");
-        assertEquals(etd.call(bindings, new Object[] { epochMilliSecond, "millisecond" }).toString(), "2022-04-21T13:19:44Z");
-        assertEquals(etd.call(bindings, new Object[] { epochMicroSecond, "microsecond" }).toString(), "2022-04-21T13:19:44Z");
+        assertEquals(etd.call(bindings, new Object[] { epochMilliSecond, "millisecond" }).toString(), "2022-04-21T13:19:44.707Z");
+        assertEquals(etd.call(bindings, new Object[] { epochMicroSecond, "microsecond" }).toString(), "2022-04-21T13:19:44.707123Z");
     }
 
     @Test

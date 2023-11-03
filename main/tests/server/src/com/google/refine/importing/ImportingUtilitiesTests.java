@@ -50,6 +50,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.io.FileSystem;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.entity.mime.StringBody;
@@ -108,10 +109,76 @@ public class ImportingUtilitiesTests extends ImporterTest {
         File dirA = new File(tempDir, "a");
         dirA.mkdir();
         File conflicting = new File(dirA, "dummy");
-        conflicting.createNewFile();
+        Assert.assertTrue(conflicting.createNewFile());
 
         File allocated = ImportingUtilities.allocateFile(dirA, ".././a/dummy");
         Assert.assertEquals(allocated, new File(dirA, "dummy-2"));
+    }
+
+    @Test
+    public void testNormalizePath() {
+        // Test for issue Unable to create a project from a URL on Windows if the URL path contains ":" character #4625
+        // https://github.com/OpenRefine/OpenRefine/issues/4625
+        String urlPath = "/a/b:c/dummy:test";
+        String urlPathFixed = "\\a\\b-c\\dummy-test";
+        String result = ImportingUtilities.normalizePath(urlPath);
+        FileSystem fileSystem = FileSystem.getCurrent();
+        if (fileSystem == FileSystem.WINDOWS) {
+            Assert.assertEquals(urlPathFixed, result);
+        } else {
+            Assert.assertEquals(urlPath, result);
+        }
+    }
+
+    @Test
+    public void testNormalizePathWithDifferentSeparator() {
+        // Test for issue Unable to create a project from a URL on Windows if the URL path contains ":" character #4625
+        // https://github.com/OpenRefine/OpenRefine/issues/4625
+        String urlPath = "\\a\\b:c\\dummy:test";
+        String urlPathFixed = "\\a\\b-c\\dummy-test";
+        String result = ImportingUtilities.normalizePath(urlPath);
+        FileSystem fileSystem = FileSystem.getCurrent();
+        if (fileSystem == FileSystem.WINDOWS) {
+            Assert.assertEquals(urlPathFixed, result);
+        } else {
+            Assert.assertEquals(urlPath, result);
+        }
+    }
+
+    @Test
+    public void testAllocateFileWithIllegalCharInWindows() throws IOException {
+        // Test for issue Unable to create a project from a URL on Windows if the URL path contains ":" character #4625
+        // https://github.com/OpenRefine/OpenRefine/issues/4625
+        File tempDir = TestUtils.createTempDirectory("openrefine-allocate-file-test");
+        File dirA = new File(tempDir, "a");
+        Assert.assertTrue(dirA.mkdir());
+        String urlPath = ".././a/b:c/dummy:test";
+        String urlPathFixed = ".././a/b-c/dummy-test";
+        File allocated = ImportingUtilities.allocateFile(dirA, urlPath);
+        FileSystem fileSystem = FileSystem.getCurrent();
+        if (fileSystem == FileSystem.WINDOWS) {
+            Assert.assertEquals(allocated, new File(dirA, urlPathFixed));
+        } else {
+            Assert.assertEquals(allocated, new File(dirA, urlPath));
+        }
+    }
+
+    @Test
+    public void testAllocateFileWithIllegalCharInWindowsDifferentSeparator() throws IOException {
+        // Test for issue Unable to create a project from a URL on Windows if the URL path contains ":" character #4625
+        // https://github.com/OpenRefine/OpenRefine/issues/4625
+        File tempDir = TestUtils.createTempDirectory("openrefine-allocate-file-test");
+        File dirA = new File(tempDir, "a");
+        Assert.assertTrue(dirA.mkdir());
+        String urlPath = "..\\.\\a\\b:c\\dummy:test";
+        String urlPathFixed = "..\\.\\a\\b-c\\dummy-test";
+        File allocated = ImportingUtilities.allocateFile(dirA, urlPath);
+        FileSystem fileSystem = FileSystem.getCurrent();
+        if (fileSystem == FileSystem.WINDOWS) {
+            Assert.assertEquals(allocated, new File(dirA, urlPathFixed));
+        } else {
+            Assert.assertEquals(allocated, new File(dirA, urlPath));
+        }
     }
 
     @Test

@@ -35,10 +35,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
@@ -67,6 +65,7 @@ public class ReconOperationTests extends RefineTest {
             + "   \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
             + "   \"type\":{\"id\":\"Q5\",\"name\":\"human\"},"
             + "   \"autoMatch\":true,"
+            + "   \"batchSize\":10,"
             + "   \"columnDetails\":[],"
             + "   \"limit\":0"
             + "},"
@@ -86,7 +85,7 @@ public class ReconOperationTests extends RefineTest {
             "           \"name\" : \"researcher: judgment\"\n" +
             "         },\n" +
             "         \"facetOptions\" : {\n" +
-            "           \"scroll\" : false\n" +
+            "           \"scroll\" : true\n" +
             "         },\n" +
             "         \"facetType\" : \"list\"\n" +
             "       }, {\n" +
@@ -133,7 +132,7 @@ public class ReconOperationTests extends RefineTest {
         List<Recon> reconList = Arrays.asList((Recon) null, (Recon) null, (Recon) null);
         ReconJob reconJob = mock(ReconJob.class);
         when(reconConfig.batchRecon(Mockito.any(), Mockito.anyLong())).thenReturn(reconList);
-        when(reconConfig.getBatchSize()).thenReturn(10);
+        when(reconConfig.getBatchSize(project.rows.size())).thenReturn(10);
         when(reconConfig.createJob(Mockito.eq(project), Mockito.anyInt(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(reconJob);
 

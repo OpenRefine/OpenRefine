@@ -56,7 +56,7 @@ function init() {
     "project/styles",
     module,
     [
-      "styles/project-injection.less"
+      "styles/project-injection.css"
     ]
   );
 }

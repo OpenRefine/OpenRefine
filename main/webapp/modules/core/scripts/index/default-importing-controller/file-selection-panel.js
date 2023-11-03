@@ -75,29 +75,6 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
   this._fileSelectionPanelElmts.startOverButton.on('click',function() {
     self._startOver();
   });
-
-  this._fileSelectionPanelResizer = function() {
-    var elmts = self._fileSelectionPanelElmts;
-    var width = self._fileSelectionPanel.width();
-    var height = self._fileSelectionPanel.height();
-    var headerHeight = elmts.wizardHeader.outerHeight(true);
-    var controlPanelWidth = 350;
-
-    elmts.controlPanel
-    .css("left", "0px")
-    .css("top", headerHeight + "px")
-    .css("width", (controlPanelWidth - DOM.getHPaddings(elmts.controlPanel)) + "px")
-    .css("height", (height - headerHeight - DOM.getVPaddings(elmts.controlPanel)) + "px");
-
-    elmts.filePanel
-    .css("left", controlPanelWidth + "px")
-    .css("top", headerHeight + "px")
-    .css("width", (width - controlPanelWidth - DOM.getHPaddings(elmts.filePanel)) + "px")
-    .css("height", (height - headerHeight - DOM.getVPaddings(elmts.filePanel)) + "px");
-  };
-
-  $(window).on('resize',this._fileSelectionPanelResizer);
-  this._fileSelectionPanelResizer();
 };
 
 Refine.DefaultImportingController.prototype._renderFileSelectionPanel = function() {

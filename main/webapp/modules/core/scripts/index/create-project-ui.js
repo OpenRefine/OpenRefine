@@ -69,16 +69,6 @@ Refine.CreateProjectUI = function(elmt) {
 
 Refine.CreateProjectUI.controllers = [];
 
-Refine.CreateProjectUI.prototype.resize = function() {
-  var totalHeight = this._elmt.height();
-  var tabBodyContainer = $('#create-project-ui-source-selection-tab-bodies');
-  var selectedTabBody = $('.create-project-ui-source-selection-tab-body.selected');
-  
-  var top = tabBodyContainer.position().top;
-  var tabBodyHeight = totalHeight - top - DOM.getVPaddings(selectedTabBody);
-  $('.create-project-ui-source-selection-tab-body').css('height', tabBodyHeight + 'px');
-};
-
 Refine.CreateProjectUI.prototype._initializeUI = function() {
   for (var i = 0; i < Refine.CreateProjectUI.controllers.length; i++) {
     this._controllers.push(new Refine.CreateProjectUI.controllers[i](this));
@@ -96,9 +86,10 @@ Refine.CreateProjectUI.prototype.addSourceSelectionUI = function(sourceSelection
   .appendTo(bodyContainer)
   .hide();
 
-  sourceSelectionUI._divHeader = $('<div>')
+  sourceSelectionUI._divHeader = $('<a>')
   .addClass('create-project-ui-source-selection-tab')
   .text(sourceSelectionUI.label)
+  .attr('href', 'javascript:void(0);')
   .appendTo(headerContainer)
   .on('click',function() { self.selectImportSource(sourceSelectionUI.id); });
 

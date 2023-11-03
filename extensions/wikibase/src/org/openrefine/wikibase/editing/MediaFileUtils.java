@@ -7,8 +7,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
@@ -263,6 +261,21 @@ public class MediaFileUtils {
 
         @JsonIgnore
         private MediaInfoIdValue mid = null;
+
+        /**
+         * Checks that the upload was successful, and if not raise an exception
+         * 
+         * @throws MediaWikiApiErrorException
+         */
+        public void checkForErrors() throws MediaWikiApiErrorException {
+            if (!"Success".equals(result)) {
+                throw new MediaWikiApiErrorException(result,
+                        "The file upload action returned the '" + result + "' error code. Warnings are: " + Objects.toString(warnings));
+            }
+            if (filename == null) {
+                throw new MediaWikiApiErrorException(result, "The MediaWiki API did not return any filename for the uploaded file");
+            }
+        }
 
         /**
          * Retrieves the Mid, either from the upload response or by issuing another call to obtain it from the filename

@@ -1,0 +1,168 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+#clusterButtonId {
+  margin-left: 0.5em;
+}
+
+.clustering-dialog-control-group {
+  display: flex;
+  align-items: baseline;
+}
+.clustering-dialog-control-group .button {
+  margin-left: .25em;
+}
+
+#methodSelectorId {
+  margin-left: .25em;
+}
+
+.clustering-dialog-body {
+  padding: 15px 15px 0 15px;
+}
+
+.clustering-dialog-control-row {
+  margin: 1em 0;
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  justify-content: space-between;
+  align-items: baseline;
+  background: #eee;
+  border: 1px #ccc solid;
+  padding: 0.5em;
+  gap: 0.5em;
+}
+
+.control-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.clustering-dialog-facet-row {
+  margin: 1em 0;
+  display: flex;
+  flex-flow: row;
+  column-gap: 5px;
+}
+
+.clustering-dialog-table-container {
+  height: 450px;
+  width: 650px;
+  overflow: auto;
+  border: 1px solid #aaa;
+}
+
+table.clustering-dialog-entry-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.clustering-dialog-entry-table>tbody>tr.header {
+  background: #ccc;
+  font-weight: bold;
+}
+
+table.clustering-dialog-entry-table>tbody>tr>td {
+  padding: 2px 5px;
+}
+
+table.clustering-dialog-entry-table>tbody>tr.odd>td {
+  background: #eee;
+}
+
+table.clustering-dialog-entry-table>tbody>tr.even>td {
+  background: var(--background-primary);
+}
+
+table.clustering-dialog-entry-table input {
+  border: 1px solid #ccc;
+  padding: 0 0.1em;
+}
+
+table.clustering-dialog-entry-table a {
+  text-decoration: none;
+}
+
+table.clustering-dialog-entry-table ul {
+  margin: 1em 0 0 0;
+}
+
+table.clustering-dialog-entry-table a:hover {
+  text-decoration: underline
+}
+
+.clustering-dialog-entry-count {
+  color: #aaa;
+  margin-left: 0.5em;
+}
+
+.clustering-dialog-controls {
+  margin-bottom: 0.5em;
+  margin-right: 2em;
+}
+
+.clustering-dialog-controls td {
+  padding-right: 0.5em;
+}
+
+.clustering-dialog-facet {
+  margin-bottom: 1em;
+}
+
+.clustering-dialog-facet-header {
+  font-weight: bold;
+}
+
+.clustering-dialog-facet-histogram {
+  overflow: hidden;
+}
+
+.clustering-dialog-facet-slider {
+  margin: 5px;
+}
+
+.clustering-dialog-facet-selection {
+  text-align: center;
+  color: #888;
+}
+
+.clustering-dialog-value-focus {
+  text-align: right;
+  font-size: 80%;
+}
+
+.clustering-dialog-value-focus a {
+  text-decoration: none;
+  visibility: hidden;
+}

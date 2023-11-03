@@ -43,9 +43,7 @@ import com.google.refine.util.TestUtils;
 import java.util.Collections;
 import java.util.Properties;
 
-import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
@@ -110,7 +108,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 "http://foo.com/identifierSpace",
                 "http://foo.com/schemaSpace",
                 null,
-                false,
+                false, 10,
                 Collections.emptyList(),
                 0);
 

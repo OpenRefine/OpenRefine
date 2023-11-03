@@ -31,7 +31,6 @@ import org.openrefine.wikibase.updates.ItemEdit;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
 import org.openrefine.wikibase.updates.MediaInfoEdit;
 import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -132,6 +131,18 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
         scrutinizer.setEnableSlowChecks(true);
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.invalidFilePathType);
+    }
+
+    @Test
+    public void testValidURL() {
+        MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFilePath("https://foo.com/bar.jpg?type=blue")
+                .addFileName("my_file.jpg")
+                .addWikitext("description")
+                .build();
+        scrutinizer.setEnableSlowChecks(true);
+        scrutinize(update);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType);
     }
 
     @Test

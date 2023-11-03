@@ -9,11 +9,6 @@
 // ***********************************************
 
 import 'cypress-file-upload';
-import 'cypress-wait-until';
-
-import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
-
-addMatchImageSnapshotCommand({ customDiffDir: 'cypress/snapshots_diffs' });
 
 // /**
 //  * Reconcile a column
@@ -199,7 +194,7 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
     // there are 3 td at the beginning of each row
     const columnIndex = $elem.index() + 3;
     cy.get(
-      `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content > span`
+      `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content div > span`
     ).should(($cellSpan) => {
       if (value == null) {
         // weird, "null" is returned as a string in this case, bug in Chai ?
@@ -371,7 +366,7 @@ Cypress.Commands.add('visitProject', (projectId) => {
 Cypress.Commands.add(
     'loadAndVisitProject',
     (fixture, projectName = Cypress.currentTest.title +'-'+Date.now()) => {
-      cy.loadProject(fixture, projectName).then((projectId) => {
+      cy.loadProject(fixture, projectName, "fooTag").then((projectId) => {
         cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
         cy.waitForProjectTable();
       });
@@ -384,7 +379,7 @@ Cypress.Commands.add('waitForProjectTable', (numRows) => {
   cy.get('#right-panel', { log: false }).should('be.visible');
   cy.get('#project-title').should('exist');
   cy.get(".data-table").find("tr").its('length').should('be.gte', 0);
-  if (arguments.length == 1) {
+  if (numRows) {
     cy.get('#summary-bar').should('to.contain', numRows+' rows');
   }
 });
@@ -422,7 +417,7 @@ Cypress.Commands.add(
   (projectName, fixture) => {
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > div')
+    cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('Clipboard')
       .click();
 
@@ -450,6 +445,6 @@ Cypress.Commands.add(
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
       .contains('Create project »')
       .click();
-    cy.get('#create-project-progress-message').contains('Done.');
+    cy.waitForProjectTable();
   }
 );

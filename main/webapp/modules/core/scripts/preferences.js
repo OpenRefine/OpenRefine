@@ -118,6 +118,7 @@ function populatePreferences(prefs) {
 
   $("#or-proj-starting").text($.i18n('core-project/starting')+"...");
   $('<h1>').text($.i18n('core-index/preferences')).appendTo(body);
+  $('#app-home-button').attr('title', $.i18n('core-index/navigate-home'));
 
   var table = $('<table>')
   .addClass("list-table")

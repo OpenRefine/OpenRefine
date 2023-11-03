@@ -51,6 +51,7 @@ Refine.selectActionArea = function(id) {
     if (id == actionArea.id) {
       actionArea.tabElmt.addClass('selected');
       actionArea.bodyElmt.css('visibility', 'visible').css('z-index', '55');
+      window.location.hash = id;
     }
   }
 };
@@ -122,52 +123,12 @@ $(function() {
   };
 
   var resize = function() {
-    var leftPanelWidth = 150;
-    // px
-    var width = $(window).width();
-    var height = $(window).height();
-    var headerHeight = $('#header').outerHeight();
-    var panelHeight = height - headerHeight;
-
-    $('.main-layout-panel')
-    .css("top", headerHeight + "px")
-    .css("bottom", "0px")
-    .css("height", panelHeight + "px")
-    .css("visibility", "visible");
-
-    $('#left-panel')
-    .css("left", "0px")
-    .css("width", leftPanelWidth + "px");
-    var leftPanelBodyHPaddings = 10;
-    // px
-    var leftPanelBodyVPaddings = 0;
-    // px
-    $('#left-panel-body')
-    .css("margin-left", leftPanelBodyHPaddings + "px")
-    .css("margin-top", leftPanelBodyVPaddings + "px")
-    .css("width", ($('#left-panel').width() - leftPanelBodyHPaddings) + "px")
-    .css("height", ($('#left-panel').height() - leftPanelBodyVPaddings) + "px");
-
-    $('#right-panel')
-    .css("left", leftPanelWidth + "px")
-    .css("width", (width - leftPanelWidth) + "px");
-
-    var rightPanelBodyHPaddings = 5;
-    // px
-    var rightPanelBodyVPaddings = 5;
-    // px
-    $('#right-panel-body')
-    .css("margin-left", rightPanelBodyHPaddings + "px")
-    .css("margin-top", rightPanelBodyVPaddings + "px")
-    .css("width", ($('#right-panel').width() - rightPanelBodyHPaddings) + "px")
-    .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
-
     for (var i = 0; i < Refine.actionAreas.length; i++) {
-      Refine.actionAreas[i].ui.resize();
+      if (Refine.actionAreas[i].ui.resize) {
+        Refine.actionAreas[i].ui.resize();
+      }
     }
   };
-  $(window).on("resize", resize);
-  window.setTimeout(resize, 100); // for Chrome, give the window some time to layout first
 
   var renderActionArea = function(actionArea) {
     actionArea.bodyElmt = $('<div>')
@@ -176,11 +137,19 @@ $(function() {
 
     actionArea.tabElmt = $('<li>')
     .addClass('action-area-tab')
-    .text(actionArea.label)
-    .appendTo($('#action-area-tabs'))
-    .on('click', function() {
-      Refine.selectActionArea(actionArea.id);
-    });
+    .append(
+      $('<a>')
+      .attr('href', '#' + actionArea.id)
+      .text(actionArea.label)
+      .on('click', function() {
+        Refine.selectActionArea(actionArea.id);
+        // clear action area specific query parameters
+        var url = new URL(location.href);
+        url.search = '';
+        window.history.replaceState('', '', url);
+      })
+    )
+    .appendTo($('#action-area-tabs'));
 
     actionArea.ui = new actionArea.uiClass(actionArea.bodyElmt);
   };
@@ -188,7 +157,20 @@ $(function() {
   for (var i = 0; i < Refine.actionAreas.length; i++) {
     renderActionArea(Refine.actionAreas[i]);
   }
-  Refine.selectActionArea('create-project');
+
+  // check for url hash and select the appropriate action area
+  var hash = window.location.hash;
+  if (hash.length > 0) {
+    hash = hash.substring(1);
+    for (var i = 0; i < Refine.actionAreas.length; i++) {
+      if (Refine.actionAreas[i].id === hash) {
+        Refine.selectActionArea(hash);
+        break;
+      }
+    }
+  } else {
+    Refine.selectActionArea('create-project');
+  }
 
   $("#slogan").text($.i18n('core-index/slogan')+".");
   $("#or-index-pref").text($.i18n('core-index/preferences'));
@@ -199,4 +181,7 @@ $(function() {
   $("#or-index-sample").text($.i18n('core-index/sample-data'));
 
   showVersion();
+
+  $(window).on("resize", resize);
+  resize();
 });

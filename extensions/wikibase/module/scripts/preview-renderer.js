@@ -312,6 +312,14 @@ EditRenderer._renderValue = function(json, container) {
   
   if (mode === "wikibase-item" || mode === "wikibase-property") {
     EditRenderer._renderEntity(json.datavalue, container);
+  } else if (json.snaktype === "somevalue") {
+    $('<span></span>')
+      .text($.i18n('wikibase-schema/some-value'))
+      .appendTo(container);
+  } else if (json.snaktype === "novalue") {
+    $('<span></span>')
+      .text($.i18n('wikibase-schema/no-value'))
+      .appendTo(container);
   } else {
     var jsonValue = JSON.stringify(json.datavalue);
     var fullJsonValue = JSON.stringify(json);

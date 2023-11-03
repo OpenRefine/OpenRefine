@@ -3,6 +3,7 @@ package org.openrefine.wikibase.schema;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.qa.QAWarning.Severity;
@@ -39,7 +40,10 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     private WbExpression<StringValue> wikitext;
     private boolean overrideWikitext;
 
+    public static final Pattern normalizedFileNameChars = Pattern.compile("[:/\\\\]");
+
     public static final String INVALID_SUBJECT_WARNING_TYPE = "invalid-mediainfo-subject";
+    public static final String REPLACED_CHARACTERS_IN_FILENAME = "replaced-characters-in-filename";
 
     @JsonCreator
     public WbMediaInfoEditExpr(
@@ -145,7 +149,15 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
             try {
                 StringValue nameValue = fileName.evaluate(ctxt);
                 if (nameValue != null && !nameValue.getString().isBlank()) {
-                    update.addFileName(nameValue.getString());
+                    String fileName = nameValue.getString();
+                    if (normalizedFileNameChars.matcher(fileName).find()) {
+                        fileName = fileName.replaceAll(normalizedFileNameChars.pattern(), "-");
+                        QAWarning warning = new QAWarning(REPLACED_CHARACTERS_IN_FILENAME, null, Severity.INFO, 1);
+                        warning.setProperty("original", nameValue.getString());
+                        warning.setProperty("normalized", fileName);
+                        ctxt.addWarning(warning);
+                    }
+                    update.addFileName(fileName);
                 }
             } catch (SkipSchemaExpressionException e) {
                 ;

@@ -1,5 +1,5 @@
 @echo off
-rem Previous line hides the remarks from being displayed with the prompt for each line
+setlocal EnableDelayedExpansion
 
 rem Change current working directory to directory of the batch script
 cd %~dp0
@@ -25,141 +25,99 @@ rem --- First two utilities for exiting ----------------------------------------
 goto endUtils
 
 :usage
-echo Usage %0 [options] ^<action^>
-echo where [options] include:
+echo Usage: %0 [options] ^<action^>
 echo.
-echo  "/?" print this message and exit
+echo Options
+echo.    /?                      Print this message and exit.
+echo     /c ^<path^>               Path to the refine.ini file. Default: .\refine.ini.
+echo     /d ^<path^>               Path to the data directory. Default: OS dependent.
+echo     /debug                  Enable JVM debugging (on port 8000).
+echo     /H ^<host^>               Expected host header value (* to disable checks). Default: ^<interface^>.
+echo     /i ^<interface^>          The network interface OpenRefine should bind to. Default: 127.0.0.1.
+echo     /jmx                    Enable JMX monitoring.
+echo     /m ^<memory^>             Set JVM min and max memory heap size to use. Default: 1400M.
+echo     /p ^<port^>               The port that OpenRefine should bind to. Default: 3333.
+echo     /v ^<level^>              Verbosity level [error, warn, info, debug, trace].
+echo     /w ^<path^>               Path to the webapp. Default: src\main\webapp.
+echo     /x ^<name=value^>         Additional configuration parameters to pass to OpenRefine.
 echo.
-echo  "/p <port>" the port that OpenRefine will listen to
-echo     default: 3333
-echo.
-echo  "/i <interface>" the network interface OpenRefine should bind to
-echo     default: 127.0.0.1
-echo.
-echo  "/H <host>" the expected value for the Host header (set to * to disable checks)
-echo     default: ^<interface^>
-echo.
-echo  "/w <path>" path to the webapp
-echo     default src\main\webapp
-echo.
-echo  "/d" enable JVM debugging (on port 8000)
-echo.
-echo  "/m <memory>" max memory heap size to use
-echo     default: 1400M
-echo.
-echo  "/x" enable JMX monitoring (for jconsole and friends)
-echo.
-echo  "/c <path>" path to the refine.ini file
-echo     default .\refine.ini
-echo.
-echo "and <action> is one of
-echo.
-echo   build ..................... Build OpenRefine
-echo   run ....................... Run OpenRefine (using only "refine" or "./refine" will also start OpenRefine)
-echo.
-echo   test ...................... Run all the tests
-echo   server_test ............... Run the server tests
-echo   extensions_test ........... Run the extensions tests
-echo.
+echo Actions
+echo     build                   Build OpenRefine.
+echo     clean                   Clean compiled classes.
+echo     extensions_test         Run the extensions tests.
+echo     run                     Run OpenRefine.
+echo     server_test             Run the server tests.
+echo     test                    Run all the tests.
+goto :eof
 
-echo   clean ..................... Clean compiled classes
-echo.
-goto end
+
 
 :fail
 echo Type 'refine /h' for usage.
-goto end
+goto :eof
 
 :endUtils
 
 set OPTS=
 
-:endConfigReading
-														 
-rem --- Argument parsing --------------------------------------------
+rem ----- Check for custom ini file /c option  --------------------------------
 
-:loop
-if ""%1"" == """" goto readIniFile
-if ""%1"" == ""/?"" goto usage
-if ""%1"" == ""/h"" goto usage
-if ""%1"" == ""/p"" goto arg-p
-if ""%1"" == ""/i"" goto arg-i
-if ""%1"" == ""/H"" goto arg-H
-if ""%1"" == ""/w"" goto arg-w
-if ""%1"" == ""/d"" goto arg-d
-if ""%1"" == ""/m"" goto arg-m
-if ""%1"" == ""/x"" goto arg-x
-if ""%1"" == ""/c"" goto arg-c
-goto readIniFile
-
-:arg-p
-set REFINE_PORT=%2
-goto shift2loop
-
-:arg-i
-set REFINE_INTERFACE=%2
-goto shift2loop
-
-:arg-H
-set REFINE_HOST=%2
-goto shift2loop
-
-:arg-w
-set REFINE_WEBAPP=%2
-goto shift2loop
-
-:arg-m
-set REFINE_MEMORY=%2
-set REFINE_MIN_MEMORY=%2
-goto shift2loop
-
-:arg-d
-set OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
-goto shift2loop
-
-:arg-x
-set OPTS=%OPTS% -Dcom.sun.management.jmxremote
-goto shift2loop
-
-:arg-c
-set REFINE_INI_PATH=%~2
-goto shift2loop
-
-:shift2loop
-shift
-shift
-goto loop
+set "REFINE_INI_PATH="
+set "FOUND_C="
+for %%A in (%*) do (
+    if defined FOUND_C (
+        set REFINE_INI_PATH=%%A
+        goto :readIniFile
+    ) else if "%%A"=="/c" (
+        set "FOUND_C=1"
+    )
+)
 
 :readIniFile
-
-rem --- Read ini file -----------------------------------------------
-
-if "%REFINE_INI_PATH%" == "" set REFINE_INI_PATH=refine.ini
-if not exist %REFINE_INI_PATH% (
-	echo The system cannot find the file %REFINE_INI_PATH%
-	exit /B 1
+rem --- Read ini file ---------------------------------------------------------
+if "!REFINE_INI_PATH!" == "" set REFINE_INI_PATH=refine.ini
+if not exist !REFINE_INI_PATH! (
+ echo Error: "!REFINE_INI_PATH!" does not exist.
+ exit /b 1
 )
-echo Using %REFINE_INI_PATH% for configuration
-for /f "tokens=1,* delims==" %%a in (%REFINE_INI_PATH%) do (
-    set %%a=%%b
+for /f "usebackq tokens=1,* delims== " %%a in (`type "!REFINE_INI_PATH!" ^| findstr /R /B /V "^# ^; ^$"`) do (
+    set "%%a=%%b"
 )
+														 
+rem ----- Parse the command line args -----------------------------------------
 
-:endArgumentParsing
+:loop
+if "%~1"=="" goto checkVars
+if "%~1"=="/?" goto usage
+if "%~1"=="/h" goto usage
+if "%~1"=="/p" set "REFINE_PORT=%~2" & shift & shift & goto loop
+if "%~1"=="/i" set "REFINE_INTERFACE=%~2" & shift & shift & goto loop
+if "%~1"=="/H" set "REFINE_HOST=%~2" & shift & shift & goto loop
+if "%~1"=="/w" set "REFINE_WEBAPP=%~2" & shift & shift & goto loop
+if "%~1"=="/m" set "REFINE_MEMORY=%~2" & set "REFINE_MIN_MEMORY=%~2" & shift & shift & goto loop
+if "%~1"=="/d" set "REFINE_DATA_DIR=%~2" & shift & shift & goto loop
+if "%~1"=="/debug" set "OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" & shift & goto loop
+if "%~1"=="/x" set "REFINE_EXTRA_OPTS=%~2" & shift & shift & goto loop
+if "%~1"=="/jmx" set "OPTS=%OPTS% -Dcom.sun.management.jmxremote" & shift & goto loop
+if "%~1"=="/c" shift & shift & goto loop
+if "%~1"=="/v" set "REFINE_VERBOSITY=%~2" & shift & shift & goto loop
 
-rem --- Check JAVA_HOME ---------------------------------------------
+:checkVars
+
+rem --- Check JAVA_HOME -------------------------------------------------------
 
 if not "%JAVA_HOME%" == "" goto gotJavaHome
 echo You must set JAVA_HOME to point at your Java Development Kit installation
 echo.
 echo If you don't know how to do this, follow the instructions at
 echo.
-echo   http://bit.ly/1c2gkR
+echo   https://openrefine.org/docs/manual/installing#java
 echo.
 
 goto fail
 :gotJavaHome			
 
-rem --- Fold in Environment Vars --------------------------------------------
+rem ----- Verify and Set Required Environment Variables -----------------------
 
 if not "%JAVA_OPTIONS%" == "" goto gotJavaOptions
 set JAVA_OPTIONS=
@@ -205,9 +163,18 @@ if not "%REFINE_CLASSES_DIR%" == "" goto gotClassesDir
 set REFINE_CLASSES_DIR=server\classes
 :gotClassesDir
 
+if not "%REFINE_DATA_DIR%" == "" set OPTS=%OPTS% -Drefine.data_dir=%REFINE_DATA_DIR%
+
 if not "%REFINE_LIB_DIR%" == "" goto gotLibDir
 set REFINE_LIB_DIR=server\target\lib
 :gotLibDir
+
+if not "%REFINE_VERBOSITY%" == "" goto gotVerbosity
+set REFINE_VERBOSITY=info
+:gotVerbosity
+set OPTS=%OPTS% -Drefine.verbosity=%REFINE_VERBOSITY%
+
+if not "%REFINE_EXTRA_OPTS%" == "" set OPTS=%OPTS% -D%REFINE_EXTRA_OPTS%
 
 if "%GDATA_CLIENT_ID%" == "" goto skipGDataCredentials
 if "%GDATA_CLIENT_SECRET%" == "" goto skipGDataCredentials
@@ -219,7 +186,6 @@ rem ----- Respond to the action ------------------------------------------------
 
 set ACTION=%1
 setlocal
-%@Try%
 if ""%ACTION%"" == ""build"" goto doMvn
 if ""%ACTION%"" == ""server_test"" goto doMvn
 if ""%ACTION%"" == ""extensions_test"" goto doMvn
@@ -227,15 +193,29 @@ if ""%ACTION%"" == ""test"" goto doMvn
 if ""%ACTION%"" == ""clean"" goto doMvn
 if ""%ACTION%"" == ""run"" goto doRun
 if ""%ACTION%"" == """" goto doRun
-%@EndTry%
-:@Catch
   echo Unknown Refine command called "%1", type "refine /?" for proper usage.
   exit /B 1
-:@EndCatch
 
 :doRun
-rem --- Log for troubleshooting ------------------------------------------
-set JAVA="%JAVA_HOME%/bin/java"
+
+for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
+echo -------------------------------------------------------------------------------------------------
+echo You have %freeRam%M of free memory.
+echo Your current configuration is set to use %REFINE_MEMORY% of memory.
+echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
+echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
+echo -------------------------------------------------------------------------------------------------
+
+rem --- Checking Java Version  ------------------------------------------
+set JAVA="%JAVA_HOME%\bin\java.exe"
+
+if not exist !JAVA! (
+    echo The specified path !JAVA! does not point to a valid Java Development Kit installation.
+    echo Please check that the path is correct and that a Java Development Kit is installed at that location.
+    echo   https://openrefine.org/docs/manual/installing#java
+    goto :fail
+)
+
 set JAVA_VERSION=""
 set JAVA_RELEASE=0
 for /f "tokens=3" %%g in ('^"%JAVA% -version 2^>^&1 ^| findstr /i "version"^"') do (
@@ -260,40 +240,23 @@ if %JAVA_RELEASE% GTR 17 (
     echo WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 17.
 )
 
-echo Getting Free Ram...
-for /f "tokens=2 delims=:" %%i in ('systeminfo ^| findstr /C:"Available Physical Memory"') do (set freeRam=%%i)
-(
-echo ----------------------- 
-echo PROCESSOR_ARCHITECTURE = %PROCESSOR_ARCHITECTURE%
-echo JAVA_HOME = %JAVA_HOME%
-echo java release = %JAVA_RELEASE%
-echo java -version = %JAVA_VERSION%
-echo freeRam = %freeRam%
-echo REFINE_MEMORY = %REFINE_MEMORY%
-echo ----------------------- 
-) > support.log
-
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
 %JAVA% -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
-goto end
+goto :eof
 
 :doMvn
-if not "%MAVEN_HOME%" == "" goto gotMvnHome
-echo You must have Apache Maven installed and the MAVEN_HOME environment variable to point to it.
-echo.
-echo You can download it from
-echo.
-echo   https://maven.apache.org/
-echo
-echo The environment variable MAVEN_HOME should not include the final "bin" directory, such as:
-echo
-echo   C:\Program Files (x86)\Apache\Maven
-echo.
-echo If you don't know how to set environment variables, follow the instructions at
-echo.
-echo   http://bit.ly/1c2gkR
-echo.
-:gotMvnHome
+if defined MAVEN_HOME (
+    set "MVN=%MAVEN_HOME%\bin\mvn"
+) else if defined M2_HOME (
+    set "MVN=%M2_HOME%\bin\mvn"
+) else (
+    set "MVN=mvn"
+)
+
+if not exist "%MVN%" (
+    echo Apache Maven not found. Please set M2_HOME or MAVEN_HOME environment variables or ensure that 'mvn' is in your system PATH.
+    exit /b 1
+)
 set MVN_ACTION=""%ACTION%""
 if ""%ACTION%"" == ""build"" goto :build-setup
 goto :endif
@@ -307,8 +270,6 @@ set MVN_ACTION=compile test-compile dependency:build-classpath
 if ""%ACTION%"" == ""test"" set MVN_ACTION=test dependency:build-classpath
 if ""%ACTION%"" == ""server_test"" set MVN_ACTION=test -f main
 if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=test -f extensions
-call "%MAVEN_HOME%\bin\mvn.cmd" process-resources
-call "%MAVEN_HOME%\bin\mvn.cmd" %MVN_ACTION%
-goto end
-
-:end
+call "%MVN%" process-resources
+call "%MVN%" %MVN_ACTION%
+goto :eof

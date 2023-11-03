@@ -41,6 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -282,7 +283,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 } else if (c == startColumnIndex || c < startColumnIndex + columnCount) {
                     if (_combinedColumnName != null) {
                         Cell newCell;
-                        if (cell == null || cell.value == null) {
+                        if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
                             if (_prependColumnName && !_ignoreBlankCells) {
                                 newCell = new Cell(column.getName() + _separator, null);
                             } else {
@@ -305,7 +306,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
 
                         transposedCells++;
                     } else {
-                        if (_ignoreBlankCells && (cell == null || cell.value == null)) {
+                        if (_ignoreBlankCells && (cell == null || !ExpressionUtils.isNonBlankData(cell.value))) {
                             continue;
                         }
 

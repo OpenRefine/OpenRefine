@@ -1,0 +1,106 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #666;
+  opacity: 0.5;
+}
+
+.dialog-container {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.dialog-frame {
+  margin: 0 auto;
+  text-align: left;
+  background: var(--background-primary);
+  border: 1px solid var(--dialog-frame);
+  display: inline-block;
+}
+
+.dialog-border {}
+
+.dialog-header {
+  background: var(--dialog-header);
+  padding: var(--padding-loose);
+  font-weight: bold;
+  font-size: 1.6em;
+  color: var(--text-primary);
+  cursor: move;
+}
+
+.dialog-body {
+  font-size: 1.3em;
+  padding: var(--padding-looser);
+}
+
+.dialog-instruction {
+  padding: 0 0 var(--padding-normal);
+}
+
+.dialog-footer {
+  font-size: 1.3em;
+  display: flex;
+  column-gap: 5px;
+  justify-content: right;
+  background: var(--dialog-footer);
+  padding: var(--padding-loose);
+}
+
+.dialog-footer .dialog-footer-bg {
+  display: flex;
+  column-gap: 5px;
+}
+
+.dialog-footer :disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.dialog-footer button:hover:disabled {
+  border: 1px solid #bbb !important;
+}
+
+.dialog-busy {
+  width: 400px;
+  border: none;
+  border-radius: 20px;
+}

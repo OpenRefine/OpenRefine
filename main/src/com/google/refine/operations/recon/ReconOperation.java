@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.messages.OpenRefineMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,7 +149,7 @@ public class ReconOperation extends EngineDependentOperation {
                 "    \"name\" : \"" + _columnName + ": " + OpenRefineMessage.recon_operation_judgement_facet_name() + "\"\n" +
                 "    },\n" +
                 "    \"facetOptions\" : {\n" +
-                "      \"scroll\" : false\n" +
+                "      \"scroll\" : true\n" +
                 "    },\n" +
                 "    \"facetType\" : \"list\"\n" +
                 " }";
@@ -261,7 +262,7 @@ public class ReconOperation extends EngineDependentOperation {
                 group.entries.add(entry);
             }
 
-            int batchSize = _reconConfig.getBatchSize();
+            int batchSize = _reconConfig.getBatchSize(_project.rows.size());
             int done = 0;
 
             List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());

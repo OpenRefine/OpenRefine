@@ -34,10 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.controls;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -60,6 +65,8 @@ public class ForEachIndex implements Control {
         } else if (!(args[2] instanceof VariableExpr)) {
             // variable name";
             return ControlEvalError.expects_third_arg_element_var_name(ControlFunctionRegistry.getControlName(this));
+        } else if (args[1].equals(args[2])) {
+            return ControlEvalError.expects_second_third_args_different(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -69,8 +76,8 @@ public class ForEachIndex implements Control {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;
-        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return ControlEvalError.foreach_index();
+        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode) && !(o instanceof ObjectNode)) {
+            return new EvalError(ControlEvalError.foreach_index());
         }
 
         String indexName = ((VariableExpr) args[1]).getName();
@@ -109,6 +116,21 @@ public class ForEachIndex implements Control {
 
                     Object r = args[3].evaluate(bindings);
 
+                    results.add(r);
+                }
+            } else if (o instanceof ObjectNode) {
+                ObjectNode obj = (ObjectNode) o;
+                results = new ArrayList<>(obj.size());
+                for (Iterator<Map.Entry<String, JsonNode>> it = obj.fields(); it.hasNext();) {
+                    Map.Entry<String, JsonNode> entry = it.next();
+                    if (entry != null) {
+                        bindings.put(indexName, entry.getKey());
+                        bindings.put(elementName, entry.getValue());
+                    } else {
+                        bindings.remove(indexName);
+                        bindings.remove(elementName);
+                    }
+                    Object r = args[3].evaluate(bindings);
                     results.add(r);
                 }
             } else {

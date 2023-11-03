@@ -362,7 +362,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
       .addClass("column-header")
       .html(
         '<div class="column-header-title">' +
-          '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
+          '<button class="column-header-menu" bind="dropdownMenu"></button><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
         '</div>'
       )
   ).dropdownMenu.on('click',function() {
@@ -411,7 +411,8 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
         {
           onDone: function(o) {
             row.starred = newStarred;
-            renderRow(tr, r, row, even);
+            star.classList.remove(newStarred ? "data-table-star-off" : "data-table-star-on");
+            star.classList.add(newStarred ? "data-table-star-on" : "data-table-star-off");
           }
         },
         "json"
@@ -433,7 +434,8 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
         {
           onDone: function(o) {
             row.flagged = newFlagged;
-            renderRow(tr, r, row, even);
+            flag.classList.remove(newFlagged ? "data-table-flag-off" : "data-table-flag-on");
+            flag.classList.add(newFlagged ? "data-table-flag-on" : "data-table-flag-off");
           }
         },
         "json"
@@ -510,21 +512,21 @@ DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
 };
 
 DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
-  var keyDownCode = event.which;
+  var keyDownCode = evt.key;
   
-  if([38, 40].indexOf(keyDownCode) == -1) return;
+  if(['ArrowUp', 'ArrowDown'].indexOf(keyDownCode) == -1) return;
   if(self._refocusPageInput == true) return; 
 
   evt.preventDefault();
   this._refocusPageInput = true;
   
   var newPageValue = $('input#viewpanel-paging-current-input')[0].value;
-  if(keyDownCode == 38) {  // Up arrow
+  if(keyDownCode == 'ArrowUp') {
     if(newPageValue <= 1) return;
     this._onClickPreviousPage(elmt, evt);
   }
     
-  if(keyDownCode == 40) {  // Down arrow
+  if(keyDownCode == 'ArrowDown') {
     if(newPageValue >= this._lastPageNumber) return;
     this._onClickNextPage(elmt, evt);
   }

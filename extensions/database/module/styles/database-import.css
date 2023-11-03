@@ -1,0 +1,179 @@
+/*
+ * Copyright (c) 2017, Tony Opara
+ *        All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * - Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * Neither the name of Google nor the names of its contributors may be used to
+ * endorse or promote products derived from this software without specific
+ * prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*.database-container {
+  margin-left: 200px;
+  width: 50%;
+  min-height: 50%;
+}*/
+
+#savedConnectionSpan, .panel-heading {
+  font-weight: bold;
+  padding: 1em;
+  line-height: 2em;
+}
+
+.cleared {
+  clear: both;
+}
+
+.custom-restricted-width {
+  /* To limit the menu width to the content of the menu: */
+  display: inline-block;
+  /* Or set the width explicitly: */
+  /* width: 10em; */
+}
+
+#menuListUl {
+  list-style: none;
+}
+
+#menuListUl li {
+  padding: 0.5em;
+  border-bottom: 1px solid #bcf;
+}
+
+.scrollable {
+  height: 400px;
+  overflow: auto;
+}
+
+.database-importing-wizard-header {
+  font-size: 1.3em;
+  background: var(--chrome-primary);
+  padding: var(--padding-tight);
+}
+
+.database-importing-parsing-data-panel {
+  font-size: 1.1em;
+  position: absolute;
+  overflow: auto;
+}
+
+.database-importing-progress-data-panel {
+  position: absolute;
+  overflow: auto;
+  font-size: 200%;
+  padding: 3em;
+  background: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.database-importing-parsing-control-panel {
+  font-size: 1.3em;
+  position: absolute;
+  overflow: auto;
+  border-top: 5px solid var(--chrome-primary);
+  background: white;
+  padding: var(--padding-looser);
+}
+
+.context-menu-text {
+  padding: 4px 4px 2px 2px;
+}
+
+.custom-restricted {
+  height: 300px;
+  width: 240px;
+  float: left;
+  box-sizing: border-box;
+  margin-right: 10px;
+}
+
+/* FIXME: This is a duplicate */
+.custom-restricted-width {
+  /* To limit the menu width to the content of the menu: */
+  display: inline-block;
+  /* Or set the width explicitly: */
+  /* width: 10em; */
+  margin-right: 10px;
+  padding-right: 10px;
+  margin-bottom: 10px;
+}
+
+.no-resize {
+  resize: none;
+}
+
+#queryTextArea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.layout-div {
+  width: 100%;
+
+}
+
+.layout-div .connection-div-layout {
+  width: calc(100% - 250px);
+  float: left;
+  box-sizing: border-box;
+}
+
+.new-connection-legend {
+  padding-left: 2px;
+  margin-left: 2px;
+  border-color: #bcf;
+}
+
+.new-connection-fieldset {
+  padding: 1em;
+}
+
+.new-connection-fieldset div {
+  margin: .5em 0;
+}
+
+.database-border {
+  border: 1px solid #bcf;
+  border-radius: 4px;
+  max-height: calc(100% - 20px);
+  overflow-y: auto;
+}
+
+.sc-context-more-vert:after {
+  content: "";
+  display: inline-block;
+  background: url("../images/more-option-horiz-16.png") no-repeat top right;
+  /* line-height: 1; */
+  width: 16px;
+  height: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.database-menu-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 .5em;
+}
+
+#connectionParameterSpan, #executeQueryBtn {
+  margin: .5em;
+}

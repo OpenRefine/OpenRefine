@@ -25,76 +25,39 @@ warn() {
 }
 
 usage() {
-    cat <<EOF
+cat <<EOF
 Usage: $0 [options] <action>
-where [options] include:
+Options
+    -c <path>                     Path to refine.ini file. Default: ./refine.ini.
+    -d <path>                     Path to the data directory. Default: OS dependent.
+    -H <host>                     Expected host header value (set to * to disable checks). Default: <interface>.
+    -h                            Print this message and exit.
+    -i <interface>                The network interface OpenRefine should bind to. Default: 127.0.0.1.
+    -m <memory>                   JVM min and max memory heap size. Default: 1400M.
+    -p <port>                     Port that OpenRefine will listen to. Default: 3333.
+    -v <level>                    Verbosity level [error,warn,info,debug,trace]. Default: info.
+    -w <path>                     Path to the webapp. Default: main/webapp.
+    -x <name=value>               Additional configuration parameters to pass to OpenRefine.
+    --debug                       Enable JVM debugging (on port 8000).
+    --jmx                         Enable JMX monitoring.
 
-  -h print this message and exit
-  
-  -p <port> the port that OpenRefine will listen to
-     default: 3333
-
-  -i <interface> the network interface OpenRefine should bind to
-     default: 127.0.0.1
-	 
-  -H <host> the expected value for the Host header (set to * to disable checks)
-     default: <interface>
-
-  -w <path> path to the webapp
-     default: main/webapp
-
-  -d <path> path to the data directory
-     default: OS dependent
-
-  -m <memory> max memory heap size to use
-     default: 1400M
-
-  -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
-     default: info
-
-  -x <name=value> additional configuration parameters to pass to OpenRefine
-     default: [none]
-
-  -c <path> path to refine.ini file
-     default: ./refine.ini
-  
-  --debug enable JVM debugging (on port 8000)
-       
-  --jmx enable JMX monitoring (for jconsole and jvisualvm)
-  
-and <action> is one of
-
-   build ............................... Build OpenRefine      
-   run ................................. Run OpenRefine [default]
-
-   test ................................ Run all OpenRefine tests
-   server_test ......................... Run only the server tests
-   extensions_test ..................... Run only the extensions tests
-   ui_tests ............................ Run only the UI tests
-   
-   broker .............................. Run OpenRefine Broker
-   
-   broker_appengine_run <id> <ver> ..... Run OpenRefine Broker for Google App Engine in local server
-   broker_appengine_upload <id> <ver> .. Upload OpenRefine to Google App Engine
-   
-   findbugs ............................ Run Findbugs against OpenRefine
-   pmd ................................. Run PMD against OpenRefine
-   cpd ................................. Run Copy/Paste Detection against OpenRefine
-   jslint .............................. Run JSlint against OpenRefine
-
-   whitespace <extension> .............. Normalize whitespace in files with the given extension
-
-   mac_dist <version> .................. Make MacOSX binary distribution
-   windows_dist <version> .............. Make Windows binary distribution
-   linux_dist <version> ................ Make Linux binary distribution
-   dist <version> ...................... Make all distributions
-
-   clean ............................... Clean compiled classes
-                
+Actions
+    build                         Build OpenRefine.
+    clean                         Clean compiled classes.
+    dist <version>                Make all distributions.
+    extensions_test               Run the extensions tests.
+    linux_dist <version>          Make Linux binary distribution.
+    mac_dist <version>            Make MacOSX binary distribution.
+    run                           Run OpenRefine [default].
+    server_test                   Run the server tests.
+    test                          Run all tests.
+    e2e_tests                      Run the e2e tests.
+    windows_dist <version>        Make Windows binary distribution.
 EOF
-    exit 1
+exit 1
 }
-                
+
+
 add_option() {
     if [ ! -z "$*" ] ; then
         OPTS+=("$@")
@@ -126,33 +89,6 @@ check_downloaders() {
     fi
 }
 
-check_unzip() {
-    UNZIP="`command -v unzip 2> /dev/null`"
-    
-    if [ -z "$UNZIP" ] ; then
-        error "We need 'unzip' present in PATH to expand external dependencies."
-    fi
-}
-    
-check_python() {
-    PYTHON="`command -v python 2> /dev/null`"
-    if [ -z "$PYTHON" ] ; then
-        error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
-    fi
-    PYTHON_VERSION="`$PYTHON --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
-    if [ "$PYTHON_VERSION" != "2.6" ] && [ "$PYTHON_VERSION" != "2.7" ]; then
-        error "This action requires Python version 2.6.x. or 2.7.x. You can download it for free at http://www.python.org/"
-    fi
-}
-
-check_pywin32() {
-    PYWIN32="`$PYTHON -c 'import win32api' 2>&1`"
-
-    if [ ! -z "$PYWIN32" ] ; then
-        error "This action requires you to have 'pywin32' windows extensions for Python installed on your machine. You can download it for free at http://sourceforge.net/projects/pywin32/"
-    fi
-}
-
 check_running() {
     check_downloaders
     URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
@@ -179,7 +115,7 @@ check_running() {
         fi    
         
         if [ -z "${RUNNING}" ] ; then
-            error "Something is already running on $URL but doesn't seem to be OpenRefine. Maybe a proxy issue?"
+            error "OpenRefine isn't running on $URL. Maybe a proxy issue?"
         fi
     else
         RUNNING=""
@@ -238,27 +174,6 @@ download() {
     fi
 }
 
-tool_download() {
-    URL=$1
-    FILE=$2
-    DIR=$3
-    
-    cd $REFINE_TOOLS_DIR
-        if [ ! -f "$FILE" ] ; then
-            download $URL $FILE
-        fi
-        if [ ! -d "$DIR" ] ; then
-            if [ -z "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" ] ; then
-                tar xzf $FILE || error "Error while expanding $FILE"
-            fi
-            if [ -z "`echo $FILE | sed 's@.*.zip$@@'`" ] ; then
-                check_unzip
-                $UNZIP -q $FILE || error "Error while expanding $FILE"
-            fi
-        fi
-    cd ..
-}
-
 load_data() {
     FILE=$1
     NAME=$2
@@ -307,75 +222,18 @@ tools_prepare() {
 
 mvn_prepare() {
     tools_prepare
+    if [ "$MAVEN_HOME" ] ; then
+        MVN="$MAVEN_HOME/bin/mvn"
+    elif [ "$M2_HOME" ] ; then
+        MVN="$M2_HOME/bin/mvn"
+    else
+        MVN="`command -v mvn 2> /dev/null`"
+    fi
 
-    MVN_VERSION="3.8.5"
-    MVN_URL="https://dlcdn.apache.org/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
-    MVN_FILE=`echo $MVN_URL | sed 's|.*/||'`
-    MVN_DIR="apache-maven-${MVN_VERSION}"
-
-    MVN="`command -v mvn 2> /dev/null`"
-
-    if [ -z "$MVN" ] ; then
-        if [ -z "$MVN_HOME" ] ; then
-            cd $REFINE_TOOLS_DIR
-                if [ ! -f "$MVN_FILE" ] ; then
-                    echo "\nCould not find Maven locally, starting download for Maven ..."
-                    download $MVN_URL $MVN_FILE
-                fi
-                if [ ! -d "$MVN_DIR" ] ; then
-                    tar xzf $MVN_FILE -C . || error "Error while expanding $MVN_FILE"
-                fi
-                export MVN_HOME="`pwd`/$MVN_DIR"
-                if [ "$OS" = "windows" ] ; then
-                    export MVN_HOME=`cygpath --unix "$MVN_HOME"`
-                fi
-            cd ..
-        fi
-        MVN="$MVN_HOME/bin/mvn"
+    if [ ! -x "$MVN" ] ; then
+        error "Apache Maven not found. Please make sure that M2_HOME or MAVEN_HOME environment variables are set or that 'mvn' is in your system PATH."
     fi
 }
-
-appengine_prepare() {
-    if [ -z "$APPENGINE_HOME" ] ; then
-        error "You have to have the APPENGINE_HOME environment variable set and pointing to the local installation of the Google AppEngine SDK."
-    elif [ ! -f "$APPENGINE_HOME/bin/appcfg.sh" ] ; then
-        error "Environment variable APPENGINE_HOME is set to '$APPENGINE_HOME' which doesn't point to a valid Google App Engine SDK."
-    fi
-    APPENGINE="$APPENGINE_HOME/bin/appcfg.sh"
-    APPENGINE_LOCAL="$APPENGINE_HOME/bin/dev_appserver.sh"
-    
-    ANT_PARAMS="$ANT_PARAMS -Dappengine.sdk.dir=$APPENGINE_HOME"
-}
-   
-virtualenv_prepare() {
-    check_python
-
-    VIRTUALENV_DIR="virtualenv-1.9.1"
-    VIRTUALENV_FILE="${VIRTUALENV_DIR}.tar.gz"
-    VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/${VIRTUALENV_FILE}"
-
-    tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
-    
-    PYTHON_LOCAL="$REFINE_TOOLS_DIR/python"
-    if [ "$OS" = "windows" ] ; then
-        PYTHON_LOCAL="${PYTHON_LOCAL}_win"
-    fi
-    
-    if [ ! -d "$PYTHON_LOCAL" ] ; then
-        $PYTHON $REFINE_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $PYTHON_LOCAL
-    fi
-    
-    PYTHON_HOME="`pwd`/$PYTHON_LOCAL"
-
-    if [ "$OS" = "windows" ] ; then
-        PYTHON="$PYTHON_HOME/Scripts/python.exe"
-        PYTHON_INSTALL="$PYTHON_HOME/Scripts/easy_install.exe"
-    else 
-        PYTHON="$PYTHON_HOME/bin/python"
-        PYTHON_INSTALL="$PYTHON_HOME/bin/easy_install"
-    fi
-}
-    
 # ----------------------------------------------------------------------------------------------
 
 do_mvn() {
@@ -489,13 +347,7 @@ test() {
 }
 
 
-ui_tests() {
-    download http://okfnlabs.org/reconcile-csv/dist/reconcile-csv-0.1.2.jar ./tools/reconcile-csv-0.1.2.jar
-    RECONCILE_SERVER_CMD="$JAVA -Xmx2g -jar ./tools/reconcile-csv-0.1.2.jar  ./main/tests/cypress/cypress/fixtures/csv-reconcile-species.csv scientific_name taxon_id"
-    echo "Starting reconcile-csv-0.1.2 ..."
-    $RECONCILE_SERVER_CMD 2>&1 &
-    RECONCILE_SERVER_PID="$!"
-
+e2e_tests() {
     get_revision
 
     CYPRESS_RECORD=0
@@ -555,8 +407,6 @@ ui_tests() {
     echo ""
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
-    echo "Killing Reconciliation Server"
-    /bin/kill -9 $RECONCILE_SERVER_PID
     echo "Cleaning up"
     rm -rf "$REFINE_DATA_DIR"
 
@@ -591,10 +441,24 @@ run() {
             mvn_prepare
             build_prepare
             $MVN process-resources
-            $MVN compile test-compile
+            $MVN compile test-compile || exit
             echo ""
         fi
     fi
+
+    freeRam=UNKNOWN
+    if [ "$OS" = "macosx" ] ; then
+        freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
+    elif [ "$OS" = "linux" ] ; then
+        freeRam=$(free -m | grep -oP '\d+' | head -n 1)
+    fi
+
+    echo "-------------------------------------------------------------------------------------------------"
+    echo You have "$freeRam"M of free memory.
+    echo Your current configuration is set to use $REFINE_MEMORY of memory.
+    echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
+    echo https://openrefine.org/docs/manual/installing\#increasing-memory-allocation
+    echo "-------------------------------------------------------------------------------------------------"
 
     if [ -d $REFINE_CLASSES_DIR ] ; then
         add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
@@ -642,131 +506,6 @@ run() {
     fi
 }
 
-broker_build() {
-    build_prepare
-    get_revision
-    # TODO migrate to Maven
-    $MVN prepare_broker
-}
-
-broker_run() {
-    FORK=$1
-
-    if [ ! -d "broker/core/WEB-INF/lib" ] ; then
-        broker_build
-        echo ""
-    fi
-
-    if [ -d $REFINE_CLASSES_DIR ] ; then
-        add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
-        add_option "-Drefine.development=true"
-    fi
-
-    add_option "-Drefine.webapp=broker/core"
-    add_option "-Drefine.headless=true"
-
-    add_option "-Drefine.port=$REFINE_PORT"
-    add_option "-Drefine.host=0.0.0.0"
-
-    LIB_PATHS=`cat server/classpath.txt`
-    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$LIB_PATHS"
-
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
-
-    #echo "$RUN_CMD"
-    #echo ""
-
-    echo "Starting OpenRefine Broker at 'http://0.0.0.0:${REFINE_PORT}/'"
-    echo ""
-
-    if [ -z "$FORK" ] ; then
-        exec $RUN_CMD
-    else
-        $RUN_CMD &
-        REFINE_PID="$!"
-    fi
-
-}
-
-broker_appengine_build() {
-    appengine_prepare
-    get_revision
-
-    MVN_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
-
-    if [ "$1" ] ; then
-        MVN_PARAMS="$MVN_PARAMS -Dappengine.app_id=$1"
-    fi
-
-    if [ "$2" ] ; then
-        MVN_PARAMS="$MVN_PARAMS -Dappengine.version=$2"
-    fi
-
-    # TODO migrate this to Maven
-    $MVN prepare_broker_appengine
-}
-
-broker_appengine_upload() {
-    broker_appengine_build $1 $2
-    "$APPENGINE" update "$REFINE_BUILD_DIR/broker/appengine"
-}
-
-broker_appengine_run() {
-    broker_appengine_build $1 $2
-    "$APPENGINE_LOCAL" "$REFINE_BUILD_DIR/broker/appengine"
-}
-
-findbugs() {
-    findbugs_prepare
-
-    MVN_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
-    ant findbugs
-
-    display "$REFINE_BUILD_DIR/reports/findbugs.html"
-}
-
-pmd() {
-    pmd_prepare
-
-    ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
-    ant pmd
-
-    display "$REFINE_BUILD_DIR/reports/pmd.html"
-}
-
-cpd() {
-    pmd_prepare
-
-    ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
-    ant cpd
-
-    display "$REFINE_BUILD_DIR/reports/cpd.txt"
-}
-
-jslint() {
-    jslint_prepare
-
-    ANT_PARAMS="-Djslint.dir=${REFINE_TOOLS_DIR}/${JSLINT_DIR}"
-    ant jslint
-
-    display "$REFINE_BUILD_DIR/reports/jslint.txt"
-}
-
-whitespace() {
-    [ $# -gt 0 ] || usage
-
-    for i in `find . -name *.$1`; do
-        # expand tabs to spaces
-        expand -t 4 < $i > $i.1
-
-        # convert DOS to UNIX newlines
-        tr -d '\r' < $i.1 > $i.2
-
-        rm $i $i.1
-        mv $i.2 $i
-    done
-}
-
 checkJavaMajorVersion() {
   java_ver=$("$JAVA" -version 2>&1 | grep version | cut -d ' ' -f 3 | tr -d \")
   # Java 6, 7, 8 starts with 1.x
@@ -810,8 +549,53 @@ if [ "$OS" = "windows" ] ; then
     SEP=";"
 fi
 
+# ----- Check for custom ini file /c option  ---------------------------------
+args=()
+while [ $# -ne 0 ] ; do
+  case "$1" in
+    -c) REFINE_INI_PATH="$2"; shift 2; continue;;
+    *) args+=("$1"); shift;;
+  esac
+done
 
-# ----- Make sure there is an appropriate java environment is available -------------
+# -- Read ini file ------------------------------------------------------------
+
+if [ -z $REFINE_INI_PATH ]; then
+  REFINE_INI_PATH=refine.ini
+fi
+
+if [ ! -f "$REFINE_INI_PATH" ]; then
+  error "$REFINE_INI_PATH is not a valid filename"
+fi
+
+echo "Using ${REFINE_INI_PATH} for configuration"
+load_configs $REFINE_INI_PATH
+
+# ----- Parse the command line args -------------------------------------------
+for ((i=0; i<${#args[@]}; i+=1)); do
+  arg="${args[i]}"
+  case "$arg" in
+    -h) usage;;
+    -p) ((i+=1)); REFINE_PORT="${args[i]}"; continue;;
+    -H) ((i+=1)); REFINE_HOST="${args[i]}"; continue;;
+    -i) ((i+=1)); REFINE_INTERFACE="${args[i]}"; continue;;
+    -w) ((i+=1)); REFINE_WEBAPP="${args[i]}"; continue;;
+    -d) ((i+=1)); REFINE_DATA_DIR="${args[i]}"; continue;;
+    -m) ((i+=1)); REFINE_MEMORY="${args[i]}"; REFINE_MIN_MEMORY="${args[i]}"; continue;;
+    -v) ((i+=1)); REFINE_VERBOSITY="${args[i]}"; continue;;
+    -x) ((i+=1)); REFINE_EXTRA_OPTS="${args[i]}"; continue;;
+    --debug) add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
+    --jmx) add_option '-Dcom.sun.management.jmxremote'; continue;;
+    -*) echo "Invalid option: $arg" >&2; exit 1;;
+    *) ACTION="$arg"; break;;
+  esac
+done
+
+if [ -z "$ACTION" ] ; then
+    ACTION="run"
+fi
+
+# --- Check Java --------------------------------------------------------------
 
 if [ "$OS" = "macosx" ] ; then
     if [ -z "$JAVA_HOME" ] ; then
@@ -833,45 +617,6 @@ fi
 
 checkJavaMajorVersion
 
-# ----- Parse the command line args ------------------------------------------
-
-while [ $# -ne 0 ] ; do
-  case "$1" in
-	-h) usage;;
-    -p) shift; REFINE_PORT="$1"; shift; continue;;
-    -H) shift; REFINE_HOST="$1"; shift; continue;;
-    -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
-    -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
-    -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
-    -m) shift; REFINE_MEMORY="$1"; REFINE_MIN_MEMORY="$1"; shift; continue;;
-    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
-    -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
-    -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
-    -c) shift; REFINE_INI_PATH="$1"; shift; continue;;
-    --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
-    --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
-    -*) fail "Invalid option: $1";;
-    *) break;;
-  esac
-done
-
-if [ $# -ne 0 ] ; then
-    ACTION=$1; shift
-fi
-
-if [ -z "$ACTION" ] ; then
-    ACTION="run"
-fi
-
-# ----- Load configurations -------------------------------------
-
-if [ -z $REFINE_INI_PATH ]; then
-  REFINE_INI_PATH=refine.ini
-fi
-
-echo "Using ${REFINE_INI_PATH} for configuration"
-load_configs $REFINE_INI_PATH
-
 # ----- Verify and Set Required Environment Variables -------------------------
 
 if [ -z "$JAVA_OPTIONS" ] ; then
@@ -886,20 +631,6 @@ if [ -z "$REFINE_MIN_MEMORY" ] ; then
     REFINE_MIN_MEMORY="256M"
 fi
 add_option "-Xms$REFINE_MIN_MEMORY" "-Xmx$REFINE_MEMORY" "-Drefine.memory=$REFINE_MEMORY"
-
-freeRam=UNKNOWN
-if [ "$OS" = "macosx" ] ; then
-    freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
-elif [ "$OS" = "linux" ] ; then
-    freeRam=$(free -m | grep -oP '\d+' | head -n 1)
-fi
-
-echo "-------------------------------------------------------------------------------------------------"
-echo You have "$freeRam"M of free memory.
-echo Your current configuration is set to use $REFINE_MEMORY of memory.
-echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://docs.openrefine.org/manual/installing\#increasing-memory-allocation
-echo "-------------------------------------------------------------------------------------------------"
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"
@@ -987,27 +718,19 @@ fi
 case "$ACTION" in
   build) build_prepare; do_mvn process-resources; do_mvn compile\ test-compile;;
   clean) do_mvn clean;;
-  whitespace) whitespace $1;;
   test) test $1;;
   tests) test $1;;
-  ui_tests) ui_tests;;    
+  e2e_tests) e2e_tests;;    
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
   extensions_tests) extensions_test $1;;
-  findbugs) findbugs;;  
-  pmd) pmd;;  
-  cpd) cpd;;  
-  jslint) jslint;;  
-  run) run;;  
-  broker) broker_run;;
-  broker_appengine_run) broker_appengine_run $1 $2;;
-  broker_appengine_upload) broker_appengine_upload $1 $2;;
+  run) run;;
   mac_dist) mac_dist $1;;
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;
   dist) dist $1;;
-  *) usage; ;;
+  *) echo "Unknown Refine command called \"$ACTION\", type \"./refine -h\" for proper usage.";;
 esac
 
 # ----------- end of file --------------------

@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2022 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,26 +65,34 @@ public class Project {
     final static protected Map<String, Class<? extends OverlayModel>> s_overlayModelClasses = new HashMap<String, Class<? extends OverlayModel>>();
 
     final public long id;
-    final public List<Row> rows = new ArrayList<Row>();
+    final public List<Row> rows = new ArrayList<>();
     final public ColumnModel columnModel = new ColumnModel();
     final public RecordModel recordModel = new RecordModel();
     final public Map<String, OverlayModel> overlayModels = new HashMap<String, OverlayModel>();
     final public History history;
 
     transient public ProcessManager processManager = new ProcessManager();
-    transient private LocalDateTime _lastSave = LocalDateTime.now();
+    transient private Instant _lastSave = Instant.now();
 
-    final static Logger logger = LoggerFactory.getLogger("project");
+    final static Logger logger = LoggerFactory.getLogger(Project.class);
 
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
     }
 
+    /**
+     * Create a new project with a generated unique ID
+     */
     public Project() {
-        id = generateID();
-        history = new History(this);
+        this(generateID());
     }
 
+    /**
+     * Create a new project with the given ID. For testing ONLY.
+     *
+     * @param id
+     *            long ID to be assigned the new project
+     */
     protected Project(long id) {
         this.id = id;
         this.history = new History(this);
@@ -109,7 +117,7 @@ public class Project {
         // The rest of the project should get garbage collected when we return.
     }
 
-    public LocalDateTime getLastSave() {
+    public Instant getLastSave() {
         return this._lastSave;
     }
 
@@ -117,7 +125,7 @@ public class Project {
      * Sets the lastSave time to now
      */
     public void setLastSave() {
-        this._lastSave = LocalDateTime.now();
+        this._lastSave = Instant.now();
     }
 
     public ProjectMetadata getMetadata() {
@@ -255,6 +263,10 @@ public class Project {
     public void update() {
         columnModel.update();
         recordModel.update(this);
+        // Old projects may have a row count of 0, but we don't want the act of filling this in to change modified time.
+        if (getMetadata() != null) {
+            getMetadata().setRowCountInternal(rows.size());
+        }
     }
 
     // wrapper of processManager variable to allow unit testing
