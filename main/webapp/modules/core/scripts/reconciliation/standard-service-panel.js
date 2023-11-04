@@ -124,7 +124,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
           $label = $mappedValue.parent().find('.mapped-value > a:not(.edit-mapped-value)');
           $input.val($label.text()).prop('disabled',false);
           $mappedValue.toggle();
-          $input.focus();
+          $input.trigger('focus');
         })
   });
 };
@@ -237,7 +237,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
               $label = $(this).parent().parent().find('.mapped-value > a:not(.edit-mapped-value)');
               $input.val($label.text()).prop('disabled',false);
               mappedColumn.toggle();
-              $input.focus();
+              $input.trigger('focus');
             }));
 
     $(td1).append(mappedColumn)
