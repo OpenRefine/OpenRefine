@@ -83,7 +83,7 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   }
 
   elmt.attr("tabindex", -1);
-  elmt.focus();
+  elmt.trigger('focus');
 
   return level;
 };
