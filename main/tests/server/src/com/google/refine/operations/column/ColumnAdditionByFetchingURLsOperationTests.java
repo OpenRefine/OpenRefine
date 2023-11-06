@@ -50,6 +50,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -192,7 +193,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             server.enqueue(new MockResponse());
 
             Row row0 = new Row(2);
-            row0.setCell(0, new Cell("auinrestrsc", null)); // malformed -> null
+            row0.setCell(0, new Cell("auinrestrsc", null)); // malformed -> error
             project.rows.add(row0);
             Row row1 = new Row(2);
             row1.setCell(0, new Cell(url.toString(), null)); // fine
@@ -216,8 +217,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
             // Inspect rows
-            Assert.assertEquals(project.rows.get(0).getCellValue(newCol), null);
-            Assert.assertTrue(project.rows.get(1).getCellValue(newCol) != null);
+            Assert.assertTrue(project.rows.get(0).getCellValue(newCol) instanceof EvalError);
+            Assert.assertNotNull(project.rows.get(1).getCellValue(newCol));
             Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
         }
     }
