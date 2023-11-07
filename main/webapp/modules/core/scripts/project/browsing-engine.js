@@ -103,7 +103,7 @@ BrowsingEngine.prototype._initializeUI = function() {
     '<div class="browsing-panel-header" bind="header">' +
     '<div class="browsing-panel-errors" bind="errors"></div>' +
     '<div class="browsing-panel-indicator" bind="indicator">' +
-    '<span class="loader small"></span>'+$.i18n('core-project/refreshing-facet')+'' +
+    '<div class="lds-spinner small"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>'+$.i18n('core-project/refreshing-facet')+'' +
     '</div>' +
     '<div class="browsing-panel-controls" bind="controls">' +
     '<div class="browsing-panel-controls-refresh">' +

@@ -92,7 +92,10 @@ ScatterplotDialog.prototype._renderMatrix = function() {
     var self = this;
     
     var container = this._elmts.tableContainer.html(
-        '<div style="margin: 1em; font-size: 130%; color: #888; background-color: white;">'+$.i18n('core-dialogs/focusing-on')+' <span class="loader small"></span></div>'
+        '<div style="margin: 1em; font-size: 130%; color: #888; background-color: white;">'
+        +$.i18n('core-dialogs/focusing-on')
+        +' <div class="lds-spinner small"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>' +
+        '</div>'
     );
 
     if (theProject.columnModel.columns.length > 0) {
