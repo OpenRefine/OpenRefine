@@ -410,7 +410,7 @@ public class StandardReconConfigTests extends RefineTest {
             String expected = "queries=" + URLEncoder.encode(
                     "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
                     "UTF-8");
-            assertEquals(query, expected);
+            TestUtils.assertEqualAsQueries(query, expected);
 
             Row row = project.rows.get(0);
             Cell cell = row.cells.get(1);
