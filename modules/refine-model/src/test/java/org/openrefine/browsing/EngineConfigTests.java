@@ -165,12 +165,14 @@ public class EngineConfigTests {
                         .getColumnDependencies(),
                 Collections.emptySet());
 
-        Assert.assertNull(
+        Assert.assertEquals(
                 new EngineConfig(Arrays.asList(configA, configB), Mode.RecordBased)
-                        .getColumnDependencies());
-        Assert.assertNull(
+                        .getColumnDependencies(),
+                Collections.singleton("foo"));
+        Assert.assertEquals(
                 new EngineConfig(Arrays.asList(configB, configC), Mode.RecordBased)
-                        .getColumnDependencies());
+                        .getColumnDependencies(),
+                Collections.emptySet());
     }
 
     @Test

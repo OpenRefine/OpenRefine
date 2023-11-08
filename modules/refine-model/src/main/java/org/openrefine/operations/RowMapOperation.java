@@ -175,6 +175,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
 
         List<String> dependencies = getColumnDependencies();
         List<ColumnId> dependencyIds = null;
+        List<ColumnId> dependencyIdsWithEngine = null;
         if (dependencies != null) {
             // Isolate mappers so that they only read the dependencies that they declare
             dependencyIds = new ArrayList<>(dependencies.size());
@@ -187,6 +188,18 @@ abstract public class RowMapOperation extends EngineDependentOperation {
                 dependencyIds.add(metadata.getColumnId());
                 inputColumns.add(metadata);
             }
+            Set<String> engineColumnDependencies = _engineConfig.getColumnDependencies();
+            if (engineColumnDependencies != null) {
+                dependencyIdsWithEngine = new ArrayList<>(dependencyIds);
+                for (String columnName : engineColumnDependencies) {
+                    ColumnMetadata metadata = columnModel.getColumnByName(columnName);
+                    if (metadata == null) {
+                        throw new MissingColumnException(columnName);
+                    }
+                    dependencyIdsWithEngine.add(metadata.getColumnId());
+                }
+            }
+
             ColumnModel inputColumnModel = new ColumnModel(inputColumns,
                     columnModel.getKeyColumnIndex(),
                     columnModel.hasRecords());
@@ -328,7 +341,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
                         Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
                         RowFilter filter = localEngine.combinedRowFilters();
                         return grid.mapRows(filter, producer, partialChangeData);
-                    }, dependencyIds, Engine.Mode.RowBased);
+                    }, dependencyIdsWithEngine, Engine.Mode.RowBased);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -345,7 +358,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
                         Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
                         RecordFilter filter = localEngine.combinedRecordFilters();
                         return grid.mapRecords(filter, producer, partialChangeData);
-                    }, dependencyIds, Engine.Mode.RowBased);
+                    }, dependencyIdsWithEngine, Engine.Mode.RecordBased);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }

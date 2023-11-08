@@ -99,25 +99,24 @@ public class EngineConfig {
     }
 
     /**
-     * Computes the set of columns the facets depend on. If the extraction of dependencies fails for some facet, or if
-     * the engine uses the records mode, this returns null.
+     * Computes the set of columns the facets depend on. If the extraction of dependencies fails for some facet that is
+     * actually used for filtering (not in neutral position), then this returns null.
      *
      * @return the set of column dependencies, or null
      */
     @JsonIgnore
     public Set<String> getColumnDependencies() {
-        if (Mode.RecordBased.equals(_mode)) {
-            return null;
-        }
         Set<String> dependencies = new HashSet<>();
         for (FacetConfig facet : _facets) {
             Set<String> facetDependencies = facet.getColumnDependencies();
-            if (facetDependencies == null) {
-                return null;
-                // only add the facet dependencies if the facet is actually used
-                // for filtering.
-            } else if (!facet.isNeutral()) {
-                dependencies.addAll(facetDependencies);
+            // only add the facet dependencies if the facet is actually used
+            // for filtering.
+            if (!facet.isNeutral()) {
+                if (facetDependencies == null) {
+                    return null;
+                } else {
+                    dependencies.addAll(facetDependencies);
+                }
             }
         }
         return dependencies;

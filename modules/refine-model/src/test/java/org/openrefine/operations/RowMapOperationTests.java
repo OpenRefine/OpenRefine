@@ -4,6 +4,7 @@ package org.openrefine.operations;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,6 +27,8 @@ import org.testng.annotations.Test;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.Facet;
+import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnId;
 import org.openrefine.model.ColumnInsertion;
@@ -61,7 +64,8 @@ public class RowMapOperationTests {
     Grid initialGrid;
     Grid rowMappedGrid;
     Grid recordMappedGrid;
-    Grid rowJoinedGrid;
+    Grid rowJoinedGridNeutralEngine;
+    Grid rowJoinedGridWithFacet;
     Grid recordJoinedGrid;
     Grid opaquelyMappedGrid;
 
@@ -70,14 +74,18 @@ public class RowMapOperationTests {
 
     ColumnModel initialColumnModel;
     ColumnModel mappedColumnModelLazy;
-    ColumnModel mappedColumnModelEager;
+    ColumnModel mappedColumnModelEagerNeutralEngine;
+    ColumnModel mappedColumnModelEagerWithFacet;
     ColumnModel mappedColumnModelOpaque;
 
     LazyRowMapOperation SUT_rowsLazy = new LazyRowMapOperation(EngineConfig.ALL_ROWS);
     LazyRowMapOperation SUT_recordsLazy = new LazyRowMapOperation(EngineConfig.ALL_RECORDS);
     EagerRowMapOperation SUT_rowsEager = new EagerRowMapOperation(EngineConfig.ALL_ROWS);
+    EagerRowMapOperation SUT_rowsEagerWithFacet;
     EagerRowMapOperation SUT_recordsEager = new EagerRowMapOperation(EngineConfig.ALL_RECORDS);
     OpaqueRowMapOperation SUT_rowsOpaque = new OpaqueRowMapOperation(EngineConfig.ALL_ROWS);
+
+    EngineConfig engineConfigWithFacet;
 
     static ReconConfig reconConfigA = mock(ReconConfig.class);
     static ReconConfig reconConfigB = mock(ReconConfig.class);
@@ -246,7 +254,7 @@ public class RowMapOperationTests {
     @SuppressWarnings("unchecked")
     @BeforeMethod
     public void setUp() {
-        changeContext = new ChangeContext() {
+        changeContext = spy(new ChangeContext() {
 
             @Override
             public long getHistoryEntryId() {
@@ -267,16 +275,16 @@ public class RowMapOperationTests {
             public <T> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer,
                     BiFunction<Grid, Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
                     List<ColumnId> dependencies, Mode engineMode) throws IOException {
-                assertEquals(dataId, "eval");
                 return completionProcess.apply(initialGrid, Optional.empty());
             }
 
-        };
+        });
 
         initialGrid = mock(Grid.class);
         rowMappedGrid = mock(Grid.class);
         recordMappedGrid = mock(Grid.class);
-        rowJoinedGrid = mock(Grid.class);
+        rowJoinedGridNeutralEngine = mock(Grid.class);
+        rowJoinedGridWithFacet = mock(Grid.class);
         recordJoinedGrid = mock(Grid.class);
         opaquelyMappedGrid = mock(Grid.class);
 
@@ -296,8 +304,14 @@ public class RowMapOperationTests {
                 new ColumnMetadata("overwritten B", "overwritten B", 1234L, reconConfigB),
                 new ColumnMetadata("A", "D", 0L, reconConfigA),
                 new ColumnMetadata("B", "new B", 0L, reconConfigA)));
-        mappedColumnModelEager = new ColumnModel(Arrays.asList(
+        mappedColumnModelEagerNeutralEngine = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("B", "new B", 0L, reconConfigA),
+                new ColumnMetadata("A"),
+                new ColumnMetadata("B").withReconConfig(reconConfigA),
+                new ColumnMetadata("D").withReconConfig(reconConfigA)));
+        mappedColumnModelEagerWithFacet = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("B", "new B", 1234L, reconConfigA), // even though the column B is copied, it is only
+                                                                       // for a subset of the dataset as we have a facet
                 new ColumnMetadata("A"),
                 new ColumnMetadata("B").withReconConfig(reconConfigA),
                 new ColumnMetadata("D").withReconConfig(reconConfigA)));
@@ -322,21 +336,35 @@ public class RowMapOperationTests {
                 .thenReturn(rowMappedChangeData);
         when(initialGrid.mapRecords(any(RecordFilter.class), any(), any(Optional.class)))
                 .thenReturn(recordMappedChangeData);
-        when(initialGrid.join(eq(rowMappedChangeData), (RowChangeDataJoiner<Row>) any(), eq(mappedColumnModelEager)))
-                .thenReturn(rowJoinedGrid);
-        when(initialGrid.join(eq(recordMappedChangeData), (RecordChangeDataJoiner<List<Row>>) any(), eq(mappedColumnModelEager)))
+        when(initialGrid.join(eq(rowMappedChangeData), (RowChangeDataJoiner<Row>) any(), eq(mappedColumnModelEagerNeutralEngine)))
+                .thenReturn(rowJoinedGridNeutralEngine);
+        when(initialGrid.join(eq(rowMappedChangeData), (RowChangeDataJoiner<Row>) any(), eq(mappedColumnModelEagerWithFacet)))
+                .thenReturn(rowJoinedGridWithFacet);
+        when(initialGrid.join(eq(recordMappedChangeData), (RecordChangeDataJoiner<List<Row>>) any(),
+                eq(mappedColumnModelEagerNeutralEngine)))
                 .thenReturn(recordJoinedGrid);
 
         when(rowMappedGrid.withOverlayModels(any()))
                 .thenReturn(rowMappedGrid);
         when(recordMappedGrid.withOverlayModels(any()))
                 .thenReturn(recordMappedGrid);
-        when(rowJoinedGrid.withOverlayModels(any()))
-                .thenReturn(rowJoinedGrid);
+        when(rowJoinedGridNeutralEngine.withOverlayModels(any()))
+                .thenReturn(rowJoinedGridNeutralEngine);
+        when(rowJoinedGridWithFacet.withOverlayModels(any()))
+                .thenReturn(rowJoinedGridWithFacet);
         when(recordJoinedGrid.withOverlayModels(any()))
                 .thenReturn(recordJoinedGrid);
         when(opaquelyMappedGrid.withOverlayModels(any()))
                 .thenReturn(opaquelyMappedGrid);
+
+        FacetConfig facetConfig = mock(FacetConfig.class);
+        Facet facet = mock(Facet.class);
+        when(facetConfig.isNeutral()).thenReturn(false);
+        when(facetConfig.getColumnDependencies()).thenReturn(Collections.singleton("C"));
+        when(facetConfig.apply(initialColumnModel, Collections.emptyMap(), projectId)).thenReturn(facet);
+        engineConfigWithFacet = new EngineConfig(Collections.singletonList(facetConfig), Mode.RowBased);
+
+        SUT_rowsEagerWithFacet = new EagerRowMapOperation(engineConfigWithFacet);
 
     }
 
@@ -363,24 +391,41 @@ public class RowMapOperationTests {
     }
 
     @Test
-    public void testApplyRowsEagerly() throws OperationException {
+    public void testApplyRowsEagerly() throws OperationException, IOException {
         ChangeResult result = SUT_rowsEager.apply(initialGrid, changeContext);
 
         verify(initialGrid, times(1)).mapRows(any(RowFilter.class), any(), eq(Optional.empty()));
         verify(initialGrid, times(0)).mapRows(any(RowMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRecords(any(RecordMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRecords(any(RecordFilter.class), any(), any());
-        assertEquals(result.getGrid(), rowJoinedGrid);
+        List<ColumnId> columnIds = Arrays.asList(new ColumnId("A", 0L), new ColumnId("D", 0L));
+        verify(changeContext, times(1)).getChangeData(eq("eval"), any(), any(), eq(columnIds), eq(Mode.RowBased));
+        assertEquals(result.getGrid(), rowJoinedGridNeutralEngine);
     }
 
     @Test
-    public void testApplyRecordsEagerly() throws OperationException {
+    public void testApplyRowsEagerlyWithFacet() throws OperationException, IOException {
+        ChangeResult result = SUT_rowsEagerWithFacet.apply(initialGrid, changeContext);
+
+        verify(initialGrid, times(1)).mapRows(any(RowFilter.class), any(), eq(Optional.empty()));
+        verify(initialGrid, times(0)).mapRows(any(RowMapper.class), any(ColumnModel.class));
+        verify(initialGrid, times(0)).mapRecords(any(RecordMapper.class), any(ColumnModel.class));
+        verify(initialGrid, times(0)).mapRecords(any(RecordFilter.class), any(), any());
+        List<ColumnId> columnIds = Arrays.asList(new ColumnId("A", 0L), new ColumnId("D", 0L), new ColumnId("C", 0L));
+        verify(changeContext, times(1)).getChangeData(eq("eval"), any(), any(), eq(columnIds), eq(Mode.RowBased));
+        assertEquals(result.getGrid(), rowJoinedGridWithFacet);
+    }
+
+    @Test
+    public void testApplyRecordsEagerly() throws OperationException, IOException {
         ChangeResult result = SUT_recordsEager.apply(initialGrid, changeContext);
 
         verify(initialGrid, times(1)).mapRecords(any(RecordFilter.class), any(), eq(Optional.empty()));
         verify(initialGrid, times(0)).mapRecords(any(RecordMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRows(any(RowMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRows(any(RowFilter.class), any(), any());
+        List<ColumnId> columnIds = Arrays.asList(new ColumnId("A", 0L), new ColumnId("D", 0L));
+        verify(changeContext, times(1)).getChangeData(eq("eval"), any(), any(), eq(columnIds), eq(Mode.RecordBased));
         assertEquals(result.getGrid(), recordJoinedGrid);
     }
 
@@ -564,7 +609,6 @@ public class RowMapOperationTests {
         assertEquals(mappedRow, new Row(Arrays.asList(
                 new Cell("a", null), new Cell("c", null), new Cell("A", null), new Cell("b", null), new Cell("B", null)), true, false));
     }
-
 
     private static abstract class ChangeDataRow implements ChangeData<Row> {
 
