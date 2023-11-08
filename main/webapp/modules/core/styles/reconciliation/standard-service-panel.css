@@ -31,7 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-.edit-mapped-column {
+.against-type-control {
+  position: relative;
+  width: fit-content;
+}
+
+.edit-mapped-value {
   margin-right: 0.5em;
   float: right;
   text-decoration: none;
@@ -44,7 +49,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   cursor: pointer;
 }
 
-.mapped-column {
+.mapped-value {
   display: none;
   width: 100%;
   padding: 2px;
@@ -54,19 +59,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   background: transparent;
 }
 
-.mapped-column a {
+.mapped-value a {
   margin-left: 0.2em;
   margin-right: 0.25em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 15ch;
+  max-width: 13ch;
   display: inline-block;
   vertical-align: middle;
 }
 
 .type-id {
   vertical-align: middle;
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .recon-dialog-standard-service-panel-message {

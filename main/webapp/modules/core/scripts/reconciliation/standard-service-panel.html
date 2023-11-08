@@ -17,11 +17,18 @@
       <td width="50%"><div class="detail-container" bind="detailContainer"></div></td>
     </tr>
     <tr>
-      <td colspan="2"><input type="radio" name="type-choice" id="againstTypeId" bind="againstType" value="">
-        <label for="againstTypeId"><span bind="or_proc_againstType"></span></label> <input aria-label="" size="20" bind="typeInput" /></td>
+      <td colspan="2" style="display:flex;align-items:center;">
+        <input type="radio" name="type-choice" id="againstTypeId" bind="againstType" value="">
+        <label for="againstTypeId"><span bind="or_proc_againstType"></span></label>
+        <div class='against-type-control'>
+          <span class="mapped-value"><a></a><span class="type-id">()</span><a bind='editMappedType' class="edit-mapped-value">edit</a></span>
+          <input aria-label="" size="25" bind="typeInput" spellcheck="false"/>
+        </div>
+      </td>
     </tr>
     <tr>
-      <td colspan="2"><input type="radio" name="type-choice" id="noTypeId" bind="noType" value="-">
+      <td colspan="2" style="display:flex;align-items:center;">
+        <input type="radio" name="type-choice" id="noTypeId" bind="noType" value="-">
         <label for="noTypeId"><span bind="or_proc_noType"></span></label></td>
     </tr>
     <tr>

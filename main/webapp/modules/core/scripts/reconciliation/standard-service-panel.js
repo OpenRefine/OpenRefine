@@ -110,13 +110,22 @@ ReconStandardServicePanel.prototype._constructUI = function() {
     self._elmts.typeInput.trigger('focus').trigger('select');
   });
 
-  this._elmts.noType.on('click', function() {
+  this._elmts.noType.on('click', function () {
     self._rewirePropertySuggests(null) // Clear any selected type
   });
-    self._populateProperties();
-  this._guessTypes(function() {
+  self._populateProperties();
+  this._guessTypes(function () {
     self._populatePanel();
     self._wireEvents();
+    self._elmts.editMappedType.on('click', function() {
+          $input = self._elmts.typeInput;
+          $mappedValue = $(this).parent();
+          $input.removeData('data.suggest');
+          $label = $mappedValue.parent().find('.mapped-value > a:not(.edit-mapped-value)');
+          $input.val($label.text()).prop('disabled',false);
+          $mappedValue.toggle();
+          $input.trigger('focus');
+        })
   });
 };
 
@@ -217,18 +226,18 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
     $(td0).attr("columnName", column.name).html(column.name);
     $(td1).data('id','property').css('position','relative');
 
-    let mappedColumn = $("<span>").addClass("mapped-column");
+    let mappedColumn = $("<span>").addClass("mapped-value");
 
     mappedColumn.append($("<a>").text(""))
         .append($("<span>").addClass("type-id").text("()"))
-        .append($("<a>").addClass("edit-mapped-column").text("edit")
+        .append($("<a>").addClass("edit-mapped-value").text("edit")
             .on('click', function() {
               $input = $(this).parent().siblings('input[name="property"]');
               $input.removeData('data.suggest');
-              $label = $(this).parent().parent().find('.mapped-column > a:not(.edit-mapped-column)');
+              $label = $(this).parent().parent().find('.mapped-value > a:not(.edit-mapped-value)');
               $input.val($label.text()).prop('disabled',false);
               mappedColumn.toggle();
-              $input.focus();
+              $input.trigger('focus');
             }));
 
     $(td1).append(mappedColumn)
@@ -262,7 +271,15 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
     if (this._service.ui && this._service.ui.access) {
       suggestOptions.access = this._service.ui.access;
     }
-    input.suggestT(sanitizeSuggestOptions(suggestOptions));
+    input.suggestT(sanitizeSuggestOptions(suggestOptions)).on("fb-select", function(e, data) {
+      let $input = $(e.currentTarget);
+      let $td = $input.parent();
+      let mapping = $input.data('data.suggest');
+      $td.children('.mapped-value').css('display', 'inline-flex');
+      $input.val('').prop('disabled', true);
+      $td.find('.mapped-value > a:not(.edit-mapped-value)').text(mapping.name);
+      $td.find('.mapped-value > .type-id').text("(" + mapping.id + ")");
+    });
   }
 
   input.on("bind fb-select", function(e, data) {
@@ -296,26 +313,30 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
       let $input = $(e.currentTarget);
       let $td = $input.parent();
       let mapping = $input.data('data.suggest');
-      $td.children('.mapped-column').css('display', 'inline');
+      $td.children('.mapped-value').css('display', 'inline-flex');
       $td.children('input[name="property"]').val('').prop('disabled', true);
-      $td.find('.mapped-column > a:not(.edit-mapped-column)').text(mapping.name);
-      $td.find('.mapped-column > .type-id').text("(" + mapping.id + ")");
+      $td.find('.mapped-value > a:not(.edit-mapped-value)').text(mapping.name);
+      $td.find('.mapped-value > .type-id').text("(" + mapping.id + ")");
     });
     }
 };
 
 ReconStandardServicePanel.prototype.start = function() {
-  var self = this;
+  let self = this;
+  let invalidState = false;
 
-  var type = this._elmts.typeInput.data("data.suggest");
-  if (!(type)) {
-    type = {
-        id: this._elmts.typeInput[0].value,
-        name: this._elmts.typeInput[0].value
-    };
+  let type = this._elmts.typeInput.data("data.suggest");
+  let hasSuggest = type && type.id && type.name;
+  if (!hasSuggest) {
+    let value = jQueryTrim(this._elmts.typeInput.val());
+    let hasValue = value && value.length > 0;
+    if (hasValue) {
+      alert('Reconcile against type "'+value+'" is not mapped.');
+      invalidState = true;
+    }
   }
 
-  var choices = this._panel.find('input[name="type-choice"]:checked');
+  let choices = this._panel.find('input[name="type-choice"]:checked');
   if (choices !== null && choices.length > 0) {
     if (choices[0].value == '-') { // TODO: This is the signal value for "no type", but don't think it's used anymore
       type = null;
@@ -327,8 +348,8 @@ ReconStandardServicePanel.prototype.start = function() {
     }
   }
 
-  var columnDetails = [];
-  var invalidState = false;
+  let columnDetails = [];
+
   $.each(
     this._panel.find('input[name="property"]'),
     function(index) {
