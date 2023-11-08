@@ -37,6 +37,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -323,7 +328,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     /**
      * This tests both exploding a zip archive into it's constituent files as well as importing them all (both) and
      * making sure that the recording of archive names and file names works correctly.
-     *
+     * <p>
      * It's kind of a lot to have in one test, but it's a sequence of steps that need to be done in order.
      *
      * @throws IOException
@@ -447,28 +452,47 @@ public class ImportingUtilitiesTests extends ImporterTest {
     }
 
     @Test
-    public void testImportGZipCompressedFiles() throws IOException {
-        String[] filenames = { "persons", "persons.csv.gz" };
+    public void testImportCompressedFiles() throws IOException, URISyntaxException {
+        final String FILENAME_BASE = "persons";
+        final int LINES = 4;
+        String[] suffixes = { "", ".csv.gz", ".csv.bz2" };
         InputStreamReader reader = null;
-        for (String filename : filenames) {
-            String filePathNoExtension = ClassLoader.getSystemResource(filename).getPath();
+        for (String suffix : suffixes) {
+            String filename = FILENAME_BASE + suffix;
+            Path filePath = Paths.get(ClassLoader.getSystemResource(filename).toURI());
 
-            File tmp = File.createTempFile("openrefine-test-" + filename.split("\\.")[0], "", job.getRawDataDir());
+            File tmp = File.createTempFile("openrefine-test-" + FILENAME_BASE, suffix, job.getRawDataDir());
             tmp.deleteOnExit();
-            FileUtils.copyFile(new File(filePathNoExtension), tmp);
+            byte[] contents = Files.readAllBytes(filePath);
+            Files.write(tmp.toPath(), contents);
+            // Write two copies of the data to test reading concatenated streams
+            Files.write(tmp.toPath(), contents, StandardOpenOption.APPEND);
 
             InputStream is = ImportingUtilities.tryOpenAsCompressedFile(tmp, null, null);
-            // assert input stream is not null
-            Assert.assertNotNull(is);
+            Assert.assertNotNull(is, "Failed to open compressed file: " + filename);
 
             reader = new InputStreamReader(is);
-            Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader()
-                    .withIgnoreHeaderCase().withTrim().parse(reader);
+            Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
-            // assert size of iterable is same as number of rows in csv file without header
-            Assert.assertEquals(IterableUtils.size(records), 3);
+            Assert.assertEquals(IterableUtils.size(records), LINES * 2, "row count mismatch for " + filename);
         }
         reader.close();
+    }
+
+    @Test
+    public void testIsCompressedFile() throws IOException {
+        Object[][] cases = {
+                { "movies.tsv", false },
+                { "persons.csv", false },
+                { "persons.csv.gz", true },
+                { "persons.csv.bz2", true },
+                { "unsupportedPPMD.zip", true },
+        };
+        for (Object[] test : cases) {
+            assertEquals(ImportingUtilities.isCompressed(new File(ClassLoader.getSystemResource((String) test[0]).getFile())), test[1],
+                    "Wrong value for isCompressed of: " + test);
+        }
+
     }
 
 }
