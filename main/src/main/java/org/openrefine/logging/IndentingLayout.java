@@ -63,7 +63,6 @@ package org.openrefine.logging;
  *
  *    Original code:  http://simile.mit.edu/repository/tracer/trunk/
  */
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -71,10 +70,9 @@ import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * This is a special Log4j log formatter that is capable of reacting on special log messages
- * and 'indent' the logs accordingly. This is very useful to visually inspect a debug log
- * and see what calls what. An example of logs are "> method()" and "< method()" where > and <
- * are used to indicate respectively "entering" and "exiting".
+ * This is a special Log4j log formatter that is capable of reacting on special log messages and 'indent' the logs
+ * accordingly. This is very useful to visually inspect a debug log and see what calls what. An example of logs are ">
+ * method()" and "< method()" where > and < are used to indicate respectively "entering" and "exiting".
  */
 public class IndentingLayout extends Layout {
 
@@ -99,7 +97,7 @@ public class IndentingLayout extends Layout {
         if (message.length() < 2) {
             return message;
         }
-        
+
         char leader = message.charAt(0);
         char secondLeader = message.charAt(1);
         if ((leader == '<') && (secondLeader == ' ') && (this.indentation > 0)) {

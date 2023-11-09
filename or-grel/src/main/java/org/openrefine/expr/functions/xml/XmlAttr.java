@@ -47,31 +47,30 @@ public class XmlAttr extends PureFunction {
             Object o1 = args[0];
             Object o2 = args[1];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
-                if(o2 != null && o2 instanceof String){
+                Element e1 = (Element) o1;
+                if (o2 != null && o2 instanceof String) {
                     return e1.attr(o2.toString());
                 }
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select() prior to using this function");
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                        + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select() prior to using this function");
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");
     }
 
-
     @Override
     public String getDescription() {
         return "Selects a value from an attribute on an XML or HTML Element";
     }
-    
+
     @Override
     public String getParams() {
         return "Element e, String s";
     }
-    
+
     @Override
     public String getReturns() {
         return "String attribute Value";
     }
 }
-

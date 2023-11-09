@@ -50,62 +50,62 @@ public class Diff extends PureFunction {
             Object o2 = args[1];
             if (o1 != null && o2 != null) {
                 if (args.length == 2 && o1 instanceof String && o2 instanceof String) {
-                    return StringUtils.difference((String) o1,(String) o2);
+                    return StringUtils.difference((String) o1, (String) o2);
                 } else if (o1 instanceof OffsetDateTime && o2 instanceof OffsetDateTime && args.length == 3) {
                     Object o3 = args[2];
                     if (o3 != null && o3 instanceof String) {
-                            String unit = ((String) o3).toLowerCase();
-                            OffsetDateTime c1 = (OffsetDateTime)o1;
-                            OffsetDateTime c2 = (OffsetDateTime)o2;
-                            try {
-                                if ("nanos".equals(unit)) {
-                                    return ChronoUnit.NANOS.between(c2, c1);
-                                }
-                                if ("milliseconds".equals(unit)) {
-                                    return ChronoUnit.MILLIS.between(c2, c1);
-                                }
-                                if ("seconds".equals(unit)) {
-                                    return ChronoUnit.SECONDS.between(c2, c1);
-                                }
-                                if ("minutes".equals(unit)) {
-                                    return ChronoUnit.MINUTES.between(c2, c1);
-                                }
-                                if ("hours".equals(unit)) {
-                                    return ChronoUnit.HOURS.between(c2, c1);
-                                }
-                                if ("days".equals(unit)) {
-                                    return ChronoUnit.DAYS.between(c2, c1);
-                                }
-                                if ("weeks".equals(unit)) {
-                                    return ChronoUnit.WEEKS.between(c2, c1);
-                                }
-                                if ("months".equals(unit)) {
-                                    return ChronoUnit.MONTHS.between(c2, c1);
-                                }
-                                if ("years".equals(unit)) {
-                                    return ChronoUnit.YEARS.between(c2, c1);
-                                }
-                                return new EvalError("Unknown time unit " + unit);
-                            } catch (ArithmeticException arithmeticException) {
-                                    return new EvalError("Number of " + unit + " between given dates causes long overflow.");
+                        String unit = ((String) o3).toLowerCase();
+                        OffsetDateTime c1 = (OffsetDateTime) o1;
+                        OffsetDateTime c2 = (OffsetDateTime) o2;
+                        try {
+                            if ("nanos".equals(unit)) {
+                                return ChronoUnit.NANOS.between(c2, c1);
                             }
-                        } 
+                            if ("milliseconds".equals(unit)) {
+                                return ChronoUnit.MILLIS.between(c2, c1);
+                            }
+                            if ("seconds".equals(unit)) {
+                                return ChronoUnit.SECONDS.between(c2, c1);
+                            }
+                            if ("minutes".equals(unit)) {
+                                return ChronoUnit.MINUTES.between(c2, c1);
+                            }
+                            if ("hours".equals(unit)) {
+                                return ChronoUnit.HOURS.between(c2, c1);
+                            }
+                            if ("days".equals(unit)) {
+                                return ChronoUnit.DAYS.between(c2, c1);
+                            }
+                            if ("weeks".equals(unit)) {
+                                return ChronoUnit.WEEKS.between(c2, c1);
+                            }
+                            if ("months".equals(unit)) {
+                                return ChronoUnit.MONTHS.between(c2, c1);
+                            }
+                            if ("years".equals(unit)) {
+                                return ChronoUnit.YEARS.between(c2, c1);
+                            }
+                            return new EvalError("Unknown time unit " + unit);
+                        } catch (ArithmeticException arithmeticException) {
+                            return new EvalError("Number of " + unit + " between given dates causes long overflow.");
+                        }
                     }
                 }
             }
+        }
         return new EvalError("Unexpected arguments - expecting either 2 strings or 2 dates and a unit string");
     }
-    
+
     @Override
     public String getDescription() {
         return "For strings, returns the portion where they differ. For dates, it returns the difference in given time units";
     }
-    
+
     @Override
     public String getParams() {
         return "o1, o2, time unit (optional)";
     }
-    
+
     @Override
     public String getReturns() {
         return "string for strings, number for dates";

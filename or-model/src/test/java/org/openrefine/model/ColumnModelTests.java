@@ -24,48 +24,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model;
+
+import org.testng.annotations.Test;
 
 import org.openrefine.model.Column;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.ModelException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class ColumnModelTests {
+
     @Test
     public void serializeColumnModel() throws ModelException {
         ColumnModel model = new ColumnModel();
         model.addColumn(0, new Column(0, "a"), false);
         model.addColumn(1, new Column(1, "b"), false);
-        String json = "{\n" + 
-                "       \"columnGroups\" : [ ],\n" + 
-                "       \"columns\" : [ {\n" + 
-                "         \"cellIndex\" : 0,\n" + 
-                "         \"constraints\" : \"{}\",\n" + 
-                "         \"description\" : \"\",\n" + 
-                "         \"format\" : \"default\",\n" + 
-                "         \"name\" : \"a\",\n" + 
-                "         \"originalName\" : \"a\",\n" + 
-                "         \"title\" : \"\",\n" + 
-                "         \"type\" : \"\"\n" + 
-                "       }, {\n" + 
-                "         \"cellIndex\" : 1,\n" + 
-                "         \"constraints\" : \"{}\",\n" + 
-                "         \"description\" : \"\",\n" + 
-                "         \"format\" : \"default\",\n" + 
-                "         \"name\" : \"b\",\n" + 
-                "         \"originalName\" : \"b\",\n" + 
-                "         \"title\" : \"\",\n" + 
-                "         \"type\" : \"\"\n" + 
-                "       } ],\n" + 
-                "       \"keyCellIndex\" : 0,\n" + 
-                "       \"keyColumnName\" : \"a\"\n" + 
+        String json = "{\n" +
+                "       \"columnGroups\" : [ ],\n" +
+                "       \"columns\" : [ {\n" +
+                "         \"cellIndex\" : 0,\n" +
+                "         \"constraints\" : \"{}\",\n" +
+                "         \"description\" : \"\",\n" +
+                "         \"format\" : \"default\",\n" +
+                "         \"name\" : \"a\",\n" +
+                "         \"originalName\" : \"a\",\n" +
+                "         \"title\" : \"\",\n" +
+                "         \"type\" : \"\"\n" +
+                "       }, {\n" +
+                "         \"cellIndex\" : 1,\n" +
+                "         \"constraints\" : \"{}\",\n" +
+                "         \"description\" : \"\",\n" +
+                "         \"format\" : \"default\",\n" +
+                "         \"name\" : \"b\",\n" +
+                "         \"originalName\" : \"b\",\n" +
+                "         \"title\" : \"\",\n" +
+                "         \"type\" : \"\"\n" +
+                "       } ],\n" +
+                "       \"keyCellIndex\" : 0,\n" +
+                "       \"keyColumnName\" : \"a\"\n" +
                 "     }";
         TestUtils.isSerializedTo(model, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeColumnModelEmpty() {
         String json = "{"

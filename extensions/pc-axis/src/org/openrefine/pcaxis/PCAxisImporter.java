@@ -37,10 +37,10 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.TabularImportingParserBase;
 import org.openrefine.importing.ImportingJob;
@@ -49,12 +49,13 @@ import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
 public class PCAxisImporter extends TabularImportingParserBase {
+
     static final Logger logger = LoggerFactory.getLogger(PCAxisImporter.class);
-    
+
     public PCAxisImporter() {
         super(false);
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
@@ -67,29 +68,28 @@ public class PCAxisImporter extends TabularImportingParserBase {
 
     @Override
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            Reader reader,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         LineNumberReader lnReader = new LineNumberReader(reader);
         TableDataReader dataReader = new PCAxisTableDataReader(lnReader, exceptions);
-        
+
         // Stuff these settings to get TabularImportingParserBase.readTable
         // to behave as we want.
         JSONUtilities.safePut(options, "ignoreLines", -1);
         JSONUtilities.safePut(options, "headerLines", 1);
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
-        
+
         TabularImportingParserBase.readTable(
-            project, metadata, job, dataReader,
-            fileSource, limit, options, exceptions);
-        
+                project, metadata, job, dataReader,
+                fileSource, limit, options, exceptions);
+
         super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
     }
 }

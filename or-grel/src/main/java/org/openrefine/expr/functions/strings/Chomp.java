@@ -50,17 +50,17 @@ public class Chomp extends PureFunction {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return "Removes separator from the end of str if it's there, otherwise leave it alone.";
     }
-    
+
     @Override
     public String getParams() {
         return "string str, string separator";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

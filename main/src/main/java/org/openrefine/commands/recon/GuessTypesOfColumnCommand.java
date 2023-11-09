@@ -52,6 +52,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.openrefine.commands.Command;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Column;
@@ -61,17 +69,10 @@ import org.openrefine.model.Row;
 import org.openrefine.model.recon.StandardReconConfig.ReconResult;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 public class GuessTypesOfColumnCommand extends Command {
-     
+
     protected static class TypesResponse {
+
         @JsonProperty("code")
         protected String code;
         @JsonProperty("message")
@@ -80,7 +81,7 @@ public class GuessTypesOfColumnCommand extends Command {
         @JsonProperty("types")
         @JsonInclude(Include.NON_NULL)
         List<TypeGroup> types;
-        
+
         protected TypesResponse(
                 String code,
                 String message,
@@ -90,66 +91,67 @@ public class GuessTypesOfColumnCommand extends Command {
             this.types = types;
         }
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
             String columnName = request.getParameter("columnName");
             String serviceUrl = request.getParameter("service");
-            
+
             Column column = project.columnModel.getColumnByName(columnName);
             if (column == null) {
                 respondJSON(response, new TypesResponse("error", "No such column", null));
             } else {
                 List<TypeGroup> typeGroups = guessTypes(project, column, serviceUrl);
-                respondJSON(response, new TypesResponse("ok", null, typeGroups));   
+                respondJSON(response, new TypesResponse("ok", null, typeGroups));
             }
 
         } catch (Exception e) {
             respondException(response, e);
         }
     }
-    
+
     final static int SAMPLE_SIZE = 10;
-    
+
     protected static class IndividualQuery {
+
         @JsonProperty("query")
         protected String query;
         @JsonProperty("limit")
         protected int limit;
-        
+
         protected IndividualQuery(String query, int limit) {
             this.query = query;
             this.limit = limit;
         }
     }
-    
+
     /**
-     * Run relevance searches for the first n cells in the given column and
-     * count the types of the results. Return a sorted list of types, from most
-     * frequent to least. 
+     * Run relevance searches for the first n cells in the given column and count the types of the results. Return a
+     * sorted list of types, from most frequent to least.
      * 
      * @param project
      * @param column
      * @return
-     * @throws JSONException, IOException 
+     * @throws JSONException,
+     *             IOException
      */
     protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl)
             throws IOException {
         Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
-        
+
         int cellIndex = column.getCellIndex();
-        
+
         List<String> samples = new ArrayList<String>(SAMPLE_SIZE);
         Set<String> sampleSet = new HashSet<String>();
-        
+
         for (Row row : project.rows) {
             Object value = row.getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {
@@ -163,12 +165,12 @@ public class GuessTypesOfColumnCommand extends Command {
                 }
             }
         }
-        
+
         Map<String, IndividualQuery> queryMap = new HashMap<>();
         for (int i = 0; i < samples.size(); i++) {
             queryMap.put("q" + i, new IndividualQuery(samples.get(i), 3));
         }
-        
+
         String queriesString = ParsingUtilities.defaultWriter.writeValueAsString(queryMap);
         try {
             URL url = new URL(serviceUrl);
@@ -177,24 +179,24 @@ public class GuessTypesOfColumnCommand extends Command {
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                 connection.setConnectTimeout(30000);
                 connection.setDoOutput(true);
-                
+
                 DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
                 try {
                     String body = "queries=" + ParsingUtilities.encode(queriesString);
-                    
+
                     dos.writeBytes(body);
                 } finally {
                     dos.flush();
                     dos.close();
                 }
-                
+
                 connection.connect();
             }
 
             if (connection.getResponseCode() >= 400) {
                 InputStream is = connection.getErrorStream();
-                throw new IOException("Failed  - code:" 
-                        + Integer.toString(connection.getResponseCode()) 
+                throw new IOException("Failed  - code:"
+                        + Integer.toString(connection.getResponseCode())
                         + " message: " + is == null ? "" : ParsingUtilities.inputStreamToString(is));
             } else {
                 InputStream is = connection.getInputStream();
@@ -210,7 +212,9 @@ public class GuessTypesOfColumnCommand extends Command {
                         }
 
                         ArrayNode results = (ArrayNode) o2.get("result");
-                        List<ReconResult> reconResults = ParsingUtilities.mapper.convertValue(results, new TypeReference<List<ReconResult>>() {});
+                        List<ReconResult> reconResults = ParsingUtilities.mapper.convertValue(results,
+                                new TypeReference<List<ReconResult>>() {
+                                });
                         int count = reconResults.size();
 
                         for (int j = 0; j < count; j++) {
@@ -221,7 +225,7 @@ public class GuessTypesOfColumnCommand extends Command {
                             int typeCount = types.size();
 
                             for (int t = 0; t < typeCount; t++) {
-                            	ReconType type = types.get(t);
+                                ReconType type = types.get(t);
                                 double score2 = score * (typeCount - t) / typeCount;
                                 if (map.containsKey(type.id)) {
                                     TypeGroup tg = map.get(type.id);
@@ -241,9 +245,10 @@ public class GuessTypesOfColumnCommand extends Command {
             logger.error("Failed to guess cell types for load\n" + queriesString, e);
             throw e;
         }
-        
+
         List<TypeGroup> types = new ArrayList<TypeGroup>(map.values());
         Collections.sort(types, new Comparator<TypeGroup>() {
+
             @Override
             public int compare(TypeGroup o1, TypeGroup o2) {
                 int c = Math.min(SAMPLE_SIZE, o2.count) - Math.min(SAMPLE_SIZE, o1.count);
@@ -253,11 +258,12 @@ public class GuessTypesOfColumnCommand extends Command {
                 return (int) Math.signum(o2.score / o2.count - o1.score / o1.count);
             }
         });
-        
+
         return types;
     }
-    
+
     static protected class TypeGroup {
+
         @JsonProperty("id")
         protected String id;
         @JsonProperty("name")
@@ -266,7 +272,7 @@ public class GuessTypesOfColumnCommand extends Command {
         protected int count;
         @JsonProperty("score")
         protected double score;
-        
+
         TypeGroup(String id, String name, double score) {
             this.id = id;
             this.name = name;

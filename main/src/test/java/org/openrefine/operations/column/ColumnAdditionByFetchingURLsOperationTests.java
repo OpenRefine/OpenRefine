@@ -39,6 +39,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
@@ -58,19 +65,11 @@ import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}";
-    
+
     private String json = "{\"op\":\"core/column-addition-by-fetching-urls\","
             + "\"description\":\"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
@@ -86,14 +85,15 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             + "    {\"name\":\"user-agent\",\"value\":\"OpenRefine 3.0 rc.1 [TRUNK]\"},"
             + "    {\"name\":\"accept\",\"value\":\"application/json\"}"
             + "]}";
-    
+
     private String processJson = ""
-            +"{\n" + 
-            "    \"description\" : \"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\",\n" + 
-            "    \"id\" : %d,\n" + 
-            "    \"immediate\" : false,\n" + 
-            "    \"progress\" : 0,\n" + 
-            "    \"status\" : \"pending\"\n" + 
+            + "{\n" +
+            "    \"description\" : \"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\",\n"
+            +
+            "    \"id\" : %d,\n" +
+            "    \"immediate\" : false,\n" +
+            "    \"progress\" : 0,\n" +
+            "    \"status\" : \"pending\"\n" +
             " }";
 
     @Override
@@ -111,11 +111,11 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
-        project = createProjectWithColumns("UrlFetchingTests", "fruits"); 
-        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");     
+        project = createProjectWithColumns("UrlFetchingTests", "fruits");
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
 
-    private boolean isHostReachable(String host, int timeout){
+    private boolean isHostReachable(String host, int timeout) {
         boolean state = false;
 
         try {
@@ -126,19 +126,20 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
         return state;
     }
-    
+
     @Test
     public void serializeColumnAdditionByFetchingURLsOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeUrlFetchingProcess() throws Exception {
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
         Process process = op.createProcess(project, new Properties());
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
     }
-    
+
     /**
      * Test for caching
      */
@@ -147,10 +148,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     public void testUrlCaching() throws Exception {
         if (!isHostReachable("www.random.org", 5000))
             return;
-        
+
         for (int i = 0; i < 100; i++) {
             Row row = new Row(2);
-            row.setCell(0, new Cell(i < 5 ? "apple":"orange", null));
+            row.setCell(0, new Cell(i < 5 ? "apple" : "orange", null));
             project.rows.add(row);
         }
 
@@ -178,9 +179,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             Assert.fail("Test interrupted");
         }
 
-
         // Inspect rows
-        String ref_val = (String)project.rows.get(0).getCellValue(1).toString();
+        String ref_val = (String) project.rows.get(0).getCellValue(1).toString();
         if (ref_val.startsWith("HTTP error"))
             return;
         Assert.assertFalse(ref_val.equals("apple")); // just to make sure I picked the right column
@@ -193,8 +193,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     }
 
     /**
-     * Fetch invalid URLs
-     * https://github.com/OpenRefine/OpenRefine/issues/1219
+     * Fetch invalid URLs https://github.com/OpenRefine/OpenRefine/issues/1219
      */
     @Test
     public void testInvalidUrl() throws Exception {
@@ -240,21 +239,15 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     public void testHttpHeaders() throws Exception {
         Row row0 = new Row(2);
         row0.setCell(0, new Cell("http://headers.jsontest.com", null));
-        /* 
-        http://headers.jsontest.com is a service which returns the HTTP request headers
-        as JSON. For example:
-        {
-           "X-Cloud-Trace-Context": "579a1a2ee5c778dfc0810a3bf131ba4e/11053223648711966807",
-           "Authorization": "Basic",
-           "Host": "headers.jsontest.com",
-           "User-Agent": "OpenRefine",
-           "Accept": "*"
-        }
-        */
+        /*
+         * http://headers.jsontest.com is a service which returns the HTTP request headers as JSON. For example: {
+         * "X-Cloud-Trace-Context": "579a1a2ee5c778dfc0810a3bf131ba4e/11053223648711966807", "Authorization": "Basic",
+         * "Host": "headers.jsontest.com", "User-Agent": "OpenRefine", "Accept": "*" }
+         */
 
         project.rows.add(row0);
 
-        String userAgentValue =  "OpenRefine";
+        String userAgentValue = "OpenRefine";
         String authorizationValue = "Basic";
         String acceptValue = "*/*";
         List<HttpHeader> headers = new ArrayList<>();
@@ -263,33 +256,33 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         headers.add(new HttpHeader("accept", acceptValue));
 
         EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
-            "fruits",
-            "value",
-            OnError.StoreError,
-            "junk",
-            1,
-            50,
-            true,
-            headers);
+                "fruits",
+                "value",
+                OnError.StoreError,
+                "junk",
+                1,
+                50,
+                true,
+                headers);
         ProcessManager pm = project.getProcessManager();
         Process process = op.createProcess(project, options);
         process.startPerforming(pm);
         Assert.assertTrue(process.isRunning());
         try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Assert.fail("Test interrupted");
+        }
         Assert.assertFalse(process.isRunning());
 
         int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
         ObjectNode headersUsed = null;
-        
-        // sometime, we got response: 
+
+        // sometime, we got response:
         // Error
         // Over Quota
         // This application is temporarily over its serving quota. Please try again later.
-        try { 
+        try {
             String response = project.rows.get(0).getCellValue(newCol).toString();
             headersUsed = ParsingUtilities.mapper.readValue(response, ObjectNode.class);
         } catch (IOException ex) {

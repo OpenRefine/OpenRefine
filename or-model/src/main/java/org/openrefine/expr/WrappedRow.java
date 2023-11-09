@@ -40,25 +40,26 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 public class WrappedRow implements HasFields {
+
     final public Project project;
     final public int rowIndex;
     final public Row row;
-    
+
     public WrappedRow(Project project, int rowIndex, Row row) {
         this.project = project;
         this.rowIndex = rowIndex;
         this.row = row;
     }
-    
+
     @Override
     public Object getField(String name) {
         if ("cells".equals(name)) {
             return new CellTuple(project, row);
         } else if ("index".equals(name)) {
             return rowIndex;
-        } else if ("record".equals(name)) {           
+        } else if ("record".equals(name)) {
             return new WrappedRecord(project.recordModel.getRecordOfRow(rowIndex));
-        } else if ("columnNames".equals(name)) {           
+        } else if ("columnNames".equals(name)) {
             return project.columnModel.getColumnNames();
         } else {
             return row.getField(name);
@@ -71,6 +72,7 @@ public class WrappedRow implements HasFields {
     }
 
     protected class WrappedRecord implements HasFields {
+
         final Record _record;
 
         protected WrappedRecord(Record record) {
@@ -98,20 +100,21 @@ public class WrappedRow implements HasFields {
             return "cells".equals(name);
         }
     }
-    
+
     protected class RecordCells implements HasFields {
+
         final Record _record;
-        
+
         protected RecordCells(Record record) {
             _record = record;
         }
-        
+
         @Override
         public Object getField(String name) {
             Column column = project.columnModel.getColumnByName(name);
             if (column != null) {
                 int cellIndex = column.getCellIndex();
-                
+
                 HasFieldsListImpl cells = new HasFieldsListImpl();
                 for (int r = _record.fromRowIndex; r < _record.toRowIndex; r++) {
                     Row row = project.rows.get(r);
@@ -120,7 +123,7 @@ public class WrappedRow implements HasFields {
                         cells.add(new WrappedCell(project, name, cell));
                     }
                 }
-                
+
                 return cells;
             }
             return null;

@@ -48,30 +48,28 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import edu.mit.simile.butterfly.Butterfly;
+import edu.mit.simile.butterfly.ButterflyModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.RefineModel;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import edu.mit.simile.butterfly.Butterfly;
-import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
-    
+
     static public String VERSION = "";
     static public String REVISION = "";
     static public String FULL_VERSION = "";
     static public String FULLNAME = "OpenRefine ";
 
+    static public final String AGENT_ID = "/en/google_refine"; // TODO: Unused? Freebase ID
 
-    static public final String AGENT_ID = "/en/google_refine"; // TODO: Unused?  Freebase ID
-    
     static final long serialVersionUID = 2386057901503517403L;
 
     static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
@@ -79,7 +77,7 @@ public class RefineServlet extends Butterfly {
 
     static private RefineServlet s_singleton;
     static private File s_dataDir;
-    
+
     static final private Map<String, Command> commands = new HashMap<String, Command>();
 
     // timer for periodically saving projects
@@ -88,6 +86,7 @@ public class RefineServlet extends Butterfly {
     static final Logger logger = LoggerFactory.getLogger("refine");
 
     static protected class AutoSaveTimerTask implements Runnable {
+
         @Override
         public void run() {
             try {
@@ -104,7 +103,7 @@ public class RefineServlet extends Butterfly {
 
         VERSION = getInitParameter("refine.version");
         REVISION = getInitParameter("refine.revision");
-        
+
         if (VERSION.equals("$VERSION")) {
             VERSION = RefineModel.ASSIGNED_VERSION;
         }
@@ -119,12 +118,12 @@ public class RefineServlet extends Butterfly {
                 REVISION = "TRUNK";
             }
         }
-        
+
         FULL_VERSION = VERSION + " [" + REVISION + "]";
         FULLNAME += FULL_VERSION;
 
         logger.info("Starting " + FULLNAME + "...");
-        
+
         s_singleton = this;
 
         logger.trace("> initialize");
@@ -140,9 +139,9 @@ public class RefineServlet extends Butterfly {
         FileProjectManager.initialize(s_dataDir);
         ImportingManager.initialize(this);
 
-	long AUTOSAVE_PERIOD = Long.parseLong(getInitParameter("refine.autosave"));
+        long AUTOSAVE_PERIOD = Long.parseLong(getInitParameter("refine.autosave"));
 
-        service.scheduleWithFixedDelay(new AutoSaveTimerTask(), AUTOSAVE_PERIOD, 
+        service.scheduleWithFixedDelay(new AutoSaveTimerTask(), AUTOSAVE_PERIOD,
                 AUTOSAVE_PERIOD, TimeUnit.MINUTES);
 
         logger.trace("< initialize");
@@ -211,16 +210,16 @@ public class RefineServlet extends Butterfly {
             super.service(request, response);
         }
     }
-    
+
     public ButterflyModule getModule(String name) {
         return _modulesByName.get(name);
     }
 
     protected String getCommandKey(HttpServletRequest request) {
         // A command path has this format: /command/module-name/command-name/...
-        
+
         String path = request.getPathInfo().substring("/command/".length());
-        
+
         int slash1 = path.indexOf('/');
         if (slash1 >= 0) {
             int slash2 = path.indexOf('/', slash1 + 1);
@@ -228,7 +227,7 @@ public class RefineServlet extends Butterfly {
                 path = path.substring(0, slash2);
             }
         }
-        
+
         return path;
     }
 
@@ -245,45 +244,50 @@ public class RefineServlet extends Butterfly {
     public File getTempFile(String name) {
         return new File(getTempDir(), name);
     }
-    
+
     public File getCacheDir(String name) {
         File dir = new File(new File(s_dataDir, "cache"), name);
         dir.mkdirs();
-        
+
         return dir;
     }
 
     public String getConfiguration(String name, String def) {
         return null;
     }
-    
+
     /**
      * Register a single command.
      *
-     * @param module the module the command belongs to
-     * @param name command verb for command
-     * @param commandObject object implementing the command
+     * @param module
+     *            the module the command belongs to
+     * @param name
+     *            command verb for command
+     * @param commandObject
+     *            object implementing the command
      * @return true if command was loaded and registered successfully
      */
     protected boolean registerOneCommand(ButterflyModule module, String name, Command commandObject) {
         return registerOneCommand(module.getName() + "/" + name, commandObject);
     }
-    
+
     /**
      * Register a single command.
      *
-     * @param path path for command
-     * @param commandObject object implementing the command
+     * @param path
+     *            path for command
+     * @param commandObject
+     *            object implementing the command
      * @return true if command was loaded and registered successfully
      */
     protected boolean registerOneCommand(String path, Command commandObject) {
         if (commands.containsKey(path)) {
             return false;
         }
-        
+
         commandObject.init(this);
         commands.put(path, commandObject);
-        
+
         return true;
     }
 
@@ -291,40 +295,41 @@ public class RefineServlet extends Butterfly {
     protected boolean unregisterCommand(String verb) {
         return commands.remove(verb) != null;
     }
-    
+
     /**
      * Register a single command. Used by extensions.
      *
-     * @param module the module the command belongs to
-     * @param name command verb for command
-     * @param commandObject object implementing the command
-     *            
+     * @param module
+     *            the module the command belongs to
+     * @param name
+     *            command verb for command
+     * @param commandObject
+     *            object implementing the command
+     * 
      * @return true if command was loaded and registered successfully
      */
     static public boolean registerCommand(ButterflyModule module, String commandName, Command commandObject) {
         return s_singleton.registerOneCommand(module, commandName, commandObject);
     }
-   
 
     static public void cacheClass(Class<?> klass) {
         RefineModel.cacheClass(klass);
     }
-    
+
     static public Class<?> getClass(String className) throws ClassNotFoundException {
         return RefineModel.getClass(className);
     }
-    
+
     static public void registerClassMapping(String from, String to) {
         RefineModel.registerClassMapping(from, to);
     }
-    
-    
+
     static public void setUserAgent(URLConnection urlConnection) {
         if (urlConnection instanceof HttpURLConnection) {
             setUserAgent((HttpURLConnection) urlConnection);
         }
     }
-    
+
     static public void setUserAgent(HttpURLConnection httpConnection) {
         httpConnection.addRequestProperty("User-Agent", getUserAgent());
     }

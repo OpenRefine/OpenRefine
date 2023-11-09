@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.math;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class LeastCommonMultipleTests {
+
     @Test
     public void serializeLeastCommonMultiple() {
         String json = "{\"description\":\"Returns the greatest common denominator of the two numbers\",\"params\":\"number d, number e\",\"returns\":\"number\"}";
         TestUtils.isSerializedTo(new LeastCommonMultiple(), json, ParsingUtilities.defaultWriter);
     }
 }
-

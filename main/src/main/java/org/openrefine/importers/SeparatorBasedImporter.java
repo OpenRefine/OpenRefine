@@ -49,48 +49,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import au.com.bytecode.opencsv.CSVParser;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringEscapeUtils;
+
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import au.com.bytecode.opencsv.CSVParser;
-
 public class SeparatorBasedImporter extends TabularImportingParserBase {
+
     public SeparatorBasedImporter() {
         super(false);
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
             List<ObjectNode> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
-        
+
         String separator = guessSeparator(job, fileRecords);
         JSONUtilities.safePut(options, "separator", separator != null ? separator : "\\t");
-        
+
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", true);
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
 
         return options;
     }
-    
+
     @Override
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            Reader reader,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         String sep = JSONUtilities.getString(options, "separator", "\\t");
         if (sep == null || "".equals(sep)) {
             sep = "\\t";
@@ -98,71 +97,72 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         sep = StringEscapeUtils.unescapeJava(sep);
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
         boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
-        
-        
+
         List<Object> retrievedColumnNames = null;
         if (options.has("columnNames")) {
-          String[] strings = JSONUtilities.getStringArray(options, "columnNames");
-          if (strings.length > 0) {
-            retrievedColumnNames = new ArrayList<Object>();
-            for (String s : strings) {
-              s = s.trim();
-              if (!s.isEmpty()) {
-                retrievedColumnNames.add(s);
-              }
-            }
+            String[] strings = JSONUtilities.getStringArray(options, "columnNames");
+            if (strings.length > 0) {
+                retrievedColumnNames = new ArrayList<Object>();
+                for (String s : strings) {
+                    s = s.trim();
+                    if (!s.isEmpty()) {
+                        retrievedColumnNames.add(s);
+                    }
+                }
 
-            if (!retrievedColumnNames.isEmpty()) {
-              JSONUtilities.safePut(options, "headerLines", 1);
-            } else {
-              retrievedColumnNames = null;
+                if (!retrievedColumnNames.isEmpty()) {
+                    JSONUtilities.safePut(options, "headerLines", 1);
+                } else {
+                    retrievedColumnNames = null;
+                }
             }
-          }
         }
-        
+
         final List<Object> columnNames = retrievedColumnNames;
-        
+
         Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
         String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
         if (quoteCharacter != null && quoteCharacter.trim().length() == 1) {
             quote = quoteCharacter.trim().charAt(0);
         }
-        
+
         final CSVParser parser = new CSVParser(
-            sep,
-            quote,
-            (char) 0, // we don't want escape processing
-            strictQuotes,
-            CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-            !processQuotes);
-        
+                sep,
+                quote,
+                (char) 0, // we don't want escape processing
+                strictQuotes,
+                CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
+                !processQuotes);
+
         final LineNumberReader lnReader = new LineNumberReader(reader);
-        
+
         TableDataReader dataReader = new TableDataReader() {
+
             boolean usedColumnNames = false;
+
             @Override
             public List<Object> getNextRowOfCells() throws IOException {
                 if (columnNames != null && !usedColumnNames) {
                     usedColumnNames = true;
                     return columnNames;
                 } else {
-	                String line = lnReader.readLine();
-	                if (line == null) {
-	                    return null;
-	                } else {
-	                    return getCells(line, parser, lnReader);
-	                }
+                    String line = lnReader.readLine();
+                    if (line == null) {
+                        return null;
+                    } else {
+                        return getCells(line, parser, lnReader);
+                    }
                 }
             }
         };
-        
+
         TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
         super.parseOneFile(project, metadata, job, fileSource, lnReader, limit, options, exceptions);
     }
-    
+
     static protected ArrayList<Object> getCells(String line, CSVParser parser, LineNumberReader lnReader)
-        throws IOException{
-        
+            throws IOException {
+
         ArrayList<Object> cells = new ArrayList<Object>();
         String[] tokens = parser.parseLineMulti(line);
         cells.addAll(Arrays.asList(tokens));
@@ -172,13 +172,13 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         }
         return cells;
     }
-    
+
     static public String guessSeparator(ImportingJob job, List<ObjectNode> fileRecords) {
         for (int i = 0; i < 5 && i < fileRecords.size(); i++) {
             ObjectNode fileRecord = fileRecords.get(i);
             String encoding = ImportingUtilities.getEncoding(fileRecord);
             String location = JSONUtilities.getString(fileRecord, "location", null);
-            
+
             if (location != null) {
                 File file = new File(job.getRawDataDir(), location);
                 // Quotes are turned on by default, so use that for guessing
@@ -190,13 +190,14 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         }
         return null;
     }
-    
+
     static public class Separator {
+
         char separator;
         int totalCount = 0;
         int totalOfSquaredCount = 0;
         int currentLineCount = 0;
-        
+
         double averagePerLine;
         double stddev;
     }
@@ -215,15 +216,15 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             try {
                 List<Separator> separators = new ArrayList<SeparatorBasedImporter.Separator>();
                 Map<Character, Separator> separatorMap = new HashMap<Character, SeparatorBasedImporter.Separator>();
-                
+
                 int totalChars = 0;
                 int lineCount = 0;
                 boolean inQuote = false;
                 String s;
                 while (totalChars < 64 * 1024 &&
-                       lineCount < 100 &&
-                       (s = lineNumberReader.readLine()) != null) {
-                    
+                        lineCount < 100 &&
+                        (s = lineNumberReader.readLine()) != null) {
+
                     totalChars += s.length() + 1; // count the new line character
                     if (s.length() == 0) {
                         continue;
@@ -231,27 +232,27 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                     if (!inQuote) {
                         lineCount++;
                     }
-                    
+
                     for (int i = 0; i < s.length(); i++) {
                         char c = s.charAt(i);
                         if ('"' == c) {
                             inQuote = !inQuote;
                         }
-                        if (!Character.isLetterOrDigit(c) 
-                                && !"\"' .-".contains(s.subSequence(i, i + 1)) 
+                        if (!Character.isLetterOrDigit(c)
+                                && !"\"' .-".contains(s.subSequence(i, i + 1))
                                 && (!handleQuotes || !inQuote)) {
                             Separator separator = separatorMap.get(c);
                             if (separator == null) {
                                 separator = new Separator();
                                 separator.separator = c;
-                                
+
                                 separatorMap.put(c, separator);
                                 separators.add(separator);
                             }
                             separator.currentLineCount++;
                         }
                     }
-                    
+
                     if (!inQuote) {
                         for (Separator separator : separators) {
                             separator.totalCount += separator.currentLineCount;
@@ -260,29 +261,29 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                         }
                     }
                 }
-                
+
                 if (separators.size() > 0) {
                     for (Separator separator : separators) {
                         separator.averagePerLine = separator.totalCount / (double) lineCount;
-                         separator.stddev = Math.sqrt(
-                                 (((double)lineCount * separator.totalOfSquaredCount) - (separator.totalCount * separator.totalCount))
-                                        / ((double)lineCount*(lineCount-1))
-                            );
+                        separator.stddev = Math.sqrt(
+                                (((double) lineCount * separator.totalOfSquaredCount) - (separator.totalCount * separator.totalCount))
+                                        / ((double) lineCount * (lineCount - 1)));
                     }
-                    
+
                     Collections.sort(separators, new Comparator<Separator>() {
+
                         @Override
                         public int compare(Separator sep0, Separator sep1) {
-                            return Double.compare(sep0.stddev / sep0.averagePerLine, 
-                            sep1.stddev / sep1.averagePerLine);
+                            return Double.compare(sep0.stddev / sep0.averagePerLine,
+                                    sep1.stddev / sep1.averagePerLine);
                         }
                     });
-                    
+
                     Separator separator = separators.get(0);
                     if (separator.stddev / separator.averagePerLine < 0.1) {
                         return separator;
                     }
-                   
+
                 }
             } finally {
                 lineNumberReader.close();

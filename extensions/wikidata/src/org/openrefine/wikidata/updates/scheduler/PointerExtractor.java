@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.Collections;
@@ -28,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
@@ -42,6 +42,8 @@ import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
+import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+
 /**
  * A class that extracts the new entity ids referred to in a statement.
  * 
@@ -51,8 +53,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
 
     /**
-     * Extracts all the new entities mentioned by this statement. This does not
-     * include the subject of the statement.
+     * Extracts all the new entities mentioned by this statement. This does not include the subject of the statement.
      * 
      * @param statement
      *            the statement to inspect
@@ -91,9 +92,8 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
     }
 
     /**
-     * Extracts all new entities mentioned by this snak group. Currently there will
-     * be at most one: the target of the snak (as property ids cannot be new for
-     * now).
+     * Extracts all new entities mentioned by this snak group. Currently there will be at most one: the target of the
+     * snak (as property ids cannot be new for now).
      * 
      * @param snak
      * @return

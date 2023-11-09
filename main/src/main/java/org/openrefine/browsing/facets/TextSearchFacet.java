@@ -35,6 +35,8 @@ package org.openrefine.browsing.facets;
 
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.FilteredRecords;
 import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RecordFilter;
@@ -49,76 +51,76 @@ import org.openrefine.model.Column;
 import org.openrefine.model.Project;
 import org.openrefine.util.PatternSyntaxExceptionParser;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class TextSearchFacet implements Facet {
-    
+
     /*
-     *  Configuration
+     * Configuration
      */
-    public static class TextSearchFacetConfig implements FacetConfig {  
+    public static class TextSearchFacetConfig implements FacetConfig {
+
         @JsonProperty("name")
-        protected String     _name;
+        protected String _name;
         @JsonProperty("columnName")
-        protected String     _columnName;
+        protected String _columnName;
         @JsonProperty("query")
-        protected String     _query = null;
+        protected String _query = null;
         @JsonProperty("mode")
-        protected String     _mode;
+        protected String _mode;
         @JsonProperty("caseSensitive")
-        protected boolean    _caseSensitive;
+        protected boolean _caseSensitive;
         @JsonProperty("invert")
-        protected boolean    _invert;
-        
+        protected boolean _invert;
+
         @Override
         public TextSearchFacet apply(Project project) {
             TextSearchFacet facet = new TextSearchFacet();
             facet.initializeFromConfig(this, project);
             return facet;
         }
-        
+
         @Override
         public String getJsonType() {
             return "core/text";
         }
     }
+
     TextSearchFacetConfig _config = new TextSearchFacetConfig();
-    
+
     /*
-     *  Derived configuration
+     * Derived configuration
      */
-    protected int        _cellIndex;
-    protected Pattern    _pattern;
-    protected String     _query; // normalized version of the query from the config
-    
+    protected int _cellIndex;
+    protected Pattern _pattern;
+    protected String _query; // normalized version of the query from the config
+
     public TextSearchFacet() {
     }
-    
+
     @JsonProperty("name")
     public String getName() {
         return _config._name;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _config._columnName;
     }
-    
+
     @JsonProperty("query")
     public String getQuery() {
         return _config._query;
     }
-    
+
     @JsonProperty("mode")
     public String getMode() {
         return _config._mode;
     }
-    
+
     @JsonProperty("caseSensitive")
     public boolean isCaseSensitive() {
         return _config._caseSensitive;
     }
-    
+
     @JsonProperty("invert")
     public boolean isInverted() {
         return _config._invert;
@@ -126,16 +128,16 @@ public class TextSearchFacet implements Facet {
 
     public void initializeFromConfig(TextSearchFacetConfig config, Project project) {
         _config = config;
-        
+
         Column column = project.columnModel.getColumnByName(_config._columnName);
         _cellIndex = column != null ? column.getCellIndex() : -1;
-        
+
         _query = _config._query;
         if (_query != null) {
             if ("regex".equals(_config._mode)) {
                 try {
                     _pattern = Pattern.compile(
-                            _query, 
+                            _query,
                             _config._caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
                 } catch (java.util.regex.PatternSyntaxException e) {
                     PatternSyntaxExceptionParser err = new PatternSyntaxExceptionParser(e);
@@ -155,11 +157,12 @@ public class TextSearchFacet implements Facet {
         } else if ("regex".equals(_config._mode) && _pattern == null) {
             return null;
         }
-        
+
         Evaluable eval = new VariableExpr("value");
-        
+
         if ("regex".equals(_config._mode)) {
             return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
+
                 @Override
                 protected boolean checkValue(String s) {
                     return _pattern.matcher(s).find();
@@ -167,12 +170,13 @@ public class TextSearchFacet implements Facet {
             };
         } else {
             return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
+
                 @Override
                 protected boolean checkValue(String s) {
                     return (_config._caseSensitive ? s : s.toLowerCase()).contains(_query);
                 };
             };
-        }        
+        }
     }
 
     @Override

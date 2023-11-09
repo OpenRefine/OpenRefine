@@ -40,32 +40,32 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.commands.Command;
 import org.openrefine.grel.Control;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.Function;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class GetExpressionLanguageInfoCommand extends Command {
-    
-    public static class LanguageInfo  {
-        
+
+    public static class LanguageInfo {
+
         @JsonProperty("functions")
         Map<String, Function> functions;
         @JsonProperty("controls")
         Map<String, Control> controls;
-        
+
         public LanguageInfo() {
             functions = ControlFunctionRegistry.getFunctionMap();
             controls = ControlFunctionRegistry.getControlMap();
         }
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             respondJSON(response, new LanguageInfo());
         } catch (Exception e) {

@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -47,14 +46,13 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openrefine.importers.ExcelImporter;
-import org.openrefine.util.ParsingUtilities;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -62,74 +60,76 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.openrefine.importers.ExcelImporter;
+import org.openrefine.util.ParsingUtilities;
 
 public class ExcelImporterTests extends ImporterTest {
-    
+
     private static final double EPSILON = 0.0000001;
     private static final int SHEETS = 3;
     private static final int ROWS = 5;
     private static final int COLUMNS = 6;
-    
-    //private static final File xlsxFile = createSpreadsheet(true);
+
+    // private static final File xlsxFile = createSpreadsheet(true);
     private static final File xlsFile = createSpreadsheet(false);
     private static final File xlsxFile = createSpreadsheet(true);
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //System Under Test
+    // System Under Test
     ExcelImporter SUT = null;
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
         SUT = new ExcelImporter();
     }
 
     @Override
     @AfterMethod
-    public void tearDown(){
+    public void tearDown() {
         SUT = null;
         super.tearDown();
     }
-    
-    //---------------------read tests------------------------
+
+    // ---------------------read tests------------------------
     @Test
-    public void readXls() throws FileNotFoundException, IOException{
+    public void readXls() throws FileNotFoundException, IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
-        
+
         whenGetIntegerOption("ignoreLines", options, 0);
         whenGetIntegerOption("headerLines", options, 0);
         whenGetIntegerOption("skipDataLines", options, 0);
         whenGetIntegerOption("limit", options, -1);
-        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
-        
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
         InputStream stream = new FileInputStream(xlsFile);
-        
+
         try {
             parseOneFile(SUT, stream);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
-        
+
         Assert.assertEquals(project.rows.size(), ROWS);
         Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
-        Assert.assertEquals(((Number)project.rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
-        Assert.assertEquals(((Number)project.rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        Assert.assertEquals(((Number) project.rows.get(1).getCellValue(0)).doubleValue(), 1.1, EPSILON);
+        Assert.assertEquals(((Number) project.rows.get(2).getCellValue(0)).doubleValue(), 2.2, EPSILON);
 
-        Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
-        Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
-        
-        Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
-        Assert.assertNull((String)project.rows.get(1).getCellValue(5));
+        Assert.assertFalse((Boolean) project.rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean) project.rows.get(2).getCellValue(1));
+
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
+        Assert.assertNull((String) project.rows.get(1).getCellValue(5));
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -137,38 +137,39 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(1)).get("limit");
         verify(options, times(1)).get("storeBlankCellsAsNulls");
     }
-    
+
     @Test
-    public void readXlsx() throws FileNotFoundException, IOException{
+    public void readXlsx() throws FileNotFoundException, IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
-        
+
         whenGetIntegerOption("ignoreLines", options, 0);
         whenGetIntegerOption("headerLines", options, 0);
         whenGetIntegerOption("skipDataLines", options, 0);
         whenGetIntegerOption("limit", options, -1);
-        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
-        
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
         InputStream stream = new FileInputStream(xlsxFile);
-        
+
         try {
             parseOneFile(SUT, stream);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
-        
+
         Assert.assertEquals(project.rows.size(), ROWS);
         Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
-        Assert.assertEquals(((Number)project.rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
-        Assert.assertEquals(((Number)project.rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        Assert.assertEquals(((Number) project.rows.get(1).getCellValue(0)).doubleValue(), 1.1, EPSILON);
+        Assert.assertEquals(((Number) project.rows.get(2).getCellValue(0)).doubleValue(), 2.2, EPSILON);
 
-        Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
-        Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
-        
-        Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
-        Assert.assertNull((String)project.rows.get(1).getCellValue(5));
+        Assert.assertFalse((Boolean) project.rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean) project.rows.get(2).getCellValue(1));
+
+        Assert.assertEquals((String) project.rows.get(1).getCellValue(4), " Row 1 Col 5");
+        Assert.assertNull((String) project.rows.get(1).getCellValue(5));
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -176,7 +177,7 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(1)).get("limit");
         verify(options, times(1)).get("storeBlankCellsAsNulls");
     }
-    
+
     private static File createSpreadsheet(boolean xml) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
@@ -207,9 +208,9 @@ public class ExcelImporterTests extends ImporterTest {
                 c = r.createCell(col++);
                 c.setCellValue(""); // string
 
-                //            HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
-                //            hl.setLabel(cellData.text);
-                //            hl.setAddress(cellData.link);
+                // HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+                // hl.setLabel(cellData.text);
+                // hl.setAddress(cellData.link);
             }
 
         }
@@ -227,7 +228,7 @@ public class ExcelImporterTests extends ImporterTest {
             return null;
         }
         return file;
-        
+
     }
 
 }

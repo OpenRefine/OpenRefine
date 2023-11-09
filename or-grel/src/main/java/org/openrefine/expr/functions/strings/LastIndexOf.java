@@ -50,17 +50,17 @@ public class LastIndexOf extends PureFunction {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns the index of sub last ocurring in s";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

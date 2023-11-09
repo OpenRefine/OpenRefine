@@ -48,18 +48,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.mit.simile.butterfly.ButterflyModule;
 import org.apache.commons.io.FileUtils;
-import org.openrefine.RefineServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import edu.mit.simile.butterfly.ButterflyModule;
+import org.openrefine.RefineServlet;
 
 public class ImportingManager {
+
     static public class Format {
+
         @JsonProperty("id")
         final public String id;
         @JsonProperty("label")
@@ -70,14 +71,13 @@ public class ImportingManager {
         final public String uiClass;
         @JsonIgnore
         final public ImportingParser parser;
-        
+
         private Format(
-            String id,
-            String label,
-            boolean download,
-            String uiClass,
-            ImportingParser parser
-        ) {
+                String id,
+                String label,
+                boolean download,
+                String uiClass,
+                ImportingParser parser) {
             this.id = id;
             this.label = label;
             this.download = download;
@@ -85,69 +85,70 @@ public class ImportingManager {
             this.parser = parser;
         }
     }
-    
+
     final static Logger logger = LoggerFactory.getLogger("importing");
-    
+
     static private RefineServlet servlet;
     static private File importDir;
-    
+
     final static private Map<Long, ImportingJob> jobs = Collections.synchronizedMap(new HashMap<Long, ImportingJob>());
     static private long jobIdCounter = 0;
     final static private Object jobIdLock = new Object();
-    
+
     // Mapping from format to label, e.g., "text" to "Text files", "text/xml" to "XML files"
     final static public Map<String, Format> formatToRecord = new HashMap<String, Format>();
-    
+
     // Mapping from format to guessers
     final static public Map<String, List<FormatGuesser>> formatToGuessers = new HashMap<String, List<FormatGuesser>>();
-    
+
     // Mapping from file extension to format, e.g., ".xml" to "text/xml"
     final static public Map<String, String> extensionToFormat = new HashMap<String, String>();
-    
+
     // Mapping from mime type to format, e.g., "application/json" to "text/json"
     final static public Map<String, String> mimeTypeToFormat = new HashMap<String, String>();
-    
+
     // URL rewriters
     final static public Set<UrlRewriter> urlRewriters = new HashSet<UrlRewriter>();
-    
+
     // Mapping from controller name to controller
     final static public Map<String, ImportingController> controllers = new HashMap<String, ImportingController>();
-    
+
     // timer for periodically deleting stale importing jobs
     static private ScheduledExecutorService service;
 
     final static private long TIMER_PERIOD = 10; // 10 minutes
     final static private long STALE_PERIOD = 60 * 60 * 1000; // 60 minutes in milliseconds
-    
+
     static private class CleaningTimerTask implements Runnable {
+
         @Override
         public void run() {
-            // An exception here will keep future runs of this task from happening, 
+            // An exception here will keep future runs of this task from happening,
             // but won't affect other timer tasks
             cleanUpStaleJobs();
         }
     }
-    
+
     static public void initialize(RefineServlet servlet) {
         ImportingManager.servlet = servlet;
-        
-        service =  Executors.newSingleThreadScheduledExecutor();
+
+        service = Executors.newSingleThreadScheduledExecutor();
         service.scheduleWithFixedDelay(new CleaningTimerTask(), TIMER_PERIOD, TIMER_PERIOD, TimeUnit.MINUTES);
     }
-    
+
     static public void registerFormat(String format, String label) {
         registerFormat(format, label, null, null);
     }
-    
+
     static public void registerFormat(String format, String label, String uiClass, ImportingParser parser) {
         formatToRecord.put(format, new Format(format, label, true, uiClass, parser));
     }
-    
+
     static public void registerFormat(
             String format, String label, boolean download, String uiClass, ImportingParser parser) {
         formatToRecord.put(format, new Format(format, label, download, uiClass, parser));
     }
-    
+
     static public void registerFormatGuesser(String format, FormatGuesser guesser) {
         List<FormatGuesser> guessers = formatToGuessers.get(format);
         if (guessers == null) {
@@ -156,23 +157,23 @@ public class ImportingManager {
         }
         guessers.add(0, guesser); // prepend so that newer guessers take priority
     }
-    
+
     static public void registerExtension(String extension, String format) {
         extensionToFormat.put(extension.startsWith(".") ? extension : ("." + extension), format);
     }
-    
+
     static public void registerMimeType(String mimeType, String format) {
         mimeTypeToFormat.put(mimeType, format);
     }
-    
+
     static public void registerUrlRewriter(UrlRewriter urlRewriter) {
         urlRewriters.add(urlRewriter);
     }
-    
+
     static public void registerController(ButterflyModule module, String name, ImportingController controller) {
         String key = module.getName() + "/" + name;
         controllers.put(key, controller);
-        
+
         controller.init(servlet);
     }
 
@@ -180,7 +181,7 @@ public class ImportingManager {
         if (importDir == null) {
             File tempDir = servlet.getTempDir();
             importDir = tempDir == null ? new File(".import-temp") : new File(tempDir, "import");
-            
+
             if (importDir.exists()) {
                 try {
                     // start fresh
@@ -192,33 +193,33 @@ public class ImportingManager {
         }
         return importDir;
     }
-    
+
     static public ImportingJob createJob() {
         long id;
-        
-        synchronized(jobIdLock) {
+
+        synchronized (jobIdLock) {
             ++jobIdCounter;
-            
+
             // Avoid negative job id's when the counter wraps around.
             if (jobIdCounter < 0) {
                 jobIdCounter = 1;
             }
-            
+
             id = jobIdCounter;
         }
-        
+
         File jobDir = new File(getImportDir(), Long.toString(id));
-        
+
         ImportingJob job = new ImportingJob(id, jobDir);
         jobs.put(id, job);
-        
+
         return job;
     }
-    
+
     static public ImportingJob getJob(long id) {
         return jobs.get(id);
     }
-    
+
     static public void disposeJob(long id) {
         ImportingJob job = getJob(id);
         if (job != null) {
@@ -226,16 +227,25 @@ public class ImportingManager {
             jobs.remove(id);
         }
     }
-    
+
     static public class ImportingConfiguration {
+
         @JsonProperty("formats")
-        public Map<String, Format> getFormats() { return formatToRecord; }
+        public Map<String, Format> getFormats() {
+            return formatToRecord;
+        }
+
         @JsonProperty("mimeTypeToFormat")
-        public Map<String, String> getMimeTypeToFormat() { return mimeTypeToFormat; }
+        public Map<String, String> getMimeTypeToFormat() {
+            return mimeTypeToFormat;
+        }
+
         @JsonProperty("extensionToFormat")
-        public Map<String, String> getExtensionToFormat() { return extensionToFormat; }
+        public Map<String, String> getExtensionToFormat() {
+            return extensionToFormat;
+        }
     }
-    
+
     static public String getFormatFromFileName(String fileName) {
         int start = 0;
         while (true) {
@@ -243,7 +253,7 @@ public class ImportingManager {
             if (dot < 0) {
                 break;
             }
-            
+
             String extension = fileName.substring(dot);
             String format = extensionToFormat.get(extension);
             if (format != null) {
@@ -254,11 +264,11 @@ public class ImportingManager {
         }
         return null;
     }
-    
+
     static public String getFormatFromMimeType(String mimeType) {
         return mimeTypeToFormat.get(mimeType);
     }
-    
+
     static public String getFormat(String fileName, String mimeType) {
         String fileNameFormat = getFormatFromFileName(fileName);
         if (mimeType != null) {
@@ -276,11 +286,11 @@ public class ImportingManager {
             return fileNameFormat;
         }
     }
-    
+
     static private void cleanUpStaleJobs() {
         long now = System.currentTimeMillis();
         Collection<Long> keys;
-        synchronized(jobs) {
+        synchronized (jobs) {
             keys = new ArrayList<Long>(jobs.keySet());
         }
         for (Long id : keys) {

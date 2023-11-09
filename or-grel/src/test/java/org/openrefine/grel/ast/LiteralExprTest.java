@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.grel.ast;
 
 import static org.testng.Assert.assertEquals;
@@ -33,23 +34,24 @@ import java.util.Collections;
 import org.testng.annotations.Test;
 
 public class LiteralExprTest extends ExprTestBase {
-	@Test
-	public void intLiteralToString() {
-		LiteralExpr expr = new LiteralExpr(42);
-		assertEquals("42", expr.toString());
-	}
-	
-	@Test
-	public void stringLiteralToString() {
-		LiteralExpr expr = new LiteralExpr("string with \"\\backslash\"");
-		assertEquals("\"string with \\\"\\\\backslash\\\"\"", expr.toString());
-	}
-	
-	@Test
-	public void columnDependencies() {
-	    LiteralExpr expr = new LiteralExpr(34);
-	    assertEquals(expr.getColumnDependencies("column"), Collections.emptySet());
-	    LiteralExpr string = new LiteralExpr("foo");
-	    assertEquals(string.getColumnDependencies("foo"), Collections.emptySet());
-	}
+
+    @Test
+    public void intLiteralToString() {
+        LiteralExpr expr = new LiteralExpr(42);
+        assertEquals("42", expr.toString());
+    }
+
+    @Test
+    public void stringLiteralToString() {
+        LiteralExpr expr = new LiteralExpr("string with \"\\backslash\"");
+        assertEquals("\"string with \\\"\\\\backslash\\\"\"", expr.toString());
+    }
+
+    @Test
+    public void columnDependencies() {
+        LiteralExpr expr = new LiteralExpr(34);
+        assertEquals(expr.getColumnDependencies("column"), Collections.emptySet());
+        LiteralExpr string = new LiteralExpr("foo");
+        assertEquals(string.getColumnDependencies("foo"), Collections.emptySet());
+    }
 }

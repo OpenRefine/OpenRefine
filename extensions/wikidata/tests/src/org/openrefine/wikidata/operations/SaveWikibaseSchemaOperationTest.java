@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import static org.testng.Assert.assertEquals;
@@ -28,13 +29,14 @@ import static org.testng.Assert.assertNull;
 
 import java.io.LineNumberReader;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.openrefine.history.Change;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class SaveWikibaseSchemaOperationTest extends OperationTest {
 

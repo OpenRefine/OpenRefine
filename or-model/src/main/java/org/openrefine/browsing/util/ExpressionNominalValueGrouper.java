@@ -53,11 +53,12 @@ import org.openrefine.model.Row;
 import org.openrefine.util.StringUtils;
 
 /**
- * Visit matched rows or records and group them into facet choices based on the values computed
- * from a given expression.
+ * Visit matched rows or records and group them into facet choices based on the values computed from a given expression.
  */
 public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor {
+
     static public class IndexedNominalFacetChoice extends NominalFacetChoice {
+
         int _latestIndex;
 
         public IndexedNominalFacetChoice(DecoratedValue decoratedValue, int latestIndex) {
@@ -69,9 +70,9 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
     /*
      * Configuration
      */
-    final protected Evaluable   _evaluable;
-    final protected String      _columnName;
-    final protected int         _cellIndex;
+    final protected Evaluable _evaluable;
+    final protected String _columnName;
+    final protected int _cellIndex;
 
     /*
      * Computed results
@@ -186,8 +187,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
             } else {
                 String label = valueString;
                 DecoratedValue dValue = new DecoratedValue(value, label);
-                IndexedNominalFacetChoice choice = 
-                    new IndexedNominalFacetChoice(dValue, index);
+                IndexedNominalFacetChoice choice = new IndexedNominalFacetChoice(dValue, index);
 
                 choice.count = 1;
                 choices.put(valueString, choice);
@@ -199,6 +199,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
     public RowEvaluable getChoiceCountRowEvaluable() {
         return new RowEvaluable() {
+
             @Override
             public Object eval(Project project, int rowIndex, Row row, Properties bindings) {
                 Object value = evalRow(project, rowIndex, row, bindings);

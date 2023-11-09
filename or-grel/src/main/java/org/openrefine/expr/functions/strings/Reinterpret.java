@@ -79,7 +79,8 @@ public class Reinterpret implements Function {
             try {
                 bytes = str.getBytes(decoder);
             } catch (UnsupportedEncodingException e) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": source encoding '" + decoder + "' is not available or recognized.");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": source encoding '" + decoder
+                        + "' is not available or recognized.");
             }
         }
         try {
@@ -89,22 +90,23 @@ public class Reinterpret implements Function {
                 result = new String(bytes, encoder);
             }
         } catch (UnsupportedEncodingException e) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": encoding '" + encoder + "' is not available or recognized.");
+            return new EvalError(
+                    ControlFunctionRegistry.getFunctionName(this) + ": encoding '" + encoder + "' is not available or recognized.");
         }
-                        
+
         return result;
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns s reinterpreted thru the given encoder.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string encoder";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.math;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class MultinomialTests {
+
     @Test
     public void serializeMultinomial() {
         String json = "{\"description\":\"Calculates the multinomial of a series of numbers\",\"params\":\"one or more numbers\",\"returns\":\"number\"}";
         TestUtils.isSerializedTo(new Multinomial(), json, ParsingUtilities.defaultWriter);
     }
 }
-

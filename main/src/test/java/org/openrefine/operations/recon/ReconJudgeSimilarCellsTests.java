@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
 
 import static org.testng.Assert.assertEquals;
@@ -33,6 +34,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Properties;
+
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
@@ -48,23 +53,20 @@ import org.openrefine.operations.recon.ReconJudgeSimilarCellsOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 public class ReconJudgeSimilarCellsTests extends RefineTest {
-    
+
     static final EngineConfig ENGINE_CONFIG = EngineConfig.reconstruct("{\"mode\":\"row-based\"}}");
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
         OperationRegistry.registerOperation("core", "recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
     }
-    
+
     @Test
-    public void serializeReconJudgeSimilarCellsOperation() throws  IOException {
+    public void serializeReconJudgeSimilarCellsOperation() throws IOException {
         String json = "{\"op\":\"core/recon-judge-similar-cells\","
                 + "\"description\":\"Mark to create one single new item for all cells containing \\\"foo\\\" in column A\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
@@ -72,11 +74,12 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 + "\"similarValue\":\"foo\","
                 + "\"judgment\":\"new\","
                 + "\"shareNewTopics\":true}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
-    public void serializeReconJudgeSimilarCellsOperationMatch() throws  IOException {
+    public void serializeReconJudgeSimilarCellsOperationMatch() throws IOException {
         String json = "{\"op\":\"core/recon-judge-similar-cells\","
                 + "\"description\":\"Match item Douglas Adams (Q42) for cells containing \\\"foo\\\" in column A\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
@@ -86,17 +89,18 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 + "\"match\":{\"id\":\"Q42\",\"name\":\"Douglas Adams\",\"types\":[\"Q5\"],\"score\":85},"
                 + "\"shareNewTopics\":false"
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testMarkNewTopics() throws Exception {
         Project project = createProject(
-                new String[] {"A","B"},
+                new String[] { "A", "B" },
                 new Serializable[] {
-                "foo","bar",
-                "alpha","beta"});
-        
+                        "foo", "bar",
+                        "alpha", "beta" });
+
         Column column = project.columnModel.columns.get(0);
         ReconConfig config = new StandardReconConfig(
                 "http://my.database/recon_service",
@@ -108,14 +112,14 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
         column.setReconConfig(config);
 
         AbstractOperation op = new ReconJudgeSimilarCellsOperation(
-            ENGINE_CONFIG,
-            "A",
-            "foo",
-            Recon.Judgment.New,
-            null, true);
+                ENGINE_CONFIG,
+                "A",
+                "foo",
+                Recon.Judgment.New,
+                null, true);
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        
+
         Cell cell = project.rows.get(0).cells.get(0);
         assertEquals(Recon.Judgment.New, cell.recon.judgment);
         assertEquals("http://my.database/entity/", cell.recon.identifierSpace);

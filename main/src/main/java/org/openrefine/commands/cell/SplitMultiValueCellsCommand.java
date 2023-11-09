@@ -40,6 +40,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import org.openrefine.commands.Command;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
@@ -47,20 +49,19 @@ import org.openrefine.operations.cell.MultiValuedCellSplitOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 public class SplitMultiValueCellsCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
-            
+
             String columnName = request.getParameter("columnName");
             String keyColumnName = request.getParameter("keyColumnName");
             String separator = request.getParameter("separator");
@@ -68,23 +69,24 @@ public class SplitMultiValueCellsCommand extends Command {
             Boolean regex = Boolean.parseBoolean(request.getParameter("regex"));
 
             if ("separator".equals(mode)) {
-                AbstractOperation op = new MultiValuedCellSplitOperation(columnName, 
-                                                                         keyColumnName,
-                                                                         separator, 
-                                                                         regex);
+                AbstractOperation op = new MultiValuedCellSplitOperation(columnName,
+                        keyColumnName,
+                        separator,
+                        regex);
                 Process process = op.createProcess(project, new Properties());
-                
+
                 performProcessAndRespond(request, response, project, process);
             } else {
                 String s = request.getParameter("fieldLengths");
-                
-                int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {});
-                
+
+                int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {
+                });
+
                 AbstractOperation op = new MultiValuedCellSplitOperation(columnName,
-                                                                         keyColumnName,
-                                                                         fieldLengths);
+                        keyColumnName,
+                        fieldLengths);
                 Process process = op.createProcess(project, new Properties());
-                
+
                 performProcessAndRespond(request, response, project, process);
             }
         } catch (Exception e) {

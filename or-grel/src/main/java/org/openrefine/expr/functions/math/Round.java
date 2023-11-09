@@ -46,17 +46,17 @@ public class Round extends PureFunction {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns n rounded";
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

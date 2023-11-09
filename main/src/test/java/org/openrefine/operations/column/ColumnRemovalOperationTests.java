@@ -24,29 +24,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.column;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnRemovalOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
 
 public class ColumnRemovalOperationTests extends RefineTest {
-    
+
     @BeforeSuite
     public void setUp() {
         OperationRegistry.registerOperation("core", "column-removal", ColumnRemovalOperation.class);
     }
-    
+
     @Test
     public void serializeColumnRemovalOperation() throws Exception {
         String json = "{\"op\":\"core/column-removal\","
                 + "\"description\":\"Remove column my column\","
                 + "\"columnName\":\"my column\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
 }

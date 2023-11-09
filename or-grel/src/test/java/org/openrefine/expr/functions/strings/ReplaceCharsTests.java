@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ReplaceCharsTests {
+
     @Test
     public void serializeReplaceChars() {
         String json = "{\"description\":\"Returns the string obtained by replacing all chars in f with the char in s at that same position\",\"params\":\"string s, string f, string r\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new ReplaceChars(), json, ParsingUtilities.defaultWriter);
     }
 }
-

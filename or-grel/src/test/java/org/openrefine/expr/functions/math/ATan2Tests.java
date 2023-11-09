@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.math;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ATan2Tests {
+
     @Test
     public void serializeATan2() {
         String json = "{\"description\":\"Converts rectangular coordinates (x, y) to polar (r, theta)\",\"params\":\"number x, number y\",\"returns\":\"number theta\"}";
         TestUtils.isSerializedTo(new ATan2(), json, ParsingUtilities.defaultWriter);
     }
 }
-

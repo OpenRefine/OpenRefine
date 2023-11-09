@@ -55,12 +55,12 @@ public class EndsWith extends PureFunction {
     public String getDescription() {
         return "Returns whether s ends with sub";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

@@ -24,13 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.clustering.binning;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Arrays;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
@@ -39,36 +43,32 @@ import org.openrefine.clustering.binning.BinningClusterer.BinningClustererConfig
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class BinningClustererTests extends RefineTest {
-    
+
     String configJson = "{"
             + "\"type\":\"binning\","
             + "\"function\":\"fingerprint\","
             + "\"column\":\"values\","
             + "\"params\":{}}";
-    
+
     String configNgramJson = "{"
             + "\"type\":\"binning\","
             + "\"function\":\"ngram-fingerprint\","
             + "\"column\":\"values\","
             + "\"params\":{\"ngram-size\":2}}";
-    
+
     String clustererJson = "["
             + "  [{\"v\":\"a\",\"c\":1},{\"v\":\"à\",\"c\":1}],"
             + "  [{\"v\":\"c\",\"c\":1},{\"v\":\"ĉ\",\"c\":1}]"
             + "]";
-    
+
     @Test
     public void testSerializeBinningClustererConfig() throws JsonParseException, JsonMappingException, IOException {
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
         TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testSerializeBinningClustererConfigWithNgrams() throws JsonParseException, JsonMappingException, IOException {
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configNgramJson, BinningClustererConfig.class);
@@ -77,27 +77,27 @@ public class BinningClustererTests extends RefineTest {
 
     @Test
     public void testSerializeBinningClusterer() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(new String[] {"column"},
+        Project project = createProject(new String[] { "column" },
                 new Serializable[] {
-                "a",
-                "à",
-                "c",
-                "ĉ"});
+                        "a",
+                        "à",
+                        "c",
+                        "ĉ" });
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
         BinningClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
         TestUtils.isSerializedTo(clusterer, clustererJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testNoLonelyClusters() throws JsonParseException, JsonMappingException, IOException {
-    	Project project = createProject(new String[] {"column"},
+        Project project = createProject(new String[] { "column" },
                 new Serializable[] {
-    			"c",
-                "ĉ",
-                "d"});
-    	BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
-    	BinningClusterer clusterer = config.apply(project);
+                        "c",
+                        "ĉ",
+                        "d" });
+        BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
+        BinningClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
         assertEquals(clusterer.getJsonRepresentation().size(), 1);
     }

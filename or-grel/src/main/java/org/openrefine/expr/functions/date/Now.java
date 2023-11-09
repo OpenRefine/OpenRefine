@@ -52,7 +52,7 @@ public class Now extends PureFunction {
     public String getDescription() {
         return "Returns the current time";
     }
-    
+
     @Override
     public String getReturns() {
         return "date";

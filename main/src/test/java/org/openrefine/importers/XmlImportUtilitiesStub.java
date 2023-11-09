@@ -44,8 +44,8 @@ import org.openrefine.importers.tree.XmlImportUtilities;
 import org.openrefine.model.Project;
 
 public class XmlImportUtilitiesStub extends XmlImportUtilities {
-    
-    public List<String> detectRecordElementWrapper(TreeReader parser, String tag) throws Exception{
+
+    public List<String> detectRecordElementWrapper(TreeReader parser, String tag) throws Exception {
         return super.detectRecordElement(parser, tag);
     }
 
@@ -58,22 +58,24 @@ public class XmlImportUtilitiesStub extends XmlImportUtilities {
     public void findRecordWrapper(Project project, TreeReader parser, String[] recordPath, int pathIndex,
             ImportColumnGroup rootColumnGroup, boolean trimStrings, boolean storeEmptyStrings, boolean guessDataType)
             throws Exception {
-        super.findRecord(project, parser, recordPath, pathIndex, rootColumnGroup, -1, 
+        super.findRecord(project, parser, recordPath, pathIndex, rootColumnGroup, -1,
                 new ImportParameters(trimStrings, storeEmptyStrings, guessDataType));
     }
 
     public void processRecordWrapper(Project project, TreeReader parser, ImportColumnGroup rootColumnGroup,
             boolean trimStrings, boolean storeEmptyStrings, boolean guessDataType)
             throws Exception {
-        super.processRecord(project, parser, rootColumnGroup, 
+        super.processRecord(project, parser, rootColumnGroup,
                 new ImportParameters(trimStrings, storeEmptyStrings, guessDataType));
-    }    
+    }
 
-    public void addCellWrapper(Project project, ImportColumnGroup columnGroup, ImportRecord record, String columnLocalName, Serializable value, int commonStartingRowIndex) {
+    public void addCellWrapper(Project project, ImportColumnGroup columnGroup, ImportRecord record, String columnLocalName,
+            Serializable value, int commonStartingRowIndex) {
         super.addCell(project, columnGroup, record, columnLocalName, value);
     }
 
-    public void addCellWrapper(Project project, ImportColumnGroup columnGroup, ImportRecord record, String columnLocalName, String text, int commonStartingRowIndex, boolean trimStrings, boolean storeEmptyStrings) {
+    public void addCellWrapper(Project project, ImportColumnGroup columnGroup, ImportRecord record, String columnLocalName, String text,
+            int commonStartingRowIndex, boolean trimStrings, boolean storeEmptyStrings) {
         super.addCell(project, columnGroup, record, columnLocalName, text, trimStrings, storeEmptyStrings);
     }
 }

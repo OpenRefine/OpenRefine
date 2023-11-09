@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates;
 
 import java.util.ArrayList;
@@ -34,8 +35,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jsoup.helper.Validate;
-import org.openrefine.wikidata.utils.StatementGroupJson;
 import org.wikidata.wdtk.datamodel.implementation.StatementGroupImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -44,14 +47,11 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.wikidata.utils.StatementGroupJson;
 
 /**
- * A class to plan an update of an item, after evaluating the statements but
- * before fetching the current content of the item (this is why it does not
- * extend StatementsUpdate).
+ * A class to plan an update of an item, after evaluating the statements but before fetching the current content of the
+ * item (this is why it does not extend StatementsUpdate).
  * 
  * @author Antonin Delpeuch
  */
@@ -70,11 +70,10 @@ public class ItemUpdate {
      * Constructor.
      * 
      * @param qid
-     *            the subject of the document. It can be a reconciled item value for
-     *            new items.
+     *            the subject of the document. It can be a reconciled item value for new items.
      * @param addedStatements
-     *            the statements to add on the item. They should be distinct. They
-     *            are modeled as a list because their insertion order matters.
+     *            the statements to add on the item. They should be distinct. They are modeled as a list because their
+     *            insertion order matters.
      * @param deletedStatements
      *            the statements to remove from the item
      * @param labels
@@ -86,9 +85,8 @@ public class ItemUpdate {
      * @param descriptionsIfNew
      *            the descriptions to add on the item, only if no description for that language exists
      * @param aliases
-     *            the aliases to add on the item. In theory their order should
-     *            matter but in practice people rarely rely on the order of aliases
-     *            so this is just kept as a set for simplicity.
+     *            the aliases to add on the item. In theory their order should matter but in practice people rarely rely
+     *            on the order of aliases so this is just kept as a set for simplicity.
      */
     @JsonCreator
     public ItemUpdate(@JsonProperty("subject") ItemIdValue qid,
@@ -117,21 +115,20 @@ public class ItemUpdate {
         mergeSingleTermMaps(this.descriptions, this.descriptionsIfNew, descriptions, descriptionsIfNew);
         this.aliases = constructTermListMap(aliases != null ? aliases : Collections.emptyList());
     }
-    
+
     /**
-     * Private constructor to avoid re-constructing term maps when
-     * merging two item updates.
+     * Private constructor to avoid re-constructing term maps when merging two item updates.
      * 
      * No validation is done on the arguments, they all have to be non-null.
      * 
      * @param qid
-     * 		the subject of the update
+     *            the subject of the update
      * @param addedStatements
-     *      the statements to add
+     *            the statements to add
      * @param deletedStatements
-     *      the statements to delete
+     *            the statements to delete
      * @param labels
-     *      the labels to add on the item, overriding any existing one in that language   
+     *            the labels to add on the item, overriding any existing one in that language
      * @param labelsIfNew
      *            the labels to add on the item, only if no label for that language exists
      * @param descriptions
@@ -139,27 +136,27 @@ public class ItemUpdate {
      * @param descriptionsIfNew
      *            the descriptions to add on the item, only if no description for that language exists
      * @param descriptions
-     *      the descriptions to add
+     *            the descriptions to add
      * @param aliases
-     *      the aliases to add
+     *            the aliases to add
      */
     private ItemUpdate(
-    		ItemIdValue qid,
-    		List<Statement> addedStatements,
-    		Set<Statement> deletedStatements,
-    		Map<String, MonolingualTextValue> labels,
-    		Map<String, MonolingualTextValue> labelsIfNew,
-    		Map<String, MonolingualTextValue> descriptions,
-    		Map<String, MonolingualTextValue> descriptionsIfNew,
-    		Map<String, List<MonolingualTextValue>> aliases) {
-    	this.qid = qid;
-    	this.addedStatements = addedStatements;
-    	this.deletedStatements = deletedStatements;
-    	this.labels = labels;
-    	this.labelsIfNew = labelsIfNew;
-    	this.descriptions = descriptions;
-    	this.descriptionsIfNew = descriptionsIfNew;
-    	this.aliases = aliases;
+            ItemIdValue qid,
+            List<Statement> addedStatements,
+            Set<Statement> deletedStatements,
+            Map<String, MonolingualTextValue> labels,
+            Map<String, MonolingualTextValue> labelsIfNew,
+            Map<String, MonolingualTextValue> descriptions,
+            Map<String, MonolingualTextValue> descriptionsIfNew,
+            Map<String, List<MonolingualTextValue>> aliases) {
+        this.qid = qid;
+        this.addedStatements = addedStatements;
+        this.deletedStatements = deletedStatements;
+        this.labels = labels;
+        this.labelsIfNew = labelsIfNew;
+        this.descriptions = descriptions;
+        this.descriptionsIfNew = descriptionsIfNew;
+        this.aliases = aliases;
     }
 
     /**
@@ -171,8 +168,7 @@ public class ItemUpdate {
     }
 
     /**
-     * Added statements are recorded as a list because their order of insertion
-     * matters.
+     * Added statements are recorded as a list because their order of insertion matters.
      * 
      * @return the list of all added statements
      */
@@ -196,7 +192,7 @@ public class ItemUpdate {
     public Set<MonolingualTextValue> getLabels() {
         return labels.values().stream().collect(Collectors.toSet());
     }
-    
+
     /**
      * @return the list of updated labels, only added if new
      */
@@ -212,7 +208,7 @@ public class ItemUpdate {
     public Set<MonolingualTextValue> getDescriptions() {
         return descriptions.values().stream().collect(Collectors.toSet());
     }
-    
+
     /**
      * @return the list of updated descriptions, only added if new
      */
@@ -243,19 +239,18 @@ public class ItemUpdate {
     @JsonIgnore
     public boolean isEmpty() {
         return (addedStatements.isEmpty() &&
-        		deletedStatements.isEmpty() &&
-        		labels.isEmpty() &&
-        		descriptions.isEmpty() &&
-        		aliases.isEmpty() &&
-        		labelsIfNew.isEmpty() &&
-        		descriptionsIfNew.isEmpty());
+                deletedStatements.isEmpty() &&
+                labels.isEmpty() &&
+                descriptions.isEmpty() &&
+                aliases.isEmpty() &&
+                labelsIfNew.isEmpty() &&
+                descriptionsIfNew.isEmpty());
     }
 
     /**
-     * Merges all the changes in other with this instance. Both updates should have
-     * the same subject. Changes coming from `other` have priority over changes
-     * from this instance. This instance is not modified, the merged update is returned
-     * instead.
+     * Merges all the changes in other with this instance. Both updates should have the same subject. Changes coming
+     * from `other` have priority over changes from this instance. This instance is not modified, the merged update is
+     * returned instead.
      * 
      * @param other
      *            the other change that should be merged
@@ -270,25 +265,26 @@ public class ItemUpdate {
         }
         Set<Statement> newDeletedStatements = new HashSet<>(deletedStatements);
         newDeletedStatements.addAll(other.getDeletedStatements());
-        Map<String,MonolingualTextValue> newLabels = new HashMap<>(labels);
-        Map<String,MonolingualTextValue> newLabelsIfNew = new HashMap<>(labelsIfNew);
+        Map<String, MonolingualTextValue> newLabels = new HashMap<>(labels);
+        Map<String, MonolingualTextValue> newLabelsIfNew = new HashMap<>(labelsIfNew);
         mergeSingleTermMaps(newLabels, newLabelsIfNew, other.getLabels(), other.getLabelsIfNew());
-        Map<String,MonolingualTextValue> newDescriptions = new HashMap<>(descriptions);
-        Map<String,MonolingualTextValue> newDescriptionsIfNew = new HashMap<>(descriptionsIfNew);
+        Map<String, MonolingualTextValue> newDescriptions = new HashMap<>(descriptions);
+        Map<String, MonolingualTextValue> newDescriptionsIfNew = new HashMap<>(descriptionsIfNew);
         mergeSingleTermMaps(newDescriptions, newDescriptionsIfNew, other.getDescriptions(), other.getDescriptionsIfNew());
-        Map<String,List<MonolingualTextValue>> newAliases = new HashMap<>(aliases);
-        for(MonolingualTextValue alias : other.getAliases()) {
-        	List<MonolingualTextValue> aliases = newAliases.get(alias.getLanguageCode());
-        	if(aliases == null) {
-        		aliases = new LinkedList<>();
-        		newAliases.put(alias.getLanguageCode(), aliases);
-        	}
-        	if(!aliases.contains(alias)) {
-        		aliases.add(alias);
-        	}
+        Map<String, List<MonolingualTextValue>> newAliases = new HashMap<>(aliases);
+        for (MonolingualTextValue alias : other.getAliases()) {
+            List<MonolingualTextValue> aliases = newAliases.get(alias.getLanguageCode());
+            if (aliases == null) {
+                aliases = new LinkedList<>();
+                newAliases.put(alias.getLanguageCode(), aliases);
+            }
+            if (!aliases.contains(alias)) {
+                aliases.add(alias);
+            }
         }
-        return new ItemUpdate(qid, newAddedStatements, newDeletedStatements, newLabels, newLabelsIfNew, newDescriptions, newDescriptionsIfNew, newAliases);
-    }    
+        return new ItemUpdate(qid, newAddedStatements, newDeletedStatements, newLabels, newLabelsIfNew, newDescriptions,
+                newDescriptionsIfNew, newAliases);
+    }
 
     /**
      * Group added statements in StatementGroups: useful if the item is new.
@@ -307,26 +303,24 @@ public class ItemUpdate {
         }
         List<StatementGroup> result = new ArrayList<>();
         for (Map.Entry<PropertyIdValue, List<Statement>> entry : map.entrySet()) {
-        	// We have to do this rather than use Datamodel in order to preserve the
-        	// custom entity id values which can link to new items.
+            // We have to do this rather than use Datamodel in order to preserve the
+            // custom entity id values which can link to new items.
             result.add(new StatementGroupImpl(entry.getValue()));
         }
         return result;
     }
-    
+
     /**
-     * Json serialization for preview of item updates. Because StatementGroup
-     * is not designed for serialization (so its format is not specified by WDTK),
-     * we add a wrapper on top to specify it.
+     * Json serialization for preview of item updates. Because StatementGroup is not designed for serialization (so its
+     * format is not specified by WDTK), we add a wrapper on top to specify it.
      */
     @JsonProperty("addedStatementGroups")
     public List<StatementGroupJson> getAddedStatementGroupsJson() {
-    	return this.getAddedStatementGroups().stream().map(s -> new StatementGroupJson(s)).collect(Collectors.toList());
+        return this.getAddedStatementGroups().stream().map(s -> new StatementGroupJson(s)).collect(Collectors.toList());
     }
 
     /**
-     * Group a list of ItemUpdates by subject: this is useful to make one single
-     * edit per item.
+     * Group a list of ItemUpdates by subject: this is useful to make one single edit per item.
      * 
      * @param itemDocuments
      * @return a map from item ids to merged ItemUpdate for that id
@@ -358,8 +352,8 @@ public class ItemUpdate {
     }
 
     /**
-     * This should only be used when creating a new item. This ensures that we never
-     * add an alias without adding a label in the same language.
+     * This should only be used when creating a new item. This ensures that we never add an alias without adding a label
+     * in the same language.
      */
     public ItemUpdate normalizeLabelsAndAliases() {
         // Ensure that we are only adding aliases with labels
@@ -376,8 +370,8 @@ public class ItemUpdate {
         Map<String, MonolingualTextValue> newDescriptions = new HashMap<>(descriptionsIfNew);
         newDescriptions.putAll(descriptions);
         return new ItemUpdate(qid, addedStatements, deletedStatements,
-        		newLabels, Collections.emptyMap(), newDescriptions, Collections.emptyMap(),
-        		constructTermListMap(filteredAliases));
+                newLabels, Collections.emptyMap(), newDescriptions, Collections.emptyMap(),
+                constructTermListMap(filteredAliases));
     }
 
     @Override
@@ -438,48 +432,49 @@ public class ItemUpdate {
         builder.append("\n>");
         return builder.toString();
     }
-    
+
     /**
      * Helper function to merge dictionaries of terms to override or provide.
+     * 
      * @param currentTerms
-     * 		current map of terms to override
+     *            current map of terms to override
      * @param currentTermsIfNew
-     *      current map of terms to provide if not already there
+     *            current map of terms to provide if not already there
      * @param newTerms
-     *      new terms to override
+     *            new terms to override
      * @param newTermsIfNew
-     *      new terms to provide if not already there
+     *            new terms to provide if not already there
      */
     private static void mergeSingleTermMaps(
-    		Map<String,MonolingualTextValue> currentTerms,
-    		Map<String,MonolingualTextValue> currentTermsIfNew,
-    		Set<MonolingualTextValue> newTerms,
-    		Set<MonolingualTextValue> newTermsIfNew) {
-    	for(MonolingualTextValue otherLabel : newTerms) {
-        	String languageCode = otherLabel.getLanguageCode();
-        	currentTerms.put(languageCode, otherLabel);
-        	if (currentTermsIfNew.containsKey(languageCode)) {
-        		currentTermsIfNew.remove(languageCode);
-        	}
+            Map<String, MonolingualTextValue> currentTerms,
+            Map<String, MonolingualTextValue> currentTermsIfNew,
+            Set<MonolingualTextValue> newTerms,
+            Set<MonolingualTextValue> newTermsIfNew) {
+        for (MonolingualTextValue otherLabel : newTerms) {
+            String languageCode = otherLabel.getLanguageCode();
+            currentTerms.put(languageCode, otherLabel);
+            if (currentTermsIfNew.containsKey(languageCode)) {
+                currentTermsIfNew.remove(languageCode);
+            }
         }
-        for(MonolingualTextValue otherLabel : newTermsIfNew) {
-        	String languageCode = otherLabel.getLanguageCode();
-        	if (!currentTermsIfNew.containsKey(languageCode) && !currentTerms.containsKey(languageCode)) {
-        		currentTermsIfNew.put(languageCode, otherLabel);
-        	}
+        for (MonolingualTextValue otherLabel : newTermsIfNew) {
+            String languageCode = otherLabel.getLanguageCode();
+            if (!currentTermsIfNew.containsKey(languageCode) && !currentTerms.containsKey(languageCode)) {
+                currentTermsIfNew.put(languageCode, otherLabel);
+            }
         }
     }
 
     protected Map<String, List<MonolingualTextValue>> constructTermListMap(Collection<MonolingualTextValue> mltvs) {
-    	Map<String,List<MonolingualTextValue>> result = new HashMap<>();
-    	for(MonolingualTextValue mltv : mltvs) {
-    		List<MonolingualTextValue> values = result.get(mltv.getLanguageCode());
-    		if (values == null) {
-    			values = new LinkedList<>();
-    			result.put(mltv.getLanguageCode(), values);
-    		}
-    		values.add(mltv);
-    	}
-    	return result;
+        Map<String, List<MonolingualTextValue>> result = new HashMap<>();
+        for (MonolingualTextValue mltv : mltvs) {
+            List<MonolingualTextValue> values = result.get(mltv.getLanguageCode());
+            if (values == null) {
+                values = new LinkedList<>();
+                result.put(mltv.getLanguageCode(), values);
+            }
+            values.add(mltv);
+        }
+        return result;
     }
 }

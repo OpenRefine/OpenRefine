@@ -30,7 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
- 
+
 package org.openrefine.grel;
 
 import java.io.IOException;
@@ -50,7 +50,6 @@ import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
-
 public class FunctionTests {
 
     static Properties bindings;
@@ -64,49 +63,48 @@ public class FunctionTests {
         project.columnModel.addColumn(0, new Column(0, "Column A"), false);
         bindings = new Properties();
         bindings.put("project", project);
-        
+
         // Five rows of a's and five of 1s
         for (int i = 0; i < 10; i++) {
             Row row = new Row(1);
-            row.setCell(0, new Cell(i < 5 ? "a":new Integer(1), null));
+            row.setCell(0, new Cell(i < 5 ? "a" : new Integer(1), null));
             project.rows.add(row);
         }
     }
-
 
     @AfterMethod
     public void TearDown() {
         bindings = null;
     }
-    
+
     /**
      * Lookup a control function by name and invoke it with a variable number of args
      */
-    private static Object invoke(String name,Object... args) {
+    private static Object invoke(String name, Object... args) {
         // registry uses static initializer, so no need to set it up
         Function function = ControlFunctionRegistry.getFunction(name);
         if (function == null) {
-            throw new IllegalArgumentException("Unknown function "+name);
+            throw new IllegalArgumentException("Unknown function " + name);
         }
         if (args == null) {
-            return function.call(bindings,new Object[0]);
+            return function.call(bindings, new Object[0]);
         } else {
-            return function.call(bindings,args);
+            return function.call(bindings, args);
         }
     }
-    
+
     @Test
-    public void testInvalidParams() {        
+    public void testInvalidParams() {
         Assert.assertTrue(invoke("facetCount") instanceof EvalError);
-        Assert.assertTrue(invoke("facetCount", "one","two","three") instanceof EvalError);
-        Assert.assertTrue(invoke("facetCount", "one","bad(","Column A") instanceof EvalError);
+        Assert.assertTrue(invoke("facetCount", "one", "two", "three") instanceof EvalError);
+        Assert.assertTrue(invoke("facetCount", "one", "bad(", "Column A") instanceof EvalError);
 
     }
-    
+
     @Test
-    public void testFacetCount() {        
-        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"),Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"),Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"),Integer.valueOf(5));
+    public void testFacetCount() {
+        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"), Integer.valueOf(5));
+        Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"), Integer.valueOf(5));
+        Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"), Integer.valueOf(5));
     }
 }

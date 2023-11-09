@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashMap;
@@ -29,14 +30,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
+import org.openrefine.wikidata.qa.QAWarning;
+
 /**
- * A scrutinizer that checks the compatibility of the qualifiers and the
- * property of a statement, and looks for mandatory qualifiers.
+ * A scrutinizer that checks the compatibility of the qualifiers and the property of a statement, and looks for
+ * mandatory qualifiers.
  * 
  * @author Antonin Delpeuch
  */

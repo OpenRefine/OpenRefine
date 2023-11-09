@@ -45,26 +45,26 @@ import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
 
 public class LogExpressionCommand extends Command {
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-    	
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             String expression = request.getParameter("expression");
 
             PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
             TopList topList = (TopList) prefStore.get("scripting.expressions");
             if (topList == null) {
-            	topList = new TopList(ProjectManager.EXPRESSION_HISTORY_MAX);
-            	prefStore.put("scripting.expressions", topList);
+                topList = new TopList(ProjectManager.EXPRESSION_HISTORY_MAX);
+                prefStore.put("scripting.expressions", topList);
             }
             topList.add(expression);
-            
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             response.getWriter().write("{ \"code\" : \"ok\" }");

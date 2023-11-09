@@ -40,46 +40,44 @@ import org.openrefine.expr.functions.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-
 public class FingerprintTests extends FunctionTestBase {
 
     static Properties bindings;
-    
+
     private static final String[][] testStrings = {
-        {"schön","schon"},  
+            { "schön", "schon" },
 //        {"Ære Øre Åre", "are aere ore"},
 //        {"Straße","strasse"},
-        {"\tABC \t DEF ","abc def"}, // test leading and trailing whitespace
-        {"bbb\taaa","aaa bbb"},
-        {"müller","muller"},
+            { "\tABC \t DEF ", "abc def" }, // test leading and trailing whitespace
+            { "bbb\taaa", "aaa bbb" },
+            { "müller", "muller" },
 //      {"müller","mueller"}, // another possible interpretation
 //        {"ﬁﬂĳ","fiflij"},
 //        {"ﭏ","אל"},
 //        {"œ ӕ","ae oe"},
-        {"",""},
+            { "", "" },
     };
-   
+
     @Test
-    public void testInvalidParams() {        
+    public void testInvalidParams() {
         Assert.assertNull(invoke("fingerprint"));
-        Assert.assertNull(invoke("fingerprint", "one","two","three"));
+        Assert.assertNull(invoke("fingerprint", "one", "two", "three"));
         Assert.assertNull(invoke("fingerprint", Long.getLong("1")));
     }
-    
+
     @Test
     public void testNormalize() {
         for (String[] ss : testStrings) {
-            Assert.assertEquals(ss.length,2,"Invalid test"); // Not a valid test
-            Assert.assertEquals((String)(invoke("fingerprint", ss[0])),ss[1],
+            Assert.assertEquals(ss.length, 2, "Invalid test"); // Not a valid test
+            Assert.assertEquals((String) (invoke("fingerprint", ss[0])), ss[1],
                     "Fingerprint for string: " + ss[0] + " failed");
         }
     }
-    
+
     @Test
     public void serializeFingerprint() {
         String json = "{\"description\":\"Returns the fingerprint of s, a derived string that aims to be a more canonical form of it (this is mostly useful for finding clusters of strings related to the same information).\",\"params\":\"string s\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Fingerprint(), json, ParsingUtilities.defaultWriter);
     }
-
 
 }

@@ -21,15 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 
+import org.openrefine.wikidata.qa.QAWarning;
+
 /**
- * A scrutinizer that checks for self-referential statements. These statements
- * are flagged by Wikibase as suspicious.
+ * A scrutinizer that checks for self-referential statements. These statements are flagged by Wikibase as suspicious.
  * 
  * @author Antonin Delpeuch
  *

@@ -48,27 +48,26 @@ public class InnerHtml extends PureFunction {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
                 return new InnerXml().call(args, "html");
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                        + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
-
     @Override
     public String getDescription() {
         return "The innerHtml of an HTML element";
     }
-    
+
     @Override
     public String getParams() {
         return "Element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "String innerHtml";
     }
 }
-

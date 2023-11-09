@@ -36,44 +36,42 @@ package org.openrefine.model;
 import java.io.IOException;
 import java.io.Writer;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Recon.Judgment;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class ReconStats {
 
-public class ReconStats  {   
     @JsonProperty("nonBlanks")
-    final public int    nonBlanks;
+    final public int nonBlanks;
     @JsonProperty("newTopics")
-    final public int    newTopics;
+    final public int newTopics;
     @JsonProperty("matchedTopics")
-    final public int    matchedTopics;
-    
+    final public int matchedTopics;
+
     @JsonCreator
     public ReconStats(
-            @JsonProperty("nonBlanks")
-            int nonBlanks,
-            @JsonProperty("newTopics")
-            int newTopics,
-            @JsonProperty("matchedTopics")
-            int matchedTopics) {
+            @JsonProperty("nonBlanks") int nonBlanks,
+            @JsonProperty("newTopics") int newTopics,
+            @JsonProperty("matchedTopics") int matchedTopics) {
         this.nonBlanks = nonBlanks;
         this.newTopics = newTopics;
         this.matchedTopics = matchedTopics;
     }
-    
+
     static public ReconStats create(Project project, int cellIndex) {
         int nonBlanks = 0;
         int newTopics = 0;
         int matchedTopics = 0;
-        
+
         for (Row row : project.rows) {
             Cell cell = row.getCell(cellIndex);
             if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                 nonBlanks++;
-                
+
                 if (cell.recon != null) {
                     if (cell.recon.judgment == Judgment.New) {
                         newTopics++;
@@ -83,10 +81,10 @@ public class ReconStats  {
                 }
             }
         }
-        
+
         return new ReconStats(nonBlanks, newTopics, matchedTopics);
     }
-    
+
     public void save(Writer writer) {
         try {
             ParsingUtilities.defaultWriter.writeValue(writer, this);

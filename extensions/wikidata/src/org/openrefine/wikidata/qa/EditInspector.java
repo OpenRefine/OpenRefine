@@ -21,12 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 import org.openrefine.wikidata.qa.scrutinizers.CalendarScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.DistinctValuesScrutinizer;
@@ -47,7 +50,6 @@ import org.openrefine.wikidata.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 /**
  * Runs a collection of edit scrutinizers on an edit batch.
@@ -109,20 +111,20 @@ public class EditInspector {
 
         Map<EntityIdValue, ItemUpdate> updates = ItemUpdate.groupBySubject(editBatch);
         List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
-        
+
         for (EditScrutinizer scrutinizer : scrutinizers.values()) {
             scrutinizer.batchIsBeginning();
         }
-        
-        for(ItemUpdate update : mergedUpdates) {
-            if(!update.isNull()) {
+
+        for (ItemUpdate update : mergedUpdates) {
+            if (!update.isNull()) {
                 for (EditScrutinizer scrutinizer : scrutinizers.values()) {
                     scrutinizer.scrutinize(update);
                 }
             }
         }
-        
-        for(EditScrutinizer scrutinizer : scrutinizers.values()) {
+
+        for (EditScrutinizer scrutinizer : scrutinizers.values()) {
             scrutinizer.batchIsFinished();
         }
 

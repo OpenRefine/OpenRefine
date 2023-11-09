@@ -21,14 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.wikidata.schema;
 
-import org.jsoup.helper.Validate;
-import org.openrefine.wikidata.schema.entityvalues.SuggestedPropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+package org.openrefine.wikidata.schema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jsoup.helper.Validate;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
+import org.openrefine.wikidata.schema.entityvalues.SuggestedPropertyIdValue;
 
 /**
  * A constant property, that does not change depending on the row

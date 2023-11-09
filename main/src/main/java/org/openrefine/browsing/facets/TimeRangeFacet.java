@@ -33,6 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.facets;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.FilteredRecords;
 import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RecordFilter;
@@ -53,44 +58,41 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Column;
 import org.openrefine.model.Project;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class TimeRangeFacet implements Facet {
+
     /*
      * Configuration, from the client side
      */
     public static class TimeRangeFacetConfig implements FacetConfig {
+
         @JsonProperty("name")
-        protected String     _name;       // name of facet
+        protected String _name; // name of facet
         @JsonProperty("expression")
-        protected String     _expression; // expression to compute numeric value(s) per row
+        protected String _expression; // expression to compute numeric value(s) per row
         @JsonProperty("columnName")
-        protected String     _columnName; // column to base expression on, if any
-        
+        protected String _columnName; // column to base expression on, if any
+
         @JsonProperty(FROM)
-        protected double      _from = 0; // the numeric selection
+        protected double _from = 0; // the numeric selection
         @JsonProperty(TO)
-        protected double      _to = 0;
-        
+        protected double _to = 0;
+
         @JsonProperty("selectTime")
-        protected boolean   _selectTime; // whether the time selection applies, default true
+        protected boolean _selectTime; // whether the time selection applies, default true
         @JsonProperty("selectNonTime")
-        protected boolean   _selectNonTime;
+        protected boolean _selectNonTime;
         @JsonProperty("selectBlank")
-        protected boolean   _selectBlank;
+        protected boolean _selectBlank;
         @JsonProperty("selectError")
-        protected boolean   _selectError;
-        
+        protected boolean _selectError;
+
         // false if we're certain that all rows will match
         // and there isn't any filtering to do
         @JsonIgnore
         protected boolean isSelected() {
             return _from != 0 || _to != 0 || !_selectTime || !_selectNonTime || !_selectBlank || !_selectError;
-        }; 
-        
+        };
+
         @Override
         public TimeRangeFacet apply(Project project) {
             TimeRangeFacet facet = new TimeRangeFacet();
@@ -103,92 +105,93 @@ public class TimeRangeFacet implements Facet {
             return "core/timerange";
         }
     }
+
     protected TimeRangeFacetConfig _config;
-    
+
     /*
      * Derived configuration data
      */
-    protected int        _cellIndex;
-    protected Evaluable  _eval;
-    protected String     _errorMessage;
-    
-    protected double    _min;
-    protected double    _max;
-    protected double    _step;
-    protected int[]     _baseBins;
-    protected int[]     _bins;
-    
+    protected int _cellIndex;
+    protected Evaluable _eval;
+    protected String _errorMessage;
+
+    protected double _min;
+    protected double _max;
+    protected double _step;
+    protected int[] _baseBins;
+    protected int[] _bins;
+
     /*
      * Computed data
      */
     @JsonProperty("baseTimeCount")
-    protected int       _baseTimeCount;
+    protected int _baseTimeCount;
     @JsonProperty("baseNonTimeCount")
-    protected int       _baseNonTimeCount;
+    protected int _baseNonTimeCount;
     @JsonProperty("baseBlankCount")
-    protected int       _baseBlankCount;
+    protected int _baseBlankCount;
     @JsonProperty("baseErrorCount")
-    protected int       _baseErrorCount;
-     
+    protected int _baseErrorCount;
+
     @JsonProperty("timeCount")
-    protected int       _timeCount;
+    protected int _timeCount;
     @JsonProperty("nonTimeCount")
-    protected int       _nonTimeCount;
+    protected int _nonTimeCount;
     @JsonProperty("blankCount")
-    protected int       _blankCount;
+    protected int _blankCount;
     @JsonProperty("errorCount")
-    protected int       _errorCount;
+    protected int _errorCount;
 
     protected static final String MIN = "min";
     protected static final String MAX = "max";
     protected static final String TO = "to";
     protected static final String FROM = "from";
-    
+
     @JsonProperty("name")
     public String getName() {
         return _config._name;
     }
-    
+
     @JsonProperty("expression")
     public String getExpression() {
         return _config._expression;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _config._columnName;
     }
-    
+
     @JsonProperty("error")
     @JsonInclude(Include.NON_NULL)
     public String getError() {
         return _errorMessage;
     }
-    
+
     @JsonProperty(MIN)
     @JsonInclude(Include.NON_NULL)
     public Double getMin() {
-        if(getError() == null) {
+        if (getError() == null) {
             return _min;
         }
         return null;
     }
-    
+
     @JsonProperty(MAX)
     @JsonInclude(Include.NON_NULL)
     public Double getMax() {
-        if(getError() == null) {
+        if (getError() == null) {
             return _max;
         }
         return null;
     }
-    
+
     @JsonProperty("step")
     @JsonInclude(Include.NON_NULL)
     public Double getStep() {
         return _step;
     }
-    
+
     @JsonProperty("bins")
     @JsonInclude(Include.NON_NULL)
     public int[] getBins() {
@@ -197,7 +200,7 @@ public class TimeRangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty("baseBins")
     @JsonInclude(Include.NON_NULL)
     public int[] getBaseBins() {
@@ -206,7 +209,7 @@ public class TimeRangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty(FROM)
     @JsonInclude(Include.NON_NULL)
     public Double getFrom() {
@@ -215,7 +218,7 @@ public class TimeRangeFacet implements Facet {
         }
         return null;
     }
-    
+
     @JsonProperty(TO)
     @JsonInclude(Include.NON_NULL)
     public Double getTo() {
@@ -224,7 +227,7 @@ public class TimeRangeFacet implements Facet {
         }
         return null;
     }
-    
+
     public void initializeFromConfig(TimeRangeFacetConfig config, Project project) {
         _config = config;
         if (_config._columnName.length() > 0) {
@@ -237,7 +240,7 @@ public class TimeRangeFacet implements Facet {
         } else {
             _cellIndex = -1;
         }
-        
+
         try {
             _eval = MetaParser.parse(_config._expression);
         } catch (ParsingException e) {
@@ -250,7 +253,7 @@ public class TimeRangeFacet implements Facet {
         if (_eval != null && _errorMessage == null && _config.isSelected()) {
             return new ExpressionTimeComparisonRowFilter(
                     getRowEvaluable(project), _config._selectTime, _config._selectNonTime, _config._selectBlank, _config._selectError) {
-                
+
                 @Override
                 protected boolean checkValue(long t) {
                     return t >= _config._from && t <= _config._to;
@@ -265,7 +268,7 @@ public class TimeRangeFacet implements Facet {
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
-            
+
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "time-bin:row-based:" + _config._expression;
             TimeBinIndex index = (TimeBinIndex) column.getPrecompute(key);
@@ -273,21 +276,21 @@ public class TimeRangeFacet implements Facet {
                 index = new TimeBinRowIndex(project, rowEvaluable);
                 column.setPrecompute(key, index);
             }
-            
+
             retrieveDataFromBaseBinIndex(index);
-                        
+
             ExpressionTimeValueBinner binner = new ExpressionTimeValueBinner(rowEvaluable, index);
-            
+
             filteredRows.accept(project, binner);
             retrieveDataFromBinner(binner);
         }
     }
-    
+
     @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
-            
+
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "time-bin:record-based:" + _config._expression;
             TimeBinIndex index = (TimeBinIndex) column.getPrecompute(key);
@@ -295,28 +298,28 @@ public class TimeRangeFacet implements Facet {
                 index = new TimeBinRecordIndex(project, rowEvaluable);
                 column.setPrecompute(key, index);
             }
-            
+
             retrieveDataFromBaseBinIndex(index);
-            
+
             ExpressionTimeValueBinner binner = new ExpressionTimeValueBinner(rowEvaluable, index);
-            
+
             filteredRecords.accept(project, binner);
-            
+
             retrieveDataFromBinner(binner);
         }
     }
-        
+
     protected void retrieveDataFromBaseBinIndex(TimeBinIndex index) {
         _min = index.getMin();
         _max = index.getMax();
         _step = index.getStep();
         _baseBins = index.getBins();
-        
+
         _baseTimeCount = index.getTimeRowCount();
         _baseNonTimeCount = index.getNonTimeRowCount();
         _baseBlankCount = index.getBlankRowCount();
         _baseErrorCount = index.getErrorRowCount();
-        
+
         if (_config.isSelected()) {
             _config._from = Math.max(_config._from, _min);
             _config._to = Math.min(_config._to, _max);
@@ -325,7 +328,7 @@ public class TimeRangeFacet implements Facet {
             _config._to = _max;
         }
     }
-    
+
     protected void retrieveDataFromBinner(ExpressionTimeValueBinner binner) {
         _bins = binner.bins;
         _timeCount = binner.timeCount;
@@ -339,7 +342,7 @@ public class TimeRangeFacet implements Facet {
         RowFilter rowFilter = getRowFilter(project);
         return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
-    
+
     protected RowEvaluable getRowEvaluable(Project project) {
         return new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _eval);
     }

@@ -39,23 +39,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.RefineServlet;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.openrefine.RefineServlet;
 
 public class GetVersionCommand extends Command {
 
-	protected class VersionResponse {
-		@JsonProperty("version")
-		public String version = RefineServlet.VERSION;
-		@JsonProperty("revision")
-		public String revision = RefineServlet.REVISION;
-		@JsonProperty("full_version")
-		public String full_version = RefineServlet.FULL_VERSION;
-		@JsonProperty("full_name")
-		public String full_name = RefineServlet.FULLNAME;
-	}
-    
+    protected class VersionResponse {
+
+        @JsonProperty("version")
+        public String version = RefineServlet.VERSION;
+        @JsonProperty("revision")
+        public String revision = RefineServlet.REVISION;
+        @JsonProperty("full_version")
+        public String full_version = RefineServlet.FULL_VERSION;
+        @JsonProperty("full_name")
+        public String full_name = RefineServlet.FULLNAME;
+    }
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         respondJSON(response, new VersionResponse());

@@ -46,16 +46,16 @@ public class NGram extends PureFunction {
         if (args.length == 2) {
             Object s = args[0];
             Object n = args[1];
-            
+
             if (s != null && s instanceof String && n != null && n instanceof Number) {
-                
+
                 String[] tokens = StringUtils.split((String) s);
-                
+
                 int count = ((Number) n).intValue();
                 if (count >= tokens.length) {
                     return new String[] { (String) s };
                 }
-                
+
                 int len = tokens.length - count + 1;
                 String[] ngrams = new String[len];
                 for (int i = 0; i < len; i++) {
@@ -63,27 +63,27 @@ public class NGram extends PureFunction {
                     for (int j = 0; j < count; j++) {
                         ss[j] = tokens[i + j];
                     }
-                    ngrams[i] = StringUtils.join(ss,' ');
+                    ngrams[i] = StringUtils.join(ss, ' ');
                 }
-                               
+
                 return ngrams;
             }
-            
+
             return null;
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string and a number");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns an array of the word ngrams of s";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "array of strings";

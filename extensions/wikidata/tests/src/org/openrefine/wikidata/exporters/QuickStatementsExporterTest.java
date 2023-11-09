@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.exporters;
 
 import static org.testng.Assert.assertEquals;
@@ -31,13 +32,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.openrefine.browsing.Engine;
-import org.openrefine.model.Project;
-import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -46,6 +40,14 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+
+import org.openrefine.browsing.Engine;
+import org.openrefine.model.Project;
+import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.testing.WikidataRefineTest;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 
 public class QuickStatementsExporterTest extends WikidataRefineTest {
 
@@ -90,10 +92,10 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     @Test
     public void testNameDesc()
             throws IOException {
-    	/**
-    	 * Adding labels and description without overriding is not supported by QS, so
-    	 * we fall back on adding them with overriding.
-    	 */
+        /**
+         * Adding labels and description without overriding is not supported by QS, so we fall back on adding them with
+         * overriding.
+         */
         ItemUpdate update = new ItemUpdateBuilder(qid1)
                 .addLabel(Datamodel.makeMonolingualTextValue("some label", "en"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("some description", "en"), true)
@@ -101,7 +103,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
 
         assertEquals("Q1377\tLen\t\"some label\"\n" + "Q1377\tDen\t\"some description\"\n", export(update));
     }
-    
+
     @Test
     public void testOptionalNameDesc()
             throws IOException {

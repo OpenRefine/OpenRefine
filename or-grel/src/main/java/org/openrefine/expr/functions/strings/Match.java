@@ -47,42 +47,42 @@ public class Match extends PureFunction {
         if (args.length == 2) {
             Object s = args[0];
             Object p = args[1];
-            
+
             if (s != null && p != null && (p instanceof String || p instanceof Pattern)) {
-                
+
                 Pattern pattern = (p instanceof String) ? Pattern.compile((String) p) : (Pattern) p;
 
                 Matcher matcher = pattern.matcher(s.toString());
-                
+
                 if (matcher.matches()) {
                     int count = matcher.groupCount();
-    
+
                     String[] groups = new String[count];
                     for (int i = 0; i < count; i++) {
                         groups[i] = matcher.group(i + 1);
                     }
-    
+
                     return groups;
                 } else {
                     return null;
                 }
             }
-            
+
             return null;
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a regexp");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns an array of the groups matching the given regular expression";
     }
-    
+
     @Override
     public String getParams() {
         return "regexp";
     }
-    
+
     @Override
     public String getReturns() {
         return "array of strings";

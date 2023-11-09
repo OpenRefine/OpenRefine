@@ -35,11 +35,13 @@ package org.openrefine.jython;
 
 import java.util.Properties;
 
-import org.openrefine.expr.HasFields;
 import org.python.core.Py;
 import org.python.core.PyObject;
 
+import org.openrefine.expr.HasFields;
+
 public class JythonHasFieldsWrapper extends PyObject {
+
     private static final long serialVersionUID = -1275353513262385099L;
 
     public HasFields _obj;

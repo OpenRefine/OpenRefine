@@ -24,47 +24,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class EngineConfig {
 
-
-public class EngineConfig  {
-    
     protected final List<FacetConfig> _facets;
     protected final Mode _mode;
-    
+
     @JsonCreator
     public EngineConfig(
-            @JsonProperty("facets")
-            List<FacetConfig> facets,
-            @JsonProperty("mode")
-            Mode mode) {
+            @JsonProperty("facets") List<FacetConfig> facets,
+            @JsonProperty("mode") Mode mode) {
         _facets = facets == null ? Collections.emptyList() : facets;
         _mode = mode == null ? Mode.RowBased : mode;
     }
-    
+
     @JsonProperty("mode")
     public Mode getMode() {
         return _mode;
     }
-    
+
     @JsonProperty("facets")
     public List<FacetConfig> getFacetConfigs() {
         return _facets;
     }
-    
+
     public static EngineConfig reconstruct(String json) {
-        if(json == null) {
+        if (json == null) {
             return new EngineConfig(Collections.emptyList(), Mode.RowBased);
         }
         try {

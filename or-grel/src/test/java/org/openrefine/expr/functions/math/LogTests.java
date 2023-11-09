@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.math;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class LogTests {
+
     @Test
     public void serializeLog() {
         String json = "{\"description\":\"Returns the base 10 log of n\",\"params\":\"number n\",\"returns\":\"number\"}";
         TestUtils.isSerializedTo(new Log(), json, ParsingUtilities.defaultWriter);
     }
 }
-

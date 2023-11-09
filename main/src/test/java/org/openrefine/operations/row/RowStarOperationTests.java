@@ -24,22 +24,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.row;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.row.RowStarOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class RowStarOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "row-star", RowStarOperation.class);
     }
-    
+
     @Test
     public void serializeRowStarOperation() throws Exception {
         String json = "{"

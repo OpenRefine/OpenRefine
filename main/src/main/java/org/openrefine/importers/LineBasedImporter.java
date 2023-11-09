@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.importers;
 
 import java.io.IOException;
@@ -32,47 +33,47 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LineBasedImporter extends TabularImportingParserBase {
+
     static final Logger logger = LoggerFactory.getLogger(LineBasedImporter.class);
-    
+
     public LineBasedImporter() {
         super(false);
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
-        
+
         JSONUtilities.safePut(options, "linesPerRow", 1);
         JSONUtilities.safePut(options, "headerLines", 0);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
-        
+
         return options;
     }
 
     @Override
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            Reader reader,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         final int linesPerRow = JSONUtilities.getInt(options, "linesPerRow", 1);
-        
+
         final List<Object> columnNames;
         if (options.has("columnNames")) {
             columnNames = new ArrayList<Object>();
@@ -85,9 +86,9 @@ public class LineBasedImporter extends TabularImportingParserBase {
             columnNames = null;
             JSONUtilities.safePut(options, "headerLines", 0);
         }
-        
+
         final LineNumberReader lnReader = new LineNumberReader(reader);
-        
+
         try {
             int skip = JSONUtilities.getInt(options, "ignoreLines", -1);
             while (skip > 0) {
@@ -98,10 +99,11 @@ public class LineBasedImporter extends TabularImportingParserBase {
             logger.error("Error reading line-based file", e);
         }
         JSONUtilities.safePut(options, "ignoreLines", -1);
-        
+
         TableDataReader dataReader = new TableDataReader() {
+
             boolean usedColumnNames = false;
-            
+
             @Override
             public List<Object> getNextRowOfCells() throws IOException {
                 if (columnNames != null && !usedColumnNames) {
@@ -128,9 +130,9 @@ public class LineBasedImporter extends TabularImportingParserBase {
                 }
             }
         };
-        
+
         TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
-        
+
         super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
     }
 }

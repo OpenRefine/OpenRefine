@@ -24,16 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.importers.tree;
 
-
 public class ImportParameters {
+
     protected boolean trimStrings;
     protected boolean storeEmptyStrings;
     protected boolean guessDataType;
     protected boolean includeFileSources;
     protected String fileSource;
-    
+
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes,
             boolean includeFileSources, String fileSource) {
         this.trimStrings = trimStrings;
@@ -46,5 +47,5 @@ public class ImportParameters {
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes) {
         this(trimStrings, storeEmptyStrings, guessCellValueTypes, false, "");
     }
-    
+
 }

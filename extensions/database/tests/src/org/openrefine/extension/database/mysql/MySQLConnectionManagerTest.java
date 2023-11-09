@@ -1,33 +1,34 @@
+
 package org.openrefine.extension.database.mysql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.mockito.MockitoAnnotations;
-import org.openrefine.extension.database.DBExtensionTests;
-import org.openrefine.extension.database.DatabaseConfiguration;
-import org.openrefine.extension.database.DatabaseService;
-import org.openrefine.extension.database.DatabaseServiceException;
-import org.openrefine.extension.database.mysql.MySQLConnectionManager;
-import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import org.openrefine.extension.database.DBExtensionTests;
+import org.openrefine.extension.database.DatabaseConfiguration;
+import org.openrefine.extension.database.DatabaseService;
+import org.openrefine.extension.database.DatabaseServiceException;
+import org.openrefine.extension.database.mysql.MySQLConnectionManager;
+import org.openrefine.extension.database.mysql.MySQLDatabaseService;
+
 @Test(groups = { "requiresMySQL" })
 public class MySQLConnectionManagerTest extends DBExtensionTests {
-  
+
     private DatabaseConfiguration testDbConfig;
-    
-    
+
     @BeforeTest
-    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable"})
-    public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName,  @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost, 
-           @Optional(DEFAULT_MYSQL_PORT)    String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
-           @Optional(DEFAULT_MYSQL_PASSWORD)  String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mySqlTestTable) {
-       
+    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable" })
+    public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName, @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost,
+            @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
+            @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable) {
+
         MockitoAnnotations.initMocks(this);
 
         testDbConfig = new DatabaseConfiguration();
@@ -38,40 +39,39 @@ public class MySQLConnectionManagerTest extends DBExtensionTests {
         testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
         testDbConfig.setDatabaseUser(mySqlDbUser);
         testDbConfig.setUseSSL(false);
-        
-        //testTable = mySqlTestTable;
-       // DBExtensionTestUtils.initTestData(testDbConfig);
-        
+
+        // testTable = mySqlTestTable;
+        // DBExtensionTestUtils.initTestData(testDbConfig);
+
         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
-        
+
     }
-    
 
     @Test
     public void testTestConnection() throws DatabaseServiceException {
-        
+
         boolean conn = MySQLConnectionManager.getInstance().testConnection(testDbConfig);
         Assert.assertEquals(conn, true);
     }
 
     @Test
     public void testGetConnection() throws DatabaseServiceException {
-      
-         Connection conn = MySQLConnectionManager.getInstance().getConnection(testDbConfig, true);
-         Assert.assertNotNull(conn);
+
+        Connection conn = MySQLConnectionManager.getInstance().getConnection(testDbConfig, true);
+        Assert.assertNotNull(conn);
     }
 
     @Test
     public void testShutdown() throws DatabaseServiceException, SQLException {
-    
-         Connection conn = MySQLConnectionManager.getInstance().getConnection(testDbConfig, true);
-         Assert.assertNotNull(conn);
-         
-         MySQLConnectionManager.getInstance().shutdown();
-         
-         if(conn != null) {
-             Assert.assertEquals(conn.isClosed(), true);
-         }
+
+        Connection conn = MySQLConnectionManager.getInstance().getConnection(testDbConfig, true);
+        Assert.assertNotNull(conn);
+
+        MySQLConnectionManager.getInstance().shutdown();
+
+        if (conn != null) {
+            Assert.assertEquals(conn.isClosed(), true);
+        }
     }
 
 }

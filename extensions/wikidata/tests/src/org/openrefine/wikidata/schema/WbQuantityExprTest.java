@@ -21,18 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
 public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
 
@@ -46,11 +47,11 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
         setRow("4.00");
         evaluatesTo(Datamodel.makeQuantityValue(new BigDecimal("4.00"), null, null, "1"), exprWithoutUnit);
     }
-    
+
     @Test
     public void testOverflow() {
-    	setRow(14341937500d);
-    	evaluatesTo(Datamodel.makeQuantityValue(new BigDecimal("14341937500"), null, null, "1"), exprWithoutUnit);
+        setRow(14341937500d);
+        evaluatesTo(Datamodel.makeQuantityValue(new BigDecimal("14341937500"), null, null, "1"), exprWithoutUnit);
     }
 
     @Test
@@ -81,7 +82,7 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
         setRow("56.094", "not reconciled");
         isSkipped(exprWithUnit);
     }
-    
+
     // for issue #341: https://github.com/Wikidata/Wikidata-Toolkit/issues/341
     @Test
     public void testExponent() throws SkipSchemaExpressionException, JsonProcessingException {

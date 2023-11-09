@@ -47,7 +47,7 @@ public class Split extends PureFunction {
     public Object call(Object[] args) {
         if (args.length >= 2 && args.length <= 3) {
             boolean preserveAllTokens = false;
-            
+
             Object v = args[0];
             Object split = args[1];
             if (args.length == 3) {
@@ -56,32 +56,32 @@ public class Split extends PureFunction {
                     preserveAllTokens = ((Boolean) preserve);
                 }
             }
-            
+
             if (v != null && split != null) {
                 String str = (v instanceof String ? (String) v : v.toString());
                 if (split instanceof String) {
-                    return preserveAllTokens ?
-                        StringUtils.splitByWholeSeparatorPreserveAllTokens(str, (String) split) :
-                        StringUtils.splitByWholeSeparator(str, (String) split);
+                    return preserveAllTokens ? StringUtils.splitByWholeSeparatorPreserveAllTokens(str, (String) split)
+                            : StringUtils.splitByWholeSeparator(str, (String) split);
                 } else if (split instanceof Pattern) {
                     Pattern pattern = (Pattern) split;
                     return pattern.split(str);
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings, or 1 string and 1 regex, followed by an optional boolean");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                + " expects 2 strings, or 1 string and 1 regex, followed by an optional boolean");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns the array of strings obtained by splitting s with separator sep. If preserveAllTokens is true, then empty segments are preserved.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string or regex sep, optional boolean preserveAllTokens";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

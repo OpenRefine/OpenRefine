@@ -46,62 +46,63 @@ import org.openrefine.util.GetProjectIDException;
 import org.openrefine.util.JoinException;
 
 public class Cross implements Function {
-    
+
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3) {
             // 1st argument can take either value or cell(for backward compatibility)
             Object v = args[0];
             Object toProjectName = args[1];
-            Object toColumnName = args[2]; 
+            Object toColumnName = args[2];
             Long toProjectID;
-            ProjectJoin join;           
-            
-            if (v != null && 
-                ( v instanceof String || v instanceof WrappedCell ) &&
-                toProjectName != null && toProjectName instanceof String &&
-                toColumnName != null && toColumnName instanceof String) {
+            ProjectJoin join;
+
+            if (v != null &&
+                    (v instanceof String || v instanceof WrappedCell) &&
+                    toProjectName != null && toProjectName instanceof String &&
+                    toColumnName != null && toColumnName instanceof String) {
                 try {
                     toProjectID = ProjectManager.singleton.getProjectID((String) toProjectName);
-                } catch (GetProjectIDException e){
+                } catch (GetProjectIDException e) {
                     return new EvalError(e.getMessage());
                 }
-                // add a try/catch here - error should bubble up from getInterProjectModel.computeJoin once that's modified
+                // add a try/catch here - error should bubble up from getInterProjectModel.computeJoin once that's
+                // modified
                 try {
                     join = ProjectManager.singleton.getInterProjectModel().getJoin(
                             // getJoin(Long fromProject, String fromColumn, Long toProject, String toColumn) {
-                            // source project name 
+                            // source project name
                             (Long) ((Project) bindings.get("project")).id,
                             // source column name
-                            (String) bindings.get("columnName"), 
+                            (String) bindings.get("columnName"),
                             // target project name
                             toProjectID,
                             // target column name
-                            (String) toColumnName
-                            );
+                            (String) toColumnName);
                 } catch (JoinException e) {
                     return new EvalError(e.getMessage());
                 }
-                if(v instanceof String) {
+                if (v instanceof String) {
                     return join.getRows(v);
                 } else {
                     return join.getRows(((WrappedCell) v).cell.value);
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                + " expects a string or cell, a project name to join with, and a column name in that project");
     }
-    
+
     @Override
     public String getDescription() {
         return "join with another project by column";
     }
-    
+
     @Override
     public String getParams() {
         return "cell c or string value, string projectName, string columnName";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

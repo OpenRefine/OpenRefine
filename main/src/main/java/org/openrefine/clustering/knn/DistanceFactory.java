@@ -39,34 +39,34 @@ import java.util.Map;
  * @author Antonin Delpeuch
  */
 public class DistanceFactory {
-    
+
     static final protected Map<String, SimilarityDistance> _distances = new HashMap<>();
     // We cannot derive this from the hashmap as the order matters
-	private static List<String> _distanceNames = new LinkedList<>();
-    
+    private static List<String> _distanceNames = new LinkedList<>();
+
     static {
 
     }
-    
+
     /**
      * Returns the distance registered under this name, or null if it does not exist.
      */
     public static SimilarityDistance get(String name) {
-    	return _distances.get(name);
+        return _distances.get(name);
     }
-    
+
     /**
      * Registers a new distance under a name.
      */
     public static void put(String name, SimilarityDistance distance) {
-    	_distances.put(name, distance);
-    	_distanceNames.add(name);
+        _distances.put(name, distance);
+        _distanceNames.add(name);
     }
-    
+
     /**
      * Lists the available distances, by name.
      */
     public static List<String> getDistanceNames() {
-    	return Collections.unmodifiableList(_distanceNames);
+        return Collections.unmodifiableList(_distanceNames);
     }
 }

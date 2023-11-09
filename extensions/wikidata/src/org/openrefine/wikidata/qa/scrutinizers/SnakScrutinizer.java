@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.Iterator;
@@ -31,8 +32,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
- * A scrutinizer that inspects snaks individually, no matter whether they appear
- * as main snaks, qualifiers or references.
+ * A scrutinizer that inspects snaks individually, no matter whether they appear as main snaks, qualifiers or
+ * references.
  * 
  * @author Antonin Delpeuch
  *

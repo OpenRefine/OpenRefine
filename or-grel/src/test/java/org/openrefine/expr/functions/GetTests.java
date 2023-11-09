@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class GetTests {
+
     @Test
     public void serializeGet() {
         String json = "{\"description\":\"If o has fields, returns the field named 'from' of o. If o is an array, returns o[from, to]. if o is a string, returns o.substring(from, to)\",\"params\":\"o, number or string from, optional number to\",\"returns\":\"Depends on actual arguments\"}";
         TestUtils.isSerializedTo(new Get(), json, ParsingUtilities.defaultWriter);
     }
 }
-

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.date;
 
 import java.time.OffsetDateTime;
@@ -39,10 +40,10 @@ import org.openrefine.expr.functions.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-
 public class NowTests extends FunctionTestBase {
-    private  DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSSSSSSSSX");
-    
+
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSSSSSSSSX");
+
     @BeforeMethod
     public void setUp() {
         bindings = new Properties();
@@ -52,15 +53,15 @@ public class NowTests extends FunctionTestBase {
     public void tearDown() {
         bindings = null;
     }
-    
+
     @Test
-    public void testNow() {        
+    public void testNow() {
         // 2018-4-30 23:55:44
         OffsetDateTime source = OffsetDateTime.parse("20180430-23:55:44.000789000Z",
                 formatter);
-        
+
         Assert.assertTrue(invoke("now") instanceof OffsetDateTime);
-        Assert.assertTrue(((OffsetDateTime)invoke("now")).isAfter(source));
+        Assert.assertTrue(((OffsetDateTime) invoke("now")).isAfter(source));
     }
 
     @Test
@@ -68,5 +69,5 @@ public class NowTests extends FunctionTestBase {
         String json = "{\"description\":\"Returns the current time\",\"returns\":\"date\"}";
         TestUtils.isSerializedTo(new Now(), json, ParsingUtilities.defaultWriter);
     }
-    
+
 }

@@ -1,8 +1,9 @@
+
 package org.openrefine.extension.database.cmd;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 
@@ -15,16 +16,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.HttpStatus;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openrefine.extension.database.DBExtensionTestUtils;
-import org.openrefine.extension.database.DBExtensionTests;
-import org.openrefine.extension.database.DatabaseConfiguration;
-import org.openrefine.extension.database.DatabaseService;
-import org.openrefine.extension.database.cmd.SavedConnectionCommand;
-import org.openrefine.extension.database.mysql.MySQLDatabaseService;
-import org.openrefine.extension.database.stub.RefineDbServletStub;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -33,19 +29,24 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
+import org.openrefine.extension.database.DBExtensionTestUtils;
+import org.openrefine.extension.database.DBExtensionTests;
+import org.openrefine.extension.database.DatabaseConfiguration;
+import org.openrefine.extension.database.DatabaseService;
+import org.openrefine.extension.database.cmd.SavedConnectionCommand;
+import org.openrefine.extension.database.mysql.MySQLDatabaseService;
+import org.openrefine.extension.database.stub.RefineDbServletStub;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 
-public class SavedConnectionCommandTest extends DBExtensionTests{
-    
+public class SavedConnectionCommandTest extends DBExtensionTests {
+
     @Mock
     private HttpServletRequest request;
 
@@ -53,37 +54,36 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
     private HttpServletResponse response;
 
     private DatabaseConfiguration testDbConfig;
-    
+
     private Project project;
     private ProjectMetadata metadata;
-    //private ImportingJob job;
+    // private ImportingJob job;
     private RefineServlet servlet;
 
-   // private String JSON_OPTION = "{\"mode\":\"row-based\"}}";
- 
-    
-    //System under test
+    // private String JSON_OPTION = "{\"mode\":\"row-based\"}}";
+
+    // System under test
     private SavedConnectionCommand SUT = null;
 
     @BeforeMethod
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
-        
+
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
         FileProjectManager.initialize(dir);
-        
+
         servlet = new RefineDbServletStub();
         ImportingManager.initialize(servlet);
         project = new Project();
         metadata = new ProjectMetadata();
-        //job = ImportingManager.createJob();
-     
+        // job = ImportingManager.createJob();
+
         metadata.setName("Save DB Config  Test Project");
         ProjectManager.singleton.registerProject(project, metadata);
         SUT = new SavedConnectionCommand();
-      
+
     }
-    
+
     @AfterMethod
     public void tearDown() {
         SUT = null;
@@ -91,33 +91,31 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         response = null;
         project = null;
         metadata = null;
-       // ImportingManager.disposeJob(job.id);
-       // job = null;
-        //options = null;
+        // ImportingManager.disposeJob(job.id);
+        // job = null;
+        // options = null;
     }
-  
-     @BeforeTest
-     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable"})
-     public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName,  @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost, 
-            @Optional(DEFAULT_MYSQL_PORT)    String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
-            @Optional(DEFAULT_MYSQL_PASSWORD)  String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mySqlTestTable) {
-        
+
+    @BeforeTest
+    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable" })
+    public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName, @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost,
+            @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
+            @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable) {
+
         // MockitoAnnotations.initMocks(this);
-         testDbConfig = new DatabaseConfiguration();
-         testDbConfig.setDatabaseHost(mySqlDbHost);
-         testDbConfig.setDatabaseName(mySqlDbName);
-         testDbConfig.setDatabasePassword(mySqlDbPassword);
-         testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
-         testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
-         testDbConfig.setDatabaseUser(mySqlDbUser);
-         testDbConfig.setUseSSL(false);
-       
-         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
-         
-     }
-    
- 
-    
+        testDbConfig = new DatabaseConfiguration();
+        testDbConfig.setDatabaseHost(mySqlDbHost);
+        testDbConfig.setDatabaseName(mySqlDbName);
+        testDbConfig.setDatabasePassword(mySqlDbPassword);
+        testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
+        testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
+        testDbConfig.setDatabaseUser(mySqlDbUser);
+        testDbConfig.setUseSSL(false);
+
+        DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
+
+    }
+
     private void saveDatabaseConfiguration(String savedDbName) {
         
         when(request.getParameter("connectionName")).thenReturn(savedDbName);
@@ -142,7 +140,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         }
        
     }
-    
+
     @Test
     public void testDoPost() throws IOException, ServletException {
         
@@ -180,10 +178,9 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
     @Test
     public void testDoGet() throws IOException, ServletException {
         String testDbName = "testLocalDb";
-        //add saved connection
+        // add saved connection
         saveDatabaseConfiguration(testDbName);
-        
-        
+
         when(request.getParameter("connectionName")).thenReturn(testDbName);
         when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
@@ -192,22 +189,22 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-       
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        
+
         when(response.getWriter()).thenReturn(pw);
-     
+
         SUT.doGet(request, response);
-      
+
         ObjectNode json = ParsingUtilities.mapper.readValue(sw.getBuffer().toString().trim(), ObjectNode.class);
-        
+
         ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
-     
+
         Assert.assertEquals(savedConnections.size(), 1);
-        
-        ObjectNode sc = (ObjectNode)savedConnections.get(0);
+
+        ObjectNode sc = (ObjectNode) savedConnections.get(0);
         String connName = sc.get("connectionName").asText();
         Assert.assertEquals(connName, testDbName);
     }
@@ -216,14 +213,13 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
     public void testDoPut() throws IOException, ServletException {
         String testDbName = "testLocalDb";
         saveDatabaseConfiguration(testDbName);
-    
-       
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        
+
         when(response.getWriter()).thenReturn(pw);
-       
-        //modify database config
+
+        // modify database config
         String newHost = "localhost";
         when(request.getParameter("connectionName")).thenReturn(testDbName);
         when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
@@ -233,16 +229,16 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-      
+
         SUT.doPut(request, response);
-        
+
         ObjectNode json = ParsingUtilities.mapper.readValue(sw.getBuffer().toString().trim(), ObjectNode.class);
         ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
-       
+
         Assert.assertEquals(savedConnections.size(), 1);
-        
-        ObjectNode sc = (ObjectNode)savedConnections.get(0);
+
+        ObjectNode sc = (ObjectNode) savedConnections.get(0);
         String newDbHost = sc.get("databaseHost").asText();
         Assert.assertEquals(newDbHost, newHost);
     }
@@ -251,55 +247,52 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
     public void testDoDeleteValidConnectionName() {
         String testDbName = "testLocalDb";
         saveDatabaseConfiguration(testDbName);
-    
-       
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        
+
         try {
             when(response.getWriter()).thenReturn(pw);
             when(request.getParameter("connectionName")).thenReturn(testDbName);
             SUT.doDelete(request, response);
-            
+
             ObjectNode json = ParsingUtilities.mapper.readValue(sw.getBuffer().toString().trim(), ObjectNode.class);
             ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
             Assert.assertNotNull(savedConnections);
-           
+
             Assert.assertEquals(savedConnections.size(), 0);
-       
+
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testDoDeleteInValidConnectionName() {
         String testDbName = "testLocalDb";
         saveDatabaseConfiguration(testDbName);
-    
-       
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        
+
         try {
             when(response.getWriter()).thenReturn(pw);
-           
+
             when(request.getParameter("connectionName")).thenReturn("noDbName");
 
             SUT.doDelete(request, response);
-            
+
             ObjectNode json = ParsingUtilities.mapper.createObjectNode();
-            
+
             Assert.assertNotNull(json);
-       
-       
+
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Added to check XSS invalid tokens
      * @throws IOException
@@ -329,16 +322,16 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
 
     @Test
     public void testCsrfProtection() throws ServletException, IOException {
-    	StringWriter sw = new StringWriter();
+        StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
         when(response.getWriter()).thenReturn(pw);
-        
+
         SUT.doPost(request, response);
-    	Assert.assertEquals(
-    			ParsingUtilities.mapper.readValue("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", ObjectNode.class),
-    			ParsingUtilities.mapper.readValue(sw.toString(), ObjectNode.class));
+        Assert.assertEquals(
+                ParsingUtilities.mapper.readValue("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}",
+                        ObjectNode.class),
+                ParsingUtilities.mapper.readValue(sw.toString(), ObjectNode.class));
     }
-    
 
 }

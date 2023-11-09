@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.xml;
 
 import java.util.Properties;
@@ -38,43 +39,43 @@ import org.openrefine.expr.functions.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-
 public class ParseXmlTests extends FunctionTestBase {
-    
+
     static Properties bindings;
-    static String x =   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<root xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
-                        "    <foaf:Person>\n" +
-                        "        <foaf:name>John Doe</foaf:name>\n" +
-                        "        <head>head1</head>\n" +
-                        "        <head>head2</head>\n" +
-                        "        <BODY>body1</BODY>\n" +
-                        "        <foaf:homepage rdf:resource=\"http://www.example.com\"/>\n" +
-                        "    </foaf:Person>\n" +
-                        "    <foaf:Person>\n" +
-                        "        <foaf:name>Héloïse Dupont</foaf:name>\n" +
-                        "        <head>head3</head>\n" +
-                        "        <BODY>body2</BODY>\n" +
-                        "        <foaf:title/>\n" +
-                        "    </foaf:Person>\n" +
-                        "</root>";
-    
-    
+    static String x = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<root xmlns:foaf=\"http://xmlns.com/foaf/0.1/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
+            "    <foaf:Person>\n" +
+            "        <foaf:name>John Doe</foaf:name>\n" +
+            "        <head>head1</head>\n" +
+            "        <head>head2</head>\n" +
+            "        <BODY>body1</BODY>\n" +
+            "        <foaf:homepage rdf:resource=\"http://www.example.com\"/>\n" +
+            "    </foaf:Person>\n" +
+            "    <foaf:Person>\n" +
+            "        <foaf:name>Héloïse Dupont</foaf:name>\n" +
+            "        <head>head3</head>\n" +
+            "        <BODY>body2</BODY>\n" +
+            "        <foaf:title/>\n" +
+            "    </foaf:Person>\n" +
+            "</root>";
+
     @Test
     public void serializeParseXml() {
         String json = "{\"description\":\"Parses a string as XML\",\"params\":\"string s\",\"returns\":\"XML object\"}";
         TestUtils.isSerializedTo(new ParseXml(), json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testParseXml() {
         Assert.assertTrue(invoke("parseXml") instanceof EvalError);
-        Assert.assertTrue(invoke("parseXml","x") instanceof org.jsoup.nodes.Document);
-        Assert.assertTrue(invoke("select",Jsoup.parse(x,"",Parser.xmlParser()),"foaf|Person") instanceof org.jsoup.select.Elements);
-        Assert.assertEquals(invoke("innerXml",Jsoup.parse(x,"",Parser.xmlParser()).select("foaf|Person").first()),"<foaf:name>\n John Doe\n</foaf:name>\n<head>\n head1\n</head>\n<head>\n head2\n</head>\n<BODY>\n body1\n</BODY>\n<foaf:homepage rdf:resource=\"http://www.example.com\" />");
-        Assert.assertEquals(invoke("xmlAttr",Jsoup.parse(x,"",Parser.xmlParser()).select("foaf|homepage").first(),"rdf:resource"),"http://www.example.com");
-        Assert.assertEquals(invoke("ownText",Jsoup.parse(x,"",Parser.xmlParser()).select("BODY").first()),"body1");
-        Assert.assertEquals(invoke("xmlText",Jsoup.parse(x,"",Parser.xmlParser()).select("foaf|Person").first()),"John Doe head1 head2 body1");
+        Assert.assertTrue(invoke("parseXml", "x") instanceof org.jsoup.nodes.Document);
+        Assert.assertTrue(invoke("select", Jsoup.parse(x, "", Parser.xmlParser()), "foaf|Person") instanceof org.jsoup.select.Elements);
+        Assert.assertEquals(invoke("innerXml", Jsoup.parse(x, "", Parser.xmlParser()).select("foaf|Person").first()),
+                "<foaf:name>\n John Doe\n</foaf:name>\n<head>\n head1\n</head>\n<head>\n head2\n</head>\n<BODY>\n body1\n</BODY>\n<foaf:homepage rdf:resource=\"http://www.example.com\" />");
+        Assert.assertEquals(invoke("xmlAttr", Jsoup.parse(x, "", Parser.xmlParser()).select("foaf|homepage").first(), "rdf:resource"),
+                "http://www.example.com");
+        Assert.assertEquals(invoke("ownText", Jsoup.parse(x, "", Parser.xmlParser()).select("BODY").first()), "body1");
+        Assert.assertEquals(invoke("xmlText", Jsoup.parse(x, "", Parser.xmlParser()).select("foaf|Person").first()),
+                "John Doe head1 head2 body1");
     }
 }
-

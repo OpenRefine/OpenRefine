@@ -21,22 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jsoup.helper.Validate;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jsoup.helper.Validate;
 
 /**
- * A class to represent a QA warning emitted by the Wikidata schema This could
- * probably be reused at a broader scale, for instance for Data Package
- * validation.
+ * A class to represent a QA warning emitted by the Wikidata schema This could probably be reused at a broader scale,
+ * for instance for Data Package validation.
  * 
  * @author Antonin Delpeuch
  *

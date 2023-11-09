@@ -24,26 +24,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing;
 
-import org.openrefine.browsing.EngineConfig;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EngineConfigTests {
-    
-    public static String engineConfigJson =
-              "{\n"
+
+    public static String engineConfigJson = "{\n"
             + "      \"mode\": \"row-based\",\n"
             + "      \"facets\": [\n"
             + "        {\n"
@@ -52,58 +52,57 @@ public class EngineConfigTests {
             + "        }\n"
             + "      ]\n"
             + "    }";
-    
-    public static String engineConfigRecordModeJson =
-             "{"
+
+    public static String engineConfigRecordModeJson = "{"
             + "    \"mode\":\"record-based\","
             + "    \"facets\":[]"
             + "}";
-    
+
     public static String noFacetProvided = "{\"mode\":\"row-based\"}";
-    
+
     protected static class MyFacetConfig implements FacetConfig {
 
-		@Override
-		public Facet apply(Project project) {
-			return null;
-		}
+        @Override
+        public Facet apply(Project project) {
+            return null;
+        }
 
-		@Override
-		public String getJsonType() {
-			return "core/my-facet";
-		}
-		
-		@JsonProperty("foo")
-		public String getFoo() {
-			return "bar";
-		}
-    	
+        @Override
+        public String getJsonType() {
+            return "core/my-facet";
+        }
+
+        @JsonProperty("foo")
+        public String getFoo() {
+            return "bar";
+        }
+
     }
-    
+
     @BeforeTest
     public void registerFacet() {
-    	FacetConfigResolver.registerFacetConfig("core", "my-facet", MyFacetConfig.class);
+        FacetConfigResolver.registerFacetConfig("core", "my-facet", MyFacetConfig.class);
     }
-    
+
     @Test
     public void serializeEngineConfig() {
         EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
         TestUtils.isSerializedTo(ec, engineConfigJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeEngineConfigRecordMode() {
         EngineConfig ec = EngineConfig.reconstruct(engineConfigRecordModeJson);
         TestUtils.isSerializedTo(ec, engineConfigRecordModeJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void reconstructNullEngineConfig() {
         EngineConfig ec = EngineConfig.reconstruct(null);
         Assert.assertEquals(ec.getMode(), Mode.RowBased);
         Assert.assertTrue(ec.getFacetConfigs().isEmpty());
     }
-    
+
     @Test
     public void reconstructNoFacetsProvided() {
         EngineConfig ec = EngineConfig.reconstruct(noFacetProvided);

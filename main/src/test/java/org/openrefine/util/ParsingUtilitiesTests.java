@@ -40,37 +40,38 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.openrefine.RefineTest;
-import org.openrefine.util.ParsingUtilities;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import org.openrefine.RefineTest;
+import org.openrefine.util.ParsingUtilities;
+
 public class ParsingUtilitiesTests extends RefineTest {
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     @Test
     public void zonedDateTimeTest() {
-        String  d = "2017-12-01T14:53:36Z";
+        String d = "2017-12-01T14:53:36Z";
         DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         OffsetDateTime.parse(d, formatter);
     }
-    
+
     @Test
     public void parseProjectBeforeJDK8() {
         String historyEntryDate = "2017-12-01T14:53:36Z";
-        
+
         OffsetDateTime zdt = ParsingUtilities.stringToDate(historyEntryDate);
         String zdtString = ParsingUtilities.dateToString(zdt);
         Assert.assertEquals(zdtString, historyEntryDate);
     }
-    
+
     @Test
     public void stringToDate() {
         Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43.123").getYear());
@@ -79,7 +80,7 @@ public class ParsingUtilitiesTests extends RefineTest {
         Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43.123Z").getYear());
         Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43+00:00").getYear());
     }
-    
+
     @Test
     public void stringToLocalDate() {
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123").getYear());
@@ -88,38 +89,38 @@ public class ParsingUtilitiesTests extends RefineTest {
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123Z").getYear());
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43+00:00").getYear());
     }
-    
+
     /**
      * Converting between string and local time must be reversible, no matter the timezone.
      */
     @Test
     public void stringToLocalDateNonUTC() {
-    	TimeZone.setDefault(TimeZone.getTimeZone("JST"));
-    	try {
-    		Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
-    		Assert.assertEquals(ParsingUtilities.localDateToString(
-    				ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
-    				"2001-08-12T00:00:00Z");
-    		
-    	} finally {
-    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    	}
+        TimeZone.setDefault(TimeZone.getTimeZone("JST"));
+        try {
+            Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
+            Assert.assertEquals(ParsingUtilities.localDateToString(
+                    ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
+                    "2001-08-12T00:00:00Z");
+
+        } finally {
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        }
     }
-    
+
     @Test
     public void parseProjectModifiedBeforeJDK8() {
         String modified = "2014-01-15T21:46:25Z";
-        Assert.assertNotEquals(ParsingUtilities.stringToLocalDate(modified).toString(), 
+        Assert.assertNotEquals(ParsingUtilities.stringToLocalDate(modified).toString(),
                 modified);
     }
-    
+
     @Test
     public void strSubstitutorTest() {
         Map<String, String> data = new HashMap<String, String>(6);
-        
+
         data.put("value", "1234");
         data.put("field_format", "String");
-        
+
         StrSubstitutor sub = new StrSubstitutor(data);
         String message = "The value ${value} in row ${row_number} and column ${column_number} is not type ${field_type} and format ${field_format}";
         String result = sub.replace(message);

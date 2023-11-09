@@ -42,8 +42,7 @@ import org.openrefine.history.HistoryEntry;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.io.FileProjectManager;
 
-
-public class HistoryEntryManagerStub implements HistoryEntryManager{
+public class HistoryEntryManagerStub implements HistoryEntryManager {
 
     @Override
     public void delete(HistoryEntry historyEntry) {
@@ -72,7 +71,7 @@ public class HistoryEntryManagerStub implements HistoryEntryManager{
     }
 
     protected File getHistoryDir(HistoryEntry historyEntry) {
-        File dir = new File(((FileProjectManager)ProjectManager.singleton)
+        File dir = new File(((FileProjectManager) ProjectManager.singleton)
                 .getProjectDir(historyEntry.projectID),
                 "history");
         dir.mkdirs();

@@ -42,6 +42,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.exporters.CsvExporter;
@@ -50,12 +57,6 @@ import org.openrefine.model.Column;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 public class CsvExporterTests extends RefineTest {
 
@@ -65,17 +66,17 @@ public class CsvExporterTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     StringWriter writer;
     Project project;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     CsvExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new CsvExporter();
         writer = new StringWriter();
         project = new Project();
@@ -84,7 +85,7 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         writer = null;
         project = null;
@@ -93,7 +94,7 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleCsv(){
+    public void exportSimpleCsv() {
         CreateGrid(2, 2);
 
         try {
@@ -103,13 +104,13 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1\n" +
-                                               "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
+                "row0cell0,row0cell1\n" +
+                "row1cell0,row1cell1\n");
 
     }
 
     @Test
-    public void exportSimpleCsvNoHeader(){
+    public void exportSimpleCsvNoHeader() {
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
@@ -119,13 +120,13 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
+                "row1cell0,row1cell1\n");
 
-        verify(options,times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).getProperty("printColumnHeader");
     }
-    
+
     @Test
-    public void exportSimpleCsvCustomLineSeparator(){
+    public void exportSimpleCsvCustomLineSeparator() {
         CreateGrid(2, 2);
         when(options.getProperty("options")).thenReturn("{\"lineSeparator\":\"X\"}");
 
@@ -136,14 +137,14 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1X" +
-                                               "row0cell0,row0cell1X" +
-                                               "row1cell0,row1cell1X");
+                "row0cell0,row0cell1X" +
+                "row1cell0,row1cell1X");
 
     }
 
     @Test
-    public void exportCsvWithLineBreaks(){
-        CreateGrid(3,3);
+    public void exportCsvWithLineBreaks() {
+        CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, new Cell("line\n\n\nbreak", null));
         try {
@@ -153,14 +154,14 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,\"line\n\n\nbreak\",row1cell2\n" +
-                                               "row2cell0,row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,\"line\n\n\nbreak\",row1cell2\n" +
+                "row2cell0,row2cell1,row2cell2\n");
     }
 
     @Test
-    public void exportCsvWithComma(){
-        CreateGrid(3,3);
+    public void exportCsvWithComma() {
+        CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, new Cell("with, comma", null));
         try {
@@ -170,14 +171,14 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,\"with, comma\",row1cell2\n" +
-                                               "row2cell0,row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,\"with, comma\",row1cell2\n" +
+                "row2cell0,row2cell1,row2cell2\n");
     }
 
     @Test
-    public void exportCsvWithQuote(){
-        CreateGrid(3,3);
+    public void exportCsvWithQuote() {
+        CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, new Cell("line has \"quote\"", null));
         try {
@@ -187,14 +188,14 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,\"line has \"\"quote\"\"\",row1cell2\n" +
-                                               "row2cell0,row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,\"line has \"\"quote\"\"\",row1cell2\n" +
+                "row2cell0,row2cell1,row2cell2\n");
     }
 
     @Test
-    public void exportCsvWithEmptyCells(){
-        CreateGrid(3,3);
+    public void exportCsvWithEmptyCells() {
+        CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
@@ -205,40 +206,31 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,,row1cell2\n" +
-                                               ",row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,,row1cell2\n" +
+                ",row2cell1,row2cell2\n");
     }
-    
-    // all date type cells are in unified format   
+
+    // all date type cells are in unified format
     /**
-    @Ignore
-    @Test
-    public void exportDateColumnsPreVersion28(){
-        CreateGrid(1,2);
-        Calendar calendar = Calendar.getInstance();
-        Date date = new Date();
+     * @Ignore
+     * @Test public void exportDateColumnsPreVersion28(){ CreateGrid(1,2); Calendar calendar = Calendar.getInstance();
+     *       Date date = new Date();
+     * 
+     *       when(options.getProperty("printColumnHeader")).thenReturn("false"); project.rows.get(0).cells.set(0, new
+     *       Cell(calendar, null)); project.rows.get(0).cells.set(1, new Cell(date, null));
+     * 
+     *       try { SUT.export(project, options, engine, writer); } catch (IOException e) { Assert.fail(); }
+     * 
+     *       String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
+     *       ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
+     * 
+     *       Assert.assertEquals(writer.toString(), expectedOutput); }
+     */
+    // helper methods
 
-        when(options.getProperty("printColumnHeader")).thenReturn("false");
-        project.rows.get(0).cells.set(0, new Cell(calendar, null));
-        project.rows.get(0).cells.set(1, new Cell(date, null));
-
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
-            ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
-
-        Assert.assertEquals(writer.toString(), expectedOutput);
-    }
-    */
-    //helper methods
-
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
+    protected void CreateColumns(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
@@ -247,12 +239,12 @@ public class CsvExporterTests extends RefineTest {
         }
     }
 
-    protected void CreateGrid(int noOfRows, int noOfColumns){
+    protected void CreateGrid(int noOfRows, int noOfColumns) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
             }
             project.rows.add(row);

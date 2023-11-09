@@ -35,6 +35,9 @@ package org.openrefine.operations.recon;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.Change;
@@ -46,75 +49,70 @@ import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.ReconChange;
 import org.openrefine.operations.EngineDependentMassCellOperation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOperation {
+
     final protected String _similarValue;
 
     @JsonCreator
     public ReconClearSimilarCellsOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig engineConfig,
-        @JsonProperty("columnName")
-        String     columnName, 
-        @JsonProperty("similarValue")
-        String     similarValue
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("similarValue") String similarValue) {
         super(engineConfig, columnName, false);
         this._similarValue = similarValue;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("similarValue")
     public String getSimilarValue() {
         return _similarValue;
     }
-    
+
     @Override
     protected String getBriefDescription(Project project) {
         return "Clear recon data for cells containing \"" +
-            _similarValue + "\" in column " + _columnName;
+                _similarValue + "\" in column " + _columnName;
     }
 
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        
+
         return "Clear recon data for " + cellChanges.size() + " cells containing \"" +
-            _similarValue + "\" in column " + _columnName;
+                _similarValue + "\" in column " + _columnName;
     }
 
     @Override
-    protected RowVisitor createRowVisitor(final Project project, final List<CellChange> cellChanges, final long historyEntryID) throws Exception {
+    protected RowVisitor createRowVisitor(final Project project, final List<CellChange> cellChanges, final long historyEntryID)
+            throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         final int cellIndex = column != null ? column.getCellIndex() : -1;
-        
+
         return new RowVisitor() {
+
             @Override
             public void start(Project project) {
                 // nothing to do
             }
-            
+
             @Override
             public void end(Project project) {
                 // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = cellIndex < 0 ? null : row.getCell(cellIndex);
                 if (cell != null && cell.recon != null) {
-                    String value = cell.value instanceof String ? 
-                            ((String) cell.value) : cell.value.toString();
-                            
+                    String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
+
                     if (_similarValue.equals(value)) {
                         Cell newCell = new Cell(cell.value, null);
-                        
+
                         CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                         cellChanges.add(cellChange);
                     }
@@ -123,14 +121,13 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
             }
         };
     }
-    
+
     @Override
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new ReconChange(
-            cellChanges, 
-            _columnName, 
-            column.getReconConfig(),
-            null
-        );
+                cellChanges,
+                _columnName,
+                column.getReconConfig(),
+                null);
     }
 }

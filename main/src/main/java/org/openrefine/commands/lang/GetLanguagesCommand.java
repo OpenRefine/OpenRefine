@@ -44,31 +44,33 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.openrefine.commands.Command;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import edu.mit.simile.butterfly.ButterflyModule;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+
+import org.openrefine.commands.Command;
 
 public class GetLanguagesCommand extends Command {
-    
+
     public static class LanguageRecord {
+
         @JsonProperty("code")
         protected String code;
         @JsonProperty("label")
         protected String label;
+
         public LanguageRecord(String code, String label) {
             this.code = code;
             this.label = label;
         }
     }
-    
+
     public class LanguagesResponse {
+
         @JsonProperty("languages")
         List<LanguageRecord> languages;
-        
+
         public LanguagesResponse(ButterflyModule module) throws UnsupportedEncodingException {
             languages = new ArrayList<>();
             languages.add(new LanguageRecord("en", "English"));
@@ -85,11 +87,11 @@ public class GetLanguagesCommand extends Command {
             }
         }
     }
-    
+
     public GetLanguagesCommand() {
         super();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -98,7 +100,7 @@ public class GetLanguagesCommand extends Command {
         if (modname == null) {
             modname = "core";
         }
-        
+
         ButterflyModule module = this.servlet.getModule(modname);
 
         respondJSON(response, new LanguagesResponse(module));

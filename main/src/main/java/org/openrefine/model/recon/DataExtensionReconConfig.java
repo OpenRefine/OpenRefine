@@ -44,23 +44,24 @@ import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconJob;
 
 public class DataExtensionReconConfig extends StandardReconConfig {
+
     final public ReconType type;
-    
+
     private final static String WARN = "Not implemented";
-    
+
     public DataExtensionReconConfig(
-        String service,
-        String identifierSpace,
-        String schemaSpace,
-        ReconType type) {
+            String service,
+            String identifierSpace,
+            String schemaSpace,
+            ReconType type) {
         super(
-            service,
-            identifierSpace,
-            schemaSpace,
-            type != null ? type.id : null, 
-            type != null ? type.name : null,
-            true,
-            new ArrayList<ColumnDetail>());
+                service,
+                identifierSpace,
+                schemaSpace,
+                type != null ? type.id : null,
+                type != null ? type.name : null,
+                true,
+                new ArrayList<ColumnDetail>());
         this.type = type;
     }
 
@@ -74,7 +75,7 @@ public class DataExtensionReconConfig extends StandardReconConfig {
     public int getBatchSize() {
         throw new RuntimeException(WARN);
     }
-   
+
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         throw new RuntimeException(WARN);

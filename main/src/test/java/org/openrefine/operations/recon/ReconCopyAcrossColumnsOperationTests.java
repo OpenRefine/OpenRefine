@@ -24,21 +24,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconCopyAcrossColumnsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-copy-across-columns", ReconCopyAcrossColumnsOperation.class);
     }
-    
+
     @Test
     public void serializeReconCopyAcrossColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/recon-copy-across-columns\","
@@ -48,6 +52,7 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 + "\"toColumnNames\":[\"first\",\"second\"],"
                 + "\"judgments\":[\"matched\",\"new\"],"
                 + "\"applyToJudgedCells\":true}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
 }

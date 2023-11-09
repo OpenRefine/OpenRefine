@@ -42,12 +42,17 @@ public class JoinException extends Exception {
     /**
      * Default JoinException format exception.
      */
-    public JoinException() { super(); }
-    
+    public JoinException() {
+        super();
+    }
+
     /**
      * JoinException exception.
      *
-     * @param message error message
+     * @param message
+     *            error message
      */
-    public JoinException(String message) { super(message); }
+    public JoinException(String message) {
+        super(message);
+    }
 }

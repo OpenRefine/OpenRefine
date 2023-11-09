@@ -21,20 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.editing;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 /**
- * This is just the necessary bits to store Wikidata credentials in OpenRefine's
- * preference store.
+ * This is just the necessary bits to store Wikidata credentials in OpenRefine's preference store.
  * 
  * @author Antonin Delpeuch
  *
  */
-class WikibaseCredentials  {
+class WikibaseCredentials {
 
     @JsonProperty("username")
     private String username;
@@ -48,10 +47,8 @@ class WikibaseCredentials  {
 
     @JsonCreator
     public WikibaseCredentials(
-    		@JsonProperty("username")
-    		String username,
-    		@JsonProperty("password")
-    		String password) {
+            @JsonProperty("username") String username,
+            @JsonProperty("password") String password) {
         this.username = username;
         this.password = password;
     }
@@ -67,7 +64,7 @@ class WikibaseCredentials  {
     public boolean isNonNull() {
         return username != null && password != null && !"null".equals(username) && !"null".equals(password);
     }
-    
+
     @JsonProperty("class")
     public String getClassName() {
         return getClass().getName();

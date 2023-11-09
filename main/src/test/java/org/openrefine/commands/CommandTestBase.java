@@ -1,3 +1,4 @@
+
 package org.openrefine.commands;
 
 import static org.mockito.Mockito.mock;
@@ -10,33 +11,35 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.testng.annotations.BeforeMethod;
+
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeMethod;
 
 public class CommandTestBase extends RefineTest {
-	protected HttpServletRequest request = null;
+
+    protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected Command command = null;
     protected StringWriter writer = null;
-    
-	@BeforeMethod
-	public void setUpRequestResponse() {
-		request = mock(HttpServletRequest.class);
-		response = mock(HttpServletResponse.class);
-		writer = new StringWriter();
-		try {
+
+    @BeforeMethod
+    public void setUpRequestResponse() {
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        writer = new StringWriter();
+        try {
             when(response.getWriter()).thenReturn(new PrintWriter(writer));
         } catch (IOException e) {
             e.printStackTrace();
         }
-	}
-	
-	/** 
-	 * Convenience method to check that CSRF protection was triggered
-	 */
-	protected void assertCSRFCheckFailed() {
-		TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
-	}
+    }
+
+    /**
+     * Convenience method to check that CSRF protection was triggered
+     */
+    protected void assertCSRFCheckFailed() {
+        TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+    }
 }

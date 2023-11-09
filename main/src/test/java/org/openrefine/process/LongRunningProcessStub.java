@@ -1,12 +1,12 @@
+
 package org.openrefine.process;
 
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
 
 /**
- * A long running process that we can actually run in the main
- * thread of the test runner, because during tests it is actually
- * expected to be quick.
+ * A long running process that we can actually run in the main thread of the test runner, because during tests it is
+ * actually expected to be quick.
  * 
  * It wraps an existing LongRunningProcess
  * 
@@ -14,21 +14,21 @@ import org.openrefine.process.Process;
  *
  */
 public class LongRunningProcessStub extends LongRunningProcess {
-	
-	protected LongRunningProcess wrapped;
 
-	public LongRunningProcessStub(Process process) {
-		super("some description");
-		this.wrapped = (LongRunningProcess)process;
-	}
-	
-	public void run() {
-		wrapped.getRunnable().run();
-	}
+    protected LongRunningProcess wrapped;
 
-	@Override
-	protected Runnable getRunnable() {
-		return wrapped.getRunnable();
-	}
+    public LongRunningProcessStub(Process process) {
+        super("some description");
+        this.wrapped = (LongRunningProcess) process;
+    }
+
+    public void run() {
+        wrapped.getRunnable().run();
+    }
+
+    @Override
+    protected Runnable getRunnable() {
+        return wrapped.getRunnable();
+    }
 
 }

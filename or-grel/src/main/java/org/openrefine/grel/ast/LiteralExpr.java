@@ -38,18 +38,20 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
+
 import org.openrefine.expr.Evaluable;
 
 /**
  * An abstract syntax tree node encapsulating a literal value.
  */
 public class LiteralExpr implements Evaluable {
+
     final protected Object _value;
-    
+
     public LiteralExpr(Object value) {
         _value = value;
     }
-                              
+
     @Override
     public Object evaluate(Properties bindings) {
         return _value;
@@ -59,14 +61,14 @@ public class LiteralExpr implements Evaluable {
     public String toString() {
         return _value instanceof String ? new TextNode((String) _value).toString() : _value.toString();
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof Evaluable) && toString().equals(other.toString());
     }
 
-	@Override
-	public Set<String> getColumnDependencies(String baseColumn) {
-		return Collections.emptySet();
-	}
+    @Override
+    public Set<String> getColumnDependencies(String baseColumn) {
+        return Collections.emptySet();
+    }
 }

@@ -24,23 +24,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.column;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnAdditionOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class ColumnAdditionOperationTests extends RefineTest {
-    
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "column-addition", ColumnAdditionOperation.class);
     }
-    
+
     @Test
     public void serializeColumnAdditionOperation() throws Exception {
         String json = "{"
@@ -49,6 +51,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 + "    \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
 }

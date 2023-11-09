@@ -24,33 +24,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconDiscardJudgmentsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class ReconDiscardJudgmentsOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-discard-judgments", ReconDiscardJudgmentsOperation.class);
     }
-    
+
     @Test
     public void serializeReconDiscardJudgmentsOperation() throws Exception {
-        String json = "{\n" + 
-                "    \"op\": \"core/recon-discard-judgments\",\n" + 
-                "    \"description\": \"Discard recon judgments and clear recon data for cells in column researcher\",\n" + 
-                "    \"engineConfig\": {\n" + 
-                "      \"mode\": \"record-based\",\n" + 
-                "      \"facets\": []\n" + 
-                "    },\n" + 
-                "    \"columnName\": \"researcher\",\n" + 
-                "    \"clearData\": true\n" + 
+        String json = "{\n" +
+                "    \"op\": \"core/recon-discard-judgments\",\n" +
+                "    \"description\": \"Discard recon judgments and clear recon data for cells in column researcher\",\n" +
+                "    \"engineConfig\": {\n" +
+                "      \"mode\": \"record-based\",\n" +
+                "      \"facets\": []\n" +
+                "    },\n" +
+                "    \"columnName\": \"researcher\",\n" +
+                "    \"clearData\": true\n" +
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
 }

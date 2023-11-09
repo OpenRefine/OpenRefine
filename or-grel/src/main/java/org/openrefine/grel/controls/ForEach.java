@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
@@ -48,13 +49,14 @@ import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.ast.VariableExpr;
 
 public class ForEach implements Control {
+
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
             return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) + 
-                " expects second argument to be a variable name";
+            return ControlFunctionRegistry.getControlName(this) +
+                    " expects second argument to be a variable name";
         }
         return null;
     }
@@ -67,16 +69,16 @@ public class ForEach implements Control {
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
             return new EvalError("First argument to forEach is not an array");
         }
-        
+
         String name = ((VariableExpr) args[1]).getName();
-        
+
         Object oldValue = bindings.get(name);
         try {
             List<Object> results = null;
-            
+
             if (o.getClass().isArray()) {
                 Object[] values = (Object[]) o;
-                
+
                 results = new ArrayList<Object>(values.length);
                 for (Object v : values) {
                     if (v != null) {
@@ -84,51 +86,51 @@ public class ForEach implements Control {
                     } else {
                         bindings.remove(name);
                     }
-                    
+
                     Object r = args[2].evaluate(bindings);
-                    
+
                     results.add(r);
                 }
             } else if (o instanceof ArrayNode) {
                 ArrayNode a = (ArrayNode) o;
                 int l = a.size();
-                
+
                 results = new ArrayList<Object>(l);
                 for (int i = 0; i < l; i++) {
                     Object v = JsonValueConverter.convert(a.get(i));
-                    
+
                     if (v != null) {
                         bindings.put(name, v);
                     } else {
                         bindings.remove(name);
                     }
-                    
+
                     Object r = args[2].evaluate(bindings);
-                    
+
                     results.add(r);
                 }
             } else {
                 Collection<Object> collection = ExpressionUtils.toObjectCollection(o);
-                
+
                 results = new ArrayList<Object>(collection.size());
-                
+
                 for (Object v : collection) {
                     if (v != null) {
                         bindings.put(name, v);
                     } else {
                         bindings.remove(name);
                     }
-                    
+
                     Object r = args[2].evaluate(bindings);
-                    
+
                     results.add(r);
                 }
             }
-            
-            return results.toArray(); 
+
+            return results.toArray();
         } finally {
             /*
-             *  Restore the old value bound to the variable, if any.
+             * Restore the old value bound to the variable, if any.
              */
             if (oldValue != null) {
                 bindings.put(name, oldValue);
@@ -137,17 +139,17 @@ public class ForEach implements Control {
             }
         }
     }
-    
+
     @Override
     public String getDescription() {
-            return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression e, and pushes the result onto the result array.";
+        return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression e, and pushes the result onto the result array.";
     }
-    
+
     @Override
     public String getParams() {
         return "expression a, variable v, expression e";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

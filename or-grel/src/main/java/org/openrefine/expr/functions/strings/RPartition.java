@@ -45,7 +45,7 @@ public class RPartition extends PureFunction {
         if (args.length >= 2 && args.length <= 3) {
             Object o1 = args[0];
             Object o2 = args[1];
-            
+
             boolean omitFragment = false;
             if (args.length == 3) {
                 Object o3 = args[2];
@@ -53,28 +53,28 @@ public class RPartition extends PureFunction {
                     omitFragment = ((Boolean) o3).booleanValue();
                 }
             }
-            
+
             if (o1 != null && o2 != null && o1 instanceof String) {
                 String s = (String) o1;
-                
+
                 int from = -1;
                 int to = -1;
-                
+
                 if (o2 instanceof String) {
                     String frag = (String) o2;
-                    
+
                     from = s.lastIndexOf(frag);
                     to = from + frag.length();
                 } else if (o2 instanceof Pattern) {
                     Pattern pattern = (Pattern) o2;
                     Matcher matcher = pattern.matcher(s);
-                    
+
                     while (matcher.find()) {
                         from = matcher.start();
                         to = matcher.end();
                     }
                 }
-                
+
                 String[] output = omitFragment ? new String[2] : new String[3];
                 if (from > -1) {
                     output[0] = s.substring(0, from);
@@ -96,18 +96,17 @@ public class RPartition extends PureFunction {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
-        return 
-            "Returns an array of strings [a,frag,b] where a is the string part before the last occurrence of frag in s and b is what's left. If omitFragment is true, frag is not returned.";
+        return "Returns an array of strings [a,frag,b] where a is the string part before the last occurrence of frag in s and b is what's left. If omitFragment is true, frag is not returned.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string or regex frag, optional boolean omitFragment";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

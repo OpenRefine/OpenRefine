@@ -39,47 +39,49 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.openrefine.expr.CellTuple;
-import org.openrefine.expr.HasFields;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.InjectableValues;
 
+import org.openrefine.expr.CellTuple;
+import org.openrefine.expr.HasFields;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.Pool;
+
 /**
- * Class representing a single Row which contains a list of {@link Cell}s.  There may
- * be multiple rows in a {@link Record}.
+ * Class representing a single Row which contains a list of {@link Cell}s. There may be multiple rows in a
+ * {@link Record}.
  */
 public class Row implements HasFields {
-    public boolean             flagged;
-    public boolean             starred;
-    final public List<Cell>    cells;
-    
+
+    public boolean flagged;
+    public boolean starred;
+    final public List<Cell> cells;
+
     private static final String FLAGGED = "flagged";
     private static final String STARRED = "starred";
-    
+
     /**
      * Construct a new Row.
      * 
-     * @param cellCount number of cells to give row initially (can be extended later)
+     * @param cellCount
+     *            number of cells to give row initially (can be extended later)
      */
     public Row(int cellCount) {
         cells = new ArrayList<Cell>(cellCount);
     }
-    
+
     protected Row(List<Cell> cells, boolean flagged, boolean starred) {
         this.cells = cells;
         this.flagged = flagged;
         this.starred = starred;
     }
-    
+
     /**
-     * Copy a row and return the copy. Note that this is a shallow copy, so
-     * if the contents of cells are changed in the original, they will be
-     * be changed in the duplicate.
+     * Copy a row and return the copy. Note that this is a shallow copy, so if the contents of cells are changed in the
+     * original, they will be be changed in the duplicate.
+     * 
      * @return the duplicated row
      */
     public Row dup() {
@@ -89,7 +91,7 @@ public class Row implements HasFields {
         row.cells.addAll(cells);
         return row;
     }
-    
+
     @Override
     public Object getField(String name) {
         if (FLAGGED.equals(name)) {
@@ -99,12 +101,12 @@ public class Row implements HasFields {
         }
         return null;
     }
-    
+
     @Override
     public boolean fieldAlsoHasFields(String name) {
         return "cells".equals(name) || "record".equals(name);
     }
-    
+
     @JsonIgnore
     public boolean isEmpty() {
         for (Cell cell : cells) {
@@ -114,9 +116,10 @@ public class Row implements HasFields {
         }
         return true;
     }
-    
+
     /**
-     * @param cellIndex index of cell to return
+     * @param cellIndex
+     *            index of cell to return
      * @return given cell or null if cell doesn't exist or cell index is out of range
      */
     public Cell getCell(int cellIndex) {
@@ -126,7 +129,7 @@ public class Row implements HasFields {
             return null;
         }
     }
-    
+
     public Object getCellValue(int cellIndex) {
         if (cellIndex >= 0 && cellIndex < cells.size()) {
             Cell cell = cells.get(cellIndex);
@@ -136,15 +139,15 @@ public class Row implements HasFields {
         }
         return null;
     }
-    
+
     public boolean isCellBlank(int cellIndex) {
         return isValueBlank(getCellValue(cellIndex));
     }
-    
+
     protected boolean isValueBlank(Object value) {
         return value == null || (value instanceof String && ((String) value).trim().length() == 0);
     }
-    
+
     public void setCell(int cellIndex, Cell cell) {
         if (cellIndex < cells.size()) {
             cells.set(cellIndex, cell);
@@ -155,31 +158,30 @@ public class Row implements HasFields {
             cells.add(cell);
         }
     }
-    
+
     public CellTuple getCellTuple(Project project) {
         return new CellTuple(project, this);
     }
-    
+
     @JsonProperty(FLAGGED)
     public boolean isFlagged() {
         return flagged;
     }
-    
+
     @JsonProperty(STARRED)
     public boolean isStarred() {
         return starred;
     }
-    
+
     @JsonProperty("cells")
     public List<Cell> getCells() {
         return cells;
     }
-    
+
     /*
-    @JsonView(JsonViews.SaveMode.class)
-    public 
-    */
-    
+     * @JsonView(JsonViews.SaveMode.class) public
+     */
+
     public void save(Writer writer, Properties options) {
         if (options.containsKey("rowIndex")) {
             // See GetRowsCommand to serialize a row with indices
@@ -187,9 +189,9 @@ public class Row implements HasFields {
         }
         try {
             ParsingUtilities.saveWriter.writeValue(writer, this);
-            Pool pool = (Pool)options.get("pool");
-            if(pool != null) {
-                for(Cell c : cells) {
+            Pool pool = (Pool) options.get("pool");
+            if (pool != null) {
+                for (Cell c : cells) {
                     if (c != null && c.recon != null) {
                         pool.pool(c.recon);
                     }
@@ -199,33 +201,29 @@ public class Row implements HasFields {
             e.printStackTrace();
         }
     }
-    
+
     static public Row load(String s, Pool pool) throws Exception {
-        return s.length() == 0 ? null : 
-            loadStreaming(s, pool);
+        return s.length() == 0 ? null : loadStreaming(s, pool);
     }
-    
+
     @JsonCreator
     static public Row deserialize(
-            @JsonProperty(STARRED)
-            boolean starred,
-            @JsonProperty(FLAGGED)
-            boolean flagged,
-            @JsonProperty("cells")
-            List<Cell> cells) {
+            @JsonProperty(STARRED) boolean starred,
+            @JsonProperty(FLAGGED) boolean flagged,
+            @JsonProperty("cells") List<Cell> cells) {
         if (cells == null) {
             cells = new ArrayList<>();
         }
         return new Row(cells, flagged, starred);
     }
-    
+
     static public Row loadStreaming(String s, Pool pool) throws Exception {
         InjectableValues injectableValues = new InjectableValues.Std()
                 .addValue("pool", pool);
         return ParsingUtilities.mapper.setInjectableValues(injectableValues)
                 .readValue(s, Row.class);
     }
-    
+
     @Override
     public String toString() {
         StringBuffer result = new StringBuffer();

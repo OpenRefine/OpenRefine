@@ -37,6 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.Change;
@@ -44,78 +47,70 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
-import org.openrefine.model.Row;
 import org.openrefine.model.Recon.Judgment;
+import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.ReconChange;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.operations.EngineDependentMassCellOperation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
-    final protected boolean    _shareNewTopics;
-    
+
+    final protected boolean _shareNewTopics;
+
     @JsonCreator
     public ReconMarkNewTopicsOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("columnName")
-            String columnName,
-            @JsonProperty("shareNewTopics")
-            boolean shareNewTopics) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("shareNewTopics") boolean shareNewTopics) {
         super(engineConfig, columnName, false);
         _shareNewTopics = shareNewTopics;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("shareNewTopics")
     public boolean getShareNewTopics() {
         return _shareNewTopics;
     }
-    
+
     @Override
     protected String getBriefDescription(Project project) {
         return "Mark to create new items for cells in column " + _columnName +
-            (_shareNewTopics ? 
-                ", one item for each group of similar cells" : 
-                ", one item for each cell");
+                (_shareNewTopics ? ", one item for each group of similar cells" : ", one item for each cell");
     }
 
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        
-        return "Mark to create new items for " + cellChanges.size() + 
-            " cells in column " + column.getName() +
-            (_shareNewTopics ? 
-                ", one item for each group of similar cells" : 
-                ", one item for each cell");
+
+        return "Mark to create new items for " + cellChanges.size() +
+                " cells in column " + column.getName() +
+                (_shareNewTopics ? ", one item for each group of similar cells" : ", one item for each cell");
     }
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         ReconConfig reconConfig = column.getReconConfig();
-        
+
         return new RowVisitor() {
-            int                 cellIndex;
-            List<CellChange>    cellChanges;
-            Map<String, Recon>  sharedRecons = new HashMap<String, Recon>();
-            long                historyEntryID;
-            
+
+            int cellIndex;
+            List<CellChange> cellChanges;
+            Map<String, Recon> sharedRecons = new HashMap<String, Recon>();
+            long historyEntryID;
+
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
                 this.historyEntryID = historyEntryID;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
@@ -125,9 +120,9 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
             public void end(Project project) {
                 // nothing to do
             }
-            
+
             private Recon createNewRecon() {
-                if(reconConfig != null) {
+                if (reconConfig != null) {
                     return reconConfig.createNewRecon(historyEntryID);
                 } else {
                     // This should only happen when marking cells as reconciled
@@ -136,7 +131,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                     return new Recon(historyEntryID, null, null);
                 }
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
@@ -152,7 +147,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                             recon.judgment = Judgment.New;
                             recon.judgmentBatchSize = 1;
                             recon.judgmentAction = "mass";
-                            
+
                             sharedRecons.put(s, recon);
                         }
                     } else {
@@ -163,9 +158,9 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                         recon.judgmentBatchSize = 1;
                         recon.judgmentAction = "mass";
                     }
-                    
+
                     Cell newCell = new Cell(cell.value, recon);
-                    
+
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                     cellChanges.add(cellChange);
                 }
@@ -173,14 +168,13 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
             }
         }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
-    
+
     @Override
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new ReconChange(
-            cellChanges, 
-            _columnName, 
-            column.getReconConfig(),
-            null
-        );
+                cellChanges,
+                _columnName,
+                column.getReconConfig(),
+                null);
     }
 }

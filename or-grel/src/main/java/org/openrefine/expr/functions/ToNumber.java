@@ -64,17 +64,17 @@ public class ToNumber extends PureFunction {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
         }
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns o converted to a number";
     }
-    
+
     @Override
     public String getParams() {
         return "o";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

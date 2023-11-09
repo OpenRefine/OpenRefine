@@ -24,9 +24,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.process;
 
 import static org.mockito.Mockito.mock;
+
+import org.testng.annotations.Test;
 
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
@@ -34,14 +37,14 @@ import org.openrefine.process.Process;
 import org.openrefine.process.QuickHistoryEntryProcess;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class QuickHistoryEntryProcessTests {
+
     public static class QuickHistoryEntryProcessStub extends QuickHistoryEntryProcess {
 
         public QuickHistoryEntryProcessStub(Project project, String briefDescription) {
             super(project, briefDescription);
-            
+
         }
 
         @Override
@@ -49,19 +52,19 @@ public class QuickHistoryEntryProcessTests {
                 throws Exception {
             return null;
         }
-        
+
     }
-    
+
     @Test
     public void serializeQuickHistoryEntryProcess() {
         Project project = mock(Project.class);
         Process process = new QuickHistoryEntryProcessStub(project, "quick description");
         int hashCode = process.hashCode();
         TestUtils.isSerializedTo(process, "{"
-		+ "\"id\":"+hashCode+","
-		+ "\"description\":"
-		+ "\"quick description\","
-		+ "\"immediate\":true,"
-		+ "\"status\":\"pending\"}", ParsingUtilities.defaultWriter);
+                + "\"id\":" + hashCode + ","
+                + "\"description\":"
+                + "\"quick description\","
+                + "\"immediate\":true,"
+                + "\"status\":\"pending\"}", ParsingUtilities.defaultWriter);
     }
 }

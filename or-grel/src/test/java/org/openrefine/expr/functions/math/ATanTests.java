@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.math;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ATanTests {
+
     @Test
     public void serializeATan() {
         String json = "{\"description\":\"Returns the arc tangent of an angle in the range of -PI/2 through PI/2\",\"params\":\"number d\",\"returns\":\"number\"}";
         TestUtils.isSerializedTo(new ATan(), json, ParsingUtilities.defaultWriter);
     }
 }
-

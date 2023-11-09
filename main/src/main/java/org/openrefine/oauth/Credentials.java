@@ -37,26 +37,26 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.util.CookiesUtilities;
-
 import oauth.signpost.OAuth;
 import oauth.signpost.http.HttpParameters;
+
+import org.openrefine.util.CookiesUtilities;
 
 public class Credentials {
 
     private static final String TOKEN = "oauth_token";
     private static final String SECRET = "oauth_token_secret";
-    
-    public enum Type { 
-        REQUEST("request"), 
-        ACCESS("access");
-        
+
+    public enum Type {
+
+        REQUEST("request"), ACCESS("access");
+
         private final String postfix;
-        
+
         Type(String postfix) {
             this.postfix = postfix;
         }
-        
+
         public String getCookieName(Provider provider) {
             if (provider == null) {
                 throw new RuntimeException("Provider can't be null");
@@ -64,18 +64,19 @@ public class Credentials {
             return provider.getHost() + "_" + postfix;
         }
     };
-    
+
     public static Credentials getCredentials(HttpServletRequest request, Provider provider, Type type) {
         Cookie cookie = CookiesUtilities.getCookie(request, type.getCookieName(provider));
         return (cookie == null) ? null : makeCredentials(cookie.getValue(), provider);
     }
 
-    public static void setCredentials(HttpServletRequest request, HttpServletResponse response, Credentials credentials, Type type, int max_age) {
+    public static void setCredentials(HttpServletRequest request, HttpServletResponse response, Credentials credentials, Type type,
+            int max_age) {
         String name = type.getCookieName(credentials.getProvider());
         String value = credentials.toString();
         CookiesUtilities.setCookie(request, response, name, value, max_age);
     }
-    
+
     public static void deleteCredentials(HttpServletRequest request, HttpServletResponse response, Provider provider, Type type) {
         CookiesUtilities.deleteCookie(request, response, type.getCookieName(provider));
     }
@@ -84,11 +85,11 @@ public class Credentials {
         HttpParameters p = OAuth.decodeForm(str);
         return new Credentials(p.getFirst(TOKEN), p.getFirst(SECRET), provider);
     }
-    
+
     private Provider provider;
     private String token;
     private String secret;
-    
+
     public Credentials(String token, String secret, Provider provider) {
         this.token = token;
         if (token == null) {
@@ -111,14 +112,14 @@ public class Credentials {
     public String getSecret() {
         return secret;
     }
-    
+
     public Provider getProvider() {
         return provider;
     }
-    
+
     @Override
     public String toString() {
         return TOKEN + "=" + OAuth.percentEncode(token) + "&" + SECRET + "=" + OAuth.percentEncode(secret);
     }
-    
+
 }

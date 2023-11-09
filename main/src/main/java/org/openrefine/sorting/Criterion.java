@@ -33,28 +33,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.sorting;
 
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.Column;
-import org.openrefine.model.Project;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(
-        use=JsonTypeInfo.Id.NAME,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="valueType")
+import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.Column;
+import org.openrefine.model.Project;
+import org.openrefine.model.Record;
+import org.openrefine.model.Row;
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "valueType")
 @JsonSubTypes({
-    @Type(value = BooleanCriterion.class, name = "boolean"),
-    @Type(value = DateCriterion.class, name = "date"),
-    @Type(value = NumberCriterion.class, name = "number"),
-    @Type(value = StringCriterion.class, name = "string") })
-abstract public class Criterion  {
+        @Type(value = BooleanCriterion.class, name = "boolean"),
+        @Type(value = DateCriterion.class, name = "date"),
+        @Type(value = NumberCriterion.class, name = "number"),
+        @Type(value = StringCriterion.class, name = "string") })
+abstract public class Criterion {
+
     @JsonProperty("column")
     public String columnName;
     @JsonIgnore
@@ -73,7 +71,7 @@ abstract public class Criterion  {
 
     @JsonIgnore // already added by @JsonTypeInfo
     public abstract String getValueType();
-    
+
     // Returns a cached cell index
     // We delay this fetching because the column might not exist
     // at deserialization (for instance if the column is created by an operation
@@ -91,8 +89,9 @@ abstract public class Criterion  {
 //    abstract public class Key implements Comparable<Key> {
 //        abstract public int compareTo(Key key);
 //    }
-    
+
     abstract public class KeyMaker {
+
         public Object makeKey(Project project, Record record) {
             Object error = null;
             Object finalKey = null;
@@ -141,5 +140,6 @@ abstract public class Criterion  {
 
         abstract protected Object makeKey(Object value);
     }
+
     abstract public KeyMaker createKeyMaker();
 }

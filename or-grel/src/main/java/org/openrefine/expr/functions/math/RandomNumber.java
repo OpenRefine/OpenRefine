@@ -40,30 +40,31 @@ import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.PureFunction;
 
 public class RandomNumber extends PureFunction {
-    
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2 && args[0] != null && args[0] instanceof Number
-                && args[1] != null && args[1] instanceof Number && ((Number) args[0]).intValue()<((Number) args[1]).intValue()) {
-            int randomNum = ThreadLocalRandom.current().nextInt(((Number) args[0]).intValue(), ((Number) args[1]).intValue()+1);
+                && args[1] != null && args[1] instanceof Number && ((Number) args[0]).intValue() < ((Number) args[1]).intValue()) {
+            int randomNum = ThreadLocalRandom.current().nextInt(((Number) args[0]).intValue(), ((Number) args[1]).intValue() + 1);
             return randomNum;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers, the first must be less than the second");
+        return new EvalError(
+                ControlFunctionRegistry.getFunctionName(this) + " expects two numbers, the first must be less than the second");
     }
 
     @Override
     public String getDescription() {
         return "Returns a pseudo-random integer between the lower and upper bound (inclusive)";
     }
-    
+
     @Override
     public String getParams() {
         return "number lower bound, number upper bound";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";
     }
-    
+
 }

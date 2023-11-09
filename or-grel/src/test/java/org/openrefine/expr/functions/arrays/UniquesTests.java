@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class UniquesTests {
+
     @Test
     public void serializeUniques() {
         String json = "{\"description\":\"Returns array a with duplicates removed\",\"params\":\"array a\",\"returns\":\"array\"}";
         TestUtils.isSerializedTo(new Uniques(), json, ParsingUtilities.defaultWriter);
     }
 }
-

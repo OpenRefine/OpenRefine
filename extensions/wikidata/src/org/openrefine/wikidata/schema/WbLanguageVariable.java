@@ -21,18 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import org.openrefine.model.Cell;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 /**
- * A language variable generates a language code from a cell. It checks its
- * values against a known list of valid language codes and fixes on the fly the
- * deprecated ones (see {@link WbLanguageConstant}).
+ * A language variable generates a language code from a cell. It checks its values against a known list of valid
+ * language codes and fixes on the fly the deprecated ones (see {@link WbLanguageConstant}).
  */
 public class WbLanguageVariable extends WbVariableExpr<String> {
 
@@ -41,8 +41,7 @@ public class WbLanguageVariable extends WbVariableExpr<String> {
     }
 
     /**
-     * Constructs a variable and sets the column it is bound to. Mostly used as a
-     * convenience method for testing.
+     * Constructs a variable and sets the column it is bound to. Mostly used as a convenience method for testing.
      * 
      * @param columnName
      *            the name of the column the expression should draw its value from

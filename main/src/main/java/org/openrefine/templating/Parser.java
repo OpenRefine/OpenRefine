@@ -42,6 +42,7 @@ import org.openrefine.grel.ast.FieldAccessorExpr;
 import org.openrefine.grel.ast.VariableExpr;
 
 public class Parser {
+
     static public Template parse(String s) throws ParsingException {
         List<Fragment> fragments = new ArrayList<Fragment>();
 
@@ -55,7 +56,7 @@ public class Parser {
                     start = current += 2;
                 } else {
                     // Invalid escape - just leave it in the template
-                    current += 1; 
+                    current += 1;
                 }
                 continue;
             }
@@ -74,9 +75,9 @@ public class Parser {
                             new DynamicFragment(
                                     new FieldAccessorExpr(
                                             new FieldAccessorExpr(
-                                                    new VariableExpr("cells"), 
-                                                    columnName), 
-                                    "value")));
+                                                    new VariableExpr("cells"),
+                                                    columnName),
+                                            "value")));
 
                     continue;
                 }

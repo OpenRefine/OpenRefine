@@ -55,12 +55,12 @@ public class IndexOf extends PureFunction {
     public String getDescription() {
         return "Returns the index of sub first ocurring in s";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

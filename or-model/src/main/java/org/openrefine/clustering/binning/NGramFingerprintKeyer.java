@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 public class NGramFingerprintKeyer extends FingerprintKeyer {
 
     static final Pattern alphanum = Pattern.compile("\\p{Punct}|\\p{Cntrl}|\\p{Space}");
-    
+
     @Override
     public String key(String s, Object... o) {
         int ngram_size = 2;
@@ -49,20 +49,20 @@ public class NGramFingerprintKeyer extends FingerprintKeyer {
         }
         s = s.toLowerCase(); // then lowercase it
         s = alphanum.matcher(s).replaceAll(""); // then remove all punctuation and control chars
-        TreeSet<String> set = ngram_split(s,ngram_size);
+        TreeSet<String> set = ngram_split(s, ngram_size);
         StringBuffer b = new StringBuffer();
         Iterator<String> i = set.iterator();
         while (i.hasNext()) { // join ordered fragments back together
             b.append(i.next());
         }
-        return asciify(b.toString()); // find ASCII equivalent to characters 
+        return asciify(b.toString()); // find ASCII equivalent to characters
     }
 
     protected TreeSet<String> ngram_split(String s, int size) {
         TreeSet<String> set = new TreeSet<String>();
         char[] chars = s.toCharArray();
         for (int i = 0; i + size <= chars.length; i++) {
-            set.add(new String(chars,i,size));
+            set.add(new String(chars, i, size));
         }
         return set;
     }

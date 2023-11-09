@@ -24,9 +24,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model;
 
 import java.util.List;
+
+import org.testng.annotations.Test;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
@@ -37,44 +40,43 @@ import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class ColumnTests {
-	
-	protected static class MyReconConfig extends ReconConfig {
 
-		@Override
-		public int getBatchSize() {
-			return 40;
-		}
+    protected static class MyReconConfig extends ReconConfig {
 
-		@Override
-		public String getBriefDescription(Project project, String columnName) {
-			return "My description";
-		}
+        @Override
+        public int getBatchSize() {
+            return 40;
+        }
 
-		@Override
-		public ReconJob createJob(Project project, int rowIndex, Row row, String columnName, Cell cell) {
-			return null;
-		}
+        @Override
+        public String getBriefDescription(Project project, String columnName) {
+            return "My description";
+        }
 
-		@Override
-		public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
-			return null;
-		}
+        @Override
+        public ReconJob createJob(Project project, int rowIndex, Row row, String columnName, Cell cell) {
+            return null;
+        }
 
-		@Override
-		public Recon createNewRecon(long historyEntryID) {
-			return null;
-		}
+        @Override
+        public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
+            return null;
+        }
 
-		@Override
-		public String getMode() {
-			return "my-recon";
-		}
-		
-	}
-	
+        @Override
+        public Recon createNewRecon(long historyEntryID) {
+            return null;
+        }
+
+        @Override
+        public String getMode() {
+            return "my-recon";
+        }
+
+    }
+
     @Test
     public void serializeColumn() throws Exception {
         ReconConfig.registerReconConfig("core", "my-recon", MyReconConfig.class);

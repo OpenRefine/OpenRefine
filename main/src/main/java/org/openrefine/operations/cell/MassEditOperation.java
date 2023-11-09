@@ -40,6 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.Evaluable;
@@ -54,47 +57,41 @@ import org.openrefine.operations.EngineDependentMassCellOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class MassEditOperation extends EngineDependentMassCellOperation {
-    final protected String         _expression;
-    final protected List<Edit>     _edits;
-    
-    static public class Edit  {
+
+    final protected String _expression;
+    final protected List<Edit> _edits;
+
+    static public class Edit {
+
         @JsonProperty("from")
-        final public List<String>     from;
+        final public List<String> from;
         @JsonProperty("fromBlank")
-        final public boolean          fromBlank;
+        final public boolean fromBlank;
         @JsonProperty("fromError")
-        final public boolean          fromError;
+        final public boolean fromError;
         @JsonProperty("to")
-        final public Serializable     to;
-        
+        final public Serializable to;
+
         public Edit(
-            List<String> from,
-            boolean fromBlank,
-            boolean fromError,
-            Serializable to) {
+                List<String> from,
+                boolean fromBlank,
+                boolean fromError,
+                Serializable to) {
             this.from = from;
             this.fromBlank = fromBlank || (from.size() == 1 && from.get(0).length() == 0);
             this.fromError = fromError;
             this.to = to;
         }
-        
+
         @JsonCreator
         public static Edit deserialize(
-                @JsonProperty("from")
-                List<String> from,
-                @JsonProperty("fromBlank")
-                boolean fromBlank,
-                @JsonProperty("fromError")
-                boolean fromError,
-                @JsonProperty("to")
-                Object to,
-                @JsonProperty("type")
-                String type) {
-            Serializable serializable = (Serializable)to;
+                @JsonProperty("from") List<String> from,
+                @JsonProperty("fromBlank") boolean fromBlank,
+                @JsonProperty("fromError") boolean fromError,
+                @JsonProperty("to") Object to,
+                @JsonProperty("type") String type) {
+            Serializable serializable = (Serializable) to;
             if ("date".equals(type)) {
                 serializable = ParsingUtilities.stringToDate((String) to);
             }
@@ -102,27 +99,23 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                     fromBlank, fromError, serializable);
         }
     }
-    
+
     @JsonCreator
     public MassEditOperation(
-    		@JsonProperty("engineConfig")
-    		EngineConfig engineConfig,
-    		@JsonProperty("columnName")
-    		String columnName,
-    		@JsonProperty("expression")
-    		String expression,
-    		@JsonProperty("edits")
-    		List<Edit> edits) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("expression") String expression,
+            @JsonProperty("edits") List<Edit> edits) {
         super(engineConfig, columnName, true);
         _expression = expression;
         _edits = edits;
     }
-    
+
     @JsonProperty("expression")
     public String getExpression() {
         return _expression;
     }
-    
+
     @JsonProperty("edits")
     public List<Edit> getEdits() {
         return _edits;
@@ -136,27 +129,27 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        
-        return "Mass edit " + cellChanges.size() + 
-            " cells in column " + column.getName();
+
+        return "Mass edit " + cellChanges.size() +
+                " cells in column " + column.getName();
     }
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
-        
+
         Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);
-        
+
         Map<String, Serializable> fromTo = new HashMap<String, Serializable>();
         Serializable fromBlankTo = null;
         Serializable fromErrorTo = null;
-        
+
         for (Edit edit : _edits) {
             for (String s : edit.from) {
                 fromTo.put(s, edit.to);
             }
-            
+
             // the last edit wins
             if (edit.fromBlank) {
                 fromBlankTo = edit.to;
@@ -165,26 +158,26 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                 fromErrorTo = edit.to;
             }
         }
-        
+
         return new RowVisitor() {
-            int                         cellIndex;
-            Properties                  bindings;
-            List<CellChange>            cellChanges;
-            Evaluable                   eval;
-            
-            Map<String, Serializable>   fromTo;
-            Serializable                fromBlankTo;
-            Serializable                fromErrorTo;
-            
+
+            int cellIndex;
+            Properties bindings;
+            List<CellChange> cellChanges;
+            Evaluable eval;
+
+            Map<String, Serializable> fromTo;
+            Serializable fromBlankTo;
+            Serializable fromErrorTo;
+
             public RowVisitor init(
-                int cellIndex, 
-                Properties bindings, 
-                List<CellChange> cellChanges, 
-                Evaluable eval, 
-                Map<String, Serializable> fromTo,
-                Serializable fromBlankTo,
-                Serializable fromErrorTo
-            ) {
+                    int cellIndex,
+                    Properties bindings,
+                    List<CellChange> cellChanges,
+                    Evaluable eval,
+                    Map<String, Serializable> fromTo,
+                    Serializable fromBlankTo,
+                    Serializable fromErrorTo) {
                 this.cellIndex = cellIndex;
                 this.bindings = bindings;
                 this.cellChanges = cellChanges;
@@ -194,7 +187,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                 this.fromErrorTo = fromErrorTo;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
@@ -204,14 +197,14 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             public void end(Project project) {
                 // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;
-                
+
                 ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
-                
+
                 Object v = eval.evaluate(bindings);
                 if (ExpressionUtils.isError(v)) {
                     if (fromErrorTo != null) {
@@ -228,7 +221,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                         newCell = new Cell(fromBlankTo, (cell != null) ? cell.recon : null);
                     }
                 }
-                
+
                 if (newCell != null) {
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                     cellChanges.add(cellChange);

@@ -39,6 +39,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.mockito.Mockito;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.history.Change;
@@ -48,29 +53,24 @@ import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 
 public class HistoryTests {
 
-    //System Under Test
+    // System Under Test
     History SUT;
 
-    //dependencies
+    // dependencies
     Project proj;
     ProjectMetadata projectMetadata;
     ProjectManager projectManager;
     HistoryEntryManager historyEntryManager;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         projectManager = mock(ProjectManager.class);
         historyEntryManager = mock(HistoryEntryManager.class);
         ProjectManager.singleton = projectManager;
-        
+
         proj = new Project();
         projectMetadata = mock(ProjectMetadata.class);
 
@@ -82,14 +82,14 @@ public class HistoryTests {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         proj = null;
     }
 
     @Test
-    public void canAddEntry(){
-        //local dependencies
+    public void canAddEntry() {
+        // local dependencies
         HistoryEntry entry = mock(HistoryEntry.class);
 
         SUT.addEntry(entry);
@@ -99,7 +99,7 @@ public class HistoryTests {
         verify(projectMetadata, times(1)).updateModified();
         Assert.assertEquals(SUT.getLastPastEntries(1).get(0), entry);
     }
-    
+
     @Test
     public void serializeHistory() throws Exception {
         String json1 = "{\"id\":1533650900300,"
@@ -125,11 +125,11 @@ public class HistoryTests {
         String json2 = "{\"id\":1533651586483,"
                 + "\"description\":\"Edit single cell on row 94, column organization_id\","
                 + "\"time\":\"2018-08-07T14:18:21Z\"}";
-        
-        String targetJson = "{\"past\":["+json1simple+","+json2+"],\"future\":[]}";
-        
+
+        String targetJson = "{\"past\":[" + json1simple + "," + json2 + "],\"future\":[]}";
+
         org.openrefine.history.Change dummyChange = mock(Change.class);
-        
+
         HistoryEntry firstEntry = HistoryEntry.load(proj, json1);
         firstEntry.setChange(dummyChange);
         HistoryEntry secondEntry = HistoryEntry.load(proj, json2);

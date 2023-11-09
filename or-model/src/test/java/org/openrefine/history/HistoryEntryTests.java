@@ -24,26 +24,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.history;
 
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.ProjectManager;
+import org.openrefine.ProjectManagerStub;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import org.openrefine.ProjectManagerStub;
 
 public class HistoryEntryTests {
-	
+
     public static final String fullJson = "{"
             + "\"id\":1533633623158,"
             + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
@@ -51,30 +52,30 @@ public class HistoryEntryTests {
             + "\"operation\":{\"op\":\"core/my-operation\","
             + "   \"description\":\"some description\"}"
             + "}";
-    
-	public static final String unknownOperationJson = "{"
+
+    public static final String unknownOperationJson = "{"
             + "\"id\":1533633623158,"
             + "\"description\":\"some mysterious operation\","
             + "\"time\":\"2018-08-07T09:06:37Z\","
             + "\"operation\":{\"op\":\"someextension/unknown-operation\","
             + "   \"description\":\"some mysterious operation\","
             + "   \"some_parameter\":234\n"
-		    + "}\n"
+            + "}\n"
             + "}";
-    
+
     Project project;
-    
+
     @BeforeTest
     public void register() {
         OperationRegistry.registerOperation("core", "my-operation", OperationStub.class);
         ProjectManager.singleton = new ProjectManagerStub();
     }
-    
+
     @BeforeMethod
     public void setUp() {
         project = mock(Project.class);
     }
-    
+
     @Test
     public void serializeHistoryEntry() throws Exception {
         String json = "{\"id\":1533651837506,"
@@ -82,23 +83,23 @@ public class HistoryEntryTests {
                 + "\"time\":\"2018-08-07T14:18:29Z\"}";
         TestUtils.isSerializedTo(HistoryEntry.load(project, json), json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeHistoryEntryWithOperation() throws Exception {
         String jsonSimple = "{"
                 + "\"id\":1533633623158,"
                 + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
                 + "\"time\":\"2018-08-07T09:06:37Z\"}";
-        
+
         HistoryEntry historyEntry = HistoryEntry.load(project, fullJson);
         TestUtils.isSerializedTo(historyEntry, jsonSimple, ParsingUtilities.defaultWriter);
-	    TestUtils.isSerializedTo(historyEntry, fullJson, ParsingUtilities.saveWriter);
+        TestUtils.isSerializedTo(historyEntry, fullJson, ParsingUtilities.saveWriter);
     }
-    
+
     @Test
     public void deserializeUnknownOperation() throws IOException {
-    	// Unknown operations are serialized back as they were parsed
-    	HistoryEntry entry = HistoryEntry.load(project, unknownOperationJson);
-		TestUtils.isSerializedTo(entry, unknownOperationJson, ParsingUtilities.saveWriter);
+        // Unknown operations are serialized back as they were parsed
+        HistoryEntry entry = HistoryEntry.load(project, unknownOperationJson);
+        TestUtils.isSerializedTo(entry, unknownOperationJson, ParsingUtilities.saveWriter);
     }
 }

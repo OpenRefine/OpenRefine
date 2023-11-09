@@ -24,14 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr;
+
+import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class EvalErrorTests {
+
     @Test
     public void serializeEvalError() {
         EvalError e = new EvalError("This is a critical error");

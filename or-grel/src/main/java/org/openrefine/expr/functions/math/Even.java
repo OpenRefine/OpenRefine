@@ -47,21 +47,21 @@ public class Even extends PureFunction {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
 
-    public static double roundUpToEven(double d){
+    public static double roundUpToEven(double d) {
         double temp = Math.ceil(d);
-        return ((temp % 2) == 0) ? temp : temp+1;
+        return ((temp % 2) == 0) ? temp : temp + 1;
     }
 
     @Override
     public String getDescription() {
         return "Rounds the number up to the nearest even integer";
     }
-    
+
     @Override
     public String getParams() {
         return "number d";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema.entityvalues;
 
 import static org.testng.Assert.assertEquals;
@@ -30,11 +31,12 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Collections;
 
-import org.openrefine.model.Recon;
-import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+
+import org.openrefine.model.Recon;
+import org.openrefine.wikidata.testing.TestingData;
 
 public class ReconEntityIdValueTest {
 

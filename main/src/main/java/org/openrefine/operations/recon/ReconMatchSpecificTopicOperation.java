@@ -37,6 +37,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.Change;
@@ -44,26 +48,24 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
+import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.Row;
-import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.ReconChange;
 import org.openrefine.operations.EngineDependentMassCellOperation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
-    
+
     public static class ReconItem {
+
         @JsonProperty("id")
-        public final String id; 
+        public final String id;
         @JsonProperty("name")
         public final String name;
         @JsonProperty("types")
         public final String[] types;
+
         @JsonCreator
         public ReconItem(
                 @JsonProperty("id") String id,
@@ -73,13 +75,13 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
             this.name = name;
             this.types = types;
         }
-        
+
         @JsonIgnore
         public ReconCandidate getCandidate() {
             return new ReconCandidate(id, name, types, 100);
         }
     }
-    
+
     @JsonProperty("match")
     final protected ReconItem match;
     @JsonProperty("identifierSpace")
@@ -89,57 +91,52 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
 
     @JsonCreator
     public ReconMatchSpecificTopicOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig engineConfig, 
-        @JsonProperty("columnName")
-        String columnName, 
-        @JsonProperty("match")
-        ReconItem match,
-        @JsonProperty("identifierSpace")
-        String identifierSpace,
-        @JsonProperty("schemaSpace")
-        String schemaSpace
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("match") ReconItem match,
+            @JsonProperty("identifierSpace") String identifierSpace,
+            @JsonProperty("schemaSpace") String schemaSpace) {
         super(engineConfig, columnName, false);
         this.match = match;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
     }
-    
+
     @Override
     protected String getBriefDescription(Project project) {
         return "Match specific item " +
-            match.name + " (" + 
-            match.id + ") to cells in column " + _columnName;
+                match.name + " (" +
+                match.id + ") to cells in column " + _columnName;
     }
 
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        return "Match specific item " + 
-            match.name + " (" + 
-            match.id + ") to " + cellChanges.size() + 
-            " cells in column " + column.getName();
+        return "Match specific item " +
+                match.name + " (" +
+                match.id + ") to " + cellChanges.size() +
+                " cells in column " + column.getName();
     }
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         ReconCandidate candidate = match.getCandidate();
-        
+
         return new RowVisitor() {
+
             int cellIndex;
             List<CellChange> cellChanges;
             Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
             long historyEntryID;
-            
+
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
                 this.historyEntryID = historyEntryID;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
@@ -155,33 +152,31 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
                 Cell cell = row.getCell(cellIndex);
                 if (cell != null) {
                     long reconID = cell.recon != null ? cell.recon.id : 0;
-                    
+
                     Recon newRecon;
                     if (dupReconMap.containsKey(reconID)) {
                         newRecon = dupReconMap.get(reconID);
                         newRecon.judgmentBatchSize++;
                     } else {
-                        newRecon = cell.recon != null ? 
-                            cell.recon.dup(historyEntryID) : 
-                            new Recon(
-                                historyEntryID,
-                                identifierSpace,
-                                schemaSpace);
-                            
+                        newRecon = cell.recon != null ? cell.recon.dup(historyEntryID)
+                                : new Recon(
+                                        historyEntryID,
+                                        identifierSpace,
+                                        schemaSpace);
+
                         newRecon.match = candidate;
                         newRecon.matchRank = -1;
                         newRecon.judgment = Judgment.Matched;
                         newRecon.judgmentAction = "mass";
                         newRecon.judgmentBatchSize = 1;
-                        
+
                         dupReconMap.put(reconID, newRecon);
                     }
-                    
+
                     Cell newCell = new Cell(
-                        cell.value,
-                        newRecon
-                    );
-                    
+                            cell.value,
+                            newRecon);
+
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                     cellChanges.add(cellChange);
                 }
@@ -189,14 +184,13 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
             }
         }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
-    
+
     @Override
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new ReconChange(
-            cellChanges, 
-            _columnName, 
-            column.getReconConfig(),
-            null
-        );
+                cellChanges,
+                _columnName,
+                column.getReconConfig(),
+                null);
     }
 }

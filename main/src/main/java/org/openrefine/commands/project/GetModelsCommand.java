@@ -41,6 +41,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpHeadersSupport;
 import org.openrefine.commands.HttpHeadersSupport.HttpHeaderInfo;
@@ -53,26 +55,25 @@ import org.openrefine.model.OverlayModel;
 import org.openrefine.model.Project;
 import org.openrefine.model.RecordModel;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class GetModelsCommand extends Command {
-	
-	/**
-	 * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
-	 */
-	
+
+    /**
+     * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
+     */
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         internalRespond(request, response);
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         internalRespond(request, response);
     }
-    
+
     protected static class ModelsResponse {
+
         @JsonProperty("columnModel")
         protected ColumnModel columnModel;
         @JsonProperty("recordModel")
@@ -83,7 +84,7 @@ public class GetModelsCommand extends Command {
         protected Map<String, LanguageInfo> scripting;
         @JsonProperty("httpHeaders")
         protected Map<String, HttpHeaderInfo> httpHeaders;
-        
+
         protected ModelsResponse(
                 ColumnModel columns,
                 RecordModel records,
@@ -97,12 +98,12 @@ public class GetModelsCommand extends Command {
             httpHeaders = headers;
         }
     }
-    
+
     protected void internalRespond(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        
+            throws ServletException, IOException {
+
         Project project = null;
-        
+
         // This command also supports retrieving rows for an importing job.
         String importingJobID = request.getParameter("importingJobID");
         if (importingJobID != null) {
@@ -115,7 +116,7 @@ public class GetModelsCommand extends Command {
         if (project == null) {
             project = getProject(request);
         }
-        
+
         response.setHeader("Cache-Control", "no-cache");
 
         Map<String, LanguageInfo> prefixesMap = new HashMap<>();
@@ -123,7 +124,7 @@ public class GetModelsCommand extends Command {
             LanguageInfo info = MetaParser.getLanguageInfo(languagePrefix);
             prefixesMap.put(languagePrefix, info);
         }
-        
+
         Map<String, HttpHeaderInfo> headersMap = new HashMap<>();
         for (String headerLabel : HttpHeadersSupport.getHttpHeaderLabels()) {
             HttpHeaderInfo info = HttpHeadersSupport.getHttpHeaderInfo(headerLabel);

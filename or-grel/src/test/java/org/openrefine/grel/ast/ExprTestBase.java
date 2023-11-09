@@ -1,3 +1,4 @@
+
 package org.openrefine.grel.ast;
 
 import static org.mockito.Mockito.mock;
@@ -12,8 +13,7 @@ import org.testng.annotations.BeforeMethod;
 import org.openrefine.expr.Evaluable;
 
 /**
- * Base class to test expression classes.
- * Contains utilities to test column dependency extraction.
+ * Base class to test expression classes. Contains utilities to test column dependency extraction.
  * 
  * 
  * @author Antonin Delpeuch
@@ -32,15 +32,15 @@ public class ExprTestBase {
         unanalyzable = mock(Evaluable.class);
         twoColumns = mock(Evaluable.class);
         constant = mock(Evaluable.class);
-        
+
         when(currentColumn.getColumnDependencies(baseColumn))
-           .thenReturn(set(baseColumn));
+                .thenReturn(set(baseColumn));
         when(unanalyzable.getColumnDependencies(baseColumn))
-           .thenReturn(null);
+                .thenReturn(null);
         when(twoColumns.getColumnDependencies(baseColumn))
-           .thenReturn(set("a","b"));
+                .thenReturn(set("a", "b"));
         when(constant.getColumnDependencies(baseColumn))
-           .thenReturn(set());
+                .thenReturn(set());
     }
 
     protected Set<String> set(String... strings) {

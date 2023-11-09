@@ -24,7 +24,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.RangeFacet.RangeFacetConfig;
@@ -33,17 +38,16 @@ import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconMatchBestCandidatesOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class ReconMatchBestCandidatesOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
-    	FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
-    	FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
+        FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
+        FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
         OperationRegistry.registerOperation("core", "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
     }
-    
+
     @Test
     public void serializeReconMatchBestCandidatesOperation() throws Exception {
         String json = "{"
@@ -55,6 +59,7 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
                 + "]},"
                 + "\"columnName\":\"organization_name\""
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
 }

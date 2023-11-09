@@ -39,8 +39,9 @@ import org.openrefine.browsing.RowVisitor;
 import org.openrefine.model.Project;
 
 public class FilteredRecordsAsFilteredRows implements FilteredRows {
+
     final protected FilteredRecords _filteredRecords;
-    
+
     public FilteredRecordsAsFilteredRows(FilteredRecords filteredRecords) {
         _filteredRecords = filteredRecords;
     }

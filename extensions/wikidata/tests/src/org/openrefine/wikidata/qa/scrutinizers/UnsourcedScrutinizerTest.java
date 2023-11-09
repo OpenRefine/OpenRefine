@@ -21,10 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
+
+import org.openrefine.wikidata.testing.TestingData;
 
 public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
 

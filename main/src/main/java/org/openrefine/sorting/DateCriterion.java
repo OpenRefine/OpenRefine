@@ -40,11 +40,13 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 
 public class DateCriterion extends Criterion {
+
     final static protected EvalError s_error = new EvalError("Not a date");
 
     @Override
     public KeyMaker createKeyMaker() {
         return new KeyMaker() {
+
             @Override
             protected Object makeKey(Object value) {
                 if (ExpressionUtils.isNonBlankData(value)) {

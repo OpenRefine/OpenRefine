@@ -38,6 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.FilteredRows;
@@ -57,57 +60,48 @@ import org.openrefine.model.changes.ColumnAdditionChange;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.OnError;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ColumnAdditionOperation extends EngineDependentOperation {
-    final protected String     _baseColumnName;
-    final protected String     _expression;
-    final protected OnError    _onError;
-    
-    final protected String     _newColumnName;
-    final protected int        _columnInsertIndex;
+
+    final protected String _baseColumnName;
+    final protected String _expression;
+    final protected OnError _onError;
+
+    final protected String _newColumnName;
+    final protected int _columnInsertIndex;
 
     @JsonCreator
     public ColumnAdditionOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig   engineConfig,
-        @JsonProperty("baseColumnName")
-        String         baseColumnName,
-        @JsonProperty("expression")
-        String         expression,
-        @JsonProperty("onError")
-        OnError        onError,
-        @JsonProperty("newColumnName")
-        String         newColumnName,
-        @JsonProperty("columnInsertIndex")
-        int            columnInsertIndex 
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("baseColumnName") String baseColumnName,
+            @JsonProperty("expression") String expression,
+            @JsonProperty("onError") OnError onError,
+            @JsonProperty("newColumnName") String newColumnName,
+            @JsonProperty("columnInsertIndex") int columnInsertIndex) {
         super(engineConfig);
-        
+
         _baseColumnName = baseColumnName;
         _expression = expression;
         _onError = onError;
-        
+
         _newColumnName = newColumnName;
         _columnInsertIndex = columnInsertIndex;
     }
-    
+
     @JsonProperty("newColumnName")
     public String getNewColumnName() {
         return _newColumnName;
     }
-    
+
     @JsonProperty("columnInsertIndex")
     public int getColumnInsertIndex() {
         return _columnInsertIndex;
     }
-    
+
     @JsonProperty("baseColumnName")
     public String getBaseColumnName() {
         return _baseColumnName;
     }
-    
+
     @JsonProperty("expression")
     public String getExpression() {
         return _expression;
@@ -117,26 +111,26 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     public OnError getOnError() {
         return _onError;
     }
-    
+
     @Override
     protected String getBriefDescription(Project project) {
-        return "Create column " + _newColumnName + 
-            " at index " + _columnInsertIndex + 
-            " based on column " + _baseColumnName + 
-            " using expression " + _expression;
+        return "Create column " + _newColumnName +
+                " at index " + _columnInsertIndex +
+                " based on column " + _baseColumnName +
+                " using expression " + _expression;
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Create new column " + _newColumnName + 
-            " based on column " + column.getName() + 
-            " by filling " + cellsAtRows.size() +
-            " rows with " + _expression;
+        return "Create new column " + _newColumnName +
+                " based on column " + column.getName() +
+                " by filling " + cellsAtRows.size() +
+                " rows with " + _expression;
     }
-    
+
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
-        
+
         Column column = project.columnModel.getColumnByName(_baseColumnName);
         if (column == null) {
             throw new Exception("No column named " + _baseColumnName);
@@ -144,32 +138,33 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         if (project.columnModel.getColumnByName(_newColumnName) != null) {
             throw new Exception("Another column already named " + _newColumnName);
         }
-        
+
         List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
-        
+
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, cellsAtRows));
-        
+
         String description = createDescription(column, cellsAtRows);
-        
+
         Change change = new ColumnAdditionChange(_newColumnName, _columnInsertIndex, cellsAtRows);
-        
+
         return new HistoryEntry(
-            historyEntryID, project, description, this, change);
+                historyEntryID, project, description, this, change);
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellAtRow> cellsAtRows) throws Exception {
         Column column = project.columnModel.getColumnByName(_baseColumnName);
-        
+
         Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);
-        
+
         return new RowVisitor() {
-            int              cellIndex;
-            Properties       bindings;
-            List<CellAtRow>  cellsAtRows;
-            Evaluable        eval;
-            
+
+            int cellIndex;
+            Properties bindings;
+            List<CellAtRow> cellsAtRows;
+            Evaluable eval;
+
             public RowVisitor init(int cellIndex, Properties bindings, List<CellAtRow> cellsAtRows, Evaluable eval) {
                 this.cellIndex = cellIndex;
                 this.bindings = bindings;
@@ -177,7 +172,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                 this.eval = eval;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
@@ -187,14 +182,14 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             public void end(Project project) {
                 // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;
 
                 ExpressionUtils.bind(bindings, row, rowIndex, _baseColumnName, cell);
-                
+
                 Object o = eval.evaluate(bindings);
                 if (o != null) {
                     if (o instanceof Cell) {
@@ -210,17 +205,17 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                                 v = cell != null ? cell.value : null;
                             }
                         }
-                        
+
                         if (v != null) {
                             newCell = new Cell(v, null);
                         }
                     }
                 }
-                
+
                 if (newCell != null) {
                     cellsAtRows.add(new CellAtRow(rowIndex, newCell));
                 }
-                
+
                 return false;
             }
         }.init(column.getCellIndex(), bindings, cellsAtRows, eval);

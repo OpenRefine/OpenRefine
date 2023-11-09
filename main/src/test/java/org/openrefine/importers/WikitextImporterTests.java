@@ -33,10 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-
 import java.io.StringReader;
 
-import org.openrefine.importers.WikitextImporter;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -44,10 +42,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import org.openrefine.importers.WikitextImporter;
+
 public class WikitextImporterTests extends ImporterTest {
 
     private WikitextImporter importer = null;
-    
+
     @Override
     @BeforeTest
     public void init() {
@@ -63,38 +63,37 @@ public class WikitextImporterTests extends ImporterTest {
 
     @Override
     @AfterMethod
-    public void tearDown(){
+    public void tearDown() {
         importer = null;
         super.tearDown();
     }
-    
+
     @Test
     public void readSimpleData() {
-    	String input = "\n"
-		+ "{|\n"
-		+ "|-\n"
-		+ "| a || b<br/>2 || c \n"
-		+ "|-\n"
-		+ "| d || e || f<br>\n"
-		+ "|-\n"
-		+ "|}\n";
-    	try {
-    	   prepareOptions(0, 0, true, true, null);
-    	   parse(input);
-    	} catch (Exception e) {
-    	   Assert.fail("Parsing failed", e);
-    	}
-    	Assert.assertEquals(project.columnModel.columns.size(), 3);
-    	Assert.assertEquals(project.rows.size(), 2);
+        String input = "\n"
+                + "{|\n"
+                + "|-\n"
+                + "| a || b<br/>2 || c \n"
+                + "|-\n"
+                + "| d || e || f<br>\n"
+                + "|-\n"
+                + "|}\n";
+        try {
+            prepareOptions(0, 0, true, true, null);
+            parse(input);
+        } catch (Exception e) {
+            Assert.fail("Parsing failed", e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "a");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b\n2");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
     }
-    
+
     /**
-     * Issue #1448
-     * https://github.com/OpenRefine/OpenRefine/issues/1448
+     * Issue #1448 https://github.com/OpenRefine/OpenRefine/issues/1448
      */
     @Test
     public void readTableWithMisplacedHeaders() {
@@ -109,10 +108,10 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|-\n"
                 + "|}\n";
         try {
-           prepareOptions(0, 0, true, true, null);
-           parse(input);
+            prepareOptions(0, 0, true, true, null);
+            parse(input);
         } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
+            Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 2);
@@ -120,37 +119,38 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "e");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
     }
-    
+
     @Test(groups = { "broken" })
     public void readTableWithLinks() {
-        // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
+        // Data credits: Wikipedia contributors,
+        // https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
-            +"{|\n"
-            +"|-\n"
-            +"| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || http://www.cedefop.europa.eu/\n"
-            +"|-\n"
-            +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/]\n"
-            +"|-\n"
-            +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/ europa.eu]\n"
-            +"|-\n"
-            +"|}\n";
+                + "{|\n"
+                + "|-\n"
+                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || http://www.cedefop.europa.eu/\n"
+                + "|-\n"
+                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/]\n"
+                + "|-\n"
+                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/ europa.eu]\n"
+                + "|-\n"
+                + "|}\n";
 
         try {
-           prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/");
-           parse(input);
+            prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/");
+            parse(input);
         } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
+            Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        
+
         // Reconciled cells
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Cedefop");
         Assert.assertEquals(project.rows.get(0).cells.get(1).recon, null);
         Assert.assertEquals(project.rows.get(2).cells.get(0).value, "Europäische Beobachtungsstelle für Drogen und Drogensucht");
         Assert.assertEquals(project.rows.get(2).cells.get(0).recon.getBestCandidate().id, "Q1377256");
-        
+
         // various ways to input external links
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
         Assert.assertEquals(project.rows.get(2).cells.get(2).value, "http://www.emcdda.europa.eu/");
@@ -160,31 +160,32 @@ public class WikitextImporterTests extends ImporterTest {
 
     @Test
     public void readStyledTableWithHeader() {
-        // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
+        // Data credits: Wikipedia contributors,
+        // https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
-            +"==Agenturen==\n"
-            +"{| class=\"wikitable sortable\"\n"
-            +"! style=\"text-align:left; width: 60em\" | Offizieller Name\n"
-            +"! style=\"text-align:left; width: 9em\" | Abkürzung\n"
-            +"! style=\"text-align:left; width: 6em\" | Website\n"
-            +"! style=\"text-align:left; width: 15em\" | Standort\n"
-            +"! style=\"text-align:left; width: 18em\" | Staat\n"
-            +"! style=\"text-align:left; width: 6em\" | Gründung\n"
-            +"! style=\"text-align:left; width: 50em\" | Anmerkungen\n"
-            +"|-\n"
-            +"| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || '''Cedefop''' || [http://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
-            +"|-\n"
-            +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || ''EUROFOUND'' || [http://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
-            +"|-\n"
-            +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
-            +"|-\n"
-            +"|}\n";
+                + "==Agenturen==\n"
+                + "{| class=\"wikitable sortable\"\n"
+                + "! style=\"text-align:left; width: 60em\" | Offizieller Name\n"
+                + "! style=\"text-align:left; width: 9em\" | Abkürzung\n"
+                + "! style=\"text-align:left; width: 6em\" | Website\n"
+                + "! style=\"text-align:left; width: 15em\" | Standort\n"
+                + "! style=\"text-align:left; width: 18em\" | Staat\n"
+                + "! style=\"text-align:left; width: 6em\" | Gründung\n"
+                + "! style=\"text-align:left; width: 50em\" | Anmerkungen\n"
+                + "|-\n"
+                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || '''Cedefop''' || [http://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
+                + "|-\n"
+                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || ''EUROFOUND'' || [http://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
+                + "|-\n"
+                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
+                + "|-\n"
+                + "|}\n";
 
         try {
-           prepareOptions(-1, 1, true, true, null);
-           parse(input);
+            prepareOptions(-1, 1, true, true, null);
+            parse(input);
         } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
+            Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 7);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Europäisches Zentrum für die Förderung der Berufsbildung");
@@ -192,58 +193,58 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "EUROFOUND");
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Offizieller Name");
         Assert.assertEquals(project.columnModel.columns.get(6).getName(), "Anmerkungen");
-        Assert.assertEquals(project.rows.get(0).cells.size(), 7);  
+        Assert.assertEquals(project.rows.get(0).cells.size(), 7);
     }
 
     @Test
     public void readTableWithSpanningCells() {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{| class=\"wikitable\"\n"
-        +"!colspan=\"6\"|Shopping List\n"
-        +"|-\n"
-        +"|Bread & Butter\n"
-        +"|Pie\n"
-        +"|Buns\n"
-        +"|rowspan=\"2\"|Danish\n"
-        +"|colspan=\"2\"|Croissant\n"
-        +"|-\n"
-        +"|Cheese\n"
-        +"|colspan=\"2\"|Ice cream\n"
-        +"|Butter\n"
-        +"|Yogurt\n"
-        +"|}\n";
-        
+                + "!colspan=\"6\"|Shopping List\n"
+                + "|-\n"
+                + "|Bread & Butter\n"
+                + "|Pie\n"
+                + "|Buns\n"
+                + "|rowspan=\"2\"|Danish\n"
+                + "|colspan=\"2\"|Croissant\n"
+                + "|-\n"
+                + "|Cheese\n"
+                + "|colspan=\"2\"|Ice cream\n"
+                + "|Butter\n"
+                + "|Yogurt\n"
+                + "|}\n";
+
         try {
-           prepareOptions(-1, 1, true, true, null);
-           parse(input);
+            prepareOptions(-1, 1, true, true, null);
+            parse(input);
         } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
+            Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 6);
         Assert.assertNull(project.rows.get(1).cells.get(2));
         Assert.assertNull(project.rows.get(1).cells.get(3));
         Assert.assertEquals(project.rows.get(1).cells.get(4).value, "Butter");
     }
-    
+
     @Test
     public void readTableWithReferences() {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{|\n"
-        +"! price\n"
-        +"! fruit\n"
-        +"! merchant\n"
-        +"|-\n"
-        +"| a || b <ref name=\"myref\"> See [http://gnu.org here]</ref>  || c <ref name=\"ms\"> or http://microsoft.com/ </ref>\n"
-        +"|-\n"
-        +"| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
-        +"|-\n"
-        +"|}\n";
-        
+                + "! price\n"
+                + "! fruit\n"
+                + "! merchant\n"
+                + "|-\n"
+                + "| a || b <ref name=\"myref\"> See [http://gnu.org here]</ref>  || c <ref name=\"ms\"> or http://microsoft.com/ </ref>\n"
+                + "|-\n"
+                + "| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
+                + "|-\n"
+                + "|}\n";
+
         try {
-           prepareOptions(-1, 1, true, true, null);
-           parse(input);
+            prepareOptions(-1, 1, true, true, null);
+            parse(input);
         } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
+            Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 5);
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
@@ -257,21 +258,21 @@ public class WikitextImporterTests extends ImporterTest {
     public void readTableWithReferencesTemplates() {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{|\n"
-        +"! price\n"
-        +"! fruit\n"
-        +"! merchant\n"
-        +"|-\n"
-        +"| a || b <ref name=\"myref\">{{cite web|url=http://gnu.org|accessdate=2017-08-30}}</ref>  || c <ref name=\"ms\"> or {{cite journal|url=http://microsoft.com/|title=BLah}} </ref>\n"
-        +"|-\n"
-        +"| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
-        +"|-\n"
-        +"|}\n";
-        
+                + "! price\n"
+                + "! fruit\n"
+                + "! merchant\n"
+                + "|-\n"
+                + "| a || b <ref name=\"myref\">{{cite web|url=http://gnu.org|accessdate=2017-08-30}}</ref>  || c <ref name=\"ms\"> or {{cite journal|url=http://microsoft.com/|title=BLah}} </ref>\n"
+                + "|-\n"
+                + "| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
+                + "|-\n"
+                + "|}\n";
+
         try {
-           prepareOptions(-1, 1, true, true, null);
-           parse(input);
+            prepareOptions(-1, 1, true, true, null);
+            parse(input);
         } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
+            Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 5);
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
@@ -280,7 +281,7 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(4).value, "http://gnu.org");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://microsoft.com/");
     }
-    
+
     /**
      * Include templates and image filenames
      */
@@ -297,10 +298,10 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|-\n"
                 + "|}\n";
         try {
-           prepareOptions(0, 0, true, true, null);
-           parse(input);
+            prepareOptions(0, 0, true, true, null);
+            parse(input);
         } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
+            Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 2);
@@ -309,16 +310,16 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "[[File:My logo.svg]]");
     }
 
-    //--helpers--
-    
+    // --helpers--
+
     private void parse(String wikitext) {
-    	parseOneFile(importer, new StringReader(wikitext));
+        parseOneFile(importer, new StringReader(wikitext));
     }
 
     private void prepareOptions(
-        int limit, int headerLines, boolean blankSpanningCells,
-        boolean guessValueType, String wikiUrl) {
-        
+            int limit, int headerLines, boolean blankSpanningCells,
+            boolean guessValueType, String wikiUrl) {
+
         whenGetIntegerOption("limit", options, limit);
         whenGetIntegerOption("headerLines", options, headerLines);
         whenGetBooleanOption("guessCellValueTypes", options, guessValueType);

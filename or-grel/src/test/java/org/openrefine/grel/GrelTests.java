@@ -55,7 +55,7 @@ public class GrelTests {
 
     Project project;
     Properties bindings;
-    
+
     @BeforeTest
     public void registerGREL() {
         MetaParser.registerLanguageParser("grel", "General Refine Expression Language", Parser.grelParser, "value");
@@ -82,10 +82,10 @@ public class GrelTests {
                 "1-1-",
                 "2**3",
 //                "2^3" // TODO: Should this generate an error?
-                };
+        };
         for (String test : tests) {
-            try{
-                MetaParser.parse("grel:"+test);
+            try {
+                MetaParser.parse("grel:" + test);
             } catch (ParsingException e) {
                 // Test succeeded
                 continue;
@@ -99,40 +99,40 @@ public class GrelTests {
         String tests[] = {
 //                "1=1", // TODO: Throws NullPointerException
                 "value.datePart()",
-                };
+        };
         for (String test : tests) {
             try {
                 Evaluable eval = MetaParser.parse("grel:" + test);
                 Object result = eval.evaluate(bindings);
-                Assert.assertTrue(result instanceof EvalError );
+                Assert.assertTrue(result instanceof EvalError);
             } catch (ParsingException e) {
-                Assert.fail("Unexpected parse failure: " + test);                
+                Assert.fail("Unexpected parse failure: " + test);
             }
         }
     }
-    
+
     @Test
     public void testMath() throws ParsingException {
-        String tests[][] = { 
-                { "1", "1" }, 
-                { "1 + 1", "2" }, 
-                { "1 + 1 + 1", "3" }, 
-                { "1-1-1", "-1" }, 
-                { "1-2-3", "-4" }, 
-                { "1-(2-3)", "2" }, 
-                { "2*3", "6" }, 
-                { "3%2", "1" }, 
+        String tests[][] = {
+                { "1", "1" },
+                { "1 + 1", "2" },
+                { "1 + 1 + 1", "3" },
+                { "1-1-1", "-1" },
+                { "1-2-3", "-4" },
+                { "1-(2-3)", "2" },
+                { "2*3", "6" },
+                { "3%2", "1" },
                 { "3/2", "1" },
-                { "3.0/2", "1.5" }, 
-                { "1==1", "true" }, 
-                { "1==2", "false" }, 
-                { "1>2", "false" }, 
-                { "1<2", "true" }, 
-                { "1>1", "false" }, 
-                { "1>=1", "true" }, 
-                { "1<=2", "true" }, 
-                { "2<=2", "true" }, 
-                { "3<=2", "false" }, 
+                { "3.0/2", "1.5" },
+                { "1==1", "true" },
+                { "1==2", "false" },
+                { "1>2", "false" },
+                { "1<2", "true" },
+                { "1>1", "false" },
+                { "1>=1", "true" },
+                { "1<=2", "true" },
+                { "2<=2", "true" },
+                { "3<=2", "false" },
 //                { "", "" }, 
         };
         for (String[] test : tests) {
@@ -148,18 +148,18 @@ public class GrelTests {
 
     @Test
     public void testString() throws ParsingException {
-        String tests[][] = { 
-                { "1", "1" }, 
-                { "1 + 1", "2" }, 
-                { "1 + 1 + 1", "3" }, 
-                { "1-1-1", "-1" }, 
-                { "1-2-3", "-4" }, 
-                { "1-(2-3)", "2" }, 
-                { "2*3", "6" }, 
-                { "3%2", "1" }, 
+        String tests[][] = {
+                { "1", "1" },
+                { "1 + 1", "2" },
+                { "1 + 1 + 1", "3" },
+                { "1-1-1", "-1" },
+                { "1-2-3", "-4" },
+                { "1-(2-3)", "2" },
+                { "2*3", "6" },
+                { "3%2", "1" },
                 { "3/2", "1" },
-                { "3.0/2", "1.5" }, 
-                { "1", "1" }, 
+                { "3.0/2", "1.5" },
+                { "1", "1" },
         };
         for (String[] test : tests) {
             parseEval(bindings, test);
@@ -174,11 +174,11 @@ public class GrelTests {
 
     @Test
     public void testGetJsonFieldAbsent() throws ParsingException {
-        String test =  "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].two";
+        String test = "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].two";
         Evaluable eval = MetaParser.parse("grel:" + test);
         Assert.assertNull(eval.evaluate(bindings));
     }
-    
+
     @Test
     public void testJoinJsonArray() throws ParsingException {
         String test[] = { "\"{\\\"values\\\":[\\\"one\\\",\\\"two\\\",\\\"three\\\"]}\".parseJson().values.join(\",\")", "one,two,three" };
@@ -187,29 +187,29 @@ public class GrelTests {
 
     @Test
     public void testGetFieldFromNull() throws ParsingException {
-        String test =  "null.value";
+        String test = "null.value";
         Evaluable eval = MetaParser.parse("grel:" + test);
         Assert.assertNull(eval.evaluate(bindings));
     }
-    
+
     // to demonstrate bug fixing for #1204
     @Test
     public void testCrossFunctionEval() {
-            String test = "cross(\"Mary\", \"My Address Book\", \"friend\")";
-            
-            try {
-                Evaluable eval = MetaParser.parse("grel:" + test);
-                Object result = eval.evaluate(bindings);
-                Assert.assertTrue(result instanceof EvalError );
-            } catch (ParsingException e) {
-                Assert.fail("Unexpected parse failure for cross function: " + test);                
-            }
+        String test = "cross(\"Mary\", \"My Address Book\", \"friend\")";
+
+        try {
+            Evaluable eval = MetaParser.parse("grel:" + test);
+            Object result = eval.evaluate(bindings);
+            Assert.assertTrue(result instanceof EvalError);
+        } catch (ParsingException e) {
+            Assert.fail("Unexpected parse failure for cross function: " + test);
+        }
     }
-    
+
     @Test
     public void testColumnDependencies() throws ParsingException {
         // integration test for column dependency extraction
-        
+
         String baseColumn = "base";
         String tests[][] = {
                 { "value", "base" },
@@ -222,25 +222,25 @@ public class GrelTests {
                 { "parseHtml(value.trim())", "base" },
                 { "cells", null },
                 { "facetCount(value, 'value', 'col')", null },
-             // this could be analyzed too, but we will never reach completeness anyway!
-             // Moving to Truffle might help with partial evaluation down
-                { "get(cells, 'foo'+'bar')", null }, 
+                // this could be analyzed too, but we will never reach completeness anyway!
+                // Moving to Truffle might help with partial evaluation down
+                { "get(cells, 'foo'+'bar')", null },
         };
         for (String[] test : tests) {
             Evaluable eval = MetaParser.parse("grel:" + test[0]);
-            Set<String> expected = test[1] == null ? null :
-                    Arrays.asList(test[1].split(",")).stream()
-                    .filter(s -> !s.isEmpty()).collect(Collectors.toSet());
-            Assert.assertEquals(eval.getColumnDependencies(baseColumn), expected, "for expression: "+test[0]);
+            Set<String> expected = test[1] == null ? null
+                    : Arrays.asList(test[1].split(",")).stream()
+                            .filter(s -> !s.isEmpty()).collect(Collectors.toSet());
+            Assert.assertEquals(eval.getColumnDependencies(baseColumn), expected, "for expression: " + test[0]);
         }
     }
-    
+
     private void parseEval(Properties bindings, String[] test)
-    throws ParsingException {
+            throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test[0]);
         Object result = eval.evaluate(bindings);
-        Assert.assertEquals(result.toString(), test[1], 
-                            "Wrong result for expression: "+test[0]);
+        Assert.assertEquals(result.toString(), test[1],
+                "Wrong result for expression: " + test[0]);
     }
 
 }

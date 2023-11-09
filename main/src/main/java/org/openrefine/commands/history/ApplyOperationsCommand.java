@@ -40,6 +40,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.openrefine.commands.Command;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
@@ -47,30 +50,27 @@ import org.openrefine.operations.UnknownOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 public class ApplyOperationsCommand extends Command {
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         Project project = getProject(request);
         String jsonString = request.getParameter("operations");
         try {
             ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
             int count = a.size();
             for (int i = 0; i < count; i++) {
-            	if (a.get(i) instanceof ObjectNode) {
-	                ObjectNode obj = (ObjectNode) a.get(i);
-	                
-	                reconstructOperation(project, obj);
-            	}
+                if (a.get(i) instanceof ObjectNode) {
+                    ObjectNode obj = (ObjectNode) a.get(i);
+
+                    reconstructOperation(project, obj);
+                }
             }
 
             if (project.processManager.hasPending()) {
@@ -82,13 +82,13 @@ public class ApplyOperationsCommand extends Command {
             respondException(response, e);
         }
     }
-    
+
     protected void reconstructOperation(Project project, ObjectNode obj) throws IOException {
         AbstractOperation operation = ParsingUtilities.mapper.convertValue(obj, AbstractOperation.class);
         if (operation != null && !(operation instanceof UnknownOperation)) {
             try {
                 Process process = operation.createProcess(project, new Properties());
-                
+
                 project.processManager.queueProcess(process);
             } catch (Exception e) {
                 e.printStackTrace();

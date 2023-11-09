@@ -42,13 +42,13 @@ import org.openrefine.model.Project;
 import org.openrefine.operations.recon.ReconMatchBestCandidatesOperation;
 
 public class ReconMatchBestCandidatesCommand extends EngineDependentCommand {
-    
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
-        
+
         return new ReconMatchBestCandidatesOperation(engineConfig, columnName);
     }
 }

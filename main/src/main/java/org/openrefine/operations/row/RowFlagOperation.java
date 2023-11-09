@@ -36,6 +36,9 @@ package org.openrefine.operations.row;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.FilteredRows;
@@ -48,22 +51,18 @@ import org.openrefine.model.changes.MassChange;
 import org.openrefine.model.changes.RowFlagChange;
 import org.openrefine.operations.EngineDependentOperation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class RowFlagOperation extends EngineDependentOperation {
+
     final protected boolean _flagged;
 
     @JsonCreator
     public RowFlagOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("flagged")
-            boolean flagged) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("flagged") boolean flagged) {
         super(engineConfig);
         _flagged = flagged;
     }
-    
+
     @JsonProperty("flagged")
     public boolean getFlagged() {
         return _flagged;
@@ -74,33 +73,33 @@ public class RowFlagOperation extends EngineDependentOperation {
         return (_flagged ? "Flag rows" : "Unflag rows");
     }
 
-   @Override
-protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+    @Override
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
-        
+
         List<Change> changes = new ArrayList<Change>(project.rows.size());
-        
+
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, changes));
-        
+
         return new HistoryEntry(
-            historyEntryID,
-            project, 
-            (_flagged ? "Flag" : "Unflag") + " " + changes.size() + " rows", 
-            this, 
-            new MassChange(changes, false)
-        );
+                historyEntryID,
+                project,
+                (_flagged ? "Flag" : "Unflag") + " " + changes.size() + " rows",
+                this,
+                new MassChange(changes, false));
     }
 
     protected RowVisitor createRowVisitor(Project project, List<Change> changes) throws Exception {
         return new RowVisitor() {
+
             List<Change> changes;
-            
+
             public RowVisitor init(List<Change> changes) {
                 this.changes = changes;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
@@ -110,12 +109,12 @@ protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) 
             public void end(Project project) {
                 // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 if (row.flagged != _flagged) {
                     RowFlagChange change = new RowFlagChange(rowIndex, _flagged);
-                    
+
                     changes.add(change);
                 }
                 return false;

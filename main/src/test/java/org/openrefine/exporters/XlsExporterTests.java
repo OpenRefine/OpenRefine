@@ -43,6 +43,13 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Properties;
 
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectManagerStub;
 import org.openrefine.ProjectMetadata;
@@ -55,35 +62,29 @@ import org.openrefine.model.Column;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 public class XlsExporterTests extends RefineTest {
 
     private static final String TEST_PROJECT_NAME = "xls exporter test project";
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     ByteArrayOutputStream stream;
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     StreamExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new XlsExporter(false);
         stream = new ByteArrayOutputStream();
         ProjectManager.singleton = new ProjectManagerStub();
@@ -96,7 +97,7 @@ public class XlsExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         stream = null;
         ProjectManager.singleton.deleteProject(project.id);
@@ -106,7 +107,7 @@ public class XlsExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleXls(){
+    public void exportSimpleXls() {
         CreateGrid(2, 2);
 
         try {
@@ -115,14 +116,14 @@ public class XlsExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        // TODO: Not a very effective test! 
+        // TODO: Not a very effective test!
         // (it didn't crash though, and it created output)
-        Assert.assertEquals(stream.size(),4096);
+        Assert.assertEquals(stream.size(), 4096);
 
     }
-    
+
     @Test
-    public void exportDateType() throws IOException{
+    public void exportDateType() throws IOException {
         OffsetDateTime odt = OffsetDateTime.now();
         createDateGrid(2, 2, odt);
 
@@ -131,12 +132,12 @@ public class XlsExporterTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        
-        Assert.assertEquals(stream.size(),4096);
+
+        Assert.assertEquals(stream.size(), 4096);
     }
 
-    @Test(enabled=false)
-    public void exportSimpleXlsNoHeader(){
+    @Test(enabled = false)
+    public void exportSimpleXlsNoHeader() {
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
@@ -146,15 +147,14 @@ public class XlsExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(stream.toString(), "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
+                "row1cell0,row1cell1\n");
 
-        verify(options,times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).getProperty("printColumnHeader");
     }
 
-
-    @Test(enabled=false)
-    public void exportXlsWithEmptyCells(){
-        CreateGrid(3,3);
+    @Test(enabled = false)
+    public void exportXlsWithEmptyCells() {
+        CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
@@ -165,15 +165,15 @@ public class XlsExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(stream.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,,row1cell2\n" +
-                                               ",row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,,row1cell2\n" +
+                ",row2cell1,row2cell2\n");
     }
 
-    //helper methods
+    // helper methods
 
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
+    protected void CreateColumns(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
@@ -182,24 +182,24 @@ public class XlsExporterTests extends RefineTest {
         }
     }
 
-    protected void CreateGrid(int noOfRows, int noOfColumns){
+    protected void CreateGrid(int noOfRows, int noOfColumns) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
             }
             project.rows.add(row);
         }
     }
-    
-    private void createDateGrid(int noOfRows, int noOfColumns, OffsetDateTime now){
+
+    private void createDateGrid(int noOfRows, int noOfColumns, OffsetDateTime now) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell(now, null));
             }
             project.rows.add(row);

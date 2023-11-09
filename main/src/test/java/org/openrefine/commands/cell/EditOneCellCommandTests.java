@@ -1,3 +1,4 @@
+
 package org.openrefine.commands.cell;
 
 import static org.mockito.Mockito.mock;
@@ -14,43 +15,44 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.cell.EditOneCellCommand;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class EditOneCellCommandTests extends RefineTest {
 
-	private static final String PARSABLE_DOUBLE_NUMBER = "12345.123";
-	private static final String PARSABLE_LONG_NUMBER = "12345";
-	protected Project project = null;
-	protected HttpServletRequest request = null;
+    private static final String PARSABLE_DOUBLE_NUMBER = "12345.123";
+    private static final String PARSABLE_LONG_NUMBER = "12345";
+    protected Project project = null;
+    protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected Command command = null;
     protected StringWriter writer = null;
-	
-	@BeforeMethod
-	public void setUpProject() {
-		project = createProject(
-				new String[] {"first_column","second_column"},
-				new Serializable[] {
-				"a","b",
-				"c","d"});
-		command = new EditOneCellCommand();
-		request = mock(HttpServletRequest.class);
-		response = mock(HttpServletResponse.class);
-		writer = new StringWriter();
-		try {
+
+    @BeforeMethod
+    public void setUpProject() {
+        project = createProject(
+                new String[] { "first_column", "second_column" },
+                new Serializable[] {
+                        "a", "b",
+                        "c", "d" });
+        command = new EditOneCellCommand();
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        writer = new StringWriter();
+        try {
             when(response.getWriter()).thenReturn(new PrintWriter(writer));
         } catch (IOException e) {
             e.printStackTrace();
         }
-	}
-	
-	@Test
+    }
+
+    @Test
 	public void testEditOneCell() throws ServletException, IOException {
 		when(request.getParameter("project")).thenReturn(Long.toString(project.id));
 		when(request.getParameter("row")).thenReturn("1");
@@ -66,8 +68,8 @@ public class EditOneCellCommandTests extends RefineTest {
 		assertEquals("e", project.rows.get(1).cells.get(0).value);
 		assertEquals("d", project.rows.get(1).cells.get(1).value);
 	}
-	
-	@Test
+
+    @Test
 	public void testNumberParsing_parsableLong() throws ServletException, IOException {
 		when(request.getParameter("project")).thenReturn(Long.toString(project.id));
 		when(request.getParameter("row")).thenReturn("1");
@@ -85,7 +87,7 @@ public class EditOneCellCommandTests extends RefineTest {
 		assertEquals("d", project.rows.get(1).cells.get(1).value);
 	}
 
-	@Test
+    @Test
 	public void testNumberParsing_parsableDouble() throws ServletException, IOException {
 		when(request.getParameter("project")).thenReturn(Long.toString(project.id));
 		when(request.getParameter("row")).thenReturn("1");
@@ -102,8 +104,8 @@ public class EditOneCellCommandTests extends RefineTest {
 		assertEquals(12345.123, project.rows.get(1).cells.get(0).value);
 		assertEquals("d", project.rows.get(1).cells.get(1).value);
 	}
-	
-	@Test
+
+    @Test
 	public void testMissingCSRFToken() throws ServletException, IOException {
 		when(request.getParameter("project")).thenReturn(Long.toString(project.id));
 		when(request.getParameter("row")).thenReturn("1");

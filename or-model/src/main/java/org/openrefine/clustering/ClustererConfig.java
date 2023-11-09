@@ -24,45 +24,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package org.openrefine.clustering;
 
-import org.openrefine.model.Project;
+package org.openrefine.clustering;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+import org.openrefine.model.Project;
+
 /**
  * Represents the configuration data for a clusterer.
+ * 
  * @author Antonin Delpeuch
  */
-@JsonTypeInfo(
-        use=JsonTypeInfo.Id.NAME,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonTypeIdResolver(ClustererConfigFactory.class)
-public abstract class ClustererConfig  {
-    
+public abstract class ClustererConfig {
+
     protected String columnName;
-    
+
     @JsonProperty("column")
     public String getColumnName() {
         return columnName;
     }
-    
+
     @JsonProperty("column")
     public void setColumnName(String name) {
-    	columnName = name;
+        columnName = name;
     }
-    
+
     /**
      * Instantiate the configuration on a particular project.
+     * 
      * @param project
      * @return
      */
     public abstract Clusterer apply(Project project);
-    
+
     /**
      * Type string used in Json serialization
      */

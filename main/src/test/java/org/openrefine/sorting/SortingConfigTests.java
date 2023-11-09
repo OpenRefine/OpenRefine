@@ -24,28 +24,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.sorting;
 
 import java.io.IOException;
 
+import org.testng.annotations.Test;
+
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class SortingConfigTests {
+
     @Test
     public void serializeSortingConfig() throws IOException {
-        String json = "{\n" + 
-                "      \"criteria\": [\n" + 
-                "        {\n" + 
-                "          \"errorPosition\": 1,\n" + 
-                "          \"valueType\": \"number\",\n" + 
-                "          \"column\": \"start_year\",\n" + 
-                "          \"blankPosition\": 2,\n" + 
-                "          \"reverse\": false\n" + 
-                "        }\n" + 
-                "      ]\n" + 
+        String json = "{\n" +
+                "      \"criteria\": [\n" +
+                "        {\n" +
+                "          \"errorPosition\": 1,\n" +
+                "          \"valueType\": \"number\",\n" +
+                "          \"column\": \"start_year\",\n" +
+                "          \"blankPosition\": 2,\n" +
+                "          \"reverse\": false\n" +
+                "        }\n" +
+                "      ]\n" +
                 "    }";
         TestUtils.isSerializedTo(SortingConfig.reconstruct(json), json, ParsingUtilities.defaultWriter);
     }

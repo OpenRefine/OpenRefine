@@ -21,15 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.wikidata.schema;
 
-import org.apache.commons.lang.Validate;
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.utils.LanguageCodeStore;
-import org.wikidata.wdtk.datamodel.interfaces.WikimediaLanguageCodes;
+package org.openrefine.wikidata.schema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
+import org.wikidata.wdtk.datamodel.interfaces.WikimediaLanguageCodes;
+
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.utils.LanguageCodeStore;
 
 /**
  * A constant that represents a Wikimedia language code.
@@ -51,8 +52,8 @@ public class WbLanguageConstant implements WbExpression<String> {
     }
 
     /**
-     * Checks that a language code is valid and returns its preferred version
-     * (converting deprecated language codes to their better values).
+     * Checks that a language code is valid and returns its preferred version (converting deprecated language codes to
+     * their better values).
      * 
      * @param lang
      *            a Wikimedia language code
@@ -60,13 +61,13 @@ public class WbLanguageConstant implements WbExpression<String> {
      */
     public static String normalizeLanguageCode(String lang) {
         try {
-        	if (LanguageCodeStore.ALLOWED_LANGUAGE_CODES.contains(lang)) {
-        		return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
-        	} else {
-        		return null;
-        	}
+            if (LanguageCodeStore.ALLOWED_LANGUAGE_CODES.contains(lang)) {
+                return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
+            } else {
+                return null;
+            }
         } catch (IllegalArgumentException e) {
-        	return null;
+            return null;
         }
     }
 

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.grel.controls;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ForEachTests {
+
     @Test
     public void serializeForEach() {
         String json = "{\"description\":\"Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression e, and pushes the result onto the result array.\",\"params\":\"expression a, variable v, expression e\",\"returns\":\"array\"}";
         TestUtils.isSerializedTo(new ForEach(), json, ParsingUtilities.defaultWriter);
     }
 }
-

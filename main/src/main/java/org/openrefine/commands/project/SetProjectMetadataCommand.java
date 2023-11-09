@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.commands.project;
 
 import java.io.IOException;
@@ -38,32 +39,33 @@ import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 
 public class SetProjectMetadataCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         String metaName = request.getParameter("name");
         String valueString = request.getParameter("value");
         ProjectMetadata meta = null;
-        
+
         if (project == null) {
             respond(response, "{ \"code\" : \"error\", \"message\" : \"Project cannot be found\" }");
             return;
         }
-        
-        meta = project.getMetadata(); 
+
+        meta = project.getMetadata();
         try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            
+
             meta.setAnyField(metaName, valueString);
             ProjectManager.singleton.saveMetadata(meta, project.id);
-            
+
             respond(response, "{ \"code\" : \"ok\" }");
         } catch (Exception e) {
             respondException(response, e);

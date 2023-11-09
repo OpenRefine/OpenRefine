@@ -43,14 +43,14 @@ import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.operations.recon.ReconOperation;
 
 public class ReconcileCommand extends EngineDependentCommand {
-    
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
         String configString = request.getParameter("config");
-        
+
         return new ReconOperation(engineConfig, columnName, ReconConfig.reconstruct(configString));
     }
 }

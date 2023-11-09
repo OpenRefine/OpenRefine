@@ -21,20 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+
 import org.openrefine.model.Cell;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
- * An expression that represents a time value, extracted from a string. A number
- * of formats are recognized, see {@link WbDateConstant} for details.
+ * An expression that represents a time value, extracted from a string. A number of formats are recognized, see
+ * {@link WbDateConstant} for details.
  * 
  * @author Antonin Delpeuch
  *
@@ -57,7 +58,7 @@ public class WbDateVariable extends WbVariableExpr<TimeValue> {
             // parsed dates are accepted by converting them to strings
             return WbDateConstant.parse(cell.value.toString());
         } catch (ParseException e) {
-            if(!cell.value.toString().isEmpty()) {
+            if (!cell.value.toString().isEmpty()) {
                 QAWarning issue = new QAWarning("ignored-date", null, QAWarning.Severity.WARNING, 1);
                 issue.setProperty("example_value", cell.value.toString());
                 ctxt.addWarning(issue);

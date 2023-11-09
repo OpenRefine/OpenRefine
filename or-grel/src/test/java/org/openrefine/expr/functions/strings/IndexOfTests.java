@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class IndexOfTests {
+
     @Test
     public void serializeIndexOf() {
         String json = "{\"description\":\"Returns the index of sub first ocurring in s\",\"params\":\"string s, string sub\",\"returns\":\"number\"}";
         TestUtils.isSerializedTo(new IndexOf(), json, ParsingUtilities.defaultWriter);
     }
 }
-

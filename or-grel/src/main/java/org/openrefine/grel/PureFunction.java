@@ -36,24 +36,23 @@ package org.openrefine.grel;
 import java.util.Properties;
 
 /**
- * Function whose value only depends on the values
- * of its arguments and not of the global state which
- * can be accessed via the context.
+ * Function whose value only depends on the values of its arguments and not of the global state which can be accessed
+ * via the context.
  * 
- * Most functions fall into this category: only a few
- * (cross, facetCount…) rely on the context.
+ * Most functions fall into this category: only a few (cross, facetCount…) rely on the context.
  * 
  * @author Antonin Delpeuch
  */
 public abstract class PureFunction implements Function {
+
     /**
      * Computes the value of the function on the given arguments
+     * 
      * @param bindings
-     *      the evaluation context
+     *            the evaluation context
      * @param args
-     *      the values of the arguments
-     * @return
-     *      the return value of the function
+     *            the values of the arguments
+     * @return the return value of the function
      */
     @Override
     public final Object call(Properties bindings, Object[] args) {
@@ -62,12 +61,12 @@ public abstract class PureFunction implements Function {
 
     /**
      * Computes the value of the function on the given arguments
+     * 
      * @param bindings
-     *      the evaluation context
+     *            the evaluation context
      * @param args
-     *      the values of the arguments
-     * @return
-     *      the return value of the function
+     *            the values of the arguments
+     * @return the return value of the function
      */
     public abstract Object call(Object[] args);
 }

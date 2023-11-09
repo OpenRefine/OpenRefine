@@ -33,8 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.row;
 
- import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
@@ -46,14 +49,11 @@ import org.openrefine.model.Row;
 import org.openrefine.model.changes.RowRemovalChange;
 import org.openrefine.operations.EngineDependentOperation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class RowRemovalOperation extends EngineDependentOperation {
+
     @JsonCreator
     public RowRemovalOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig) {
         super(engineConfig);
     }
 
@@ -62,28 +62,28 @@ public class RowRemovalOperation extends EngineDependentOperation {
         return "Remove rows";
     }
 
-   @Override
-protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+    @Override
+    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
-        
+
         List<Integer> rowIndices = new ArrayList<Integer>();
-        
+
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, rowIndices));
-        
+
         return new HistoryEntry(
-            historyEntryID,
-            project, 
-            "Remove " + rowIndices.size() + " rows", 
-            this, 
-            new RowRemovalChange(rowIndices)
-        );
+                historyEntryID,
+                project,
+                "Remove " + rowIndices.size() + " rows",
+                this,
+                new RowRemovalChange(rowIndices));
     }
 
     protected RowVisitor createRowVisitor(Project project, List<Integer> rowIndices) throws Exception {
         return new RowVisitor() {
+
             List<Integer> rowIndices;
-            
+
             public RowVisitor init(List<Integer> rowIndices) {
                 this.rowIndices = rowIndices;
                 return this;
@@ -102,7 +102,7 @@ protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) 
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 rowIndices.add(rowIndex);
-                
+
                 return false;
             }
         }.init(rowIndices);

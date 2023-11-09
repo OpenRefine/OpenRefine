@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.grel.ControlFunctionRegistry;
@@ -50,18 +51,18 @@ public class Uniques extends PureFunction {
     public Object call(Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v instanceof ArrayNode) {
                     v = JSONUtilities.toArray((ArrayNode) v);
                 }
-                
+
                 if (v.getClass().isArray() || v instanceof List<?>) {
                     Set<Object> set = null;
-                    
+
                     if (v.getClass().isArray()) {
                         Object[] a = (Object[]) v;
-                        
+
                         set = new HashSet<Object>(a.length);
                         for (Object element : a) {
                             set.add(element);
@@ -80,12 +81,12 @@ public class Uniques extends PureFunction {
     public String getDescription() {
         return "Returns array a with duplicates removed";
     }
-    
+
     @Override
     public String getParams() {
         return "array a";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

@@ -40,6 +40,7 @@ import java.util.Set;
  * Interface for evaluable expressions in any arbitrary language.
  */
 public interface Evaluable {
+
     /**
      * Evaluate this expression in the given environment (bindings).
      * 
@@ -47,17 +48,16 @@ public interface Evaluable {
      * @return
      */
     public Object evaluate(Properties bindings);
-    
+
     /**
      * Returns the names of the columns this expression depends on.
      * 
      * @param baseColumn
-     * 		the name of the column this expression is based on
-     * 		(null if none)
-     * @returns null if the columns could not be isolated: in this 
-     *     case, the expression might depend on all columns in the project.
+     *            the name of the column this expression is based on (null if none)
+     * @returns null if the columns could not be isolated: in this case, the expression might depend on all columns in
+     *          the project.
      */
     public default Set<String> getColumnDependencies(String baseColumn) {
-    	return null;
+        return null;
     }
 }

@@ -21,10 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema.entityvalues;
 
-import org.openrefine.model.Recon;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
+import org.openrefine.model.Recon;
 
 public class ReconPropertyIdValue extends ReconEntityIdValue implements PropertyIdValue {
 

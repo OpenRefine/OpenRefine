@@ -39,16 +39,16 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class OdsExporter implements StreamExporter {
 
@@ -65,13 +65,14 @@ public class OdsExporter implements StreamExporter {
         try {
             odfDoc = OdfSpreadsheetDocument.newSpreadsheetDocument();
         } catch (Exception e) {
-            throw new IOException("Failed to create spreadsheet",e);
+            throw new IOException("Failed to create spreadsheet", e);
         }
-        
+
         TabularSerializer serializer = new TabularSerializer() {
+
             OdfTable table;
-            //int rowCount = 0;
-            
+            // int rowCount = 0;
+
             @Override
             public void startFile(JsonNode options) {
                 table = OdfTable.newTable(odfDoc);
@@ -85,8 +86,8 @@ public class OdsExporter implements StreamExporter {
             @Override
             public void addRow(List<CellData> cells, boolean isHeader) {
                 OdfTableRow r = table.appendRow();
-                //rowCount++;
-                
+                // rowCount++;
+
                 for (int i = 0; i < cells.size(); i++) {
                     OdfTableCell c = r.getCellByIndex(i); // implicitly creates cell
                     CellData cellData = cells.get(i);
@@ -98,7 +99,7 @@ public class OdsExporter implements StreamExporter {
                         } else if (v instanceof Boolean) {
                             c.setBooleanValue(((Boolean) v).booleanValue());
                         } else if (v instanceof OffsetDateTime) {
-                            OffsetDateTime odt = (OffsetDateTime)v;
+                            OffsetDateTime odt = (OffsetDateTime) v;
                             c.setDateValue(ParsingUtilities.offsetDateTimeToCalendar(odt));
                         } else {
                             c.setStringValue(cellData.text);
@@ -111,14 +112,14 @@ public class OdsExporter implements StreamExporter {
                 }
             }
         };
-        
+
         CustomizableTabularExporterUtilities.exportRows(
                 project, engine, params, serializer);
-        
+
         try {
             odfDoc.save(outputStream);
         } catch (Exception e) {
-            throw new IOException("Error saving spreadsheet",e);
+            throw new IOException("Error saving spreadsheet", e);
         }
         outputStream.flush();
     }

@@ -46,19 +46,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.project.SetProjectMetadataCommand;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class SetProjectMetadataCommandTests {
 
@@ -87,16 +87,16 @@ public class SetProjectMetadataCommandTests {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         SUT = new SetProjectMetadataCommand();
-        
+
         ProjectMetadata metadata = new ProjectMetadata();
         metadata.setUserMetadata((ArrayNode) ParsingUtilities.mapper.readTree("[ {name: \"clientID\", display: true} ]"));
-        
+
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getMetadata()).thenReturn(metadata);
-        
+
         try {
             when(response.getWriter()).thenReturn(pw);
         } catch (IOException e1) {
@@ -149,7 +149,7 @@ public class SetProjectMetadataCommandTests {
         
         Assert.assertEquals(proj.getMetadata().getSubject(), SUBJECT);
     }
-    
+
     /**
      *  set a user defined metadata field
      * @throws JSONException 
@@ -186,14 +186,14 @@ public class SetProjectMetadataCommandTests {
         Assert.assertEquals(obj.get("name").asText(), "clientID");
         Assert.assertEquals(obj.get("value").asText(), "IBM");
     }
-    
-     @Test
-     public void doPostThrowsIfCommand_getProjectReturnsNull(){
+
+    @Test
+    public void doPostThrowsIfCommand_getProjectReturnsNull() {
         // run
         try {
             SUT.doPost(request, response);
         } catch (ServletException e) {
-            //expected
+            // expected
         } catch (IOException e) {
             Assert.fail();
         }
@@ -201,5 +201,5 @@ public class SetProjectMetadataCommandTests {
         // verify
         verify(request, times(2)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
-     }
+    }
 }

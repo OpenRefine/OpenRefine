@@ -24,12 +24,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.clustering.knn;
 
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import edu.mit.simile.vicino.distances.PPMDistance;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
@@ -41,16 +48,9 @@ import org.openrefine.clustering.knn.kNNClusterer.kNNClustererConfig;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-import edu.mit.simile.vicino.distances.PPMDistance;
 
 public class kNNClustererTests extends RefineTest {
-    
+
     public static String configJson = "{"
             + "\"type\":\"knn\","
             + "\"function\":\"PPM\","
@@ -60,45 +60,45 @@ public class kNNClustererTests extends RefineTest {
     public static String clustererJson = "["
             + "   [{\"v\":\"ab\",\"c\":1},{\"v\":\"abc\",\"c\":1}]"
             + "]";
-    
+
     @BeforeTest
     public void registerClusterer() {
-    	ClustererConfigFactory.register("knn", kNNClustererConfig.class);
-    	DistanceFactory.put("ppm", new VicinoDistance(new PPMDistance()));
+        ClustererConfigFactory.register("knn", kNNClustererConfig.class);
+        DistanceFactory.put("ppm", new VicinoDistance(new PPMDistance()));
     }
-    
+
     @Test
     public void serializekNNClustererConfig() throws JsonParseException, JsonMappingException, IOException {
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializekNNClusterer() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(new String[] {"column"},
-        		new Serializable[] {
-                "ab",
-                "abc",
-                "c",
-                "ĉ"});
-        
+        Project project = createProject(new String[] { "column" },
+                new Serializable[] {
+                        "ab",
+                        "abc",
+                        "c",
+                        "ĉ" });
+
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
-        
+
         TestUtils.isSerializedTo(clusterer, clustererJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testNoLonelyclusters() throws JsonParseException, JsonMappingException, IOException {
-    	Project project = createProject(new String[] {"column"},
-    			new Serializable[] {
-                "foo",
-                "bar"});
-    	kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
-    	kNNClusterer clusterer = config.apply(project);
-    	clusterer.computeClusters(new Engine(project));
-    	
-    	assertTrue(clusterer.getJsonRepresentation().isEmpty());
+        Project project = createProject(new String[] { "column" },
+                new Serializable[] {
+                        "foo",
+                        "bar" });
+        kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
+        kNNClusterer clusterer = config.apply(project);
+        clusterer.computeClusters(new Engine(project));
+
+        assertTrue(clusterer.getJsonRepresentation().isEmpty());
     }
 }

@@ -44,9 +44,9 @@ public class ParseXml extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        return call(args,"xml");
+        return call(args, "xml");
     }
-    
+
     public Object call(Object[] args, String mode) {
         if (args.length == 1) {
             Object o1 = args[0];
@@ -54,7 +54,7 @@ public class ParseXml extends PureFunction {
                 if (mode.equals("html")) {
                     return Jsoup.parse(o1.toString());
                 } else if (mode.equals("xml")) {
-                    return Jsoup.parse(o1.toString(), "",Parser.xmlParser());
+                    return Jsoup.parse(o1.toString(), "", Parser.xmlParser());
                 } else {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to identify which parser to use");
                 }
@@ -63,20 +63,18 @@ public class ParseXml extends PureFunction {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
-
     @Override
     public String getDescription() {
-    	return "Parses a string as XML";
+        return "Parses a string as XML";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
-    	return "XML object";
+        return "XML object";
     }
 }
-

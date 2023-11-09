@@ -47,28 +47,29 @@ public class Contains extends PureFunction {
             Object s2 = args[1];
             if (s1 != null && s2 != null && s1 instanceof String && s2 instanceof String) {
                 return ((String) s1).indexOf((String) s2) > -1;
-            } else if (s1 != null && s2 != null && s1 instanceof String && s2 instanceof Pattern){
+            } else if (s1 != null && s2 != null && s1 instanceof String && s2 instanceof Pattern) {
                 String s = (String) s1;
                 Pattern pattern = (Pattern) s2;
                 Matcher matcher = pattern.matcher(s);
                 if (matcher.find()) {
                     return true;
-                }else
+                } else
                     return false;
             }
         }
         return null;
     }
+
     @Override
     public String getDescription() {
         return "Returns whether s contains frag";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string frag";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

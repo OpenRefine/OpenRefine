@@ -33,14 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.TransposeRowsIntoColumnsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 public class TransposeTests extends RefineTest {
 
@@ -50,14 +51,15 @@ public class TransposeTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
         OperationRegistry.registerOperation("core", "transpose-rows-into-columns", TransposeRowsIntoColumnsOperation.class);
     }
-    
+
     @Test
     public void testTransposeRowsIntoColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/transpose-rows-into-columns\","
                 + "\"description\":\"Transpose every 3 cells in column start column into separate columns\","
                 + "\"columnName\":\"start column\","
                 + "\"rowCount\":3}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
 
 }

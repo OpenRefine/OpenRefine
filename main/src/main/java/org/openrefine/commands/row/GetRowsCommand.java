@@ -42,12 +42,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.FilteredRecords;
 import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RecordVisitor;
 import org.openrefine.browsing.RowVisitor;
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
@@ -61,14 +66,10 @@ import org.openrefine.sorting.SortingRowVisitor;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.Pool;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 public class GetRowsCommand extends Command {
-    
-    protected static class WrappedRow  {
+
+    protected static class WrappedRow {
+
         @JsonUnwrapped
         protected final Row row;
         @JsonProperty("i")
@@ -76,15 +77,16 @@ public class GetRowsCommand extends Command {
         @JsonProperty("j")
         @JsonInclude(Include.NON_NULL)
         protected final Integer recordIndex;
-        
+
         protected WrappedRow(Row rowOrRecord, int rowIndex, Integer recordIndex) {
             this.row = rowOrRecord;
             this.rowIndex = rowIndex;
             this.recordIndex = recordIndex;
         }
     }
-    
-    protected static class JsonResult  {
+
+    protected static class JsonResult {
+
         @JsonProperty("mode")
         protected final Mode mode;
         @JsonProperty("rows")
@@ -99,7 +101,7 @@ public class GetRowsCommand extends Command {
         protected final int limit;
         @JsonProperty("pool")
         protected final Pool pool;
-        
+
         protected JsonResult(Mode mode, List<WrappedRow> rows, int filtered,
                 int totalCount, int start, int limit, Pool pool) {
             this.mode = mode;
@@ -111,28 +113,28 @@ public class GetRowsCommand extends Command {
             this.pool = pool;
         }
     }
-    
+
     /**
      * This command accepts both POST and GET. It is not CSRF-protected as it does not incur any state change.
      */
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         internalRespond(request, response);
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         internalRespond(request, response);
     }
-    
+
     protected void internalRespond(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        
+            throws ServletException, IOException {
+
         try {
             Project project = null;
-            
+
             // This command also supports retrieving rows for an importing job.
             String importingJobID = request.getParameter("importingJobID");
             if (importingJobID != null) {
@@ -145,30 +147,30 @@ public class GetRowsCommand extends Command {
             if (project == null) {
                 project = getProject(request);
             }
-            
+
             Engine engine = getEngine(request, project);
             String callback = request.getParameter("callback");
-            
+
             int start = Math.min(project.rows.size(), Math.max(0, getIntegerParameter(request, "start", 0)));
             int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
-            
+
             Pool pool = new Pool();
-            /* Properties options = new Properties();
-            options.put("project", project);
-            options.put("reconCandidateOmitTypes", true);
-            options.put("pool", pool); */
-            
+            /*
+             * Properties options = new Properties(); options.put("project", project);
+             * options.put("reconCandidateOmitTypes", true); options.put("pool", pool);
+             */
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", callback == null ? "application/json" : "text/javascript");
-            
+
             PrintWriter writer = response.getWriter();
             if (callback != null) {
                 writer.write(callback);
                 writer.write("(");
             }
-            
+
             RowWritingVisitor rwv = new RowWritingVisitor(start, limit);
-            
+
             SortingConfig sortingConfig = null;
             try {
                 String sortingJson = request.getParameter("sorting");
@@ -177,14 +179,14 @@ public class GetRowsCommand extends Command {
                 }
             } catch (IOException e) {
             }
-            
+
             if (engine.getMode() == Mode.RowBased) {
                 FilteredRows filteredRows = engine.getAllFilteredRows();
                 RowVisitor visitor = rwv;
-                
+
                 if (sortingConfig != null) {
                     SortingRowVisitor srv = new SortingRowVisitor(visitor);
-                    
+
                     srv.initializeFromConfig(project, sortingConfig);
                     if (srv.hasCriteria()) {
                         visitor = srv;
@@ -194,10 +196,10 @@ public class GetRowsCommand extends Command {
             } else {
                 FilteredRecords filteredRecords = engine.getFilteredRecords();
                 RecordVisitor visitor = rwv;
-                
+
                 if (sortingConfig != null) {
                     SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
-                    
+
                     srv.initializeFromConfig(project, sortingConfig);
                     if (srv.hasCriteria()) {
                         visitor = srv;
@@ -205,83 +207,84 @@ public class GetRowsCommand extends Command {
                 }
                 filteredRecords.accept(project, visitor);
             }
-            
+
             // Pool all the recons occuring in the rows seen
-            for(WrappedRow wr : rwv.results) {
-                for(Cell c : wr.row.cells) {
-                    if(c != null && c.recon != null) {
+            for (WrappedRow wr : rwv.results) {
+                for (Cell c : wr.row.cells) {
+                    if (c != null && c.recon != null) {
                         pool.pool(c.recon);
                     }
                 }
             }
-            
+
             JsonResult result = new JsonResult(engine.getMode(),
                     rwv.results, rwv.total,
                     engine.getMode() == Mode.RowBased ? project.rows.size() : project.recordModel.getRecordCount(),
-                            start, limit, pool);
-            
+                    start, limit, pool);
+
             ParsingUtilities.defaultWriter.writeValue(writer, result);
             if (callback != null) {
                 writer.write(")");
             }
-            
+
             // metadata refresh for row mode and record mode
-	    if (project.getMetadata() != null) {
-            	project.getMetadata().setRowCount(project.rows.size());
-	    }
+            if (project.getMetadata() != null) {
+                project.getMetadata().setRowCount(project.rows.size());
+            }
         } catch (Exception e) {
             respondException(response, e);
         }
     }
-    
+
     static protected class RowWritingVisitor implements RowVisitor, RecordVisitor {
-        final int           start;
-        final int           limit;
+
+        final int start;
+        final int limit;
         public List<WrappedRow> results;
-        
+
         public int total;
-        
+
         public RowWritingVisitor(int start, int limit) {
             this.start = start;
             this.limit = limit;
             this.results = new ArrayList<>();
         }
-        
+
         @Override
         public void start(Project project) {
             // nothing to do
         }
-        
+
         @Override
         public void end(Project project) {
             // nothing to do
         }
-        
+
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             if (total >= start && total < start + limit) {
                 internalVisit(project, rowIndex, row);
             }
             total++;
-            
+
             return false;
         }
-        
+
         @Override
         public boolean visit(Project project, Record record) {
             if (total >= start && total < start + limit) {
                 internalVisit(project, record);
             }
             total++;
-            
+
             return false;
         }
-        
+
         public boolean internalVisit(Project project, int rowIndex, Row row) {
             results.add(new WrappedRow(row, rowIndex, null));
             return false;
         }
-        
+
         protected boolean internalVisit(Project project, Record record) {
             for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
                 Row row = project.rows.get(r);

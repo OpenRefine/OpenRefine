@@ -39,5 +39,6 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 public interface RowEvaluable {
+
     public Object eval(Project project, int rowIndex, Row row, Properties bindings);
 }

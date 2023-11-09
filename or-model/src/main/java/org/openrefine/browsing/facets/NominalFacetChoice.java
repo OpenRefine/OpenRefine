@@ -33,22 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.facets;
 
-import org.openrefine.browsing.DecoratedValue;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.browsing.DecoratedValue;
+
 /**
- * Store a facet choice that has a decorated value, a count of matched rows,
- * and a flag of whether it has been selected.
+ * Store a facet choice that has a decorated value, a count of matched rows, and a flag of whether it has been selected.
  */
-public class NominalFacetChoice  {
+public class NominalFacetChoice {
+
     @JsonProperty("v")
-    final public DecoratedValue    decoratedValue;
+    final public DecoratedValue decoratedValue;
     @JsonProperty("c")
-    public int                    count;
+    public int count;
     @JsonProperty("s")
-    public boolean                selected;
-    
+    public boolean selected;
+
     public NominalFacetChoice(DecoratedValue decoratedValue) {
         this.decoratedValue = decoratedValue;
     }

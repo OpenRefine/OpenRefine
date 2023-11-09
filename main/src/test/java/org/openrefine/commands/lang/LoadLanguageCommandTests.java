@@ -1,3 +1,4 @@
+
 package org.openrefine.commands.lang;
 
 import static org.mockito.Mockito.mock;
@@ -10,35 +11,34 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.openrefine.RefineServlet;
-import org.openrefine.commands.lang.LoadLanguageCommand;
-import org.openrefine.util.ParsingUtilities;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.openrefine.commands.CommandTestBase;
-
 import edu.mit.simile.butterfly.ButterflyModule;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import org.openrefine.RefineServlet;
+import org.openrefine.commands.CommandTestBase;
+import org.openrefine.commands.lang.LoadLanguageCommand;
+import org.openrefine.util.ParsingUtilities;
 
 public class LoadLanguageCommandTests extends CommandTestBase {
-	
-	@BeforeMethod
-	public void setUpCommand() {
-		command = new LoadLanguageCommand();
-		ButterflyModule coreModule = mock(ButterflyModule.class);
-		
-		when(coreModule.getName()).thenReturn("core");
-		when(coreModule.getPath()).thenReturn(new File("webapp/modules/core"));
-		RefineServlet servlet = mock(RefineServlet.class);
-		when(servlet.getModule("core")).thenReturn(coreModule);
-		command.init(servlet);
-	}
-	
-	@Test
+
+    @BeforeMethod
+    public void setUpCommand() {
+        command = new LoadLanguageCommand();
+        ButterflyModule coreModule = mock(ButterflyModule.class);
+
+        when(coreModule.getName()).thenReturn("core");
+        when(coreModule.getPath()).thenReturn(new File("webapp/modules/core"));
+        RefineServlet servlet = mock(RefineServlet.class);
+        when(servlet.getModule("core")).thenReturn(coreModule);
+        command.init(servlet);
+    }
+
+    @Test
 	public void testLoadLanguages() throws ServletException, IOException {
 		when(request.getParameter("module")).thenReturn("core");
 		when(request.getParameterValues("lang")).thenReturn(new String[] {"en"});
@@ -49,8 +49,8 @@ public class LoadLanguageCommandTests extends CommandTestBase {
 		assertTrue(response.has("dictionary"));
 		assertTrue(response.has("lang"));
 	}
-	
-	@Test
+
+    @Test
 	public void testLoadUnknownLanguage() throws ServletException, IOException {
 		when(request.getParameter("module")).thenReturn("core");
 		when(request.getParameterValues("lang")).thenReturn(new String[] {"foobar"});
@@ -61,8 +61,8 @@ public class LoadLanguageCommandTests extends CommandTestBase {
 		assertTrue(response.has("dictionary"));
 		assertEquals(response.get("lang").asText(), "en");
 	}
-	
-	@Test
+
+    @Test
 	public void testLoadNoLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
 	    when(request.getParameter("module")).thenReturn("core");
 	    when(request.getParameter("lang")).thenReturn("");
@@ -73,27 +73,26 @@ public class LoadLanguageCommandTests extends CommandTestBase {
         assertTrue(response.has("dictionary"));
         assertEquals(response.get("lang").asText(), "en");
 	}
-	
-	@Test
-	public void testLanguageFallback() throws JsonParseException, JsonMappingException, IOException {
-		String fallbackJson = "{"
-				+ "\"foo\":\"hello\","
-				+ "\"bar\":\"world\""
-				+ "}";
-		String preferredJson = "{"
-				+ "\"foo\":\"hallo\""
-				+ "}";
-		String expectedJson = "{"
-				+ "\"foo\":\"hallo\","
-				+ "\"bar\":\"world\""
-				+ "}";
-		ObjectNode fallback = ParsingUtilities.mapper.readValue(fallbackJson, ObjectNode.class);
-		ObjectNode preferred = ParsingUtilities.mapper.readValue(preferredJson, ObjectNode.class);
-		ObjectNode expected = ParsingUtilities.mapper.readValue(expectedJson, ObjectNode.class);
-		
-		ObjectNode merged = LoadLanguageCommand.mergeLanguages(preferred, fallback);
-		
-		assertEquals(merged, expected);
-	}
-}
 
+    @Test
+    public void testLanguageFallback() throws JsonParseException, JsonMappingException, IOException {
+        String fallbackJson = "{"
+                + "\"foo\":\"hello\","
+                + "\"bar\":\"world\""
+                + "}";
+        String preferredJson = "{"
+                + "\"foo\":\"hallo\""
+                + "}";
+        String expectedJson = "{"
+                + "\"foo\":\"hallo\","
+                + "\"bar\":\"world\""
+                + "}";
+        ObjectNode fallback = ParsingUtilities.mapper.readValue(fallbackJson, ObjectNode.class);
+        ObjectNode preferred = ParsingUtilities.mapper.readValue(preferredJson, ObjectNode.class);
+        ObjectNode expected = ParsingUtilities.mapper.readValue(expectedJson, ObjectNode.class);
+
+        ObjectNode merged = LoadLanguageCommand.mergeLanguages(preferred, fallback);
+
+        assertEquals(merged, expected);
+    }
+}

@@ -35,35 +35,33 @@ package org.openrefine.browsing;
 
 import java.time.OffsetDateTime;
 
-import org.openrefine.util.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.util.StringUtils;
+
 /**
- * Store a value and its text label, in case the value is not a string itself.
- * For instance, if a value is a date, then its label can be one particular
- * rendering of that date.
+ * Store a value and its text label, in case the value is not a string itself. For instance, if a value is a date, then
+ * its label can be one particular rendering of that date.
  * 
  * Facet choices that are presented to the user as text are stored as decorated values.
  */
-public class DecoratedValue  {
+public class DecoratedValue {
+
     @JsonProperty("v")
     final public Object value;
     @JsonProperty("l")
     final public String label;
-    
+
     @JsonCreator
     public DecoratedValue(
-            @JsonProperty("v")
-            Object value,
-            @JsonProperty("l")
-            String label) {
-      if (value instanceof OffsetDateTime) {
-          this.value = StringUtils.toString(value);
-      } else {
-          this.value = value;
-      }
-      this.label = label;
+            @JsonProperty("v") Object value,
+            @JsonProperty("l") String label) {
+        if (value instanceof OffsetDateTime) {
+            this.value = StringUtils.toString(value);
+        } else {
+            this.value = value;
+        }
+        this.label = label;
     }
 }

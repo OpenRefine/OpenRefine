@@ -21,22 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.updates.ItemUpdate;
+
 /**
- * For now this scrutinizer only checks for uniqueness at the item level (it
- * ignores qualifiers and references).
+ * For now this scrutinizer only checks for uniqueness at the item level (it ignores qualifiers and references).
  * 
- * Given that all ranks are currently set to Normal, this also checks for
- * single best values.
+ * Given that all ranks are currently set to Normal, this also checks for single best values.
  * 
  * @author Antonin Delpeuch
  *

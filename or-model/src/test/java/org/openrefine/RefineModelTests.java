@@ -1,13 +1,14 @@
+
 package org.openrefine;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class RefineModelTests {
+
     /**
-     * Tests that the appropriate aliases are in place to load classes
-     * by their old qualified name. This ensures backwards compatibility
-     * with previous versions.
+     * Tests that the appropriate aliases are in place to load classes by their old qualified name. This ensures
+     * backwards compatibility with previous versions.
      * 
      * @throws ClassNotFoundException
      */

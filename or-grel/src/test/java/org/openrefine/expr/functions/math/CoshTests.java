@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.math;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class CoshTests {
+
     @Test
     public void serializeCosh() {
         String json = "{\"description\":\"Returns the hyperbolic cosine of a value\",\"params\":\"number d\",\"returns\":\"number\"}";
         TestUtils.isSerializedTo(new Cosh(), json, ParsingUtilities.defaultWriter);
     }
 }
-

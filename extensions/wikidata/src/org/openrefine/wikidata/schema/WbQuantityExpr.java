@@ -21,20 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.Validate;
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
 public class WbQuantityExpr implements WbExpression<QuantityValue> {
 
@@ -42,13 +43,11 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
     private final WbExpression<? extends ItemIdValue> unitExpr;
 
     /**
-     * Creates an expression for a quantity, which contains two sub-expressions: one
-     * for the amount (a string with a particular format) and one for the unit,
-     * which is optional.
+     * Creates an expression for a quantity, which contains two sub-expressions: one for the amount (a string with a
+     * particular format) and one for the unit, which is optional.
      * 
-     * Setting unitExpr to null will give quantities without units. Setting it to a
-     * non-null value will make the unit mandatory: if the unit expression fails to
-     * evaluate, the whole quantity expression will fail too.
+     * Setting unitExpr to null will give quantities without units. Setting it to a non-null value will make the unit
+     * mandatory: if the unit expression fails to evaluate, the whole quantity expression will fail too.
      */
     @JsonCreator
     public WbQuantityExpr(@JsonProperty("amount") WbExpression<? extends StringValue> amountExpr,
@@ -68,16 +67,15 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
         BigDecimal lowerBound = null;
         BigDecimal upperBound = null;
         String originalAmount = amount.getString().toUpperCase();
-        try { 
+        try {
             parsedAmount = new BigDecimal(originalAmount);
-            
-            
+
             if (originalAmount.contains("E")) {
                 // engineering notation: we derive the precision from
                 // the expression (feature!)
                 BigDecimal uncertainty = new BigDecimal("0.5").scaleByPowerOfTen(-parsedAmount.scale());
                 lowerBound = new BigDecimal(parsedAmount.subtract(uncertainty).toPlainString());
-                upperBound = new BigDecimal(parsedAmount.add(uncertainty).toPlainString());  
+                upperBound = new BigDecimal(parsedAmount.add(uncertainty).toPlainString());
             }
             // workaround for https://github.com/Wikidata/Wikidata-Toolkit/issues/341
             parsedAmount = new BigDecimal(parsedAmount.toPlainString());

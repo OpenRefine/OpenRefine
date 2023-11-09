@@ -57,17 +57,16 @@ public class ParseJson extends PureFunction {
         return null;
     }
 
-    
     @Override
     public String getDescription() {
         return "Parses a string as JSON";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "JSON object";

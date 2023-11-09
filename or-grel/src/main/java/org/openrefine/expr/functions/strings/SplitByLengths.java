@@ -38,43 +38,44 @@ import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.PureFunction;
 
 public class SplitByLengths extends PureFunction {
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 2 && args[0] != null) {
             Object o = args[0];
             String s = o instanceof String ? (String) o : o.toString();
-            
+
             String[] results = new String[args.length - 1];
-            
+
             int lastIndex = 0;
-            
+
             for (int i = 1; i < args.length; i++) {
                 int thisIndex = lastIndex;
-                
+
                 Object o2 = args[i];
                 if (o2 instanceof Number) {
                     thisIndex = Math.min(s.length(), lastIndex + Math.max(0, ((Number) o2).intValue()));
                 }
-                
+
                 results[i - 1] = s.substring(lastIndex, thisIndex);
                 lastIndex = thisIndex;
             }
-            
+
             return results;
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 string and 1 or more numbers");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns the array of strings obtained by splitting s into substrings with the given lengths";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, number n, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

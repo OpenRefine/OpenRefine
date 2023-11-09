@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.commands.expr;
 
 import java.io.IOException;
@@ -40,11 +41,11 @@ public class ToggleStarredExpressionCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-    	
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         String expression = request.getParameter("expression");
 
         TopList starredExpressions = ((TopList) ProjectManager.singleton.getPreferenceStore().get(
@@ -56,7 +57,7 @@ public class ToggleStarredExpressionCommand extends Command {
             starredExpressions.add(expression);
         }
 
-        if(request.getParameter("returnList") != null) {
+        if (request.getParameter("returnList") != null) {
             try {
                 respondJSON(response, GetStarredExpressionsCommand.getExpressionsList());
             } catch (Exception e) {

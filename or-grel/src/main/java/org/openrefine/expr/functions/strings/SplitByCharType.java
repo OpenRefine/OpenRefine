@@ -52,17 +52,17 @@ public class SplitByCharType extends PureFunction {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns an array of strings obtained by splitting s grouping consecutive chars by their unicode type";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

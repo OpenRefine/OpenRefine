@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.xml;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class OwnTextTests {
+
     @Test
     public void serializeOwnText() {
         String json = "{\"description\":\"Gets the text owned by this XML/HTML element only; does not get the combined text of all children.\",\"params\":\"Element e\",\"returns\":\"String ownText\"}";
         TestUtils.isSerializedTo(new OwnText(), json, ParsingUtilities.defaultWriter);
     }
 }
-

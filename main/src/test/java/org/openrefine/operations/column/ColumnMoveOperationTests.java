@@ -24,23 +24,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.column;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnMoveOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class ColumnMoveOperationTests extends RefineTest {
-    
+
     @BeforeSuite
     public void setUp() {
         OperationRegistry.registerOperation("core", "column-move", ColumnMoveOperation.class);
     }
-    
+
     @Test
     public void serializeColumnMoveOperation() throws Exception {
         String json = "{\"op\":\"core/column-move\","

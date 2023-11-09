@@ -42,12 +42,17 @@ public class GetProjectIDException extends Exception {
     /**
      * Default GetProjectID format exception.
      */
-    public GetProjectIDException() { super(); }
-    
+    public GetProjectIDException() {
+        super();
+    }
+
     /**
      * GetProjectID exception.
      *
-     * @param message error message
+     * @param message
+     *            error message
      */
-    public GetProjectIDException(String message) { super(message); }
+    public GetProjectIDException(String message) {
+        super(message);
+    }
 }

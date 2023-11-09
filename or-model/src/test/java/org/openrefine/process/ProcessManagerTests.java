@@ -24,27 +24,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.process;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class ProcessManagerTests {
-    
+
     ProcessManager processManager;
     Process process1, process2;
-    
+
     @BeforeMethod
     public void setUp() {
         processManager = new ProcessManager();
         process1 = new LongRunningProcessTests.LongRunningProcessStub("some description");
         process2 = new LongRunningProcessTests.LongRunningProcessStub("some other description");
     }
-    
+
     @Test
     public void serializeProcessManager() throws Exception {
         processManager.queueProcess(process1);
@@ -52,8 +54,8 @@ public class ProcessManagerTests {
         processManager.onFailedProcess(process1, new IllegalArgumentException("unexpected error"));
         String processJson = ParsingUtilities.defaultWriter.writeValueAsString(process2);
         TestUtils.isSerializedTo(processManager, "{"
-		+ "\"processes\":["+processJson+"],\n"
-		+ "\"exceptions\":[{\"message\":\"unexpected error\"}]"
-		+ "}", ParsingUtilities.defaultWriter);
+                + "\"processes\":[" + processJson + "],\n"
+                + "\"exceptions\":[{\"message\":\"unexpected error\"}]"
+                + "}", ParsingUtilities.defaultWriter);
     }
 }

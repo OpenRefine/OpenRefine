@@ -45,6 +45,7 @@ public class NumberCriterion extends Criterion {
     @Override
     public KeyMaker createKeyMaker() {
         return new KeyMaker() {
+
             @Override
             protected Object makeKey(Object value) {
                 if (ExpressionUtils.isNonBlankData(value)) {

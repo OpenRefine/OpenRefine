@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -51,12 +52,12 @@ public abstract class EditScrutinizer {
     public void setFetcher(ConstraintFetcher fetcher) {
         _fetcher = fetcher;
     }
-    
+
     /**
      * Called before an edit batch is scrutinized.
      */
     public void batchIsBeginning() {
-        
+
     }
 
     /**
@@ -66,20 +67,19 @@ public abstract class EditScrutinizer {
      *            the list of ItemUpdates to scrutinize
      */
     public abstract void scrutinize(ItemUpdate edit);
-    
+
     /**
      * Method called once the edit batch has been read entirely
      */
     public void batchIsFinished() {
-        
+
     }
-    
+
     /**
-     * Emits an issue that will be reported to the user,
-     * after merging with other issues of the same kind.
+     * Emits an issue that will be reported to the user, after merging with other issues of the same kind.
      * 
      * @param warning
-     *    the issue to report
+     *            the issue to report
      */
     protected void addIssue(QAWarning warning) {
         _store.addWarning(warning);

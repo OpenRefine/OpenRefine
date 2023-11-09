@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.xml;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class xmlTextTests {
+
     @Test
     public void serializeXmlText() {
         String json = "{\"description\":\"Selects the text from within an element (including all child elements)\",\"params\":\"Element e\",\"returns\":\"String text\"}";
         TestUtils.isSerializedTo(new XmlText(), json, ParsingUtilities.defaultWriter);
     }
 }
-

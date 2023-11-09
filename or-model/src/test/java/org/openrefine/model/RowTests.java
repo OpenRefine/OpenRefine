@@ -39,6 +39,11 @@ import static org.mockito.Mockito.when;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
@@ -46,10 +51,6 @@ import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.Pool;
 import org.openrefine.util.TestUtils;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class RowTests {
 
@@ -103,7 +104,7 @@ public class RowTests {
     }
 
     // This way of serializing a row with indices is now deprecated, see GetRowsCommand.
-    @Test(expectedExceptions=IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void saveRowWithRecordIndex() {
         Row row = new Row(5);
         row.setCell(0, new Cell("I'm not empty", null));
@@ -113,10 +114,10 @@ public class RowTests {
         when(options.get("recordIndex")).thenReturn(1);
         row.save(writer, options);
     }
-    
+
     @Test
     public void serializeRowTest() throws Exception {
-        
+
         String reconJson = "{\"id\":1533649346002675326,"
                 + "\"judgmentHistoryEntry\":1530278634724,"
                 + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
@@ -129,7 +130,7 @@ public class RowTests {
         Pool pool = mock(Pool.class);
         Recon recon = Recon.loadStreaming(reconJson);
         when(pool.getRecon("1533649346002675326")).thenReturn(recon);
-        
+
         String json = "{\"flagged\":false,"
                 + "\"starred\":false,"
                 + "\"cells\":["

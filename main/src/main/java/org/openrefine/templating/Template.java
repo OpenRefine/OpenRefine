@@ -47,6 +47,7 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 public class Template {
+
     protected String _prefix;
     protected String _suffix;
     protected String _separator;
@@ -82,6 +83,7 @@ public class Template {
     }
 
     protected class RowWritingVisitor implements RowVisitor, RecordVisitor {
+
         final protected int limit;
         final protected Writer writer;
         protected Properties bindings;
@@ -142,7 +144,7 @@ public class Template {
                 writer.write("null");
             } else if (ExpressionUtils.isError(v)) {
                 writer.write("null");
-                //writer.write("[Error: " + ((EvalError) v).message);
+                // writer.write("[Error: " + ((EvalError) v).message);
             } else if (v instanceof String) {
                 writer.write((String) v);
             } else {

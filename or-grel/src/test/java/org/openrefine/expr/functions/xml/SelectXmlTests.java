@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.xml;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class SelectXmlTests {
+
     @Test
     public void serializeSelectXml() {
         String json = "{\"description\":\"Selects an element from an XML or HTML elementn using selector syntax.\",\"returns\":\"HTML Elements\",\"params\":\"Element e, String s\"}";
         TestUtils.isSerializedTo(new SelectXml(), json, ParsingUtilities.defaultWriter);
     }
 }
-

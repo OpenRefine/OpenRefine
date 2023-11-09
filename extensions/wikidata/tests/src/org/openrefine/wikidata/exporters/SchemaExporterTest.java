@@ -1,19 +1,21 @@
+
 package org.openrefine.wikidata.exporters;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import org.testng.annotations.Test;
+
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.testng.annotations.Test;
 
 public class SchemaExporterTest extends WikidataRefineTest {
-	
-	private SchemaExporter exporter = new SchemaExporter();
-	
+
+    private SchemaExporter exporter = new SchemaExporter();
+
     @Test
     public void testNoSchema()
             throws IOException {

@@ -36,18 +36,19 @@ package org.openrefine.operations.row;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
-import org.openrefine.model.Row;
 import org.openrefine.model.RecordModel.CellDependency;
 import org.openrefine.model.RecordModel.RowDependency;
+import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowChange;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 public class DenormalizeOperation extends AbstractOperation {
+
     @JsonCreator
     public DenormalizeOperation() {
     }
@@ -60,12 +61,12 @@ public class DenormalizeOperation extends AbstractOperation {
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         List<Row> newRows = new ArrayList<Row>();
-        
+
         List<Row> oldRows = project.rows;
         for (int r = 0; r < oldRows.size(); r++) {
             Row oldRow = oldRows.get(r);
             Row newRow = null;
-            
+
             RowDependency rd = project.recordModel.getRowDependency(r);
             if (rd.cellDependencies != null) {
                 newRow = oldRow.dup();
@@ -84,16 +85,15 @@ public class DenormalizeOperation extends AbstractOperation {
                     }
                 }
             }
-            
+
             newRows.add(newRow != null ? newRow : oldRow);
         }
-        
+
         return new HistoryEntry(
-            historyEntryID, 
-            project,
-            getBriefDescription(project),
-            DenormalizeOperation.this,
-            new MassRowChange(newRows)
-        );
+                historyEntryID,
+                project,
+                getBriefDescription(project),
+                DenormalizeOperation.this,
+                new MassRowChange(newRows));
     }
 }

@@ -50,17 +50,17 @@ public class Fingerprint extends PureFunction {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns the fingerprint of s, a derived string that aims to be a more canonical form of it (this is mostly useful for finding clusters of strings related to the same information).";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

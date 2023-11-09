@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.testing;
 
 import java.io.IOException;
@@ -28,6 +29,13 @@ import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
@@ -37,12 +45,6 @@ import org.openrefine.wikidata.schema.WbMonolingualExpr;
 import org.openrefine.wikidata.schema.WbStringConstant;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 public class TestingData {
 
@@ -63,11 +65,12 @@ public class TestingData {
     public static ItemIdValue existingId = Datamodel.makeWikidataItemIdValue("Q43");
 
     protected static PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P38");
-    
+
     public static class ReconStub extends Recon {
+
         public ReconStub(long id, long judgmentHistoryEntry) {
             super(id, judgmentHistoryEntry);
-        }  
+        }
     }
 
     public static Recon makeNewItemRecon(long id) {

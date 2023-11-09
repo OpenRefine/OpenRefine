@@ -24,37 +24,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.sorting;
 
 import java.io.IOException;
 
-import org.openrefine.util.ParsingUtilities;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.util.ParsingUtilities;
 
 /**
  * Stores the configuration of a row/record sorting setup.
+ * 
  * @author Antonin Delpeuch
  *
  */
-public final class SortingConfig  {
-    
+public final class SortingConfig {
+
     protected Criterion[] _criteria;
-    
+
     @JsonCreator
     public SortingConfig(
-            @JsonProperty("criteria")
-            Criterion[] criteria) {
+            @JsonProperty("criteria") Criterion[] criteria) {
         _criteria = criteria;
     }
-    
+
     @JsonProperty("criteria")
     public Criterion[] getCriteria() {
         return _criteria;
     }
-    
+
     public static SortingConfig reconstruct(String obj) throws IOException {
         return ParsingUtilities.mapper.readValue(obj, SortingConfig.class);
     }

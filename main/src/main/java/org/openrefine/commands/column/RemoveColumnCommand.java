@@ -47,22 +47,23 @@ import org.openrefine.operations.column.ColumnRemovalOperation;
 import org.openrefine.process.Process;
 
 public class RemoveColumnCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
-            
+
             String columnName = request.getParameter("columnName");
-            
+
             AbstractOperation op = new ColumnRemovalOperation(columnName);
             Process process = op.createProcess(project, new Properties());
-            
+
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);

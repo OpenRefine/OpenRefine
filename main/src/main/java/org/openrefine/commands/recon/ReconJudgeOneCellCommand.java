@@ -47,22 +47,23 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
+import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.ReconStats;
-import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.ReconChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
 import org.openrefine.util.Pool;
 
 public class ReconJudgeOneCellCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             request.setCharacterEncoding("UTF-8");
@@ -80,29 +81,27 @@ public class ReconJudgeOneCellCommand extends Command {
                 String scoreString = request.getParameter("score");
 
                 match = new ReconCandidate(
-                    id,
-                    request.getParameter("name"),
-                    request.getParameter("types").split(","),
-                    scoreString != null ? Double.parseDouble(scoreString) : 100
-                );
+                        id,
+                        request.getParameter("name"),
+                        request.getParameter("types").split(","),
+                        scoreString != null ? Double.parseDouble(scoreString) : 100);
             }
 
             JudgeOneCellProcess process = new JudgeOneCellProcess(
-                project,
-                "Judge one cell's recon result",
-                judgment,
-                rowIndex,
-                cellIndex,
-                match,
-                request.getParameter("identifierSpace"),
-                request.getParameter("schemaSpace")
-            );
+                    project,
+                    "Judge one cell's recon result",
+                    judgment,
+                    rowIndex,
+                    cellIndex,
+                    match,
+                    request.getParameter("identifierSpace"),
+                    request.getParameter("schemaSpace"));
 
             HistoryEntry historyEntry = project.processManager.queueProcess(process);
             if (historyEntry != null) {
                 /*
-                 * If the process is done, write back the cell's data so that the
-                 * client side can update its UI right away.
+                 * If the process is done, write back the cell's data so that the client side can update its UI right
+                 * away.
                  */
 
                 Pool pool = new Pool();
@@ -121,25 +120,24 @@ public class ReconJudgeOneCellCommand extends Command {
 
     protected static class JudgeOneCellProcess extends QuickHistoryEntryProcess {
 
-        final int               rowIndex;
-        final int               cellIndex;
-        final Judgment          judgment;
-        final ReconCandidate    match;
-        final String            identifierSpace;
-        final String            schemaSpace;
-        
+        final int rowIndex;
+        final int cellIndex;
+        final Judgment judgment;
+        final ReconCandidate match;
+        final String identifierSpace;
+        final String schemaSpace;
+
         Cell newCell;
 
         JudgeOneCellProcess(
-            Project project,
-            String briefDescription,
-            Judgment judgment,
-            int rowIndex,
-            int cellIndex,
-            ReconCandidate match,
-            String identifierSpace,
-            String schemaSpace
-        ) {
+                Project project,
+                String briefDescription,
+                Judgment judgment,
+                int rowIndex,
+                int cellIndex,
+                ReconCandidate match,
+                String identifierSpace,
+                String schemaSpace) {
             super(project, briefDescription);
 
             this.judgment = judgment;
@@ -163,7 +161,7 @@ public class ReconJudgeOneCellCommand extends Command {
             }
 
             Judgment oldJudgment = cell.recon == null ? Judgment.None : cell.recon.judgment;
-            
+
             Recon newRecon = null;
             if (cell.recon != null) {
                 newRecon = cell.recon.dup(historyEntryID);
@@ -174,18 +172,16 @@ public class ReconJudgeOneCellCommand extends Command {
             } else {
                 // This should only happen if we are judging a cell in a column that
                 // has never been reconciled before.
-               newRecon = new Recon(historyEntryID, null, null);
+                newRecon = new Recon(historyEntryID, null, null);
             }
 
             newCell = new Cell(
-                cell.value,
-                newRecon
-            );
+                    cell.value,
+                    newRecon);
 
-            String cellDescription =
-                "single cell on row " + (rowIndex + 1) +
-                ", column " + column.getName() +
-                ", containing \"" + cell.value + "\"";
+            String cellDescription = "single cell on row " + (rowIndex + 1) +
+                    ", column " + column.getName() +
+                    ", containing \"" + cell.value + "\"";
 
             String description = null;
 
@@ -214,10 +210,10 @@ public class ReconJudgeOneCellCommand extends Command {
                         }
                     }
                 }
-                
+
                 description = "Match " + this.match.name +
-                    " (" + match.id + ") to " +
-                    cellDescription;
+                        " (" + match.id + ") to " +
+                        cellDescription;
             }
 
             ReconStats stats = column.getReconStats();
@@ -241,20 +237,19 @@ public class ReconJudgeOneCellCommand extends Command {
                 }
 
                 stats = new ReconStats(
-                    stats.nonBlanks,
-                    stats.newTopics + newChange,
-                    stats.matchedTopics + matchChange);
+                        stats.nonBlanks,
+                        stats.newTopics + newChange,
+                        stats.matchedTopics + matchChange);
             }
 
             Change change = new ReconChange(
-                new CellChange(rowIndex, cellIndex, cell, newCell),
-                column.getName(),
-                column.getReconConfig(),
-                stats
-            );
+                    new CellChange(rowIndex, cellIndex, cell, newCell),
+                    column.getName(),
+                    column.getReconConfig(),
+                    stats);
 
             return new HistoryEntry(
-                historyEntryID, _project, description, null, change);
+                    historyEntryID, _project, description, null, change);
         }
     }
 }

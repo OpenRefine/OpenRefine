@@ -21,16 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
+
 import org.openrefine.model.Cell;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class WbLocationVariable extends WbVariableExpr<GlobeCoordinatesValue> {
 

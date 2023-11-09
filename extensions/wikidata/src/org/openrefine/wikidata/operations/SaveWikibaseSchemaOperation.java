@@ -21,12 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Properties;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
@@ -35,10 +40,6 @@ import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.Pool;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
@@ -49,8 +50,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
     @JsonCreator
     public SaveWikibaseSchemaOperation(
-    		@JsonProperty("schema")
-    		WikibaseSchema schema) {
+            @JsonProperty("schema") WikibaseSchema schema) {
         this._schema = schema;
 
     }

@@ -37,9 +37,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum OnError {
     @JsonProperty("keep-original")
-    KeepOriginal,
-    @JsonProperty("set-to-blank")
-    SetToBlank,
-    @JsonProperty("store-error")
+    KeepOriginal, @JsonProperty("set-to-blank")
+    SetToBlank, @JsonProperty("store-error")
     StoreError
 }

@@ -43,15 +43,16 @@ import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 
 public class GetProcessesCommand extends Command {
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Project project = getProject(request);
-        
+
         respondJSON(response, project.processManager);
     }
-    
+
     @Override
     public boolean logRequests() {
         return false;

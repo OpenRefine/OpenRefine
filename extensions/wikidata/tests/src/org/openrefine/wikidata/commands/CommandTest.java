@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.mock;
@@ -33,12 +34,13 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 
 public abstract class CommandTest extends WikidataRefineTest {
 
@@ -48,7 +50,6 @@ public abstract class CommandTest extends WikidataRefineTest {
     protected StringWriter writer = null;
 
     protected Command command = null;
-   
 
     @BeforeMethod(alwaysRun = true)
     public void setUpProject() {

@@ -40,20 +40,21 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.model.Project;
-import org.openrefine.util.Pool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openrefine.ProjectManager;
+import org.openrefine.model.Project;
+import org.openrefine.util.Pool;
 
 public class ProjectUtilities {
+
     final static Logger logger = LoggerFactory.getLogger("project_utilities");
 
     synchronized public static void save(Project project) throws IOException {
         synchronized (project) {
             long id = project.id;
-            File dir = ((FileProjectManager)ProjectManager.singleton).getProjectDir(id);
+            File dir = ((FileProjectManager) ProjectManager.singleton).getProjectDir(id);
 
             File tempFile = new File(dir, "data.temp.zip");
             try {
@@ -83,11 +84,11 @@ public class ProjectUtilities {
 
             project.setLastSave();
 
-            logger.info("Saved project '{}'",id);
+            logger.info("Saved project '{}'", id);
         }
     }
 
-    protected static void saveToFile(Project project, File file) throws IOException  {
+    protected static void saveToFile(Project project, File file) throws IOException {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
         try {
             Pool pool = new Pool();
@@ -143,8 +144,7 @@ public class ProjectUtilities {
 
     static protected Project loadFromFile(
             File file,
-            long id
-    ) throws Exception {
+            long id) throws Exception {
         ZipFile zipFile = new ZipFile(file);
         try {
             Pool pool = new Pool();
@@ -156,8 +156,7 @@ public class ProjectUtilities {
             return Project.loadFromInputStream(
                     zipFile.getInputStream(zipFile.getEntry("data.txt")),
                     id,
-                    pool
-            );
+                    pool);
         } finally {
             zipFile.close();
         }

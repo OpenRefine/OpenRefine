@@ -39,6 +39,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.commands.Command;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.Change;
@@ -46,17 +48,17 @@ import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
 import org.openrefine.model.Project;
-import org.openrefine.model.ReconStats;
 import org.openrefine.model.Recon.Judgment;
+import org.openrefine.model.ReconStats;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.ReconChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
 import org.openrefine.util.Pool;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ReconClearOneCellCommand extends Command {
+
     protected static class CellResponse {
+
         @JsonProperty("code")
         protected String code = "ok";
         @JsonProperty("historyEntry")
@@ -65,21 +67,21 @@ public class ReconClearOneCellCommand extends Command {
         Cell cell;
         @JsonProperty("pool")
         Pool pool;
-        
+
         protected CellResponse(HistoryEntry historyEntry, Cell newCell, Pool newPool) {
-           entry = historyEntry;
-           cell = newCell;
-           pool = newPool;
+            entry = historyEntry;
+            cell = newCell;
+            pool = newPool;
         }
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             Project project = getProject(request);
@@ -88,21 +90,20 @@ public class ReconClearOneCellCommand extends Command {
             int cellIndex = Integer.parseInt(request.getParameter("cell"));
 
             ClearOneCellProcess process = new ClearOneCellProcess(
-                project,
-                "Clear one cell's recon data",
-                rowIndex,
-                cellIndex
-            );
+                    project,
+                    "Clear one cell's recon data",
+                    rowIndex,
+                    cellIndex);
 
             HistoryEntry historyEntry = project.processManager.queueProcess(process);
             if (historyEntry != null) {
                 /*
-                 * If the process is done, write back the cell's data so that the
-                 * client side can update its UI right away.
+                 * If the process is done, write back the cell's data so that the client side can update its UI right
+                 * away.
                  */
                 Pool pool = new Pool();
-                
-                if(process.newCell != null && process.newCell.recon != null) {
+
+                if (process.newCell != null && process.newCell.recon != null) {
                     pool.pool(process.newCell.recon);
                 }
 
@@ -117,16 +118,15 @@ public class ReconClearOneCellCommand extends Command {
 
     protected static class ClearOneCellProcess extends QuickHistoryEntryProcess {
 
-        final int               rowIndex;
-        final int               cellIndex;
+        final int rowIndex;
+        final int cellIndex;
         Cell newCell;
 
         ClearOneCellProcess(
-            Project project,
-            String briefDescription,
-            int rowIndex,
-            int cellIndex
-        ) {
+                Project project,
+                String briefDescription,
+                int rowIndex,
+                int cellIndex) {
             super(project, briefDescription);
 
             this.rowIndex = rowIndex;
@@ -164,25 +164,23 @@ public class ReconClearOneCellCommand extends Command {
                 }
 
                 stats = new ReconStats(
-                    stats.nonBlanks + 1,
-                    stats.newTopics + newChange,
-                    stats.matchedTopics + matchChange);
+                        stats.nonBlanks + 1,
+                        stats.newTopics + newChange,
+                        stats.matchedTopics + matchChange);
             }
 
-            String description =
-                "Clear recon data for single cell on row " + (rowIndex + 1) +
-                ", column " + column.getName() +
-                ", containing \"" + cell.value + "\"";
+            String description = "Clear recon data for single cell on row " + (rowIndex + 1) +
+                    ", column " + column.getName() +
+                    ", containing \"" + cell.value + "\"";
 
             Change change = new ReconChange(
-                new CellChange(rowIndex, cellIndex, cell, newCell),
-                column.getName(),
-                column.getReconConfig(),
-                stats
-            );
+                    new CellChange(rowIndex, cellIndex, cell, newCell),
+                    column.getName(),
+                    column.getReconConfig(),
+                    stats);
 
             return new HistoryEntry(
-                historyEntryID, _project, description, null, change);
+                    historyEntryID, _project, description, null, change);
         }
     }
 }

@@ -33,22 +33,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.process;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 abstract public class QuickHistoryEntryProcess extends Process {
+
     final protected Project _project;
     final protected String _briefDescription;
     protected HistoryEntry _historyEntry;
     boolean _done = false;
-    
+
     public QuickHistoryEntryProcess(Project project, String briefDescription) {
         _project = project;
         _briefDescription = briefDescription;
     }
-    
+
     @Override
     public void cancel() {
         throw new RuntimeException("Not a long-running process");
@@ -59,7 +60,7 @@ abstract public class QuickHistoryEntryProcess extends Process {
     public boolean isImmediate() {
         return true;
     }
-    
+
     @Override
     public boolean isRunning() {
         throw new RuntimeException("Not a long-running process");
@@ -72,7 +73,7 @@ abstract public class QuickHistoryEntryProcess extends Process {
         }
         _project.history.addEntry(_historyEntry);
         _done = true;
-        
+
         return _historyEntry;
     }
 
@@ -80,12 +81,12 @@ abstract public class QuickHistoryEntryProcess extends Process {
     public void startPerforming(ProcessManager manager) {
         throw new RuntimeException("Not a long-running process");
     }
-    
+
     @JsonProperty("status")
     public String getStatus() {
         return _done ? "done" : "pending";
     }
-    
+
     @JsonProperty("description")
     public String getDescription() {
         return _historyEntry != null ? _historyEntry.description : _briefDescription;
@@ -95,6 +96,6 @@ abstract public class QuickHistoryEntryProcess extends Process {
     public boolean isDone() {
         return _done;
     }
-    
+
     abstract protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception;
 }

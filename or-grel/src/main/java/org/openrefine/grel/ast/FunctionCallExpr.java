@@ -44,20 +44,20 @@ import org.openrefine.grel.Function;
 import org.openrefine.grel.PureFunction;
 
 /**
- * An abstract syntax tree node encapsulating a function call. The function's
- * arguments are all evaluated down to values before the function is applied.
- * If any argument is an error, the function is not applied, and the error is
- * the result of the expression.
+ * An abstract syntax tree node encapsulating a function call. The function's arguments are all evaluated down to values
+ * before the function is applied. If any argument is an error, the function is not applied, and the error is the result
+ * of the expression.
  */
 public class FunctionCallExpr implements Evaluable {
-    final protected Function    _function;
+
+    final protected Function _function;
     final private Evaluable[] _args;
-    
+
     public FunctionCallExpr(Evaluable[] args, Function f) {
         _args = args;
         _function = f;
     }
-                              
+
     @Override
     public Object evaluate(Properties bindings) {
         Object[] args = new Object[_args.length];
@@ -66,7 +66,7 @@ public class FunctionCallExpr implements Evaluable {
             if (ExpressionUtils.isError(v)) {
                 return v; // bubble up the error
             }
-             args[i] = v;
+            args[i] = v;
         }
         try {
             return _function.call(bindings, args);
@@ -78,22 +78,22 @@ public class FunctionCallExpr implements Evaluable {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        
+
         for (Evaluable ev : _args) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append(ev.toString());
         }
-        
+
         return _function.getClass().getSimpleName() + "(" + sb.toString() + ")";
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof Evaluable) && toString().equals(other.toString());
     }
-    
+
     @Override
     public final Set<String> getColumnDependencies(String baseColumn) {
         if (_function instanceof PureFunction) {

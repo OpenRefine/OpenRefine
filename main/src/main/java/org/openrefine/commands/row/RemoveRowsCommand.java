@@ -42,11 +42,11 @@ import org.openrefine.model.Project;
 import org.openrefine.operations.row.RowRemovalOperation;
 
 public class RemoveRowsCommand extends EngineDependentCommand {
-    
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         return new RowRemovalOperation(engineConfig);
     }
 }

@@ -39,20 +39,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingManager.ImportingConfiguration;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class GetImportingConfigurationCommand extends Command {
-    
+
     public static class ConfigurationResponse {
+
         @JsonProperty("config")
         ImportingConfiguration config = new ImportingConfiguration();
     }
+
     /**
-     * This command uses POST but does not actually modify any state so
-     * it is not CSRF-protected.
+     * This command uses POST but does not actually modify any state so it is not CSRF-protected.
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)

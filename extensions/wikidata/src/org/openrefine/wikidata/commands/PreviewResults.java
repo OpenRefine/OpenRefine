@@ -1,14 +1,15 @@
+
 package org.openrefine.wikidata.commands;
 
 import java.util.List;
 
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.qa.QAWarning.Severity;
-import org.openrefine.wikidata.updates.ItemUpdate;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
+import org.openrefine.wikidata.updates.ItemUpdate;
 
 public class PreviewResults {
 
@@ -17,32 +18,32 @@ public class PreviewResults {
     protected int nbWarnings;
     protected int editCount;
     protected List<ItemUpdate> editsPreview;
-    
+
     @JsonProperty("warnings")
     public List<QAWarning> getWarnings() {
-    	return warnings;
+        return warnings;
     }
-    
+
     @JsonProperty("max_severity")
     public Severity getMaxSeverity() {
-    	return maxSeverity;
+        return maxSeverity;
     }
-    
+
     @JsonProperty("nb_warnings")
     public int getNbWarnings() {
-    	return nbWarnings;
+        return nbWarnings;
     }
-    
+
     @JsonProperty("edit_count")
     public int getEditCount() {
-    	return editCount;
+        return editCount;
     }
-    
+
     @JsonProperty("edits_preview")
     public List<ItemUpdate> getEditsPreview() {
-    	return editsPreview;
+        return editsPreview;
     }
-    
+
     protected PreviewResults(
             List<QAWarning> warnings,
             Severity maxSeverity,
@@ -55,14 +56,14 @@ public class PreviewResults {
         this.editCount = editCount;
         this.editsPreview = editsPreview;
     }
-    
+
     @Override
     public String toString() {
-    	try {
-    		ObjectMapper mapper = new ObjectMapper();
-			return mapper.writeValueAsString(this);
-		} catch (JsonProcessingException e) {
-			return super.toString();
-		}
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            return super.toString();
+        }
     }
 }

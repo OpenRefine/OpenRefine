@@ -24,21 +24,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.preference;
 
 import java.io.IOException;
 import java.util.Collections;
 
-import org.openrefine.preference.PreferenceValue;
-import org.openrefine.preference.TopList;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.Test;
+
+import org.openrefine.preference.PreferenceValue;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
 
 public class TopListTests {
+
     @Test
     public void serializeTopList() throws JsonParseException, JsonMappingException, IOException {
         String json = "{"
@@ -54,8 +55,8 @@ public class TopListTests {
                 + "]}";
         PreferenceValue prefValue = ParsingUtilities.mapper.readValue(json, PreferenceValue.class);
         TestUtils.isSerializedTo(prefValue, json, ParsingUtilities.defaultWriter);
-        
-        String mapJson = "{\"key\":"+json+"}";
-        TestUtils.isSerializedTo(Collections.singletonMap("key",prefValue), mapJson, ParsingUtilities.defaultWriter);
+
+        String mapJson = "{\"key\":" + json + "}";
+        TestUtils.isSerializedTo(Collections.singletonMap("key", prefValue), mapJson, ParsingUtilities.defaultWriter);
     }
 }

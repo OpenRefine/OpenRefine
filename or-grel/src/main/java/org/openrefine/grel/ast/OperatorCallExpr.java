@@ -42,7 +42,8 @@ import org.openrefine.expr.ExpressionUtils;
  * An abstract syntax tree node encapsulating an operator call, such as "+".
  */
 public class OperatorCallExpr extends PureArgumentsExpr {
-    final protected String        _op;
+
+    final protected String _op;
 
     public OperatorCallExpr(Evaluable[] args, String op) {
         super(args);
@@ -159,10 +160,10 @@ public class OperatorCallExpr extends PureArgumentsExpr {
     private boolean isIntegral(Object n) {
         return n instanceof Long || n instanceof Integer;
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof Evaluable) && toString().equals(other.toString());
     }
-    
+
 }

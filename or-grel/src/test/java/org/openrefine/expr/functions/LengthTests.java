@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class LengthTests {
+
     @Test
     public void serializeLength() {
         String json = "{\"description\":\"Returns the length of o\",\"params\":\"array or string o\",\"returns\":\"number\"}";
         TestUtils.isSerializedTo(new Length(), json, ParsingUtilities.defaultWriter);
     }
 }
-

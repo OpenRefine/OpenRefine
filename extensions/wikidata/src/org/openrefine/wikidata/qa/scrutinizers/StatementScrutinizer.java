@@ -21,11 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
+import org.openrefine.wikidata.updates.ItemUpdate;
 
 public abstract class StatementScrutinizer extends EditScrutinizer {
 
@@ -41,8 +43,7 @@ public abstract class StatementScrutinizer extends EditScrutinizer {
     }
 
     /**
-     * The method that should be overridden by subclasses, implementing the checks
-     * on one statement
+     * The method that should be overridden by subclasses, implementing the checks on one statement
      * 
      * @param statement:
      *            the statement to scrutinize

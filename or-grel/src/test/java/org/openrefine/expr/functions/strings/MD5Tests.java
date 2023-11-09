@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class MD5Tests {
+
     @Test
     public void serializeMD5() {
         String json = "{\"description\":\"Returns the MD5 hash of s\",\"params\":\"string s\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new MD5(), json, ParsingUtilities.defaultWriter);
     }
 }
-

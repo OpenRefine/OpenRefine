@@ -36,6 +36,7 @@ package org.openrefine.expr.functions.arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.grel.ControlFunctionRegistry;
@@ -48,17 +49,15 @@ public class Reverse extends PureFunction {
     public Object call(Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v instanceof ArrayNode) {
                     v = JSONUtilities.toArray((ArrayNode) v);
                 }
-                
+
                 if (v.getClass().isArray() || v instanceof List<?>) {
-                    int length = v.getClass().isArray() ? 
-                            ((Object[]) v).length :
-                            ExpressionUtils.toObjectList(v).size();
-                    
+                    int length = v.getClass().isArray() ? ((Object[]) v).length : ExpressionUtils.toObjectList(v).size();
+
                     Object[] r = new Object[length];
                     if (v.getClass().isArray()) {
                         Object[] a = (Object[]) v;
@@ -82,12 +81,12 @@ public class Reverse extends PureFunction {
     public String getDescription() {
         return "Reverses array a";
     }
-    
+
     @Override
     public String getParams() {
         return "array a";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

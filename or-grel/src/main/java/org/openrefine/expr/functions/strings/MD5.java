@@ -50,17 +50,17 @@ public class MD5 extends PureFunction {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns the MD5 hash of s";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

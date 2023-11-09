@@ -24,9 +24,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.process;
 
 import static org.mockito.Mockito.mock;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
@@ -37,11 +41,9 @@ import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class HistoryProcessTests {
-    
+
     private Project project;
     private ProjectMetadata projectMetadata;
 
@@ -57,13 +59,13 @@ public class HistoryProcessTests {
         entry = new HistoryEntry(5678L, project, "second operation", op, ch);
         project.history.addEntry(entry);
     }
-    
+
     @Test
     public void serializeHistoryProcess() {
         HistoryProcess process = new HistoryProcess(project, 1234L);
         TestUtils.isSerializedTo(process, "{"
-		+ "\"description\":\"Undo/redo until after first operation\","
-		+ "\"immediate\":true,"
-		+ "\"status\":\"pending\"}", ParsingUtilities.defaultWriter);
+                + "\"description\":\"Undo/redo until after first operation\","
+                + "\"immediate\":true,"
+                + "\"status\":\"pending\"}", ParsingUtilities.defaultWriter);
     }
 }

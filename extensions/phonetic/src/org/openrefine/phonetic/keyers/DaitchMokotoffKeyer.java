@@ -1,10 +1,12 @@
+
 package org.openrefine.phonetic.keyers;
 
-import org.openrefine.clustering.binning.Keyer;
 import org.apache.commons.codec.language.DaitchMokotoffSoundex;
 
+import org.openrefine.clustering.binning.Keyer;
+
 public class DaitchMokotoffKeyer extends Keyer {
-    
+
     protected DaitchMokotoffSoundex encoder = new DaitchMokotoffSoundex();
 
     @Override

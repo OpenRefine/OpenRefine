@@ -71,8 +71,9 @@ public class Escape extends PureFunction {
                     return StringEscapeUtils.escapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
-                        return URLEncoder.encode(s,"UTF-8");
-                    } catch (UnsupportedEncodingException e) {}
+                        return URLEncoder.encode(s, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                    }
                 } else {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " does not recognize mode '" + mode + "'.");
                 }
@@ -80,17 +81,17 @@ public class Escape extends PureFunction {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return "Escapes a string depending on the given escaping mode.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string mode ['html','xml','csv','url','javascript']";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

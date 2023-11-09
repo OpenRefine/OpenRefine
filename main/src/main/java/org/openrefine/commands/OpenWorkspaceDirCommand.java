@@ -45,18 +45,20 @@ import org.openrefine.ProjectManager;
 import org.openrefine.io.FileProjectManager;
 
 public class OpenWorkspaceDirCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         String serverName = request.getServerName();
-        
+
         if (!"127.0.0.1".equals(serverName) && !"localhost".equals(serverName)) {
-            respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace directory can only be opened on the local machine where OpenRefine is run.\" }");
+            respond(response,
+                    "{ \"code\" : \"error\", \"message\" : \"Workspace directory can only be opened on the local machine where OpenRefine is run.\" }");
         } else if (ProjectManager.singleton instanceof FileProjectManager) {
             File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
 
@@ -67,10 +69,9 @@ public class OpenWorkspaceDirCommand extends Command {
                 Runtime.getRuntime().exec(
                         "open .",
                         new String[] {},
-                        dir
-                );
+                        dir);
             }
-            
+
             respond(response, "{ \"code\" : \"ok\" }");
         } else {
             respond(response, "{ \"code\" : \"error\", \"message\" : \"Workspace is not stored on the file system.\" }");

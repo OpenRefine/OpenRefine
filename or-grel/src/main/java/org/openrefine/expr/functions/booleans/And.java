@@ -54,14 +54,14 @@ public class And extends PureFunction {
 
     @Override
     public String getDescription() {
-    	return "AND two or more booleans to yield a boolean";
+        return "AND two or more booleans to yield a boolean";
     }
-    
+
     @Override
     public String getParams() {
         return "boolean a, boolean b";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

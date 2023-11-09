@@ -47,8 +47,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.FilteredRows;
@@ -63,22 +70,16 @@ import org.openrefine.preference.PreferenceStore;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 abstract public class CustomizableTabularExporterUtilities {
-	final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-	
+
+    final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
     static public void exportRows(
-        final Project project,
-        final Engine engine,
-        Properties params,
-        final TabularSerializer serializer) {
-        
+            final Project project,
+            final Engine engine,
+            Properties params,
+            final TabularSerializer serializer) {
+
         String optionsString = (params != null) ? params.getProperty("options") : null;
         JsonNode optionsTemp = null;
         if (optionsString != null) {
@@ -89,23 +90,18 @@ abstract public class CustomizableTabularExporterUtilities {
             }
         }
         final JsonNode options = optionsTemp;
-        
-        final boolean outputColumnHeaders = options == null ? true :
-            JSONUtilities.getBoolean(options, "outputColumnHeaders", true);
-        final boolean outputEmptyRows = options == null ? false :
-            JSONUtilities.getBoolean(options, "outputBlankRows", true);
-        final int limit = options == null ? -1 :
-            JSONUtilities.getInt(options, "limit", -1);
-        
+
+        final boolean outputColumnHeaders = options == null ? true : JSONUtilities.getBoolean(options, "outputColumnHeaders", true);
+        final boolean outputEmptyRows = options == null ? false : JSONUtilities.getBoolean(options, "outputBlankRows", true);
+        final int limit = options == null ? -1 : JSONUtilities.getInt(options, "limit", -1);
+
         final List<String> columnNames;
-        final Map<String, CellFormatter> columnNameToFormatter =
-            new HashMap<String, CustomizableTabularExporterUtilities.CellFormatter>();
-        
-        List<JsonNode> columnOptionArray = options == null ? null :
-            JSONUtilities.getArray(options, "columns");
+        final Map<String, CellFormatter> columnNameToFormatter = new HashMap<String, CustomizableTabularExporterUtilities.CellFormatter>();
+
+        List<JsonNode> columnOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
         if (columnOptionArray == null) {
             List<Column> columns = project.columnModel.columns;
-            
+
             columnNames = new ArrayList<String>(columns.size());
             for (Column column : columns) {
                 String name = column.getName();
@@ -114,7 +110,7 @@ abstract public class CustomizableTabularExporterUtilities {
             }
         } else {
             int count = columnOptionArray.size();
-            
+
             columnNames = new ArrayList<String>(count);
             for (int i = 0; i < count; i++) {
                 JsonNode columnOptions = columnOptionArray.get(i);
@@ -123,18 +119,19 @@ abstract public class CustomizableTabularExporterUtilities {
                     if (name != null) {
                         columnNames.add(name);
                         try {
-							columnNameToFormatter.put(name, ParsingUtilities.mapper.treeToValue(columnOptions, ColumnOptions.class));
-						} catch (JsonProcessingException e) {
-							e.printStackTrace();
-						}
+                            columnNameToFormatter.put(name, ParsingUtilities.mapper.treeToValue(columnOptions, ColumnOptions.class));
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
         }
-        
+
         RowVisitor visitor = new RowVisitor() {
+
             int rowCount = 0;
-            
+
             @Override
             public void start(Project project) {
                 serializer.startFile(options);
@@ -151,26 +148,26 @@ abstract public class CustomizableTabularExporterUtilities {
             public boolean visit(Project project, int rowIndex, Row row) {
                 List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
                 int nonNullCount = 0;
-                
+
                 for (String columnName : columnNames) {
                     Column column = project.columnModel.getColumnByName(columnName);
                     CellFormatter formatter = columnNameToFormatter.get(columnName);
                     CellData cellData = formatter.format(
-                        project,
-                        column,
-                        row.getCell(column.getCellIndex()));
-                    
+                            project,
+                            column,
+                            row.getCell(column.getCellIndex()));
+
                     cells.add(cellData);
                     if (cellData != null) {
                         nonNullCount++;
                     }
                 }
-                
+
                 if (nonNullCount > 0 || outputEmptyRows) {
                     serializer.addRow(cells, false);
                     rowCount++;
                 }
-                
+
                 return limit > 0 && rowCount >= limit;
             }
 
@@ -183,7 +180,7 @@ abstract public class CustomizableTabularExporterUtilities {
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, visitor);
     }
-    
+
     static public int[] countColumnsRows(
             final Project project,
             final Engine engine,
@@ -192,11 +189,12 @@ abstract public class CustomizableTabularExporterUtilities {
         exportRows(project, engine, params, serializer);
         return new int[] { serializer.columns, serializer.rows };
     }
-    
+
     static private class RowCountingTabularSerializer implements TabularSerializer {
+
         int columns;
         int rows;
-        
+
         @Override
         public void startFile(JsonNode options) {
         }
@@ -211,31 +209,26 @@ abstract public class CustomizableTabularExporterUtilities {
             rows++;
         }
     }
-    
+
     private enum ReconOutputMode {
         @JsonProperty("entity-name")
-        ENTITY_NAME,
-        @JsonProperty("entity-id")
-        ENTITY_ID,
-        @JsonProperty("cell-content")
+        ENTITY_NAME, @JsonProperty("entity-id")
+        ENTITY_ID, @JsonProperty("cell-content")
         CELL_CONTENT
     }
+
     private enum DateFormatMode {
         @JsonProperty("iso-8601")
-        ISO_8601,
-        @JsonProperty("locale-short")
-        SHORT_LOCALE,
-        @JsonProperty("locale-medium")
-        MEDIUM_LOCALE,
-        @JsonProperty("locale-long")
-        LONG_LOCALE,
-        @JsonProperty("locale-full")
-        FULL_LOCALE,
-        @JsonProperty("custom")
+        ISO_8601, @JsonProperty("locale-short")
+        SHORT_LOCALE, @JsonProperty("locale-medium")
+        MEDIUM_LOCALE, @JsonProperty("locale-long")
+        LONG_LOCALE, @JsonProperty("locale-full")
+        FULL_LOCALE, @JsonProperty("custom")
         CUSTOM
     }
-    
+
     static private class ReconSettings {
+
         @JsonProperty("output")
         ReconOutputMode outputMode = ReconOutputMode.ENTITY_NAME;
         @JsonProperty("blankUnmatchedCells")
@@ -243,8 +236,9 @@ abstract public class CustomizableTabularExporterUtilities {
         @JsonProperty("linkToEntityPages")
         boolean linkToEntityPages = true;
     }
-    
+
     static private class DateSettings {
+
         @JsonProperty("format")
         DateFormatMode formatMode = DateFormatMode.ISO_8601;
         @JsonProperty("custom")
@@ -254,96 +248,89 @@ abstract public class CustomizableTabularExporterUtilities {
         @JsonProperty("omitTime")
         boolean omitTime = false;
     }
-    
+
     static public class ColumnOptions extends CellFormatter {
+
         @JsonProperty("name")
         String columnName;
     }
-    
+
     static public class CellFormatter {
+
         @JsonProperty("reconSettings")
         ReconSettings recon = new ReconSettings();
         @JsonProperty("dateSettings")
         DateSettings date = new DateSettings();
-        
-        //SQLExporter parameter to convert null cell value to empty string
+
+        // SQLExporter parameter to convert null cell value to empty string
         @JsonProperty("nullValueToEmptyStr")
         boolean includeNullFieldValue = false;
-        
+
         DateFormat dateFormatter;
-        String[] urlSchemes = {"http","https", "ftp"};
+        String[] urlSchemes = { "http", "https", "ftp" };
         UrlValidator urlValidator = new UrlValidator(urlSchemes);
-        
+
         Map<String, String> identifierSpaceToUrl = null;
-        
+
         @JsonCreator
         CellFormatter(
-                @JsonProperty("reconSettings")
-                ReconSettings reconSettings,
-                @JsonProperty("dateSettings")
-                DateSettings dateSettings,
-                @JsonProperty("nullValueToEmptyStr")
-                boolean includeNullFieldValue) {
-            if(reconSettings != null) {
+                @JsonProperty("reconSettings") ReconSettings reconSettings,
+                @JsonProperty("dateSettings") DateSettings dateSettings,
+                @JsonProperty("nullValueToEmptyStr") boolean includeNullFieldValue) {
+            if (reconSettings != null) {
                 recon = reconSettings;
             }
-            if(dateSettings != null) {
+            if (dateSettings != null) {
                 date = dateSettings;
             }
             setup();
         }
-        
+
         CellFormatter() {
             setup();
         }
-        
+
         private void setup() {
             if (date.formatMode == DateFormatMode.CUSTOM &&
-                (date.custom == null || date.custom.isEmpty())) {
+                    (date.custom == null || date.custom.isEmpty())) {
                 date.formatMode = DateFormatMode.ISO_8601;
             }
-            
+
             switch (date.formatMode) {
-            case SHORT_LOCALE:
-                dateFormatter = date.omitTime ?
-                    SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT) :
-                    SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT);
-                break;
-            case MEDIUM_LOCALE:
-                dateFormatter = date.omitTime ?
-                    SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM) :
-                    SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.MEDIUM);
-                break;
-            case LONG_LOCALE:
-                dateFormatter = date.omitTime ?
-                    SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG) :
-                    SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.LONG, SimpleDateFormat.LONG);
-                break;
-            case FULL_LOCALE:
-                dateFormatter = date.omitTime ?
-                    SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL) :
-                    SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.FULL, SimpleDateFormat.FULL);
-                break;
-            case CUSTOM:
-                dateFormatter = new SimpleDateFormat(date.custom);
-                break;
-                
-            default:
-                dateFormatter = date.omitTime ?
-                    new SimpleDateFormat("yyyy-MM-dd") :
-                    new SimpleDateFormat(fullIso8601);
+                case SHORT_LOCALE:
+                    dateFormatter = date.omitTime ? SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)
+                            : SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT);
+                    break;
+                case MEDIUM_LOCALE:
+                    dateFormatter = date.omitTime ? SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM)
+                            : SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.MEDIUM);
+                    break;
+                case LONG_LOCALE:
+                    dateFormatter = date.omitTime ? SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG)
+                            : SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.LONG, SimpleDateFormat.LONG);
+                    break;
+                case FULL_LOCALE:
+                    dateFormatter = date.omitTime ? SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)
+                            : SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.FULL, SimpleDateFormat.FULL);
+                    break;
+                case CUSTOM:
+                    dateFormatter = new SimpleDateFormat(date.custom);
+                    break;
+
+                default:
+                    dateFormatter = date.omitTime ? new SimpleDateFormat("yyyy-MM-dd") : new SimpleDateFormat(fullIso8601);
             }
-            
+
             if (!date.useLocalTimeZone) {
                 dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
             }
         }
-        
+
         CellData format(Project project, Column column, Cell cell) {
             if (cell != null) {
                 String link = null;
                 String text = null;
-                
+
                 if (cell.recon != null) {
                     Recon recon = cell.recon;
                     if (recon.judgment == Recon.Judgment.Matched) {
@@ -352,10 +339,10 @@ abstract public class CustomizableTabularExporterUtilities {
                         } else if (this.recon.outputMode == ReconOutputMode.ENTITY_ID) {
                             text = recon.match.id;
                         } // else: output cell content
-                        
+
                         if (this.recon.linkToEntityPages) {
                             buildIdentifierSpaceToUrlMap();
-                            
+
                             String service = recon.service;
                             String viewUrl = identifierSpaceToUrl.get(service);
                             if (viewUrl != null) {
@@ -366,20 +353,20 @@ abstract public class CustomizableTabularExporterUtilities {
                         return null;
                     }
                 }
-                
+
                 Object value = cell.value;
                 if (value != null) {
                     if (text == null) {
                         if (value instanceof String) {
                             text = (String) value;
-                            
-                            if(text.contains(":") && urlValidator.isValid(text)) {
-                            	// Extra check for https://github.com/OpenRefine/OpenRefine/issues/2213
-                            	try {
-                            		link = new URI(text).toString();
-                            	} catch(URISyntaxException e) {
-                            		;
-                            	}
+
+                            if (text.contains(":") && urlValidator.isValid(text)) {
+                                // Extra check for https://github.com/OpenRefine/OpenRefine/issues/2213
+                                try {
+                                    link = new URI(text).toString();
+                                } catch (URISyntaxException e) {
+                                    ;
+                                }
                             }
                         } else if (value instanceof OffsetDateTime) {
                             text = ((OffsetDateTime) value).format(DateTimeFormatter.ISO_INSTANT);
@@ -389,28 +376,28 @@ abstract public class CustomizableTabularExporterUtilities {
                     }
                     return new CellData(column.getName(), value, text, link);
                 }
-            }else {//added for sql exporter
-            
-                if(includeNullFieldValue) {
+            } else {// added for sql exporter
+
+                if (includeNullFieldValue) {
                     return new CellData(column.getName(), "", "", "");
                 }
-                
+
             }
             return null;
         }
-        
+
         void buildIdentifierSpaceToUrlMap() {
             if (identifierSpaceToUrl != null) {
                 return;
             }
 
             identifierSpaceToUrl = new HashMap<String, String>();
-            
+
             PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
             ArrayNode services = (ArrayNode) ps.get("reconciliation.standardServices");
             if (services != null) {
                 int count = services.size();
-                
+
                 for (int i = 0; i < count; i++) {
                     ObjectNode service = (ObjectNode) services.get(i);
                     ObjectNode view = JSONUtilities.getObject(service, "view");

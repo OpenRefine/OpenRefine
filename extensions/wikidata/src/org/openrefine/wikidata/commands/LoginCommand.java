@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import java.io.IOException;
@@ -30,26 +31,26 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import org.openrefine.commands.Command;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.editing.ConnectionManager;
-
-import com.fasterxml.jackson.core.JsonGenerator;
 
 public class LoginCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-    	respond(request, response);
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+        respond(request, response);
     }
-    
+
     protected void respond(HttpServletRequest request, HttpServletResponse response)
-    	throws ServletException, IOException {
+            throws ServletException, IOException {
         String username = request.getParameter("wb-username");
         String password = request.getParameter("wb-password");
         String remember = request.getParameter("remember-credentials");

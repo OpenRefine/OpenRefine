@@ -21,16 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.Iterator;
 
-import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
+import org.openrefine.wikidata.qa.QAWarning;
 
 public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 
@@ -70,13 +72,13 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
             addIssue(issue);
         }
     }
-    
+
     public boolean positionAllowed(PropertyIdValue pid, SnakPosition position) {
-        if(position.equals(SnakPosition.MAINSNAK)) {
+        if (position.equals(SnakPosition.MAINSNAK)) {
             return _fetcher.allowedAsValue(pid);
-        } else if(position.equals(SnakPosition.QUALIFIER)) {
+        } else if (position.equals(SnakPosition.QUALIFIER)) {
             return _fetcher.allowedAsQualifier(pid);
-        } else if(position.equals(SnakPosition.REFERENCE)) {
+        } else if (position.equals(SnakPosition.REFERENCE)) {
             return _fetcher.allowedAsReference(pid);
         }
         return true;

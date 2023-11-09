@@ -24,18 +24,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing;
 
 import static org.mockito.Mockito.mock;
+
+import org.testng.annotations.Test;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
-
 
 public class EngineTests {
+
     @Test
     public void serializeEngine() {
         Project project = mock(Project.class);

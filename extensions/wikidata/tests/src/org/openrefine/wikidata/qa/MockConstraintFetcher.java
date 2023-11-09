@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa;
 
 import java.util.Arrays;
@@ -44,19 +45,19 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     public static PropertyIdValue mainSnakPid = Datamodel.makeWikidataPropertyIdValue("P1234");
     public static PropertyIdValue qualifierPid = Datamodel.makeWikidataPropertyIdValue("P987");
     public static PropertyIdValue referencePid = Datamodel.makeWikidataPropertyIdValue("P384");
-    
+
     public static PropertyIdValue allowedValuesPid = Datamodel.makeWikidataPropertyIdValue("P8121");
     public static ItemIdValue allowedValueQid = Datamodel.makeWikidataItemIdValue("Q389");
     public static PropertyIdValue forbiddenValuesPid = Datamodel.makeWikidataPropertyIdValue("P8141");
     public static ItemIdValue forbiddenValueQid = Datamodel.makeWikidataItemIdValue("Q378");
-    
+
     public static PropertyIdValue allowedUnitsPid = Datamodel.makeWikidataPropertyIdValue("P34787");
     public static ItemIdValue allowedUnit = Datamodel.makeWikidataItemIdValue("Q7887");
     public static PropertyIdValue noUnitsPid = Datamodel.makeWikidataPropertyIdValue("P334211");
-    
+
     public static PropertyIdValue noBoundsPid = Datamodel.makeWikidataPropertyIdValue("P8932");
     public static PropertyIdValue integerPid = Datamodel.makeWikidataPropertyIdValue("P389");
-    
+
     public static PropertyIdValue propertyOnlyPid = Datamodel.makeWikidataPropertyIdValue("P372");
 
     @Override
@@ -65,8 +66,7 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     }
 
     /**
-     * This constraint is purposely left inconsistent (the inverse constraint holds
-     * only on one side).
+     * This constraint is purposely left inconsistent (the inverse constraint holds only on one side).
      */
     @Override
     public PropertyIdValue getInversePid(PropertyIdValue pid) {
@@ -105,7 +105,7 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     public boolean hasSingleValue(PropertyIdValue pid) {
         return true;
     }
-    
+
     @Override
     public boolean hasSingleBestValue(PropertyIdValue pid) {
         return false;
@@ -149,9 +149,9 @@ public class MockConstraintFetcher implements ConstraintFetcher {
 
     @Override
     public Set<ItemIdValue> allowedUnits(PropertyIdValue pid) {
-        if(allowedUnitsPid.equals(pid)) {
+        if (allowedUnitsPid.equals(pid)) {
             return Collections.singleton(allowedUnit);
-        } else if(noUnitsPid.equals(pid)) {
+        } else if (noUnitsPid.equals(pid)) {
             return Collections.singleton(null);
         }
         return null;

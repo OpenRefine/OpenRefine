@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa;
 
 import java.util.Set;
@@ -38,12 +39,10 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 public interface ConstraintFetcher {
 
     /**
-     * Retrieves the regular expression for formatting a property, or null if there
-     * is no such constraint
+     * Retrieves the regular expression for formatting a property, or null if there is no such constraint
      * 
      * @param pid
-     * @return the expression of a regular expression which should be compatible
-     *         with java.util.regex
+     * @return the expression of a regular expression which should be compatible with java.util.regex
      */
     String getFormatRegex(PropertyIdValue pid);
 
@@ -55,7 +54,7 @@ public interface ConstraintFetcher {
      * @return the pid of the inverse property
      */
     PropertyIdValue getInversePid(PropertyIdValue pid);
-    
+
     /**
      * Is this property supposed to be symmetric (its own inverse)?
      */
@@ -77,26 +76,24 @@ public interface ConstraintFetcher {
     boolean allowedAsReference(PropertyIdValue pid);
 
     /**
-     * Get the list of allowed qualifiers (as property ids) for this property (null
-     * if any)
+     * Get the list of allowed qualifiers (as property ids) for this property (null if any)
      */
     Set<PropertyIdValue> allowedQualifiers(PropertyIdValue pid);
 
     /**
-     * Get the list of mandatory qualifiers (as property ids) for this property
-     * (null if any)
+     * Get the list of mandatory qualifiers (as property ids) for this property (null if any)
      */
     Set<PropertyIdValue> mandatoryQualifiers(PropertyIdValue pid);
-    
+
     /**
-     * Get the set of allowed values for this property (null if no such constraint).
-     * This set may contain null if one of the allowed values in novalue or somevalue.
+     * Get the set of allowed values for this property (null if no such constraint). This set may contain null if one of
+     * the allowed values in novalue or somevalue.
      */
     Set<Value> allowedValues(PropertyIdValue pid);
-    
+
     /**
-     * Get the set of disallowed values for this property (null if no such constraint).
-     * This set may contain null if one of the allowed values in novalue or somevalue.
+     * Get the set of disallowed values for this property (null if no such constraint). This set may contain null if one
+     * of the allowed values in novalue or somevalue.
      */
     Set<Value> disallowedValues(PropertyIdValue pid);
 
@@ -104,7 +101,7 @@ public interface ConstraintFetcher {
      * Is this property expected to have at most one value per item?
      */
     boolean hasSingleValue(PropertyIdValue pid);
-    
+
     /**
      * Is this property expected to have a single best value only?
      */
@@ -124,12 +121,12 @@ public interface ConstraintFetcher {
      * Is this property expected to have integer values only?
      */
     boolean integerValued(PropertyIdValue pid);
-    
+
     /**
      * Returns the allowed units for this property. If empty, no unit is allowed. If null, any unit is allowed.
      */
     Set<ItemIdValue> allowedUnits(PropertyIdValue pid);
-    
+
     /**
      * Can this property be used on items?
      */

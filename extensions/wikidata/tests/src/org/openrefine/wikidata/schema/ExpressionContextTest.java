@@ -21,15 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import org.openrefine.model.Project;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import org.openrefine.model.Project;
+import org.openrefine.wikidata.testing.WikidataRefineTest;
 
 public class ExpressionContextTest extends WikidataRefineTest {
 

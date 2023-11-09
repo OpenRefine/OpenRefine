@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.math;
 
 import org.testng.Assert;
@@ -35,25 +36,24 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class RandomNumberTests extends FunctionTestBase {
-	
+
     @Test
     public void serializeRandomNumber() {
         String json = "{\"description\":\"Returns a pseudo-random integer between the lower and upper bound (inclusive)\",\"params\":\"number lower bound, number upper bound\",\"returns\":\"number\"}";
         TestUtils.isSerializedTo(new RandomNumber(), json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testRandomNumberParameters() {
         Assert.assertTrue(invoke("randomNumber") instanceof EvalError);
         Assert.assertTrue(invoke("randomNumber", "string1") instanceof EvalError);
-        Assert.assertTrue(invoke("randomNumber", "string1","string2") instanceof EvalError);
+        Assert.assertTrue(invoke("randomNumber", "string1", "string2") instanceof EvalError);
         Assert.assertTrue(invoke("randomNumber", 3, 2) instanceof EvalError);
     }
-    
+
     @Test
     public void testRandomNumber() {
         Object a = invoke("randomNumber", 1, 10);
         Assert.assertTrue((int) a < 11 && (int) a > 0);
     }
 }
-

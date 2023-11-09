@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -34,10 +34,18 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.spi.LoggerRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wikidata.wdtk.util.WebResourceFetcherImpl;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
+import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
+
 import org.openrefine.RefineModel;
-import org.openrefine.RefineServlet;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.Change;
@@ -52,16 +60,6 @@ import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.util.WebResourceFetcherImpl;
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
-import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
-import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
@@ -72,10 +70,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     @JsonCreator
     public PerformWikibaseEditsOperation(
-    		@JsonProperty("engineConfig")
-    		EngineConfig engineConfig,
-    		@JsonProperty("summary")
-    		String summary) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("summary") String summary) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
@@ -165,7 +161,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
             Matcher matcher = pattern.matcher(RefineModel.ASSIGNED_VERSION);
             if (matcher.matches()) {
-                tag += "-"+matcher.group(1);
+                tag += "-" + matcher.group(1);
             }
             this._tags = Collections.emptyList(); // TODO Arrays.asList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
@@ -183,14 +179,14 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
             WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());
-            
+
             // Generate batch token
             long token = (new Random()).nextLong();
             // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
             // Because commas and colons are used by Wikibase to separate the auto-generated summaries
             // from the user-supplied ones, we replace these separators by similar unicode characters to
             // make sure they can be told apart.
-            String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
+            String summaryWithoutCommas = _summary.replaceAll(", ", "ꓹ ").replaceAll(": ", "։ ");
             String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
                     (Long.toHexString(token).substring(0, 10)));
 

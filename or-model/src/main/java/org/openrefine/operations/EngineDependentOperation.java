@@ -33,27 +33,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 abstract public class EngineDependentOperation extends AbstractOperation {
-    
-    transient protected EngineConfig    _engineConfig;
-    
+
+    transient protected EngineConfig _engineConfig;
+
     protected EngineDependentOperation(EngineConfig engineConfig) {
         _engineConfig = engineConfig;
     }
-    
+
     protected Engine createEngine(Project project) throws Exception {
         Engine engine = new Engine(project);
         engine.initializeFromConfig(getEngineConfig());
         return engine;
     }
-    
+
     @JsonProperty("engineConfig")
     protected EngineConfig getEngineConfig() {
         return _engineConfig;

@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database;
 
 import java.io.BufferedInputStream;
@@ -35,49 +36,44 @@ import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 
+import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.mit.simile.butterfly.ButterflyModuleImpl;
-
-
 public class DatabaseModuleImpl extends ButterflyModuleImpl {
-    
+
     private static final Logger logger = LoggerFactory.getLogger("DatabaseModuleImpl");
-    
+
     public static DatabaseModuleImpl instance;
-    
+
     public static Properties extensionProperties;
-    
+
     private static String DEFAULT_CREATE_PROJ_BATCH_SIZE = "100";
     private static String DEFAULT_PREVIEW_BATCH_SIZE = "100";
-    
-
 
     @Override
     public void init(ServletConfig config)
             throws Exception {
         // TODO Auto-generated method stub
         super.init(config);
-        
-        
-        readModuleProperty(); 
-        
-         // Set the singleton.
+
+        readModuleProperty();
+
+        // Set the singleton.
         instance = this;
-       
+
         logger.trace("Database Extension module initialization completed");
     }
-    
+
     public static String getImportCreateBatchSize() {
-        if(extensionProperties == null) {
+        if (extensionProperties == null) {
             return DEFAULT_CREATE_PROJ_BATCH_SIZE;
         }
         return extensionProperties.getProperty("create.batchSize", DEFAULT_CREATE_PROJ_BATCH_SIZE);
     }
 
     public static String getImportPreviewBatchSize() {
-        if(extensionProperties == null) {
+        if (extensionProperties == null) {
             return DEFAULT_PREVIEW_BATCH_SIZE;
         }
         return extensionProperties.getProperty("preview.batchSize", DEFAULT_PREVIEW_BATCH_SIZE);
@@ -86,34 +82,34 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
     private void readModuleProperty() {
         // The module path
         File f = getPath();
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("Module getPath(): {}", f.getPath());
         }
 
         // Load our custom properties.
-        File modFile = new File(f,"MOD-INF");
-        if(logger.isDebugEnabled()) {
+        File modFile = new File(f, "MOD-INF");
+        if (logger.isDebugEnabled()) {
             logger.debug("Module File: {}", modFile.getPath());
         }
-        
+
         if (modFile.exists()) {
 
-            extensionProperties = loadProperties (new File(modFile,"dbextension.properties"));
+            extensionProperties = loadProperties(new File(modFile, "dbextension.properties"));
 
         }
-        
+
     }
-    
+
     private Properties loadProperties(File propFile) {
         Properties ps = new Properties();
         try {
             if (propFile.exists()) {
-                if(logger.isDebugEnabled()) {
+                if (logger.isDebugEnabled()) {
                     logger.debug("Loading Extension properties ({})", propFile);
                 }
                 BufferedInputStream stream = null;
                 try {
-                     ps = new Properties();
+                    ps = new Properties();
                     stream = new BufferedInputStream(new FileInputStream(propFile));
                     ps.load(stream);
 
@@ -128,6 +124,5 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
         }
         return ps;
     }
-    
-  
+
 }

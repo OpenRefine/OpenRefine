@@ -21,21 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.wikidata.schema;
 
-import org.jsoup.helper.Validate;
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+package org.openrefine.wikidata.schema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jsoup.helper.Validate;
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 
 /**
- * An expression that represent a term (label, description or alias). The
- * structure is slightly different from other expressions because we need to
- * call different methods on {@link ItemUpdateBuilder}.
+ * An expression that represent a term (label, description or alias). The structure is slightly different from other
+ * expressions because we need to call different methods on {@link ItemUpdateBuilder}.
  * 
  * @author Antonin Delpeuch
  *
@@ -71,21 +71,21 @@ public class WbNameDescExpr {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {
-            case LABEL:
-                item.addLabel(val, true);
-                break;
-            case LABEL_IF_NEW:
-            	item.addLabel(val, false);
-            	break;
-            case DESCRIPTION:
-                item.addDescription(val, true);
-                break;
-            case DESCRIPTION_IF_NEW:
-            	item.addDescription(val, false);
-            	break;
-            case ALIAS:
-                item.addAlias(val);
-                break;
+                case LABEL:
+                    item.addLabel(val, true);
+                    break;
+                case LABEL_IF_NEW:
+                    item.addLabel(val, false);
+                    break;
+                case DESCRIPTION:
+                    item.addDescription(val, true);
+                    break;
+                case DESCRIPTION_IF_NEW:
+                    item.addDescription(val, false);
+                    break;
+                case ALIAS:
+                    item.addAlias(val);
+                    break;
             }
         } catch (SkipSchemaExpressionException e) {
             return;

@@ -38,35 +38,35 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+public class ImportingJob {
 
-
-public class ImportingJob  {
     final public long id;
     final public File dir; // Temporary directory where the data about this job is stored
-    
+
     private ObjectNode config;
-    
+
     public Project project;
     public ProjectMetadata metadata;
-    
+
     public long lastTouched;
     public boolean updating;
     public boolean canceled;
-    
+
     final private Object lock = new Object();
-    
+
     public ImportingJob(long id, File dir) {
         this.id = id;
         this.dir = dir;
@@ -75,37 +75,37 @@ public class ImportingJob  {
         JSONUtilities.safePut(cfg, "state", "new");
         JSONUtilities.safePut(cfg, "hasData", false);
         this.config = cfg;
-        
+
         lastTouched = System.currentTimeMillis();
-        
+
         dir.mkdirs();
     }
-    
+
     @JsonProperty("config")
     @JsonRawValue
     public String getJsonConfig() {
         return config.toString();
     }
-    
+
     @JsonIgnore
     public ObjectNode getOrCreateDefaultConfig() {
         return config;
     }
-    
+
     public void setState(String state) {
-        synchronized(config) {
-            JSONUtilities.safePut(config, "state", state);        
+        synchronized (config) {
+            JSONUtilities.safePut(config, "state", state);
         }
     }
 
     public void setError(List<Exception> exceptions) {
-        synchronized(config) {
-            JSONUtilities.safePut(config, "errors", 
+        synchronized (config) {
+            JSONUtilities.safePut(config, "errors",
                     DefaultImportingController.convertErrorsToJsonArray(exceptions));
             setState("error");
         }
     }
-    
+
     public void setProjectID(long projectID) {
         synchronized (config) {
             JSONUtilities.safePut(config, "projectID", projectID);
@@ -131,30 +131,29 @@ public class ImportingJob  {
             JSONUtilities.safePut(config, "fileSelection", fileSelectionArray);
         }
     }
-    
+
     public void setRankedFormats(ArrayNode rankedFormats) {
         synchronized (config) {
             JSONUtilities.safePut(config, "rankedFormats", rankedFormats);
         }
     }
 
-
     @JsonIgnore
     public ObjectNode getRetrievalRecord() {
-        synchronized(config) {
-            return JSONUtilities.getObject(config,"retrievalRecord");
+        synchronized (config) {
+            return JSONUtilities.getObject(config, "retrievalRecord");
         }
     }
-    
+
     @JsonIgnore
     public List<ObjectNode> getSelectedFileRecords() {
         List<ObjectNode> results = new ArrayList<ObjectNode>();
-        
-        ObjectNode retrievalRecord = JSONUtilities.getObject(config,"retrievalRecord");
+
+        ObjectNode retrievalRecord = JSONUtilities.getObject(config, "retrievalRecord");
         if (retrievalRecord != null) {
             ArrayNode fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
             if (fileRecordArray != null) {
-                ArrayNode fileSelectionArray = JSONUtilities.getArray(config,"fileSelection");
+                ArrayNode fileSelectionArray = JSONUtilities.getArray(config, "fileSelection");
                 if (fileSelectionArray != null) {
                     for (int i = 0; i < fileSelectionArray.size(); i++) {
                         int index = JSONUtilities.getIntElement(fileSelectionArray, i, -1);
@@ -168,37 +167,36 @@ public class ImportingJob  {
         return results;
     }
 
-    
     public void touch() {
         lastTouched = System.currentTimeMillis();
     }
-    
+
     public void prepareNewProject() {
         if (project != null) {
             project.dispose();
         }
-        
-        // Make sure all projects have been saved in case we run out of memory 
+
+        // Make sure all projects have been saved in case we run out of memory
         // or have some other catastrophe on import
         ProjectManager.singleton.save(true);
-        
+
         project = new Project();
         metadata = new ProjectMetadata();
     }
-    
+
     public void dispose() {
         if (project != null) {
             project.dispose();
             project = null;
         }
         metadata = null;
-        
+
         try {
             FileUtils.deleteDirectory(dir);
         } catch (IOException e) {
         }
     }
-    
+
     public File getRawDataDir() {
         File dir2 = new File(dir, "raw-data");
         dir2.mkdirs();

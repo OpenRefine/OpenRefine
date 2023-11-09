@@ -52,17 +52,16 @@ public class Jsonize extends PureFunction {
         return null;
     }
 
-    
     @Override
     public String getDescription() {
         return "Quotes a value as a JSON literal value";
     }
-    
+
     @Override
     public String getParams() {
         return "value";
     }
-    
+
     @Override
     public String getReturns() {
         return "JSON literal value";

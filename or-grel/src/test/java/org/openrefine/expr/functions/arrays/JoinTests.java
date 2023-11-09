@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class JoinTests {
+
     @Test
     public void serializeJoin() {
         String json = "{\"description\":\"Returns the string obtained by joining the array a with the separator sep\",\"params\":\"array a, string sep\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Join(), json, ParsingUtilities.defaultWriter);
     }
 }
-

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class PhoneticTests {
+
     @Test
     public void serializePhonetic() {
         String json = "{\"description\":\"Returns the a phonetic encoding of s (optionally indicating which encoding to use')\",\"params\":\"string s, string encoding (optional, defaults to 'metaphone3')\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Phonetic(), json, ParsingUtilities.defaultWriter);
     }
 }
-

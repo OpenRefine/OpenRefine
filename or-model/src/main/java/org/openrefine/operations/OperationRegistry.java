@@ -42,17 +42,15 @@ import org.openrefine.model.AbstractOperation;
 
 public abstract class OperationRegistry {
 
-    static final public Map<String, List<Class<? extends AbstractOperation>>> s_opNameToClass =
-        new HashMap<String, List<Class<? extends AbstractOperation>>>();
-    
-    static final public Map<Class<? extends AbstractOperation>, String> s_opClassToName =
-        new HashMap<Class<? extends AbstractOperation>, String>();
-    
+    static final public Map<String, List<Class<? extends AbstractOperation>>> s_opNameToClass = new HashMap<String, List<Class<? extends AbstractOperation>>>();
+
+    static final public Map<Class<? extends AbstractOperation>, String> s_opClassToName = new HashMap<Class<? extends AbstractOperation>, String>();
+
     static public void registerOperation(String moduleName, String name, Class<? extends AbstractOperation> klass) {
         String key = moduleName + "/" + name;
-        
+
         s_opClassToName.put(klass, key);
-        
+
         List<Class<? extends AbstractOperation>> classes = s_opNameToClass.get(key);
         if (classes == null) {
             classes = new LinkedList<Class<? extends AbstractOperation>>();
@@ -60,7 +58,7 @@ public abstract class OperationRegistry {
         }
         classes.add(klass);
     }
-    
+
     static public Class<? extends AbstractOperation> resolveOperationId(String op) {
         if (!op.contains("/")) {
             op = "core/" + op; // backward compatible

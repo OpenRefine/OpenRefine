@@ -41,13 +41,14 @@ import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.ast.VariableExpr;
 
 public class With implements Control {
+
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 3) {
             return ControlFunctionRegistry.getControlName(this) + " expects 3 arguments";
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) + 
-                " expects second argument to be a variable name";
+            return ControlFunctionRegistry.getControlName(this) +
+                    " expects second argument to be a variable name";
         }
         return null;
     }
@@ -56,7 +57,7 @@ public class With implements Control {
     public Object call(Properties bindings, Evaluable[] args) {
         Object o = args[0].evaluate(bindings);
         String name = ((VariableExpr) args[1]).getName();
-        
+
         Object oldValue = bindings.get(name);
         try {
             if (o != null) {
@@ -64,11 +65,11 @@ public class With implements Control {
             } else {
                 bindings.remove(name);
             }
-            
+
             return args[2].evaluate(bindings);
         } finally {
             /*
-             *  Restore the old value bound to the variable, if any.
+             * Restore the old value bound to the variable, if any.
              */
             if (oldValue != null) {
                 bindings.put(name, oldValue);
@@ -77,17 +78,17 @@ public class With implements Control {
             }
         }
     }
-    
+
     @Override
     public String getDescription() {
-            return "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result";
+        return "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result";
     }
-    
+
     @Override
     public String getParams() {
         return "expression o, variable v, expression e";
     }
-    
+
     @Override
     public String getReturns() {
         return "Depends on actual arguments";

@@ -41,12 +41,12 @@ public class Max extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if (args.length == 2 && 
+        if (args.length == 2 &&
                 args[0] != null && args[0] instanceof Number &&
                 args[1] != null && args[1] instanceof Number) {
             return Math.max(
-                ((Number) args[0]).doubleValue(),
-                ((Number) args[1]).doubleValue());
+                    ((Number) args[0]).doubleValue(),
+                    ((Number) args[1]).doubleValue());
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 numbers");
     }
@@ -55,12 +55,12 @@ public class Max extends PureFunction {
     public String getDescription() {
         return "Returns the greater of two numbers";
     }
-    
+
     @Override
     public String getParams() {
         return "number a, number b";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

@@ -35,18 +35,17 @@ package org.openrefine.model;
 
 import java.io.IOException;
 
-import org.openrefine.util.ParsingUtilities;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.util.ParsingUtilities;
 
 /**
- * This represents a type from the reconciliation
- * service. It is used when extending data to
- * store the (expected) types of new columns.
+ * This represents a type from the reconciliation service. It is used when extending data to store the (expected) types
+ * of new columns.
  */
-public class ReconType  {
+public class ReconType {
+
     @JsonProperty("id")
     public String id;
     @JsonProperty("name")
@@ -54,20 +53,18 @@ public class ReconType  {
 
     @JsonCreator
     public ReconType(
-            @JsonProperty("id")
-            String id,
-            @JsonProperty("name")
-            String name) {
-    	this.id = id;
-    	this.name = name;
+            @JsonProperty("id") String id,
+            @JsonProperty("name") String name) {
+        this.id = id;
+        this.name = name;
     }
-    
+
     @JsonCreator
     public ReconType(String id) {
-    	this.id = id;
-    	this.name = null;
+        this.id = id;
+        this.name = null;
     }
-    
+
     static public ReconType load(String json) throws IOException {
         return ParsingUtilities.mapper.readValue(json, ReconType.class);
     }

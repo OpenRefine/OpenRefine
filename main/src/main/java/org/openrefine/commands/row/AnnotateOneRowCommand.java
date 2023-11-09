@@ -47,13 +47,14 @@ import org.openrefine.model.changes.RowStarChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class AnnotateOneRowCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
@@ -69,11 +70,10 @@ public class AnnotateOneRowCommand extends Command {
                 String description = (starred ? "Star row " : "Unstar row ") + (rowIndex + 1);
 
                 StarOneRowProcess process = new StarOneRowProcess(
-                    project,
-                    description,
-                    rowIndex,
-                    starred
-                );
+                        project,
+                        description,
+                        rowIndex,
+                        starred);
 
                 performProcessAndRespond(request, response, project, process);
                 return;
@@ -85,11 +85,10 @@ public class AnnotateOneRowCommand extends Command {
                 String description = (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1);
 
                 FlagOneRowProcess process = new FlagOneRowProcess(
-                    project,
-                    description,
-                    rowIndex,
-                    flagged
-                );
+                        project,
+                        description,
+                        rowIndex,
+                        flagged);
 
                 performProcessAndRespond(request, response, project, process);
                 return;
@@ -103,15 +102,15 @@ public class AnnotateOneRowCommand extends Command {
     }
 
     protected static class StarOneRowProcess extends QuickHistoryEntryProcess {
+
         final int rowIndex;
         final boolean starred;
 
         StarOneRowProcess(
-            Project project,
-            String briefDescription,
-            int rowIndex,
-            boolean starred
-        ) {
+                Project project,
+                String briefDescription,
+                int rowIndex,
+                boolean starred) {
             super(project, briefDescription);
 
             this.rowIndex = rowIndex;
@@ -121,24 +120,24 @@ public class AnnotateOneRowCommand extends Command {
         @Override
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             return new HistoryEntry(
-                historyEntryID,
-                _project,
-                (starred ? "Star row " : "Unstar row ") + (rowIndex + 1),
-                null,
-                new RowStarChange(rowIndex, starred)
-            );
+                    historyEntryID,
+                    _project,
+                    (starred ? "Star row " : "Unstar row ") + (rowIndex + 1),
+                    null,
+                    new RowStarChange(rowIndex, starred));
         }
     }
+
     protected static class FlagOneRowProcess extends QuickHistoryEntryProcess {
+
         final int rowIndex;
         final boolean flagged;
 
         FlagOneRowProcess(
-            Project project,
-            String briefDescription,
-            int rowIndex,
-            boolean flagged
-        ) {
+                Project project,
+                String briefDescription,
+                int rowIndex,
+                boolean flagged) {
             super(project, briefDescription);
 
             this.rowIndex = rowIndex;
@@ -148,12 +147,11 @@ public class AnnotateOneRowCommand extends Command {
         @Override
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             return new HistoryEntry(
-                historyEntryID,
-                _project,
-                (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1),
-                null,
-                new RowFlagChange(rowIndex, flagged)
-            );
+                    historyEntryID,
+                    _project,
+                    (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1),
+                    null,
+                    new RowFlagChange(rowIndex, flagged));
         }
     }
 }

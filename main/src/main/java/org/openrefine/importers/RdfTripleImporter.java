@@ -40,10 +40,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+
 import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.importing.ImportingJob;
@@ -53,24 +55,18 @@ import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-
 public class RdfTripleImporter extends ImportingParserBase {
+
     private Mode mode;
-    
+
     public enum Mode {
-        RDFXML,
-        NT,
-        N3,
-        TTL,
-        JSONLD
+        RDFXML, NT, N3, TTL, JSONLD
     }
 
     public RdfTripleImporter() {
         this(Mode.NT);
     }
-    
+
     public RdfTripleImporter(Mode mode) {
         super(true);
         this.mode = mode;
@@ -83,85 +79,85 @@ public class RdfTripleImporter extends ImportingParserBase {
 
         try {
             switch (mode) {
-            case NT:
-                model.read(input, null, "NT");
-                break;
-            case N3:
-                model.read(input, null, "N3");
-                break;
-            case TTL:
-                model.read(input, null, "TTL");
-                break;
-            case JSONLD:
-                model.read(input, null, "JSON-LD");
-                break;
-            case RDFXML:
-                model.read(input, null);            
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown parsing mode");    
+                case NT:
+                    model.read(input, null, "NT");
+                    break;
+                case N3:
+                    model.read(input, null, "N3");
+                    break;
+                case TTL:
+                    model.read(input, null, "TTL");
+                    break;
+                case JSONLD:
+                    model.read(input, null, "JSON-LD");
+                    break;
+                case RDFXML:
+                    model.read(input, null);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown parsing mode");
             }
         } catch (Exception e) {
             exceptions.add(e);
             return;
         }
 
-      StmtIterator triples = model.listStatements();
-      
-      try {
-          Map<String, List<Row>> subjectToRows = new LinkedHashMap<String, List<Row>>();
-          Column subjectColumn = new Column(project.columnModel.allocateNewCellIndex(), "subject");
-          project.columnModel.addColumn(0, subjectColumn, false);
-          project.columnModel.setKeyColumnIndex(0);
-          
-          while (triples.hasNext()) {
-              Statement triple = triples.nextStatement();
-              String subject = triple.getSubject().toString();
-              String predicate = triple.getPredicate().toString();
-              String object = triple.getObject().toString();
+        StmtIterator triples = model.listStatements();
 
-              Column column = project.columnModel.getColumnByName(predicate);
-              if (column == null) {
-                  column = new Column(project.columnModel.allocateNewCellIndex(), predicate);
-                  project.columnModel.addColumn(-1, column, true);
-              }
+        try {
+            Map<String, List<Row>> subjectToRows = new LinkedHashMap<String, List<Row>>();
+            Column subjectColumn = new Column(project.columnModel.allocateNewCellIndex(), "subject");
+            project.columnModel.addColumn(0, subjectColumn, false);
+            project.columnModel.setKeyColumnIndex(0);
 
-              int cellIndex = column.getCellIndex();
-              if (subjectToRows.containsKey(subject)) {
-                  List<Row> rows = subjectToRows.get(subject);
-                  for (Row row : rows) {
-                      if (!ExpressionUtils.isNonBlankData(row.getCellValue(cellIndex))) {
-                          row.setCell(cellIndex, new Cell(object, null));
-                          object = null;
-                          break;
-                      }
-                  }
+            while (triples.hasNext()) {
+                Statement triple = triples.nextStatement();
+                String subject = triple.getSubject().toString();
+                String predicate = triple.getPredicate().toString();
+                String object = triple.getObject().toString();
 
-                  if (object != null) {
-                      Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
-                      rows.add(row);
+                Column column = project.columnModel.getColumnByName(predicate);
+                if (column == null) {
+                    column = new Column(project.columnModel.allocateNewCellIndex(), predicate);
+                    project.columnModel.addColumn(-1, column, true);
+                }
 
-                      row.setCell(cellIndex, new Cell(object, null));
-                  }
-              } else {
-                  List<Row> rows = new ArrayList<Row>();
-                  subjectToRows.put(subject, rows);
+                int cellIndex = column.getCellIndex();
+                if (subjectToRows.containsKey(subject)) {
+                    List<Row> rows = subjectToRows.get(subject);
+                    for (Row row : rows) {
+                        if (!ExpressionUtils.isNonBlankData(row.getCellValue(cellIndex))) {
+                            row.setCell(cellIndex, new Cell(object, null));
+                            object = null;
+                            break;
+                        }
+                    }
 
-                  Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
-                  rows.add(row);
+                    if (object != null) {
+                        Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
+                        rows.add(row);
 
-                  row.setCell(subjectColumn.getCellIndex(), new Cell(subject, null));
-                  row.setCell(cellIndex, new Cell(object, null));
-              }
-          }
+                        row.setCell(cellIndex, new Cell(object, null));
+                    }
+                } else {
+                    List<Row> rows = new ArrayList<Row>();
+                    subjectToRows.put(subject, rows);
 
-          for (Entry<String, List<Row>> entry : subjectToRows.entrySet()) {
-              project.rows.addAll(entry.getValue());
-          }
-      } catch (ModelException e) {
-          exceptions.add(e);
-      } 
-      
-      super.parseOneFile(project, metadata, job, fileSource, input, limit, options, exceptions);
+                    Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
+                    rows.add(row);
+
+                    row.setCell(subjectColumn.getCellIndex(), new Cell(subject, null));
+                    row.setCell(cellIndex, new Cell(object, null));
+                }
+            }
+
+            for (Entry<String, List<Row>> entry : subjectToRows.entrySet()) {
+                project.rows.addAll(entry.getValue());
+            }
+        } catch (ModelException e) {
+            exceptions.add(e);
+        }
+
+        super.parseOneFile(project, metadata, job, fileSource, input, limit, options, exceptions);
     }
 }

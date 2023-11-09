@@ -37,23 +37,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.openrefine.RefineServlet;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.openrefine.RefineServlet;
 
 abstract public class HttpHeadersSupport {
 
     static final protected Map<String, HttpHeaderInfo> s_headers = new HashMap<String, HttpHeaderInfo>();
 
     static public class HttpHeaderInfo {
+
         @JsonIgnore
-        final public String                 name;
+        final public String name;
         @JsonProperty("header")
-        final public String                 header;
+        final public String header;
         @JsonProperty("defaultValue")
-        final public String                 defaultValue;
-        
+        final public String defaultValue;
+
         HttpHeaderInfo(String header, String defaultValue) {
             this.name = header.toLowerCase();
             this.header = header;
@@ -66,7 +67,7 @@ abstract public class HttpHeadersSupport {
         registerHttpHeader("Accept", "*/*");
         registerHttpHeader("Authorization", "");
     }
-    
+
     /**
      * @param header
      * @param defaultValue
@@ -74,11 +75,11 @@ abstract public class HttpHeadersSupport {
     static public void registerHttpHeader(String header, String defaultValue) {
         s_headers.put(header.toLowerCase(), new HttpHeaderInfo(header, defaultValue));
     }
-    
+
     static public HttpHeaderInfo getHttpHeaderInfo(String header) {
         return s_headers.get(header.toLowerCase());
     }
-    
+
     static public Set<String> getHttpHeaderLabels() {
         return s_headers.keySet();
     }

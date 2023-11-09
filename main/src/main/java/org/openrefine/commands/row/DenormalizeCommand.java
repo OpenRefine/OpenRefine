@@ -47,20 +47,21 @@ import org.openrefine.operations.row.DenormalizeOperation;
 import org.openrefine.process.Process;
 
 public class DenormalizeCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
-            
+
             AbstractOperation op = new DenormalizeOperation();
             Process process = op.createProcess(project, new Properties());
-            
+
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);

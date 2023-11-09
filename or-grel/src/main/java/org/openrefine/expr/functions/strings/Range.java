@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import java.util.regex.Matcher;
@@ -36,11 +37,10 @@ import org.openrefine.grel.PureFunction;
 /**
  * Implements the logic behind the range function.
  * 
- * The range function can take in a single string of the form 'a, b, c' or three
- * integers a, b, c where a and b represents the first (inclusive) and last (exclusive)
- * numbers in the range respectively. If b is not given, a defaults to the range end 
- * and 0 becomes the range start. c is optional and represents the step (increment) 
- * for the generated sequence.
+ * The range function can take in a single string of the form 'a, b, c' or three integers a, b, c where a and b
+ * represents the first (inclusive) and last (exclusive) numbers in the range respectively. If b is not given, a
+ * defaults to the range end and 0 becomes the range start. c is optional and represents the step (increment) for the
+ * generated sequence.
  */
 public class Range extends PureFunction {
 
@@ -65,7 +65,7 @@ public class Range extends PureFunction {
             return createRangeWithThreeGivenArguments(args);
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                 + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
                 + "are the start and the end of the range respectively and c is the step (increment)");
     }
@@ -81,16 +81,15 @@ public class Range extends PureFunction {
     }
 
     /**
-     * Processes the single argument given to determine if the argument is (i) a valid string, (ii) a 
-     * valid integer, or (iii) an invalid argument.
+     * Processes the single argument given to determine if the argument is (i) a valid string, (ii) a valid integer, or
+     * (iii) an invalid argument.
      * 
-     * If the argument is a valid string, it can either be in the form 'a', or 'a, b' or 'a, b, c' 
-     * where a and b are the start and end of the range respectively, and c is the optional
-     * step argument. In the case where 'a' is the only argument, 'a' becomes the range end (exclusive)
-     * and 0 becomes the default range start.
+     * If the argument is a valid string, it can either be in the form 'a', or 'a, b' or 'a, b, c' where a and b are the
+     * start and end of the range respectively, and c is the optional step argument. In the case where 'a' is the only
+     * argument, 'a' becomes the range end (exclusive) and 0 becomes the default range start.
      * 
-     * If the argument is a valid integer, it can will default to become the range end, and 0 defaults
-     * to become the range start.
+     * If the argument is a valid integer, it can will default to become the range end, and 0 defaults to become the
+     * range start.
      * 
      * In all other cases, the argument is considered invalid.
      */
@@ -125,7 +124,7 @@ public class Range extends PureFunction {
                     return createRange(rangeStart, rangeEnd, rangeStep);
                 }
             } catch (NumberFormatException nfe) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                         + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
                         + "are the start and the end of the range respectively and c is the step (increment)");
             }
@@ -143,28 +142,28 @@ public class Range extends PureFunction {
                 rangeEnd = Integer.parseInt(String.valueOf(range));
                 return createRange(DEFAULT_START, rangeEnd, DEFAULT_STEP);
             } catch (NumberFormatException nfe) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                         + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
                         + "are the start and the end of the range respectively and c is the step (increment)");
             }
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                 + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                + "are the start and the end of the range respectively and c is the step (increment)");    
+                + "are the start and the end of the range respectively and c is the step (increment)");
     }
 
     /**
-     * Processes the two arguments given to determine if the arguments are (i) two valid strings, 
-     * (ii) two valid integers or (iii) a valid string and an integer or (iv) invalid arguments.
+     * Processes the two arguments given to determine if the arguments are (i) two valid strings, (ii) two valid
+     * integers or (iii) a valid string and an integer or (iv) invalid arguments.
      * 
-     * If the arguments are valid strings, the strings can either be such that (i) each string contains 
-     * single arguments (i.e. two arguments in total), or (ii) one string contains one argument and the other 
-     * string contains two argument (i.e. three arguments in total).
+     * If the arguments are valid strings, the strings can either be such that (i) each string contains single arguments
+     * (i.e. two arguments in total), or (ii) one string contains one argument and the other string contains two
+     * argument (i.e. three arguments in total).
      * 
-     * If the arguments are a valid string and a valid integer, the string can be such that (i) the string
-     * contains a single argument (i.e. two arguments in total) or (ii) the string contains two arguments 
-     * (i.e. three arguments in total).
+     * If the arguments are a valid string and a valid integer, the string can be such that (i) the string contains a
+     * single argument (i.e. two arguments in total) or (ii) the string contains two arguments (i.e. three arguments in
+     * total).
      * 
      * In all other cases, the arguments are considered invalid.
      */
@@ -177,7 +176,7 @@ public class Range extends PureFunction {
         int rangeStep = DEFAULT_STEP;
 
         if (firstArg == null || secondArg == null) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                     + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
                     + "are the start and the end of the range respectively and c is the step (increment)");
         }
@@ -210,9 +209,9 @@ public class Range extends PureFunction {
             return new EvalError("the last character in the input string should not be a comma");
         }
 
-        // Check if the strings are valid strings (e.g. range("1, 2", "3, 4") should fail but 
+        // Check if the strings are valid strings (e.g. range("1, 2", "3, 4") should fail but
         // range("1, 2", "1") should pass)
-        if (hasString) {            
+        if (hasString) {
             String[] firstArgArray = firstArgStringified.split(SEPARATOR);
             String[] secondArgArray = secondArgStringified.split(SEPARATOR);
 
@@ -220,7 +219,7 @@ public class Range extends PureFunction {
 
             if (combinedArrayLength == 3) {
                 hasThreeArguments = true;
- 
+
                 if (firstArgArray.length == 1) {
                     secondArgStringified = secondArgArray[0].trim();
                     thirdArgStringified = secondArgArray[1].trim();
@@ -247,20 +246,20 @@ public class Range extends PureFunction {
                 return createRange(rangeStart, rangeEnd, rangeStep);
             }
         } catch (NumberFormatException nfe) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                     + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
-                    + "are the start and the end of the range respectively and c is the step (increment)");   
+                    + "are the start and the end of the range respectively and c is the step (increment)");
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                 + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
                 + "are the start and the end of the range respectively and c is the step (increment)");
     }
 
     /**
-     * Processes the three arguments given to determine if the arguments are (i) three valid strings, 
-     * (ii) three valid integers, (iii) two valid strings and a valid integer, (iv) a valid string and 
-     * two valid integers or (v) invalid arguments.
+     * Processes the three arguments given to determine if the arguments are (i) three valid strings, (ii) three valid
+     * integers, (iii) two valid strings and a valid integer, (iv) a valid string and two valid integers or (v) invalid
+     * arguments.
      * 
      * In this case, all valid strings can only contain a single argument.
      */
@@ -268,7 +267,7 @@ public class Range extends PureFunction {
         Object firstArg = args[0];
         Object secondArg = args[1];
         Object thirdArg = args[2];
-      
+
         // Deal with negative integers first
         if (firstArg != null && firstArg instanceof Double && (Double) firstArg % 1 == 0) {
             firstArg = ((Double) firstArg).intValue();
@@ -282,13 +281,13 @@ public class Range extends PureFunction {
             thirdArg = ((Double) thirdArg).intValue();
         }
 
-        try {    
+        try {
             int rangeStart = Integer.parseInt(String.valueOf(firstArg).trim());
             int rangeEnd = Integer.parseInt(String.valueOf(secondArg).trim());
             int rangeStep = Integer.parseInt(String.valueOf(thirdArg).trim());
             return createRange(rangeStart, rangeEnd, rangeStep);
         } catch (NumberFormatException nfe) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                     + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
                     + "are the start and the end of the range respectively and c is the step (increment)");
         }
@@ -297,36 +296,35 @@ public class Range extends PureFunction {
     /**
      * Creates a range from the given range values with the given step.
      * 
-     * The generated range is either an increasing sequence or a decreasing sequence, and 
-     * each number in the sequence differs from the next number by the step value. 
+     * The generated range is either an increasing sequence or a decreasing sequence, and each number in the sequence
+     * differs from the next number by the step value.
      */
-    private static Object createRange(int start, int stop, int step) {        
+    private static Object createRange(int start, int stop, int step) {
         if ((start > stop && step > 0) || (start < stop && step < 0) || step == 0) {
             return EMPTY_ARRAY;
         }
 
-        int rangeSize = (int) (Math.ceil(((double) Math.abs(start - stop))/ Math.abs(step)));
+        int rangeSize = (int) (Math.ceil(((double) Math.abs(start - stop)) / Math.abs(step)));
 
         Integer[] generatedRange = new Integer[rangeSize];
 
         for (int i = 0; i < rangeSize; i++) {
-           generatedRange[i] = start + step * i;
+            generatedRange[i] = start + step * i;
         }
 
-        return generatedRange;   
+        return generatedRange;
     }
 
     @Override
     public String getDescription() {
-        return 
-                "Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).";
+        return "Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).";
     }
-    
+
     @Override
     public String getParams() {
         return "A single string 'a', 'a, b' or 'a, b, c' or one, two or three integers a or a, b or a, b, c";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.grel.controls;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class IfTests {
+
     @Test
     public void serializeIf() {
         String json = "{\"description\":\"Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. Otherwise, evaluates expression eFalse and returns that result instead.\",\"params\":\"expression o, expression eTrue, expression eFalse\",\"returns\":\"Depends on actual arguments\"}";
         TestUtils.isSerializedTo(new If(), json, ParsingUtilities.defaultWriter);
     }
 }
-

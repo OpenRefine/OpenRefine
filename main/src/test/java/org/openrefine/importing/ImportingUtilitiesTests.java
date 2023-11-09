@@ -24,35 +24,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.importing;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importers.ImporterTest;
 import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.openrefine.importers.ImporterTest;
 
 public class ImportingUtilitiesTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
     }
-    
+
     @Test
     public void createProjectMetadataTest()
             throws Exception {
@@ -63,22 +64,22 @@ public class ImportingUtilitiesTests extends ImporterTest {
         Assert.assertEquals(pm.getEncoding(), "UTF-8");
         Assert.assertTrue(pm.getTags().length == 0);
     }
-    
-    @Test(expectedExceptions=IllegalArgumentException.class)
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testZipSlip() throws IOException {
-    	File tempDir = TestUtils.createTempDirectory("openrefine-zip-slip-test");
+        File tempDir = TestUtils.createTempDirectory("openrefine-zip-slip-test");
         // For CVE-2018-19859, issue #1840
-    	ImportingUtilities.allocateFile(tempDir, "../../tmp/script.sh");
+        ImportingUtilities.allocateFile(tempDir, "../../tmp/script.sh");
     }
-    
+
     private ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
-        
+
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         path.add("results");
         path.add("result");
-        
+
         JSONUtilities.safePut(options, "recordPath", path);
         return options;
     }

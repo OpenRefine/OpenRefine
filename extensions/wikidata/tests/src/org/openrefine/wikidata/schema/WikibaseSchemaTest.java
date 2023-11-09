@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
@@ -31,17 +32,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.facets.FacetConfigResolver;
-import org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
-import org.openrefine.model.Project;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -54,6 +44,18 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.FacetConfigResolver;
+import org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
+import org.openrefine.model.Project;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
+import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.testing.WikidataRefineTest;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 
 public class WikibaseSchemaTest extends WikidataRefineTest {
 
@@ -99,7 +101,8 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/history_of_medicine.json");
         WikibaseSchema parsed = WikibaseSchema.reconstruct(serialized);
-        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString(), ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString(),
+                ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -125,11 +128,11 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         expected.add(update2);
         assertEquals(expected, updates);
     }
-    
+
     @Test(expectedExceptions = IOException.class)
     public void testDeserializeEmpty() throws IOException {
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
-                +"\"nameDescs\":[]}],\"wikibasePrefix\":\"http://www.wikidata.org/entity/\"}";
+                + "\"nameDescs\":[]}],\"wikibasePrefix\":\"http://www.wikidata.org/entity/\"}";
         WikibaseSchema.reconstruct(schemaJson);
     }
 
@@ -140,7 +143,7 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         Engine engine = new Engine(project);
         EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
-                + "      \"mode\": \"row-based\",\n" 
+                + "      \"mode\": \"row-based\",\n"
                 + "      \"facets\": [\n"
                 + "        {\n"
                 + "          \"mode\": \"text\",\n"

@@ -47,21 +47,20 @@ import org.openrefine.model.Project;
 public class CommandStub extends Command {
 
     public Project wrapGetProject(HttpServletRequest request)
-    throws ServletException {
+            throws ServletException {
         return getProject(request);
     }
 
-    public EngineConfig wrapGetEngineConfig(HttpServletRequest request)
-    {
+    public EngineConfig wrapGetEngineConfig(HttpServletRequest request) {
         return getEngineConfig(request);
     }
 
     public Engine wrapGetEngine(HttpServletRequest request, Project project)
-    throws Exception {
+            throws Exception {
         return getEngine(request, project);
     }
 
-    public int wrapGetIntegerParameter(HttpServletRequest request, String name,int def) {
+    public int wrapGetIntegerParameter(HttpServletRequest request, String name, int def) {
         return getIntegerParameter(request, name, def);
     }
 }

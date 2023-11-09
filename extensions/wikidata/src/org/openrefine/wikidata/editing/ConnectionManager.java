@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.editing;
 
 import java.io.IOException;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.preference.PreferenceStore;
-import org.openrefine.util.ParsingUtilities;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -35,24 +35,23 @@ import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.openrefine.ProjectManager;
+import org.openrefine.preference.PreferenceStore;
+import org.openrefine.util.ParsingUtilities;
 
 /**
- * Manages a connection to Wikidata, with login credentials stored in the
- * preferences.
+ * Manages a connection to Wikidata, with login credentials stored in the preferences.
  * 
- * Ideally, we should store only the cookies and not the password. But
- * Wikidata-Toolkit does not allow for that as cookies are kept private.
+ * Ideally, we should store only the cookies and not the password. But Wikidata-Toolkit does not allow for that as
+ * cookies are kept private.
  * 
- * This class is also hard-coded for Wikidata: generalization to other Wikibase
- * instances should be feasible though.
+ * This class is also hard-coded for Wikidata: generalization to other Wikibase instances should be feasible though.
  * 
  * @author Antonin Delpeuch
  */
 
 public class ConnectionManager {
-    
+
     final static Logger logger = LoggerFactory.getLogger("connection_mananger");
 
     public static final String PREFERENCE_STORE_KEY = "wikidata_credentials";
@@ -69,8 +68,7 @@ public class ConnectionManager {
     }
 
     /**
-     * Creates a connection manager, which attempts to restore any
-     * previous connection (from the preferences).
+     * Creates a connection manager, which attempts to restore any previous connection (from the preferences).
      */
     private ConnectionManager() {
         prefStore = ProjectManager.singleton.getPreferenceStore();
@@ -82,11 +80,11 @@ public class ConnectionManager {
      * Logs in to the Wikibase instance, using login/password
      * 
      * @param username
-     *      the username to log in with
+     *            the username to log in with
      * @param password
-     *      the password to log in with
+     *            the password to log in with
      * @param rememberCredentials
-     *      whether to store these credentials in the preferences (unencrypted!)
+     *            whether to store these credentials in the preferences (unencrypted!)
      */
     public void login(String username, String password, boolean rememberCredentials) {
         if (rememberCredentials) {
@@ -156,10 +154,10 @@ public class ConnectionManager {
             return null;
         }
     }
-    
+
     /**
-     * Creates a fresh connection object with our
-     * prefered settings.
+     * Creates a fresh connection object with our prefered settings.
+     * 
      * @return
      */
     protected BasicApiConnection createNewConnection() {

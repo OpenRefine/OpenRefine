@@ -24,37 +24,34 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package org.openrefine.browsing.facets;
 
-import org.openrefine.model.Project;
+package org.openrefine.browsing.facets;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+import org.openrefine.model.Project;
 
 /**
- * Represents the configuration of a facet, as stored
- * in the engine configuration and in the JSON serialization
- * of operations. It does not contain the actual values displayed by
- * the facet.
+ * Represents the configuration of a facet, as stored in the engine configuration and in the JSON serialization of
+ * operations. It does not contain the actual values displayed by the facet.
  * 
  * @author Antonin Delpeuch
  *
  */
-@JsonTypeInfo(
-        use=JsonTypeInfo.Id.NAME,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonTypeIdResolver(FacetConfigResolver.class)
-public interface FacetConfig  {   
+public interface FacetConfig {
+
     /**
      * Instantiates the given facet on a particular project.
+     * 
      * @param project
      * @return a computed facet on the given project.
      */
     public Facet apply(Project project);
-    
+
     /**
      * The facet type as stored in json.
      */

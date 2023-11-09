@@ -39,30 +39,31 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.poi.ss.usermodel.Hyperlink;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 public class XlsExporter implements StreamExporter {
+
     final private boolean xml;
-    
+
     public XlsExporter(boolean xml) {
         this.xml = xml;
     }
-    
+
     @Override
     public String getContentType() {
         return xml ? "application/xlsx" : "application/xls";
@@ -73,12 +74,13 @@ public class XlsExporter implements StreamExporter {
             OutputStream outputStream) throws IOException {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
-        
+
         TabularSerializer serializer = new TabularSerializer() {
+
             Sheet s;
             int rowCount = 0;
             CellStyle dateStyle;
-            
+
             @Override
             public void startFile(JsonNode options) {
                 s = wb.createSheet();
@@ -98,7 +100,7 @@ public class XlsExporter implements StreamExporter {
             @Override
             public void addRow(List<CellData> cells, boolean isHeader) {
                 Row r = s.createRow(rowCount++);
-                
+
                 for (int i = 0; i < cells.size(); i++) {
                     Cell c = r.createCell(i);
                     if (i == 255 && cells.size() > 256) {
@@ -106,7 +108,7 @@ public class XlsExporter implements StreamExporter {
                         break;
                     } else {
                         CellData cellData = cells.get(i);
-                        
+
                         if (cellData != null && cellData.text != null && cellData.value != null) {
                             Object v = cellData.value;
                             if (v instanceof Number) {
@@ -114,7 +116,7 @@ public class XlsExporter implements StreamExporter {
                             } else if (v instanceof Boolean) {
                                 c.setCellValue(((Boolean) v).booleanValue());
                             } else if (v instanceof OffsetDateTime) {
-                                OffsetDateTime odt = (OffsetDateTime)v;
+                                OffsetDateTime odt = (OffsetDateTime) v;
                                 c.setCellValue(ParsingUtilities.offsetDateTimeToCalendar(odt));
                                 c.setCellStyle(dateStyle);
                             } else {
@@ -125,27 +127,27 @@ public class XlsExporter implements StreamExporter {
                                 }
                                 c.setCellValue(s);
                             }
-                            
+
                             if (cellData.link != null) {
-                            	try {
-                            		Hyperlink hl = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
-                            		hl.setLabel(cellData.text);
-                            		hl.setAddress(cellData.link);
-                            		c.setHyperlink(hl);
-                            	} catch(IllegalArgumentException e) {
-                            		// If we failed to create the hyperlink and add it to the cell,
-                            		// we just use the string value as fallback
-                            	}
+                                try {
+                                    Hyperlink hl = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+                                    hl.setLabel(cellData.text);
+                                    hl.setAddress(cellData.link);
+                                    c.setHyperlink(hl);
+                                } catch (IllegalArgumentException e) {
+                                    // If we failed to create the hyperlink and add it to the cell,
+                                    // we just use the string value as fallback
+                                }
                             }
                         }
                     }
                 }
             }
         };
-        
+
         CustomizableTabularExporterUtilities.exportRows(
                 project, engine, params, serializer);
-        
+
         wb.write(outputStream);
         outputStream.flush();
         wb.close();

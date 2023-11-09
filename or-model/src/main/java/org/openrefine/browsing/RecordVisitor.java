@@ -37,16 +37,16 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 
 /**
- * Interface for visiting records one by one. The records visited are only those that match some
- * particular criteria, such as facets' constraints.
+ * Interface for visiting records one by one. The records visited are only those that match some particular criteria,
+ * such as facets' constraints.
  */
 public interface RecordVisitor {
+
     public void start(Project project); // called before any visit() call
 
     public boolean visit(
-            Project project, 
-            Record record
-    );
+            Project project,
+            Record record);
 
     public void end(Project project); // called after all visit() calls
 }

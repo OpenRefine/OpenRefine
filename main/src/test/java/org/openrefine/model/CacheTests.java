@@ -32,8 +32,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 package org.openrefine.model;
+
 import java.io.IOException;
 import java.util.Properties;
+
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
@@ -47,15 +55,9 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.row.RowRemovalOperation;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 public class CacheTests extends RefineTest {
-    
+
     // Equivalent to duplicate facet on Column A with true selected
     static final String ENGINE_JSON_DUPLICATES = "{\"facets\":[{\"type\":\"list\",\"name\":\"facet A\",\"columnName\":\"Column A\",\"expression\":\"facetCount(value, 'value', 'Column A') > 1\",\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":true,\"l\":\"true\"}}],\"selectBlank\":false,\"selectError\":false,\"invert\":false}],\"mode\":\"row-based\"}}";
 
@@ -75,15 +77,15 @@ public class CacheTests extends RefineTest {
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         project = createProjectWithColumns("CacheTests", "Column A");
-        
+
         engine = new Engine(project);
         engine_config = EngineConfig.reconstruct(ENGINE_JSON_DUPLICATES);
         engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
-        
+
         bindings = new Properties();
         bindings.put("project", project);
-        
+
     }
 
     @AfterMethod
@@ -94,9 +96,8 @@ public class CacheTests extends RefineTest {
     }
 
     /**
-     * Test for issue 567.  Problem doesn't seem to occur when testing
-     * interactively, but this demonstrates that the facet count cache
-     * can get stale after row removal operations
+     * Test for issue 567. Problem doesn't seem to occur when testing interactively, but this demonstrates that the
+     * facet count cache can get stale after row removal operations
      * 
      * @throws Exception
      */
@@ -104,22 +105,22 @@ public class CacheTests extends RefineTest {
     public void testIssue567() throws Exception {
         for (int i = 0; i < 5; i++) {
             Row row = new Row(5);
-            row.setCell(0, new Cell(i < 4 ? "a":"b", null));
+            row.setCell(0, new Cell(i < 4 ? "a" : "b", null));
             project.rows.add(row);
         }
-        engine.getAllRows().accept(project, new CountingRowVisitor(5)) ;
+        engine.getAllRows().accept(project, new CountingRowVisitor(5));
         engine.getAllFilteredRows().accept(project, new CountingRowVisitor(4));
         Function fc = new FacetCount();
-        Integer count = (Integer) fc.call(bindings, new Object[] {"a", "value", "Column A"});
+        Integer count = (Integer) fc.call(bindings, new Object[] { "a", "value", "Column A" });
         Assert.assertEquals(count.intValue(), 4);
         EngineDependentOperation op = new RowRemovalOperation(engine_config);
         op.createProcess(project, options).performImmediate();
-        engine.getAllRows().accept(project, new CountingRowVisitor(1)) ;
+        engine.getAllRows().accept(project, new CountingRowVisitor(1));
         engine.getAllFilteredRows().accept(project, new CountingRowVisitor(0));
-        count = (Integer) fc.call(bindings, new Object[] {"a", "value", "Column A"});
+        count = (Integer) fc.call(bindings, new Object[] { "a", "value", "Column A" });
         Assert.assertEquals(count.intValue(), 0);
     }
-    
+
     class CountingRowVisitor implements RowVisitor {
 
         private int count = 0;
@@ -137,12 +138,12 @@ public class CacheTests extends RefineTest {
 
         @Override
         public void start(Project project) {
-            count = 0; 
+            count = 0;
         }
 
         @Override
         public void end(Project project) {
-            Assert.assertEquals(count, target); 
+            Assert.assertEquals(count, target);
         }
     }
 }

@@ -21,18 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.wikidata.schema;
 
-import org.openrefine.model.Cell;
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+package org.openrefine.wikidata.schema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.model.Cell;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+
 /**
- * A base class for expressions which draw their values from a particular
- * column.
+ * A base class for expressions which draw their values from a particular column.
  * 
  * @author Antonin Delpeuch
  *
@@ -63,8 +63,8 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
     }
 
     /**
-     * Changes the column name used by the variable. This is useful for
-     * deserialization, as well as updates when column names change.
+     * Changes the column name used by the variable. This is useful for deserialization, as well as updates when column
+     * names change.
      */
     @JsonProperty("columnName")
     public void setColumnName(String columnName) {
@@ -85,9 +85,8 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
     }
 
     /**
-     * Method that should be implemented by subclasses, converting an OpenRefine
-     * cell to a Wikibase value. Access to other values and emitting warnings is
-     * possible via the supplied EvaluationContext object.
+     * Method that should be implemented by subclasses, converting an OpenRefine cell to a Wikibase value. Access to
+     * other values and emitting warnings is possible via the supplied EvaluationContext object.
      * 
      * @param cell
      *            the cell to convert

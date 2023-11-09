@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr.functions;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.openrefine.expr.HasFields;
 import org.openrefine.grel.PureFunction;
 
@@ -44,7 +45,7 @@ public class HasField extends PureFunction {
         if (args.length > 1 && args.length <= 2) {
             Object v = args[0];
             Object f = args[1];
-            
+
             if (v != null && f != null && f instanceof String) {
                 String name = (String) f;
                 if (v instanceof HasFields) {
@@ -61,12 +62,12 @@ public class HasField extends PureFunction {
     public String getDescription() {
         return "Returns whether o has field name";
     }
-    
+
     @Override
     public String getParams() {
         return "o, string name";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

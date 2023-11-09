@@ -41,13 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.openrefine.preference.PreferenceStore;
-import org.openrefine.util.JsonViews;
-import org.openrefine.util.ParsingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -55,23 +48,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.openrefine.preference.PreferenceStore;
+import org.openrefine.util.JsonViews;
+import org.openrefine.util.ParsingUtilities;
 
 public class ProjectMetadata {
+
     public final static String DEFAULT_FILE_NAME = "metadata.json";
     public final static String TEMP_FILE_NAME = "metadata.temp.json";
     public final static String OLD_FILE_NAME = "metadata.old.json";
-    
+
     @JsonProperty("created")
-    private final LocalDateTime     _created;
+    private final LocalDateTime _created;
     @JsonProperty("modified")
-    private LocalDateTime           _modified;
+    private LocalDateTime _modified;
     @JsonIgnore
     private LocalDateTime written = null;
     @JsonProperty("name")
-    private String         _name = "";
+    private String _name = "";
     @JsonProperty("password")
     @JsonView(JsonViews.SaveMode.class)
-    private String         _password = "";
+    private String _password = "";
 
     @JsonProperty("encoding")
     @JsonView(JsonViews.SaveMode.class)
@@ -93,7 +94,7 @@ public class ProjectMetadata {
     private String _description = ""; // free form of comment
     @JsonProperty("rowCount")
     private int _rowCount; // at the creation. Essential for cleaning old projects too heavy
-    
+
     @JsonProperty("title")
     private String _title = "";
     @JsonProperty("version")
@@ -112,12 +113,12 @@ public class ProjectMetadata {
     // user metadata
     @JsonIgnore
     private ArrayNode _userMetadata = ParsingUtilities.mapper.createArrayNode();
-    
+
     @JsonProperty("customMetadata")
-    private Map<String, Object>   _customMetadata = new HashMap<>();
+    private Map<String, Object> _customMetadata = new HashMap<>();
     @JsonProperty("preferences")
     @JsonView(JsonViews.SaveMode.class)
-    private PreferenceStore             _preferenceStore = new PreferenceStore();
+    private PreferenceStore _preferenceStore = new PreferenceStore();
 
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
@@ -136,7 +137,7 @@ public class ProjectMetadata {
         _modified = modified;
         _name = name;
     }
-    
+
     @JsonIgnore
     public boolean isDirty() {
         return written == null || _modified.isAfter(written);
@@ -231,7 +232,7 @@ public class ProjectMetadata {
     }
 
     @JsonIgnore
-    public  LocalDateTime getModified() {
+    public LocalDateTime getModified() {
         return _modified;
     }
 
@@ -247,7 +248,7 @@ public class ProjectMetadata {
 
     @JsonIgnore
     public Serializable getCustomMetadata(String key) {
-        return (Serializable)_customMetadata.get(key);
+        return (Serializable) _customMetadata.get(key);
     }
 
     public void setCustomMetadata(String key, Serializable value) {
@@ -334,14 +335,14 @@ public class ProjectMetadata {
     public ArrayNode getUserMetadata() {
         return _userMetadata;
     }
-    
+
     @JsonProperty("userMetadata")
     @JsonInclude(Include.NON_NULL)
     public ArrayNode getUserMetadataJson() {
-    	if (_userMetadata != null && _userMetadata.size() > 0) {
-    		return _userMetadata;
-    	}
-    	return null;
+        if (_userMetadata != null && _userMetadata.size() > 0) {
+            return _userMetadata;
+        }
+        return null;
     }
 
     @JsonIgnore
@@ -351,7 +352,7 @@ public class ProjectMetadata {
 
     private void updateUserMetadata(String metaName, String valueString) {
         for (int i = 0; i < _userMetadata.size(); i++) {
-            ObjectNode obj = (ObjectNode)_userMetadata.get(i);
+            ObjectNode obj = (ObjectNode) _userMetadata.get(i);
             if (obj.get("name").asText("").equals(metaName)) {
                 obj.put("value", valueString);
             }

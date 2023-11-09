@@ -41,8 +41,8 @@ public class Coalesce extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if (args.length> 1) {
-            for (int i = 0; i < args.length; i++){
+        if (args.length > 1) {
+            for (int i = 0; i < args.length; i++) {
                 if (args[i] == null) {
                     continue;
                 } else {
@@ -58,16 +58,15 @@ public class Coalesce extends PureFunction {
     public String getDescription() {
         return "Returns the first non-null from a series of values";
     }
-    
+
     @Override
     public String getParams() {
         return "two or more objects";
     }
-    
+
     @Override
     public String getReturns() {
         return "object or null";
     }
-  
-    			
+
 }

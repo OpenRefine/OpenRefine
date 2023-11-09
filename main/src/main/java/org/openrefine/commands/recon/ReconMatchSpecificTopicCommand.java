@@ -42,24 +42,22 @@ import org.openrefine.model.Project;
 import org.openrefine.operations.recon.ReconMatchSpecificTopicOperation;
 
 public class ReconMatchSpecificTopicCommand extends EngineDependentCommand {
-    
+
     @Override
     protected AbstractOperation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
         ReconMatchSpecificTopicOperation.ReconItem match = new ReconMatchSpecificTopicOperation.ReconItem(
-            request.getParameter("topicID"),
-            request.getParameter("topicName"),
-            request.getParameter("types").split(",")
-        );
-        
+                request.getParameter("topicID"),
+                request.getParameter("topicName"),
+                request.getParameter("types").split(","));
+
         return new ReconMatchSpecificTopicOperation(
-            engineConfig, 
-            columnName, 
-            match,
-            request.getParameter("identifierSpace"),
-            request.getParameter("schemaSpace")
-        );
+                engineConfig,
+                columnName,
+                match,
+                request.getParameter("identifierSpace"),
+                request.getParameter("schemaSpace"));
     }
 }

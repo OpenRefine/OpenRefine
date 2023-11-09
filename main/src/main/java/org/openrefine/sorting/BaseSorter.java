@@ -40,12 +40,14 @@ import org.openrefine.model.Project;
 import org.openrefine.sorting.Criterion.KeyMaker;
 
 abstract public class BaseSorter {
+
     protected Criterion[] _criteria;
     protected KeyMaker[] _keyMakers;
     protected ComparatorWrapper[] _comparatorWrappers;
     protected List<Object[]> _keys;
 
     public class ComparatorWrapper {
+
         final public int criterionIndex;
         final protected int multiplier;
 

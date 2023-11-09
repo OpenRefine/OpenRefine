@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.database.cmd;
 
 import java.io.IOException;
@@ -35,44 +36,43 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
 import org.openrefine.extension.database.DatabaseServiceException;
 import org.openrefine.extension.database.model.DatabaseInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openrefine.util.ParsingUtilities;
-
 
 public class ConnectCommand extends DatabaseCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("ConnectCommand");
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("ConnectCommand::Post::{}", databaseConfiguration);
         }
-       // ProjectManager.singleton.setBusy(true);
+        // ProjectManager.singleton.setBusy(true);
         try {
-        
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             Writer w = response.getWriter();
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             ObjectMapper mapperObj = new ObjectMapper();
-            
+
             try {
                 DatabaseInfo databaseInfo = DatabaseService.get(databaseConfiguration.getDatabaseType())
                         .connect(databaseConfiguration);
@@ -82,14 +82,14 @@ public class ConnectCommand extends DatabaseCommand {
                 writer.writeStringField("code", "ok");
                 writer.writeStringField("databaseInfo", databaseInfoString);
                 writer.writeEndObject();
-           
+
             } catch (DatabaseServiceException e) {
                 logger.error("ConnectCommand::Post::DatabaseServiceException::{}", e);
-                sendError(HttpStatus.SC_UNAUTHORIZED,response, e);
-            }catch (Exception e) {
+                sendError(HttpStatus.SC_UNAUTHORIZED, response, e);
+            } catch (Exception e) {
                 logger.error("ConnectCommand::Post::Exception::{}", e);
-                sendError(HttpStatus.SC_UNAUTHORIZED,response, e);
-            } finally {  
+                sendError(HttpStatus.SC_UNAUTHORIZED, response, e);
+            } finally {
                 writer.flush();
                 writer.close();
                 w.close();
@@ -97,12 +97,11 @@ public class ConnectCommand extends DatabaseCommand {
         } catch (Exception e) {
             logger.error("ConnectCommand::Post::Exception::{}", e);
             throw new ServletException(e);
-        } 
+        }
 //        finally {
 //           // ProjectManager.singleton.setBusy(false);
 //        }
 
-        
     }
 
 }

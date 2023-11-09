@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr.functions.strings;
 
 import com.google.common.base.CharMatcher;
+
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.PureFunction;
 
@@ -49,16 +50,17 @@ public class Trim extends PureFunction {
         }
         return new EvalError("Invalid parameters");
     }
+
     @Override
     public String getDescription() {
         return "Returns copy of the string, with leading and trailing whitespace omitted.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

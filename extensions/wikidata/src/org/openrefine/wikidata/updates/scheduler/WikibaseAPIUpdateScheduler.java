@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.ArrayList;
@@ -29,20 +30,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
  * A simple scheduler for batches committed via the Wikibase API.
  * 
- * The strategy is quite simple and makes at most two edits per touched item
- * (which is not minimal though). Each update is split between statements making
- * references to new items, and statements not making these references. All
- * updates with no references to new items are done first (which creates all new
- * items), then all other updates are done.
+ * The strategy is quite simple and makes at most two edits per touched item (which is not minimal though). Each update
+ * is split between statements making references to new items, and statements not making these references. All updates
+ * with no references to new items are done first (which creates all new items), then all other updates are done.
  * 
  * @author Antonin Delpeuch
  *
@@ -50,13 +50,11 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
 
     /**
-     * The first part of updates: the ones which create new items without referring
-     * to any other new item.
+     * The first part of updates: the ones which create new items without referring to any other new item.
      */
     private UpdateSequence pointerFreeUpdates;
     /**
-     * The second part of the updates: all existing items, plus all parts of new
-     * items that refer to other new items.
+     * The second part of the updates: all existing items, plus all parts of new items that refer to other new items.
      */
     private UpdateSequence pointerFullUpdates;
     /**
@@ -99,8 +97,8 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
      */
     protected void splitUpdate(ItemUpdate update) {
         ItemUpdateBuilder pointerFreeBuilder = new ItemUpdateBuilder(update.getItemId())
-        		.addLabels(update.getLabels(), true)
-        		.addLabels(update.getLabelsIfNew(), false)
+                .addLabels(update.getLabels(), true)
+                .addLabels(update.getLabelsIfNew(), false)
                 .addDescriptions(update.getDescriptions(), true)
                 .addDescriptions(update.getDescriptionsIfNew(), false)
                 .addAliases(update.getAliases())

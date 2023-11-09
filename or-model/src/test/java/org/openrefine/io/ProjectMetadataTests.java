@@ -24,51 +24,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.io;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.TimeZone;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.commons.io.IOUtils;
-import org.openrefine.ProjectMetadata;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import org.openrefine.ProjectMetadata;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
 
 public class ProjectMetadataTests {
-	  
+
     private String jsonSaveMode = null;
     private String jsonNonSaveMode = null;
-    
+
     @BeforeSuite
     public void setUpJson() throws IOException {
-    	InputStream f = ProjectMetadataTests.class.getClassLoader().getResourceAsStream("example_project_metadata.json");
-		jsonNonSaveMode = IOUtils.toString(f);
-		f = ProjectMetadataTests.class.getClassLoader().getResourceAsStream("example_project_metadata_save_mode.json");
-		jsonSaveMode = IOUtils.toString(f);
+        InputStream f = ProjectMetadataTests.class.getClassLoader().getResourceAsStream("example_project_metadata.json");
+        jsonNonSaveMode = IOUtils.toString(f);
+        f = ProjectMetadataTests.class.getClassLoader().getResourceAsStream("example_project_metadata_save_mode.json");
+        jsonSaveMode = IOUtils.toString(f);
     }
-	
-	@Test
-	public void serializeProjectMetadata() throws IOException {
+
+    @Test
+    public void serializeProjectMetadata() throws IOException {
         ProjectMetadata metadata = ParsingUtilities.mapper.readValue(jsonSaveMode, ProjectMetadata.class);
         TestUtils.isSerializedTo(metadata, jsonNonSaveMode, ParsingUtilities.defaultWriter);
         TestUtils.isSerializedTo(metadata, jsonSaveMode, ParsingUtilities.saveWriter);
-	}
-	
-	@Test
-	public void serializeProjectMetadataInDifferentTimezone() throws JsonParseException, JsonMappingException, IOException {
-    	TimeZone.setDefault(TimeZone.getTimeZone("JST"));
-    	try {
-	        ProjectMetadata metadata = ParsingUtilities.mapper.readValue(jsonSaveMode, ProjectMetadata.class);
-	        TestUtils.isSerializedTo(metadata, jsonNonSaveMode, ParsingUtilities.defaultWriter);
-	        TestUtils.isSerializedTo(metadata, jsonSaveMode, ParsingUtilities.saveWriter);
-    	} finally {
-    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    	}
-	}
+    }
+
+    @Test
+    public void serializeProjectMetadataInDifferentTimezone() throws JsonParseException, JsonMappingException, IOException {
+        TimeZone.setDefault(TimeZone.getTimeZone("JST"));
+        try {
+            ProjectMetadata metadata = ParsingUtilities.mapper.readValue(jsonSaveMode, ProjectMetadata.class);
+            TestUtils.isSerializedTo(metadata, jsonNonSaveMode, ParsingUtilities.defaultWriter);
+            TestUtils.isSerializedTo(metadata, jsonSaveMode, ParsingUtilities.saveWriter);
+        } finally {
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        }
+    }
 }

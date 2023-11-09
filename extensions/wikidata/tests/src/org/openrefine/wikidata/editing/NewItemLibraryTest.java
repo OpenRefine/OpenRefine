@@ -21,12 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.editing;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Collections;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
@@ -35,8 +39,6 @@ import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class NewItemLibraryTest extends WikidataRefineTest {
 
@@ -58,9 +60,9 @@ public class NewItemLibraryTest extends WikidataRefineTest {
     public void testUpdateReconciledCells() {
         Project project = createCSVProject(TestingData.inceptionWithNewCsv);
         StandardReconConfig config = new StandardReconConfig("http://my.endpoint",
-        		"http://my.schema", "http://my.schema", "Q5", "human", true, Collections.emptyList());
+                "http://my.schema", "http://my.schema", "Q5", "human", true, Collections.emptyList());
         project.columnModel.columns.get(0).setReconConfig(config);
-        
+
         project.rows.get(0).cells.set(0, TestingData.makeNewItemCell(3289L, "University of Ljubljana"));
         project.rows.get(1).cells.set(0, TestingData.makeMatchedCell("Q865528", "University of Warwick"));
         project.rows.get(2).cells.set(0, TestingData.makeNewItemCell(1234L, "new uni"));

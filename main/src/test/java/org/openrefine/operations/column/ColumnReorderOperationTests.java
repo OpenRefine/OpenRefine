@@ -24,11 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.column;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Properties;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.AbstractOperation;
@@ -38,11 +44,6 @@ import org.openrefine.operations.column.ColumnReorderOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
 
 public class ColumnReorderOperationTests extends RefineTest {
 
@@ -56,19 +57,19 @@ public class ColumnReorderOperationTests extends RefineTest {
     @BeforeMethod
     public void createProject() {
         project = createProject(
-        		new String[] {
-                "a","b","c"},
-        		new Serializable[] {
-                "1|2","d","e",
-                "3","f","g"});
+                new String[] {
+                        "a", "b", "c" },
+                new Serializable[] {
+                        "1|2", "d", "e",
+                        "3", "f", "g" });
     }
 
     @Test
     public void serializeColumnReorderOperation() {
-        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b","c","a"));
+        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b", "c", "a"));
         TestUtils.isSerializedTo(op, "{\"op\":\"core/column-reorder\","
-		+ "\"description\":\"Reorder columns\","
-		+ "\"columnNames\":[\"b\",\"c\",\"a\"]}", ParsingUtilities.defaultWriter);
+                + "\"description\":\"Reorder columns\","
+                + "\"columnNames\":[\"b\",\"c\",\"a\"]}", ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -84,7 +85,6 @@ public class ColumnReorderOperationTests extends RefineTest {
         Assert.assertEquals(project.rows.get(1).getCellValue(aCol), "3");
         Assert.assertEquals(project.rows.get(1).getCellValue(bCol), "f");
         Assert.assertEquals(project.rows.get(1).getCellValue(cCol), "g");
-
 
         AbstractOperation op = new ColumnReorderOperation(Arrays.asList("a"));
         Process process = op.createProcess(project, new Properties());

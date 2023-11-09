@@ -24,15 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing.facets;
+
+import org.testng.annotations.Test;
 
 import org.openrefine.browsing.DecoratedValue;
 import org.openrefine.browsing.facets.NominalFacetChoice;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class NominalFacetChoiceTests {
+
     @Test
     public void serializeNominalFacetChoice() {
         DecoratedValue value = new DecoratedValue("some string", "some string");
@@ -40,10 +43,10 @@ public class NominalFacetChoiceTests {
         choice.count = 3;
         choice.selected = true;
         TestUtils.isSerializedTo(choice, "{"
-		+ "\"v\":"
-		+ "   {\"v\":\"some string\","
-		+ "    \"l\":\"some string\"},"
-		+ "\"c\":3,"
-		+ "\"s\":true}", ParsingUtilities.defaultWriter);
+                + "\"v\":"
+                + "   {\"v\":\"some string\","
+                + "    \"l\":\"some string\"},"
+                + "\"c\":3,"
+                + "\"s\":true}", ParsingUtilities.defaultWriter);
     }
 }

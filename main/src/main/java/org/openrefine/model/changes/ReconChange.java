@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * 
  */
+
 package org.openrefine.model.changes;
 
 import java.io.IOException;
@@ -52,126 +53,127 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.Pool;
 
 public class ReconChange extends MassCellChange {
+
     final protected ReconConfig _newReconConfig;
     protected ReconStats _newReconStats;
-    
+
     protected ReconConfig _oldReconConfig;
     protected ReconStats _oldReconStats;
-    
+
     public ReconChange(
-        List<CellChange>    cellChanges,
-        String              commonColumnName,
-        ReconConfig         newReconConfig,
-        ReconStats          newReconStats // can be null
+            List<CellChange> cellChanges,
+            String commonColumnName,
+            ReconConfig newReconConfig,
+            ReconStats newReconStats // can be null
     ) {
         super(cellChanges, commonColumnName, false);
         _newReconConfig = newReconConfig;
         _newReconStats = newReconStats;
     }
-    
+
     public ReconChange(
-        CellChange[]    cellChanges,
-        String          commonColumnName,
-        ReconConfig     newReconConfig,
-        ReconStats      newReconStats // can be null
+            CellChange[] cellChanges,
+            String commonColumnName,
+            ReconConfig newReconConfig,
+            ReconStats newReconStats // can be null
     ) {
         super(cellChanges, commonColumnName, false);
         _newReconConfig = newReconConfig;
         _newReconStats = newReconStats;
     }
-    
+
     public ReconChange(
-        CellChange         cellChange,
-        String             commonColumnName,
-        ReconConfig     newReconConfig,
-        ReconStats        newReconStats // can be null
+            CellChange cellChange,
+            String commonColumnName,
+            ReconConfig newReconConfig,
+            ReconStats newReconStats // can be null
     ) {
         super(cellChange, commonColumnName, false);
         _newReconConfig = newReconConfig;
         _newReconStats = newReconStats;
     }
-    
+
     @Override
     public void apply(Project project) {
         synchronized (project) {
             super.apply(project);
-            
+
             Column column = project.columnModel.getColumnByName(_commonColumnName);
-            
+
             if (_newReconStats == null) {
                 _newReconStats = ReconStats.create(project, column.getCellIndex());
             }
-            
+
             _oldReconConfig = column.getReconConfig();
             _oldReconStats = column.getReconStats();
-            
+
             column.setReconConfig(_newReconConfig);
             column.setReconStats(_newReconStats);
-            
+
             column.clearPrecomputes();
             ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
         }
     }
-    
+
     @Override
     public void revert(Project project) {
         synchronized (project) {
             super.revert(project);
-            
+
             Column column = project.columnModel.getColumnByName(_commonColumnName);
             column.setReconConfig(_oldReconConfig);
             column.setReconStats(_oldReconStats);
-            
+
             column.clearPrecomputes();
             ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
         }
     }
-    
+
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("newReconConfig="); 
+        writer.write("newReconConfig=");
         if (_newReconConfig != null) {
-            _newReconConfig.save(writer); 
+            _newReconConfig.save(writer);
         }
         writer.write('\n');
-        
+
         writer.write("newReconStats=");
         if (_newReconStats != null) {
             _newReconStats.save(writer);
         }
         writer.write('\n');
-        
+
         writer.write("oldReconConfig=");
         if (_oldReconConfig != null) {
-            _oldReconConfig.save(writer); 
+            _oldReconConfig.save(writer);
         }
         writer.write('\n');
-        
+
         writer.write("oldReconStats=");
         if (_oldReconStats != null) {
-            _oldReconStats.save(writer); 
+            _oldReconStats.save(writer);
         }
         writer.write('\n');
-        
+
         super.save(writer, options);
     }
-    
+
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         ReconConfig newReconConfig = null;
         ReconStats newReconStats = null;
         ReconConfig oldReconConfig = null;
         ReconStats oldReconStats = null;
-        
+
         String commonColumnName = null;
         CellChange[] cellChanges = null;
-        
+
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
             int equal = line.indexOf('=');
-            
+
             CharSequence field = line.subSequence(0, equal);
             String value = line.substring(equal + 1);
-            
+
             if ("newReconConfig".equals(field)) {
                 if (value.length() > 0) {
                     newReconConfig = ReconConfig.reconstruct(value);
@@ -192,20 +194,20 @@ public class ReconChange extends MassCellChange {
                 commonColumnName = value;
             } else if ("cellChangeCount".equals(field)) {
                 int cellChangeCount = Integer.parseInt(value);
-                
+
                 cellChanges = new CellChange[cellChangeCount];
                 for (int i = 0; i < cellChangeCount; i++) {
                     cellChanges[i] = CellChange.load(reader, pool);
                 }
             }
         }
-        
+
         ReconChange change = new ReconChange(
                 cellChanges, commonColumnName, newReconConfig, newReconStats);
-        
+
         change._oldReconConfig = oldReconConfig;
         change._oldReconStats = oldReconStats;
-        
+
         return change;
     }
 }

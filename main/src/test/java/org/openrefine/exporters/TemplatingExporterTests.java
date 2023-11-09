@@ -40,6 +40,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectManagerStub;
 import org.openrefine.ProjectMetadata;
@@ -52,12 +59,6 @@ import org.openrefine.model.Column;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 public class TemplatingExporterTests extends RefineTest {
 
@@ -75,18 +76,18 @@ public class TemplatingExporterTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     StringWriter writer;
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     WriterExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new TemplatingExporter();
         writer = new StringWriter();
         ProjectManager.singleton = new ProjectManagerStub();
@@ -99,7 +100,7 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         writer = null;
         ProjectManager.singleton.deleteProject(project.id);
@@ -107,6 +108,7 @@ public class TemplatingExporterTests extends RefineTest {
         engine = null;
         options = null;
     }
+
     @Test
     public void exportEmptyTemplate(){
 
@@ -126,14 +128,13 @@ public class TemplatingExporterTests extends RefineTest {
 
         Assert.assertEquals(writer.toString(), prefix + suffix);
     }
-    
+
     @Test
-    public void exportSimpleTemplate(){
+    public void exportSimpleTemplate() {
         CreateGrid(2, 2);
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
 //      String template = "boilerplate${column0}{{4+3}}${column1}";
 
-        
 //        when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //        when(options.getProperty("sorting")).thenReturn(""); //optional
         when(options.getProperty("template")).thenReturn(template);
@@ -148,13 +149,12 @@ public class TemplatingExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), 
-                prefix 
-                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
-                + rowPrefix + "row1cell0" + cellSeparator + "row1cell1" 
-                + suffix);
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
+                        + rowPrefix + "row1cell0" + cellSeparator + "row1cell1"
+                        + suffix);
     }
-
 
     @Test()
     public void exportTemplateWithEmptyCells(){
@@ -214,11 +214,11 @@ public class TemplatingExporterTests extends RefineTest {
                 + suffix);
 
     }
-    
-    //helper methods
 
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
+    // helper methods
+
+    protected void CreateColumns(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
@@ -227,12 +227,12 @@ public class TemplatingExporterTests extends RefineTest {
         }
     }
 
-    protected void CreateGrid(int noOfRows, int noOfColumns){
+    protected void CreateGrid(int noOfRows, int noOfColumns) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
             }
             project.rows.add(row);

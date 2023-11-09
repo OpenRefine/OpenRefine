@@ -24,11 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing.facets;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
@@ -41,15 +47,9 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 
 public class TimeRangeFacetTests extends RefineTest {
-    
+
     public static String facetJson = "{"
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
@@ -69,44 +69,44 @@ public class TimeRangeFacetTests extends RefineTest {
             + "\"nonTimeCount\":1,"
             + "\"blankCount\":0,"
             + "\"errorCount\":0}";
-    
-    public static String configJson = "{\n" + 
-            "          \"selectNonTime\": true,\n" + 
-            "          \"expression\": \"value\",\n" + 
-            "          \"selectBlank\": true,\n" + 
-            "          \"selectError\": true,\n" + 
-            "          \"selectTime\": true,\n" + 
-            "          \"name\": \"my column\",\n" + 
-            "          \"from\": 1262443349000,\n" + 
-            "          \"to\": 1514966950000,\n" + 
-            "          \"type\": \"core/timerange\",\n" + 
-            "          \"columnName\": \"my column\"\n" + 
+
+    public static String configJson = "{\n" +
+            "          \"selectNonTime\": true,\n" +
+            "          \"expression\": \"value\",\n" +
+            "          \"selectBlank\": true,\n" +
+            "          \"selectError\": true,\n" +
+            "          \"selectTime\": true,\n" +
+            "          \"name\": \"my column\",\n" +
+            "          \"from\": 1262443349000,\n" +
+            "          \"to\": 1514966950000,\n" +
+            "          \"type\": \"core/timerange\",\n" +
+            "          \"columnName\": \"my column\"\n" +
             "        }";
-    
+
     @BeforeTest
     public void registerFacetConfig() {
-    	FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
+        FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
-    
+
     @Test
     public void serializeTimeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeTimeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(new String[] {"my column"},
-        		new Serializable[] {
-                "placeholder",
-                "nontime",
-                "placeholder",
-                "placeholder"});
+        Project project = createProject(new String[] { "my column" },
+                new Serializable[] {
+                        "placeholder",
+                        "nontime",
+                        "placeholder",
+                        "placeholder" });
         project.rows.get(0).cells.set(0, new Cell(OffsetDateTime.parse("2018-01-03T08:09:10Z"), null));
         project.rows.get(2).cells.set(0, new Cell(OffsetDateTime.parse("2008-01-03T03:04:05Z"), null));
         project.rows.get(3).cells.set(0, new Cell(OffsetDateTime.parse("2012-04-05T02:00:01Z"), null));
-        
+
         Engine engine = new Engine(project);
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         TimeRangeFacet facet = config.apply(project);

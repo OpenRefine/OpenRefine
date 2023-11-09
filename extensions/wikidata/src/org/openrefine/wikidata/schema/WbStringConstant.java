@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.wikidata.schema;
 
-import org.apache.commons.lang.Validate;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.StringValue;
+package org.openrefine.wikidata.schema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
 public class WbStringConstant implements WbExpression<StringValue> {
 
@@ -51,15 +51,15 @@ public class WbStringConstant implements WbExpression<StringValue> {
     public String getValue() {
         return value;
     }
-    
+
     @Override
     public boolean equals(Object other) {
-        if(other == null || !WbStringConstant.class.isInstance(other)) {
+        if (other == null || !WbStringConstant.class.isInstance(other)) {
             return false;
         }
-        return value.equals(((WbStringConstant)other).getValue());
+        return value.equals(((WbStringConstant) other).getValue());
     }
-    
+
     @Override
     public int hashCode() {
         return value.hashCode();

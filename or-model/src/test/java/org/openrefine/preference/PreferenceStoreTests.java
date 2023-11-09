@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.preference;
 
 import static org.testng.Assert.assertFalse;
@@ -31,15 +32,16 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.Test;
+
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class PreferenceStoreTests {
+
     public static String json = "{"
             + "\"entries\":{"
             + "   \"reconciliation.standardServices\":["
@@ -48,10 +50,10 @@ public class PreferenceStoreTests {
             + "   \"scripting.starred-expressions\":{\"class\":\"org.openrefine.preference.TopList\",\"top\":2147483647,\"list\":[]},"
             + "   \"scripting.expressions\":{\"class\":\"org.openrefine.preference.TopList\",\"top\":100,\"list\":[]}"
             + "}}";
-    
+
     @Test
     public void serializePreferenceStore() throws JsonParseException, JsonMappingException, IOException {
- 
+
         String jsonAfter = "{"
                 + "\"entries\":{"
                 + "   \"reconciliation.standardServices\":["
@@ -68,5 +70,5 @@ public class PreferenceStoreTests {
         TestUtils.isSerializedTo(prefStore, jsonAfter, ParsingUtilities.defaultWriter);
         assertFalse(prefStore.isDirty());
     }
-    
+
 }

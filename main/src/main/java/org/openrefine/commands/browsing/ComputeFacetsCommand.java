@@ -44,21 +44,21 @@ import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 
 public class ComputeFacetsCommand extends Command {
-	
+
     /**
-     * This command uses POST (probably to allow for larger parameters) but does not actually modify any state
-     * so we do not add CSRF protection to it.
+     * This command uses POST (probably to allow for larger parameters) but does not actually modify any state so we do
+     * not add CSRF protection to it.
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-            
+
             engine.computeFacets();
-            
+
             respondJSON(response, engine);
         } catch (Exception e) {
             respondException(response, e);

@@ -39,10 +39,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.commands.Command;
-import org.openrefine.importing.ImportingManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.openrefine.commands.Command;
+import org.openrefine.importing.ImportingManager;
 
 public class CreateImportingJobCommand extends Command {
 
@@ -51,13 +52,13 @@ public class CreateImportingJobCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         long id = ImportingManager.createJob().id;
-        
+
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
         respond(response, "{ \"jobID\" : " + id + " }");

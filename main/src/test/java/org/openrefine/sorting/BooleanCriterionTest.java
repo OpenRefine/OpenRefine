@@ -24,25 +24,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.sorting;
 
 import java.io.IOException;
 
+import org.testng.annotations.Test;
+
 import org.openrefine.sorting.Criterion;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class BooleanCriterionTest {
+
     @Test
     public void serializeBooleanCriterion() throws IOException {
-        String json = 
-                "        {\n" + 
-                "          \"errorPosition\": 1,\n" + 
-                "          \"valueType\": \"boolean\",\n" + 
-                "          \"column\": \"start_year\",\n" + 
-                "          \"blankPosition\": 2,\n" + 
-                "          \"reverse\": false\n" + 
+        String json = "        {\n" +
+                "          \"errorPosition\": 1,\n" +
+                "          \"valueType\": \"boolean\",\n" +
+                "          \"column\": \"start_year\",\n" +
+                "          \"blankPosition\": 2,\n" +
+                "          \"reverse\": false\n" +
                 "        }\n";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json, ParsingUtilities.defaultWriter);
     }

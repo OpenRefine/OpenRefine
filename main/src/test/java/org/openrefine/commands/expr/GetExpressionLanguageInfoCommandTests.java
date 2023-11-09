@@ -24,19 +24,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.commands.expr;
 
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.openrefine.commands.expr.GetExpressionLanguageInfoCommand;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import org.openrefine.commands.expr.GetExpressionLanguageInfoCommand;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
 
 public class GetExpressionLanguageInfoCommandTests extends ExpressionCommandTestBase {
 
@@ -44,19 +45,20 @@ public class GetExpressionLanguageInfoCommandTests extends ExpressionCommandTest
     public void setUp() {
         command = new GetExpressionLanguageInfoCommand();
     }
-    
+
     @Test
     public void testJsonResponse() throws ServletException, IOException {
 
         initWorkspace(null, null);
-        
+
         command.doGet(request, response);
         String jsonResponse = writer.toString();
         JsonNode result = ParsingUtilities.mapper.readValue(jsonResponse, JsonNode.class);
-        TestUtils.assertEqualAsJson("{\n" + 
-                "           \"description\" : \"Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array.\",\n" + 
-                "           \"params\" : \"expression a, variable v, expression test\",\n" + 
-                "           \"returns\" : \"array\"\n" + 
+        TestUtils.assertEqualAsJson("{\n" +
+                "           \"description\" : \"Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array.\",\n"
+                +
+                "           \"params\" : \"expression a, variable v, expression test\",\n" +
+                "           \"returns\" : \"array\"\n" +
                 "         }", result.get("controls").get("filter").toString());
     }
 }

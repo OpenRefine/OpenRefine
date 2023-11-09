@@ -24,29 +24,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model;
+
+import org.testng.annotations.Test;
 
 import org.openrefine.model.ColumnGroup;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class ColumnGroupTests {
-    
+
     String json = "{"
             + "\"startColumnIndex\":2,"
             + "\"columnSpan\":3,"
             + "\"keyColumnIndex\":1"
             + "}";
+
     @Test
     public void serializeColumnGroup() throws Exception {
         TestUtils.isSerializedTo(ColumnGroup.load(json), json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeColumnGroupWithSubgroups() throws Exception {
-        ColumnGroup cg = new ColumnGroup(2,3,1);
-        ColumnGroup subCg = new ColumnGroup(2,2,1);
+        ColumnGroup cg = new ColumnGroup(2, 3, 1);
+        ColumnGroup subCg = new ColumnGroup(2, 2, 1);
         cg.subgroups.add(subCg);
         String fullJson = "{"
                 + "\"startColumnIndex\":2,"
@@ -58,15 +61,15 @@ public class ColumnGroupTests {
                 + "   \"keyColumnIndex\":1"
                 + "}]"
                 + "}";
-        if(true) {
-		    TestUtils.isSerializedTo(cg, json, ParsingUtilities.saveWriter);
-		} else {
-			TestUtils.isSerializedTo(cg, json, ParsingUtilities.defaultWriter);
-		}
-        if(false) {
-		    TestUtils.isSerializedTo(cg, fullJson, ParsingUtilities.saveWriter);
-		} else {
-			TestUtils.isSerializedTo(cg, fullJson, ParsingUtilities.defaultWriter);
-		}
+        if (true) {
+            TestUtils.isSerializedTo(cg, json, ParsingUtilities.saveWriter);
+        } else {
+            TestUtils.isSerializedTo(cg, json, ParsingUtilities.defaultWriter);
+        }
+        if (false) {
+            TestUtils.isSerializedTo(cg, fullJson, ParsingUtilities.saveWriter);
+        } else {
+            TestUtils.isSerializedTo(cg, fullJson, ParsingUtilities.defaultWriter);
+        }
     }
 }

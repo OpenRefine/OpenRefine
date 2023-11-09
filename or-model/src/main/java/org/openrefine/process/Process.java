@@ -33,26 +33,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.process;
 
-import org.openrefine.history.HistoryEntry;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public abstract class Process  {
+import org.openrefine.history.HistoryEntry;
+
+public abstract class Process {
+
     @JsonProperty("immediate")
     abstract public boolean isImmediate();
-    
+
     @JsonIgnore
     abstract public boolean isRunning();
+
     @JsonIgnore
     abstract public boolean isDone();
-    
+
     @JsonIgnore
     abstract public HistoryEntry performImmediate() throws Exception;
-    
+
     abstract public void startPerforming(ProcessManager manager);
+
     abstract public void cancel();
-    
+
     @JsonProperty("id")
     public long getId() {
         return hashCode();

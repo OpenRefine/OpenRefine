@@ -21,11 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.LineNumberReader;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.Change;
@@ -33,8 +37,6 @@ import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Recon;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.testing.TestingData;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class PerformWikibaseEditsOperationTest extends OperationTest {
 
@@ -54,8 +56,8 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
             throws Exception {
         return TestingData.jsonFromFile("operations/perform-edits.json");
     }
-    
-    @Test(expectedExceptions=IllegalArgumentException.class)
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructor() {
         new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "");
     }

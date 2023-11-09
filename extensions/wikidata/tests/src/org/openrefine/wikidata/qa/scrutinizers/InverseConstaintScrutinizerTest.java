@@ -21,15 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
+
+import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 import org.openrefine.wikidata.qa.MockConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
-import org.testng.annotations.Test;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
 
@@ -51,7 +53,7 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
     }
-    
+
     @Test
     public void testSymmetric() {
         ItemUpdate update = new ItemUpdateBuilder(idA)

@@ -21,10 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
 import java.io.Serializable;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.ModelException;
@@ -35,8 +39,6 @@ import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 
 public class WbExpressionTest<T> extends WikidataRefineTest {
 

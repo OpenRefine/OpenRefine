@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.PureFunction;
@@ -50,7 +51,7 @@ public class InArray extends PureFunction {
         if (args.length == 2) {
             Object v = args[0];
             Object s = args[1];
-            
+
             if (v != null && s != null && s instanceof String) {
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
@@ -74,12 +75,12 @@ public class InArray extends PureFunction {
     public String getDescription() {
         return "Checks if array a contains string s";
     }
-    
+
     @Override
     public String getParams() {
         return "array a, string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

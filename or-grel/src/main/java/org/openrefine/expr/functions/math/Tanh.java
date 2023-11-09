@@ -51,12 +51,12 @@ public class Tanh extends PureFunction {
     public String getDescription() {
         return "Returns the hyperbolic tangent of a value";
     }
-    
+
     @Override
     public String getParams() {
         return "number d";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

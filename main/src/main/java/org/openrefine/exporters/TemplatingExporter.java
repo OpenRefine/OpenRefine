@@ -37,12 +37,14 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.FilteredRecords;
 import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RecordVisitor;
 import org.openrefine.browsing.RowVisitor;
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Project;
 import org.openrefine.sorting.SortingConfig;
@@ -52,16 +54,15 @@ import org.openrefine.templating.Parser;
 import org.openrefine.templating.Template;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class TemplatingExporter implements WriterExporter {
 
     @Override
     public String getContentType() {
         return "application/x-unknown";
     }
-    
+
     protected static class TemplateConfig {
+
         @JsonProperty("template")
         protected String template;
         @JsonProperty("prefix")
@@ -70,7 +71,7 @@ public class TemplatingExporter implements WriterExporter {
         protected String suffix;
         @JsonProperty("separator")
         protected String separator;
-        
+
         protected TemplateConfig(
                 String template, String prefix,
                 String suffix, String separator) {
@@ -85,63 +86,63 @@ public class TemplatingExporter implements WriterExporter {
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;
-        
+
         String sortingJson = options.getProperty("sorting");
-        
+
         String templateString = options.getProperty("template");
         String prefixString = options.getProperty("prefix");
         String suffixString = options.getProperty("suffix");
         String separatorString = options.getProperty("separator");
-        
+
         Template template;
         try {
             template = Parser.parse(templateString);
         } catch (ParsingException e) {
             throw new IOException("Missing or bad template", e);
         }
-        
+
         template.setPrefix(prefixString);
         template.setSuffix(suffixString);
         template.setSeparator(separatorString);
-        
+
         if (!"true".equals(options.getProperty("preview"))) {
             TemplateConfig config = new TemplateConfig(templateString, prefixString,
                     suffixString, separatorString);
             project.getMetadata().getPreferenceStore().put("exporters.templating.template",
                     ParsingUtilities.defaultWriter.writeValueAsString(config));
         }
-        
+
         if (engine.getMode() == Mode.RowBased) {
             FilteredRows filteredRows = engine.getAllFilteredRows();
             RowVisitor visitor = template.getRowVisitor(writer, limit);
-            
+
             if (sortingJson != null) {
                 SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
                 SortingRowVisitor srv = new SortingRowVisitor(visitor);
                 srv.initializeFromConfig(project, sorting);
-                
+
                 if (srv.hasCriteria()) {
                     visitor = srv;
                 }
             }
-            
+
             filteredRows.accept(project, visitor);
         } else {
             FilteredRecords filteredRecords = engine.getFilteredRecords();
             RecordVisitor visitor = template.getRecordVisitor(writer, limit);
-            
+
             if (sortingJson != null) {
                 SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
                 SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
                 srv.initializeFromConfig(project, sorting);
-                
+
                 if (srv.hasCriteria()) {
                     visitor = srv;
                 }
             }
-            
+
             filteredRecords.accept(project, visitor);
         }
     }
-    
+
 }

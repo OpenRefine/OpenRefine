@@ -33,30 +33,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnRenameChange;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ColumnRenameOperation extends AbstractOperation {
+
     final protected String _oldColumnName;
     final protected String _newColumnName;
 
     @JsonCreator
     public ColumnRenameOperation(
-        @JsonProperty("oldColumnName")
-        String oldColumnName,
-        @JsonProperty("newColumnName")
-        String newColumnName
-    ) {
+            @JsonProperty("oldColumnName") String oldColumnName,
+            @JsonProperty("newColumnName") String newColumnName) {
         _oldColumnName = oldColumnName;
         _newColumnName = newColumnName;
     }
-    
+
     @JsonProperty("oldColumnName")
     public String getOldColumnName() {
         return _oldColumnName;
@@ -80,9 +78,9 @@ public class ColumnRenameOperation extends AbstractOperation {
         if (project.columnModel.getColumnByName(_newColumnName) != null) {
             throw new Exception("Another column already named " + _newColumnName);
         }
-        
+
         Change change = new ColumnRenameChange(_oldColumnName, _newColumnName);
-        
+
         return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnRenameOperation.this, change);
     }
 }

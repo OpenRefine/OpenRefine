@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.when;
@@ -30,9 +31,10 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.testng.annotations.Test;
+
 import org.openrefine.commands.Command;
 import org.openrefine.util.ParsingUtilities;
-import org.testng.annotations.Test;
 
 public abstract class SchemaCommandTest extends CommandTest {
 

@@ -21,21 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
+import org.openrefine.wikidata.qa.QAWarning;
+
 /**
- * A scrutinizer that detects incorrect formats in text values (mostly
- * identifiers).
+ * A scrutinizer that detects incorrect formats in text values (mostly identifiers).
  * 
  * @author Antonin Delpeuch
  *
@@ -51,8 +52,8 @@ public class FormatScrutinizer extends SnakScrutinizer {
     }
 
     /**
-     * Loads the regex for a property and compiles it to a pattern (this is cached
-     * upstream, plus we are doing it only once per property and batch).
+     * Loads the regex for a property and compiles it to a pattern (this is cached upstream, plus we are doing it only
+     * once per property and batch).
      * 
      * @param pid
      *            the id of the property to fetch the constraints for

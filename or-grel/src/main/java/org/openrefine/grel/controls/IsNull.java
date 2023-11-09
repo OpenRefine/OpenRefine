@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.grel.controls;
 
 public class IsNull extends IsTest {
+
     @Override
     public String getDescription() {
         return "Returns whether o is null";

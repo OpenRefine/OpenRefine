@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.editing;
 
 import java.io.IOException;
@@ -30,10 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -43,6 +40,11 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+
+import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 
 /**
  * Schedules and performs a list of updates to items via the API.
@@ -69,9 +71,8 @@ public class EditBatchProcessor {
     private int batchSize;
 
     /**
-     * Initiates the process of pushing a batch of updates to Wikibase. This
-     * schedules the updates and is a prerequisite for calling
-     * {@link performOneEdit}.
+     * Initiates the process of pushing a batch of updates to Wikibase. This schedules the updates and is a prerequisite
+     * for calling {@link performOneEdit}.
      * 
      * @param fetcher
      *            the fetcher to use to retrieve the current state of items
@@ -86,8 +87,7 @@ public class EditBatchProcessor {
      * @param tags
      *            the list of tags to apply to all edits
      * @param batchSize
-     *            the number of items that should be retrieved in one go from the
-     *            API
+     *            the number of items that should be retrieved in one go from the API
      */
     public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<ItemUpdate> updates,
             NewItemLibrary library, String summary, List<String> tags, int batchSize) {
@@ -134,11 +134,12 @@ public class EditBatchProcessor {
         // Rewrite mentions to new items
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getItemId());
         try {
-        	update = rewriter.rewrite(update);
+            update = rewriter.rewrite(update);
         } catch (NewItemNotCreatedYetException e) {
-        	logger.warn("Failed to rewrite update on entity "+update.getItemId()+". Missing entity: "+e.getMissingEntity()+". Skipping update.");
-        	batchCursor++;
-        	return;
+            logger.warn("Failed to rewrite update on entity " + update.getItemId() + ". Missing entity: " + e.getMissingEntity()
+                    + ". Skipping update.");
+            batchCursor++;
+            return;
         }
 
         try {
@@ -160,12 +161,13 @@ public class EditBatchProcessor {
                 ItemDocument currentDocument = (ItemDocument) currentDocs.get(update.getItemId().getId());
                 List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
                 labels.addAll(update.getLabelsIfNew().stream()
-                      .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
+                        .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
                 List<MonolingualTextValue> descriptions = update.getDescriptions().stream().collect(Collectors.toList());
                 descriptions.addAll(update.getDescriptionsIfNew().stream()
-                        .filter(desc -> !currentDocument.getDescriptions().containsKey(desc.getLanguageCode())).collect(Collectors.toList()));
+                        .filter(desc -> !currentDocument.getDescriptions().containsKey(desc.getLanguageCode()))
+                        .collect(Collectors.toList()));
                 editor.updateTermsStatements(currentDocument,
-                		labels,
+                        labels,
                         descriptions,
                         update.getAliases().stream().collect(Collectors.toList()),
                         new ArrayList<MonolingualTextValue>(),
@@ -176,7 +178,7 @@ public class EditBatchProcessor {
         } catch (MediaWikiApiErrorException e) {
             // TODO find a way to report these errors to the user in a nice way
             logger.warn("MediaWiki error while editing [" + e.getErrorCode()
-            + "]: " + e.getErrorMessage());
+                    + "]: " + e.getErrorMessage());
         } catch (IOException e) {
             logger.warn("IO error while editing: " + e.getMessage());
         }
@@ -225,10 +227,10 @@ public class EditBatchProcessor {
                 currentDocs = fetcher.getEntityDocuments(qidsToFetch);
             } catch (MediaWikiApiErrorException e) {
                 logger.warn("MediaWiki error while fetching documents to edit [" + e.getErrorCode()
-                                                + "]: " + e.getErrorMessage());
+                        + "]: " + e.getErrorMessage());
             } catch (IOException e) {
                 logger.warn("IO error while fetching documents to edit: " + e.getMessage());
-			}
+            }
             retries--;
             sleepTime *= backoff;
             if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0) {
@@ -237,7 +239,7 @@ public class EditBatchProcessor {
             }
         }
         if (currentDocs == null) {
-            logger.warn("Giving up on fetching documents to edit. Skipping "+remainingEdits()+" remaining edits.");
+            logger.warn("Giving up on fetching documents to edit. Skipping " + remainingEdits() + " remaining edits.");
             globalCursor = scheduled.size();
         }
         batchCursor = 0;

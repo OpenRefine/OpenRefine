@@ -46,17 +46,17 @@ public class Floor extends PureFunction {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns the floor of a number as an integer";
     }
-    
+
     @Override
     public String getParams() {
         return "number d";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

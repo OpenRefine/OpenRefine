@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.operations;
 
 import java.io.IOException;
@@ -28,6 +29,9 @@ import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Properties;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import org.openrefine.history.Change;
 import org.openrefine.model.AbstractOperation;
@@ -37,8 +41,6 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.Pool;
 import org.openrefine.util.TestUtils;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public abstract class OperationTest extends WikidataRefineTest {
 

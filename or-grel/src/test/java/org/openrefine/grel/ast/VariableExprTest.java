@@ -1,3 +1,4 @@
+
 package org.openrefine.grel.ast;
 
 import static org.testng.Assert.assertEquals;
@@ -8,7 +9,7 @@ import org.testng.annotations.Test;
 import org.openrefine.expr.Evaluable;
 
 public class VariableExprTest extends ExprTestBase {
-    
+
     @Test
     public void testBaseColumn() {
         Evaluable ev = new VariableExpr("value");
@@ -18,7 +19,7 @@ public class VariableExprTest extends ExprTestBase {
         ev = new VariableExpr("recon");
         assertEquals(ev.getColumnDependencies(baseColumn), set(baseColumn));
     }
-    
+
     @Test
     public void testUnanalyzable() {
         Evaluable ev = new VariableExpr("cells");
@@ -28,7 +29,7 @@ public class VariableExprTest extends ExprTestBase {
         ev = new VariableExpr("record");
         assertNull(ev.getColumnDependencies(baseColumn));
     }
-    
+
     @Test
     public void testSingleton() {
         Evaluable ev = new VariableExpr("foo");

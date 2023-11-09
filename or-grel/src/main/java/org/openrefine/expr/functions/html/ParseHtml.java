@@ -51,20 +51,18 @@ public class ParseHtml extends PureFunction {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
-
     @Override
     public String getDescription() {
         return "Parses a string as HTML";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "HTML object";
     }
 }
-

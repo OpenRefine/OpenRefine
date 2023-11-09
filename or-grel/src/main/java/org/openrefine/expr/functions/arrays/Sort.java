@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.PureFunction;
@@ -50,25 +51,25 @@ public class Sort extends PureFunction {
     public Object call(Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
                     Object[] r = a.clone();
-                    
+
                     Arrays.sort(r, 0, r.length);
-                    
+
                     return r;
                 } else if (v instanceof ArrayNode) {
                     Object[] r = JSONUtilities.toArray((ArrayNode) v);
-                    
+
                     Arrays.sort(r, 0, r.length);
-                    
+
                     return r;
                 } else if (v instanceof List<?>) {
                     List<? extends Comparable<Object>> a = (List<? extends Comparable<Object>>) v;
                     Collections.sort(a);
-                    
+
                     return a;
                 }
             }
@@ -80,12 +81,12 @@ public class Sort extends PureFunction {
     public String getDescription() {
         return "Sorts array a";
     }
-    
+
     @Override
     public String getParams() {
         return "array a";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

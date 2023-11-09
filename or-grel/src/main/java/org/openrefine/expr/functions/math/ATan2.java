@@ -43,7 +43,7 @@ public class ATan2 extends PureFunction {
     public Object call(Object[] args) {
         if (args.length == 2 && args[0] != null && args[0] instanceof Number
                 && args[1] != null && args[1] instanceof Number) {
-            return Math.atan2(((Number) args[0]).doubleValue(),((Number) args[1]).doubleValue());
+            return Math.atan2(((Number) args[0]).doubleValue(), ((Number) args[1]).doubleValue());
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
@@ -52,12 +52,12 @@ public class ATan2 extends PureFunction {
     public String getDescription() {
         return "Converts rectangular coordinates (x, y) to polar (r, theta)";
     }
-    
+
     @Override
     public String getParams() {
         return "number x, number y";
     }
-    
+
     @Override
     public String getReturns() {
         return "number theta";

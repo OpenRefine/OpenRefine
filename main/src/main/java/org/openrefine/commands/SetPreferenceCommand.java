@@ -40,35 +40,34 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.model.Project;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 public class SetPreferenceCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         Project project = request.getParameter("project") != null ? getProject(request) : null;
-        PreferenceStore ps = project != null ? 
-                project.getMetadata().getPreferenceStore() : 
-                ProjectManager.singleton.getPreferenceStore();
-                
+        PreferenceStore ps = project != null ? project.getMetadata().getPreferenceStore() : ProjectManager.singleton.getPreferenceStore();
+
         String prefName = request.getParameter("name");
         String valueString = request.getParameter("value");
-        
+
         try {
             JsonNode o = valueString == null ? null : ParsingUtilities.mapper.readTree(valueString);
-            
+
             ps.put(prefName, PreferenceStore.loadObject(o));
-            
+
             respondJSON(response, Collections.singletonMap("code", "ok"));
         } catch (IOException e) {
             respondException(response, e);

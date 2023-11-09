@@ -45,13 +45,14 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 
 public class CancelImportingJobCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         long jobID = Long.parseLong(request.getParameter("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
@@ -59,9 +60,9 @@ public class CancelImportingJobCommand extends Command {
             HttpUtilities.respond(response, "error", "No such import job");
         } else {
             job.canceled = true;
-            
+
             ImportingManager.disposeJob(jobID);
-            
+
             HttpUtilities.respond(response, "ok", "Job canceled");
         }
     }

@@ -34,29 +34,29 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.commands.Command;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class GetAllProjectTagsCommand extends Command {
-    
-  public static class AllProjectsTags  {
-      
-    @JsonProperty("tags")
-    protected Set<String> tags;
-    
-    protected AllProjectsTags(Set<String> tags) {
-        this.tags = tags;
+
+    public static class AllProjectsTags {
+
+        @JsonProperty("tags")
+        protected Set<String> tags;
+
+        protected AllProjectsTags(Set<String> tags) {
+            this.tags = tags;
+        }
     }
-  }
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-     Map<String, Integer> tagMap = ProjectManager.singleton.getAllProjectTags();
-     Set<String> tags = tagMap == null ? Collections.emptySet() : tagMap.keySet();
-     respondJSON(response, new AllProjectsTags(tags));
-  }
+        Map<String, Integer> tagMap = ProjectManager.singleton.getAllProjectTags();
+        Set<String> tags = tagMap == null ? Collections.emptySet() : tagMap.keySet();
+        respondJSON(response, new AllProjectsTags(tags));
+    }
 }

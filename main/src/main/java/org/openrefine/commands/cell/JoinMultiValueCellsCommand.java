@@ -47,24 +47,25 @@ import org.openrefine.operations.cell.MultiValuedCellJoinOperation;
 import org.openrefine.process.Process;
 
 public class JoinMultiValueCellsCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
-            
+
             String columnName = request.getParameter("columnName");
             String keyColumnName = request.getParameter("keyColumnName");
             String separator = request.getParameter("separator");
-            
+
             AbstractOperation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
             Process process = op.createProcess(project, new Properties());
-            
+
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);

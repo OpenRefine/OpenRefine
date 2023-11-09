@@ -37,12 +37,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.tools.tar.TarOutputStream;
+
+import org.openrefine.HistoryEntryManagerStub;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.Project;
-
-import org.openrefine.HistoryEntryManagerStub;
 
 /**
  * Stub used to avoid saves and stub HistoryEntryManager
@@ -94,9 +94,9 @@ public class ProjectManagerStub extends ProjectManager {
         // empty
     }
 
-    //Overridden to make public for testing
+    // Overridden to make public for testing
     @Override
-    public void saveProjects(boolean allModified){
+    public void saveProjects(boolean allModified) {
         super.saveProjects(allModified);
     }
 

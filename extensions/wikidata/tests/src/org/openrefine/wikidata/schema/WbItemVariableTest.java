@@ -21,17 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
+
+import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.Recon;
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
-import org.testng.annotations.Test;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
 
@@ -66,7 +68,7 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }
-    
+
     @Test
     public void testInvalidSpace() {
         Recon recon = Recon.makeWikidataRecon(34989L);

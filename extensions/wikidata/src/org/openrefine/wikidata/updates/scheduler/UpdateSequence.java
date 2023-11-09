@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.ArrayList;
@@ -29,12 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
+import org.openrefine.wikidata.updates.ItemUpdate;
+
 /**
- * Helper class to store a list of updates where each subject appears at most
- * once. It preserves order of insertion.
+ * Helper class to store a list of updates where each subject appears at most once. It preserves order of insertion.
  * 
  * @author Antonin Delpeuch
  */
@@ -50,8 +51,7 @@ public class UpdateSequence {
     private Map<ItemIdValue, Integer> index = new HashMap<>();
 
     /**
-     * Adds a new update to the list, merging it with any existing one with the same
-     * subject.
+     * Adds a new update to the list, merging it with any existing one with the same subject.
      * 
      * @param update
      */

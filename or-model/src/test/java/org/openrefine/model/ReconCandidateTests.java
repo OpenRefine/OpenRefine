@@ -24,14 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model;
+
+import org.testng.annotations.Test;
 
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class ReconCandidateTests {
+
     @Test
     public void serializeReconCandidateInt() throws Exception {
         String json = "{\"id\":\"Q49213\","
@@ -41,7 +44,7 @@ public class ReconCandidateTests {
         ReconCandidate rc = ReconCandidate.loadStreaming(json);
         TestUtils.isSerializedTo(rc, json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeReconCandidateDouble() throws Exception {
         String json = "{\"id\":\"Q49213\","

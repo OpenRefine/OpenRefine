@@ -1,3 +1,4 @@
+
 package org.openrefine.extension.database.cmd;
 
 import static org.mockito.Mockito.when;
@@ -10,28 +11,27 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openrefine.extension.database.DBExtensionTests;
-import org.openrefine.extension.database.DatabaseConfiguration;
-import org.openrefine.extension.database.DatabaseService;
-import org.openrefine.extension.database.cmd.ConnectCommand;
-import org.openrefine.extension.database.cmd.TestConnectCommand;
-import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.commands.Command;
+import org.openrefine.extension.database.DBExtensionTests;
+import org.openrefine.extension.database.DatabaseConfiguration;
+import org.openrefine.extension.database.DatabaseService;
+import org.openrefine.extension.database.cmd.ConnectCommand;
+import org.openrefine.extension.database.cmd.TestConnectCommand;
+import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.openrefine.util.ParsingUtilities;
 
-
 @Test(groups = { "requiresMySQL" })
-public class TestConnectCommandTest extends DBExtensionTests{
-    
+public class TestConnectCommandTest extends DBExtensionTests {
+
     @Mock
     private HttpServletRequest request;
 
@@ -40,34 +40,31 @@ public class TestConnectCommandTest extends DBExtensionTests{
 
     private DatabaseConfiguration testDbConfig;
     // private String testTable;
-   
-  
-     @BeforeTest
-     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable"})
-     public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName,  @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost, 
-            @Optional(DEFAULT_MYSQL_PORT)    String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
-            @Optional(DEFAULT_MYSQL_PASSWORD)  String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mySqlTestTable) {
-        
-         MockitoAnnotations.initMocks(this);
-       
-         testDbConfig = new DatabaseConfiguration();
-         testDbConfig.setDatabaseHost(mySqlDbHost);
-         testDbConfig.setDatabaseName(mySqlDbName);
-         testDbConfig.setDatabasePassword(mySqlDbPassword);
-         testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
-         testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
-         testDbConfig.setDatabaseUser(mySqlDbUser);
-         testDbConfig.setUseSSL(false);
-         
-         //testTable = mySqlTestTable;
-        // DBExtensionTestUtils.initTestData(testDbConfig);
-         
-         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
-         
-     }
-     
 
-     
+    @BeforeTest
+    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable" })
+    public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName, @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost,
+            @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
+            @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable) {
+
+        MockitoAnnotations.initMocks(this);
+
+        testDbConfig = new DatabaseConfiguration();
+        testDbConfig.setDatabaseHost(mySqlDbHost);
+        testDbConfig.setDatabaseName(mySqlDbName);
+        testDbConfig.setDatabasePassword(mySqlDbPassword);
+        testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
+        testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
+        testDbConfig.setDatabaseUser(mySqlDbUser);
+        testDbConfig.setUseSSL(false);
+
+        // testTable = mySqlTestTable;
+        // DBExtensionTestUtils.initTestData(testDbConfig);
+
+        DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
+
+    }
+
     @Test
     public void testDoPost() throws IOException, ServletException {
         
@@ -96,19 +93,20 @@ public class TestConnectCommandTest extends DBExtensionTests{
         Assert.assertEquals(code, "ok");
       
     }
-    
+
     @Test
     public void testCsrfProtection() throws ServletException, IOException {
-    	StringWriter sw = new StringWriter();
+        StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
         when(response.getWriter()).thenReturn(pw);
         ConnectCommand connectCommand = new ConnectCommand();
-        
+
         connectCommand.doPost(request, response);
-    	Assert.assertEquals(
-    			ParsingUtilities.mapper.readValue("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", ObjectNode.class),
-    			ParsingUtilities.mapper.readValue(sw.toString(), ObjectNode.class));
+        Assert.assertEquals(
+                ParsingUtilities.mapper.readValue("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}",
+                        ObjectNode.class),
+                ParsingUtilities.mapper.readValue(sw.toString(), ObjectNode.class));
     }
 
 }

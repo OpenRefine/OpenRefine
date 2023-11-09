@@ -24,21 +24,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconJudgeSimilarCellsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
     }
-    
+
     @Test
     public void serializeReconJudgeSimilarCellsOperation() throws Exception {
         String json = "{\"op\":\"core/recon-judge-similar-cells\","
@@ -49,6 +53,7 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 + "\"judgment\":\"matched\","
                 + "\"match\":{\"id\":\"Q7884717\",\"name\":\"Unicef Indonesia\",\"score\":71.42857142857143,\"types\":[\"Q43229\"]},"
                 + "\"shareNewTopics\":false}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
 }

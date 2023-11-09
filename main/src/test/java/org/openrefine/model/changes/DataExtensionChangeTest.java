@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model.changes;
 
 import static org.testng.Assert.assertEquals;
@@ -34,22 +35,22 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Serializable;
 
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.history.Change;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.DataExtensionChange;
 import org.openrefine.util.Pool;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 
 public class DataExtensionChangeTest extends RefineTest {
 
     Project project;
-    
+
     @Override
     @BeforeTest
     public void init() {
@@ -60,10 +61,10 @@ public class DataExtensionChangeTest extends RefineTest {
     public void SetUp()
             throws IOException, ModelException {
         project = createProject(
-                new String[] {"reconciled"},
-                new Serializable[] {"some item"});
+                new String[] { "reconciled" },
+                new Serializable[] { "some item" });
     }
-    
+
     @Test
     public void testApplyOldChange() throws Exception {
         Pool pool = new Pool();
@@ -77,7 +78,7 @@ public class DataExtensionChangeTest extends RefineTest {
         change.apply(project);
         assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
     }
-    
+
     @Test
     public void testApplyNewChange() throws Exception {
         Pool pool = new Pool();

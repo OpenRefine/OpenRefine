@@ -24,12 +24,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.cell;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.RefineTest;
@@ -43,37 +50,32 @@ import org.openrefine.operations.cell.FillDownOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class FillDownTests extends RefineTest {
-    
+
     Project project = null;
-    
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "fill-down", FillDownOperation.class);
     }
-    
+
     @BeforeMethod
     public void setUp() {
         project = createProject(
-                new String[] {"key","first","second"},
+                new String[] { "key", "first", "second" },
                 new Serializable[] {
-                "a","b","c",
-                null,"d",null,
-                "e","f",null,
-                null,null,"h"});
+                        "a", "b", "c",
+                        null, "d", null,
+                        "e", "f", null,
+                        null, null, "h" });
     }
-    
+
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.id);
     }
-    
+
     @Test
     public void serializeFillDownOperation() throws Exception {
         String json = "{\"op\":\"core/fill-down\","
@@ -82,7 +84,7 @@ public class FillDownTests extends RefineTest {
                 + "\"columnName\":\"my key\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, FillDownOperation.class), json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testFillDownRecordKey() throws Exception {
         AbstractOperation op = new FillDownOperation(
@@ -90,13 +92,13 @@ public class FillDownTests extends RefineTest {
                 "key");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        
+
         Assert.assertEquals("a", project.rows.get(0).cells.get(0).value);
         Assert.assertEquals("a", project.rows.get(1).cells.get(0).value);
         Assert.assertEquals("e", project.rows.get(2).cells.get(0).value);
         Assert.assertEquals("e", project.rows.get(3).cells.get(0).value);
     }
-    
+
     // For issue #742
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
@@ -106,44 +108,44 @@ public class FillDownTests extends RefineTest {
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        
+
         Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
         Assert.assertEquals("c", project.rows.get(1).cells.get(2).value);
         Assert.assertNull(project.rows.get(2).cells.get(2));
         Assert.assertEquals("h", project.rows.get(3).cells.get(2).value);
     }
-    
+
     // For issue #742
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
-    public void testFillDownRows() throws Exception {       
+    public void testFillDownRows() throws Exception {
         AbstractOperation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        
+
         Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
         Assert.assertEquals("c", project.rows.get(1).cells.get(2).value);
         Assert.assertEquals("c", project.rows.get(2).cells.get(2).value);
         Assert.assertEquals("h", project.rows.get(3).cells.get(2).value);
     }
-    
+
     @Test
     public void testKeyColumnIndex() throws Exception {
-    	// Shift all column indices
-    	for(Row r : project.rows) {
-    		r.cells.add(0, null);
-    	}
-    	List<Column> newColumns = new ArrayList<>();
-    	for(Column c : project.columnModel.columns) {
-    		newColumns.add(new Column(c.getCellIndex()+1, c.getName()));
-    	}
-    	project.columnModel.columns.clear();
-    	project.columnModel.columns.addAll(newColumns);
-    	project.columnModel.update();
-    	
-    	AbstractOperation op = new FillDownOperation(
+        // Shift all column indices
+        for (Row r : project.rows) {
+            r.cells.add(0, null);
+        }
+        List<Column> newColumns = new ArrayList<>();
+        for (Column c : project.columnModel.columns) {
+            newColumns.add(new Column(c.getCellIndex() + 1, c.getName()));
+        }
+        project.columnModel.columns.clear();
+        project.columnModel.columns.addAll(newColumns);
+        project.columnModel.update();
+
+        AbstractOperation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());

@@ -24,25 +24,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.sorting;
 
 import java.io.IOException;
 
+import org.testng.annotations.Test;
+
 import org.openrefine.sorting.Criterion;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class DateCriterionTest {
+
     @Test
     public void serializeDateCriterion() throws IOException {
-        String json = 
-                "        {\n" + 
-                "          \"errorPosition\": 2,\n" + 
-                "          \"valueType\": \"date\",\n" + 
-                "          \"column\": \"start_year\",\n" + 
-                "          \"blankPosition\": -1,\n" + 
-                "          \"reverse\": true\n" + 
+        String json = "        {\n" +
+                "          \"errorPosition\": 2,\n" +
+                "          \"valueType\": \"date\",\n" +
+                "          \"column\": \"start_year\",\n" +
+                "          \"blankPosition\": -1,\n" +
+                "          \"reverse\": true\n" +
                 "        }\n";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json, ParsingUtilities.defaultWriter);
     }

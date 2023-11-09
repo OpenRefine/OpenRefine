@@ -31,10 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.clustering.binning;
 
-import org.openrefine.RefineTest;
-import org.openrefine.clustering.binning.FingerprintKeyer;
-import org.openrefine.clustering.binning.Keyer;
-import org.openrefine.clustering.binning.NGramFingerprintKeyer;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -42,70 +38,72 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import org.openrefine.RefineTest;
+import org.openrefine.clustering.binning.FingerprintKeyer;
+import org.openrefine.clustering.binning.Keyer;
+import org.openrefine.clustering.binning.NGramFingerprintKeyer;
 
 public class KeyerTests extends RefineTest {
 
     private static Keyer keyer;
-    
+
     private static final String[][] testStrings = {
-        {"the multi multi word test","multi test the word"},
-        {" école ÉCole ecoLe ", "ecole"},
-        {"a b c d","a b c d"},
-        {" d c b a ","a b c d"},
-        {"\tABC \t DEF ","abc def"}, // test leading and trailing whitespace
-        {"bbb\taaa","aaa bbb"},
-        {"",""},
-        {"",""},
-        {"",""},
+            { "the multi multi word test", "multi test the word" },
+            { " école ÉCole ecoLe ", "ecole" },
+            { "a b c d", "a b c d" },
+            { " d c b a ", "a b c d" },
+            { "\tABC \t DEF ", "abc def" }, // test leading and trailing whitespace
+            { "bbb\taaa", "aaa bbb" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
     };
-    
+
     private static final String[][] testNGramStrings = {
-        {"abcdefg","abbccddeeffg"},
-        {"",""}, //TODO: add more test cases
-        {"",""},
-        {"",""},
+            { "abcdefg", "abbccddeeffg" },
+            { "", "" }, // TODO: add more test cases
+            { "", "" },
+            { "", "" },
     };
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     @BeforeMethod
     public void SetUp() {
-         keyer = new FingerprintKeyer();
+        keyer = new FingerprintKeyer();
     }
 
     @AfterMethod
     public void TearDown() {
         keyer = null;
     }
-    
-    @Test(expectedExceptions=IllegalArgumentException.class)
-    public void testInvalidParams() {        
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testInvalidParams() {
         keyer.key(null);
     }
-    
+
     @Test
     public void testFingerprintKeyer() {
         for (String[] ss : testStrings) {
-            Assert.assertEquals(ss.length,2,"Invalid test"); // Not a valid test
-            Assert.assertEquals(keyer.key(ss[0]),ss[1],
+            Assert.assertEquals(ss.length, 2, "Invalid test"); // Not a valid test
+            Assert.assertEquals(keyer.key(ss[0]), ss[1],
                     "Fingerprint for string: " + ss[0] + " failed");
         }
     }
-    
+
     @Test
-    public void testNGramKeyer() {    
+    public void testNGramKeyer() {
         keyer = new NGramFingerprintKeyer();
         for (String[] ss : testNGramStrings) {
-            Assert.assertEquals(ss.length,2,"Invalid test"); // Not a valid test
-            Assert.assertEquals(keyer.key(ss[0]),ss[1],
+            Assert.assertEquals(ss.length, 2, "Invalid test"); // Not a valid test
+            Assert.assertEquals(keyer.key(ss[0]), ss[1],
                     "Fingerprint for string: " + ss[0] + " failed");
         }
     }
-    
- 
 
 }

@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
@@ -47,16 +48,17 @@ import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.ast.VariableExpr;
 
 public class ForEachIndex implements Control {
+
     @Override
     public String checkArguments(Evaluable[] args) {
         if (args.length != 4) {
             return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) + 
-                " expects second argument to be the index's variable name";
+            return ControlFunctionRegistry.getControlName(this) +
+                    " expects second argument to be the index's variable name";
         } else if (!(args[2] instanceof VariableExpr)) {
-            return ControlFunctionRegistry.getControlName(this) + 
-                " expects third argument to be the element's variable name";
+            return ControlFunctionRegistry.getControlName(this) +
+                    " expects third argument to be the element's variable name";
         }
         return null;
     }
@@ -69,66 +71,66 @@ public class ForEachIndex implements Control {
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
             return new EvalError("First argument to forEach is not an array");
         }
-        
+
         String indexName = ((VariableExpr) args[1]).getName();
         String elementName = ((VariableExpr) args[2]).getName();
-        
+
         Object oldIndexValue = bindings.get(indexName);
         Object oldElementValue = bindings.get(elementName);
         try {
             List<Object> results = null;
-            
+
             if (o.getClass().isArray()) {
                 Object[] values = (Object[]) o;
-                
+
                 results = new ArrayList<Object>(values.length);
-                
+
                 for (int i = 0; i < values.length; i++) {
                     Object v = values[i];
-                    
+
                     bindings.put(indexName, i);
                     bindings.put(elementName, v);
-                    
+
                     Object r = args[3].evaluate(bindings);
-                    
+
                     results.add(r);
                 }
             } else if (o instanceof ArrayNode) {
                 ArrayNode a = (ArrayNode) o;
                 int l = a.size();
-                
+
                 results = new ArrayList<Object>(l);
                 for (int i = 0; i < l; i++) {
                     Object v = JsonValueConverter.convert(a.get(i));
-                    
+
                     bindings.put(indexName, i);
                     bindings.put(elementName, v);
-                    
+
                     Object r = args[3].evaluate(bindings);
-                    
+
                     results.add(r);
                 }
             } else {
                 List<Object> list = ExpressionUtils.toObjectList(o);
-                
+
                 results = new ArrayList<Object>(list.size());
-                
+
                 for (int i = 0; i < list.size(); i++) {
                     Object v = list.get(i);
 
                     bindings.put(indexName, i);
                     bindings.put(elementName, v);
-                    
+
                     Object r = args[3].evaluate(bindings);
-                    
+
                     results.add(r);
                 }
             }
-            
-            return results.toArray(); 
+
+            return results.toArray();
         } finally {
             /*
-             *  Restore the old values bound to the variables, if any.
+             * Restore the old values bound to the variables, if any.
              */
             if (oldIndexValue != null) {
                 bindings.put(indexName, oldIndexValue);
@@ -142,17 +144,17 @@ public class ForEachIndex implements Control {
             }
         }
     }
-    
+
     @Override
     public String getDescription() {
-            return "Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array.";
+        return "Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array.";
     }
-    
+
     @Override
     public String getParams() {
         return "expression a, variable i, variable v, expression e";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

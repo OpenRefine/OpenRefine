@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.ArrayList;
@@ -31,32 +32,32 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 public class QuickStatementsUpdateScheduler implements UpdateScheduler {
 
     private PointerExtractor extractor = new PointerExtractor();
 
     /**
-     * This map holds for each new entity id value a list of updates that refer to
-     * this id (and should hence be scheduled right after creation of that entity).
+     * This map holds for each new entity id value a list of updates that refer to this id (and should hence be
+     * scheduled right after creation of that entity).
      */
     private Map<ItemIdValue, UpdateSequence> pointerUpdates;
 
     /**
-     * This contains all updates which do not refer to any new entity apart from
-     * possibly the subject, in the order that they were supplied to us.
+     * This contains all updates which do not refer to any new entity apart from possibly the subject, in the order that
+     * they were supplied to us.
      */
     private UpdateSequence pointerFreeUpdates;
 
     /**
-     * Separates out the statements which refer to new items from the rest of the
-     * update. The resulting updates are stored in {@link referencingUpdates} and
-     * {@link updatesWithoutReferences}.
+     * Separates out the statements which refer to new items from the rest of the update. The resulting updates are
+     * stored in {@link referencingUpdates} and {@link updatesWithoutReferences}.
      * 
      * @param update
      * @throws ImpossibleSchedulingException

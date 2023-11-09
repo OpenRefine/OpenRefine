@@ -45,6 +45,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import org.openrefine.commands.Command;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
@@ -53,22 +56,21 @@ import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconciledDataExtensionJob;
-import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
+import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.util.ParsingUtilities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
-
 public class PreviewExtendDataCommand extends Command {
-    
+
     protected static class PreviewResponse {
+
         public PreviewResponse(List<ColumnInfo> columns2, List<List<Object>> rows2) {
             columns = columns2;
             rows = rows2;
         }
+
         @JsonProperty("code")
         protected String code = "ok";
         @JsonProperty("columns")
@@ -76,46 +78,47 @@ public class PreviewExtendDataCommand extends Command {
         @JsonProperty("rows")
         protected List<List<Object>> rows;
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
             String columnName = request.getParameter("columnName");
-            
+
             String rowIndicesString = request.getParameter("rowIndices");
             if (rowIndicesString == null) {
                 respond(response, "{ \"code\" : \"error\", \"message\" : \"No row indices specified\" }");
                 return;
             }
-            
+
             String jsonString = request.getParameter("extension");
             DataExtensionConfig config = DataExtensionConfig.reconstruct(jsonString);
-            
-            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
+
+            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {
+            });
             int length = rowIndices.size();
             Column column = project.columnModel.getColumnByName(columnName);
             int cellIndex = column.getCellIndex();
 
             // get the endpoint to extract data from
             String endpoint = null;
-		    ReconConfig cfg = column.getReconConfig();
-		    if (cfg != null &&
-			cfg instanceof StandardReconConfig) {
-			StandardReconConfig scfg = (StandardReconConfig)cfg;
-			endpoint = scfg.service;
-	    } else {
-                respond(response, "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
+            ReconConfig cfg = column.getReconConfig();
+            if (cfg != null &&
+                    cfg instanceof StandardReconConfig) {
+                StandardReconConfig scfg = (StandardReconConfig) cfg;
+                endpoint = scfg.service;
+            } else {
+                respond(response,
+                        "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
                 return;
-	    }
-		
-            
+            }
+
             List<String> topicNames = new ArrayList<String>();
             List<String> topicIds = new ArrayList<String>();
             Set<String> ids = new HashSet<String>();
@@ -135,7 +138,7 @@ public class PreviewExtendDataCommand extends Command {
                     }
                 }
             }
-            
+
             Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
             ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint);
             Map<String, DataExtension> map = job.extend(ids, reconCandidateMap);
@@ -144,11 +147,11 @@ public class PreviewExtendDataCommand extends Command {
             for (int r = 0; r < topicNames.size(); r++) {
                 String id = topicIds.get(r);
                 String topicName = topicNames.get(r);
-                
+
                 if (id != null && map.containsKey(id)) {
                     DataExtension ext = map.get(id);
                     boolean first = true;
-                    
+
                     if (ext.data.length > 0) {
                         for (Object[] row : ext.data) {
                             List<Object> jsonRow = new ArrayList<>();
@@ -158,7 +161,7 @@ public class PreviewExtendDataCommand extends Command {
                             } else {
                                 jsonRow.add(null);
                             }
-                            
+
                             for (Object cell : row) {
                                 jsonRow.add(cell);
                             }
@@ -167,7 +170,7 @@ public class PreviewExtendDataCommand extends Command {
                         continue;
                     }
                 }
-                
+
                 List<Object> supplement = new ArrayList<>();
                 if (id != null) {
                     supplement.add(new ReconCandidate(id, topicName, new String[0], 100));
@@ -176,7 +179,7 @@ public class PreviewExtendDataCommand extends Command {
                 }
                 rows.add(supplement);
             }
-            
+
             respondJSON(response, new PreviewResponse(job.columns, rows));
         } catch (Exception e) {
             respondException(response, e);

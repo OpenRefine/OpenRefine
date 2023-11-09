@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ToNumberTests {
+
     @Test
     public void serializeToNumber() {
         String json = "{\"description\":\"Returns o converted to a number\",\"params\":\"o\",\"returns\":\"number\"}";
         TestUtils.isSerializedTo(new ToNumber(), json, ParsingUtilities.defaultWriter);
     }
 }
-

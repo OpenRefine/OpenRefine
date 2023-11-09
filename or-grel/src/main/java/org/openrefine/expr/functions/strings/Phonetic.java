@@ -84,26 +84,26 @@ public class Phonetic extends PureFunction {
             } else if ("cologne".equalsIgnoreCase(encoding)) {
                 return cologne.key(str);
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                         + " doesn't know how to handle the '"
                         + encoding + "' encoding.");
             }
         } else {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                    + " expects one or two string arguments");   
+                    + " expects one or two string arguments");
         }
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns the a phonetic encoding of s (optionally indicating which encoding to use')";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string encoding (optional, defaults to 'metaphone3')";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

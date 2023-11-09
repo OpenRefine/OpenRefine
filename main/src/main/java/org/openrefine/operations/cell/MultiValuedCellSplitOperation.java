@@ -37,7 +37,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
+
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
@@ -46,34 +51,24 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowChange;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class MultiValuedCellSplitOperation extends AbstractOperation {
-    final protected String  _columnName;
-    final protected String  _keyColumnName;
-    final protected String  _mode;
-    final protected String  _separator;
+
+    final protected String _columnName;
+    final protected String _keyColumnName;
+    final protected String _mode;
+    final protected String _separator;
     final protected Boolean _regex;
-    
-    final protected int[]      _fieldLengths;
+
+    final protected int[] _fieldLengths;
 
     @JsonCreator
     public static MultiValuedCellSplitOperation deserialize(
-            @JsonProperty("columnName")
-            String columnName,
-            @JsonProperty("keyColumnName")
-            String keyColumnName,
-            @JsonProperty("mode")
-            String mode,
-            @JsonProperty("separator")
-            String separator,
-            @JsonProperty("regex")
-            boolean regex,
-            @JsonProperty("fieldLengths")
-            int[] fieldLengths) {
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("keyColumnName") String keyColumnName,
+            @JsonProperty("mode") String mode,
+            @JsonProperty("separator") String separator,
+            @JsonProperty("regex") boolean regex,
+            @JsonProperty("fieldLengths") int[] fieldLengths) {
         if ("separator".equals(mode)) {
             return new MultiValuedCellSplitOperation(
                     columnName,
@@ -87,27 +82,25 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                     fieldLengths);
         }
     }
-    
+
     public MultiValuedCellSplitOperation(
-        String      columnName,
-        String      keyColumnName,
-        String      separator,
-        boolean     regex
-    ) {
+            String columnName,
+            String keyColumnName,
+            String separator,
+            boolean regex) {
         _columnName = columnName;
         _keyColumnName = keyColumnName;
         _separator = separator;
         _mode = "separator";
         _regex = regex;
-        
+
         _fieldLengths = null;
     }
 
     public MultiValuedCellSplitOperation(
-        String      columnName,
-        String      keyColumnName,
-        int[]       fieldLengths
-    ) {
+            String columnName,
+            String keyColumnName,
+            int[] fieldLengths) {
         _columnName = columnName;
         _keyColumnName = keyColumnName;
 
@@ -117,34 +110,34 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 
         _fieldLengths = fieldLengths;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("keyColumnName")
     public String getKeyColumnName() {
         return _keyColumnName;
     }
-    
+
     @JsonProperty("mode")
     public String getMode() {
         return _mode;
     }
-    
+
     @JsonProperty("separator")
     @JsonInclude(Include.NON_NULL)
     public String getSeparator() {
         return _separator;
     }
-    
+
     @JsonProperty("regex")
     @JsonInclude(Include.NON_NULL)
     public Boolean getRegex() {
         return _regex;
     }
-    
+
     @JsonProperty("fieldLengths")
     @JsonInclude(Include.NON_NULL)
     public int[] getFieldLengths() {
@@ -163,7 +156,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             throw new Exception("No column named " + _columnName);
         }
         int cellIndex = column.getCellIndex();
-        
+
         Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
         if (keyColumn == null) {
             throw new Exception("No key column named " + _keyColumnName);
@@ -171,7 +164,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         int keyCellIndex = keyColumn.getCellIndex();
 
         List<Row> newRows = new ArrayList<Row>();
-        
+
         int oldRowCount = project.rows.size();
         for (int r = 0; r < oldRowCount; r++) {
             Row oldRow = project.rows.get(r);
@@ -179,83 +172,81 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                 newRows.add(oldRow.dup());
                 continue;
             }
-            
+
             Object value = oldRow.getCellValue(cellIndex);
             String s = value instanceof String ? ((String) value) : value.toString();
             String[] values = null;
-            if("lengths".equals(_mode)) {
+            if ("lengths".equals(_mode)) {
                 if (_fieldLengths.length > 0 && _fieldLengths[0] > 0) {
                     values = new String[_fieldLengths.length];
-                    
+
                     int lastIndex = 0;
-                    
+
                     for (int i = 0; i < _fieldLengths.length; i++) {
                         int thisIndex = lastIndex;
-                        
+
                         Object o = _fieldLengths[i];
                         if (o instanceof Number) {
                             thisIndex = Math.min(s.length(), lastIndex + Math.max(0, ((Number) o).intValue()));
                         }
-                        
+
                         values[i] = s.substring(lastIndex, thisIndex);
                         lastIndex = thisIndex;
                     }
                 }
-            }
-            else if (_regex) {
+            } else if (_regex) {
                 Pattern pattern = Pattern.compile(_separator);
                 values = pattern.split(s);
             } else {
                 values = StringUtils.splitByWholeSeparatorPreserveAllTokens(s, _separator);
             }
-            
+
             if (values.length < 2) {
                 newRows.add(oldRow.dup());
                 continue;
             }
-            
+
             // First value goes into the same row
             {
                 Row firstNewRow = oldRow.dup();
                 firstNewRow.setCell(cellIndex, new Cell(values[0], null));
-                
+
                 newRows.add(firstNewRow);
             }
-            
+
             int r2 = r + 1;
             for (int v = 1; v < values.length; v++) {
                 Cell newCell = new Cell(values[v], null);
-                
+
                 if (r2 < project.rows.size()) {
                     Row oldRow2 = project.rows.get(r2);
-                    if (oldRow2.isCellBlank(cellIndex) && 
-                        oldRow2.isCellBlank(keyCellIndex)) {
-                        
+                    if (oldRow2.isCellBlank(cellIndex) &&
+                            oldRow2.isCellBlank(keyCellIndex)) {
+
                         Row newRow = oldRow2.dup();
                         newRow.setCell(cellIndex, newCell);
-                        
+
                         newRows.add(newRow);
                         r2++;
-                        
+
                         continue;
                     }
                 }
-                
+
                 Row newRow = new Row(cellIndex + 1);
                 newRow.setCell(cellIndex, newCell);
-                
+
                 newRows.add(newRow);
             }
-            
+
             r = r2 - 1; // r will be incremented by the for loop anyway
         }
-        
+
         return new HistoryEntry(
-            historyEntryID,
-            project, 
-            getBriefDescription(null), 
-            this, 
-            new MassRowChange(newRows)
-        );
+                historyEntryID,
+                project,
+                getBriefDescription(null),
+                this,
+                new MassRowChange(newRows));
     }
 }

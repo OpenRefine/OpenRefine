@@ -43,13 +43,14 @@ import org.openrefine.grel.Control;
  * An abstract syntax tree node encapsulating a control call, such as "if".
  */
 public class ControlCallExpr extends PureArgumentsExpr {
-    final protected Control     _control;
-    
+
+    final protected Control _control;
+
     public ControlCallExpr(Evaluable[] args, Control c) {
         super(args);
         _control = c;
     }
-                              
+
     @Override
     public Object evaluate(Properties bindings) {
         try {
@@ -62,19 +63,19 @@ public class ControlCallExpr extends PureArgumentsExpr {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        
+
         for (Evaluable ev : _args) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append(ev.toString());
         }
-        
+
         return _control.getClass().getSimpleName() + "(" + sb.toString() + ")";
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof Evaluable) && toString().equals(other.toString());
     }
 }

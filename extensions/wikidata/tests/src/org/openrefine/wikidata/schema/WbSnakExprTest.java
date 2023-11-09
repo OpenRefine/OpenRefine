@@ -21,15 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
-import org.openrefine.wikidata.testing.JacksonSerializationTest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.openrefine.wikidata.testing.JacksonSerializationTest;
 
 public class WbSnakExprTest extends WbExpressionTest<Snak> {
 

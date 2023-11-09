@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ReverseTests {
+
     @Test
     public void serializeReverse() {
         String json = "{\"description\":\"Reverses array a\",\"params\":\"array a\",\"returns\":\"array\"}";
         TestUtils.isSerializedTo(new Reverse(), json, ParsingUtilities.defaultWriter);
     }
 }
-

@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.when;
@@ -7,18 +8,19 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.openrefine.commands.Command;
-import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.commands.Command;
+import org.openrefine.util.TestUtils;
+
 public class LoginCommandTest extends CommandTest {
-    
+
     @BeforeMethod
     public void SetUp() {
         command = new LoginCommand();
     }
-    
+
     @Test
     public void testNoCredentials() throws ServletException, IOException {
     	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
@@ -27,16 +29,16 @@ public class LoginCommandTest extends CommandTest {
 
         assertEquals("{\"logged_in\":false,\"username\":null}", writer.toString());
     }
-    
+
     @Test
     public void testCsrfProtection() throws ServletException, IOException {
-    	command.doPost(request, response);
-    	TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+        command.doPost(request, response);
+        TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
     }
-    
+
     @Test
     public void testGetNotCsrfProtected() throws ServletException, IOException {
-    	command.doGet(request, response);
-    	TestUtils.assertEqualAsJson("{\"logged_in\":false,\"username\":null}", writer.toString());
+        command.doGet(request, response);
+        TestUtils.assertEqualAsJson("{\"logged_in\":false,\"username\":null}", writer.toString());
     }
 }

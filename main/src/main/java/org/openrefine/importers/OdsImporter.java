@@ -44,35 +44,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
-import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.Recon.Judgment;
+import org.openrefine.model.ReconCandidate;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+public class OdsImporter extends TabularImportingParserBase {
 
-
-public class OdsImporter extends TabularImportingParserBase { 
     final static Logger logger = LoggerFactory.getLogger("open office");
 
     public OdsImporter() {
         super(true);
     }
 
-    
     @Override
     public ObjectNode createParserUIInitializationData(
             ImportingJob job, List<ObjectNode> fileRecords, String format) {
@@ -82,20 +81,20 @@ public class OdsImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         OdfDocument odfDoc = null;
         try {
-            for (int index = 0;index < fileRecords.size();index++) {
+            for (int index = 0; index < fileRecords.size(); index++) {
                 ObjectNode fileRecord = fileRecords.get(index);
                 File file = ImportingUtilities.getFile(job, fileRecord);
                 InputStream is = new FileInputStream(file);
                 odfDoc = OdfDocument.loadDocument(is);
                 List<OdfTable> tables = odfDoc.getTableList();
                 int sheetCount = tables.size();
-    
+
                 for (int i = 0; i < sheetCount; i++) {
                     OdfTable sheet = tables.get(i);
                     int rows = sheet.getRowCount();
-    
+
                     ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
-                    JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getTableName());
+                    JSONUtilities.safePut(sheetRecord, "name", file.getName() + "#" + sheet.getTableName());
                     JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                     JSONUtilities.safePut(sheetRecord, "rows", rows);
                     if (rows > 0) {
@@ -107,10 +106,10 @@ public class OdsImporter extends TabularImportingParserBase {
                 }
             }
         } catch (FileNotFoundException e) {
-            logger.info("File not found",e);
+            logger.info("File not found", e);
         } catch (Exception e) {
             // ODF throws *VERY* wide exceptions
-            logger.info("Error reading ODF spreadsheet",e);
+            logger.info("Error reading ODF spreadsheet", e);
         } finally {
             if (odfDoc != null) {
                 odfDoc.close();
@@ -118,7 +117,6 @@ public class OdsImporter extends TabularImportingParserBase {
         }
         return options;
     }
-    
 
     @Override
     public void parseOneFile(
@@ -129,8 +127,7 @@ public class OdsImporter extends TabularImportingParserBase {
             InputStream inputStream,
             int limit,
             ObjectNode options,
-            List<Exception> exceptions
-    ) {
+            List<Exception> exceptions) {
         OdfDocument odfDoc;
         try {
             odfDoc = OdfDocument.loadDocument(inputStream);
@@ -142,19 +139,20 @@ public class OdsImporter extends TabularImportingParserBase {
         List<OdfTable> tables = odfDoc.getTableList();
 
         ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
-        for(int i=0;i<sheets.size();i++)  {
+        for (int i = 0; i < sheets.size(); i++) {
             String[] fileNameAndSheetIndex = new String[2];
             ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
             // value is fileName#sheetIndex
             fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
-        
+
             if (!fileNameAndSheetIndex[0].equals(fileSource))
                 continue;
-            
+
             final OdfTable table = tables.get(Integer.parseInt(fileNameAndSheetIndex[1]));
             final int lastRow = table.getRowCount();
 
             TableDataReader dataReader = new TableDataReader() {
+
                 int nextRow = 0;
                 Map<String, Recon> reconMap = new HashMap<String, Recon>();
 
@@ -190,16 +188,15 @@ public class OdsImporter extends TabularImportingParserBase {
                     fileSource + "#" + table.getTableName(),
                     limit,
                     options,
-                    exceptions
-            );
+                    exceptions);
         }
-        
+
         super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
     }
 
     static protected Serializable extractCell(OdfTableCell cell) {
         // TODO: how can we tell if a cell contains an error?
-        //String formula = cell.getFormula();
+        // String formula = cell.getFormula();
 
         Serializable value = null;
         // "boolean", "currency", "date", "float", "percentage", "string" or "time"
@@ -221,7 +218,7 @@ public class OdsImporter extends TabularImportingParserBase {
             if ("".equals(value)) {
                 value = null;
             } else {
-                logger.info("Null cell type with non-empty value: " + value);                
+                logger.info("Null cell type with non-empty value: " + value);
             }
         } else {
             logger.info("Unexpected cell type " + cellType);
@@ -282,4 +279,4 @@ public class OdsImporter extends TabularImportingParserBase {
         }
     }
 
-} 
+}

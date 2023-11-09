@@ -33,30 +33,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.history;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
- * The process for undoing or redoing. This involves calling apply() and revert()
- * on changes.
+ * The process for undoing or redoing. This involves calling apply() and revert() on changes.
  */
 public class HistoryProcess extends Process {
+
     final protected Project _project;
-    final protected long    _lastDoneID;
-    final protected String  _description;
-    
+    final protected long _lastDoneID;
+    final protected String _description;
+
     protected boolean _done = false;
 
     private final static String WARN = "Not a long-running process";
-    
+
     public HistoryProcess(Project project, long lastDoneID) {
         _project = project;
         _lastDoneID = lastDoneID;
-        
+
         if (_lastDoneID == 0) {
             _description = "Undo all";
         } else {
@@ -64,13 +64,13 @@ public class HistoryProcess extends Process {
             _description = "Undo/redo until after " + entry.description;
         }
     }
-    
+
     @Override
     @JsonIgnore
     public long getId() {
         return super.getId();
     }
-    
+
     @Override
     public void cancel() {
         throw new RuntimeException(WARN);
@@ -85,7 +85,7 @@ public class HistoryProcess extends Process {
     public HistoryEntry performImmediate() {
         _project.history.undoRedo(_lastDoneID);
         _done = true;
-        
+
         return null;
     }
 
@@ -93,12 +93,12 @@ public class HistoryProcess extends Process {
     public void startPerforming(ProcessManager manager) {
         throw new RuntimeException(WARN);
     }
-    
+
     @JsonProperty("status")
     public String getStatus() {
         return _done ? "done" : "pending";
     }
-    
+
     @JsonProperty("description")
     public String getDescription() {
         return _description;

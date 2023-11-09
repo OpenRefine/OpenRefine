@@ -1,9 +1,16 @@
+
 package org.openrefine.extension.database.pgsql;
 
 import java.sql.Connection;
 import java.util.List;
 
 import org.mockito.MockitoAnnotations;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+
 import org.openrefine.extension.database.DBExtensionTestUtils;
 import org.openrefine.extension.database.DBExtensionTests;
 import org.openrefine.extension.database.DatabaseConfiguration;
@@ -13,25 +20,19 @@ import org.openrefine.extension.database.model.DatabaseColumn;
 import org.openrefine.extension.database.model.DatabaseInfo;
 import org.openrefine.extension.database.model.DatabaseRow;
 import org.openrefine.extension.database.pgsql.PgSQLDatabaseService;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
 
 @Test(groups = { "requiresPgSQL" })
-public class PgSQLDatabaseServiceTest extends DBExtensionTests{
-  
+public class PgSQLDatabaseServiceTest extends DBExtensionTests {
+
     private DatabaseConfiguration testDbConfig;
     private String testTable;
-  
- 
+
     @BeforeTest
-    @Parameters({ "pgSqlDbName", "pgSqlDbHost", "pgSqlDbPort", "pgSqlDbUser", "pgSqlDbPassword", "pgSqlTestTable"})
-    public void beforeTest(@Optional(DEFAULT_PGSQL_DB_NAME) String pgSqlDbName,  @Optional(DEFAULT_PGSQL_HOST) String pgSqlDbHost, 
-           @Optional(DEFAULT_PGSQL_PORT)        String pgSqlDbPort,     @Optional(DEFAULT_PGSQL_USER)   String pgSqlDbUser,
-           @Optional(DEFAULT_PGSQL_PASSWORD)    String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE)   String pgSqlTestTable) {
-       
+    @Parameters({ "pgSqlDbName", "pgSqlDbHost", "pgSqlDbPort", "pgSqlDbUser", "pgSqlDbPassword", "pgSqlTestTable" })
+    public void beforeTest(@Optional(DEFAULT_PGSQL_DB_NAME) String pgSqlDbName, @Optional(DEFAULT_PGSQL_HOST) String pgSqlDbHost,
+            @Optional(DEFAULT_PGSQL_PORT) String pgSqlDbPort, @Optional(DEFAULT_PGSQL_USER) String pgSqlDbUser,
+            @Optional(DEFAULT_PGSQL_PASSWORD) String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String pgSqlTestTable) {
+
         MockitoAnnotations.initMocks(this);
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(pgSqlDbHost);
@@ -41,38 +42,35 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests{
         testDbConfig.setDatabaseType(PgSQLDatabaseService.DB_NAME);
         testDbConfig.setDatabaseUser(pgSqlDbUser);
         testDbConfig.setUseSSL(false);
-        
+
         testTable = pgSqlTestTable;
-        //DBExtensionTestUtils.initTestData(testDbConfig);
-        
+        // DBExtensionTestUtils.initTestData(testDbConfig);
+
         DatabaseService.DBType.registerDatabase(PgSQLDatabaseService.DB_NAME, PgSQLDatabaseService.getInstance());
     }
-   
-
 
     @Test
     public void testGetDatabaseUrl() {
-        PgSQLDatabaseService pgSqlService = (PgSQLDatabaseService)DatabaseService.get(PgSQLDatabaseService.DB_NAME);
+        PgSQLDatabaseService pgSqlService = (PgSQLDatabaseService) DatabaseService.get(PgSQLDatabaseService.DB_NAME);
         String dbUrl = pgSqlService.getDatabaseUrl(testDbConfig);
-       
+
         Assert.assertNotNull(dbUrl);
         Assert.assertEquals(dbUrl, DBExtensionTestUtils.getJDBCUrl(testDbConfig));
     }
- 
 
     @Test
     public void testGetConnection() throws DatabaseServiceException {
-        
-        PgSQLDatabaseService pgSqlService = (PgSQLDatabaseService)DatabaseService.get(PgSQLDatabaseService.DB_NAME);
+
+        PgSQLDatabaseService pgSqlService = (PgSQLDatabaseService) DatabaseService.get(PgSQLDatabaseService.DB_NAME);
         Connection conn = pgSqlService.getConnection(testDbConfig);
-   
+
         Assert.assertNotNull(conn);
     }
 
     @Test
     public void testTestConnection() throws DatabaseServiceException {
-        PgSQLDatabaseService pgSqlService = (PgSQLDatabaseService)DatabaseService.get(PgSQLDatabaseService.DB_NAME);
-               
+        PgSQLDatabaseService pgSqlService = (PgSQLDatabaseService) DatabaseService.get(PgSQLDatabaseService.DB_NAME);
+
         boolean result = pgSqlService.testConnection(testDbConfig);
         Assert.assertEquals(result, true);
     }
@@ -80,11 +78,11 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests{
     @Test
     public void testConnect() throws DatabaseServiceException {
 
-       PgSQLDatabaseService pgSqlService = (PgSQLDatabaseService)DatabaseService.get(PgSQLDatabaseService.DB_NAME);
-       DatabaseInfo databaseInfo = pgSqlService.connect(testDbConfig);
-       Assert.assertNotNull(databaseInfo);
+        PgSQLDatabaseService pgSqlService = (PgSQLDatabaseService) DatabaseService.get(PgSQLDatabaseService.DB_NAME);
+        DatabaseInfo databaseInfo = pgSqlService.connect(testDbConfig);
+        Assert.assertNotNull(databaseInfo);
     }
-    
+
     @Test
     public void testExecuteQuery() throws DatabaseServiceException {
 
@@ -130,6 +128,5 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests{
         Assert.assertNotNull(dbColumns);
 
     }
-
 
 }

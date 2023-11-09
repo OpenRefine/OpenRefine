@@ -50,17 +50,17 @@ public class Unicode extends PureFunction {
         }
         return null;
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns an array of strings describing each character of s in their full unicode notation";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

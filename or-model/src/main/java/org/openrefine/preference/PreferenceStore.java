@@ -38,8 +38,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.openrefine.util.ParsingUtilities;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -48,12 +46,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class PreferenceStore  {
+import org.openrefine.util.ParsingUtilities;
+
+public class PreferenceStore {
+
     public static final String USER_METADATA_KEY = "userMetadata";
-    
+
     private boolean dirty = false;
     protected Map<String, Object> _prefs = new HashMap<>();
-    
+
     public void put(String key, Object value) {
         if (value == null) {
             _prefs.remove(key);
@@ -66,12 +67,12 @@ public class PreferenceStore  {
     public Object get(String key) {
         return _prefs.get(key);
     }
-    
+
     @JsonIgnore
     public Set<String> getKeys() {
         return _prefs.keySet();
     }
-    
+
     /**
      * @return true if the preference store has unsaved changes
      */
@@ -79,11 +80,11 @@ public class PreferenceStore  {
     public boolean isDirty() {
         return dirty;
     }
-    
+
     /**
-     * Mark the object as clean every time it is serialized.
-     * This behaviour is not very clean - it is inherited from
-     * the previous deserialization code.
+     * Mark the object as clean every time it is serialized. This behaviour is not very clean - it is inherited from the
+     * previous deserialization code.
+     * 
      * @return
      */
     @JsonProperty("makeClean")
@@ -92,7 +93,7 @@ public class PreferenceStore  {
         dirty = false;
         return null;
     }
-    
+
     @JsonProperty("entries")
     public void setEntries(JsonNode entries) {
         Iterator<String> i = entries.fieldNames();
@@ -106,23 +107,23 @@ public class PreferenceStore  {
         }
         dirty = false; // internal puts don't count
     }
-    
+
     @JsonProperty("entries")
     public Map<String, Object> getEntries() {
-    	return _prefs;
+        return _prefs;
     }
-    
+
     static public Object loadObject(JsonNode o) {
         try {
-	        if (o instanceof ObjectNode) {
+            if (o instanceof ObjectNode) {
                 ObjectNode obj2 = (ObjectNode) o;
                 return ParsingUtilities.mapper.treeToValue(obj2, PreferenceValue.class);
-	        } else if (o instanceof ArrayNode) {
-	        	return o;
-	        } else {
-	        	// basic datatypes (int, double, boolean, string)
-	            return ParsingUtilities.mapper.treeToValue(o, Object.class);
-	        }
+            } else if (o instanceof ArrayNode) {
+                return o;
+            } else {
+                // basic datatypes (int, double, boolean, string)
+                return ParsingUtilities.mapper.treeToValue(o, Object.class);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;

@@ -35,41 +35,40 @@ package org.openrefine.util;
 
 import java.util.List;
 
-import org.openrefine.expr.util.JsonValueConverter;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
+import org.openrefine.expr.util.JsonValueConverter;
 
 public class JSONUtilities {
-    
+
     static public ObjectNode getObject(ObjectNode obj, String key) {
-    	JsonNode node = obj.get(key);
-    	if(node != null && node instanceof ObjectNode) {
-    		return (ObjectNode)node;
-    	}
-    	return null;
+        JsonNode node = obj.get(key);
+        if (node != null && node instanceof ObjectNode) {
+            return (ObjectNode) node;
+        }
+        return null;
     }
-    
+
     static public String getString(JsonNode obj, String key, String def) {
-    	if (obj.has(key)) {
-    		return obj.get(key).textValue();
-    	} else {
-    		return def;
-    	}
+        if (obj.has(key)) {
+            return obj.get(key).textValue();
+        } else {
+            return def;
+        }
     }
-    
+
     static public int getInt(JsonNode obj, String key, int def) {
-    	if (obj.has(key)) {
-    		return obj.get(key).asInt(def);
-    	} else {
-    		return def;
-    	}
+        if (obj.has(key)) {
+            return obj.get(key).asInt(def);
+        } else {
+            return def;
+        }
     }
-    
+
     static public boolean getBoolean(JsonNode obj, String key, boolean def) {
         if (obj.has(key)) {
             return obj.get(key).asBoolean(def);
@@ -79,13 +78,13 @@ public class JSONUtilities {
     }
 
     static public ArrayNode getArray(ObjectNode obj, String key) {
-    	JsonNode v = obj.get(key);
-        if( obj.has(key) && obj.get(key) instanceof ArrayNode) {
-        	return (ArrayNode) obj.get(key);
-        } 
+        JsonNode v = obj.get(key);
+        if (obj.has(key) && obj.get(key) instanceof ArrayNode) {
+            return (ArrayNode) obj.get(key);
+        }
         return null;
     }
-    
+
     static public List<JsonNode> getArray(JsonNode obj, String key) {
         if (obj.has(key) && obj.get(key).getNodeType().equals(JsonNodeType.ARRAY)) {
             return Lists.newArrayList(obj.get(key).elements());
@@ -95,93 +94,93 @@ public class JSONUtilities {
     }
 
     static public int[] getIntArray(ObjectNode obj, String key) {
-    	ArrayNode a = getArray(obj, key);
-    	if (a == null) {
-    		return new int[0];
-    	}
-    	int[] r = new int[a.size()];
-    	int i = 0;
-    	for(JsonNode n : a) {
-    		r[i] = n.asInt();
-    		i++;
-    	}
+        ArrayNode a = getArray(obj, key);
+        if (a == null) {
+            return new int[0];
+        }
+        int[] r = new int[a.size()];
+        int i = 0;
+        for (JsonNode n : a) {
+            r[i] = n.asInt();
+            i++;
+        }
         return r;
     }
 
     static public String[] getStringArray(ObjectNode obj, String key) {
         ArrayNode a = getArray(obj, key);
         if (a == null) {
-        	return new String[0];
+            return new String[0];
         }
         String[] r = new String[a.size()];
-        
+
         for (int i = 0; i < r.length; i++) {
             r[i] = a.get(i).asText();
         }
-        
+
         return r;
     }
- 
+
     static public ObjectNode getObjectElement(ArrayNode a, int i) {
-    	JsonNode n = a.get(i);
-    	if (n != null && n instanceof ObjectNode) {
-    		return (ObjectNode) n;
-    	}
-    	return null;
+        JsonNode n = a.get(i);
+        if (n != null && n instanceof ObjectNode) {
+            return (ObjectNode) n;
+        }
+        return null;
     }
-    
+
     static public int getIntElement(ArrayNode a, int i, int def) {
         if (a.get(i) != null) {
             return a.get(i).asInt(def);
         }
         return def;
     }
-    
+
     static public void append(ArrayNode sheetRecords, ObjectNode sheetRecord) {
         sheetRecords.add(sheetRecord);
     }
-    
+
     static public void append(ArrayNode array, int v) {
         array.add(v);
     }
-    
+
     static public void append(ArrayNode a, String element) {
         a.add(element);
     }
-    
+
     static public void safePut(ObjectNode options, String key, JsonNode rootElement) {
         options.put(key, rootElement);
     }
-    
+
     static public void safeInc(ObjectNode obj, String key) {
         int currentValue = getInt(obj, key, 0);
         safePut(obj, key, currentValue + 1);
     }
-    
+
     static public void safePut(ObjectNode obj, String key, long value) {
-    	obj.put(key, value);
-    }
-    
-    static public void safePut(ObjectNode obj, String key, double value) {
-    	obj.put(key, value);
-    }
-    
-    static public void safePut(ObjectNode obj, String key, boolean value) {
-    	obj.put(key, value);
-    }
-    
-    static public void safePut(ObjectNode obj, String key, String value) {
-    	obj.put(key, value);
+        obj.put(key, value);
     }
 
-	public static Object[] toArray(ArrayNode v) {
-		if (v == null) {
-			return null;
-		}
-		Object[] result = new Object[v.size()];
-		for (int i = 0; i != v.size(); i++) {
-			result[i] = JsonValueConverter.convert(v.get(i));
-		}
-		return result;
-	}
+    static public void safePut(ObjectNode obj, String key, double value) {
+        obj.put(key, value);
+    }
+
+    static public void safePut(ObjectNode obj, String key, boolean value) {
+        obj.put(key, value);
+    }
+
+    static public void safePut(ObjectNode obj, String key, String value) {
+        obj.put(key, value);
+    }
+
+    public static Object[] toArray(ArrayNode v) {
+        if (v == null) {
+            return null;
+        }
+        Object[] result = new Object[v.size()];
+        for (int i = 0; i != v.size(); i++) {
+            result[i] = JsonValueConverter.convert(v.get(i));
+        }
+        return result;
+    }
 }

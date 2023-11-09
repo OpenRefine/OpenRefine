@@ -36,6 +36,7 @@ package org.openrefine.expr.functions.arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
@@ -49,10 +50,10 @@ public class Join extends PureFunction {
         if (args.length == 2) {
             Object v = args[0];
             Object s = args[1];
-            
+
             if (v != null && s != null && s instanceof String) {
                 String separator = (String) s;
-                
+
                 if (v.getClass().isArray() || v instanceof List<?> || v instanceof ArrayNode) {
                     StringBuffer sb = new StringBuffer();
                     if (v.getClass().isArray()) {
@@ -67,7 +68,7 @@ public class Join extends PureFunction {
                     } else if (v instanceof ArrayNode) {
                         ArrayNode a = (ArrayNode) v;
                         int l = a.size();
-                        
+
                         for (int i = 0; i < l; i++) {
                             if (sb.length() > 0) {
                                 sb.append(separator);
@@ -84,7 +85,7 @@ public class Join extends PureFunction {
                             }
                         }
                     }
-                    
+
                     return sb.toString();
                 }
             }
@@ -96,12 +97,12 @@ public class Join extends PureFunction {
     public String getDescription() {
         return "Returns the string obtained by joining the array a with the separator sep";
     }
-    
+
     @Override
     public String getParams() {
         return "array a, string sep";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.oauth;
 
 public class GoogleProvider extends Provider {
-    
+
     @Override
     public String getRequestTokenServiceURL() {
         return "https://www.google.com/accounts/OAuthGetRequestToken";

@@ -41,14 +41,14 @@ public class Xor extends PureFunction {
 
     @Override
     public String getDescription() {
-    	return "XORs two or more boolean values";
+        return "XORs two or more boolean values";
     }
-    
+
     @Override
     public String getParams() {
         return "boolean a, boolean b";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

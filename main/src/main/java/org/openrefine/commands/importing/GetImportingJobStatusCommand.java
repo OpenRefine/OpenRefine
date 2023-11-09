@@ -39,16 +39,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.commands.Command;
-import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingManager;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.commands.Command;
+import org.openrefine.importing.ImportingJob;
+import org.openrefine.importing.ImportingManager;
+
 public class GetImportingJobStatusCommand extends Command {
+
     protected static class JobStatusResponse {
+
         @JsonProperty("code")
         protected String code;
         @JsonProperty("message")
@@ -57,17 +59,16 @@ public class GetImportingJobStatusCommand extends Command {
         @JsonProperty("job")
         @JsonInclude(Include.NON_NULL)
         protected ImportingJob job;
-        
+
         protected JobStatusResponse(String code, String message, ImportingJob job) {
             this.code = code;
             this.message = message;
             this.job = job;
         }
     }
-    
+
     /**
-     * This command uses POST but does not actually modify any state so
-     * it is not CSRF-protected.
+     * This command uses POST but does not actually modify any state so it is not CSRF-protected.
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -75,7 +76,7 @@ public class GetImportingJobStatusCommand extends Command {
 
         long jobID = Long.parseLong(request.getParameter("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
-        
+
         if (job == null) {
             respondJSON(response, new JobStatusResponse("error", "No such import job", null));
         } else {

@@ -24,10 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.row;
 
 import java.io.Serializable;
 import java.util.Properties;
+
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.RefineTest;
@@ -41,75 +48,67 @@ import org.openrefine.process.Process;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class RowReorderOperationTests extends RefineTest {
-    
+
     Project project = null;
 
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "row-reorder", RowReorderOperation.class);
     }
-    
+
     @BeforeMethod
     public void setUp() {
         project = createProject(
-                new String[] {"key","first"},
+                new String[] { "key", "first" },
                 new Serializable[] {
-                "8","b",
-                null,"d",
-                "2","f",
-                "1","h"});
+                        "8", "b",
+                        null, "d",
+                        "2", "f",
+                        "1", "h" });
     }
-    
+
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.id);
     }
-    
+
     @Test
     public void testSortEmptyString() throws Exception {
         String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}";
         SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
-                Mode.RowBased, sortingConfig
-                );
+                Mode.RowBased, sortingConfig);
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        
+
         Assert.assertEquals("h", project.rows.get(0).cells.get(1).value);
         Assert.assertEquals("f", project.rows.get(1).cells.get(1).value);
         Assert.assertEquals("b", project.rows.get(2).cells.get(1).value);
         Assert.assertEquals("d", project.rows.get(3).cells.get(1).value);
     }
 
-   
     @Test
     public void serializeRowReorderOperation() throws Exception {
-        String json = "  {\n" + 
-                "    \"op\": \"core/row-reorder\",\n" + 
-                "    \"description\": \"Reorder rows\",\n" + 
-                "    \"mode\": \"record-based\",\n" + 
-                "    \"sorting\": {\n" + 
-                "      \"criteria\": [\n" + 
-                "        {\n" + 
-                "          \"errorPosition\": 1,\n" + 
-                "          \"valueType\": \"number\",\n" + 
-                "          \"column\": \"start_year\",\n" + 
-                "          \"blankPosition\": 2,\n" + 
-                "          \"reverse\": false\n" + 
-                "        }\n" + 
-                "      ]\n" + 
-                "    }\n" + 
+        String json = "  {\n" +
+                "    \"op\": \"core/row-reorder\",\n" +
+                "    \"description\": \"Reorder rows\",\n" +
+                "    \"mode\": \"record-based\",\n" +
+                "    \"sorting\": {\n" +
+                "      \"criteria\": [\n" +
+                "        {\n" +
+                "          \"errorPosition\": 1,\n" +
+                "          \"valueType\": \"number\",\n" +
+                "          \"column\": \"start_year\",\n" +
+                "          \"blankPosition\": 2,\n" +
+                "          \"reverse\": false\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    }\n" +
                 "  }";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
 }
-

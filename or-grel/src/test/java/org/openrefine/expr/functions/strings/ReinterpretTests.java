@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ReinterpretTests {
+
     @Test
     public void serializeReinterpret() {
         String json = "{\"description\":\"Returns s reinterpreted thru the given encoder.\",\"params\":\"string s, string encoder\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Reinterpret(), json, ParsingUtilities.defaultWriter);
     }
 }
-

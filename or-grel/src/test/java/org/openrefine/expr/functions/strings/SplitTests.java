@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class SplitTests {
+
     @Test
     public void serializeSplit() {
         String json = "{\"description\":\"Returns the array of strings obtained by splitting s with separator sep. If preserveAllTokens is true, then empty segments are preserved.\",\"params\":\"string s, string or regex sep, optional boolean preserveAllTokens\",\"returns\":\"array\"}";
         TestUtils.isSerializedTo(new Split(), json, ParsingUtilities.defaultWriter);
     }
 }
-

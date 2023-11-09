@@ -37,39 +37,35 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.collections.list.UnmodifiableList;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import org.apache.commons.collections.list.UnmodifiableList;
 
 public class TopList implements Iterable<String>, PreferenceValue {
-    
+
     @JsonProperty("top")
-    protected int          _top = 10;
+    protected int _top = 10;
     protected List<String> _list = new ArrayList<String>();
 
     public TopList(int top) {
         _top = top;
     }
-    
+
     @JsonCreator
     public TopList(
-    		@JsonProperty("top")
-    		int top,
-    		@JsonProperty("list")
-    		List<String> list) {
-    	_top = top;
-    	_list = list;
+            @JsonProperty("top") int top,
+            @JsonProperty("list") List<String> list) {
+        _top = top;
+        _list = list;
     }
-    
+
     @SuppressWarnings("unchecked")
     @JsonProperty("list")
     public List<String> getList() {
         return UnmodifiableList.decorate(_list);
     }
-    
+
     public void add(String element) {
         _list.remove(element);
         _list.add(0, element);
@@ -77,15 +73,14 @@ public class TopList implements Iterable<String>, PreferenceValue {
             _list.remove(_list.size() - 1);
         }
     }
-    
-    public void remove(String element)
-    {
+
+    public void remove(String element) {
         _list.remove(element);
     }
-    
+
     @Override
     @JsonIgnore
-    public Iterator<String> iterator() {  
-        return _list.iterator();  
-    } 
+    public Iterator<String> iterator() {
+        return _list.iterator();
+    }
 }

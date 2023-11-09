@@ -26,6 +26,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.openrefine.extension.gdata;
 
 import java.io.IOException;
@@ -34,8 +35,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.commands.Command;
-
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
@@ -43,9 +42,12 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
+import org.openrefine.commands.Command;
+
 public class DeAuthorizeCommand extends Command {
 
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -56,16 +58,16 @@ public class DeAuthorizeCommand extends Command {
 
             String sessionToken = TokenCookie.getToken(request);
             if (sessionToken != null) {
-                
+
                 // No method to do this in Google's client lib, so roll our own
                 HttpRequestFactory factory = HTTP_TRANSPORT.createRequestFactory();
-                GenericUrl url = new GenericUrl("https://accounts.google.com/o/oauth2/revoke?token="+sessionToken);
+                GenericUrl url = new GenericUrl("https://accounts.google.com/o/oauth2/revoke?token=" + sessionToken);
                 HttpRequest rqst = factory.buildGetRequest(url);
                 HttpResponse resp = rqst.execute();
                 if (resp.getStatusCode() != 200) {
                     respond(response, String.valueOf(resp.getStatusCode()), resp.getStatusMessage());
                 }
-                
+
                 TokenCookie.deleteToken(request, response);
             }
             respond(response, "200 OK", "");

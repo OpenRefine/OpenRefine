@@ -40,57 +40,56 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.ImportingController;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.util.ParsingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ImportingControllerCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("importing-controller_command");
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFTokenAsGET(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFTokenAsGET(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         ImportingController controller = getController(request);
         if (controller != null) {
-        	response.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             controller.doPost(request, response);
         } else {
             HttpUtilities.respond(response, "error", "No such import controller");
         }
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         ImportingController controller = getController(request);
         if (controller != null) {
-        	response.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             controller.doPost(request, response);
         } else {
             HttpUtilities.respond(response, "error", "No such import controller");
         }
     }
-    
+
     private ImportingController getController(HttpServletRequest request) {
         /*
-         * The uploaded file is in the POST body as a "file part". If
-         * we call request.getParameter() then the POST body will get
-         * read and we won't have a chance to parse the body ourselves.
-         * This is why we have to parse the URL for parameters ourselves.
-         * Don't call request.getParameter() before calling internalImport().
+         * The uploaded file is in the POST body as a "file part". If we call request.getParameter() then the POST body
+         * will get read and we won't have a chance to parse the body ourselves. This is why we have to parse the URL
+         * for parameters ourselves. Don't call request.getParameter() before calling internalImport().
          */
         Properties options = ParsingUtilities.parseUrlParameters(request);
         String name = options.getProperty("controller");

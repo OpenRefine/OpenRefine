@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model.changes;
 
 import static org.testng.AssertJUnit.assertTrue;
@@ -32,6 +33,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.history.Change;
 import org.openrefine.model.ModelException;
@@ -39,10 +45,6 @@ import org.openrefine.model.Project;
 import org.openrefine.model.changes.CellAtRow;
 import org.openrefine.model.changes.ColumnAdditionChange;
 import org.openrefine.model.changes.MassChange;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 public class MassChangeTests extends RefineTest {
 
@@ -61,11 +63,9 @@ public class MassChangeTests extends RefineTest {
     }
 
     /**
-     * Test case for #914 - Demonstrates MassChange revert doesn't work by
-     * adding two columns to a project with a MassChange and then reverting.
-     * Without the fix, column "a" will be removed before column "b", causing
-     * column "b" removal to fail because it won't be found at index 1 as
-     * expected.
+     * Test case for #914 - Demonstrates MassChange revert doesn't work by adding two columns to a project with a
+     * MassChange and then reverting. Without the fix, column "a" will be removed before column "b", causing column "b"
+     * removal to fail because it won't be found at index 1 as expected.
      */
     @Test
     public void testWrongReverseOrder()

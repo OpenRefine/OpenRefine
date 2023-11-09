@@ -36,6 +36,7 @@ package org.openrefine.grel.controls;
 import org.openrefine.expr.ExpressionUtils;
 
 public class IsBlank extends IsTest {
+
     @Override
     public String getDescription() {
         return "Returns whether o is null or an empty string";

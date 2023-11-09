@@ -51,12 +51,12 @@ public class Ln extends PureFunction {
     public String getDescription() {
         return "Returns the natural log of n";
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

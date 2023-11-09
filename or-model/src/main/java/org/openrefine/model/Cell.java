@@ -42,13 +42,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Properties;
 
-import org.openrefine.expr.EvalError;
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.expr.HasFields;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
-import org.openrefine.util.StringUtils;
-
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -57,17 +50,25 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.InjectableValues;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.expr.HasFields;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.Pool;
+import org.openrefine.util.StringUtils;
+
 public class Cell implements HasFields {
+
     @JsonIgnore
-    final public Serializable   value;
+    final public Serializable value;
     @JsonIgnore
-    final public Recon          recon;
-    
+    final public Recon recon;
+
     public Cell(Serializable value, Recon recon) {
         this.value = value;
         this.recon = recon;
     }
-    
+
     @Override
     public Object getField(String name) {
         if ("value".equals(name)) {
@@ -77,12 +78,12 @@ public class Cell implements HasFields {
         }
         return null;
     }
-    
+
     @Override
     public boolean fieldAlsoHasFields(String name) {
         return "recon".equals(name);
     }
-    
+
     @JsonProperty("e")
     @JsonInclude(Include.NON_NULL)
     public String getErrorMessage() {
@@ -91,7 +92,7 @@ public class Cell implements HasFields {
         }
         return null;
     }
-    
+
     @JsonProperty("t")
     @JsonInclude(Include.NON_NULL)
     public String getTypeString() {
@@ -100,42 +101,40 @@ public class Cell implements HasFields {
         }
         return null;
     }
-    
+
     @JsonProperty("v")
     @JsonInclude(Include.NON_NULL)
     public Object getValue() {
         if (value != null && !ExpressionUtils.isError(value)) {
             Instant instant = null;
             if (value instanceof OffsetDateTime) {
-                instant = ((OffsetDateTime)value).toInstant();
+                instant = ((OffsetDateTime) value).toInstant();
             } else if (value instanceof LocalDateTime) {
-                instant = ((LocalDateTime)value).toInstant(ZoneOffset.of("Z"));
+                instant = ((LocalDateTime) value).toInstant(ZoneOffset.of("Z"));
             }
-            
+
             if (instant != null) {
                 return ParsingUtilities.instantToString(instant);
-            } else if (value instanceof Double 
-                    && (((Double)value).isNaN() || ((Double)value).isInfinite())) {
+            } else if (value instanceof Double
+                    && (((Double) value).isNaN() || ((Double) value).isInfinite())) {
                 // write as a string
-                 return ((Double)value).toString();
+                return ((Double) value).toString();
             } else if (value instanceof Float
-                    && (((Float)value).isNaN() || ((Float)value).isInfinite())) {
-                return ((Float)value).toString();
-            } else if (value instanceof Boolean || value instanceof Number){
+                    && (((Float) value).isNaN() || ((Float) value).isInfinite())) {
+                return ((Float) value).toString();
+            } else if (value instanceof Boolean || value instanceof Number) {
                 return value;
             } else {
                 return value.toString();
             }
         } else {
-           return null;
+            return null;
         }
     }
-    
+
     /**
-     * TODO
-     * - use JsonIdentityInfo on recon
-     * - implement custom resolver to tie it to a pool
-     * - figure it all out
+     * TODO - use JsonIdentityInfo on recon - implement custom resolver to tie it to a pool - figure it all out
+     * 
      * @return
      */
     @JsonProperty("r")
@@ -146,11 +145,11 @@ public class Cell implements HasFields {
         }
         return null;
     }
-    
+
     public void save(Writer writer, Properties options) {
         try {
-            Pool pool = (Pool)options.get("pool");
-            if(pool != null && recon != null) {
+            Pool pool = (Pool) options.get("pool");
+            if (pool != null && recon != null) {
                 pool.pool(recon);
             }
             ParsingUtilities.saveWriter.writeValue(writer, this);
@@ -158,39 +157,34 @@ public class Cell implements HasFields {
             e.printStackTrace();
         }
     }
-    
+
     static public Cell loadStreaming(String s, Pool pool) throws Exception {
         InjectableValues injectableValues = new InjectableValues.Std()
                 .addValue("pool", pool);
         return ParsingUtilities.mapper.setInjectableValues(injectableValues)
                 .readValue(s, Cell.class);
     }
-    
+
     @JsonCreator
     static public Cell deserialize(
-            @JsonProperty("v")
-            Object value,
-            @JsonProperty("t")
-            String type,
-            @JsonProperty("r")
-            String reconId,
-            @JsonProperty("e")
-            String error,
-            @JacksonInject("pool")
-            Pool pool) {
+            @JsonProperty("v") Object value,
+            @JsonProperty("t") String type,
+            @JsonProperty("r") String reconId,
+            @JsonProperty("e") String error,
+            @JacksonInject("pool") Pool pool) {
         Recon recon = null;
-        if(reconId != null) {
+        if (reconId != null) {
             recon = pool.getRecon(reconId);
         }
         if (type != null && "date".equals(type)) {
-            value = ParsingUtilities.stringToDate((String) value); 
+            value = ParsingUtilities.stringToDate((String) value);
         }
         if (error != null) {
             value = new EvalError(error);
         }
-        return new Cell((Serializable)value, recon);
+        return new Cell((Serializable) value, recon);
     }
-    
+
     @Override
     public String toString() {
         return StringUtils.toString(value);

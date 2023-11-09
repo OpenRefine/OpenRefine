@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import static org.testng.Assert.assertEquals;
@@ -30,12 +31,13 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.testng.annotations.BeforeMethod;
+
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.MockConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.updates.ItemUpdate;
-import org.testng.annotations.BeforeMethod;
 
 public abstract class ScrutinizerTest {
 
@@ -56,8 +58,8 @@ public abstract class ScrutinizerTest {
 
     public void scrutinize(ItemUpdate... updates) {
         scrutinizer.batchIsBeginning();
-        for(ItemUpdate update : Arrays.asList(updates)) {
-            if(!update.isNull()) {
+        for (ItemUpdate update : Arrays.asList(updates)) {
+            if (!update.isNull()) {
                 scrutinizer.scrutinize(update);
             }
         }

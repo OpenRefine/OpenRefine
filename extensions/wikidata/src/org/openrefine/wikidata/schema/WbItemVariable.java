@@ -21,17 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.Recon.Judgment;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
  * An item that depends on a reconciled value in a column.
@@ -47,8 +48,7 @@ public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
     }
 
     /**
-     * Constructs a variable and sets the column it is bound to. Mostly used as a
-     * convenience method for testing.
+     * Constructs a variable and sets the column it is bound to. Mostly used as a convenience method for testing.
      * 
      * @param columnName
      *            the name of the column the expression should draw its value from

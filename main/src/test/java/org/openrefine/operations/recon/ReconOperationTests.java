@@ -24,11 +24,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
 
 import static org.mockito.Mockito.mock;
 
 import java.util.Properties;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
@@ -38,12 +42,10 @@ import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
 
 public class ReconOperationTests extends RefineTest {
-    private String json= "{"
+
+    private String json = "{"
             + "\"op\":\"core/recon\","
             + "\"description\":\"Reconcile cells in column researcher to type Q5\","
             + "\"columnName\":\"researcher\","
@@ -59,35 +61,36 @@ public class ReconOperationTests extends RefineTest {
             + "},"
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
     private Project project = mock(Project.class);
-    
+
     private String processJson = ""
-            + "    {\n" + 
-            "       \"description\" : \"Reconcile cells in column researcher to type Q5\",\n" + 
-            "       \"id\" : %d,\n" + 
-            "       \"immediate\" : false,\n" + 
-            "       \"onDone\" : [ {\n" + 
-            "         \"action\" : \"createFacet\",\n" + 
-            "         \"facetConfig\" : {\n" + 
-            "           \"columnName\" : \"researcher\",\n" + 
-            "           \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n" + 
-            "           \"name\" : \"researcher: judgment\"\n" + 
-            "         },\n" + 
-            "         \"facetOptions\" : {\n" + 
-            "           \"scroll\" : false\n" + 
-            "         },\n" + 
-            "         \"facetType\" : \"list\"\n" + 
-            "       }, {\n" + 
-            "         \"action\" : \"createFacet\",\n" + 
-            "         \"facetConfig\" : {\n" + 
-            "           \"columnName\" : \"researcher\",\n" + 
-            "           \"expression\" : \"cell.recon.best.score\",\n" + 
-            "           \"mode\" : \"range\",\n" + 
-            "           \"name\" : \"researcher: best candidate's score\"\n" + 
-            "         },\n" + 
-            "         \"facetType\" : \"range\"\n" + 
-            "       } ],\n" + 
-            "       \"progress\" : 0,\n" + 
-            "       \"status\" : \"pending\"\n" + 
+            + "    {\n" +
+            "       \"description\" : \"Reconcile cells in column researcher to type Q5\",\n" +
+            "       \"id\" : %d,\n" +
+            "       \"immediate\" : false,\n" +
+            "       \"onDone\" : [ {\n" +
+            "         \"action\" : \"createFacet\",\n" +
+            "         \"facetConfig\" : {\n" +
+            "           \"columnName\" : \"researcher\",\n" +
+            "           \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n"
+            +
+            "           \"name\" : \"researcher: judgment\"\n" +
+            "         },\n" +
+            "         \"facetOptions\" : {\n" +
+            "           \"scroll\" : false\n" +
+            "         },\n" +
+            "         \"facetType\" : \"list\"\n" +
+            "       }, {\n" +
+            "         \"action\" : \"createFacet\",\n" +
+            "         \"facetConfig\" : {\n" +
+            "           \"columnName\" : \"researcher\",\n" +
+            "           \"expression\" : \"cell.recon.best.score\",\n" +
+            "           \"mode\" : \"range\",\n" +
+            "           \"name\" : \"researcher: best candidate's score\"\n" +
+            "         },\n" +
+            "         \"facetType\" : \"range\"\n" +
+            "       } ],\n" +
+            "       \"progress\" : 0,\n" +
+            "       \"status\" : \"pending\"\n" +
             "     }";
 
     @BeforeSuite
@@ -95,12 +98,12 @@ public class ReconOperationTests extends RefineTest {
         OperationRegistry.registerOperation("core", "recon", ReconOperation.class);
         ReconConfig.registerReconConfig("core", "standard-service", StandardReconConfig.class);
     }
-    
+
     @Test
     public void serializeReconOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconOperation.class), json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeReconProcess() throws Exception {
         ReconOperation op = ParsingUtilities.mapper.readValue(json, ReconOperation.class);

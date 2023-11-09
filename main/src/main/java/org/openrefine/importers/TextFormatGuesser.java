@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.importers;
 
 import java.io.File;
@@ -53,10 +54,10 @@ public class TextFormatGuesser implements FormatGuesser {
                 int wikiTableBegin = 0;
                 int wikiTableRow = 0;
                 int trailingPeriods = 0;
-                
+
                 char firstChar = ' ';
                 boolean foundFirstChar = false;
-                
+
                 char[] chars = new char[4096];
                 int c;
                 while (totalBytes < 64 * 1024 && (c = reader.read(chars)) > 0) {
@@ -68,7 +69,7 @@ public class TextFormatGuesser implements FormatGuesser {
                     wikiTableBegin += countSubstrings(chunk, "{|");
                     wikiTableRow += countSubstrings(chunk, "|-");
                     trailingPeriods += countLineSuffix(chunk, ".");
-                    
+
                     if (!foundFirstChar) {
                         chunk = chunk.trim();
                         if (chunk.length() > 0) {
@@ -78,12 +79,13 @@ public class TextFormatGuesser implements FormatGuesser {
                     }
                     totalBytes += c;
                 }
-                
+
                 if (foundFirstChar) {
                     if (wikiTableBegin >= 1 && wikiTableRow >= 2) {
                         return "text/wiki";
-                    } if ((firstChar == '{' || firstChar == '[') &&
-                        openBraces >= 5 && closeBraces >= 5) {
+                    }
+                    if ((firstChar == '{' || firstChar == '[') &&
+                            openBraces >= 5 && closeBraces >= 5) {
                         return "text/json";
                     } else if (openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
                         if (trailingPeriods > 0) {
@@ -105,7 +107,7 @@ public class TextFormatGuesser implements FormatGuesser {
         }
         return null;
     }
-    
+
     static public int countSubstrings(String s, String sub) {
         int count = 0;
         int from = 0;
@@ -120,7 +122,7 @@ public class TextFormatGuesser implements FormatGuesser {
         }
         return count;
     }
-    
+
     static public int countLineSuffix(String s, String suffix) {
         int count = 0;
         int from = 0;

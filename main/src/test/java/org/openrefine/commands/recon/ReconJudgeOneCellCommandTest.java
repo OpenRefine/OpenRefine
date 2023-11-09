@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.commands.recon;
 
 import static org.mockito.Mockito.mock;
@@ -37,6 +38,11 @@ import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
@@ -47,59 +53,55 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class ReconJudgeOneCellCommandTest extends RefineTest {
-        
+
     Project project = null;
     HttpServletRequest request = null;
     HttpServletResponse response = null;
     Command command = null;
     PrintWriter writer = null;
-    
+
     @BeforeMethod
     public void setUp() {
         project = createProject(
-                new String[] {"reconciled column","unreconciled column"},
+                new String[] { "reconciled column", "unreconciled column" },
                 new Serializable[] {
-                "a","b",
-                "c","d"});
+                        "a", "b",
+                        "c", "d" });
         Column reconciled = project.columnModel.columns.get(0);
         ReconConfig config = new StandardReconConfig(
                 "http://my.recon.service/api",
                 "http://my.recon.service/rdf/space",
                 "http://my.recon.service/rdf/schema",
-                "type3894", 
+                "type3894",
                 "octopus",
                 true,
                 Collections.emptyList(),
                 5);
         reconciled.setReconConfig(config);
-        
+
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        
+
         when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        
+
         writer = mock(PrintWriter.class);
         try {
             when(response.getWriter()).thenReturn(writer);
         } catch (IOException e1) {
             Assert.fail();
         }
-        
-        command = new  ReconJudgeOneCellCommand();
+
+        command = new ReconJudgeOneCellCommand();
     }
-    
+
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.id);
     }
-    
+
     @Test
     public void testMarkOneCellInReconciledColumn() throws Exception {
 
@@ -112,7 +114,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.recon.service/rdf/space", cell.recon.identifierSpace);
     }
-    
+
     @Test
     public void testMarkOneCellWithCustomSpace() throws Exception {
 

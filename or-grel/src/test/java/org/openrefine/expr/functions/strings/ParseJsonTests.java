@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ParseJsonTests {
+
     @Test
     public void serializeParseJson() {
         String json = "{\"description\":\"Parses a string as JSON\",\"params\":\"string s\",\"returns\":\"JSON object\"}";
         TestUtils.isSerializedTo(new ParseJson(), json, ParsingUtilities.defaultWriter);
     }
 }
-

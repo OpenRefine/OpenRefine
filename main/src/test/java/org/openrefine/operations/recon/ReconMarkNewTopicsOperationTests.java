@@ -24,21 +24,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconMarkNewTopicsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-mark-new-topics", ReconMarkNewTopicsOperation.class);
     }
-    
+
     @Test
     public void serializeReconMarkNewTopicsOperation() throws Exception {
         String json = "{"
@@ -48,6 +52,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 + "\"shareNewTopics\":true,"
                 + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\""
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMarkNewTopicsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMarkNewTopicsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
 }

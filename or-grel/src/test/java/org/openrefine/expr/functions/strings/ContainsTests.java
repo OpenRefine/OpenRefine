@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import java.util.regex.Pattern;
@@ -43,21 +44,20 @@ public class ContainsTests extends FunctionTestBase {
     @Test
     public void testContainsFunction() {
         String value = "rose is a rose";
-        Assert.assertEquals(invoke("contains", value, "rose"),true);
+        Assert.assertEquals(invoke("contains", value, "rose"), true);
 
         // Test if it does not interpret regex passed in String as Pattern
-        Assert.assertEquals(invoke("contains", value, "$"),false);
-        Assert.assertEquals(invoke("contains", value, "r.se"),false);
-        Assert.assertEquals(invoke("contains", value, "\\s+"),false);
+        Assert.assertEquals(invoke("contains", value, "$"), false);
+        Assert.assertEquals(invoke("contains", value, "r.se"), false);
+        Assert.assertEquals(invoke("contains", value, "\\s+"), false);
         // Input regex pattern in UI with : "/ /" , is intepreted as Pattern
-        Assert.assertEquals(invoke("contains", value, Pattern.compile("$")),true);
-        Assert.assertEquals(invoke("contains", value, Pattern.compile("\\s+")),true);
+        Assert.assertEquals(invoke("contains", value, Pattern.compile("$")), true);
+        Assert.assertEquals(invoke("contains", value, Pattern.compile("\\s+")), true);
     }
-    
+
     @Test
     public void serializeContains() {
         String json = "{\"description\":\"Returns whether s contains frag\",\"params\":\"string s, string frag\",\"returns\":\"boolean\"}";
         TestUtils.isSerializedTo(new Contains(), json, ParsingUtilities.defaultWriter);
     }
 }
-

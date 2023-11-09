@@ -47,31 +47,30 @@ public class SelectXml extends PureFunction {
             Object o1 = args[0];
             Object o2 = args[1];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
-                if(o2 != null && o2 instanceof String){
+                Element e1 = (Element) o1;
+                if (o2 != null && o2 instanceof String) {
                     return e1.select(o2.toString());
                 }
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml()");
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                        + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml()");
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");
     }
 
-
     @Override
     public String getDescription() {
         return "Selects an element from an XML or HTML elementn using selector syntax.";
     }
-    
+
     @Override
     public String getParams() {
         return "Element e, String s";
     }
-    
+
     @Override
     public String getReturns() {
         return "HTML Elements";
     }
 }
-

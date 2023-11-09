@@ -37,6 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.Change;
@@ -44,35 +47,30 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
-import org.openrefine.model.Row;
 import org.openrefine.model.Recon.Judgment;
+import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.ReconChange;
 import org.openrefine.operations.EngineDependentMassCellOperation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOperation {
+
     final protected boolean _clearData;
-    
+
     @JsonCreator
     public ReconDiscardJudgmentsOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("columnName")
-            String columnName, 
-            @JsonProperty("clearData")
-            boolean clearData) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("clearData") boolean clearData) {
         super(engineConfig, columnName, false);
         _clearData = clearData;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("clearData")
     public boolean getClearData() {
         return _clearData;
@@ -80,38 +78,36 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
 
     @Override
     protected String getBriefDescription(Project project) {
-        return _clearData ?
-            "Discard recon judgments and clear recon data for cells in column " + _columnName :
-            "Discard recon judgments for cells in column " + _columnName;
+        return _clearData ? "Discard recon judgments and clear recon data for cells in column " + _columnName
+                : "Discard recon judgments for cells in column " + _columnName;
     }
 
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        
-        return (_clearData ?
-            "Discard recon judgments and clear recon data" :
-            "Discard recon judgments") +
-            " for " + cellChanges.size() + " cells in column " + column.getName();
+
+        return (_clearData ? "Discard recon judgments and clear recon data" : "Discard recon judgments") +
+                " for " + cellChanges.size() + " cells in column " + column.getName();
     }
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
-        
+
         return new RowVisitor() {
+
             int cellIndex;
             List<CellChange> cellChanges;
             Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
             long historyEntryID;
-            
+
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
                 this.historyEntryID = historyEntryID;
                 return this;
             }
-            
+
             @Override
             public void start(Project project) {
                 // nothing to do
@@ -121,7 +117,7 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
             public void end(Project project) {
                 // nothing to do
             }
-            
+
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
@@ -138,13 +134,13 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
                             newRecon.judgment = Judgment.None;
                             newRecon.judgmentAction = "mass";
                             newRecon.judgmentBatchSize = 1;
-                            
+
                             dupReconMap.put(cell.recon.id, newRecon);
                         }
                     }
-                    
+
                     Cell newCell = new Cell(cell.value, newRecon);
-                    
+
                     CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
                     cellChanges.add(cellChange);
                 }
@@ -152,14 +148,13 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
             }
         }.init(column.getCellIndex(), cellChanges, historyEntryID);
     }
-    
+
     @Override
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new ReconChange(
-            cellChanges, 
-            _columnName, 
-            column.getReconConfig(),
-            null
-        );
+                cellChanges,
+                _columnName,
+                column.getReconConfig(),
+                null);
     }
 }

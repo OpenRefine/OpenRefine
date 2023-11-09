@@ -37,15 +37,15 @@ public class Metaphone3Keyer extends Keyer {
 
     public Metaphone3Keyer() {
     }
-    
+
     @Override
     public String key(String s, Object... o) {
         Metaphone3 _metaphone3 = new Metaphone3();
-        //_metaphone3.SetEncodeVowels(true);
-        //_metaphone3.SetEncodeExact(true);
+        // _metaphone3.SetEncodeVowels(true);
+        // _metaphone3.SetEncodeExact(true);
         _metaphone3.SetWord(s);
         _metaphone3.Encode();
         return _metaphone3.GetMetaph();
     }
-    
+
 }

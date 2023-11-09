@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.exporters;
 
 import java.io.IOException;
@@ -29,13 +30,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.openrefine.browsing.Engine;
-import org.openrefine.exporters.WriterExporter;
-import org.openrefine.model.Project;
-import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
-import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -47,6 +41,14 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
+
+import org.openrefine.browsing.Engine;
+import org.openrefine.exporters.WriterExporter;
+import org.openrefine.model.Project;
+import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
+import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 
 public class QuickStatementsExporter implements WriterExporter {
 

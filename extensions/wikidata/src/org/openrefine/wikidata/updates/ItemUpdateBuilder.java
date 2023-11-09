@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates;
 
 import java.util.ArrayList;
@@ -55,8 +56,7 @@ public class ItemUpdateBuilder {
      * Constructor.
      * 
      * @param qid
-     *            the subject of the document. It can be a reconciled item value for
-     *            new items.
+     *            the subject of the document. It can be a reconciled item value for new items.
      */
     public ItemUpdateBuilder(ItemIdValue qid) {
         Validate.notNull(qid);
@@ -72,8 +72,7 @@ public class ItemUpdateBuilder {
     }
 
     /**
-     * Mark a statement for insertion. If it matches an existing statement, it will
-     * update the statement instead.
+     * Mark a statement for insertion. If it matches an existing statement, it will update the statement instead.
      * 
      * @param statement
      *            the statement to add or update
@@ -85,8 +84,7 @@ public class ItemUpdateBuilder {
     }
 
     /**
-     * Mark a statement for deletion. If no such statement exists, nothing will be
-     * deleted.
+     * Mark a statement for deletion. If no such statement exists, nothing will be deleted.
      * 
      * @param statement
      *            the statement to delete
@@ -132,9 +130,9 @@ public class ItemUpdateBuilder {
     public ItemUpdateBuilder addLabel(MonolingualTextValue label, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
-        	labels.add(label);
+            labels.add(label);
         } else {
-        	labelsIfNew.add(label);
+            labelsIfNew.add(label);
         }
         return this;
     }
@@ -150,9 +148,9 @@ public class ItemUpdateBuilder {
     public ItemUpdateBuilder addLabels(Set<MonolingualTextValue> labels, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
-        	this.labels.addAll(labels);
+            this.labels.addAll(labels);
         } else {
-        	labelsIfNew.addAll(labels);
+            labelsIfNew.addAll(labels);
         }
         return this;
     }
@@ -168,9 +166,9 @@ public class ItemUpdateBuilder {
     public ItemUpdateBuilder addDescription(MonolingualTextValue description, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
-        	descriptions.add(description);
+            descriptions.add(description);
         } else {
-        	descriptionsIfNew.add(description);
+            descriptionsIfNew.add(description);
         }
         return this;
     }
@@ -186,16 +184,15 @@ public class ItemUpdateBuilder {
     public ItemUpdateBuilder addDescriptions(Set<MonolingualTextValue> descriptions, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         if (override) {
-        	this.descriptions.addAll(descriptions);
+            this.descriptions.addAll(descriptions);
         } else {
-        	descriptionsIfNew.addAll(descriptions);
+            descriptionsIfNew.addAll(descriptions);
         }
         return this;
     }
 
     /**
-     * Adds an alias to the item. It will be added to any existing aliases in that
-     * language.
+     * Adds an alias to the item. It will be added to any existing aliases in that language.
      * 
      * @param alias
      *            the alias to add
@@ -207,8 +204,7 @@ public class ItemUpdateBuilder {
     }
 
     /**
-     * Adds a list of aliases to the item. They will be added to any existing
-     * aliases in each language.
+     * Adds a list of aliases to the item. They will be added to any existing aliases in each language.
      * 
      * @param aliases
      *            the aliases to add

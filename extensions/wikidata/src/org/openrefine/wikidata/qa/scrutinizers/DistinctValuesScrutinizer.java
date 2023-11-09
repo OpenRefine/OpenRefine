@@ -21,20 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import org.openrefine.wikidata.qa.QAWarning;
+
 /**
- * A scrutinizer that checks for properties using the same value on different
- * items.
+ * A scrutinizer that checks for properties using the same value on different items.
  * 
  * @author Antonin Delpeuch
  *

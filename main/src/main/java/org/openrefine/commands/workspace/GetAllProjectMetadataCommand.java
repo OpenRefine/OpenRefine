@@ -40,35 +40,37 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.ProjectMetadata;
-import org.openrefine.commands.Command;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
+import org.openrefine.ProjectManager;
+import org.openrefine.ProjectMetadata;
+import org.openrefine.commands.Command;
+
 public class GetAllProjectMetadataCommand extends Command {
-    public static class AllProjectMetadata  {
+
+    public static class AllProjectMetadata {
+
         @JsonProperty("projects")
         protected Map<Long, ProjectMetadata> projects;
         @JsonProperty("customMetadataColumns")
         @JsonInclude(Include.NON_NULL)
         @JsonRawValue
         protected String customMetadataColumns;
-        
+
         protected AllProjectMetadata(Map<Long, ProjectMetadata> map, String json) {
             projects = map;
             customMetadataColumns = json;
         }
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetadata");
+
+        String userMeta = (String) ProjectManager.singleton.getPreferenceStore().get("userMetadata");
         respondJSON(response, new AllProjectMetadata(ProjectManager.singleton.getAllProjectMetadata(), userMeta));
     }
 }

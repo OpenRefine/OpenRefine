@@ -36,6 +36,9 @@ package org.openrefine.operations;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.FilteredRows;
@@ -48,15 +51,13 @@ import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.MassCellChange;
 import org.openrefine.operations.EngineDependentOperation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 abstract public class EngineDependentMassCellOperation extends EngineDependentOperation {
+
     @JsonIgnore
-    final protected String    _columnName;
+    final protected String _columnName;
     @JsonIgnore
     final protected boolean _updateRowContextDependencies;
-    
+
     protected EngineDependentMassCellOperation(
             EngineConfig engineConfig, String columnName, boolean updateRowContextDependencies) {
         super(engineConfig);
@@ -67,37 +68,38 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
-        
+
         Column column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {
             throw new Exception("No column named " + _columnName);
         }
-        
+
         List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
-        
+
         FilteredRows filteredRows = engine.getAllFilteredRows();
         try {
             filteredRows.accept(project, createRowVisitor(project, cellChanges, historyEntryID));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         String description = createDescription(column, cellChanges);
-        
+
         return new HistoryEntry(
-            historyEntryID, project, description, this, createChange(project, column, cellChanges));
+                historyEntryID, project, description, this, createChange(project, column, cellChanges));
     }
-    
+
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new MassCellChange(
-            cellChanges, column.getName(), _updateRowContextDependencies);
+                cellChanges, column.getName(), _updateRowContextDependencies);
     }
-    
+
     @JsonProperty("columnName")
     protected String getColumnName() {
         return _columnName;
     }
-    
+
     abstract protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception;
+
     abstract protected String createDescription(Column column, List<CellChange> cellChanges);
 }

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ChompTests {
+
     @Test
     public void serializeChomp() {
         String json = "{\"description\":\"Removes separator from the end of str if it's there, otherwise leave it alone.\",\"params\":\"string str, string separator\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Chomp(), json, ParsingUtilities.defaultWriter);
     }
 }
-

@@ -48,7 +48,7 @@ public class GreatestCommonDenominator extends PureFunction {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
     }
 
-    public static double GCD(double a, double b){
+    public static double GCD(double a, double b) {
         return b == 0 ? a : GCD(b, a % b);
     }
 
@@ -56,12 +56,12 @@ public class GreatestCommonDenominator extends PureFunction {
     public String getDescription() {
         return "Returns the greatest common denominator of the two numbers";
     }
-    
+
     @Override
     public String getParams() {
         return "number d, number e";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

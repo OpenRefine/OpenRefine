@@ -46,11 +46,12 @@ import org.openrefine.model.Project;
 import org.openrefine.util.Pool;
 
 public class CellChange implements Change {
-    final public int     row;
-    final public int     cellIndex;
-    final public Cell    oldCell;
-    final public Cell    newCell;
-    
+
+    final public int row;
+    final public int cellIndex;
+    final public Cell oldCell;
+    final public Cell newCell;
+
     public CellChange(int row, int cellIndex, Cell oldCell, Cell newCell) {
         this.row = row;
         this.cellIndex = cellIndex;
@@ -61,7 +62,7 @@ public class CellChange implements Change {
     @Override
     public void apply(Project project) {
         project.rows.get(row).setCell(cellIndex, newCell);
-        
+
         Column column = project.columnModel.getColumnByCellIndex(cellIndex);
         column.clearPrecomputes();
         ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
@@ -70,44 +71,48 @@ public class CellChange implements Change {
     @Override
     public void revert(Project project) {
         project.rows.get(row).setCell(cellIndex, oldCell);
-        
+
         Column column = project.columnModel.getColumnByCellIndex(cellIndex);
         column.clearPrecomputes();
         ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
     }
-    
+
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("row="); writer.write(Integer.toString(row)); writer.write('\n');
-        writer.write("cell="); writer.write(Integer.toString(cellIndex)); writer.write('\n');
-        
+        writer.write("row=");
+        writer.write(Integer.toString(row));
+        writer.write('\n');
+        writer.write("cell=");
+        writer.write(Integer.toString(cellIndex));
+        writer.write('\n');
+
         writer.write("old=");
         if (oldCell != null) {
             oldCell.save(writer, options); // one liner
         }
         writer.write('\n');
-        
+
         writer.write("new=");
         if (newCell != null) {
             newCell.save(writer, options); // one liner
         }
         writer.write('\n');
-        
+
         writer.write("/ec/\n"); // end of change marker
     }
-    
+
     static public CellChange load(LineNumberReader reader, Pool pool) throws Exception {
         int row = -1;
         int cellIndex = -1;
         Cell oldCell = null;
         Cell newCell = null;
-        
+
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
             int equal = line.indexOf('=');
             CharSequence field = line.subSequence(0, equal);
             String value = line.substring(equal + 1);
-            
+
             if ("row".equals(field)) {
                 row = Integer.parseInt(value);
             } else if ("cell".equals(field)) {
@@ -118,7 +123,7 @@ public class CellChange implements Change {
                 oldCell = Cell.loadStreaming(value, pool);
             }
         }
-        
+
         return new CellChange(row, cellIndex, oldCell, newCell);
     }
 }

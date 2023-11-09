@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -28,9 +29,9 @@ import org.openrefine.wikidata.updates.ItemUpdate;
 public class NoEditsMadeScrutinizer extends EditScrutinizer {
 
     public static final String type = "no-edit-generated";
-    
+
     private boolean nonNullUpdateSeen = false;
-    
+
     @Override
     public void batchIsBeginning() {
         nonNullUpdateSeen = false;
@@ -40,10 +41,10 @@ public class NoEditsMadeScrutinizer extends EditScrutinizer {
     public void scrutinize(ItemUpdate edit) {
         nonNullUpdateSeen = true;
     }
-    
+
     @Override
     public void batchIsFinished() {
-        if(!nonNullUpdateSeen) {
+        if (!nonNullUpdateSeen) {
             info(type);
         }
     }

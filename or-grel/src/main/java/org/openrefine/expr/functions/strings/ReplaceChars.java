@@ -55,17 +55,16 @@ public class ReplaceChars extends PureFunction {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 3 strings");
     }
 
-    
     @Override
     public String getDescription() {
         return "Returns the string obtained by replacing all chars in f with the char in s at that same position";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string f, string r";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

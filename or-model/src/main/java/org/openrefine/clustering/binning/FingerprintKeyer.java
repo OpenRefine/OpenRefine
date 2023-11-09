@@ -43,7 +43,7 @@ public class FingerprintKeyer extends Keyer {
 
     // Punctuation and control characters (except for TAB which we need for split to work)
     static final Pattern punctctrl = Pattern.compile("\\p{Punct}|[\\x00-\\x08\\x0A-\\x1F\\x7F]");
-    
+
     @Override
     public String key(String s, Object... o) {
         if (s == null) {
@@ -60,7 +60,7 @@ public class FingerprintKeyer extends Keyer {
         }
         StringBuffer b = new StringBuffer();
         Iterator<String> i = set.iterator();
-        while (i.hasNext()) {  // join ordered fragments back together
+        while (i.hasNext()) { // join ordered fragments back together
             b.append(i.next());
             if (i.hasNext()) {
                 b.append(' ');
@@ -77,13 +77,13 @@ public class FingerprintKeyer extends Keyer {
         }
         return b.toString();
     }
-    
+
     /**
-     * Translate the given unicode char in the closest ASCII representation
-     * NOTE: this function deals only with latin-1 supplement and latin-1 extended code charts
+     * Translate the given unicode char in the closest ASCII representation NOTE: this function deals only with latin-1
+     * supplement and latin-1 extended code charts
      */
     private char translate(char c) {
-        switch(c) {
+        switch (c) {
             case '\u00C0':
             case '\u00C1':
             case '\u00C2':

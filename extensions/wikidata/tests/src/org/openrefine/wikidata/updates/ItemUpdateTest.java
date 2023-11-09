@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates;
 
 import static org.testng.Assert.assertEquals;
@@ -37,9 +38,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -50,6 +48,10 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
+import org.openrefine.wikidata.testing.TestingData;
 
 public class ItemUpdateTest {
 
@@ -113,22 +115,20 @@ public class ItemUpdateTest {
         assertEquals(Arrays.asList(statement1, statement2), update.getAddedStatements());
         assertEquals(statementGroups, update.getAddedStatementGroups().stream().collect(Collectors.toSet()));
     }
-    
+
     /**
-     * Test disabled because it fails due to
-     * https://github.com/Wikidata/Wikidata-Toolkit/issues/417
-     * (not fixed as of WDTK 0.10.0).
+     * Test disabled because it fails due to https://github.com/Wikidata/Wikidata-Toolkit/issues/417 (not fixed as of
+     * WDTK 0.10.0).
      * 
-     * This bug is not critical as the extraneous serialized data
-     * is ignored by Wikibase.
+     * This bug is not critical as the extraneous serialized data is ignored by Wikibase.
      * 
      * @todo reenable once a later version is released
      */
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testSerializeStatements() throws IOException {
-    	ItemUpdate update = new ItemUpdateBuilder(existingSubject).addStatement(statement1).addStatement(statement2)
+        ItemUpdate update = new ItemUpdateBuilder(existingSubject).addStatement(statement1).addStatement(statement2)
                 .build();
-    	TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/statement_groups.json"), ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/statement_groups.json"), ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -176,20 +176,20 @@ public class ItemUpdateTest {
                 .addLabel(aliasFr, true).build();
         assertEquals(expectedUpdate, normalized);
     }
-    
+
     @Test
     public void testMergeLabels() {
-    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
         ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, true).build();
         ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, true).build();
         ItemUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(label2), merged.getLabels());
     }
-    
+
     @Test
     public void testMergeLabelsIfNew() {
-    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
         ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, false).build();
         ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, false).build();
@@ -197,10 +197,10 @@ public class ItemUpdateTest {
         assertEquals(Collections.singleton(label1), merged.getLabelsIfNew());
         assertEquals(Collections.emptySet(), merged.getLabels());
     }
-    
+
     @Test
     public void testMergeLabelsIfNewOverriding() {
-    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
         ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, true).build();
         ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, false).build();
@@ -208,10 +208,10 @@ public class ItemUpdateTest {
         assertEquals(Collections.singleton(label1), merged.getLabels());
         assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
     }
-    
+
     @Test
     public void testMergeLabelsIfNewOverriding2() {
-    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
         ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, false).build();
         ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, true).build();
@@ -219,10 +219,10 @@ public class ItemUpdateTest {
         assertEquals(Collections.singleton(label2), merged.getLabels());
         assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
     }
-    
+
     @Test
     public void testMergeDescriptionsIfNew() {
-    	MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
+        MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
         ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, false).build();
         ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, false).build();
@@ -231,10 +231,10 @@ public class ItemUpdateTest {
         assertEquals(Collections.emptySet(), merged.getDescriptions());
         assertFalse(merged.isEmpty());
     }
-    
+
     @Test
     public void testMergeDescriptionsIfNewOverriding() {
-    	MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
+        MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
         ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, true).build();
         ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, false).build();
@@ -242,10 +242,10 @@ public class ItemUpdateTest {
         assertEquals(Collections.singleton(description1), merged.getDescriptions());
         assertEquals(Collections.emptySet(), merged.getDescriptionsIfNew());
     }
-    
+
     @Test
     public void testMergeDescriptionsIfNewOverriding2() {
-    	MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
+        MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
         ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, false).build();
         ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, true).build();
@@ -253,15 +253,15 @@ public class ItemUpdateTest {
         assertEquals(Collections.singleton(description2), merged.getDescriptions());
         assertEquals(Collections.emptySet(), merged.getDescriptionsIfNew());
     }
-    
+
     @Test
     public void testConstructOverridingLabels() {
-    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
         ItemUpdate update = new ItemUpdateBuilder(existingSubject)
-        		.addLabel(label1, false)
-        		.addLabel(label2, true)
-        		.build();
+                .addLabel(label1, false)
+                .addLabel(label2, true)
+                .build();
         assertEquals(Collections.singleton(label2), update.getLabels());
         assertEquals(Collections.emptySet(), update.getLabelsIfNew());
     }

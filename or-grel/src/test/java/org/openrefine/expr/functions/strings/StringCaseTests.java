@@ -39,29 +39,27 @@ import org.testng.annotations.Test;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.functions.FunctionTestBase;
 
-
 /**
- * Tests for string up/low/title case functions.  
- * (A very brief start so far)
+ * Tests for string up/low/title case functions. (A very brief start so far)
  * 
  * @author Tom Morris <tfmorris@gmail.com>
  */
 public class StringCaseTests extends FunctionTestBase {
-    
+
     @Test
-    public void testToTitlecaseInvalidParams() {        
+    public void testToTitlecaseInvalidParams() {
         Assert.assertTrue(invoke("toTitlecase") instanceof EvalError);
-        Assert.assertTrue(invoke("toTitlecase", "one","two","three") instanceof EvalError);
+        Assert.assertTrue(invoke("toTitlecase", "one", "two", "three") instanceof EvalError);
     }
-    
+
     @Test
-    public void testToTitlecase() {        
-        Assert.assertEquals((String)(invoke("toTitlecase", "one")),"One");
-        Assert.assertEquals((String)(invoke("toTitlecase", "ONE")),"One");
-        Assert.assertEquals((String)(invoke("toTitlecase", "one two three")),"One Two Three");
-        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.")),"C.R. Sandidge Wines, Inc.");
-        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.",",. ")),"C.R. Sandidge Wines, Inc.");
-        Assert.assertEquals((String)(invoke("toTitlecase", "one-two-three","-")),"One-Two-Three");
+    public void testToTitlecase() {
+        Assert.assertEquals((String) (invoke("toTitlecase", "one")), "One");
+        Assert.assertEquals((String) (invoke("toTitlecase", "ONE")), "One");
+        Assert.assertEquals((String) (invoke("toTitlecase", "one two three")), "One Two Three");
+        Assert.assertEquals((String) (invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.")), "C.R. Sandidge Wines, Inc.");
+        Assert.assertEquals((String) (invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.", ",. ")), "C.R. Sandidge Wines, Inc.");
+        Assert.assertEquals((String) (invoke("toTitlecase", "one-two-three", "-")), "One-Two-Three");
     }
-    
+
 }

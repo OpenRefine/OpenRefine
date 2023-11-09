@@ -41,52 +41,55 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.commands.Command;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class GetOperationsCommand extends Command {
-    protected static class SimpleHistoryEntry  {
+
+    protected static class SimpleHistoryEntry {
+
         protected HistoryEntry entry;
 
         public SimpleHistoryEntry(HistoryEntry e) {
             entry = e;
         }
-        
+
         @JsonProperty("description")
         public String getDescription() {
             return entry.description;
         }
-        
+
         @JsonProperty("operation")
         @JsonInclude(Include.NON_NULL)
         public AbstractOperation getOperation() {
             return entry.operation;
         }
     }
-    
-    protected static class HistoryEntries  {
+
+    protected static class HistoryEntries {
+
         @JsonProperty("entries")
         List<SimpleHistoryEntry> entries;
-        
+
         protected HistoryEntries(List<HistoryEntry> entries) {
             this.entries = entries.stream()
                     .map(e -> new SimpleHistoryEntry(e))
                     .collect(Collectors.toList());
         }
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Project project = getProject(request);
-        
+
         HistoryEntries entries = new HistoryEntries(project.history.getLastPastEntries(-1));
         respondJSON(response, entries);
     }

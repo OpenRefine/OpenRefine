@@ -38,6 +38,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.AbstractOperation;
@@ -46,13 +48,12 @@ import org.openrefine.operations.cell.TextTransformOperation;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
+
     @Override
     protected AbstractOperation createOperation(Project project,
-        HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+            HttpServletRequest request, EngineConfig engineConfig) throws Exception {
+
         String baseColumnName = request.getParameter("baseColumnName");
         String urlExpression = request.getParameter("urlExpression");
         String newColumnName = request.getParameter("newColumnName");
@@ -64,16 +65,15 @@ public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
         List<HttpHeader> headers = Arrays.asList(mapper.readValue(request.getParameter("httpHeaders"), HttpHeader[].class));
 
         return new ColumnAdditionByFetchingURLsOperation(
-            engineConfig, 
-            baseColumnName, 
-            urlExpression,
-            TextTransformOperation.stringToOnError(onError),
-            newColumnName,
-            columnInsertIndex,
-            delay,
-            cacheResponses,
-            headers
-        );
+                engineConfig,
+                baseColumnName,
+                urlExpression,
+                TextTransformOperation.stringToOnError(onError),
+                newColumnName,
+                columnInsertIndex,
+                delay,
+                cacheResponses,
+                headers);
     }
 
 }

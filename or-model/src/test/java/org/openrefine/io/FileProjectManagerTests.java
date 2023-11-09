@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.io;
 
 import static org.mockito.Mockito.mock;
@@ -31,21 +32,23 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.IOException;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.openrefine.ProjectMetadata;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
-public class FileProjectManagerTests  {
+public class FileProjectManagerTests {
+
     protected File workspaceDir;
-    
+
     @BeforeMethod
     public void createDirectory() throws IOException {
         workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
     }
-    
+
     protected class FileProjectManagerStub extends FileProjectManager {
 
         protected FileProjectManagerStub(File dir) {
@@ -53,26 +56,26 @@ public class FileProjectManagerTests  {
             _projectsMetadata.put(1234L, mock(ProjectMetadata.class));
         }
     }
-    
+
     @Test
     public void serializeFileProjectManager() {
         FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
-        String json = "{\n" + 
-                "       \"preferences\" : {\n" + 
-                "         \"entries\" : {\n" + 
-                "           \"scripting.expressions\" : {\n" + 
-                "             \"class\" : \"org.openrefine.preference.TopList\",\n" + 
-                "             \"list\" : [ ],\n" + 
-                "             \"top\" : 100\n" + 
-                "           },\n" + 
-                "           \"scripting.starred-expressions\" : {\n" + 
-                "             \"class\" : \"org.openrefine.preference.TopList\",\n" + 
-                "             \"list\" : [ ],\n" + 
-                "             \"top\" : 2147483647\n" + 
-                "           }\n" + 
-                "         }\n" + 
-                "       },\n" + 
-                "       \"projectIDs\" : [ 1234 ]\n" + 
+        String json = "{\n" +
+                "       \"preferences\" : {\n" +
+                "         \"entries\" : {\n" +
+                "           \"scripting.expressions\" : {\n" +
+                "             \"class\" : \"org.openrefine.preference.TopList\",\n" +
+                "             \"list\" : [ ],\n" +
+                "             \"top\" : 100\n" +
+                "           },\n" +
+                "           \"scripting.starred-expressions\" : {\n" +
+                "             \"class\" : \"org.openrefine.preference.TopList\",\n" +
+                "             \"list\" : [ ],\n" +
+                "             \"top\" : 2147483647\n" +
+                "           }\n" +
+                "         }\n" +
+                "       },\n" +
+                "       \"projectIDs\" : [ 1234 ]\n" +
                 "     }";
         TestUtils.isSerializedTo(manager, json, ParsingUtilities.defaultWriter);
     }

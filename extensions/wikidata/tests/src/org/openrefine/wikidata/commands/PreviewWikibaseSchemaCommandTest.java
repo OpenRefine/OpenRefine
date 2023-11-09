@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.when;
@@ -31,12 +32,12 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.openrefine.util.ParsingUtilities;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.openrefine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 

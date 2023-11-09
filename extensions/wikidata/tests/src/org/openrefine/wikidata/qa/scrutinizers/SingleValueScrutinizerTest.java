@@ -21,13 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
+
+import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
-import org.testng.annotations.Test;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 public class SingleValueScrutinizerTest extends ScrutinizerTest {
 

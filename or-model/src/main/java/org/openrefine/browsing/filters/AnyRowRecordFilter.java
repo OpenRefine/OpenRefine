@@ -39,6 +39,7 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 
 public class AnyRowRecordFilter implements RecordFilter {
+
     final protected RowFilter _rowFilter;
 
     public AnyRowRecordFilter(RowFilter rowFilter) {

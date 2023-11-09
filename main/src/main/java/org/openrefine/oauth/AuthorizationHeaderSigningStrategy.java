@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.oauth;
 
 import java.util.Iterator;
@@ -38,13 +39,13 @@ public class AuthorizationHeaderSigningStrategy implements SigningStrategy {
     private static final long serialVersionUID = 1L;
 
     private final String realm;
-    
+
     public AuthorizationHeaderSigningStrategy(String realm) {
         this.realm = realm;
     }
-    
+
     public String writeSignature(String signature, HttpRequest request, HttpParameters requestParameters) {
-        
+
         StringBuilder sb = new StringBuilder();
 
         sb.append("OAuth ");

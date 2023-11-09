@@ -24,14 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model;
+
+import org.testng.annotations.Test;
 
 import org.openrefine.model.RecordModel;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
 
 public class RecordModelTests {
+
     @Test
     public void serializeRecordModel() {
         RecordModel model = new RecordModel();

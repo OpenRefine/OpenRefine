@@ -49,27 +49,27 @@ import org.openrefine.model.Row;
 import org.openrefine.util.JoinException;
 
 public class InterProjectModel {
+
     static public class ProjectJoin {
-        final public long   fromProjectID;
+
+        final public long fromProjectID;
         final public String fromProjectColumnName;
-        final public long   toProjectID;
+        final public long toProjectID;
         final public String toProjectColumnName;
-        
-        final public Map<Object, List<Integer>> valueToRowIndices = 
-            new HashMap<Object, List<Integer>>();
-        
+
+        final public Map<Object, List<Integer>> valueToRowIndices = new HashMap<Object, List<Integer>>();
+
         ProjectJoin(
-            long   fromProjectID,
-            String fromProjectColumnName,
-            long   toProjectID,
-            String toProjectColumnName
-        ) {
+                long fromProjectID,
+                String fromProjectColumnName,
+                long toProjectID,
+                String toProjectColumnName) {
             this.fromProjectID = fromProjectID;
             this.fromProjectColumnName = fromProjectColumnName;
             this.toProjectID = toProjectID;
             this.toProjectColumnName = toProjectColumnName;
         }
-        
+
         public HasFieldsListImpl getRows(Object value) {
             if (ExpressionUtils.isNonBlankData(value) && valueToRowIndices.containsKey(value)) {
                 Project toProject = ProjectManager.singleton.getProject(toProjectID);
@@ -79,16 +79,16 @@ public class InterProjectModel {
                         Row row = toProject.rows.get(r);
                         rows.add(new WrappedRow(toProject, r, row));
                     }
-                    
+
                     return rows;
                 }
             }
             return null;
         }
     }
-    
+
     protected Map<String, ProjectJoin> _joins = new HashMap<String, ProjectJoin>();
-    
+
     /**
      * Compute the ProjectJoin based on combination key, return the cached one from the HashMap if already computed
      * 
@@ -102,22 +102,21 @@ public class InterProjectModel {
         String key = fromProject + ";" + fromColumn + ";" + toProject + ";" + toColumn;
         if (!_joins.containsKey(key)) {
             ProjectJoin join = new ProjectJoin(
-                fromProject, 
-                fromColumn, 
-                toProject, 
-                toColumn
-            );
-            
+                    fromProject,
+                    fromColumn,
+                    toProject,
+                    toColumn);
+
             computeJoin(join);
-            
+
             synchronized (_joins) {
                 _joins.put(key, join);
             }
         }
-        
+
         return _joins.get(key);
     }
-    
+
     public void flushJoinsInvolvingProject(long projectID) {
         synchronized (_joins) {
             for (Iterator<Entry<String, ProjectJoin>> it = _joins.entrySet().iterator(); it.hasNext();) {
@@ -135,7 +134,7 @@ public class InterProjectModel {
             for (Iterator<Entry<String, ProjectJoin>> it = _joins.entrySet().iterator(); it.hasNext();) {
                 Entry<String, ProjectJoin> entry = it.next();
                 ProjectJoin join = entry.getValue();
-                if (join.fromProjectID == projectID && join.fromProjectColumnName.equals(columnName) || 
+                if (join.fromProjectID == projectID && join.fromProjectColumnName.equals(columnName) ||
                         join.toProjectID == projectID && join.toProjectColumnName.equals(columnName)) {
                     it.remove();
                 }
@@ -147,37 +146,37 @@ public class InterProjectModel {
         if (join.fromProjectID < 0 || join.toProjectID < 0) {
             return;
         }
-        
+
         Project fromProject = ProjectManager.singleton.getProject(join.fromProjectID);
         ProjectMetadata fromProjectMD = ProjectManager.singleton.getProjectMetadata(join.fromProjectID);
         Project toProject = ProjectManager.singleton.getProject(join.toProjectID);
         ProjectMetadata toProjectMD = ProjectManager.singleton.getProjectMetadata(join.toProjectID);
-        
+
         // split this test to check each one and throw an appropriate error
         if (fromProject == null || toProject == null) {
             return;
         }
-        
+
         Column fromColumn = fromProject.columnModel.getColumnByName(join.fromProjectColumnName);
         Column toColumn = toProject.columnModel.getColumnByName(join.toProjectColumnName);
         if (fromColumn == null) {
-            throw new JoinException("Unable to find column " + join.fromProjectColumnName + " in project " + fromProjectMD.getName()); 
+            throw new JoinException("Unable to find column " + join.fromProjectColumnName + " in project " + fromProjectMD.getName());
         }
         if (toColumn == null) {
-            throw new JoinException("Unable to find column " + join.toProjectColumnName + " in project " + toProjectMD.getName()); 
+            throw new JoinException("Unable to find column " + join.toProjectColumnName + " in project " + toProjectMD.getName());
         }
-        
+
         for (Row fromRow : fromProject.rows) {
             Object value = fromRow.getCellValue(fromColumn.getCellIndex());
             if (ExpressionUtils.isNonBlankData(value) && !join.valueToRowIndices.containsKey(value)) {
                 join.valueToRowIndices.put(value, new ArrayList<Integer>());
             }
         }
-        
+
         int count = toProject.rows.size();
         for (int r = 0; r < count; r++) {
             Row toRow = toProject.rows.get(r);
-            
+
             Object value = toRow.getCellValue(toColumn.getCellIndex());
             if (ExpressionUtils.isNonBlankData(value) && join.valueToRowIndices.containsKey(value)) {
                 join.valueToRowIndices.get(value).add(r);

@@ -39,6 +39,10 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
 import org.openrefine.importing.ImportingJob;
@@ -49,32 +53,30 @@ import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract public class ImportingParserBase implements ImportingParser {
+
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
 
     final protected boolean useInputStream;
-    
+
     /**
-     * @param useInputStream true if parser takes an InputStream, false if it takes a Reader.
+     * @param useInputStream
+     *            true if parser takes an InputStream, false if it takes a Reader.
      */
     protected ImportingParserBase(boolean useInputStream) {
         this.useInputStream = useInputStream;
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
             List<ObjectNode> fileRecords, String format) {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
-        
+
         return options;
     }
-    
+
     @Override
     public void parse(Project project, ProjectMetadata metadata,
             final ImportingJob job, List<ObjectNode> fileRecords, String format,
@@ -84,32 +86,31 @@ abstract public class ImportingParserBase implements ImportingParser {
             if (job.canceled) {
                 break;
             }
-            
+
             try {
                 parseOneFile(project, metadata, job, fileRecord, limit, options, exceptions, progress);
             } catch (IOException e) {
                 exceptions.add(e);
             }
-            
+
             if (limit > 0 && project.rows.size() >= limit) {
                 break;
             }
         }
     }
-    
+
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        ObjectNode fileRecord,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions,
-        final MultiFileReadingProgress progress
-    ) throws IOException {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            ObjectNode fileRecord,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions,
+            final MultiFileReadingProgress progress) throws IOException {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
-        
+
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
@@ -121,10 +122,10 @@ abstract public class ImportingParserBase implements ImportingParser {
                     if (commonEncoding != null && commonEncoding.isEmpty()) {
                         commonEncoding = null;
                     }
-                    
+
                     Reader reader = ImportingUtilities.getReaderFromStream(
-                        inputStream, fileRecord, commonEncoding);
-                    
+                            inputStream, fileRecord, commonEncoding);
+
                     parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
                 }
             } finally {
@@ -134,17 +135,16 @@ abstract public class ImportingParserBase implements ImportingParser {
             progress.endFile(fileSource, file.length());
         }
     }
-    
+
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            Reader reader,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         pushImportingOptions(metadata, fileSource, options);
     }
 
@@ -153,32 +153,30 @@ abstract public class ImportingParserBase implements ImportingParser {
         // set the import options to metadata:
         metadata.appendImportOptionMetadata(options);
     }
-    
+
     public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        InputStream inputStream,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            InputStream inputStream,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
         pushImportingOptions(metadata, fileSource, options);
     }
-    
-    
+
     protected static int addFilenameColumn(Project project) {
         String fileNameColumnName = "File";
         if (project.columnModel.getColumnByName(fileNameColumnName) == null) {
             try {
                 project.columnModel.addColumn(
-                    0, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
+                        0, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
 
                 return 0;
             } catch (ModelException e) {
                 // Shouldn't happen: We already checked for duplicate name.
-                logger.error("ModelException adding Filename column",e);
+                logger.error("ModelException adding Filename column", e);
             }
             return -1;
         } else {

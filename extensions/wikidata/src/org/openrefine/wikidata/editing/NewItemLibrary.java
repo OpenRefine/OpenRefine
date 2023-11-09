@@ -21,12 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.editing;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
@@ -38,12 +42,8 @@ import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
- * This keeps track of the new items that we have created for each internal
- * reconciliation id.
+ * This keeps track of the new items that we have created for each internal reconciliation id.
  * 
  * @author Antonin Delpeuch
  *
@@ -95,11 +95,10 @@ public class NewItemLibrary {
         Set<Integer> impactedColumns = new HashSet<>();
 
         /*
-         * Note that there is a slight violation of OpenRefine's model here: if we
-         * reconcile multiple cells to the same new item, and then perform this
-         * operation on a subset of the corresponding rows, we are going to modify cells
-         * that are outside the facet (because they are reconciled to the same cell).
-         * But I think this is the right thing to do.
+         * Note that there is a slight violation of OpenRefine's model here: if we reconcile multiple cells to the same
+         * new item, and then perform this operation on a subset of the corresponding rows, we are going to modify cells
+         * that are outside the facet (because they are reconciled to the same cell). But I think this is the right
+         * thing to do.
          */
 
         for (Row row : project.rows) {
@@ -117,28 +116,28 @@ public class NewItemLibrary {
                             new String[0], 100);
                     recon.addCandidate(recon.match);
                     changed = true;
-                    
+
                 } else if (Recon.Judgment.Matched.equals(recon.judgment) && reset
                         && map.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.New;
-                    if(recon.candidates != null) {
-                    	recon.candidates.remove(recon.candidates.size()-1);
+                    if (recon.candidates != null) {
+                        recon.candidates.remove(recon.candidates.size() - 1);
                     }
                     recon.match = null;
                     changed = true;
                 }
-                
+
                 if (changed) {
-	                impactedColumns.add(i);
-	                // Compute features
-	                Column column = project.columnModel.getColumnByCellIndex(i);
-	                ReconConfig config = column.getReconConfig();
-	                if (config instanceof StandardReconConfig) {
-	                	StandardReconConfig stdConfig = (StandardReconConfig)config;
-										if (cell.getValue() instanceof String) {
-	                		stdConfig.computeFeatures(recon, (String) cell.getValue());
-										}
-	                }
+                    impactedColumns.add(i);
+                    // Compute features
+                    Column column = project.columnModel.getColumnByCellIndex(i);
+                    ReconConfig config = column.getReconConfig();
+                    if (config instanceof StandardReconConfig) {
+                        StandardReconConfig stdConfig = (StandardReconConfig) config;
+                        if (cell.getValue() instanceof String) {
+                            stdConfig.computeFeatures(recon, (String) cell.getValue());
+                        }
+                    }
                 }
             }
         }

@@ -44,14 +44,12 @@ import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 
 public class PreviewWikibaseSchemaCommand extends Command {
-	
-	/**
-	 * This command uses POST but is left CSRF-unprotected since it does not
-	 * incur a side effect or state change in the backend.
-	 * The reason why it uses POST is to make sure large schemas and engines
-	 * can be passed as parameters.
-	 */
-    
+
+    /**
+     * This command uses POST but is left CSRF-unprotected since it does not incur a side effect or state change in the
+     * backend. The reason why it uses POST is to make sure large schemas and engines can be passed as parameters.
+     */
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -89,7 +87,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
             // Inspect the edits and generate warnings
             EditInspector inspector = new EditInspector(warningStore);
             inspector.inspect(editBatch);
-            
+
             // Dump the first 10 edits, scheduled with the default scheduler
             WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
             List<ItemUpdate> nonNullEdits = scheduler.schedule(editBatch).stream()

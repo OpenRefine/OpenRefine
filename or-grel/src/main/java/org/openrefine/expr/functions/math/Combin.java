@@ -41,13 +41,13 @@ public class Combin extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if(args.length != 2) {
+        if (args.length != 2) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
         }
-        if(args[0] == null || !(args[0] instanceof Number)) {
+        if (args[0] == null || !(args[0] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first argument to be a number");
         }
-        if(args[1] == null || !(args[1] instanceof Number)) {
+        if (args[1] == null || !(args[1] instanceof Number)) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second argument to be a number");
         }
 
@@ -55,12 +55,11 @@ public class Combin extends PureFunction {
     }
 
     /*
-     * Compute binomial coefficient using dynamic programming which takes 
-     * advantage of Pascal's identity as described in:
-     * http://introcs.cs.princeton.edu/java/96optimization/
+     * Compute binomial coefficient using dynamic programming which takes advantage of Pascal's identity as described
+     * in: http://introcs.cs.princeton.edu/java/96optimization/
      */
     public static long combination(int n, int k) {
-        long[][] binomial = new long[n+1][k+1];
+        long[][] binomial = new long[n + 1][k + 1];
 
         for (int j = 1; j <= k; j++) {
             binomial[0][j] = 0;
@@ -71,7 +70,7 @@ public class Combin extends PureFunction {
 
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= k; j++) {
-                binomial[i][j] = binomial[i-1][j-1] + binomial[i-1][j];
+                binomial[i][j] = binomial[i - 1][j - 1] + binomial[i - 1][j];
                 if (binomial[i][j] > Long.MAX_VALUE || binomial[i][j] < 0) {
                     throw new RuntimeException("Range limit exceeded");
                 }
@@ -85,12 +84,12 @@ public class Combin extends PureFunction {
     public String getDescription() {
         return "Returns the number of combinations for n elements as divided into k";
     }
-    
+
     @Override
     public String getParams() {
         return "number d";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

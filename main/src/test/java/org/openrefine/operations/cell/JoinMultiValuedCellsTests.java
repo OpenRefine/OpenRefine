@@ -36,6 +36,13 @@ package org.openrefine.operations.cell;
 import java.io.Serializable;
 import java.util.Properties;
 
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import org.openrefine.RefineTest;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
@@ -44,16 +51,9 @@ import org.openrefine.operations.cell.MultiValuedCellJoinOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 
 public class JoinMultiValuedCellsTests extends RefineTest {
-    
+
     Project project;
 
     @Override
@@ -61,24 +61,24 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "multivalued-cell-join", MultiValuedCellJoinOperation.class);
     }
-    
+
     @BeforeMethod
     public void createProject() {
         project = createProject(
-        		new String[] {
-                "Key","Value"},
-        		new Serializable[] {
-                "Record_1","one",
-                null,"two",
-                null,"three",
-                null,"four"});
+                new String[] {
+                        "Key", "Value" },
+                new Serializable[] {
+                        "Record_1", "one",
+                        null, "two",
+                        null, "three",
+                        null, "four" });
     }
-    
+
     @Test
     public void serializeMultiValuedCellJoinOperation() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-join\","
@@ -86,9 +86,9 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 + "\"columnName\":\"value column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"separator\":\",\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
 
     /*
      * Test to demonstrate the intended behaviour of the function
@@ -97,15 +97,15 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     @Test
     public void testJoinMultiValuedCells() throws Exception {
         AbstractOperation op = new MultiValuedCellJoinOperation(
-            "Value",
-            "Key",
-            ",");
+                "Value",
+                "Key",
+                ",");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-        
+
         Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
         Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,two,three,four");
     }
@@ -113,19 +113,17 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     @Test
     public void testJoinMultiValuedCellsMultipleSpaces() throws Exception {
         AbstractOperation op = new MultiValuedCellJoinOperation(
-            "Value",
-            "Key",
-            ",     ,");
+                "Value",
+                "Key",
+                ",     ,");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-        
+
         Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
         Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,     ,two,     ,three,     ,four");
     }
 
-
 }
-

@@ -24,10 +24,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing.facets;
 
 import java.io.IOException;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
@@ -38,26 +44,22 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class RangeFacetTests extends RefineTest {
-    public static String configJson = "{\n" + 
-            "          \"selectNumeric\": true,\n" + 
-            "          \"expression\": \"value\",\n" + 
-            "          \"selectBlank\": true,\n" + 
-            "          \"selectNonNumeric\": true,\n" + 
-            "          \"selectError\": true,\n" + 
-            "          \"name\": \"my column\",\n" + 
-            "          \"from\": -30,\n" + 
-            "          \"to\": 90,\n" + 
-            "          \"type\": \"core/range\",\n" + 
-            "          \"columnName\": \"my column\"\n" + 
+
+    public static String configJson = "{\n" +
+            "          \"selectNumeric\": true,\n" +
+            "          \"expression\": \"value\",\n" +
+            "          \"selectBlank\": true,\n" +
+            "          \"selectNonNumeric\": true,\n" +
+            "          \"selectError\": true,\n" +
+            "          \"name\": \"my column\",\n" +
+            "          \"from\": -30,\n" +
+            "          \"to\": 90,\n" +
+            "          \"type\": \"core/range\",\n" +
+            "          \"columnName\": \"my column\"\n" +
             "        }";
-    
+
     public static String facetJson = "{"
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
@@ -77,26 +79,26 @@ public class RangeFacetTests extends RefineTest {
             + "\"nonNumericCount\":1,"
             + "\"blankCount\":0,"
             + "\"errorCount\":0}";
-    
+
     @BeforeTest
     public void registerFacetConfig() {
-    	FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
+        FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
     }
-    
+
     @Test
     public void serializeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(new String[] {"my column"},
-        		new Serializable[] {
-                89.2,
-                -45.9,
-                "blah",
-                0.4});
+        Project project = createProject(new String[] { "my column" },
+                new Serializable[] {
+                        89.2,
+                        -45.9,
+                        "blah",
+                        0.4 });
         project.rows.get(0).cells.set(0, new Cell(89.2, null));
         project.rows.get(1).cells.set(0, new Cell(-45.9, null));
         project.rows.get(3).cells.set(0, new Cell(0.4, null));

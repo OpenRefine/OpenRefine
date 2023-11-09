@@ -40,7 +40,8 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 public interface Binder {
+
     public void initializeBindings(Properties bindings, Project project);
-        
+
     public void bind(Properties bindings, Row row, int rowIndex, String columnName, Cell cell);
 }

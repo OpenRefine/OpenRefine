@@ -47,13 +47,14 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ImportProjectCommand extends Command {
 
@@ -62,10 +63,10 @@ public class ImportProjectCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFTokenAsGET(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFTokenAsGET(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         ProjectManager.singleton.setBusy(true);
         try {
@@ -99,10 +100,9 @@ public class ImportProjectCommand extends Command {
     }
 
     protected void internalImport(
-        HttpServletRequest    request,
-        Properties            options,
-        long                  projectID
-    ) throws Exception {
+            HttpServletRequest request,
+            Properties options,
+            long projectID) throws Exception {
 
         String url = null;
 
@@ -135,11 +135,10 @@ public class ImportProjectCommand extends Command {
     }
 
     protected void internalImportURL(
-        HttpServletRequest    request,
-        Properties            options,
-        long                  projectID,
-        String                urlString
-    ) throws Exception {
+            HttpServletRequest request,
+            Properties options,
+            long projectID,
+            String urlString) throws Exception {
         URL url = new URL(urlString);
         URLConnection connection = null;
 
@@ -164,6 +163,5 @@ public class ImportProjectCommand extends Command {
             inputStream.close();
         }
     }
-
 
 }

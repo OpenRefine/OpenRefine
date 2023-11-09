@@ -40,7 +40,6 @@ import java.util.Properties;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.Project;
 
-
 public interface StreamExporter extends Exporter {
 
     public void export(Project project, Properties options, Engine engine, OutputStream outputStream) throws IOException;
