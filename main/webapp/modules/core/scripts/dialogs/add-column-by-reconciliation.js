@@ -163,7 +163,6 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
     $('<a>')
     .attr("href", "javascript:{}")
     .html(label)
-    
     .appendTo(div)
     .on('click',function() {
       self._addProperty(property);
