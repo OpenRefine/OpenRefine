@@ -163,6 +163,7 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
     $('<a>')
     .attr("href", "javascript:{}")
     .html(label)
+    
     .appendTo(div)
     .on('click',function() {
       self._addProperty(property);
@@ -275,6 +276,7 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
     $('<a href="javascript:{}"></a>')
     .text($.i18n('core-views/remove-prop'))
     .addClass("action")
+    .css("margin-right", "5px")
     .attr("title", $.i18n('core-views/remove-col'))
     .on('click',function() {
       self._removeProperty(column.id);
