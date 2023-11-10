@@ -246,7 +246,7 @@ SchemaAlignment.updateColumns = function() {
      // TODO we could potentially ignore any reconciliation to a siteIRI not
      // mentioned in the manifest…
      var cell = SchemaAlignment._createDraggableColumn(column.name,
-        reconConfig && column.reconStats ? reconConfig.identifierSpace : null);
+        reconConfig && column.reconStats ? reconConfig.identifierSpace : null, reconConfig);
      this._columnArea.append(cell);
   }
 
@@ -433,8 +433,31 @@ SchemaAlignment._changesCleared = function() {
         .addClass('disabled');
 };
 
-SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI) {
+SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI, reconConfig) {
+  var serviceUrl = null;
+  var service = null;
+  var serviceLogo=null;
+  var reconConfig = reconConfig;
+  if (reconConfig) {
+     serviceUrl =reconConfig.service;
+  }
+  if (serviceUrl) {
+    service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+  }    
+  if(service){
+    serviceLogo=service.logo;
+  }
+
+  var img = $("<img>");
+ 
+  if(serviceLogo ){
+  var imageUrl = serviceLogo; 
+  img.attr("src", imageUrl); 
+  img.attr("title", service.name); 
+  img.addClass("serviceLogo-for-schema")    
+  }
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
+  cell.append(img);
   cell.data({
         'columnName': name,
         'reconciledSiteIRI': reconciledSiteIRI
@@ -1544,7 +1567,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         input.val(initialValue.label);
         input.addClass("wbs-validated-input");
      } else if (initialValue.type == "wbentityvariable") {
-        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, true);
+        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, true, null);
         acceptDraggableColumn(cell);
      } else if (initialValue.type === "wbstringconstant" ||
                 initialValue.type === "wbdateconstant" ||
@@ -1557,7 +1580,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
                 initialValue.type === "wbdatevariable" ||
                 initialValue.type === "wblocationvariable" ||
                 initialValue.type === "wblanguagevariable") {
-        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, false);
+        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, false, null);
         acceptDraggableColumn(cell);
      }
      inputContainer.data("jsonValue", initialValue);

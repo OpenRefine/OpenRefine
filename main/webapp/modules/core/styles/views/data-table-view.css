@@ -192,13 +192,23 @@ table.data-table td.column-header, table.data-table th.column-header {
   background-position: -17px 0px;
 }
 
+.container {
+  display: grid;
+  grid-template-columns: max-content auto;
+  width:100%;
+}
 .column-header-recon-stats-bar {
-  margin-top: 10px;
-  height: 4px;
+  margin-top:4px;
+  height: 6px;
   background: #ddd;
   border: 1px solid #ccc;
   position: relative;
   width: 100%;
+}
+
+.serviceLogo {
+    width: 19px;
+    height: 21px; 
 }
 
 .column-header-recon-stats-matched {
