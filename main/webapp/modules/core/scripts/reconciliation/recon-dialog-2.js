@@ -106,35 +106,21 @@ ReconDialog2.prototype._cleanDialog = function() {
 
 
 ReconDialog2.prototype._selectService = function(record) {
-
   for (var i = 0; i < this._serviceRecords.length; i++) {
     if (record === this._serviceRecords[i]) {
-      if (i !== this._selectedServiceRecordIndex) {
-        if (this._selectedServiceRecordIndex >= 0) {
-          var oldRecord = this._serviceRecords[this._selectedServiceRecordIndex];
-          if (oldRecord.handler) {
-            oldRecord.selector.removeClass("selected");
-            oldRecord.handler.deactivate();
-          }
-        }
-
-        record.selector.addClass("selected");
-        if (record.handler) {
-          record.handler.activate();
-        } else {
+       {  this._selectedServiceRecordIndex = i;
+          if (record.handler) {
+            record.handler.activate();
+          } else {
           var handlerConstructor = eval(record.service.ui.handler);
-
           record.handler = new handlerConstructor(
               this._column, record.service, this._elmts.servicePanelContainer);
-        }
-
-        this._selectedServiceRecordIndex = i;
+        }  
         return;
-      }
     }
   };   
 };
-
+}
 
 ReconDialog2.prototype._refresh = function(newSelectIndex) {
   this._cleanDialog();

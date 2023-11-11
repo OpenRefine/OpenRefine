@@ -124,7 +124,9 @@ a.recon-dialog-service-selector-remove {
 .recon-dialog-service-list-element{
   display:block;
   margin-bottom: 0.5em ;
-
+}
+.recon-dialog-service-list-element:hover{
+  background-color:var(--chrome-primary);
 }
 
 .pop-up-message {
