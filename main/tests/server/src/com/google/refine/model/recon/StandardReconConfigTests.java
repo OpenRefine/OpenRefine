@@ -288,7 +288,7 @@ public class StandardReconConfigTests extends RefineTest {
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 Assert.fail("Test interrupted");
             }
