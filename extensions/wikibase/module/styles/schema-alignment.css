@@ -21,6 +21,12 @@
   max-width: 70em;
 }
 
+.serviceLogo-for-schema{
+  float: left !important;
+  width:19px;
+  height:21px;
+  }
+  
 .main-view-panel-tab-header {
   margin-top: 9px;
   margin-left: 7px;
