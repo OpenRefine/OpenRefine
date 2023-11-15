@@ -1565,7 +1565,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         input.val(initialValue.label);
         input.addClass("wbs-validated-input");
      } else if (initialValue.type == "wbentityvariable") {
-        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, true, this.column.reconConfig);
+        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, true, null);
         acceptDraggableColumn(cell);
      } else if (initialValue.type === "wbstringconstant" ||
                 initialValue.type === "wbdateconstant" ||
