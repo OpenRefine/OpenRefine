@@ -70,26 +70,26 @@ DataTableColumnHeaderUI.prototype._render = function() {
     self._createMenuForColumnHeader(this);
   });
   var serviceUrl = null;
-var service = null;
-var serviceLogo=null;
-if (this._column.reconConfig) {
-serviceUrl =this._column.reconConfig.service;
-}
-if (serviceUrl) {
-service = ReconciliationManager.getServiceFromUrl(serviceUrl);
-}
-if(service){
-serviceLogo=service.logo;
-}
+  var service = null;
+  var serviceLogo=null;
+  if (this._column.reconConfig) {
+   serviceUrl =this._column.reconConfig.service;
+  }
+  if (serviceUrl) {
+    service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+  }
+  if(service){
+    serviceLogo=service.logo;
+  }
 
-var img =$("<img>");
-if(serviceLogo ){
-var imageUrl = serviceLogo;
-img.attr("src", imageUrl);
-img.attr("title", service.name);
-img.addClass("serviceLogo")
-img.appendTo(elmts.serviceLogoContainer.show());
-}
+  var img =$("<img>");
+  if(serviceLogo ){
+    var imageUrl = serviceLogo;
+    img.attr("src", imageUrl);
+    img.attr("title", service.name);
+    img.addClass("serviceLogo")
+    img.appendTo(elmts.serviceLogoContainer.show());
+  }
 
   if ("reconStats" in this._column) {
     var stats = this._column.reconStats;

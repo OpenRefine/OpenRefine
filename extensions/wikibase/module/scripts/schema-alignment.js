@@ -435,25 +435,25 @@ SchemaAlignment._changesCleared = function() {
 
 SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI, reconConfig) {
   var serviceUrl = null;
-var service = null;
-var serviceLogo=null;
-if (reconConfig) {
-serviceUrl =reconConfig.service;
-}
-if (serviceUrl) {
-service = ReconciliationManager.getServiceFromUrl(serviceUrl);
-}
-if(service){
-serviceLogo=service.logo;
-}
-
-var img =$("<img>");
-if(serviceLogo ){
-var imageUrl = serviceLogo;
-img.attr("src", imageUrl);
-img.attr("title", service.name);
-img.addClass("serviceLogo-for-schema")
-};
+  var service = null;
+  var serviceLogo=null;
+  if (reconConfig) {
+    serviceUrl =reconConfig.service;
+  }
+  if (serviceUrl) {
+    service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+  }
+  if(service){
+    serviceLogo=service.logo;
+  }
+    
+  var img =$("<img>");
+  if(serviceLogo ){
+    var imageUrl = serviceLogo;
+    img.attr("src", imageUrl);
+    img.attr("title", service.name);
+    img.addClass("serviceLogo-for-schema")
+  };
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
   cell.append(img);
   cell.data({
@@ -1565,7 +1565,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         input.val(initialValue.label);
         input.addClass("wbs-validated-input");
      } else if (initialValue.type == "wbentityvariable") {
-        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, true, null);
+        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, true, this.column.reconConfig);
         acceptDraggableColumn(cell);
      } else if (initialValue.type === "wbstringconstant" ||
                 initialValue.type === "wbdateconstant" ||
