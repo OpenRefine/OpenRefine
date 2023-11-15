@@ -77,12 +77,6 @@ function formatRelativeDate(d) {
     return rtf.format(-diffMonths, 'month');
   } else {
     const diffYears = diffDays / 365; // Approximation
-
-    // Ensure diffYears is a finite number before formatting
-    if (!Number.isFinite(diffYears)) {
-      throw new Error('Invalid year difference calculation, resulting in a non-finite number.');
-    }
-
     return rtf.format(-Math.floor(diffYears), 'year');
   }
 }
