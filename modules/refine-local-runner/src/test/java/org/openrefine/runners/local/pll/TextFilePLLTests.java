@@ -4,6 +4,7 @@ package org.openrefine.runners.local.pll;
 import static java.lang.Thread.sleep;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.*;
@@ -256,10 +257,39 @@ public class TextFilePLLTests extends PLLTestsBase {
     }
 
     @Test
+    public void testTouchAllPartitionsBeforeWriting() {
+        PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz", "boo"))
+                .map(str -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new IllegalStateException(e);
+                    }
+                    return str;
+                }, "artificially make PLL computation slow");
+
+        File tempFile = new File(tempDir, "touch_all_partitions_first");
+
+        // start saving the PLL to the disk
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false, false);
+        // immediately cancel the saving
+        future.cancel(false);
+
+        // the two files for each partition should be present already
+        File partition1 = new File(tempFile, "part-00000.zst");
+        assertTrue(partition1.exists());
+        File partition2 = new File(tempFile, "part-00001.zst");
+        assertTrue(partition2.exists());
+        File partition3 = new File(tempFile, "part-00002.zst");
+        assertFalse(partition3.exists());
+    }
+
+    @Test
     public void testSynchronousRead() throws IOException, InterruptedException {
         File tempFile = new File(tempDir, "synchronous_read");
         tempFile.mkdir();
-        try (FileOutputStream fos = new FileOutputStream(new File(tempFile, "part-0000.zst"));
+        try (FileOutputStream fos = new FileOutputStream(new File(tempFile, "part-00000.zst"));
+                FileOutputStream fos2 = new FileOutputStream(new File(tempFile, "part-00001.zst"));
                 ZstdCompressorOutputStream gos = new ZstdCompressorOutputStream(fos);
                 Writer writer = new OutputStreamWriter(gos, StandardCharsets.UTF_8)) {
 
@@ -312,7 +342,7 @@ public class TextFilePLLTests extends PLLTestsBase {
             }
 
             // start writing a second partition
-            try (FileOutputStream fos2 = new FileOutputStream(new File(tempFile, "part-0001.zst"));
+            try (
                     ZstdCompressorOutputStream gos2 = new ZstdCompressorOutputStream(fos2);
                     Writer writer2 = new OutputStreamWriter(gos2, StandardCharsets.UTF_8)) {
 

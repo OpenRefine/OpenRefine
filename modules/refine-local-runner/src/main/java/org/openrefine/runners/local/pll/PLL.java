@@ -719,6 +719,9 @@ public abstract class PLL<T> {
                 }
             }
 
+            // Create files for each partition
+            touchPartitions(gridPath, partitions.size());
+
             // Iterate sequentially over the whole PLL.
             TaskSignalling taskSignalling = new TaskSignalling(count());
             partitionWritingFuture = new ProgressingFutureWrapper<>(context.getExecutorService().submit(() -> {
@@ -740,6 +743,9 @@ public abstract class PLL<T> {
                 }
             }), taskSignalling, true);
         } else {
+            // we create files for all partitions first (synchronously), to make sure the PLL can be loaded
+            // immediately after returning the future
+            touchPartitions(gridPath, numPartitions());
             partitionWritingFuture = runOnPartitionsAsync((p, taskSignalling) -> {
                 try {
                     writeOriginalPartition(p, gridPath, Optional.of(taskSignalling), flushRegularly);
@@ -769,10 +775,33 @@ public abstract class PLL<T> {
         return future;
     }
 
+    /**
+     * Ensures that there is a file for each partition. This is important to make it possible for a reader to know the
+     * number of partitions ahead of time, before all partitions have been fully written. The number of partitions in a
+     * PLL is not supposed to change after creation of the PLL so it would be more difficult to dynamically discover new
+     * partition files as they are created.
+     * 
+     * @param directory
+     *            the directory in which the partitions are written
+     * @param partitionCount
+     *            the number of partitions
+     * @throws IOException
+     */
+    protected void touchPartitions(File directory, int partitionCount) {
+        try {
+            for (int i = 0; i != partitionCount; i++) {
+                File file = new File(directory, partitionFilename(i));
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     protected void writeOriginalPartition(Partition partition, File directory, Optional<TaskSignalling> taskSignalling,
             boolean flushRegularly)
             throws IOException {
-        String filename = String.format("part-%05d.zst", partition.getIndex());
+        String filename = partitionFilename(partition.getIndex());
         File partFile = new File(directory, filename);
         writePartition(partition.getIndex(), iterate(partition, IterationContext.SYNCHRONOUS_DEFAULT), partFile, taskSignalling,
                 flushRegularly);
@@ -781,10 +810,14 @@ public abstract class PLL<T> {
     protected void writePlannedPartition(PlannedPartition partition, File directory, Iterator<T> choppedIterator,
             Optional<TaskSignalling> taskSignalling, boolean flushRegularly)
             throws IOException {
-        String filename = String.format("part-%05d.zst", partition.index);
+        String filename = partitionFilename(partition.index);
         File partFile = new File(directory, filename);
         CloseableIterator<T> limitedIterator = CloseableIterator.wrapping(choppedIterator);
         writePartition(partition.index, limitedIterator, partFile, taskSignalling, flushRegularly);
+    }
+
+    protected String partitionFilename(int index) {
+        return String.format("part-%05d.zst", index);
     }
 
     protected void writePartition(int partitionIndex, CloseableIterator<T> iterator, File partFile, Optional<TaskSignalling> taskSignalling,
