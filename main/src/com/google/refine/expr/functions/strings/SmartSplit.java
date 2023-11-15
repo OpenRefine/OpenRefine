@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import com.univocity.parsers.csv.CsvFormat;

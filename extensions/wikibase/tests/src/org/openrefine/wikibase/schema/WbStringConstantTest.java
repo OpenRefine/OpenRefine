@@ -1,10 +1,11 @@
 
 package org.openrefine.wikibase.schema;
 
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
+
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 
 public class WbStringConstantTest extends WbExpressionTest<StringValue> {
 

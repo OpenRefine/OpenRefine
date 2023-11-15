@@ -28,7 +28,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.LineNumberReader;
 
-import org.openrefine.wikibase.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -37,6 +36,8 @@ import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Recon;
 import com.google.refine.util.ParsingUtilities;
+
+import org.openrefine.wikibase.testing.TestingData;
 
 public class PerformWikibaseEditsOperationTest extends OperationTest {
 

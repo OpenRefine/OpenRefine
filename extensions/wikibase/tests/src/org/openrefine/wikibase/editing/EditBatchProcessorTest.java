@@ -36,12 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.testing.WikidataRefineTest;
-import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.ItemEditBuilder;
-import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -60,6 +54,13 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import com.google.refine.util.ParsingUtilities;
+
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.testing.WikidataRefineTest;
+import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.updates.ItemEditBuilder;
+import org.openrefine.wikibase.updates.MediaInfoEdit;
+import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
 
 public class EditBatchProcessorTest extends WikidataRefineTest {
 

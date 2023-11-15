@@ -44,6 +44,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.net.PercentEscaper;
 import org.apache.hc.core5.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,6 @@ import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.WriterExporter;
 import com.google.refine.exporters.sql.SqlExporterException;
 import com.google.refine.model.Project;
-import com.google.common.net.PercentEscaper;
 
 public class ExportRowsCommand extends Command {
 

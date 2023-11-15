@@ -37,9 +37,9 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.mockito.Mockito;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.RefineServletStub;

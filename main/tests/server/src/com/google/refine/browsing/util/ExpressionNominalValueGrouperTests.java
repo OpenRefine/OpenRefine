@@ -43,7 +43,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.browsing.util.ExpressionNominalValueGrouper;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.model.Cell;

@@ -31,11 +31,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.grel.Function;

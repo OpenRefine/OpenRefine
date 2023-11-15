@@ -33,8 +33,6 @@ import static org.testng.Assert.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import com.google.refine.model.Project;
-import com.google.refine.util.GetProjectIDException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,6 +43,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectMetadata;
+import com.google.refine.model.Project;
+import com.google.refine.util.GetProjectIDException;
 import com.google.refine.util.TestUtils;
 
 public class FileProjectManagerTests {

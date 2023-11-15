@@ -8,7 +8,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikibase.schema.WbStatementExpr;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
@@ -20,8 +21,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.wikibase.schema.WbStatementExpr;
 
 /**
  * Merging strategy which only looks at the main value of statements (in addition to their property, but that is

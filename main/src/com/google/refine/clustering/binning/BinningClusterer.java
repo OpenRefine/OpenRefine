@@ -44,14 +44,14 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;

@@ -28,10 +28,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.testng.Assert;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.testng.Assert;
+
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 

@@ -29,17 +29,18 @@
 
 package com.google.refine.extension.database.sqlite;
 
-import com.google.refine.extension.database.SQLType;
-import com.google.refine.extension.database.*;
-import com.google.refine.extension.database.model.DatabaseColumn;
-import com.google.refine.extension.database.model.DatabaseInfo;
-import com.google.refine.extension.database.model.DatabaseRow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.refine.extension.database.*;
+import com.google.refine.extension.database.SQLType;
+import com.google.refine.extension.database.model.DatabaseColumn;
+import com.google.refine.extension.database.model.DatabaseInfo;
+import com.google.refine.extension.database.model.DatabaseRow;
 
 public class SQLiteDatabaseService extends DatabaseService {
 

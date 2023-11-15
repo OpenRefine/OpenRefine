@@ -51,6 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
+import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -59,10 +60,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.util.Scanner;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import com.google.util.threads.ThreadPoolExecutorAdapter;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

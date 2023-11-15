@@ -24,10 +24,13 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.qa.ConstraintFetcher;
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
-import org.openrefine.wikibase.updates.ItemEditBuilder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -38,12 +41,10 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.openrefine.wikibase.qa.ConstraintFetcher;
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.updates.ItemEditBuilder;
+import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
 
 public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
 

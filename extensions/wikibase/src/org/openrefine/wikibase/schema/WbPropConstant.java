@@ -24,12 +24,12 @@
 
 package org.openrefine.wikibase.schema;
 
-import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
-import org.openrefine.wikibase.schema.validation.ValidationState;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
+import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
+import org.openrefine.wikibase.schema.validation.ValidationState;
 
 /**
  * A constant property, that does not change depending on the row

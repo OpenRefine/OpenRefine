@@ -31,6 +31,13 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
+
 import org.openrefine.wikibase.manifests.Manifest;
 import org.openrefine.wikibase.qa.scrutinizers.*;
 import org.openrefine.wikibase.schema.WikibaseSchema;
@@ -38,12 +45,6 @@ import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikibase.utils.EntityCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
-import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 
 /**
  * Runs a collection of edit scrutinizers on an edit batch.

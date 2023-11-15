@@ -32,7 +32,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.util.TestUtils;
-import com.google.refine.browsing.EngineConfig;
 
 public class EngineConfigTests {
 

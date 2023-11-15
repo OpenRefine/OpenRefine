@@ -33,13 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
-import java.time.Instant;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
+import java.time.Instant;
 import java.util.ArrayList;
 
-import com.google.refine.model.Row;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -50,6 +49,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.model.Project;
 import com.google.refine.model.ProjectStub;
+import com.google.refine.model.Row;
 import com.google.refine.process.ProcessManager;
 
 public class ProjectManagerTests extends RefineTest {

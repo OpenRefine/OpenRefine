@@ -24,16 +24,16 @@
 
 package org.openrefine.wikibase.schema;
 
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.schema.exceptions.QAWarningException;
-import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikibase.schema.validation.ValidationState;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.schema.exceptions.QAWarningException;
+import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikibase.schema.validation.ValidationState;
 
 public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
 

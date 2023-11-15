@@ -1,20 +1,22 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.refine.util.ParsingUtilities;
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
-import org.testng.annotations.Test;
-import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-
-import java.io.IOException;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.testng.annotations.Test;
+import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+
+import com.google.refine.util.ParsingUtilities;
+
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.updates.MediaInfoEdit;
+import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
 
 public class FileNameScrutinizerTest extends ScrutinizerTest {
 

@@ -2,9 +2,11 @@
 package com.google.refine.jython;
 
 import java.util.Properties;
+
 import org.python.core.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.model.Cell;

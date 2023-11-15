@@ -31,10 +31,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.*;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
@@ -46,10 +46,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.csv.CSVFormat;
@@ -65,8 +71,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterTest;
 import com.google.refine.importers.ImportingParserBase;
@@ -75,11 +79,6 @@ import com.google.refine.importing.ImportingUtilities.Progress;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
-
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public class ImportingUtilitiesTests extends ImporterTest {
 

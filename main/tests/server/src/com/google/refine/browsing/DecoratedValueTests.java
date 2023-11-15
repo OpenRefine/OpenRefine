@@ -31,7 +31,6 @@ import java.time.OffsetDateTime;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.browsing.DecoratedValue;
 import com.google.refine.util.TestUtils;
 
 public class DecoratedValueTests {

@@ -29,10 +29,11 @@ import static org.testng.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
+import org.testng.annotations.Test;
+
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
-import org.testng.annotations.Test;
+import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
 
 public class QuickStatementsUpdateSchedulerTest extends UpdateSchedulerTest {
 

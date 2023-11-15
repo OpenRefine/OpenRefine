@@ -26,10 +26,11 @@ package org.openrefine.wikibase.schema;
 
 import java.util.Calendar;
 
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 
 public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
 

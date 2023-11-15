@@ -30,13 +30,12 @@ package com.google.refine.model;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import edu.mit.simile.butterfly.ButterflyModule;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.util.TestUtils;
-
-import edu.mit.simile.butterfly.ButterflyModule;
 
 public class ColumnTests {
 

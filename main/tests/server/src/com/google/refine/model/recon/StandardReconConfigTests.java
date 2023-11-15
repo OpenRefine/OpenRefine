@@ -27,8 +27,6 @@
 
 package com.google.refine.model.recon;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -41,18 +39,19 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.model.changes.CellChange;
-import org.mockito.Mockito;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Cell;
@@ -67,11 +66,6 @@ import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
-
-import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 
 public class StandardReconConfigTests extends RefineTest {
 

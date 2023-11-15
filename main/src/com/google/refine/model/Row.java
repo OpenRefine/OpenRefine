@@ -44,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.google.common.base.CharMatcher;
+
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;

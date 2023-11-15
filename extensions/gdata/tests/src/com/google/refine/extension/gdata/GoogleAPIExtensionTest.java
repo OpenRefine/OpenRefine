@@ -1,11 +1,12 @@
 
 package com.google.refine.extension.gdata;
 
-import com.google.refine.ProjectManager;
-import org.testng.annotations.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
+
+import org.testng.annotations.Test;
+
+import com.google.refine.ProjectManager;
 
 public class GoogleAPIExtensionTest {
 

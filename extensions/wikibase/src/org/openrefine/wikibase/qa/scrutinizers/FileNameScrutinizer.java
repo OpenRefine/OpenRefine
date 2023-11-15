@@ -1,12 +1,6 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.editing.MediaFileUtils;
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.updates.ItemEdit;
-import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -15,6 +9,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+
+import org.openrefine.wikibase.editing.MediaFileUtils;
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.updates.ItemEdit;
+import org.openrefine.wikibase.updates.MediaInfoEdit;
 
 public class FileNameScrutinizer extends EditScrutinizer {
 

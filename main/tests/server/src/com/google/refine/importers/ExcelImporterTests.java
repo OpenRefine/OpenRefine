@@ -51,6 +51,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -61,7 +62,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporterTests extends ImporterTest {

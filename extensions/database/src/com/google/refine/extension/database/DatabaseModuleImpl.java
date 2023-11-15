@@ -36,10 +36,9 @@ import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 
+import edu.mit.simile.butterfly.ButterflyModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import edu.mit.simile.butterfly.ButterflyModuleImpl;
 
 public class DatabaseModuleImpl extends ButterflyModuleImpl {
 

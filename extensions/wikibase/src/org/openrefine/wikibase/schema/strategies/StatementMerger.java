@@ -1,11 +1,10 @@
 
 package org.openrefine.wikibase.schema.strategies;
 
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
  * Object which determines how uploaded statements are matched with existing statements on the edited entity.

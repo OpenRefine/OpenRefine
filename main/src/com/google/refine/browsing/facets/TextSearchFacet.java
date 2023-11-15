@@ -36,6 +36,7 @@ package com.google.refine.browsing.facets;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;

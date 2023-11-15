@@ -28,16 +28,17 @@ import static org.testng.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
-import org.openrefine.wikibase.schema.exceptions.QAWarningException;
-import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.ModelException;
+
+import org.openrefine.wikibase.schema.exceptions.QAWarningException;
+import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
 
 public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
 

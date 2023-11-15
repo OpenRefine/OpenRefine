@@ -48,12 +48,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.zip.GZIPInputStream;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.net.URLCodec;
-import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -67,8 +64,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-
-import java.util.zip.GZIPInputStream;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.net.URLCodec;
+import org.apache.commons.io.IOUtils;
 
 public class ParsingUtilities {
 

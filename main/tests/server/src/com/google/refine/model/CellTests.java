@@ -27,14 +27,14 @@
 
 package com.google.refine.model;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.testng.annotations.Test;
 

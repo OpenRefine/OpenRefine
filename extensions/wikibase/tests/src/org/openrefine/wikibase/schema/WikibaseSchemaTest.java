@@ -34,6 +34,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+
+import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.model.ColumnModel;
+import com.google.refine.model.Project;
+import com.google.refine.util.TestUtils;
+
 import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
 import org.openrefine.wikibase.schema.strategies.StatementMerger;
 import org.openrefine.wikibase.schema.validation.PathElement;
@@ -46,17 +58,6 @@ import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
 import org.openrefine.wikibase.updates.StatementEdit;
 import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.*;
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
-
-import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.EngineConfig;
-import com.google.refine.model.ColumnModel;
-import com.google.refine.model.Project;
-import com.google.refine.util.TestUtils;
 
 public class WikibaseSchemaTest extends WikidataRefineTest {
 

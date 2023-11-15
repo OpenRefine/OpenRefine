@@ -27,16 +27,16 @@
 
 package com.google.refine.grel.controls;
 
-import com.google.refine.RefineTest;
-import com.google.refine.expr.*;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import com.google.refine.util.TestUtils;
-
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.stream.Collectors;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.google.refine.RefineTest;
+import com.google.refine.expr.*;
+import com.google.refine.util.TestUtils;
 
 public class ForRangeTests extends RefineTest {
 
