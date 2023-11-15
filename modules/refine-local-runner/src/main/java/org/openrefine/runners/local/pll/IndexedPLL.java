@@ -10,6 +10,7 @@ import io.vavr.collection.Array;
 
 import org.openrefine.runners.local.pll.partitioning.LongRangePartitioner;
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -70,9 +71,9 @@ public class IndexedPLL<T> extends PLL<Tuple2<Long, T>> {
     }
 
     @Override
-    protected CloseableIterator<Tuple2<Long, T>> compute(Partition partition) {
+    protected CloseableIterator<Tuple2<Long, T>> compute(Partition partition, IterationContext context) {
         IndexedPartition indexedPartition = (IndexedPartition) partition;
-        CloseableIterator<T> upstream = parent.compute(indexedPartition.parent);
+        CloseableIterator<T> upstream = parent.iterate(indexedPartition.parent, context);
         return upstream.zipWithIndex((t, i) -> Tuple2.of(indexedPartition.offset + i, t));
     }
 

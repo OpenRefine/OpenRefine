@@ -224,7 +224,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     public void testReadIncompleteChangeData() throws IOException {
         // this is a change data partition observed in the wild, which used not to be read at all
         // (with the decompressor failing before any line could be read)
-        PLL<String> pll = new TextFilePLL(context, incompleteChangeData.getAbsolutePath(), utf8, TextFilePLL.EarlyEOF.IGNORE);
+        PLL<String> pll = new TextFilePLL(context, incompleteChangeData.getAbsolutePath(), utf8, true, "end");
         Array<String> lines = pll.collect();
         assertTrue(lines.size() >= 20);
     }
@@ -249,7 +249,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         File successMarker = new File(tempFile, "_SUCCESS");
         successMarker.delete();
 
-        PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8, TextFilePLL.EarlyEOF.IGNORE);
+        PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8, true, "end");
         assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
         assertTrue(deserializedPLL.count() > 1000L); // it is 1196 as of 2023-06-02 with java 11
         // but I suspect the exact count can be JVM-dependent
@@ -270,12 +270,12 @@ public class TextFilePLLTests extends PLLTestsBase {
             writer.write("world\n");
             writer.flush();
 
-            TextFilePLL pll = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8, TextFilePLL.EarlyEOF.STALL);
+            TextFilePLL pll = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8, true, "end");
 
             List<String> readStrings = new ArrayList<>();
 
             Thread consumer = new Thread(() -> {
-                try (CloseableIterator<String> iterator = pll.iterator()) {
+                try (CloseableIterator<String> iterator = pll.blockingIterator()) {
                     for (String line : iterator) {
                         synchronized (readStrings) {
                             readStrings.add(line);

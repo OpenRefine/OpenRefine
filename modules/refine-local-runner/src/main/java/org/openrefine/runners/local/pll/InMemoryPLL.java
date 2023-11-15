@@ -10,6 +10,7 @@ import io.vavr.collection.Array;
 
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.process.ProgressingFutures;
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -34,7 +35,7 @@ public class InMemoryPLL<T> extends PLL<T> {
     }
 
     @Override
-    public CloseableIterator<T> compute(Partition partition) {
+    public CloseableIterator<T> compute(Partition partition, IterationContext context) {
         InMemoryPartition imPartition = (InMemoryPartition) partition;
 
         return CloseableIterator.wrapping(list.subList(imPartition.offset, imPartition.offset + imPartition.length)

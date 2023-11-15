@@ -78,8 +78,8 @@ public class PLLContext {
      * @param earlyEOF
      *            what to do if the end of the file is reached prematurely
      */
-    public TextFilePLL textFile(String path, Charset encoding, TextFilePLL.EarlyEOF earlyEOF) throws IOException {
-        return new TextFilePLL(this, path, encoding, earlyEOF);
+    public TextFilePLL textFile(String path, Charset encoding, boolean ignoreEarlyEOF, String endMarker) throws IOException {
+        return new TextFilePLL(this, path, encoding, ignoreEarlyEOF, endMarker);
     }
 
     /**

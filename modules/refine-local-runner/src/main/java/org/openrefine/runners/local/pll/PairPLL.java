@@ -14,6 +14,7 @@ import org.openrefine.runners.local.pll.partitioning.CroppedPartitioner;
 import org.openrefine.runners.local.pll.partitioning.LongRangePartitioner;
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
 import org.openrefine.runners.local.pll.partitioning.RangePartitioner;
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.runners.local.pll.util.QueryTree;
 import org.openrefine.util.CloseableIterator;
 
@@ -148,7 +149,7 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * @return
      */
     public List<Tuple2<K, V>> getRangeAfter(K from, int limit, Comparator<K> comparator) {
-        try (CloseableIterator<Tuple2<K, V>> stream = streamFromKey(from, comparator)) {
+        try (CloseableIterator<Tuple2<K, V>> stream = streamFromKey(from, comparator, IterationContext.DEFAULT)) {
             return stream
                     .take(limit).collect(Collectors.toList());
         }
@@ -264,15 +265,15 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *            the order used to compare the keys
      * @return a streams which starts on the first element whose key is greater or equal to the provided one
      */
-    public CloseableIterator<Tuple2<K, V>> streamFromKey(K from, Comparator<K> comparator) {
+    public CloseableIterator<Tuple2<K, V>> streamFromKey(K from, Comparator<K> comparator, IterationContext context) {
         CloseableIterator<Tuple2<K, V>> iterator;
         if (partitioner.isEmpty() || !(partitioner.get() instanceof LongRangePartitioner)) {
             // we resort to simple scanning of all partitions
-            iterator = iterator();
+            iterator = iterator(context);
         } else {
             // we can use the partitioner to locate the partition to start from
             int startingPartition = partitioner.get().getPartition(from);
-            iterator = iterateFromPartition(startingPartition);
+            iterator = iterateFromPartition(startingPartition, context);
         }
         return iterator.dropWhile(tuple -> comparator.compare(from, tuple.getKey()) > 0);
     }
@@ -284,10 +285,11 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *            the key to stop iterating at
      * @param comparator
      *            the order used to compare the keys
-     * @return
+     * @param context
+     *            additional settings to be passed for the generation of the underlying stream
      */
-    public CloseableIterator<Tuple2<K, V>> streamUpToKey(K upTo, Comparator<K> comparator) {
-        return iterator().takeWhile(tuple -> comparator.compare(tuple.getKey(), upTo) < 0);
+    public CloseableIterator<Tuple2<K, V>> streamUpToKey(K upTo, Comparator<K> comparator, IterationContext context) {
+        return iterator(context).takeWhile(tuple -> comparator.compare(tuple.getKey(), upTo) < 0);
     }
 
     /**
@@ -300,10 +302,11 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      *            the key to stop iterating at
      * @param comparator
      *            the order used to compare the keys
-     * @return
+     * @param context
+     *            additional settings to pass to the generation of the underlying stream
      */
-    public CloseableIterator<Tuple2<K, V>> streamBetweenKeys(K from, K upTo, Comparator<K> comparator) {
-        return streamFromKey(from, comparator)
+    public CloseableIterator<Tuple2<K, V>> streamBetweenKeys(K from, K upTo, Comparator<K> comparator, IterationContext context) {
+        return streamFromKey(from, comparator, context)
                 .takeWhile(tuple -> comparator.compare(tuple.getKey(), upTo) < 0);
     }
 
@@ -312,19 +315,24 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
      * that the PLL is sorted.
      * 
      * @param from
+     *            optional lower bound. If not provided, the stream starts from the beginning of the PLL.
      * @param upTo
+     *            optional upper bound. If not provided, the stream runs until the end of the PLL.
      * @param comparator
-     * @return
+     *            used to compare keys of the PLL
+     * @param context
+     *            additional settings to pass to the generation of the underlying stream
      */
-    public CloseableIterator<Tuple2<K, V>> streamBetweenKeys(Optional<K> from, Optional<K> upTo, Comparator<K> comparator) {
+    public CloseableIterator<Tuple2<K, V>> streamBetweenKeys(Optional<K> from, Optional<K> upTo,
+            Comparator<K> comparator, IterationContext context) {
         if (from.isEmpty() && upTo.isEmpty()) {
-            return iterator();
+            return iterator(context);
         } else if (from.isEmpty() && upTo.isPresent()) {
-            return streamUpToKey(upTo.get(), comparator);
+            return streamUpToKey(upTo.get(), comparator, context);
         } else if (from.isPresent() && upTo.isEmpty()) {
-            return streamFromKey(from.get(), comparator);
+            return streamFromKey(from.get(), comparator, context);
         } else {
-            return streamBetweenKeys(from.get(), upTo.get(), comparator);
+            return streamBetweenKeys(from.get(), upTo.get(), comparator, context);
         }
     }
 
@@ -383,14 +391,14 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
     }
 
     @Override
-    protected CloseableIterator<Tuple2<K, V>> compute(Partition partition) {
-        return pll.compute(partition);
+    protected CloseableIterator<Tuple2<K, V>> compute(Partition partition, IterationContext context) {
+        return pll.iterate(partition, context);
     }
 
     @Override
-    public CloseableIterator<Tuple2<K, V>> iterate(Partition partition) {
+    public CloseableIterator<Tuple2<K, V>> iterate(Partition partition, IterationContext context) {
         // Overridden to ensure we are only caching this PLL once, in the parent PLL
-        return pll.iterate(partition);
+        return pll.iterate(partition, context);
     }
 
     @Override

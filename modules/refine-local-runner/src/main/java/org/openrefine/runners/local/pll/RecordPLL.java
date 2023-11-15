@@ -3,7 +3,6 @@ package org.openrefine.runners.local.pll;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import io.vavr.collection.Array;
@@ -11,6 +10,7 @@ import io.vavr.collection.Array;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -105,9 +105,9 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
     }
 
     @Override
-    protected CloseableIterator<Tuple2<Long, Record>> compute(Partition partition) {
+    protected CloseableIterator<Tuple2<Long, Record>> compute(Partition partition, IterationContext context) {
         RecordPartition recordPartition = (RecordPartition) partition;
-        CloseableIterator<IndexedRow> rows = parent.iterate(recordPartition.getParent())
+        CloseableIterator<IndexedRow> rows = parent.iterate(recordPartition.getParent(), context)
                 .map(Tuple2::getValue);
         return groupIntoRecords(rows, keyColumnIndex, partition.getIndex() != 0,
                 recordPartition.additionalRows);

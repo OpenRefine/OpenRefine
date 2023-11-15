@@ -8,6 +8,7 @@ import java.util.List;
 import io.vavr.collection.Array;
 import org.apache.commons.lang3.Validate;
 
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -63,13 +64,13 @@ public class CroppedPLL<T> extends PLL<T> {
     }
 
     @Override
-    protected CloseableIterator<T> compute(Partition partition) {
+    protected CloseableIterator<T> compute(Partition partition, IterationContext context) {
         if (!atEnd && partition.getIndex() == 0 && itemsToDrop > 0) {
-            return pll.compute(partition.getParent()).drop((int) itemsToDrop);
+            return pll.iterate(partition.getParent(), context).drop((int) itemsToDrop);
         } else if (atEnd && partition.getIndex() == numPartitions() - 1 && itemsToDrop > 0) {
-            return pll.compute(partition.getParent()).take(getPartitionSizes().get(numPartitions() - 1).intValue());
+            return pll.iterate(partition.getParent(), context).take(getPartitionSizes().get(numPartitions() - 1).intValue());
         } else {
-            return pll.compute(partition.getParent());
+            return pll.iterate(partition.getParent(), context);
         }
     }
 

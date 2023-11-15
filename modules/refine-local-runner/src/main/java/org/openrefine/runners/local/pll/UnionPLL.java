@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import io.vavr.collection.Array;
 
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -43,10 +44,10 @@ public class UnionPLL<T> extends PLL<T> {
     }
 
     @Override
-    protected CloseableIterator<T> compute(Partition partition) {
+    protected CloseableIterator<T> compute(Partition partition, IterationContext context) {
         UnionPartition unionPartition = (UnionPartition) partition;
         PLL<T> parent = parents.get(unionPartition.parentIndex);
-        return parent.compute(unionPartition.parent);
+        return parent.iterate(unionPartition.parent, context);
     }
 
     @Override

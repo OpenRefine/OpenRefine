@@ -7,6 +7,7 @@ import io.vavr.collection.Array;
 
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
 import org.openrefine.runners.local.pll.partitioning.RangePartitioner;
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -115,8 +116,8 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
     }
 
     @Override
-    protected CloseableIterator<Tuple2<K, Tuple2<V, W>>> compute(Partition partition) {
-        CloseableIterator<Tuple2<K, V>> firstStream = first.iterate(partition.getParent());
+    protected CloseableIterator<Tuple2<K, Tuple2<V, W>>> compute(Partition partition, IterationContext context) {
+        CloseableIterator<Tuple2<K, V>> firstStream = first.iterate(partition.getParent(), context);
         CloseableIterator<Tuple2<K, W>> secondStream;
         Optional<K> lowerBound = Optional.empty();
         Optional<K> upperBound = Optional.empty();
@@ -133,7 +134,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
         if (partition.getIndex() < numPartitions() - 1) {
             upperBound = upperBounds.get(numPartitions() - 2 - partition.getIndex());
         }
-        secondStream = second.streamBetweenKeys(lowerBound, upperBound, comparator);
+        secondStream = second.streamBetweenKeys(lowerBound, upperBound, comparator, context);
         return joinStreams(firstStream, secondStream, comparator, joinType);
     }
 

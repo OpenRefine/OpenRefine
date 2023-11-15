@@ -6,6 +6,7 @@ import java.util.List;
 
 import io.vavr.collection.Array;
 
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.CloseableIterator;
 
@@ -40,7 +41,7 @@ public class SinglePartitionPLL<T> extends PLL<T> {
     }
 
     @Override
-    protected CloseableIterator<T> compute(Partition partition) {
+    protected CloseableIterator<T> compute(Partition partition, IterationContext context) {
         return iterable.iterator();
     }
 

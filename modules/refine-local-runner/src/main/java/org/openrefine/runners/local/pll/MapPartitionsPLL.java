@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 
 import io.vavr.collection.Array;
 
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -80,8 +81,8 @@ public class MapPartitionsPLL<U, T> extends PLL<T> {
     }
 
     @Override
-    public CloseableIterator<T> compute(Partition partition) {
-        CloseableIterator<U> parentIterator = parent.iterate(partition);
+    public CloseableIterator<T> compute(Partition partition, IterationContext context) {
+        CloseableIterator<U> parentIterator = parent.iterate(partition, context);
         return mapFunction.apply(partition.getIndex(), parentIterator);
     }
 

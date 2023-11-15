@@ -7,6 +7,7 @@ import java.util.List;
 
 import io.vavr.collection.Array;
 
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterator;
 
 /**
@@ -45,8 +46,8 @@ public class DropPartitionsPLL<T> extends PLL<T> {
     }
 
     @Override
-    protected CloseableIterator<T> compute(Partition partition) {
-        return parent.compute(partition.getParent());
+    protected CloseableIterator<T> compute(Partition partition, IterationContext context) {
+        return parent.iterate(partition.getParent(), context);
     }
 
     @Override

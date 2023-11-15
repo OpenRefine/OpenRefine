@@ -26,6 +26,7 @@ import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.process.ProgressingFutures;
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.runners.local.pll.util.ProgressingFutureWrapper;
 import org.openrefine.runners.local.pll.util.QueryTree;
 import org.openrefine.runners.local.pll.util.TaskSignalling;
@@ -76,9 +77,10 @@ public abstract class PLL<T> {
      * 
      * @param partition
      *            the partition to iterate over
+     * @param context
      * @return
      */
-    protected abstract CloseableIterator<T> compute(Partition partition);
+    protected abstract CloseableIterator<T> compute(Partition partition, IterationContext context);
 
     /**
      * @return the number of partitions in this list
@@ -94,17 +96,30 @@ public abstract class PLL<T> {
 
     /**
      * Iterate over the elements of the given partition. If the contents of this PLL have been cached, this will iterate
-     * from the cache instead.
-     * 
+     * from the cache instead. Iteration is done with the default {@link IterationContext}.
+     *
      * @param partition
      *            the partition to iterate over
-     * @return
      */
     public CloseableIterator<T> iterate(Partition partition) {
+        return iterate(partition, IterationContext.DEFAULT);
+    }
+
+    /**
+     * Iterate over the elements of the given partition. If the contents of this PLL have been cached, this will iterate
+     * from the cache instead.
+     *
+     * @param partition
+     *            the partition to iterate over
+     * @param context
+     *            some additional information to configure the iteration, relaxing the completeness requirements of the
+     *            generated data
+     */
+    public CloseableIterator<T> iterate(Partition partition, IterationContext context) {
         if (cachedPartitions != null) {
             return CloseableIterator.wrapping(cachedPartitions.get(partition.getIndex()).iterator());
         } else {
-            return compute(partition);
+            return compute(partition, context);
         }
     }
 
@@ -180,27 +195,63 @@ public abstract class PLL<T> {
     }
 
     /**
-     * Returns an iterator over the list
+     * Returns an iterator over the list. This may contain incomplete elements if the underlying collection is being
+     * computed.
+     *
+     * @see #blockingIterator()
      */
     public CloseableIterator<T> iterator() {
         return iterateFromPartition(0);
     }
 
     /**
-     * Stream over the part of the collection that starts at given partition boundary.
-     * 
+     * Returns an iterator over the list, blocking synchronously if we are encountering elements that are not fuly
+     * computed. They will only be enumerated once they are fully computed.
+     *
+     * @see #iterator()
+     */
+    public CloseableIterator<T> blockingIterator() {
+        return iterateFromPartition(0, IterationContext.SYNCHRONOUS_DEFAULT);
+    }
+
+    /**
+     * Returns an iterator over the list, with the settings of the iteration described by the parameter supplied.
+     *
+     * @see #iterator()
+     * @see #blockingIterator()
+     */
+    public CloseableIterator<T> iterator(IterationContext context) {
+        return iterateFromPartition(0, context);
+    }
+
+    /**
+     * Stream over the part of the collection that starts at given partition boundary. The iteration is done with the
+     * default iteration context, {@link IterationContext#DEFAULT}.
+     *
      * @param partitionId
      *            the index of the partition to start enumerating from
-     * @return
+     * @see #iterateFromPartition(int, IterationContext)
      */
     protected CloseableIterator<T> iterateFromPartition(int partitionId) {
+        return iterateFromPartition(partitionId, IterationContext.DEFAULT);
+    }
+
+    /**
+     * Stream over the part of the collection that starts at given partition boundary.
+     *
+     * @param partitionId
+     *            the index of the partition to start enumerating from
+     * @param context
+     *            the iteration context to use
+     */
+    protected CloseableIterator<T> iterateFromPartition(int partitionId, IterationContext context) {
         CloseableIterator<? extends Partition> partitions = CloseableIterator.wrapping(getPartitions().iterator().drop(partitionId));
         if (cachedPartitions != null) {
             return CloseableIterator.wrapping(partitions
                     .flatMap(p -> cachedPartitions.get(p.getIndex())));
         } else {
             return partitions
-                    .flatMapCloseable(this::iterate);
+                    .flatMapCloseable(partition -> iterate(partition, context));
         }
     }
 
@@ -671,7 +722,7 @@ public abstract class PLL<T> {
             // Iterate sequentially over the whole PLL.
             TaskSignalling taskSignalling = new TaskSignalling(count());
             partitionWritingFuture = new ProgressingFutureWrapper<>(context.getExecutorService().submit(() -> {
-                try (CloseableIterator<T> fullIterator = iterator()) {
+                try (CloseableIterator<T> fullIterator = blockingIterator()) {
                     try {
                         Iterator<Integer> partitionSizes = Array.ofAll(partitions)
                                 .iterator()
@@ -723,7 +774,8 @@ public abstract class PLL<T> {
             throws IOException {
         String filename = String.format("part-%05d.zst", partition.getIndex());
         File partFile = new File(directory, filename);
-        writePartition(partition.getIndex(), iterate(partition), partFile, taskSignalling, flushRegularly);
+        writePartition(partition.getIndex(), iterate(partition, IterationContext.SYNCHRONOUS_DEFAULT), partFile, taskSignalling,
+                flushRegularly);
     }
 
     protected void writePlannedPartition(PlannedPartition partition, File directory, Iterator<T> choppedIterator,

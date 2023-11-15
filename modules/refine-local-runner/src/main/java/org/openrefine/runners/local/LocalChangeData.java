@@ -55,8 +55,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
         this.grid = grid;
         this.complete = complete; // TODO should just be a boolean, because if it's not complete when creating it we
         // should not assume that it gets complete later on (if we have empty/missing partitions when creating it they
-        // will
-        // not appear afterwards).
+        // will not appear afterwards).
         this.maxConcurrency = maxConcurrency;
         if (parentPartitionSizes == null) {
             parentPartitionFirstIndices = null;

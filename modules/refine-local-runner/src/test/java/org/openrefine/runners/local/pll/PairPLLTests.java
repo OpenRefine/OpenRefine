@@ -19,6 +19,7 @@ import org.testng.annotations.Test;
 import org.openrefine.runners.local.pll.partitioning.Partitioner;
 import org.openrefine.runners.local.pll.partitioning.PartitionerTestUtils;
 import org.openrefine.runners.local.pll.partitioning.RangePartitioner;
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.util.CloseableIterable;
 import org.openrefine.util.CloseableIterator;
 
@@ -57,7 +58,7 @@ public class PairPLLTests extends PLLTestsBase {
         PLL<Tuple2<Integer, String>> emptyPLL = new PLL<>(context, "empty PLL") {
 
             @Override
-            protected CloseableIterator<Tuple2<Integer, String>> compute(Partition partition) {
+            protected CloseableIterator<Tuple2<Integer, String>> compute(Partition partition, IterationContext context) {
                 throw new IllegalArgumentException("This PLL has no partitions");
             }
 

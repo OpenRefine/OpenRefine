@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.model.Runner;
+import org.openrefine.runners.local.pll.util.IterationContext;
 import org.openrefine.runners.local.pll.util.LineReader;
 import org.openrefine.util.CloseableIterator;
 
@@ -40,7 +41,6 @@ public class TextFilePLL extends PLL<String> {
     private final Charset encoding;
     private final boolean ignoreEarlyEOF;
     private final String endMarker;
-    private final boolean synchronous;
     private ReadingProgressReporter progress;
 
     /**
@@ -51,7 +51,7 @@ public class TextFilePLL extends PLL<String> {
     }
 
     public TextFilePLL(PLLContext context, String path, Charset encoding) throws IOException {
-        this(context, path, encoding, EarlyEOF.FAIL);
+        this(context, path, encoding, false, null);
     }
 
     /**
@@ -63,16 +63,19 @@ public class TextFilePLL extends PLL<String> {
      *            the path to the file or directory whose contents should be read
      * @param encoding
      *            the encoding in which the files should be read
-     * @param earlyEOF
+     * @param ignoreEarlyEOF
      *            what to do if the stream ends unexpectedly
+     * @param endMarker
+     *            an optional string which should be considered the end marker of each partition. If the last line of a
+     *            partition is equal to this marker, this line will be omitted from the iteration. This marker is useful
+     *            to enable synchronous reading from the PLL. If null, no such marker is expected.
      */
-    public TextFilePLL(PLLContext context, String path, Charset encoding, EarlyEOF earlyEOF) throws IOException {
+    public TextFilePLL(PLLContext context, String path, Charset encoding, boolean ignoreEarlyEOF, String endMarker) throws IOException {
         super(context, "Text file from " + path);
         this.path = path;
         this.encoding = encoding;
-        this.ignoreEarlyEOF = earlyEOF != EarlyEOF.FAIL;
-        this.endMarker = "end";
-        this.synchronous = earlyEOF == EarlyEOF.STALL;
+        this.ignoreEarlyEOF = ignoreEarlyEOF;
+        this.endMarker = endMarker;
         this.progress = null;
 
         File file = new File(path);
@@ -189,8 +192,9 @@ public class TextFilePLL extends PLL<String> {
     }
 
     @Override
-    protected CloseableIterator<String> compute(Partition partition) {
+    protected CloseableIterator<String> compute(Partition partition, IterationContext context) {
         TextFilePartition textPartition = (TextFilePartition) partition;
+        boolean synchronous = !context.generateIncompleteElements() && endMarker != null && ignoreEarlyEOF;
 
         int reportBatchSize = 64;
         try {
