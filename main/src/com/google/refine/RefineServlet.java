@@ -50,18 +50,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import edu.mit.simile.butterfly.Butterfly;
+import edu.mit.simile.butterfly.ButterflyModule;
 import org.apache.hc.core5.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
-
-import edu.mit.simile.butterfly.Butterfly;
-import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
 

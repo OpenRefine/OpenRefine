@@ -39,6 +39,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.OperationResolver;

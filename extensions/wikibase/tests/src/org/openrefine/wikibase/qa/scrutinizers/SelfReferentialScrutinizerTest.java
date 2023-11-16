@@ -24,9 +24,10 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+
+import org.openrefine.wikibase.testing.TestingData;
 
 public class SelfReferentialScrutinizerTest extends StatementScrutinizerTest {
 

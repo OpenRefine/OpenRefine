@@ -27,6 +27,12 @@ package org.openrefine.wikibase.qa.scrutinizers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+
 import org.openrefine.wikibase.manifests.Manifest;
 import org.openrefine.wikibase.qa.ConstraintFetcher;
 import org.openrefine.wikibase.qa.QAWarning;
@@ -35,11 +41,6 @@ import org.openrefine.wikibase.qa.QAWarningStore;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.ItemEdit;
 import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 
 /**
  * Inspects an edit batch and emits warnings.

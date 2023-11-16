@@ -24,14 +24,15 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.LabeledStatementEntityEdit;
-import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
+
+import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.updates.LabeledStatementEntityEdit;
+import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
 
 /**
  * A scrutinizer that inspects the values of snaks and terms

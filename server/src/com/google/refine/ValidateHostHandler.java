@@ -29,11 +29,13 @@ package com.google.refine;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.eclipse.jetty.server.handler.HandlerWrapper;
+
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 /**
  * Validate the Host header of the HTTP request to see if it matches either a loopback IP address, localhost or an

@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.google.refine.commands.Command;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;

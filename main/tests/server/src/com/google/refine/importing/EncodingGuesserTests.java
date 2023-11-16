@@ -3,13 +3,14 @@ package com.google.refine.importing;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+
 import java.io.File;
 import java.io.IOException;
 
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.testng.annotations.Test;
+
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 

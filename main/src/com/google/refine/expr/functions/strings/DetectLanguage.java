@@ -1,17 +1,18 @@
 
 package com.google.refine.expr.functions.strings;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import com.google.common.base.Optional;
+import com.optimaize.langdetect.i18n.LdLocale;
+
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.DetectLanguageUtils;
-import com.optimaize.langdetect.i18n.LdLocale;
-
-import java.io.IOException;
-import java.util.Properties;
 
 public class DetectLanguage implements Function {
 

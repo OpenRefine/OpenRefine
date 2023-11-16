@@ -94,7 +94,7 @@ jobs:
       - name: Check Java linting
         id: java_linting
         run: |
-          mvn -B compile formatter:validate javadoc:javadoc -Ddoclint=all
+          mvn -B compile formatter:validate impsort:check javadoc:javadoc -Ddoclint=all
 
       - name: Configure connections to databases
         id: configure_db_connections
@@ -132,7 +132,7 @@ jobs:
       - name: Check Java linting
         id: java_linting
         run: |
-          mvn -B formatter:validate
+          mvn -B formatter:validate impsort:check
 
       - name: Build and test with Maven
         run: mvn -B jacoco:prepare-agent test

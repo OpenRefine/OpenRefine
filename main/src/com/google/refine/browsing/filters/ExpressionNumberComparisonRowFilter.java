@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.util.RowEvaluable;
 import com.google.refine.expr.ExpressionUtils;

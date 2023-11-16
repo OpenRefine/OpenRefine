@@ -33,7 +33,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import org.openrefine.wikibase.testing.WikidataRefineTest;
+import edu.mit.simile.butterfly.ButterflyModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -45,7 +45,7 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 import com.google.refine.util.TestUtils;
 
-import edu.mit.simile.butterfly.ButterflyModule;
+import org.openrefine.wikibase.testing.WikidataRefineTest;
 
 public abstract class OperationTest extends WikidataRefineTest {
 

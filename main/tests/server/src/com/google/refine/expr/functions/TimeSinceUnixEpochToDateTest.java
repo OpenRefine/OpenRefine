@@ -5,7 +5,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Properties;
+
 import org.testng.annotations.Test;
+
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 

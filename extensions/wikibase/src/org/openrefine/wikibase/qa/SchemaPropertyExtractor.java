@@ -1,6 +1,15 @@
 
 package org.openrefine.wikibase.qa;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
 import org.openrefine.wikibase.schema.WbExpression;
 import org.openrefine.wikibase.schema.WbItemEditExpr;
 import org.openrefine.wikibase.schema.WbMediaInfoEditExpr;
@@ -11,14 +20,6 @@ import org.openrefine.wikibase.schema.WbStatementExpr;
 import org.openrefine.wikibase.schema.WbStatementGroupExpr;
 import org.openrefine.wikibase.schema.WikibaseSchema;
 import org.openrefine.wikibase.updates.EntityEdit;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class SchemaPropertyExtractor {
 

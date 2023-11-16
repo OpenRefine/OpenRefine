@@ -28,13 +28,14 @@ import static org.testng.Assert.assertEquals;
 
 import java.text.ParseException;
 
-import org.openrefine.wikibase.schema.validation.ValidationState;
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
 import com.google.refine.model.ColumnModel;
+
+import org.openrefine.wikibase.schema.validation.ValidationState;
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 
 public class WbLocationConstantTest extends WbExpressionTest<GlobeCoordinatesValue> {
 

@@ -29,18 +29,27 @@
 
 package com.google.refine.extension.database.sqlite;
 
-import com.google.refine.extension.database.*;
-import com.google.refine.extension.database.model.DatabaseColumn;
-import com.google.refine.extension.database.model.DatabaseInfo;
-import com.google.refine.extension.database.model.DatabaseRow;
-import org.mockito.MockitoAnnotations;
-import org.testng.Assert;
-import org.testng.annotations.*;
-
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.mockito.MockitoAnnotations;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+
+import com.google.refine.extension.database.DBExtensionTestUtils;
+import com.google.refine.extension.database.DBExtensionTests;
+import com.google.refine.extension.database.DatabaseConfiguration;
+import com.google.refine.extension.database.DatabaseService;
+import com.google.refine.extension.database.DatabaseServiceException;
+import com.google.refine.extension.database.model.DatabaseColumn;
+import com.google.refine.extension.database.model.DatabaseInfo;
+import com.google.refine.extension.database.model.DatabaseRow;
 
 @Test(groups = { "requiresSQLite" })
 public class SQLiteDatabaseServiceTest extends DBExtensionTests {

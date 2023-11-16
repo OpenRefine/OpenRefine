@@ -29,14 +29,15 @@ import static org.testng.Assert.assertNull;
 
 import java.io.LineNumberReader;
 
-import org.openrefine.wikibase.schema.WikibaseSchema;
-import org.openrefine.wikibase.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.util.ParsingUtilities;
+
+import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.testing.TestingData;
 
 public class SaveWikibaseSchemaOperationTest extends OperationTest {
 

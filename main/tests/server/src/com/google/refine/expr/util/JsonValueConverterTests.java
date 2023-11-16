@@ -31,9 +31,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.ParsingUtilities;
 
 public class JsonValueConverterTests {

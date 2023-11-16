@@ -48,7 +48,6 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;

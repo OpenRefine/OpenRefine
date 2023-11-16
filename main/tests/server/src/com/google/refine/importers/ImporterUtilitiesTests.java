@@ -49,9 +49,9 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.Column;
 
 public class ImporterUtilitiesTests extends RefineTest {
 

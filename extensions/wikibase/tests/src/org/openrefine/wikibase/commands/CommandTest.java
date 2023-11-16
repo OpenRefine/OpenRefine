@@ -34,13 +34,14 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.testing.WikidataRefineTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.testing.WikidataRefineTest;
 
 public abstract class CommandTest extends WikidataRefineTest {
 
