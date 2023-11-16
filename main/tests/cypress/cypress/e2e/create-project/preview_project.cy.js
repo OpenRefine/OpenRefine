@@ -181,24 +181,24 @@ describe(__filename, function () {
     // **Testing ignore feature with auto preview enabled** //
     cy.get('input[bind="ignoreInput"]').type('{backspace}1');
     cy.get('input[bind="ignoreCheckbox"]').check();
-    cy.waitForImportUpdate();
+
     // Look for automatic preview update
     cy.get('table.data-table tr').eq(1);
     cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
 
     cy.get('input[bind="ignoreCheckbox"]').uncheck();
-    cy.waitForImportUpdate();
+    cy.get('table.data-table tr').eq(1);
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
 
     // **Testing ignore feature with auto preview disabled** //
     cy.get('input[bind="disableAutoPreviewCheckbox"]').check();
     // Verify no auto update
     cy.get('input[bind="ignoreCheckbox"]').check();
-    cy.wait(5000); // 5 second wait. No choice but to use this here because the dom is not rendered.
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
     // Verify update on button click
     cy.get('button[bind="previewButton"]').click();
-    cy.waitForImportUpdate(); // This can be flaky, happening too quickly to capture
+
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
     cy.get('input[bind="disableAutoPreviewCheckbox"]').uncheck();
