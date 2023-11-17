@@ -165,9 +165,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       const day = findPart(dateParts, 'day');
       const hour = findPart(timeParts, 'hour');
       const minute = findPart(timeParts, 'minute');
-      const dayPeriod = findPart(timeParts, 'dayPeriod'); // AM or PM
 
-      project.date = `${year}-${month}-${day} ${hour}:${minute} ${dayPeriod}`;
+      project.date = `${year}-${month}-${day} ${hour}:${minute}`;
       
       if (typeof project.userMetadata !== "undefined")  {
           for (var m in data.customMetadataColumns) {
