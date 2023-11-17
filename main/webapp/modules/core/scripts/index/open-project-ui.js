@@ -135,7 +135,7 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
 };
 
 const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
-const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
 const dateFormatter = new Intl.DateTimeFormat(navigator.language, dateOptions);
 const timeFormatter =  new Intl.DateTimeFormat(navigator.language, timeOptions);
 
