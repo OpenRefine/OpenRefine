@@ -134,6 +134,11 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
     });
 };
 
+const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+const dateFormatter = new Intl.DateTimeFormat(navigator.language, dateOptions);
+const timeFormatter =  new Intl.DateTimeFormat(navigator.language, timeOptions);
+
 Refine.OpenProjectUI.prototype._renderProjects = function(data) {
   var self = this;
   var projects = [];
@@ -149,7 +154,20 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
          console.log('Project '+project.id+' name is not set. skipping...');
          continue;
       }
-      project.date = moment(project.modified).format('YYYY-MM-DD HH:mm A');
+      // project.modified is ISO 8601 format
+      const date = new Date(project.modified);
+      const dateParts = dateFormatter.formatToParts(date);
+      const timeParts = timeFormatter.formatToParts(date);
+      const findPart = (parts, type) => parts.find(part => part.type === type)?.value;
+
+      const year = findPart(dateParts, 'year');
+      const month = findPart(dateParts, 'month');
+      const day = findPart(dateParts, 'day');
+      const hour = findPart(timeParts, 'hour');
+      const minute = findPart(timeParts, 'minute');
+      const dayPeriod = findPart(timeParts, 'dayPeriod'); // AM or PM
+
+      project.date = `${year}-${month}-${day} ${hour}:${minute} ${dayPeriod}`;
       
       if (typeof project.userMetadata !== "undefined")  {
           for (var m in data.customMetadataColumns) {
