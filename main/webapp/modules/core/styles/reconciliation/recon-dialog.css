@@ -36,9 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .recon-dialog-service-list-container {
-
   border: 1px solid #ccc;
-  padding: 10px;
   max-height: 470px;
   height: 470px !important;
   z-index: 10;
@@ -124,9 +122,10 @@ a.recon-dialog-service-selector-remove {
 .recon-dialog-service-list-element{
   display:block;
   margin-bottom: 0.5em ;
+  padding:5px 10px
 }
 .recon-dialog-service-list-element:hover{
-  background-color:var(--chrome-primary);
+  background-color:var(--dialog-header);
 }
 
 .pop-up-message {
