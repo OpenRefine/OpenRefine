@@ -111,6 +111,18 @@ describe(__filename, function () {
     cy.getFacetContainer('Water').contains('Cluster');
   });
 
+  it('Renames a facet name', function () {
+    cy.loadAndVisitProject('food.small');
+    cy.columnActionClick('Water', ['Facet', 'Text facet']);
+
+    cy.window().then(win=>{
+      const stub=cy.stub(win,'prompt');
+      stub.returns('facet_new_name');
+      cy.get('.facet-title-span').click();
+    })
+    cy.get('.facet-title-span').contains('facet_new_name');
+  });
+
   it('Delete a facet', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
