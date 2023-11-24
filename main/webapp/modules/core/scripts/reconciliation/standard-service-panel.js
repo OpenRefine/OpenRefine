@@ -103,7 +103,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   if(this._service.documentation) {
     this._elmts.documentationLink.attr("href", this._service.documentation);
     // Show the documentation link if documentation is available
-    this._elmts.documentationLink.css("display", "block");
+    this._elmts.documentationLink.css("display", "inline");
   } 
   
   this._elmts.againstType.on('change', function() {
