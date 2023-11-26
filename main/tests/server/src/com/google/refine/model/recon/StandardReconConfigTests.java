@@ -522,7 +522,7 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void batchReconTestError() throws Exception {
-  
+
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
@@ -662,7 +662,6 @@ public class StandardReconConfigTests extends RefineTest {
         assertNotNull(returnReconList.get(0).error);
 
     }
-
 
     /**
      * The UI format and the backend format differ for serialization (the UI never deserializes and the backend
