@@ -299,6 +299,8 @@ public class ReconOperation extends EngineDependentOperation {
                             // TODO add EvalError instead? That is not so convenient
                             // for users because they would lose the cell contents.
                             // Better leave the cell unreconciled so they can be reconciled again later.
+                            Cell oldCell = entry.cell;
+                            logger.warn("We have a null recon here" + " " + oldCell + " " + entry.rowIndex);
                             continue;
                         }
                         Cell oldCell = entry.cell;
