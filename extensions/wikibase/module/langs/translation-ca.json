@@ -30,7 +30,6 @@
     "wikibase-addition/version-error": "Els manifestos de versió $1 no són compatibles. OpenRefine admet només manifestos de versió 1.x i 2.x.",
     "wikibase-schema/dialog-header": "Alinear a Wikibase",
     "wikibase-schema/target-wikibase-instance": "Instància de Wikibase objectiu:",
-    "wikibase-schema/dialog-explanation": "L'esquema de sota especifica com es transformarà les vostres dades tabulades en <a href=\"$1\">$2</a> edicions.",
     "wikibase-schema/start-from-an-existing-schema": "Començar a partir d'un esquema existent:",
     "wikibase-schema/save-new-schema": "Guardar nou...",
     "wikibase-schema/preview-explanation": "Aquesta pestanya mostra les primeres edicions (de $1) que es faran quan carregueu els canvis a <a href=\"$2\" target=\"_blank\">$3</a>. Podeu usar filtres per inspeccionar les edicions en ítems concrets.",

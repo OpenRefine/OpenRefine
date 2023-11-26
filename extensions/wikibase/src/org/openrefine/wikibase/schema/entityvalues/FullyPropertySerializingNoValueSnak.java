@@ -1,10 +1,9 @@
 
 package org.openrefine.wikibase.schema.entityvalues;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.implementation.NoValueSnakImpl;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FullyPropertySerializingNoValueSnak extends NoValueSnakImpl {
 

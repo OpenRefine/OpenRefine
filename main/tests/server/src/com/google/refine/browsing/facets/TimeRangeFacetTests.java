@@ -30,13 +30,12 @@ package com.google.refine.browsing.facets;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.Test;
+
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.facets.TimeRangeFacet;
 import com.google.refine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;

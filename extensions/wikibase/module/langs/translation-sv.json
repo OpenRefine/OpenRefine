@@ -6,7 +6,6 @@
     "wikibase-extension/export-to-qs": "Exportera till QuickStatements",
     "wikibase-extension/export-schema": "Exportera schema",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
-    "wikibase-schema/dialog-explanation": "Wikidata-schemat nedan specificerar hur dina tabulerade data transformeras till <a href=\"$1\">$2</a>-redigeringar.",
     "wikibase-schema/schema-tab-header": "Schema",
     "wikibase-schema/edits-preview-tab-header": "Förhandsvisning",
     "wikibase-schema/statements-header": "Påståenden",

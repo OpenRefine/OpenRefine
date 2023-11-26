@@ -12,18 +12,20 @@ function navigateToProjectPreview() {
   cy.get('table.data-table tr').eq(1).should('to.contain', '717');
 }
 describe(__filename, function () {
-  it('Tests Parsing Options related to column seperation', function () {
+  it('Tests Parsing Options related to column separation', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
+    // Since the quotes in our input file aren't escaped, they aren't legal for any separator except comma(,)
+    cy.get('input[bind="processQuoteMarksCheckbox"]').uncheck();
     cy.get('[type="radio"]').check('tab');
     cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr')
       .eq(1)
-      .should('to.contain', '01001","BUTTER,WITH SALT","15.87","717');
+      .should('to.contain', '"01001","BUTTER,WITH SALT","15.87","717"');
 
     cy.get('input[bind="columnSeparatorInput"]').type('{backspace};');
     cy.get('[type="radio"]').check('custom');
@@ -32,10 +34,11 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr')
       .eq(1)
-      .should('to.contain', '01001","BUTTER,WITH SALT","15.87","717');
+      .should('to.contain', '"01001","BUTTER,WITH SALT","15.87","717"');
 
+    // Re-enable quotes for CSV case since they're now in a legal configuration
+    cy.get('input[bind="processQuoteMarksCheckbox"]').check();
     cy.get('[type="radio"]').check('comma');
-
     cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
@@ -67,7 +70,7 @@ describe(__filename, function () {
     cy.navigateTo('Import project');
     cy.get('#or-import-locate').should(
       'to.contain',
-      'Locate an existing Refine project file (.tar or .tar.gz)'
+      'Locate an existing Refine project file or use a URL (.tar or .tar.gz):'
     );
 
     cy.navigateTo('Create project');
@@ -178,24 +181,24 @@ describe(__filename, function () {
     // **Testing ignore feature with auto preview enabled** //
     cy.get('input[bind="ignoreInput"]').type('{backspace}1');
     cy.get('input[bind="ignoreCheckbox"]').check();
-    cy.waitForImportUpdate();
+
     // Look for automatic preview update
     cy.get('table.data-table tr').eq(1);
     cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
 
     cy.get('input[bind="ignoreCheckbox"]').uncheck();
-    cy.waitForImportUpdate();
+    cy.get('table.data-table tr').eq(1);
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
 
     // **Testing ignore feature with auto preview disabled** //
     cy.get('input[bind="disableAutoPreviewCheckbox"]').check();
     // Verify no auto update
     cy.get('input[bind="ignoreCheckbox"]').check();
-    cy.wait(5000); // 5 second wait. No choice but to use this here because the dom is not rendered.
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
     // Verify update on button click
     cy.get('button[bind="previewButton"]').click();
-    cy.waitForImportUpdate();
+
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
     cy.get('input[bind="disableAutoPreviewCheckbox"]').uncheck();

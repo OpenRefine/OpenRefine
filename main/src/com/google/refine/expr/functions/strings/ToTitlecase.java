@@ -35,13 +35,13 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import com.google.refine.grel.EvalErrorMessage;
-import com.google.refine.grel.FunctionDescription;
 import org.apache.commons.text.WordUtils;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class ToTitlecase implements Function {
 

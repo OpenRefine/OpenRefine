@@ -63,7 +63,9 @@ public class RowReorderOperationTests extends RefineTest {
                         "8,b\n" +
                         ",d\n" +
                         "2,f\n" +
-                        "1,h\n");
+                        "1,h\n" +
+                        "9,F\n" +
+                        "10,f\n");
     }
 
     @AfterMethod
@@ -81,10 +83,48 @@ public class RowReorderOperationTests extends RefineTest {
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
-        Assert.assertEquals("h", project.rows.get(0).cells.get(1).value);
-        Assert.assertEquals("f", project.rows.get(1).cells.get(1).value);
-        Assert.assertEquals("b", project.rows.get(2).cells.get(1).value);
-        Assert.assertEquals("d", project.rows.get(3).cells.get(1).value);
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "h");
+        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "f");
+        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "b");
+        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "F");
+        Assert.assertEquals(project.rows.get(4).cells.get(1).value, "f");
+        Assert.assertEquals(project.rows.get(5).cells.get(1).value, "d");
+    }
+
+    @Test
+    public void testReverseSort() throws Exception {
+        String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":true,\"blankPosition\":-1,\"errorPosition\":1}]}";
+        SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
+        project.rows.get(1).cells.set(0, new Cell("", null));
+        AbstractOperation op = new RowReorderOperation(
+                Mode.RowBased, sortingConfig);
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
+
+        Assert.assertEquals(project.rows.get(5).cells.get(1).value, "h");
+        Assert.assertEquals(project.rows.get(4).cells.get(1).value, "f");
+        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "b");
+        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "F");
+        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "f");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "d"); // controlled by blankPosition, not reverse
+    }
+
+    @Test
+    public void testStringSort() throws Exception {
+        String sortingJson = "{\"criteria\":[{\"column\":\"first\",\"valueType\":\"string\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1,\"caseSensitive\":true}]}";
+        SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
+        project.rows.get(1).cells.set(0, new Cell("", null));
+        AbstractOperation op = new RowReorderOperation(
+                Mode.RowBased, sortingConfig);
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
+
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
+        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "d");
+        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "f");
+        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "f");
+        Assert.assertEquals(project.rows.get(4).cells.get(1).value, "F");
+        Assert.assertEquals(project.rows.get(5).cells.get(1).value, "h");
     }
 
     @Test

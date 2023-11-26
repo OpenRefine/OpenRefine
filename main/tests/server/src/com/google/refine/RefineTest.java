@@ -45,6 +45,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import edu.mit.simile.butterfly.ButterflyModule;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.testng.Assert;
@@ -52,11 +58,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
@@ -74,8 +75,6 @@ import com.google.refine.model.Row;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.TestUtils;
-
-import edu.mit.simile.butterfly.ButterflyModule;
 
 /**
  * A base class containing various utilities to help testing Refine.
@@ -390,5 +389,9 @@ public class RefineTest {
             Assert.fail("Test interrupted");
         }
         Assert.assertFalse(process.isRunning(), "Process failed to complete within timeout " + timeout);
+    }
+
+    public static void assertEqualsSystemLineEnding(String actual, String expected) {
+        Assert.assertEquals(actual, expected.replaceAll("\n", System.lineSeparator()));
     }
 }

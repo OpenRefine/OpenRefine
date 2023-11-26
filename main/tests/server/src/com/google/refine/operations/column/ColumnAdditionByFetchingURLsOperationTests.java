@@ -41,7 +41,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -50,6 +55,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -64,11 +70,6 @@ import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
-
-import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
@@ -192,7 +193,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             server.enqueue(new MockResponse());
 
             Row row0 = new Row(2);
-            row0.setCell(0, new Cell("auinrestrsc", null)); // malformed -> null
+            row0.setCell(0, new Cell("auinrestrsc", null)); // malformed -> error
             project.rows.add(row0);
             Row row1 = new Row(2);
             row1.setCell(0, new Cell(url.toString(), null)); // fine
@@ -216,8 +217,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
             // Inspect rows
-            Assert.assertEquals(project.rows.get(0).getCellValue(newCol), null);
-            Assert.assertTrue(project.rows.get(1).getCellValue(newCol) != null);
+            Assert.assertTrue(project.rows.get(0).getCellValue(newCol) instanceof EvalError);
+            Assert.assertNotNull(project.rows.get(1).getCellValue(newCol));
             Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
         }
     }
@@ -255,7 +256,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             runAndWait(op, 3000);
 
-            RecordedRequest request = server.takeRequest();
+            RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
             Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);
             Assert.assertEquals(request.getHeader("authorization"), authorizationValue);
             Assert.assertEquals(request.getHeader("accept"), acceptValue);

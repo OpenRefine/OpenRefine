@@ -38,9 +38,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.refine.model.AbstractOperation;
-
 import edu.mit.simile.butterfly.ButterflyModule;
+
+import com.google.refine.model.AbstractOperation;
 
 public abstract class OperationRegistry {
 

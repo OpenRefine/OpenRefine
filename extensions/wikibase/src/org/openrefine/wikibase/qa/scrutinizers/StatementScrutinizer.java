@@ -24,13 +24,14 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
 import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
 import org.openrefine.wikibase.updates.ItemEdit;
 import org.openrefine.wikibase.updates.MediaInfoEdit;
 import org.openrefine.wikibase.updates.StatementEdit;
 import org.openrefine.wikibase.updates.StatementEntityEdit;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 public abstract class StatementScrutinizer extends EditScrutinizer {
 

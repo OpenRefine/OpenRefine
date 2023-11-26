@@ -36,20 +36,26 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.*;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.model.changes.CellChange;
-import org.mockito.Mockito;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Cell;
@@ -88,7 +94,7 @@ public class StandardReconConfigTests extends RefineTest {
     private class StandardReconConfigStub extends StandardReconConfig {
 
         public StandardReconConfigStub() {
-            super("", "", "", "", "", false, new ArrayList<ColumnDetail>());
+            super("", "", "", "", "", false, 10, new ArrayList<ColumnDetail>());
         }
 
         public double wordDistanceTest(String s1, String s2) {
@@ -129,6 +135,7 @@ public class StandardReconConfigTests extends RefineTest {
                 "                \"name\": \"scientific article\"\n" +
                 "        },\n" +
                 "        \"autoMatch\": true,\n" +
+                "        \"batchSize\": 10,\n" +
                 "        \"columnDetails\": [\n" +
                 "           {\n" +
                 "             \"column\": \"organization_country\",\n" +
@@ -167,6 +174,28 @@ public class StandardReconConfigTests extends RefineTest {
         StandardReconConfig config = StandardReconConfig.reconstruct(json);
         assertNull(config.typeID);
         assertNull(config.typeName);
+    }
+
+    @Test
+    public void testGetBatchSize() throws IOException {
+
+        String json = "{\"mode\":\"standard-service\","
+                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+                + "\"type\":null,"
+                + "\"autoMatch\":true,"
+                + "\"batchSize\":50,"
+                + "\"columnDetails\":["
+                + "    {\"column\":\"_ - id\","
+                + "     \"property\":{\"id\":\"P3153\",\"name\":\"Crossref funder ID\"}}"
+                + "],"
+                + "\"limit\":0}";
+        StandardReconConfig c = StandardReconConfig.reconstruct(json);
+        assertEquals(c.getBatchSize(10), 10);
+        assertEquals(c.getBatchSize(120), 12);
+        assertEquals(c.getBatchSize(1200), 50);
+        assertEquals(c.getBatchSize(10000), 50);
     }
 
     @Test
@@ -248,6 +277,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "                \"name\": \"film\"\n" +
                     "        },\n" +
                     "        \"autoMatch\": true,\n" +
+                    "        \"batchSize\": 10,\n" +
                     "        \"columnDetails\": [\n" +
                     "           {\n" +
                     "             \"column\": \"director\",\n" +
@@ -268,7 +298,7 @@ public class StandardReconConfigTests extends RefineTest {
             }
             Assert.assertFalse(process.isRunning());
 
-            RecordedRequest request1 = server.takeRequest();
+            RecordedRequest request1 = server.takeRequest(5, TimeUnit.SECONDS);
 
             assertNotNull(request1);
 
@@ -354,6 +384,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "                \"name\": \"film\"\n" +
                     "        },\n" +
                     "        \"autoMatch\": true,\n" +
+                    "        \"batchSize\": 10,\n" +
                     "        \"columnDetails\": [\n" +
                     "           {\n" +
                     "             \"column\": \"director\",\n" +
@@ -374,8 +405,8 @@ public class StandardReconConfigTests extends RefineTest {
             }
             Assert.assertFalse(process.isRunning());
 
-            server.takeRequest(); // ignore the first request which was a 503 error
-            RecordedRequest request1 = server.takeRequest();
+            server.takeRequest(5, TimeUnit.SECONDS); // ignore the first request which was a 503 error
+            RecordedRequest request1 = server.takeRequest(5, TimeUnit.SECONDS);
 
             assertNotNull(request1);
             String query = request1.getBody().readUtf8Line();
@@ -383,7 +414,7 @@ public class StandardReconConfigTests extends RefineTest {
             String expected = "queries=" + URLEncoder.encode(
                     "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
                     "UTF-8");
-            assertEquals(query, expected);
+            TestUtils.assertEqualAsQueries(query, expected);
 
             Row row = project.rows.get(0);
             Cell cell = row.cells.get(1);
@@ -394,8 +425,8 @@ public class StandardReconConfigTests extends RefineTest {
     }
 
     @Test
-    public void batchReconTestSuccessful() throws Exception {
 
+    public void batchReconTestSuccessful() throws Exception {
         String reconResponse = "{\n" +
                 "q0: {\n" +
                 "  result: [\n" +
@@ -491,6 +522,7 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void batchReconTestError() throws Exception {
+  
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
@@ -535,9 +567,10 @@ public class StandardReconConfigTests extends RefineTest {
             assertEquals(query, expected);
             assertNotNull(returnReconList);
             assertNotNull(returnReconList.get(0));
+            assertNotNull(returnReconList.get(0).error);
             // checking for error due to missing result field
             String reconResponse = "{\n" +
-                    "q0:{\n" +
+                    "q0: {\n" +
                     "  }\n" +
                     "}\n";
             server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
@@ -627,7 +660,6 @@ public class StandardReconConfigTests extends RefineTest {
             assertNotNull(returnReconList.get(0).error);
 
         }
-
 
     /**
      * The UI format and the backend format differ for serialization (the UI never deserializes and the backend

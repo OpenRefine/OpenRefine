@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -51,9 +54,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.refine.util.ParsingUtilities;
-
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
 
 public class SeparatorBasedImporterTests extends ImporterTest {
 
@@ -505,7 +505,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2\"");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
     }
 
@@ -637,7 +637,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals((String) project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals((String) project.rows.get(0).cells.get(1).value, "data2");
+        Assert.assertEquals((String) project.rows.get(0).cells.get(1).value, "data2\"");
         Assert.assertEquals((String) project.rows.get(0).cells.get(2).value, "data3");
         Assert.assertEquals((String) project.rows.get(0).cells.get(3).value, "data4");
     }

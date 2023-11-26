@@ -49,6 +49,8 @@ import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
@@ -57,6 +59,8 @@ import com.google.refine.expr.LanguageSpecificParser;
 import com.google.refine.expr.ParsingException;
 
 public class JythonEvaluable implements Evaluable {
+
+    final static Logger logger = LoggerFactory.getLogger("jython");
 
     static public LanguageSpecificParser createParser() {
         return new LanguageSpecificParser() {
@@ -79,6 +83,7 @@ public class JythonEvaluable implements Evaluable {
     // don't have access to the servlet context from this class this is
     // the best we can do for now.
     static {
+        logger.debug("Executing static block in JythonEvaluable");
         File libPath = new File("webapp/WEB-INF/lib/jython");
         if (!libPath.exists() && !libPath.canRead()) {
             libPath = new File("main/webapp/WEB-INF/lib/jython");
@@ -93,10 +98,16 @@ public class JythonEvaluable implements Evaluable {
             PythonInterpreter.initialize(System.getProperties(), props, new String[] { "" });
         }
 
-        _engine = new PythonInterpreter();
+        logger.debug("Done with static block in Jython initialization");
     }
 
     public JythonEvaluable(String s) {
+        if (_engine == null) {
+            // TODO: This could potentially be done in the background, after startup, but before the user needs it
+            logger.debug("Invoking constructor for PythonInterpreter()");
+            _engine = new PythonInterpreter();
+            logger.debug("Done constructor for PythonInterpreter()");
+        }
         this.s_functionName = String.format("__temp_%d__", Math.abs(s.hashCode()));
 
         // indent and create a function out of the code

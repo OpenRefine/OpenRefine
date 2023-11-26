@@ -30,13 +30,12 @@ package com.google.refine.model;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import edu.mit.simile.butterfly.ButterflyModule;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.util.TestUtils;
-
-import edu.mit.simile.butterfly.ButterflyModule;
 
 public class ColumnTests {
 
@@ -55,6 +54,7 @@ public class ColumnTests {
                 + "   \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
                 + "   \"type\":{\"id\":\"Q43229\",\"name\":\"organization\"},"
                 + "   \"autoMatch\":true,"
+                + "   \"batchSize\":10,"
                 + "   \"columnDetails\":["
                 + "      {\"column\":\"organization_country\",\"propertyName\":\"SPARQL: P17/P297\",\"propertyID\":\"P17/P297\"},"
                 + "      {\"column\":\"organization_id\",\"propertyName\":\"SPARQL: P3500|P2427\",\"propertyID\":\"P3500|P2427\"}"

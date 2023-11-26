@@ -31,7 +31,6 @@
     "database-source/alert-db-port-invalid-character": "Błąd portu bazy danych: Wprowadzono zabronione znaki. Dozwolone jedynie cyfry.",
     "database-source/alert-db-host-invalid-character": "Błąd hosta bazy danych: Wprowadzono zabronione znaki. Dozwolone jedynie znaki alfanumeryczne",
     "database-source/alert-conn-name-invalid-character": "Błąd wprowadzenia nazwy połączenia: Wprowadzono zabronione znaki. Dozwolone tylko [a-zA-Z0-9._-]",
-    "database-source/alert-invalid-query-keyword": "Kwerenda nie może zawierać słowa kluczowego manipulacji danymi:",
     "database-source/alert-query": "Musisz określić prawidłowe zapytanie",
     "database-source/alert-initial-database": "Musisz określić początkową bazę danych",
     "database-source/form-validation-failure": "Błędna nowa forma połączenia!",

@@ -33,6 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var CustomSuggest = {};
 
+function sanitizeSuggestOptions(options) {
+  return {
+    query_param_name: options.query_param_name,
+    access: options.access,
+    formatter_url: options.formatter_url,
+    service_url:options.service_url,
+    service_path:options.service_path,
+  };
+}
+
 (function() {
 
   /*

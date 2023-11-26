@@ -80,6 +80,7 @@ public class PatternSyntaxExceptionParser {
                 msg = "The regular expression has a '*','+' or '?' in the wrong place.";
                 break;
             case "Unexpected internal error":
+            case "Unescaped trailing backslash":
                 msg = "The regular expression has a backslash '\\' at the end.";
                 break;
             case "Unclosed counted closure":

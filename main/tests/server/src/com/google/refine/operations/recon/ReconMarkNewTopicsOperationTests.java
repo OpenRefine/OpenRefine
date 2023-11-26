@@ -27,23 +27,21 @@
 
 package com.google.refine.operations.recon;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.recon.ReconConfig;
-import com.google.refine.model.recon.StandardReconConfig;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
-import com.google.refine.RefineTest;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.TestUtils;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.Properties;
 
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
+import com.google.refine.RefineTest;
+import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
+import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.operations.OperationRegistry;
+import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.TestUtils;
 
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
@@ -108,7 +106,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 "http://foo.com/identifierSpace",
                 "http://foo.com/schemaSpace",
                 null,
-                false,
+                false, 10,
                 Collections.emptyList(),
                 0);
 

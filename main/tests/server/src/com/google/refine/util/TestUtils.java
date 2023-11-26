@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -45,6 +47,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.testng.Assert;
 
 public class TestUtils {
 
@@ -173,5 +176,13 @@ public class TestUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void assertEqualAsQueries(String expectedQuery, String actualQuery) throws UnsupportedEncodingException {
+        String actualResponse[] = URLDecoder.decode(actualQuery, "UTF-8").split("=");
+        String expected[] = URLDecoder.decode(expectedQuery, "UTF-8").split("=");
+
+        Assert.assertEquals(actualResponse[0], expected[0]);
+        TestUtils.assertEqualsAsJson(actualResponse[1], expected[1]);
     }
 }

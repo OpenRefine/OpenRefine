@@ -1,11 +1,12 @@
 
 package org.openrefine.wikibase.schema;
 
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 
 public class WbEntityIdValueConstantTest extends WbExpressionTest<EntityIdValue> {
 

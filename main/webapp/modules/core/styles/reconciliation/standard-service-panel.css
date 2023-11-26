@@ -31,6 +31,51 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+.against-type-control {
+  position: relative;
+  width: fit-content;
+}
+
+.edit-mapped-value {
+  margin-right: 0.5em;
+  float: right;
+  text-decoration: none;
+  color: var(--background-primary);
+  background-color: #8ae;
+  padding: 1px 3px;
+  border-radius: 3px;
+  font-weight: normal;
+  line-height: normal;
+  cursor: pointer;
+}
+
+.mapped-value {
+  display: none;
+  width: 100%;
+  padding: 2px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: transparent;
+}
+
+.mapped-value a {
+  margin-left: 0.2em;
+  margin-right: 0.25em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 13ch;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.type-id {
+  vertical-align: middle;
+  margin-left: 0;
+  margin-right: auto;
+}
+
 .recon-dialog-standard-service-panel-message {
   text-align: center;
   font-size: 150%;

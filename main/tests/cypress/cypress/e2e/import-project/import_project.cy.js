@@ -47,4 +47,31 @@ describe(__filename, function () {
     cy.waitForProjectTable();
     cy.get('#project-name-button').contains(projectName);
   });
+
+  it('Import a project from URL', function () {
+    cy.visitOpenRefine();
+    cy.navigateTo('Import project');
+    const url = "https://raw.githubusercontent.com/OpenRefine/OpenRefine/master/main/tests/cypress/cypress/fixtures/food-small-csv.openrefine.tar.zip";
+    cy.get('#or-import-url').type(url);
+    cy.get('#project-upload-form').submit();
+
+    cy.waitForProjectTable(199);
+    cy.get('div[bind="summaryBarDiv"]').contains('199 rows');
+  });
+
+  it('Delete a file', function () {
+    cy.visitOpenRefine();
+    
+    const projectFile = {
+      filePath: 'food-small-csv.openrefine.tar.zip',
+      mimeType: 'application/gzip',
+    };
+    cy.get('#project-upload-form input#project-tar-file-input').attachFile(
+      projectFile
+    );
+    cy.get('#project-tar-file-delete').click({force: true});
+
+    // Verify the project has been deleted
+    cy.get('#project-tar-file-input').should('not.contain', projectFile.filePath);
+  });
 });

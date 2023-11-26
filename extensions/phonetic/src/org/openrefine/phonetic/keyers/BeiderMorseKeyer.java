@@ -1,10 +1,10 @@
 
 package org.openrefine.phonetic.keyers;
 
-import com.google.refine.clustering.binning.Keyer;
-
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.language.bm.BeiderMorseEncoder;
+
+import com.google.refine.clustering.binning.Keyer;
 
 public class BeiderMorseKeyer extends Keyer {
 

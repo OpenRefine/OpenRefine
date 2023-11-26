@@ -32,14 +32,13 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.Test;
+
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.RowFilter;
-import com.google.refine.browsing.facets.ScatterplotFacet;
 import com.google.refine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;

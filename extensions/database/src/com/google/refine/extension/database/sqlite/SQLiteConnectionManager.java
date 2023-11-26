@@ -29,15 +29,18 @@
 
 package com.google.refine.extension.database.sqlite;
 
-import com.google.refine.extension.database.DatabaseConfiguration;
-import com.google.refine.extension.database.DatabaseServiceException;
-import com.google.refine.extension.database.SQLType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.refine.extension.database.DatabaseConfiguration;
+import com.google.refine.extension.database.DatabaseServiceException;
+import com.google.refine.extension.database.SQLType;
 
 public class SQLiteConnectionManager {
 
@@ -66,7 +69,12 @@ public class SQLiteConnectionManager {
     }
 
     public static String getDatabaseUrl(DatabaseConfiguration dbConfig) {
-        return "jdbc:" + dbConfig.getDatabaseType().toLowerCase() + ":" + dbConfig.getDatabaseName();
+        try {
+            URI uri = new URI("jdbc:" + dbConfig.getDatabaseType().toLowerCase(), dbConfig.getDatabaseName(), null);
+            return uri.toASCIIString();
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**

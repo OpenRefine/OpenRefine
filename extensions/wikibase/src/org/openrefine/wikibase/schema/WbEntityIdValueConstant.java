@@ -1,13 +1,13 @@
 
 package org.openrefine.wikibase.schema;
 
-import org.openrefine.wikibase.schema.entityvalues.SuggestedEntityIdValue;
-import org.openrefine.wikibase.schema.validation.ValidationState;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedEntityIdValue;
+import org.openrefine.wikibase.schema.validation.ValidationState;
 
 /**
  * A constant entity id value, that does not change depending on the row

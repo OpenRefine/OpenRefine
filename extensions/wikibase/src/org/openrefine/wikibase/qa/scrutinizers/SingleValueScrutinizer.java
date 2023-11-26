@@ -28,12 +28,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.updates.ItemEdit;
 import org.openrefine.wikibase.updates.MediaInfoEdit;
 import org.openrefine.wikibase.updates.StatementEntityEdit;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
  * For now this scrutinizer only checks for uniqueness at the entity level (it ignores qualifiers and references).

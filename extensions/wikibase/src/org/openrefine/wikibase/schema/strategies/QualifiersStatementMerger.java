@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -21,9 +23,6 @@ import org.wikidata.wdtk.datamodel.interfaces.SomeValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Merging strategy which compares statements using not just their main value, but also their qualifiers. It is possible
@@ -49,11 +48,14 @@ public class QualifiersStatementMerger implements StatementMerger {
 
     @Override
     public boolean match(Statement existing, Statement added) {
+        Snak existingSnak = existing.getMainSnak();
+        Snak addedSnak = added.getMainSnak();
+
         // Select the discriminating SnakGroups
         List<SnakGroup> existingDiscriminatingSnaks = discriminatingSnaks(existing.getQualifiers());
         List<SnakGroup> addedDiscriminatingSnaks = discriminatingSnaks(added.getQualifiers());
 
-        return snakGroupsEqual(existingDiscriminatingSnaks, addedDiscriminatingSnaks);
+        return snakEquality(existingSnak, addedSnak) && snakGroupsEqual(existingDiscriminatingSnaks, addedDiscriminatingSnaks);
     }
 
     @Override
