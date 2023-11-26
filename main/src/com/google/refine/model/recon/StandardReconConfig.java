@@ -480,7 +480,7 @@ public class StandardReconConfig extends ReconConfig {
                         recon = createReconServiceResults(text, results, historyEntryID);
                     } else {
                         recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-                        recon.error ="The service returned a JSON response without \"result\" field for query "+key;
+                        recon.error = "The service returned a JSON response without \"result\" field for query " + key;
                     }
                 } else {
                     recon = new Recon(historyEntryID, identifierSpace, schemaSpace);

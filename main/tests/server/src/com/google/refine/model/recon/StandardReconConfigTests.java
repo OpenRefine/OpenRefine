@@ -545,9 +545,10 @@ public class StandardReconConfigTests extends RefineTest {
             assertEquals(query, expected);
             assertNotNull(returnReconList.get(0));
             assertNotNull(returnReconList.get(0).error);
-            assertEquals(returnReconList.get(0).error,"The service returned a JSON response without \"result\" field for query q0");
+            assertEquals(returnReconList.get(0).error, "The service returned a JSON response without \"result\" field for query q0");
         }
     }
+
     @Test
     public void batchReconTestConnectionError() throws Exception {
         try (MockWebServer server = new MockWebServer()) {
@@ -557,7 +558,7 @@ public class StandardReconConfigTests extends RefineTest {
 
             String configJson = " {\n" +
                     "        \"mode\": \"standard-service\",\n" +
-                    "        \"service\": \""+ url + "\",\n" +
+                    "        \"service\": \"" + url + "\",\n" +
                     "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
                     "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
                     "        \"type\": {\n" +
@@ -588,46 +589,46 @@ public class StandardReconConfigTests extends RefineTest {
 
             // assertions
             assertNotNull(returnReconList.get(0).error);
-            assertEquals(returnReconList.get(0).error,"Read timed out");
+            assertEquals(returnReconList.get(0).error, "Read timed out");
             assertNotNull(returnReconList);
         }
     }
+
     @Test
     public void batchReconTestDNSError() throws Exception {
-           HttpUrl url= HttpUrl.parse("https://hewsjsajsajk.com/search?q=ujdjsaoiksa");
+        HttpUrl url = HttpUrl.parse("https://hewsjsajsajk.com/search?q=ujdjsaoiksa");
 
-            String configJson = " {\n" +
-                    "        \"mode\": \"standard-service\",\n" +
-                    "        \"service\": \""+ url +"\",\n" +
-                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                    "        \"type\": {\n" +
-                    "                \"id\": \"Q11424\",\n" +
-                    "                \"name\": \"film\"\n" +
-                    "        },\n" +
-                    "        \"autoMatch\": true,\n" +
-                    "        \"columnDetails\": [\n" +
-                    "           {\n" +
-                    "             \"column\": \"director\",\n" +
-                    "             \"propertyName\": \"Director\",\n" +
-                    "             \"propertyID\": \"P57\"\n" +
-                    "           }\n" +
-                    "        ]}";
-            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
-            StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
-            job.text = "david lynch";
-            job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
-            List<ReconJob> jobList = new ArrayList<ReconJob>();
-            jobList.add(job);
+        String configJson = " {\n" +
+                "        \"mode\": \"standard-service\",\n" +
+                "        \"service\": \"" + url + "\",\n" +
+                "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+                "        \"type\": {\n" +
+                "                \"id\": \"Q11424\",\n" +
+                "                \"name\": \"film\"\n" +
+                "        },\n" +
+                "        \"autoMatch\": true,\n" +
+                "        \"columnDetails\": [\n" +
+                "           {\n" +
+                "             \"column\": \"director\",\n" +
+                "             \"propertyName\": \"Director\",\n" +
+                "             \"propertyID\": \"P57\"\n" +
+                "           }\n" +
+                "        ]}";
+        StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+        StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
+        job.text = "david lynch";
+        job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+        List<ReconJob> jobList = new ArrayList<ReconJob>();
+        jobList.add(job);
 
-            List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
-            // assertions
-            assertEquals(returnReconList.get(0).error,url.host()+": nodename nor servname provided, or not known");
-            assertNotNull(returnReconList);
-            assertNotNull(returnReconList.get(0).error);
+        List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
+        // assertions
+        assertEquals(returnReconList.get(0).error, url.host() + ": nodename nor servname provided, or not known");
+        assertNotNull(returnReconList);
+        assertNotNull(returnReconList.get(0).error);
 
-        }
-
+    }
 
     /**
      * The UI format and the backend format differ for serialization (the UI never deserializes and the backend
