@@ -27,8 +27,6 @@
 
 package com.google.refine.model.recon;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -36,7 +34,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -49,7 +46,7 @@ import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-
+import okhttp3.mockwebserver.SocketPolicy;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -70,12 +67,6 @@ import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
-
-import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-import okhttp3.mockwebserver.SocketPolicy;
 
 public class StandardReconConfigTests extends RefineTest {
 
