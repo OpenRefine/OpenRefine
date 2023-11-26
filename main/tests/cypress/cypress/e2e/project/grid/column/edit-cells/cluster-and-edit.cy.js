@@ -30,6 +30,7 @@ describe(__filename, function () {
     it('Test the footer buttons, Select/Unselect All', function () {
         cy.loadAndVisitProject(fixture);
         cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);
+        cy.get('#autoId').check();
 
         cy.get('.dialog-container').within(() => {
             cy.get('.dialog-footer button[bind="selectAllButton"]').click();
@@ -47,6 +48,7 @@ describe(__filename, function () {
     it('Test the different clustering options for rendering and expected inputs', function () {
         cy.loadAndVisitProject(fixture);
         cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);
+        cy.get('#autoId').check();
 
         // test the rendering of the main content when selecting different clustering methods
         // the following code simply iterate over every clustering method (dropdow) and functions (ngram, levenshtein ...) to ensure the rendering is not broken
@@ -107,6 +109,7 @@ describe(__filename, function () {
     it('Merge Select & Close', function () {
         cy.loadAndVisitProject(fixture);
         cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);
+        cy.get('#autoId').check();
 
         cy.get('.dialog-container').within(() => {
             // check lines to be merged
@@ -136,6 +139,7 @@ describe(__filename, function () {
     it('Merge Select & Re Cluster', function () {
         cy.loadAndVisitProject(fixture);
         cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);
+        cy.get('#autoId').check();
 
         cy.get('.dialog-container').within(() => {
             // Merge BALLARDS RIVER
@@ -189,6 +193,7 @@ describe(__filename, function () {
 
         cy.loadAndVisitProject(fixture);
         cy.columnActionClick('test', ['Edit cells', 'Cluster and edit']);
+        cy.get('#autoId').check();
 
         cy.get('.dialog-container').within(() => {
             cy.get('.clustering-dialog-entry-table tr td:nth-child(3)').should(

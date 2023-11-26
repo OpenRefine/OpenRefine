@@ -38,11 +38,10 @@ package com.google.refine.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
-
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
+import java.util.zip.GZIPOutputStream;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;

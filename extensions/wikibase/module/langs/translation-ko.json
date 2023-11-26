@@ -8,7 +8,6 @@
     "wikibase-extension/export-schema": "스키마 익스포트",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
     "wikibase-schema/dialog-header": "Wikidata에 맞추기",
-    "wikibase-schema/dialog-explanation": "아래의 Wikidata 스키마는 당신의 테이블 데이터가 Wikidata 편집값으로 어떻게 변하는지 지정합니다. 입력상자  아래의 컬럼 이름을 드래그 앤 드랍할 수 있습니다. 매 줄마다, 편집값이 컬럼별로 값이 생성됩니다.",
     "wikibase-schema/preview-explanation": "This tab shows the first edits (out of {nb_edits}) that will be made once you upload the changes to Wikidata. You can use facets to inspect the edits on particular items.\n이 탭에서는 Wikidata 로 변경사항을 업로드하면 처음 편집 (out of {nb_edits})이 만들어 집니다. 특정 아이템에서 편집을 검사하기 위해 facets 을 사용할 수 있습니다.",
     "wikibase-schema/schema-tab-header": "스키마",
     "wikibase-schema/warnings-tab-header": "이슈",

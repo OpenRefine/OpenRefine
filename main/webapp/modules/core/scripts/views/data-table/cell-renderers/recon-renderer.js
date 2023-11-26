@@ -334,7 +334,7 @@ class ReconCellRenderer {
     }
     var suggest = elmts.input
     .val(cell.v)
-    .suggest(suggestOptions2);
+    .suggest(sanitizeSuggestOptions(suggestOptions2));
 
     suggest.on("fb-pane-show", function(e, data) {
       DialogSystem.pauseEscapeKeyHandling();
@@ -403,6 +403,7 @@ class ReconCellRenderer {
       .width(preview.width)
       .height(preview.height)
       .attr("src", url)
+      .attr("sandbox", "")
       .appendTo(fakeMenu);
     } else {
       return; // no preview service available

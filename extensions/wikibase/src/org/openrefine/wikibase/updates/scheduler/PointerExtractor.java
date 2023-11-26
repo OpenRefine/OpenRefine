@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
@@ -43,6 +42,8 @@ import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
+
+import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
 
 /**
  * A class that extracts the new entity ids referred to in a statement.

@@ -44,10 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -57,6 +53,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -143,6 +143,8 @@ public class StandardReconConfig extends ReconConfig {
     final public String typeName;
     @JsonProperty("autoMatch")
     final public boolean autoMatch;
+    @JsonProperty("batchSize")
+    final public int batchSize;
     @JsonProperty("columnDetails")
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
@@ -158,12 +160,13 @@ public class StandardReconConfig extends ReconConfig {
             @JsonProperty("schemaSpace") String schemaSpace,
             @JsonProperty("type") ReconType type,
             @JsonProperty("autoMatch") boolean autoMatch,
+            @JsonProperty("batchSize") int batchSize,
             @JsonProperty("columnDetails") List<ColumnDetail> columnDetails,
             @JsonProperty("limit") int limit) {
         this(service, identifierSpace, schemaSpace,
                 type != null ? type.id : null,
                 type != null ? type.name : null,
-                autoMatch, columnDetails, limit);
+                autoMatch, batchSize, columnDetails, limit);
     }
 
     public StandardReconConfig(
@@ -174,8 +177,9 @@ public class StandardReconConfig extends ReconConfig {
             String typeID,
             String typeName,
             boolean autoMatch,
+            int batchSize,
             List<ColumnDetail> columnDetails) {
-        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, columnDetails, 0);
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, batchSize, columnDetails, 0);
     }
 
     /**
@@ -196,6 +200,7 @@ public class StandardReconConfig extends ReconConfig {
             String typeID,
             String typeName,
             boolean autoMatch,
+            int batchSize,
             List<ColumnDetail> columnDetails,
             int limit) {
         this.service = service;
@@ -205,6 +210,7 @@ public class StandardReconConfig extends ReconConfig {
         this.typeID = typeID;
         this.typeName = typeName;
         this.autoMatch = autoMatch;
+        this.batchSize = batchSize;
         this.columnDetails = columnDetails;
         this.limit = limit;
     }
@@ -220,8 +226,8 @@ public class StandardReconConfig extends ReconConfig {
 
     @Override
     @JsonIgnore
-    public int getBatchSize() {
-        return 10;
+    public int getBatchSize(int rowCount) {
+        return Math.min(Math.max(rowCount / 10, 10), batchSize);
     }
 
     @Override
@@ -452,6 +458,7 @@ public class StandardReconConfig extends ReconConfig {
         String responseString = "";
         ObjectNode o = null;
         try {
+
             responseString = postQueries(service, queriesString);
             o = ParsingUtilities.mapper.readValue(responseString, ObjectNode.class);
         } catch (IOException e) {
@@ -481,6 +488,7 @@ public class StandardReconConfig extends ReconConfig {
                     } else {
                         recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
                         recon.error = "The service returned a JSON response without \"result\" field for query " + key;
+
                     }
                 } else {
                     recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
@@ -492,6 +500,7 @@ public class StandardReconConfig extends ReconConfig {
                 }
                 recons.add(recon);
             }
+
         }
 
         while (recons.size() < jobs.size()) {

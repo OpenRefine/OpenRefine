@@ -32,7 +32,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import com.google.refine.util.TestUtils;
 
 public class ToTitlecaseTests extends RefineTest {
 

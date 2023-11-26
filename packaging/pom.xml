@@ -443,7 +443,6 @@
               <jre>
                 <path>%JAVA_HOME%;%PATH%</path>
                 <minVersion>${java.minversion}</minVersion>
-                <maxVersion>${java.maxversion}</maxVersion>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
@@ -509,92 +508,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.2</version>
         <configuration>
           <skip>true</skip>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>${build-helper-maven-plugin.version}</version>
-        <inherited>false</inherited>
-        <executions>
-          <!-- Attach tar.gz artifact for linux -->
-          <execution>
-              <id>attach-linux</id>
-              <phase>deploy</phase>
-              <goals>
-                  <goal>attach-artifact</goal>
-              </goals>
-              <configuration>
-                  <artifacts>
-                      <artifact>
-                          <file>${project.build.directory}/${project.build.finalName}-linux-${project.version}.tar.gz</file>
-                          <type>tar.gz</type>
-                          <classifier>linux</classifier>
-                      </artifact>
-                  </artifacts>
-              </configuration>
-          </execution>
-
-          <!-- Attach the zip file for windows, without embedded JRE -->
-          <execution>
-              <id>attach-win-without-jre</id>
-              <phase>deploy</phase>
-              <goals>
-                  <goal>attach-artifact</goal>
-              </goals>
-              <configuration>
-                  <skipAttach>${skipCreateExe}</skipAttach>
-                  <artifacts>
-                      <artifact>
-                          <file>${project.build.directory}/${project.build.finalName}-win-${project.version}.zip</file>
-                          <type>zip</type>
-                          <classifier>win</classifier>
-                      </artifact>
-                  </artifacts>
-              </configuration>
-          </execution>
-
-          <!-- Attach the zip file for windows, with embedded JRE -->
-          <execution>
-              <id>attach-win-with-jre</id>
-              <phase>deploy</phase>
-              <goals>
-                  <goal>attach-artifact</goal>
-              </goals>
-              <configuration>
-                  <skipAttach>${skipCreateExe}</skipAttach>
-                  <artifacts>
-                      <artifact>
-                          <file>${project.build.directory}/${project.build.finalName}-win-with-java-${project.version}.zip</file>
-                          <type>zip</type>
-                          <classifier>win-with-java</classifier>
-                      </artifact>
-                  </artifacts>
-              </configuration>
-          </execution>
-
-          <!-- Attach the final DMG for MacOS -->
-          <execution>
-              <id>attach-dmg</id>
-              <phase>deploy</phase>
-              <goals>
-                  <goal>attach-artifact</goal>
-              </goals>
-              <configuration>
-                  <artifacts>
-                      <artifact>
-                          <file>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</file>
-                          <type>dmg</type>
-                          <classifier>mac</classifier>
-                      </artifact>
-                  </artifacts>
-              </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
     <pluginManagement>
@@ -657,7 +574,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.7.1</version>
+              <version>4.9.0</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>

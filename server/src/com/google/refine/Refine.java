@@ -44,12 +44,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
+import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -58,10 +60,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.util.Scanner;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import com.google.util.threads.ThreadPoolExecutorAdapter;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,7 +219,7 @@ class RefineServer extends Server {
         this.addBean(handler);
         // Tell the server we want to try and shutdown gracefully
         // this means that the server will stop accepting new connections
-        // right away but it will continue to process the ones that
+        // right away, but it will continue to process the ones that
         // are in execution for the given timeout before attempting to stop
         // NOTE: this is *not* a blocking method, it just sets a parameter
         // that _server.stop() will rely on
@@ -284,7 +285,7 @@ class RefineServer extends Server {
         scanner.addListener(new Scanner.BulkListener() {
 
             @Override
-            public void filesChanged(@SuppressWarnings("rawtypes") List changedFiles) {
+            public void filesChanged(Set<String> set) {
                 try {
                     logger.info("Stopping context: " + contextRoot.getAbsolutePath());
                     context.stop();
@@ -487,7 +488,7 @@ class RefineClient extends JFrame implements ActionListener {
     }
 
     private void openBrowser() {
-        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) || System.getenv("SNAP") != null) {
             try {
                 openBrowserFallback();
             } catch (IOException e) {

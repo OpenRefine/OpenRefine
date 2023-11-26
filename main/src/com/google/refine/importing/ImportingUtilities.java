@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importing;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -66,10 +68,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
@@ -84,11 +87,10 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.mozilla.universalchardet.UnicodeBOMInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingManager.Format;
@@ -349,7 +351,6 @@ public class ImportingUtilities {
                         if (httpClient.getResponse(urlString, null, responseHandler) != null) {
                             archiveCount++;
                         }
-                        ;
                         downloadCount++;
                     } else {
                         // Fallback handling for non HTTP connections (only FTP?)
@@ -435,19 +436,19 @@ public class ImportingUtilities {
 
         update.totalExpectedSize += length;
 
-        progress.setProgress("Downloading " + url.toString(),
+        progress.setProgress("Downloading " + url, // TODO: Localize
                 calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
         long actualLength = saveStreamToFile(stream, file, update);
         JSONUtilities.safePut(fileRecord, "size", actualLength);
         if (actualLength == 0) {
-            throw new IOException("No content found in " + url.toString());
+            throw new IOException("No content found in " + url);
         } else if (length >= 0) {
             update.totalExpectedSize += (actualLength - length);
         } else {
             update.totalExpectedSize += actualLength;
         }
-        progress.setProgress("Saving " + url.toString() + " locally",
+        progress.setProgress("Saving " + url + " locally", // TODO: Localize
                 calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
         return postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress);
     }
@@ -528,11 +529,23 @@ public class ImportingUtilities {
             encoding = commonEncoding;
         }
         if (encoding != null) {
-            try {
-                return new InputStreamReader(inputStream, encoding);
-            } catch (UnsupportedEncodingException e) {
-                // Ignore and fall through
+
+            // Special case for UTF-8 with BOM
+            if (EncodingGuesser.UTF_8_BOM.equals(encoding)) {
+                try {
+                    return new InputStreamReader(new UnicodeBOMInputStream(inputStream, true), UTF_8);
+                } catch (IOException e) {
+                    throw new RuntimeException("Exception from UnicodeBOMInputStream", e);
+                }
+            } else {
+                try {
+                    return new InputStreamReader(inputStream, encoding);
+                } catch (UnsupportedEncodingException e) {
+                    // This should never happen since they picked from a list of supported encodings
+                    throw new RuntimeException("Unsupported encoding: " + encoding, e);
+                }
             }
+
         }
         return new InputStreamReader(inputStream);
     }
@@ -677,7 +690,7 @@ public class ImportingUtilities {
                     || "application/x-zip-compressed".equals(contentType)
                     || "application/zip".equals(contentType)
                     || "application/x-compressed".equals(contentType)
-                    || "multipar/x-zip".equals(contentType)) {
+                    || "multipart/x-zip".equals(contentType)) {
                 return new ZipInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".kmz")) {
                 return new ZipInputStream(new FileInputStream(file));
@@ -689,11 +702,27 @@ public class ImportingUtilities {
 
     private static boolean isFileGZipped(File file) {
         int magic = 0;
-        try (RandomAccessFile raf = new RandomAccessFile(file, "r");) {
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
             magic = raf.read() & 0xff | ((raf.read() << 8) & 0xff00);
         } catch (IOException ignored) {
         }
         return magic == GZIPInputStream.GZIP_MAGIC;
+    }
+
+    public static boolean isCompressed(File file) throws IOException {
+        // Check for common compressed file types to protect ourselves from binary data
+        try (InputStream is = new FileInputStream(file)) {
+            byte[] magic = new byte[4];
+            int count = is.read(magic);
+            if (count == 4 && Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x03, 0x04 }) || // zip
+                    Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x07, 0x08 }) ||
+                    (magic[0] == 0x1F && magic[1] == (byte) 0x8B) || // gzip
+                    (magic[0] == 'B' && magic[1] == 'Z' && magic[2] == 'h') // bzip2
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // FIXME: This is wasteful of space and time. We should try to process on the fly
@@ -777,15 +806,10 @@ public class ImportingUtilities {
                 return new GZIPInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".bz2")
                     || "application/x-bzip2".equals(mimeType)) {
-                InputStream is = new FileInputStream(file);
-                is.mark(4);
-                if (!(is.read() == 'B' && is.read() == 'Z')) {
-                    // No BZ prefix as appended by command line tools. Reset and hope for the best
-                    is.reset();
-                }
-                return new BZip2CompressorInputStream(is);
+                return new BZip2CompressorInputStream(new FileInputStream(file), true);
             }
         } catch (IOException e) {
+            // TODO: We need to get this error back to the user
             logger.warn("Something that looked like a compressed file gave an error on open: " + file, e);
         }
         return null;
@@ -870,7 +894,7 @@ public class ImportingUtilities {
             }
         });
 
-        // Default to "text" to to avoid parsing as "binary/excel".
+        // Default to "text" to avoid parsing as "binary/excel".
         // "text" is more general than "text/line-based", so a better starting point
         String bestFormat = formats.size() > 0 ? formats.get(0) : "text";
         if (JSONUtilities.getInt(retrievalRecord, "archiveCount", 0) == 0) {
@@ -888,7 +912,7 @@ public class ImportingUtilities {
                 }
             }
 
-            // If nothing matches the best format but we have some files,
+            // If nothing matches the best format, but we have some files,
             // then select them all
             if (fileSelectionIndexes.size() == 0 && count > 0) {
                 for (int i = 0; i < count; i++) {

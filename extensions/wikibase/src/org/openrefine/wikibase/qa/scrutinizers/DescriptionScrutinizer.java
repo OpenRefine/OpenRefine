@@ -3,10 +3,11 @@ package org.openrefine.wikibase.qa.scrutinizers;
 
 import java.util.Set;
 
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+
 import org.openrefine.wikibase.updates.ItemEdit;
 import org.openrefine.wikibase.updates.LabeledStatementEntityEdit;
 import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
 /**
  * @author Lu Liu

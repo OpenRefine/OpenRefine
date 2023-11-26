@@ -33,6 +33,7 @@ public class QualifiersStatementMergerTests {
     PropertyIdValue otherPid = Datamodel.makeWikidataPropertyIdValue("P898");
     PropertyIdValue otherPid2 = Datamodel.makeWikidataPropertyIdValue("P33333");
     Snak mainSnak = Datamodel.makeValueSnak(otherPid, qidA);
+    Snak otherMainSnak = Datamodel.makeValueSnak(otherPid, qidB);
     SnakGroup discriminatingQualifier1 = Datamodel.makeSnakGroup(
             Collections.singletonList(Datamodel.makeValueSnak(discrimatingQualifierPid, qidA)));
     SnakGroup discriminatingQualifier2 = Datamodel.makeSnakGroup(
@@ -53,6 +54,7 @@ public class QualifiersStatementMergerTests {
     Statement statementD = statement(Datamodel.makeClaim(qidA, mainSnak, Arrays.asList(
             nonDiscriminatingQualifier2, discriminatingQualifier1, nonDiscriminatingQualifier3)));
     Statement statementE = statement(Datamodel.makeClaim(qidA, mainSnak, Collections.emptyList()));
+    Statement statementF = statement(Datamodel.makeClaim(qidA, otherMainSnak, Collections.singletonList(discriminatingQualifier1)));
 
     @Test
     public void testMatchNoPids() {
@@ -74,6 +76,7 @@ public class QualifiersStatementMergerTests {
         assertTrue(SUTwithPids.match(statementA, statementD));
         assertFalse(SUTwithPids.match(statementA, statementE));
         assertTrue(SUTwithPids.match(statementC, statementD));
+        assertFalse(SUTwithPids.match(statementA, statementF));
     }
 
     @Test

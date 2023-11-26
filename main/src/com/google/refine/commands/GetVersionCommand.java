@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.RefineServlet;
 
 public class GetVersionCommand extends Command {

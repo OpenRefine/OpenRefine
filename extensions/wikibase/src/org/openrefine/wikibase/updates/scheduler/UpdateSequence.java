@@ -30,8 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openrefine.wikibase.updates.EntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+
+import org.openrefine.wikibase.updates.EntityEdit;
 
 /**
  * Helper class to store a list of updates where each subject appears at most once. It preserves order of insertion.

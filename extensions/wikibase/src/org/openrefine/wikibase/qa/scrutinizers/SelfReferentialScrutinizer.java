@@ -24,10 +24,11 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
+
+import org.openrefine.wikibase.qa.QAWarning;
 
 /**
  * A scrutinizer that checks for self-referential statements. These statements are flagged by Wikibase as suspicious.

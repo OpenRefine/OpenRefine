@@ -9,7 +9,6 @@
 // ***********************************************
 
 import 'cypress-file-upload';
-import 'cypress-wait-until';
 
 // /**
 //  * Reconcile a column
@@ -277,6 +276,13 @@ Cypress.Commands.add('waitForOrOperation', () => {
 
 /**
  * Wait for OpenRefine parsing options to be updated
+ *
+ * @deprecated
+ *
+ * NOTE: This command is unreliable because if you call it after starting an operation e.g. with a click(), the loading
+ * indicator may have come and gone already by the time waitForImportUpdate() is called, causing the cypress test to
+ * wait forever on ('#or-import-updating').should('be.visible') until it fails due to timeout.
+ *
  */
 Cypress.Commands.add('waitForImportUpdate', () => {
   cy.get('#or-import-updating').should('be.visible');
@@ -367,7 +373,7 @@ Cypress.Commands.add('visitProject', (projectId) => {
 Cypress.Commands.add(
     'loadAndVisitProject',
     (fixture, projectName = Cypress.currentTest.title +'-'+Date.now()) => {
-      cy.loadProject(fixture, projectName).then((projectId) => {
+      cy.loadProject(fixture, projectName, "fooTag").then((projectId) => {
         cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
         cy.waitForProjectTable();
       });
@@ -380,7 +386,7 @@ Cypress.Commands.add('waitForProjectTable', (numRows) => {
   cy.get('#right-panel', { log: false }).should('be.visible');
   cy.get('#project-title').should('exist');
   cy.get(".data-table").find("tr").its('length').should('be.gte', 0);
-  if (arguments.length == 1) {
+  if (numRows) {
     cy.get('#summary-bar').should('to.contain', numRows+' rows');
   }
 });

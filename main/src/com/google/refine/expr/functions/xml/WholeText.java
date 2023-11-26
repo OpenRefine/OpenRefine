@@ -34,15 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
-import com.google.refine.expr.functions.Type;
 
-import com.google.refine.grel.EvalErrorMessage;
-import com.google.refine.grel.FunctionDescription;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class WholeText implements Function {
 

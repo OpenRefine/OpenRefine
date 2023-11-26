@@ -41,6 +41,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
@@ -129,6 +130,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                         _schemaSpace,
                         null,
                         false,
+                        10,
                         Collections.emptyList(),
                         0);
     }

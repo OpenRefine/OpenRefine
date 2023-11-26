@@ -50,18 +50,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import edu.mit.simile.butterfly.Butterfly;
+import edu.mit.simile.butterfly.ButterflyModule;
 import org.apache.hc.core5.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
-
-import edu.mit.simile.butterfly.Butterfly;
-import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
 
@@ -202,6 +201,13 @@ public class RefineServlet extends Butterfly {
                     logger.trace("> DELETE {}", commandKey);
                     command.doDelete(request, response);
                     logger.trace("< DELETE {}", commandKey);
+                } else if (request.getMethod().equals("HEAD")) {
+                    if (!logger.isTraceEnabled() && command.logRequests()) {
+                        logger.info("HEAD {}", request.getPathInfo());
+                    }
+                    logger.trace("> HEAD {}", commandKey);
+                    command.doHead(request, response);
+                    logger.trace("< HEAD {}", commandKey);
                 } else {
                     response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
                 }

@@ -27,8 +27,6 @@ package org.openrefine.wikibase.exporters;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikibase.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -38,6 +36,9 @@ import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
+
+import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikibase.updates.scheduler.QuickStatementsUpdateScheduler;
 
 /**
  * Prints a Wikibase value as a string as required by QuickStatements. Format documentation:

@@ -40,7 +40,11 @@ import java.util.Properties;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.grel.*;
+import com.google.refine.grel.Control;
+import com.google.refine.grel.ControlDescription;
+import com.google.refine.grel.ControlEvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class ForRange implements Control {

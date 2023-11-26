@@ -33,7 +33,6 @@
     "database-parsing/discard-next": "Descartar primeira(s)",
     "database-source/databaseNameLabel": "Nome do banco de dados",
     "database-source/alert-port": "Deve definir uma porta de banco de dados",
-    "database-source/alert-invalid-query-keyword": "A consulta não pode conter palavra-chave de manipulação de dados:",
     "database-source/databasePasswordPlaceholder": "Digite a palavra-passe do banco de dados",
     "database-source/connectionNamePlaceholder": "Digite um novo nome de conexão",
     "database-source/databaseFileNamePlaceholder": "Digite o caminho completo do ficheiro de banco de dados",

@@ -28,9 +28,6 @@
 package com.google.refine.util;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
@@ -244,20 +241,13 @@ public class HttpClient {
     }
 
     public String getResponse(String urlString, Header[] headers, HttpClientResponseHandler<String> responseHandler) throws IOException {
-        try {
-            // Use of URL constructor below is purely to get additional error checking to mimic
-            // previous behavior for the tests.
-            new URL(urlString).toURI();
-        } catch (IllegalArgumentException | MalformedURLException | URISyntaxException e) {
-            return null;
-        }
 
         HttpGet httpGet = new HttpGet(urlString);
 
         if (headers != null && headers.length > 0) {
             httpGet.setHeaders(headers);
         }
-        httpGet.setConfig(defaultRequestConfig); // FIXME: Redundant? already includes in client builder
+        httpGet.setConfig(defaultRequestConfig); // FIXME: Redundant? already included in client builder
         return httpClient.execute(httpGet, responseHandler);
     }
 

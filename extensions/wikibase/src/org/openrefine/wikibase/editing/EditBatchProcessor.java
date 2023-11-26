@@ -31,13 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikibase.schema.exceptions.NewEntityNotCreatedYetException;
-import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.FullMediaInfoUpdate;
-import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
-import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
@@ -47,6 +40,14 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+
+import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikibase.schema.exceptions.NewEntityNotCreatedYetException;
+import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.updates.FullMediaInfoUpdate;
+import org.openrefine.wikibase.updates.MediaInfoEdit;
+import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
+import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
 
 /**
  * Schedules and performs a list of updates to entities via the API.
@@ -173,12 +174,18 @@ public class EditBatchProcessor {
                 // Existing entities
                 EntityUpdate entityUpdate;
                 if (update.requiresFetchingExistingState()) {
-                    entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
+                    String entityId = update.getEntityId().getId();
+                    if (currentDocs.get(entityId) != null) {
+                        entityUpdate = update.toEntityUpdate(currentDocs.get(entityId));
+                    } else {
+                        logger.warn(String.format("Skipping editing of %s as it could not be retrieved", entityId));
+                        entityUpdate = null;
+                    }
                 } else {
                     entityUpdate = update.toEntityUpdate(null);
                 }
 
-                if (!entityUpdate.isEmpty()) { // skip updates which do not change anything
+                if (entityUpdate != null && !entityUpdate.isEmpty()) { // skip updates which do not change anything
                     editor.editEntityDocument(entityUpdate, false, summary, tags);
                 }
                 // custom code for handling our custom updates to mediainfo, which cover editing more than Wikibase

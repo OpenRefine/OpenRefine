@@ -45,7 +45,6 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.recon.ReconJudgeOneCellCommand;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -74,7 +73,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
                 "http://my.recon.service/rdf/schema",
                 "type3894",
                 "octopus",
-                true,
+                true, 10,
                 Collections.emptyList(),
                 5);
         reconciled.setReconConfig(config);

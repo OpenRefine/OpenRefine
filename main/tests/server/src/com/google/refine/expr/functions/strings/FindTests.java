@@ -37,7 +37,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineServlet;
 import com.google.refine.RefineTest;
-import com.google.refine.util.TestUtils;
 
 /**
  * Test cases for find function.

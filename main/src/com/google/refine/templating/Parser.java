@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.templating;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.ast.FieldAccessorExpr;
 import com.google.refine.grel.ast.VariableExpr;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Parser class

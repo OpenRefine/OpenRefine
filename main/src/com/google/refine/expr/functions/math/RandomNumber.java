@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions.math;
 
 import java.util.Properties;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.refine.expr.EvalError;

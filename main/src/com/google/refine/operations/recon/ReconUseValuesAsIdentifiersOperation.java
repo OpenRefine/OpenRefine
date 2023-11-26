@@ -33,6 +33,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
@@ -73,7 +74,7 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
         this.service = service;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
-        this.reconConfig = new StandardReconConfig(service, identifierSpace, schemaSpace, null, null, true, Collections.emptyList());
+        this.reconConfig = new StandardReconConfig(service, identifierSpace, schemaSpace, null, null, true, 10, Collections.emptyList());
     }
 
     @Override

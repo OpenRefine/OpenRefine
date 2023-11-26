@@ -45,7 +45,11 @@ public class VariableExpr implements Evaluable {
     final protected String _name;
 
     public VariableExpr(String name) {
-        _name = name;
+        if (name != null || !name.isEmpty()) {
+            _name = name;
+        } else {
+            throw new IllegalArgumentException("Illegal variable name ");
+        }
     }
 
     @Override
@@ -60,5 +64,15 @@ public class VariableExpr implements Evaluable {
 
     public String getName() {
         return _name;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof VariableExpr && getName().equals(((VariableExpr) other).getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return _name.hashCode();
     }
 }

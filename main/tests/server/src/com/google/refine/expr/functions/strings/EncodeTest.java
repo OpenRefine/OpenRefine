@@ -1,10 +1,11 @@
 
 package com.google.refine.expr.functions.strings;
 
-import com.google.refine.RefineTest;
-import com.google.refine.expr.EvalError;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
 
 public class EncodeTest extends RefineTest {
 

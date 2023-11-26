@@ -45,6 +45,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.zip.GZIPInputStream;
 
+import com.google.common.io.PatternFilenameFilter;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -52,7 +53,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.io.PatternFilenameFilter;
 import com.google.refine.importing.FormatGuesser;
 
 public class TextFormatGuesserTests extends ImporterTest {

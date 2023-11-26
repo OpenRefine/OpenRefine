@@ -55,7 +55,6 @@
                 <configuration>
                     <outputDirectory>module/MOD-INF/lib</outputDirectory>
                     <includeScope>runtime</includeScope>
-                    <excludeGroupIds>org.mortbay.jetty</excludeGroupIds>
                 </configuration>
                 </execution>
             </executions>
@@ -85,12 +84,12 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev20230603-2.0.0</version>
+      <version>v3-rev20230822-2.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-sheets</artifactId>
-      <version>v4-rev20230526-2.0.0</version>
+      <version>v4-rev20230815-2.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

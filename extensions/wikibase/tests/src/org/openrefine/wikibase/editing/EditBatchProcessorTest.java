@@ -24,6 +24,8 @@
 
 package org.openrefine.wikibase.editing;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,12 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.testing.WikidataRefineTest;
-import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.ItemEditBuilder;
-import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -63,6 +59,13 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import com.google.refine.util.ParsingUtilities;
+
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.testing.WikidataRefineTest;
+import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.updates.ItemEditBuilder;
+import org.openrefine.wikibase.updates.MediaInfoEdit;
+import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
 
 public class EditBatchProcessorTest extends WikidataRefineTest {
 
@@ -121,6 +124,23 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         NewEntityLibrary expectedLibrary = new NewEntityLibrary();
         expectedLibrary.setId(1234L, "Q1234");
         assertEquals(expectedLibrary, library);
+    }
+
+    @Test
+    public void testDeletedItem() throws IOException, MediaWikiApiErrorException, InterruptedException {
+        String id = "Q389";
+        ItemIdValue qid = Datamodel.makeWikidataItemIdValue(id);
+        MonolingualTextValue description = Datamodel.makeMonolingualTextValue("village in Nepal", "en");
+        EntityEdit edit = new ItemEditBuilder(qid).addDescription(description, true).build();
+        List<EntityEdit> batch = Collections.singletonList(edit);
+        when(fetcher.getEntityDocuments(Collections.singletonList(id))).thenReturn(Collections.emptyMap());
+
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library,
+                summary, maxlag, tags, 10, 60);
+        assertEquals(processor.progress(), 0);
+        processor.performEdit();
+        assertEquals(processor.progress(), 100);
+        verify(editor, times(0)).editEntityDocument(any(), anyBoolean(), any(), any());
     }
 
     @Test

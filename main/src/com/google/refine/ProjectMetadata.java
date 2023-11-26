@@ -41,18 +41,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.CharMatcher;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
@@ -135,6 +137,7 @@ public class ProjectMetadata {
 
     public ProjectMetadata(Instant created, Instant modified, String name) {
         this(created);
+        _modified = modified;
         _name = name;
     }
 
@@ -374,9 +377,17 @@ public class ProjectMetadata {
             Field metaField = metaClass.getDeclaredField("_" + metaName);
             if (metaName.equals("tags")) {
                 metaField.set(this, valueString.split(","));
+            } else if (metaName.equals("customMetadata")) {
+                ParsingUtilities.mapper.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature());
+                Map<String, Object> map = ParsingUtilities.mapper.readValue(valueString, HashMap.class);
+                metaField.set(this, map);
             } else {
                 metaField.set(this, valueString);
             }
+        } catch (JsonProcessingException e) {
+            String errorMessage = "Error reading JSON: " + e.getOriginalMessage();
+            logger.error(errorMessage);
+            throw new RuntimeException(errorMessage);
         } catch (NoSuchFieldException e) {
             updateUserMetadata(metaName, valueString);
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {

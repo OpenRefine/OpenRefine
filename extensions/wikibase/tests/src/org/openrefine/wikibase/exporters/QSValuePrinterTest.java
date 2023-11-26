@@ -28,13 +28,14 @@ import static org.testng.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
-import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikibase.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikibase.testing.TestingData;
 
 public class QSValuePrinterTest {
 

@@ -29,9 +29,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Collections;
 
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.testing.WikidataRefineTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -39,6 +36,10 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.recon.StandardReconConfig;
+
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.testing.WikidataRefineTest;
 
 public class NewEntityLibraryTest extends WikidataRefineTest {
 
@@ -60,7 +61,7 @@ public class NewEntityLibraryTest extends WikidataRefineTest {
     public void testUpdateReconciledCells() {
         Project project = createCSVProject(TestingData.inceptionWithNewCsv);
         StandardReconConfig config = new StandardReconConfig("http://my.endpoint",
-                "http://my.schema", "http://my.schema", "Q5", "human", true, Collections.emptyList());
+                "http://my.schema", "http://my.schema", "Q5", "human", true, 10, Collections.emptyList());
         project.columnModel.columns.get(0).setReconConfig(config);
 
         project.rows.get(0).cells.set(0, TestingData.makeNewItemCell(3289L, "University of Ljubljana"));

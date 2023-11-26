@@ -26,12 +26,13 @@ package org.openrefine.wikibase.schema;
 
 import java.text.ParseException;
 
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.refine.model.Cell;
+
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
 
 /**
  * An expression that represents a time value, extracted from a string. A number of formats are recognized, see

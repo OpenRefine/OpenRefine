@@ -1,12 +1,14 @@
 
 package com.google.refine.expr.functions.strings;
 
-import com.google.refine.RefineTest;
-import com.google.refine.expr.EvalError;
+import java.util.Properties;
+
 import org.junit.Assert;
 import org.testng.annotations.Test;
+
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ParsingException;
-import java.util.Properties;
 
 public class ReplaceEachTest extends RefineTest {
 

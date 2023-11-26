@@ -44,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.google.common.base.CharMatcher;
+
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
@@ -80,7 +81,7 @@ public class Row implements HasFields {
 
     /**
      * Copy a row and return the copy. Note that this is a shallow copy, so if the contents of cells are changed in the
-     * original, they will be be changed in the duplicate.
+     * original, they will be changed in the duplicate.
      * 
      * @return the duplicated row
      */

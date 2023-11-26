@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010, 2023 Google Inc. & OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,13 +37,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.google.refine.operations.OperationDescription;
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -51,6 +50,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
+import com.google.refine.operations.OperationDescription;
 
 public class MultiValuedCellSplitOperation extends AbstractOperation {
 
@@ -59,6 +59,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String _mode;
     final protected String _separator;
     final protected Boolean _regex;
+    private final Pattern _pattern;
 
     final protected int[] _fieldLengths;
 
@@ -94,6 +95,11 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         _separator = separator;
         _mode = "separator";
         _regex = regex;
+        if (_regex) {
+            _pattern = Pattern.compile(_separator, Pattern.UNICODE_CHARACTER_CLASS);
+        } else {
+            _pattern = null;
+        }
 
         _fieldLengths = null;
     }
@@ -108,7 +114,14 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         _mode = "lengths";
         _separator = null;
         _regex = null;
+        _pattern = null;
 
+        // Make sure all of our lengths are non-negative
+        for (int i = 0; i < fieldLengths.length; i++) {
+            if (fieldLengths[i] < 0) {
+                fieldLengths[i] = 0;
+            }
+        }
         _fieldLengths = fieldLengths;
     }
 
@@ -176,45 +189,39 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 
             Object value = oldRow.getCellValue(cellIndex);
             String s = value instanceof String ? ((String) value) : value.toString();
-            String[] values = null;
+            String[] values;
             if ("lengths".equals(_mode)) {
                 if (_fieldLengths.length > 0 && _fieldLengths[0] > 0) {
                     values = new String[_fieldLengths.length];
 
-                    int lastIndex = 0;
-
+                    int from = 0;
+                    int end = s.length();
                     for (int i = 0; i < _fieldLengths.length; i++) {
-                        int thisIndex = lastIndex;
-
-                        Object o = _fieldLengths[i];
-                        if (o instanceof Number) {
-                            thisIndex = Math.min(s.length(), lastIndex + Math.max(0, ((Number) o).intValue()));
-                        }
-
-                        values[i] = s.substring(lastIndex, thisIndex);
-                        lastIndex = thisIndex;
+                        int to = Math.min(end, from + _fieldLengths[i]);
+                        values[i] = s.substring(from, to);
+                        from = to;
                     }
+                } else {
+                    values = new String[] { s };
                 }
             } else if (_regex) {
-                Pattern pattern = Pattern.compile(_separator, Pattern.UNICODE_CHARACTER_CLASS);
-                values = pattern.split(s);
+                values = _pattern.split(s);
             } else {
                 values = StringUtils.splitByWholeSeparatorPreserveAllTokens(s, _separator);
             }
 
+            // Split didn't change anything. Just copy the row
             if (values.length < 2) {
                 newRows.add(oldRow.dup());
                 continue;
             }
 
-            // First value goes into the same row
-            {
-                Row firstNewRow = oldRow.dup();
-                firstNewRow.setCell(cellIndex, new Cell(values[0], null));
+            // First newly split value goes into the original cell in the existing row
+            Row firstNewRow = oldRow.dup();
+            firstNewRow.setCell(cellIndex, new Cell(values[0], null));
+            newRows.add(firstNewRow);
 
-                newRows.add(firstNewRow);
-            }
-
+            // For remaining values, use an empty cell, if one exists in the row, otherwise allocate a new row
             int r2 = r + 1;
             for (int v = 1; v < values.length; v++) {
                 Cell newCell = new Cell(values[v], null);
@@ -222,6 +229,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                 if (r2 < project.rows.size()) {
                     Row oldRow2 = project.rows.get(r2);
                     if (oldRow2.isCellBlank(cellIndex) &&
+                    // key cell not blank means we are on next record
                             oldRow2.isCellBlank(keyCellIndex)) {
 
                         Row newRow = oldRow2.dup();
@@ -234,6 +242,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                     }
                 }
 
+                // We need a new (empty) row
                 Row newRow = new Row(cellIndex + 1);
                 newRow.setCell(cellIndex, newCell);
 

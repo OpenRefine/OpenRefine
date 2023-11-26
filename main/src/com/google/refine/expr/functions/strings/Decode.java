@@ -1,14 +1,15 @@
 
 package com.google.refine.expr.functions.strings;
 
+import java.util.Properties;
+
 import com.google.common.io.BaseEncoding;
+
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
-
-import java.util.Properties;
 
 public class Decode implements Function {
 

@@ -37,6 +37,8 @@ import java.util.Collection;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -61,6 +63,8 @@ public class Length implements Function {
                     return ((HasFieldsList) v).length();
                 } else if (v instanceof ArrayNode) {
                     return ((ArrayNode) v).size();
+                } else if (v instanceof ObjectNode) {
+                    return ((ObjectNode) v).size();
                 } else {
                     String s = (v instanceof String ? (String) v : v.toString());
                     return s.length();

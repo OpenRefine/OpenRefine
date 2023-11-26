@@ -37,6 +37,7 @@ var URLUtil = {
     "chrome":1,
     "file":1,
     "ftp":1,
+    "geo":0,
     "http":1,
     "https":1,
     "imap":1,

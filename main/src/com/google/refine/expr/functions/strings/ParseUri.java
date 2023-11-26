@@ -1,20 +1,21 @@
 
 package com.google.refine.expr.functions.strings;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.expr.EvalError;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.EvalErrorMessage;
-import com.google.refine.grel.Function;
-import com.google.refine.grel.FunctionDescription;
-import com.google.refine.util.ParsingUtilities;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Properties;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
+import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
+import com.google.refine.util.ParsingUtilities;
 
 /**
  * Parse a URI string into its components and returns a JSON object with the following keys: scheme, authority, path,

@@ -1,10 +1,12 @@
 
 package com.google.refine.util;
 
-import com.google.refine.RefineTest;
+import java.time.OffsetDateTime;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import java.time.OffsetDateTime;
+
+import com.google.refine.RefineTest;
 
 public class StringUtilsTests extends RefineTest {
 
