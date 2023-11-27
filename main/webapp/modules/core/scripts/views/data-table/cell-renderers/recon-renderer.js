@@ -43,18 +43,45 @@ class ReconCellRenderer {
         .on('click',function(evt) {
           self.doRematch(rowIndex, cellIndex, cell, cellUI);
         });
-      }else if(r.j != "matched" && r.e!=null)
+      } else if (r.j != "matched" && r.e!=null)
         { var divContent = document.createElement('div');
           var cellcontent = document.createElement('span');
+
           cellcontent.textContent = cell.v;
           var lineBreak = document.createElement('br');
           cellcontent.appendChild(lineBreak);
           divContent.appendChild(cellcontent);
+          
           var errorSpan = document.createElement('span');
           errorSpan.className = 'data-table-error';
           errorSpan.textContent = r.e;
           divContent.appendChild(errorSpan);
           $('<span>').text(divContent).appendTo(divContentRecon);
+
+          var addSuggest = false;
+          if ((service) && (service.suggest) && (service.suggest.entity)) {
+            suggestOptions = service.suggest.entity;
+            if ('view' in service && 'url' in service.view && !('view_url' in suggestOptions)) {
+              suggestOptions.view_url = service.view.url;
+            }
+            // CORS / JSONP support
+            if (service.ui && service.ui.access) {
+              suggestOptions.access = service.ui.access;
+            }
+            addSuggest = true;
+          }
+
+          var extraChoices = $('<div>').addClass("data-table-error-extra").appendTo(divContent);
+
+          if (addSuggest) {
+            $('<a href="javascript:{}"></a>')
+            .on('click',function(evt) {
+              self.searchForMatch(suggestOptions, rowIndex, cellIndex, cell, cellUI);
+              return false;
+            })
+            .text($.i18n('core-views/search-match'))
+            .appendTo(extraChoices);
+          }
         }
 
       else {
