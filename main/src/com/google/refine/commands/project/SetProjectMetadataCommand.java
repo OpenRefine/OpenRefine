@@ -54,7 +54,7 @@ public class SetProjectMetadataCommand extends Command {
         ProjectMetadata meta = null;
 
         if (project == null) {
-            respond(response, "{ \"code\" : \"error\", \"message\" : \"Project cannot be found\" }");
+            respond(response, "{\"code\":\"error\",\"message\":\"Project cannot be found\"}");
             return;
         }
 
