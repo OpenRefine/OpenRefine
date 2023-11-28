@@ -3,7 +3,7 @@ describe('Copy reconciliation data', () => {
     cy.addProjectForDeletion();
   });
   
-  it('Copy reconciliation data from species to species_copy', () => {
+  it.only('Copy reconciliation data from species to species_copy', () => {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
     cy.get('#or-import-locate').should('to.contain', 'Locate an existing Refine project file');
@@ -42,9 +42,10 @@ describe('Copy reconciliation data', () => {
       'Copy 4 recon judgments from column species to duplicated_column'
     );
 
-    // ensure 4 are matched on the duplicate column
-    cy.get(
-      'table.data-table td .data-table-cell-content:contains("Choose new match")'
-    ).should('have.length', 4);
+    cy.get('table.data-table th').contains('duplicated_column').should('exist').then(() => {
+      cy.get('table.data-table tbody tr')
+              .find('td:last .data-table-cell-content:contains("Choose new match")')
+              .should('have.length', 4);
+    });
   });
 });
