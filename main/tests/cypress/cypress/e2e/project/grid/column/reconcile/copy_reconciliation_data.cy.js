@@ -3,7 +3,7 @@ describe('Copy reconciliation data', () => {
     cy.addProjectForDeletion();
   });
   
-  it.only('Copy reconciliation data from species to species_copy', () => {
+  it('Copy reconciliation data from species to species_copy', () => {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
     cy.get('#or-import-locate').should('to.contain', 'Locate an existing Refine project file');
