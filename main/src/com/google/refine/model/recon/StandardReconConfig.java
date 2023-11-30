@@ -492,7 +492,7 @@ public class StandardReconConfig extends ReconConfig {
                     }
                 } else {
                     recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-                    recon.error = "The service returned a JSON response without \"key\" field ";
+                    recon.error = "The service returned a JSON response without \"" + key + "\" field ";
                 }
 
                 if (recon != null) {
