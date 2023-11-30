@@ -63,7 +63,7 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
       null,
       function(data) {
         self._renderProjects(data);
-        self.resize();
+        self.resize(); // other version of this function excludes this resize
       },
       "json"
   );
@@ -119,7 +119,7 @@ Refine.OpenProjectUI._filterTags = function(tag) {
   });
 };
 
-
+// FIXME: This is overwriting an earlier function definition
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
     var self = this;
     $.ajax({
@@ -134,12 +134,9 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
     });
 };
 
-const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
-const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
-const dateFormatter = new Intl.DateTimeFormat(navigator.language, dateOptions);
-const timeFormatter =  new Intl.DateTimeFormat(navigator.language, timeOptions);
-
 Refine.OpenProjectUI.prototype._renderProjects = function(data) {
+  const options  = { dateStyle: 'medium', timeStyle: 'medium' };
+  const dateFormatter = new Intl.DateTimeFormat(Refine.userLang || navigator.language, options);
   var self = this;
   var projects = [];
   for (var n in data.projects) {
@@ -154,19 +151,10 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
          console.log('Project '+project.id+' name is not set. skipping...');
          continue;
       }
-      // project.modified is ISO 8601 format
+
+      // project.modified is ISO 8601 format string
       const date = new Date(project.modified);
-      const dateParts = dateFormatter.formatToParts(date);
-      const timeParts = timeFormatter.formatToParts(date);
-      const findPart = (parts, type) => parts.find(part => part.type === type)?.value;
-
-      const year = findPart(dateParts, 'year');
-      const month = findPart(dateParts, 'month');
-      const day = findPart(dateParts, 'day');
-      const hour = findPart(timeParts, 'hour');
-      const minute = findPart(timeParts, 'minute');
-
-      project.date = `${year}-${month}-${day} ${hour}:${minute}`;
+      project.date = dateFormatter.format(date);
       
       if (typeof project.userMetadata !== "undefined")  {
           for (var m in data.customMetadataColumns) {
@@ -179,7 +167,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
                   if (!found) {
                       project.userMetadata.push({
                           name: data.customMetadataColumns[m].name,
-                          dispay: data.customMetadataColumns[m].display,
+                          display: data.customMetadataColumns[m].display,
                           value: ""
                       });
                   }
@@ -260,7 +248,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       );
       
       $('<div></div>')
-      .html(project.date)
+      .html('<span style="display:none">' + project.modified + '</span>' + project.date)
       .addClass("last-modified")
       .appendTo($(tr.insertCell(tr.cells.length)));
       
