@@ -294,15 +294,10 @@ Cypress.Commands.add('waitForImportUpdate', () => {
  * Utility method to fill something into the expression input
  * Need to wait for OpenRefine to preview the result, hence the cy.wait
  */
-Cypress.Commands.add('typeExpression', (expression) => {
-  if (expression.length <= 30) {
-    cy.get('textarea.expression-preview-code').type(expression);
-    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)').should('contain',expression);
-  } else {
-    cy.get('textarea.expression-preview-code').type(expression);
-    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)').should('contain',expression.substring(0,30) + ' ...');
-  }
-
+Cypress.Commands.add('typeExpression', (expression, options = {}) => {
+    cy.get('textarea.expression-preview-code', options).type(expression);
+    const expectedText = expression.length <= 30 ? expression : `${expression.substring(0, 30)} ...`;
+    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)', options).should('contain', expectedText);
 });
 
 /**
