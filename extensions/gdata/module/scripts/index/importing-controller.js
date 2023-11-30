@@ -77,7 +77,7 @@ Refine.GDataImportingController.prototype.startImportingDocument = function(doc)
 
                 self._showParsingPanel();
             } else {
-                alert(data2.message);
+                DialogSystem.alert(data2.message);
             }
             },
             "json"
@@ -329,7 +329,7 @@ Refine.GDataImportingController.prototype._updatePreview = function() {
             });
         } else {
             self._parsingPanelElmts.progressPanel.hide();
-            alert('Errors:\n' +
+            DialogSystem.alert('Errors:\n' +
             (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
         }
         },
@@ -373,7 +373,7 @@ Refine.GDataImportingController.prototype._getPreviewData = function(callback, n
 Refine.GDataImportingController.prototype._createProject = function() {
   var projectName = jQueryTrim(this._parsingPanelElmts.projectNameInput[0].value);
   if (projectName.length == 0) {
-    window.alert("Please name the project.");
+    DialogSystem.alert("Please name the project.");
     this._parsingPanelElmts.projectNameInput.focus();
     return;
   }
@@ -394,7 +394,7 @@ Refine.GDataImportingController.prototype._createProject = function() {
         },
         function(o) {
         if (o.status == 'error') {
-            alert(o.message);
+            DialogSystem.alert(o.message);
         } else {
             var start = new Date();
             var timerID = window.setInterval(
@@ -412,7 +412,7 @@ Refine.GDataImportingController.prototype._createProject = function() {
                     document.location = "project?project=" + job.config.projectID;
                     },
                     function(job) {
-                    alert(Refine.CreateProjectUI.composeErrorMessage(job));
+                      DialogSystem.alert(Refine.CreateProjectUI.composeErrorMessage(job));
                     }
                 );
             },
