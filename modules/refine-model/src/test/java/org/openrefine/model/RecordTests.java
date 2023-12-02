@@ -2,7 +2,6 @@
 package org.openrefine.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -72,6 +71,31 @@ public class RecordTests {
     }
 
     @Test
+    public void testGroupRowsIntoRecordsWithAdditionalRows() {
+        List<Record> records = groupRows(new Row[] {
+                row(null, "z"),
+                row("a", "b"),
+                row("", "c"),
+                row(null, null),
+                row("", "d"),
+                row("e", "f"),
+                row(null, "g") },
+                new Row[] {
+                        row(null, "h"),
+                        row(null, "i"),
+                        row("j", "k"),
+                        row("", "l")
+                });
+
+        List<Record> expected = Arrays.asList(
+                record(1L, row("a", "b"), row("", "c")),
+                record(3L, row(null, null), row("", "d")),
+                record(5L, row("e", "f"), row(null, "g"), row(null, "h"), row(null, "i")));
+
+        Assert.assertEquals(records, expected);
+    }
+
+    @Test
     public void testGroupEmptyRowsIntoRecords() {
         // by convention, empty rows form a record on their own.
         List<Record> records = groupRows(
@@ -89,13 +113,15 @@ public class RecordTests {
     }
 
     protected List<Record> groupRows(Row... rows) {
+        return groupRows(rows, new Row[] {});
+    }
+
+    protected List<Record> groupRows(Row[] rows, Row[] additionalRows) {
         Iterator<IndexedRow> indexedRows = IntStream.range(0, rows.length).mapToObj(i -> new IndexedRow(i, rows[i])).iterator();
-        Iterator<Record> records = Record.groupIntoRecords(CloseableIterator.wrapping(indexedRows), 0, true, Collections.emptyList());
-        List<Record> list = new ArrayList<>();
-        while (records.hasNext()) {
-            list.add(records.next());
-        }
-        return list;
+        List<Row> additionalRowList = Arrays.asList(additionalRows);
+        CloseableIterator<Record> records = Record.groupIntoRecords(CloseableIterator.wrapping(indexedRows), 0, true,
+                () -> CloseableIterator.ofAll(additionalRowList));
+        return records.toJavaList();
     }
 
     protected Row row(Serializable... values) {

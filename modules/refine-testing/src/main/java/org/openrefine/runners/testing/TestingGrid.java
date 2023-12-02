@@ -66,8 +66,9 @@ public class TestingGrid implements Grid {
     }
 
     public static List<Record> groupRowsIntoRecords(List<IndexedRow> rows, int keyCellIndex) {
-        return Record.groupIntoRecords(
-                CloseableIterator.wrapping(rows.iterator()), keyCellIndex, false, Collections.emptyList())
+        return Record
+                .groupIntoRecords(CloseableIterator.wrapping(rows.iterator()), keyCellIndex, false,
+                        () -> CloseableIterator.ofAll(Collections.emptyList()))
                 .toJavaList();
     }
 

@@ -35,6 +35,7 @@ package org.openrefine.model;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -187,15 +188,17 @@ public class Record implements Serializable {
      * @param ignoreFirstRows
      *            whether the first rows with blank record key should be ignored
      * @param additionalRows
-     *            additional rows to read once the stream is consumed
+     *            additional rows to read once the stream is consumed. This will be read until the first record start in
+     *            this stream is found and the rows until that point will be added to the last record emitted by the
+     *            returned stream. The iterator will only be retrieved from the supplier once the `parentIter` argument
+     *            was entirely consumed
      * @return a stream of records
      */
     public static CloseableIterator<Record> groupIntoRecords(
             CloseableIterator<IndexedRow> parentIter,
             int keyCellIndex,
             boolean ignoreFirstRows,
-            List<Row> additionalRows) {
-
+            Supplier<CloseableIterator<Row>> additionalRows) {
         return new CloseableIterator<Record>() {
 
             IndexedRow fetchedRowTuple = null;
@@ -244,7 +247,9 @@ public class Record implements Serializable {
                     fetchedRowTuple = null;
                 }
                 if (!parentIter.hasNext() && fetchedRowTuple == null && !additionalRowsConsumed) {
-                    rows.addAll(additionalRows);
+                    try (CloseableIterator<Row> iterator = additionalRows.get().takeUntil(row -> Record.isRecordStart(row, keyCellIndex))) {
+                        rows.addAll(iterator.toJavaList());
+                    }
                     additionalRowsConsumed = true;
                 }
                 nextRecord = rows.isEmpty() ? null : new Record(startRowId, originalStartRowId, rows);

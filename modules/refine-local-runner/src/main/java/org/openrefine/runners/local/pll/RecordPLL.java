@@ -4,6 +4,7 @@ package org.openrefine.runners.local.pll;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import io.vavr.collection.Array;
 
@@ -51,29 +52,11 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
         super(grid.getContext(), "Group into records");
         this.keyColumnIndex = keyColumnIndex;
         Array<? extends Partition> parentPartitions = grid.getPartitions();
-        io.vavr.collection.Iterator<? extends Partition> lastPartitions = parentPartitions.drop(1).iterator();
-        PLL<IndexedRow> indexedRows = grid.values();
-        Array<RecordEnd> recordEnds = indexedRows
-                .runOnPartitionsWithoutInterruption(partition -> extractRecordEnd(indexedRows.iterate(partition), keyColumnIndex),
-                        lastPartitions);
         parent = grid;
         List<RecordPartition> partitions = new ArrayList<>(parentPartitions.size());
         for (int i = 0; i != parentPartitions.size(); i++) {
-            List<Row> additionalRows = Collections.emptyList();
-            if (i < parentPartitions.size() - 1 && !(i > 0 && recordEnds.get(i - 1).partitionExhausted)) {
-                if (!recordEnds.get(i).partitionExhausted) {
-                    additionalRows = recordEnds.get(i).rows;
-                } else {
-                    additionalRows = new ArrayList<>();
-                    for (int j = i; j < parentPartitions.size() - 1; j++) {
-                        additionalRows.addAll(recordEnds.get(j).rows);
-                        if (!recordEnds.get(j).partitionExhausted) {
-                            break;
-                        }
-                    }
-                }
-            }
-            partitions.add(new RecordPartition(i, additionalRows, parentPartitions.get(i)));
+            partitions.add(new RecordPartition(i, parentPartitions.get(i),
+                    i == parentPartitions.size() - 1 ? null : parentPartitions.get(i + 1)));
         }
         this.partitions = Array.ofAll(partitions);
     }
@@ -98,7 +81,7 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
             CloseableIterator<IndexedRow> indexedRows,
             int keyCellIndex,
             boolean ignoreFirstRows,
-            List<Row> additionalRows) {
+            Supplier<CloseableIterator<Row>> additionalRows) {
         CloseableIterator<Record> recordIterator = Record.groupIntoRecords(indexedRows, keyCellIndex, ignoreFirstRows, additionalRows);
         return recordIterator.map(
                 record -> Tuple2.of(record.getStartRowId(), record));
@@ -109,8 +92,15 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
         RecordPartition recordPartition = (RecordPartition) partition;
         CloseableIterator<IndexedRow> rows = parent.iterate(recordPartition.getParent(), context)
                 .map(Tuple2::getValue);
-        return groupIntoRecords(rows, keyColumnIndex, partition.getIndex() != 0,
-                recordPartition.additionalRows);
+
+        return groupIntoRecords(rows, keyColumnIndex, partition.getIndex() != 0, () -> {
+            if (recordPartition.getNextParent() == null) {
+                return CloseableIterator.empty();
+            } else {
+                return parent.iterateFromPartition(recordPartition.getNextParent().getIndex(), context)
+                        .map(tuple -> tuple.getValue().getRow());
+            }
+        });
     }
 
     @Override
@@ -126,13 +116,23 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
     protected static class RecordPartition implements Partition {
 
         protected final int index;
-        protected final List<Row> additionalRows;
         protected final Partition parent;
+        protected final Partition nextParent;
 
-        protected RecordPartition(int index, List<Row> additionalRows, Partition parent) {
+        /**
+         * Constructs a partition of records.
+         * 
+         * @param index
+         *            the index of the partition in the records PLL
+         * @param parent
+         *            the parent partition in the rows PLL
+         * @param nextParent
+         *            the following partition in the rows PLL, or null if there isn't
+         */
+        protected RecordPartition(int index, Partition parent, Partition nextParent) {
             this.index = index;
-            this.additionalRows = additionalRows;
             this.parent = parent;
+            this.nextParent = nextParent;
         }
 
         @Override
@@ -143,6 +143,10 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
         @Override
         public Partition getParent() {
             return parent;
+        }
+
+        public Partition getNextParent() {
+            return this.nextParent;
         }
     }
 
