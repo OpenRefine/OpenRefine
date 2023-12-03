@@ -30,6 +30,7 @@ public class ChangeDataStoringProcess<T> extends Process {
     final File temporaryDirToDelete;
     final History history;
     final int requiredStepIndex;
+    ProgressingFuture<Void> future;
 
     /**
      * Constructor.
@@ -71,33 +72,36 @@ public class ChangeDataStoringProcess<T> extends Process {
         this.temporaryDirToDelete = temporaryDirToDelete;
         this.history = history;
         this.requiredStepIndex = requiredStepIndex;
+        this.future = null;
     }
 
     @Override
-    protected ProgressingFuture<Void> getFuture() {
-        // TODO we might want to run the completionProcess in the future itself, just in case this is expensive
-        ChangeData<T> newChangeData = completionProcess.apply(storedChangeData);
-        ProgressingFuture<Void> future = changeDataStore.storeAsync(newChangeData, changeDataId, serializer);
-        FutureCallback<Void> callback = new FutureCallback<>() {
+    public ProgressingFuture<Void> getFuture() {
+        if (future == null) {
+            // TODO we might want to run the completionProcess in the future itself, just in case this is expensive
+            ChangeData<T> newChangeData = completionProcess.apply(storedChangeData);
+            future = changeDataStore.storeAsync(newChangeData, changeDataId, serializer);
+            FutureCallback<Void> callback = new FutureCallback<>() {
 
-            @Override
-            public void onSuccess(Void result) {
-                if (temporaryDirToDelete != null && temporaryDirToDelete.exists()) {
-                    try {
-                        FileUtils.deleteDirectory(temporaryDirToDelete);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                @Override
+                public void onSuccess(Void result) {
+                    if (temporaryDirToDelete != null && temporaryDirToDelete.exists()) {
+                        try {
+                            FileUtils.deleteDirectory(temporaryDirToDelete);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                // failure is handled by the logic in Process already
-            }
-        };
-        Futures.addCallback(future, callback, MoreExecutors.directExecutor());
-        future.onProgress(_reporter);
+                @Override
+                public void onFailure(Throwable t) {
+                    // failure is handled by the logic in Process already
+                }
+            };
+            Futures.addCallback(future, callback, MoreExecutors.directExecutor());
+            future.onProgress(_reporter);
+        }
         return future;
     }
 

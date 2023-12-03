@@ -132,7 +132,7 @@ public class TestingRunner implements Runner {
     }
 
     @Override
-    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException {
+    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer, boolean frozen) throws IOException {
         Map<Long, IndexedData<T>> data = new HashMap<>();
         List<File> files = sortedListFiles(path);
         for (File partitionFile : files) {

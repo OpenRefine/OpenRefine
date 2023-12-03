@@ -205,7 +205,7 @@ public class LocalRunnerTests extends RunnerTestBase {
             writer.write("56,{\"some unfinished json");
         }
 
-        ChangeData<JsonNode> changeData = getDatamodelRunner().loadChangeData(tempFile, serializer);
+        ChangeData<JsonNode> changeData = getDatamodelRunner().loadChangeData(tempFile, serializer, false);
 
         Assert.assertFalse(changeData.isComplete());
         assertEquals(changeData.get(34L), indexedDataList.get(0));

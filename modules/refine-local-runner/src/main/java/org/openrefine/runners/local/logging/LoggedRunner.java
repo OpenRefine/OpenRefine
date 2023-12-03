@@ -93,11 +93,11 @@ public class LoggedRunner implements Runner {
     }
 
     @Override
-    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException {
+    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer, boolean frozen) throws IOException {
         try {
             return wrap(exec("loadChangeData", () -> {
                 try {
-                    return runner.loadChangeData(path, serializer);
+                    return runner.loadChangeData(path, serializer, false);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

@@ -69,7 +69,8 @@ public class FileChangeDataStoreTests {
     @Test
     public void testStoreRetrieveAndDelete() throws IOException, InterruptedException {
         ChangeDataId changeDataId = new ChangeDataId(123, "data");
-        when(runner.loadChangeData(eq(new File(changeDir, "123" + File.separator + "data")), eq(serializer))).thenReturn(changeData);
+        when(runner.loadChangeData(eq(new File(changeDir, "123" + File.separator + "data")), eq(serializer), eq(false)))
+                .thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(true);
 
         SUT.store(changeData, changeDataId, serializer, Optional.empty());
@@ -94,13 +95,15 @@ public class FileChangeDataStoreTests {
         // set up original change data to be recovered
         File originalChangeDataLocation = new File(changeDir, "198" + File.separator + "data");
         originalChangeDataLocation.mkdirs();
-        when(runner.loadChangeData(eq(originalChangeDataLocation), eq(serializer))).thenReturn(changeData);
+        when(runner.loadChangeData(eq(originalChangeDataLocation), eq(serializer), eq(false)))
+                .thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(false);
 
         // set up new change data, moved to its temporary location
         File newChangeDataLocation = new File(incompleteDir, "198" + File.separator + "data");
         ChangeData<String> movedChangeData = mock(MyChangeData.class);
-        when(runner.loadChangeData(eq(newChangeDataLocation), eq(serializer))).thenReturn(movedChangeData);
+        when(runner.loadChangeData(eq(newChangeDataLocation), eq(serializer), eq(true)))
+                .thenReturn(movedChangeData);
         when(movedChangeData.isComplete()).thenReturn(false);
         when(movedChangeData.saveToFileAsync(any(), eq(serializer))).thenReturn(future);
 
@@ -111,7 +114,8 @@ public class FileChangeDataStoreTests {
 
         Assert.assertTrue(SUT.needsRefreshing(198));
         Assert.assertTrue(newChangeDataLocation.exists());
-        Assert.assertEquals(returnedChangeData, emptyChangeData);
+        Assert.assertEquals(returnedChangeData, changeData);
+        verify(runner, times(2)).loadChangeData(eq(originalChangeDataLocation), eq(serializer), eq(false));
         Assert.assertEquals(SUT.getChangeDataIds(198L), Collections.singletonList(changeDataId));
     }
 
@@ -135,7 +139,7 @@ public class FileChangeDataStoreTests {
 
     @Test
     public void testNeedsRefreshingRunningProcess() throws IOException {
-        when(runner.loadChangeData(eq(new File(changeDir, "456" + File.separator + "data")), eq(serializer))).thenReturn(changeData);
+        when(runner.loadChangeData(eq(new File(changeDir, "456" + File.separator + "data")), eq(serializer), eq(false))).thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(false);
 
         ChangeDataId changeDataId = new ChangeDataId(456L, "data");
@@ -152,7 +156,7 @@ public class FileChangeDataStoreTests {
      */
     @Test(enabled = false)
     public void testNeedsRefreshingPausedProcess() throws IOException {
-        when(runner.loadChangeData(eq(new File(changeDir, "789" + File.separator + "data")), eq(serializer))).thenReturn(changeData);
+        when(runner.loadChangeData(eq(new File(changeDir, "789" + File.separator + "data")), eq(serializer), eq(false))).thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(false);
         ChangeDataId changeDataId = new ChangeDataId(789L, "data");
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);

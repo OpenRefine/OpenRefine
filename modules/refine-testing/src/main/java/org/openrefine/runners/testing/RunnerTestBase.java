@@ -939,7 +939,7 @@ public abstract class RunnerTestBase {
 
     @Test(expectedExceptions = IOException.class)
     public void testLoadChangeDataDoesNotExist() throws IOException {
-        SUT.loadChangeData(new File(tempDir, "doesNotExist"), stringSerializer);
+        SUT.loadChangeData(new File(tempDir, "doesNotExist"), stringSerializer, false);
     }
 
     @DataProvider(name = "supportedCompressionFormats")
@@ -959,7 +959,7 @@ public abstract class RunnerTestBase {
             IOUtils.copy(stream, partitionFile);
         }
 
-        ChangeData<String> loaded = SUT.loadChangeData(tempFile, stringSerializer);
+        ChangeData<String> loaded = SUT.loadChangeData(tempFile, stringSerializer, false);
 
         Assert.assertNotNull(loaded.getRunner());
         Assert.assertFalse(loaded.isComplete()); // because the completion marker is missing
@@ -973,7 +973,7 @@ public abstract class RunnerTestBase {
 
         simpleChangeData.saveToFile(new File(tempFile, "data"), stringSerializer);
 
-        ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer);
+        ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer, false);
 
         Assert.assertNotNull(loaded.getRunner());
         Assert.assertEquals(loaded.get(0L), new IndexedData<>(0L, "first"));
@@ -996,7 +996,7 @@ public abstract class RunnerTestBase {
         future.get();
         Assert.assertEquals(progress.getPercentage(), 100);
 
-        ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer);
+        ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer, false);
 
         Assert.assertNotNull(loaded.getRunner());
         Assert.assertEquals(loaded.get(0L), new IndexedData<>(0L, "first"));
@@ -1015,7 +1015,7 @@ public abstract class RunnerTestBase {
 
         simpleChangeData.saveToFile(tempFile, stringSerializer);
 
-        ChangeData<String> loaded = SUT.loadChangeData(tempFile, stringSerializer);
+        ChangeData<String> loaded = SUT.loadChangeData(tempFile, stringSerializer, false);
 
         Assert.assertNotNull(loaded.getRunner());
         Assert.assertEquals(loaded.get(0L), new IndexedData<>(0L, "first"));
@@ -1085,7 +1085,7 @@ public abstract class RunnerTestBase {
     public void testLoadEmptyChangeData() throws IOException {
         File tempDir = TestUtils.createTempDirectory("empty_change_data");
 
-        ChangeData<String> empty = SUT.loadChangeData(tempDir, stringSerializer);
+        ChangeData<String> empty = SUT.loadChangeData(tempDir, stringSerializer, false);
         Assert.assertFalse(empty.isComplete());
 
         Assert.assertEquals(empty.get(0L), new IndexedData<>(0L));
@@ -1105,7 +1105,7 @@ public abstract class RunnerTestBase {
         completionMarker.delete();
 
         // reload the now properly incomplete change data
-        incomplete = SUT.loadChangeData(tempFile, stringSerializer);
+        incomplete = SUT.loadChangeData(tempFile, stringSerializer, false);
         Assert.assertFalse(incomplete.isComplete());
 
         // check that it returns incomplete IndexedData objects for unseen keys
@@ -1309,7 +1309,7 @@ public abstract class RunnerTestBase {
         completionMarker.delete();
 
         // reload the now properly incomplete change data
-        incomplete = SUT.loadChangeData(tempFile, stringSerializer);
+        incomplete = SUT.loadChangeData(tempFile, stringSerializer, false);
 
         // complete it with more records
 

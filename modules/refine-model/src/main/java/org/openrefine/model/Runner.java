@@ -46,10 +46,14 @@ public interface Runner {
      * 
      * @param path
      *            the directory where the ChangeData is stored
+     * @param frozen
+     *            assume that no other process is writing to the same disk location and therefore
+     *            that iterating from this object should never wait for further writes even if
+     *            the it is not complete
      * @throws IOException
      *             when loading the grid failed
      */
-    <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException;
+    <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer, boolean frozen) throws IOException;
 
     /**
      * Creates a {@link Grid} from an in-memory list of rows, which will be numbered from 0 to length-1.

@@ -146,13 +146,13 @@ public class LocalRunner implements Runner {
     }
 
     @Override
-    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
+    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer, boolean frozen)
             throws IOException {
         File completionMarker = new File(path, Runner.COMPLETION_MARKER_FILE_NAME);
         Callable<Boolean> isComplete = () -> completionMarker.exists();
         boolean alreadyComplete = completionMarker.exists();
         PairPLL<Long, IndexedData<T>> pll = pllContext
-                .textFile(path.getAbsolutePath(), GRID_ENCODING, !alreadyComplete, ChangeData.partitionEndMarker)
+                .textFile(path.getAbsolutePath(), GRID_ENCODING, !alreadyComplete, frozen ? null : ChangeData.partitionEndMarker)
                 .map(line -> {
                     if (ChangeData.partitionEndMarker.equals(line.strip())) {
                         return null;

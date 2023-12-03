@@ -111,7 +111,7 @@ public class FileChangeDataStore implements ChangeDataStore {
     public <T> ChangeData<T> retrieve(ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer) throws IOException {
         File file = idsToFile(changeDataId, false);
-        ChangeData<T> changeData = _runner.loadChangeData(file, serializer);
+        ChangeData<T> changeData = _runner.loadChangeData(file, serializer, false);
         if (changeData.isComplete() && _toRefresh.contains(changeDataId)) {
             _toRefresh.remove(changeDataId);
         }
@@ -135,7 +135,7 @@ public class FileChangeDataStore implements ChangeDataStore {
         Optional<ChangeData<T>> recoveredChangeData;
         boolean storedChangeDataIsComplete;
         try {
-            recoveredChangeData = Optional.of(_runner.loadChangeData(changeDataDir, serializer));
+            recoveredChangeData = Optional.of(_runner.loadChangeData(changeDataDir, serializer, false));
             storedChangeDataIsComplete = recoveredChangeData.get().isComplete();
         } catch (IOException e) {
             recoveredChangeData = Optional.empty();
@@ -153,12 +153,12 @@ public class FileChangeDataStore implements ChangeDataStore {
                     FileUtils.deleteDirectory(incompleteDir);
                 }
                 FileUtils.moveDirectory(changeDataDir, incompleteDir);
-                recoveredChangeData = Optional.of(_runner.loadChangeData(incompleteDir, serializer));
+                recoveredChangeData = Optional.of(_runner.loadChangeData(incompleteDir, serializer, true));
                 returnedChangeData = Optional.empty();
             }
 
             // queue a new process to compute the change data
-            processManager.queueProcess(new ChangeDataStoringProcess<T>(description,
+            ChangeDataStoringProcess<T> process = new ChangeDataStoringProcess<T>(description,
                     recoveredChangeData,
                     changeDataId,
                     this,
@@ -166,7 +166,13 @@ public class FileChangeDataStore implements ChangeDataStore {
                     completionProcess,
                     incompleteDir,
                     history,
-                    requiredStepIndex));
+                    requiredStepIndex);
+            if (returnedChangeData.isEmpty()) {
+                // ensure the directory of the change data is already created at this stage
+                process.getFuture();
+                returnedChangeData = Optional.of(_runner.loadChangeData(changeDataDir, serializer, false));
+            }
+            processManager.queueProcess(process);
             _toRefresh.add(changeDataId);
         } else if (storedChangeDataIsComplete) {
             _toRefresh.remove(changeDataId);
