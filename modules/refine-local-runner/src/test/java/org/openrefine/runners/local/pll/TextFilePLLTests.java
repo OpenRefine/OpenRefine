@@ -226,6 +226,9 @@ public class TextFilePLLTests extends PLLTestsBase {
         // this is a change data partition observed in the wild, which used not to be read at all
         // (with the decompressor failing before any line could be read)
         PLL<String> pll = new TextFilePLL(context, incompleteChangeData.getAbsolutePath(), utf8, true, "end");
+        assertEquals(pll.getPartitions().size(), 1);
+        assertEquals(((TextFilePLL.TextFilePartition) pll.getPartitions().get(0)).getEnd(), -1L);
+        
         Array<String> lines = pll.collect();
         assertTrue(lines.size() >= 20);
     }
@@ -252,6 +255,8 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8, true, "end");
         assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
+        assertEquals(((TextFilePLL.TextFilePartition) deserializedPLL.getPartitions().get(0)).getEnd(), -1L);
+        assertEquals(((TextFilePLL.TextFilePartition) deserializedPLL.getPartitions().get(1)).getEnd(), -1L);
         assertTrue(deserializedPLL.count() > 1000L); // it is 1196 as of 2023-06-02 with java 11
         // but I suspect the exact count can be JVM-dependent
     }

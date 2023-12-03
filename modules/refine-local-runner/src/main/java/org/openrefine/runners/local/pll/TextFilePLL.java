@@ -113,7 +113,7 @@ public class TextFilePLL extends PLL<String> {
         long size = Files.size(file.toPath());
         if (size < context.getMinSplitSize() * context.getDefaultParallelism() || isGzipped(file) || isZstdCompressed(file)) {
             // a single split
-            partitions.add(new TextFilePartition(file, partitions.size(), 0L, size));
+            partitions.add(new TextFilePartition(file, partitions.size(), 0L, -1L));
         } else {
             // defaultParallelism many splits, unless that makes splits too big
             long splitSize = Math.min((size / context.getDefaultParallelism()) + 1, context.getMaxSplitSize());
@@ -252,7 +252,7 @@ public class TextFilePLL extends PLL<String> {
                 public boolean hasNext() {
                     long currentPosition = textPartition.start + (countingIs == null ? 0 : countingIs.getCount());
                     try {
-                        if (!nextLineAttempted && (currentPosition <= textPartition.getEnd() || synchronous)) {
+                        if (!nextLineAttempted && ((currentPosition <= textPartition.getEnd() || textPartition.getEnd() < 0) || synchronous)) {
                             if (synchronous) {
                                 lineNumberReader.mark(4096);
                                 // TODO add logic to bump this readAheadLimit (restart from the beginning of the
@@ -386,7 +386,8 @@ public class TextFilePLL extends PLL<String> {
          * @param start
          *            starting byte where to read from in the file
          * @param end
-         *            first byte not to be read after the end of the file
+         *            first byte not to be read after the end of the partition,
+         *            or -1 if the entire file should be read 
          */
         protected TextFilePartition(File path, int index, long start, long end) {
             this.path = path;
