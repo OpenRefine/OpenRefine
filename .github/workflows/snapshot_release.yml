@@ -12,6 +12,7 @@ on:
 
 jobs:
   prepare_e2e_test_matrix:
+    if: github.repository == 'OpenRefine/OpenRefine'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -29,6 +30,7 @@ jobs:
         env:
           browsers: chrome
   e2e_test:
+    if: github.repository == 'OpenRefine/OpenRefine'
     name: e2e_test ${{ matrix.specs.group }}
     needs: prepare_e2e_test_matrix
     runs-on: ubuntu-latest
@@ -93,7 +95,7 @@ jobs:
 
 
   build:
-
+    if: github.repository == 'OpenRefine/OpenRefine'
     services:
       postgres:
         image: postgres
@@ -175,6 +177,7 @@ jobs:
       run: mvn -B package -DskipTests=true
 
   mac_test_and_deploy:
+    if: github.repository == 'OpenRefine/OpenRefine'
     runs-on: macos-12
 
     outputs: 
@@ -331,6 +334,7 @@ jobs:
         name: openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}
 
   windows_installer:
+    if: github.repository == 'OpenRefine/OpenRefine'
     runs-on: windows-2022
     needs: mac_test_and_deploy
 
