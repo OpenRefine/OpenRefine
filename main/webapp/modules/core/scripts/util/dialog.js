@@ -155,7 +155,7 @@ DialogSystem.alert = function (error) {
         try {
             errorMessage = JSON.stringify(error, null, 4); // Indent with 4 spaces for readability
         } catch (e) {
-            errorMessage = 'Error: Could not stringify error object.';
+            errorMessage = $.i18n('core-dialogs/could-not-stringify');
         }
     } else {
         errorMessage = error;

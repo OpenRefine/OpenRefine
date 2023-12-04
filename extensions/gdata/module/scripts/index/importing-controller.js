@@ -329,8 +329,8 @@ Refine.GDataImportingController.prototype._updatePreview = function() {
             });
         } else {
             self._parsingPanelElmts.progressPanel.hide();
-            DialogSystem.alert('Errors:\n' +
-            (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
+            DialogSystem.alert($.i18n('gdata-import/errors',
+            (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job)));
         }
         },
         "json"
@@ -373,7 +373,7 @@ Refine.GDataImportingController.prototype._getPreviewData = function(callback, n
 Refine.GDataImportingController.prototype._createProject = function() {
   var projectName = jQueryTrim(this._parsingPanelElmts.projectNameInput[0].value);
   if (projectName.length == 0) {
-    DialogSystem.alert("Please name the project.");
+    DialogSystem.alert($.i18n('gdata-import/please-name-project'));
     this._parsingPanelElmts.projectNameInput.focus();
     return;
   }
