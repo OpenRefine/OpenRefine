@@ -802,5 +802,6 @@
     "core-index-import/blank-url": "URL en blanco",
     "core-index-import/remove-row": "Remover esta fila",
     "core-index/rows-loading-failed": "Error al cargar las filas.",
-    "core-index/navigate-home": "Navegar a la pantalla de inicio"
+    "core-index/navigate-home": "Navegar a la pantalla de inicio",
+    "core-dialogs/could-not-stringify": "Error: No se ha podido encadenar el objeto de error JSON."
 }
