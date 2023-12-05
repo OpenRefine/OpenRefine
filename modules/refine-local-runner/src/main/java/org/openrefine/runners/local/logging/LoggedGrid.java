@@ -282,6 +282,11 @@ public class LoggedGrid implements Grid {
     }
 
     @Override
+    public <T> ChangeData<T> emptyChangeData() {
+        return wrap(exec("emptyChangeData", () -> grid.emptyChangeData()));
+    }
+
+    @Override
     public <T> Grid join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel) {
         return wrap(
                 exec("join (with row joiner)", () -> grid.join(((LoggedChangeData<T>) changeData).changeData, rowJoiner, newColumnModel)));
@@ -334,4 +339,5 @@ public class LoggedGrid implements Grid {
     public String toString() {
         return grid.toString();
     }
+
 }

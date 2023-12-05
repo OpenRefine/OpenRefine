@@ -649,10 +649,11 @@ public abstract class PLL<T> {
 
     /**
      * Write the PLL to a directory, containing one file for each partition.
+     * @param completionMarker TODO
      */
-    public void saveAsTextFile(String path, int maxConcurrency, boolean repartition, boolean flushRegularly)
+    public void saveAsTextFile(String path, int maxConcurrency, boolean repartition, boolean flushRegularly, boolean completionMarker)
             throws IOException, InterruptedException {
-        ProgressingFuture<Void> future = saveAsTextFileAsync(path, maxConcurrency, repartition, flushRegularly);
+        ProgressingFuture<Void> future = saveAsTextFileAsync(path, maxConcurrency, repartition, flushRegularly, completionMarker);
         try {
             future.get();
         } catch (ExecutionException e) {
@@ -692,9 +693,11 @@ public abstract class PLL<T> {
      * @param flushRegularly
      *            whether the file should be written to disk often (at the cost of a lower compression ratio, and more
      *            disk writes)
+     * @param completionMarker
+     *            whether to add an empty file as completion marker (with filename {@link Runner#COMPLETION_MARKER_FILE_NAME}).
      * @return a future for the saving process, which supports progress reporting and pausing.
      */
-    public ProgressingFuture<Void> saveAsTextFileAsync(String path, int maxConcurrency, boolean repartition, boolean flushRegularly) {
+    public ProgressingFuture<Void> saveAsTextFileAsync(String path, int maxConcurrency, boolean repartition, boolean flushRegularly, boolean completionMarker) {
 
         File gridPath = new File(path);
         gridPath.mkdirs();
@@ -760,15 +763,17 @@ public abstract class PLL<T> {
         ProgressingFuture<Void> future = ProgressingFutures.transform(
                 partitionWritingFuture,
                 v -> {
-                    try {
-                        // Write an empty file as success marker
-                        File successMarker = new File(gridPath, Runner.COMPLETION_MARKER_FILE_NAME);
-                        try (FileOutputStream fos = new FileOutputStream(successMarker)) {
-                            Writer writer = new OutputStreamWriter(fos);
-                            writer.close();
+                    if (completionMarker) {
+                        try {
+                            // Write an empty file as success marker
+                            File successMarker = new File(gridPath, Runner.COMPLETION_MARKER_FILE_NAME);
+                            try (FileOutputStream fos = new FileOutputStream(successMarker)) {
+                                Writer writer = new OutputStreamWriter(fos);
+                                writer.close();
+                            }
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
                         }
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
                     }
                     return null;
                 }, context.getExecutorService());

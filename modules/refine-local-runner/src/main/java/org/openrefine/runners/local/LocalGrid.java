@@ -361,7 +361,7 @@ public class LocalGrid implements Grid {
         return ProgressingFutures.transform(grid
                 .values()
                 .map(LocalGrid::serializeIndexedRow, "serialize indexed row")
-                .saveAsTextFileAsync(gridFile.getAbsolutePath(), runner.defaultParallelism, true, false),
+                .saveAsTextFileAsync(gridFile.getAbsolutePath(), runner.defaultParallelism, true, false, true),
                 v -> {
                     try {
                         ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());
@@ -594,7 +594,7 @@ public class LocalGrid implements Grid {
                 data.filter(tuple -> tuple.getValue() != null),
                 grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null,
                 () -> true,
-                rowMapper.getMaxConcurrency());
+                rowMapper.getMaxConcurrency(), true);
     }
 
     protected static <T> CloseableIterator<Tuple2<Long, IndexedData<T>>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper,
@@ -677,7 +677,17 @@ public class LocalGrid implements Grid {
                 data.filter(tuple -> tuple.getValue() != null),
                 grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null,
                 () -> true,
-                recordMapper.getMaxConcurrency());
+                recordMapper.getMaxConcurrency(), true);
+    }
+
+    @Override
+    public <T> ChangeData<T> emptyChangeData() {
+        return new LocalChangeData<T>(
+                runner,
+                grid.limitPartitions(0L).mapToPair(tuple -> Tuple2.of(tuple.getKey(), null), "bureaucratic map"),
+                null,
+                () -> false,
+                0, false);
     }
 
     /**

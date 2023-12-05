@@ -610,6 +610,11 @@ public class TestingGrid implements Grid {
         }
         return new TestingChangeData<>(changeData, true);
     }
+    
+    @Override
+    public <T> ChangeData<T> emptyChangeData() {
+        return new TestingChangeData<>(Collections.emptyMap(), false);
+    }
 
     @Override
     public <T> Grid join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,

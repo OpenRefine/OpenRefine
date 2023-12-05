@@ -31,10 +31,10 @@ public class LocalChangeData<T> implements ChangeData<T> {
     private final Long parentSize;
     private final Callable<Boolean> complete;
     private final int maxConcurrency;
+    private final boolean serializeWithEndMarker;
 
     /**
      * Constructs a change data.
-     *
      * @param grid
      *            expected not to contain any null value (they should be filtered out first)
      * @param parentPartitionSizes
@@ -44,19 +44,23 @@ public class LocalChangeData<T> implements ChangeData<T> {
      * @param maxConcurrency
      *            the maximum number of concurrent calls to the underlying resource (fetcher). This is respected when
      *            saving the change data to a file.
+     * @param serializeWithEndMarker
+     *            add an end marker at the end of partitions when serializing
      */
     public LocalChangeData(
             LocalRunner runner,
             PairPLL<Long, IndexedData<T>> grid,
             Array<Long> parentPartitionSizes,
             Callable<Boolean> complete,
-            int maxConcurrency) {
+            int maxConcurrency,
+            boolean serializeWithEndMarker) {
         this.runner = runner;
         this.grid = grid;
         this.complete = complete; // TODO should just be a boolean, because if it's not complete when creating it we
         // should not assume that it gets complete later on (if we have empty/missing partitions when creating it they
         // will not appear afterwards).
         this.maxConcurrency = maxConcurrency;
+        this.serializeWithEndMarker = serializeWithEndMarker;
         if (parentPartitionSizes == null) {
             parentPartitionFirstIndices = null;
             parentSize = null;
@@ -120,14 +124,16 @@ public class LocalChangeData<T> implements ChangeData<T> {
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
-                }, "serialize")
-                .mapPartitions((index, iterator) -> iterator.concat(CloseableIterator.of(ChangeData.partitionEndMarker)),
+                }, "serialize");
+         if (serializeWithEndMarker) {
+             serialized = serialized.mapPartitions((index, iterator) -> iterator.concat(CloseableIterator.of(ChangeData.partitionEndMarker)),
                         "add end marker", false);
+         }
 
         // we do not want to repartition while saving because the partitions should ideally correspond exactly
         // to those of the parent grid, for efficient joining.
         ProgressingFuture<Void> future = serialized
-                .saveAsTextFileAsync(file.getAbsolutePath(), maxConcurrency, false, true);
+                .saveAsTextFileAsync(file.getAbsolutePath(), maxConcurrency, false, true, serializeWithEndMarker);
         if (useNativeProgressReporting) {
             return future;
         } else {

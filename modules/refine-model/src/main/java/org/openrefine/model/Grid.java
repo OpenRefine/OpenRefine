@@ -503,6 +503,16 @@ public interface Grid {
             Optional<ChangeData<T>> incompleteChangeData);
 
     /**
+     * Extract an empty change data from this grid. This is useful as a placeholder, to replace a change data to be
+     * computed later.
+     * 
+     * @param <T>
+     *            the type of change data (can be anything)
+     * @return an empty change data object fitting to the current grid
+     */
+    public <T> ChangeData<T> emptyChangeData();
+
+    /**
      * Joins pre-computed change data with the current grid data, row by row.
      * 
      * @param <T>

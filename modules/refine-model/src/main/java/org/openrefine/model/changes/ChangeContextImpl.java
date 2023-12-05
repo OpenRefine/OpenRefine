@@ -65,10 +65,10 @@ public class ChangeContextImpl implements ChangeContext {
             return _dataStore.retrieveOrCompute(
                     new ChangeDataId(_historyEntryId, dataId),
                     serializer,
+                    grid,
                     partialChangeData -> completionProcess.apply(grid, partialChangeData),
                     _changeDescription,
-                    _history,
-                    applicationIndex);
+                    _history, applicationIndex);
         } catch (OperationException e) {
             // unreachable since earliestStepContainingDependencies must return a grid that is already computed
             throw new RuntimeException(e);

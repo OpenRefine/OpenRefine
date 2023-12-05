@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.openrefine.history.History;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.process.ProgressReporter;
@@ -63,10 +64,10 @@ public class LazyChangeDataStore implements ChangeDataStore {
     public <T> ChangeData<T> retrieveOrCompute(
             ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer,
+            Grid baseGrid,
             Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
             String description,
-            History history,
-            int requiredStepIndex) throws IOException {
+            History history, int requiredStepIndex) throws IOException {
         if (!_changeData.containsKey(changeDataId)) {
             ChangeData<T> computed = completionProcess.apply(Optional.empty());
             _changeData.put(changeDataId, computed);

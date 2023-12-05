@@ -173,9 +173,7 @@ public class LocalRunner implements Runner {
         pll = PairPLL.assumeSorted(pll);
 
         if (!alreadyComplete) {
-            if (pll.getPartitions().isEmpty()) {
-                return emptyChangeData();
-            } else {
+            if (!pll.getPartitions().isEmpty()) {
                 // we know the partitioner is present because we just sorted the pll above
                 LongRangePartitioner partitioner = (LongRangePartitioner) pll.getPartitioner().get();
                 // Compute up to which index we should fill up the PLL with pending records
@@ -190,7 +188,7 @@ public class LocalRunner implements Runner {
             }
         }
 
-        return new LocalChangeData<T>(this, pll, null, isComplete, 0);
+        return new LocalChangeData<T>(this, pll, null, isComplete, 0, true);
     }
 
     /**
@@ -300,7 +298,7 @@ public class LocalRunner implements Runner {
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
         // no need for parent partition sizes, since pll has cached ones
-        return new LocalChangeData<T>(this, pll, null, () -> true, 0);
+        return new LocalChangeData<T>(this, pll, null, () -> true, 0, true);
     }
 
     @Override
@@ -313,7 +311,7 @@ public class LocalRunner implements Runner {
         PairPLL<Long, IndexedData<T>> pll = pllContext.singlePartitionPLL(iterable, itemCount)
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData), "indexed data to Tuple2");
         pll = PairPLL.assumeSorted(pll);
-        return new LocalChangeData<>(this, pll, null, () -> isComplete, 0);
+        return new LocalChangeData<>(this, pll, null, () -> isComplete, 0, true);
     }
 
     @Override

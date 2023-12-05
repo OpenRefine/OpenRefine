@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.openrefine.history.History;
+import org.openrefine.model.Grid;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.process.ProgressingFuture;
@@ -80,6 +81,8 @@ public interface ChangeDataStore {
      *            the id of the change data to retrieve
      * @param serializer
      *            the serializer to read it back from a file and to write its completion if it is incomplete
+     * @param baseGrid
+     *            the grid based on which the change data will be computed
      * @param completionProcess
      *            a function taking the existing state of the change data and returning the complete version
      * @param description
@@ -88,10 +91,10 @@ public interface ChangeDataStore {
     public <T> ChangeData<T> retrieveOrCompute(
             ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer,
+            Grid baseGrid,
             Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
             String description,
-            History history,
-            int requiredStepIndex)
+            History history, int requiredStepIndex)
             throws IOException;
 
     /**

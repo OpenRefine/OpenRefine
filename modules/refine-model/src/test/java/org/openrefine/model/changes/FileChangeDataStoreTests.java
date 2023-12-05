@@ -22,6 +22,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.history.History;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProgressingFuture;
@@ -30,6 +31,7 @@ import org.openrefine.util.TestUtils;
 public class FileChangeDataStoreTests {
 
     Runner runner;
+    Grid baseGrid;
     MyChangeData changeData;
     MyChangeData emptyChangeData;
     MySerializer serializer;
@@ -55,12 +57,13 @@ public class FileChangeDataStoreTests {
     @BeforeMethod
     public void setUp() throws IOException {
         runner = mock(Runner.class);
+        baseGrid = mock(Grid.class);
         changeData = mock(MyChangeData.class);
         emptyChangeData = mock(MyChangeData.class);
         serializer = mock(MySerializer.class);
         history = mock(History.class);
 
-        when(runner.<String> emptyChangeData()).thenReturn(emptyChangeData);
+        when(baseGrid.<String> emptyChangeData()).thenReturn(emptyChangeData);
         future = mock(VoidFuture.class);
         when(changeData.saveToFileAsync(any(), eq(serializer))).thenReturn(future);
         SUT = new FileChangeDataStore(runner, changeDir, incompleteDir);
@@ -109,8 +112,8 @@ public class FileChangeDataStoreTests {
 
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> oldChangeData.get());
 
-        ChangeData<String> returnedChangeData = SUT.retrieveOrCompute(changeDataId, serializer, completionProcess, "description", history,
-                2);
+        ChangeData<String> returnedChangeData = SUT.retrieveOrCompute(changeDataId, serializer, baseGrid, completionProcess, "description",
+                history, 2);
 
         Assert.assertTrue(SUT.needsRefreshing(198));
         Assert.assertTrue(newChangeDataLocation.exists());
@@ -145,7 +148,7 @@ public class FileChangeDataStoreTests {
         ChangeDataId changeDataId = new ChangeDataId(456L, "data");
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
 
-        SUT.retrieveOrCompute(changeDataId, serializer, completionProcess, "description", history, 2);
+        SUT.retrieveOrCompute(changeDataId, serializer, baseGrid, completionProcess, "description", history, 2);
 
         // A history entry with a corresponding running process needs refreshing
         Assert.assertTrue(SUT.needsRefreshing(456L));
@@ -161,7 +164,7 @@ public class FileChangeDataStoreTests {
         ChangeDataId changeDataId = new ChangeDataId(789L, "data");
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
 
-        SUT.retrieveOrCompute(changeDataId, serializer, completionProcess, "description", history, 2);
+        SUT.retrieveOrCompute(changeDataId, serializer, baseGrid, completionProcess, "description", history, 2);
         // artificially pause the process
         when(future.isPaused()).thenReturn(true);
 

@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.history.History;
+import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
 import org.openrefine.process.*;
 import org.openrefine.process.Process;
@@ -32,7 +33,7 @@ import org.openrefine.process.Process;
  * <li>The incomplete directory, which is used as a temporary location when resuming the fetching of some change data
  * after an interruption.</li>
  * </ul>
- * When {@link #retrieveOrCompute(ChangeDataId, ChangeDataSerializer, Function, String, History, int)} finds an
+ * When {@link #retrieveOrCompute(ChangeDataId, ChangeDataSerializer, Grid, Function, String, History, int)} finds an
  * incomplete change data is found in the base directory, it is moved to the incomplete directory. A new version of the
  * change data, completed using the completion process, is then saved again in the base directory.
  */
@@ -123,10 +124,10 @@ public class FileChangeDataStore implements ChangeDataStore {
     public <T> ChangeData<T> retrieveOrCompute(
             ChangeDataId changeDataId,
             ChangeDataSerializer<T> serializer,
+            Grid baseGrid,
             Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
             String description,
-            History history,
-            int requiredStepIndex) throws IOException {
+            History history, int requiredStepIndex) throws IOException {
         File changeDataDir = idsToFile(changeDataId, false);
         registerId(changeDataId);
         File incompleteDir = null;
@@ -157,6 +158,18 @@ public class FileChangeDataStore implements ChangeDataStore {
                 returnedChangeData = Optional.empty();
             }
 
+            if (returnedChangeData.isEmpty()) {
+                logger.info("Writing new empty change data in directory " + changeDataDir.toString());
+                // ensure the directory of the change data is already created at this stage
+                ChangeData<T> emptyChangeData = baseGrid.emptyChangeData();
+                try {
+                    emptyChangeData.saveToFile(changeDataDir, serializer);
+                } catch (Exception e) {
+                    throw new IOException(e);
+                }
+                logger.info("Wrote the empty change data");
+                returnedChangeData = Optional.of(_runner.loadChangeData(changeDataDir, serializer, false));
+            }
             // queue a new process to compute the change data
             ChangeDataStoringProcess<T> process = new ChangeDataStoringProcess<T>(description,
                     recoveredChangeData,
@@ -167,11 +180,6 @@ public class FileChangeDataStore implements ChangeDataStore {
                     incompleteDir,
                     history,
                     requiredStepIndex);
-            if (returnedChangeData.isEmpty()) {
-                // ensure the directory of the change data is already created at this stage
-                process.getFuture();
-                returnedChangeData = Optional.of(_runner.loadChangeData(changeDataDir, serializer, false));
-            }
             processManager.queueProcess(process);
             _toRefresh.add(changeDataId);
         } else if (storedChangeDataIsComplete) {

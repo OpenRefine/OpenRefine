@@ -62,8 +62,8 @@ public class LazyChangeDataStoreTests {
 
         ChangeDataId changeDataId = new ChangeDataId(456, "data");
         ChangeData<String> returnedChangeData = SUT.retrieveOrCompute(
-                changeDataId, serializer, completionProcess,
-                "description", mock(History.class), 2);
+                changeDataId, serializer, null,
+                completionProcess, "description", mock(History.class), 2);
 
         Assert.assertEquals(returnedChangeData, changeData);
         Assert.assertFalse(SUT.needsRefreshing(456));

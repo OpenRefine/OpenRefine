@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.Files;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.NotImplementedException;
@@ -1084,6 +1085,8 @@ public abstract class RunnerTestBase {
     @Test
     public void testLoadEmptyChangeData() throws IOException {
         File tempDir = TestUtils.createTempDirectory("empty_change_data");
+        File partitionFile = new File(tempDir, "part-0000");
+        Files.touch(partitionFile);
 
         ChangeData<String> empty = SUT.loadChangeData(tempDir, stringSerializer, false);
         Assert.assertFalse(empty.isComplete());
@@ -1602,11 +1605,25 @@ public abstract class RunnerTestBase {
     }
 
     @Test
-    public void testEmptyChangeData() throws IOException {
-        ChangeData<String> changeData = getDatamodelRunner().emptyChangeData();
+    public void testEmptyChangeData() throws IOException, InterruptedException {
+        ChangeData<String> changeData = simpleGrid.emptyChangeData();
 
         Assert.assertFalse(changeData.isComplete());
         Assert.assertEquals(changeData.get(3L), new IndexedData<String>(3L));
+
+        File saveDir = new File(tempDir, "empty_change_data");
+        try {
+            changeData.saveToFile(saveDir, stringSerializer);
+            List<String> filenames = Arrays.asList(saveDir.listFiles()).stream()
+                    .map(path -> path.getName())
+                    .sorted()
+                    .collect(Collectors.toList());
+            Assert.assertFalse(filenames.isEmpty());
+            Assert.assertFalse(new File(saveDir, Runner.COMPLETION_MARKER_FILE_NAME).exists());
+            Assert.assertTrue(filenames.get(0).startsWith("part-00000"));
+        } finally {
+            FileUtils.deleteDirectory(saveDir);
+        }
     }
 
     /**

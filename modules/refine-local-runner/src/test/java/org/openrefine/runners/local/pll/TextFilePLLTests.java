@@ -24,6 +24,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import org.openrefine.model.Runner;
 import org.openrefine.process.ProgressReporterStub;
 import org.openrefine.process.ProgressingFuture;
 import org.openrefine.util.CloseableIterable;
@@ -111,7 +112,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     public void testRoundTripSerialization() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         File tempFile = new File(tempDir, "roundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false);
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false, true);
 
         // check for presence of the _SUCCESS marker
         File successMarker = new File(tempFile, "_SUCCESS");
@@ -128,7 +129,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         int nbPartitions = pll.getPartitions().size();
 
         File tempFile = new File(tempDir, "largerroundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false);
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false, true);
 
         PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8);
         assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
@@ -145,7 +146,7 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false, false);
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false, false, true);
         future.onProgress(progressReporter);
         future.get();
         assertEquals(progressReporter.getPercentage(), 100);
@@ -161,7 +162,7 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false, false);
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false, false, true);
         future.onProgress(progressReporter);
         future.get();
         assertEquals(progressReporter.getPercentage(), 100);
@@ -183,7 +184,7 @@ public class TextFilePLLTests extends PLLTestsBase {
 
         ProgressReporterStub progressReporter = new ProgressReporterStub();
 
-        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, true, false);
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, true, false, true);
         future.onProgress(progressReporter);
         future.get();
         assertEquals(progressReporter.getPercentage(), 100);
@@ -191,6 +192,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         assertTrue(new File(tempFile, "part-00001.zst").exists());
         assertTrue(new File(tempFile, "part-00002.zst").exists());
         assertTrue(new File(tempFile, "part-00003.zst").exists());
+        assertTrue(new File(tempFile, Runner.COMPLETION_MARKER_FILE_NAME).exists());
     }
 
     @Test
@@ -239,7 +241,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         int nbPartitions = pll.getPartitions().size();
 
         File tempFile = new File(tempDir, "largerroundtrip.txt");
-        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false);
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), 0, false, false, true);
 
         // truncate various partitions at various sizes and remove the completion marker
         truncateFile(new File(tempFile, "part-00001.zst"), 1);
@@ -276,7 +278,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         File tempFile = new File(tempDir, "touch_all_partitions_first");
 
         // start saving the PLL to the disk
-        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false, false);
+        ProgressingFuture<Void> future = pll.saveAsTextFileAsync(tempFile.getAbsolutePath(), 0, false, false, true);
         // immediately cancel the saving
         future.cancel(false);
 
