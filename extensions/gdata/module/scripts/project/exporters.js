@@ -68,7 +68,7 @@ ExporterManager.MenuItems.push(
             if (o.url) {
               window.open(o.url, '_blank');
             } else {
-                alert($.i18n('gdata-exporter/upload-error') + o.message)
+              DialogSystem.alert($.i18n('gdata-exporter/upload-error') + o.message)
             }
             if (onDone) {
               onDone();
@@ -111,9 +111,9 @@ ExporterManager.handlers.exportProjectToGoogleDrive = function () {
           dismiss();
 
           if (o.url) {
-            alert($.i18n('gdata-exporter/upload-google-drive-success'));
+            DialogSystem.alert($.i18n('gdata-exporter/upload-google-drive-success'));
           } else {
-            alert($.i18n('gdata-exporter/upload-error') + o.message)
+            DialogSystem.alert($.i18n('gdata-exporter/upload-error') + o.message)
           }
         },
         "json"
@@ -144,9 +144,9 @@ ExporterManager.handlers.exportProjectToGoogleSheets = function () {
           dismiss();
 
           if (o.url) {
-            alert($.i18n('gdata-exporter/upload-google-sheets-success'));
+            DialogSystem.alert($.i18n('gdata-exporter/upload-google-sheets-success'));
           } else {
-            alert($.i18n('gdata-exporter/upload-error') + o.message)
+            DialogSystem.alert($.i18n('gdata-exporter/upload-error') + o.message)
           }
         },
         "json"

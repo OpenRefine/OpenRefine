@@ -334,6 +334,7 @@
     "core-dialogs/choose-export-destination": "Please choose the destination for project export",
     "core-dialogs/export-to-local": "OpenRefine project archive to file",
     "core-dialogs/missing-bad-template": "Missing or bad template",
+    "core-dialogs/could-not-stringify": "Error: Could not stringify JSON error object.",
     "core-facets/remove-facet": "Remove this facet",
     "core-facets/minimize-facet": "Toggle between the minimization and maximization of this facet",
     "core-facets/reset": "reset",
