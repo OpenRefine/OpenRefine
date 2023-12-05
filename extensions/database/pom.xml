@@ -75,7 +75,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.5.1</version>
+      <version>42.7.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
