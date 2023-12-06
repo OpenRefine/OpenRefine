@@ -31,12 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ReconDialog(column, previousService) {
+function ReconDialog(column, previousServiceURL) {
   this._column = column;
   this._serviceRecords = [];
   this._selectedServiceRecordIndex = -1;
   this._record = null;
-  this.previousRecord = previousService;
+  this.previousRecordURL = previousServiceURL;
 
   this._createDialog();
 }
@@ -73,7 +73,7 @@ ReconDialog.prototype._createDialog = function() {
    });
 
   this._level = DialogSystem.showDialog(dialog);
-  this._populateDialog();
+  this._populateDialog(self.previousRecordURL);
 
 };
 
@@ -107,7 +107,7 @@ ReconDialog.prototype._cleanDialog = function() {
   this._selectedServiceRecordIndex = -1;
 };
 
-ReconDialog.prototype._populateDialog = function() {
+ReconDialog.prototype._populateDialog = function(selectedURL) {
   var self = this;
   self._elmts.serviceList.empty();
 
@@ -130,9 +130,9 @@ ReconDialog.prototype._populateDialog = function() {
         .val(service.name) 
         .appendTo(label);
 
-      if (self.previousRecord === service) {
-          record.selector.prop('checked', true);
-          self._record = record;
+      if(selectedURL === service.url) {
+        record.selector.prop('checked',true);
+        self._record=record;
       }
 
       var mainSpan=$('<span>')
@@ -158,10 +158,11 @@ ReconDialog.prototype._populateDialog = function() {
       .addClass("recon-dialog-service-selector-remove")
       .prependTo(label)
       .on('click',function(event) {
+        $(this).parents('label').remove();
         ReconciliationManager.unregisterService(service, function() {
           self._record = null;
-          self._refresh(this._selectedServiceRecordIndex);
         });
+
         event.stopImmediatePropagation();
       });
 
@@ -177,9 +178,9 @@ ReconDialog.prototype._populateDialog = function() {
 };
 
 
-ReconDialog.prototype._refresh = function(newSelectIndex) {
+ReconDialog.prototype._refresh = function(selectedURL) {
   this._cleanDialog();
-  this._populateDialog();
+  this._populateDialog(selectedURL);
 };
 
 ReconDialog.prototype._onAddStandardService = function() {
@@ -202,7 +203,7 @@ ReconDialog.prototype._onAddStandardService = function() {
     var url = jQueryTrim(elmts.input[0].value);
     if (url.length > 0) {
       ReconciliationManager.registerStandardService(url, function(index) {
-        self._refresh(index);
+        self._refresh(url);
       });
     }
     dismiss();
