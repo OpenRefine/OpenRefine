@@ -125,8 +125,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
 
         whenGetIntegerOption("ignoreLines", options, 0);
@@ -187,8 +186,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
 
         whenGetIntegerOption("ignoreLines", options, 0);
@@ -250,8 +248,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
 
         whenGetIntegerOption("ignoreLines", options, 0);
@@ -325,8 +322,7 @@ public class ExcelImporterTests extends ImporterTest {
     public void readExcelDates() throws IOException {
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
 
         whenGetIntegerOption("ignoreLines", options, 0);
@@ -352,14 +348,11 @@ public class ExcelImporterTests extends ImporterTest {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
 
         whenGetIntegerOption("ignoreLines", options, 0);
@@ -409,14 +402,11 @@ public class ExcelImporterTests extends ImporterTest {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
         sheets.add(ParsingUtilities.mapper
-                .readTree(
-                        "{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
+                .readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
 
         whenGetIntegerOption("ignoreLines", options, 0);
