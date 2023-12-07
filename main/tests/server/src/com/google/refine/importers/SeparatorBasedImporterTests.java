@@ -165,9 +165,12 @@ public class SeparatorBasedImporterTests extends ImporterTest {
             Assert.fail("Exception during file parse", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), OpenRefineMessage.importer_utilities_column() + " 1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), OpenRefineMessage.importer_utilities_column() + " 2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), OpenRefineMessage.importer_utilities_column() + " 3");
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(),
+                OpenRefineMessage.importer_utilities_column() + " 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(),
+                OpenRefineMessage.importer_utilities_column() + " 2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(),
+                OpenRefineMessage.importer_utilities_column() + " 3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -338,9 +341,12 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), OpenRefineMessage.importer_utilities_column() + " 4");
-        Assert.assertEquals(project.columnModel.columns.get(4).getName(), OpenRefineMessage.importer_utilities_column() + " 5");
-        Assert.assertEquals(project.columnModel.columns.get(5).getName(), OpenRefineMessage.importer_utilities_column() + " 6");
+        Assert.assertEquals(project.columnModel.columns.get(3).getName(),
+                OpenRefineMessage.importer_utilities_column() + " 4");
+        Assert.assertEquals(project.columnModel.columns.get(4).getName(),
+                OpenRefineMessage.importer_utilities_column() + " 5");
+        Assert.assertEquals(project.columnModel.columns.get(5).getName(),
+                OpenRefineMessage.importer_utilities_column() + " 6");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 6);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -466,8 +472,8 @@ public class SeparatorBasedImporterTests extends ImporterTest {
                 "skip2\n" +
                 "data-row1-cell1" + inputSeparator + "data-row1-cell2" + inputSeparator + "data-row1-cell3\n" +
                 "data-row2-cell1" + inputSeparator + "data-row2-cell2" + inputSeparator + "\n" + // missing last data
-                                                                                                 // point of this row on
-                                                                                                 // purpose
+                // point of this row on
+                // purpose
                 "data-row3-cell1" + inputSeparator + "data-row3-cell2" + inputSeparator + "data-row1-cell3";
 
         try {
@@ -529,7 +535,8 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "\"To\n Be\" is often followed by \"or not To\n Be\"");
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value,
+                "\"To\n Be\" is often followed by \"or not To\n Be\"");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
     }
 
@@ -671,6 +678,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     }
 
     // --helpers--
+
     /**
      * Used for parameterized testing for both SeparatorParser and TsvCsvParser.
      */
@@ -691,7 +699,8 @@ public class SeparatorBasedImporterTests extends ImporterTest {
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter) {
 
-        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter, "[]", false);
+        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter, "[]",
+                false);
     }
 
     protected void prepareOptions(
