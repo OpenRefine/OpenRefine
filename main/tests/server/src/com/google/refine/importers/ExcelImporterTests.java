@@ -480,8 +480,7 @@ public class ExcelImporterTests extends ImporterTest {
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
             for (int row = 0; row < ROWS; row++) {
-                createDataRow(sheet, row, date, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle,
-                        currencyStyle, 0);
+                createDataRow(sheet, row, date, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, 0);
             }
         }
 
@@ -529,8 +528,7 @@ public class ExcelImporterTests extends ImporterTest {
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
             for (int row = 0; row < ROWS; row++) {
-                createDataRow(sheet, row, NOW, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle,
-                        currencyStyle, s);
+                createDataRow(sheet, row, NOW, dateTimeStyle, dateStyle, intStyle, floatStyle, zeroStyle, otherStyle, currencyStyle, s);
             }
         }
 
@@ -549,11 +547,9 @@ public class ExcelImporterTests extends ImporterTest {
         return file;
     }
 
-    private static void createDataRow(Sheet sheet, int row, LocalDateTime date, CellStyle dateTimeStyle,
-            CellStyle dateStyle,
+    private static void createDataRow(Sheet sheet, int row, LocalDateTime date, CellStyle dateTimeStyle, CellStyle dateStyle,
             CellStyle intStyle,
-            CellStyle floatStyle, CellStyle zeroStyle, CellStyle otherStyle, CellStyle currencyStyle,
-            int extra_columns) {
+            CellStyle floatStyle, CellStyle zeroStyle, CellStyle otherStyle, CellStyle currencyStyle, int extra_columns) {
         int col = 0;
         Row r = sheet.createRow(row);
         Cell c;
@@ -603,9 +599,9 @@ public class ExcelImporterTests extends ImporterTest {
         c.setCellValue(1234.56);
         c.setCellStyle(currencyStyle); // currency should import as float
 
-        // HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
-        // hl.setLabel(cellData.text);
-        // hl.setAddress(cellData.link);
+//    HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+//    hl.setLabel(cellData.text);
+//    hl.setAddress(cellData.link);
 
         // Create extra columns to ensure sheet(i+1) has more columns than sheet(i)
         for (int i = 0; i < extra_columns; i++) {

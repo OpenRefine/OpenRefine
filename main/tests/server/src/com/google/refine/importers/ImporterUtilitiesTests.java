@@ -174,8 +174,8 @@ public class ImporterUtilitiesTests extends RefineTest {
         List<String> newColumnNames = new ArrayList<String>();
         Column c0 = ImporterUtilities.getOrAllocateColumn(project, newColumnNames, 0, false);
         Column c1 = ImporterUtilities.getOrAllocateColumn(project, newColumnNames, 1, false);
-        Assert.assertEquals(c0.getName(), OpenRefineMessage.importer_utilities_column() + " 1");
-        Assert.assertEquals(c1.getName(), OpenRefineMessage.importer_utilities_column() + " 2");
+        Assert.assertEquals(c0.getName(), OpenRefineMessage.importer_utilities_column()+" 1");
+        Assert.assertEquals(c1.getName(), OpenRefineMessage.importer_utilities_column()+" 2");
         Assert.assertEquals(newColumnNames.size(), 2);
     }
 }
