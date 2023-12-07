@@ -24,20 +24,21 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.updates.ItemEdit;
-import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.io.File;
+
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.updates.ItemEdit;
+import org.openrefine.wikibase.updates.MediaInfoEdit;
 
 /**
  * A scrutinizer that inspects new entities.

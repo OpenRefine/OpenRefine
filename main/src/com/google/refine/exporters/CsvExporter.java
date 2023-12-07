@@ -39,15 +39,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.univocity.parsers.csv.CsvFormat;
-import com.univocity.parsers.csv.CsvParserSettings;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;

@@ -25,7 +25,7 @@
     "gdata-parsing/parse-next": "Analizar próximos",
     "gdata-parsing/ignore": "renglones al principio del archivo",
     "gdata-parsing/ignore-first": "Ignorar primeros",
-    "gdata-parsing/preview-button": "Actualizar&nbsp;previsualización",
+    "gdata-parsing/preview-button": "Actualización&nbsp;vista previa",
     "gdata-parsing/option": "Opciones",
     "gdata-parsing/worksheet": "Hojas de trabajo",
     "gdata-parsing/updating-preview": "Actualizando previsualización…",
@@ -48,5 +48,7 @@
     "gdata-import/preparing": "Preparando…",
     "gdata-import/re-sign-in-another": "Iniciar sesión con una cuenta diferente",
     "gdata-import/please-signin": "Inicie sesión y autorice el acceso a sus datos de Google",
-    "gdata-parsing/disable-auto-preview": "Desactivar la vista previa automática"
+    "gdata-parsing/disable-auto-preview": "Desactivar la vista previa automática",
+    "gdata-import/errors": "Errores:\n $1",
+    "gdata-import/please-name-project": "Por favor, ponga un nombre al proyecto."
 }

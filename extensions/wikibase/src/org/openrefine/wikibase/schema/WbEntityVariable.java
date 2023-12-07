@@ -24,6 +24,16 @@
 
 package org.openrefine.wikibase.schema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
+import com.google.refine.model.Cell;
+import com.google.refine.model.Recon.Judgment;
+
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.qa.QAWarning.Severity;
 import org.openrefine.wikibase.schema.entityvalues.ReconItemIdValue;
@@ -31,15 +41,6 @@ import org.openrefine.wikibase.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikibase.schema.entityvalues.ReconPropertyIdValue;
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Recon.Judgment;
 
 /**
  * An Entity that depends on a reconciled value in a column.

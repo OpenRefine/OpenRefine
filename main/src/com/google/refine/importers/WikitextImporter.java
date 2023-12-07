@@ -36,7 +36,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.CharMatcher;
+import com.google.common.io.CharStreams;
+import de.fau.cs.osr.ptk.common.AstVisitor;
 import org.sweble.wikitext.parser.ParserConfig;
 import org.sweble.wikitext.parser.WikitextEncodingValidator;
 import org.sweble.wikitext.parser.WikitextParser;
@@ -77,9 +80,8 @@ import org.sweble.wikitext.parser.nodes.WtXmlStartTag;
 import org.sweble.wikitext.parser.parser.PreprocessorToParserTransformer;
 import org.sweble.wikitext.parser.preprocessor.PreprocessedWikitext;
 import org.sweble.wikitext.parser.utils.SimpleParserConfig;
+import xtc.parser.ParseException;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.io.CharStreams;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
@@ -91,9 +93,6 @@ import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.util.JSONUtilities;
-
-import de.fau.cs.osr.ptk.common.AstVisitor;
-import xtc.parser.ParseException;
 
 public class WikitextImporter extends TabularImportingParserBase {
     // static final private Logger logger = LoggerFactory.getLogger(WikitextImporter.class);

@@ -32,15 +32,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.openrefine.wikibase.schema.WikibaseSchema;
-import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
-import org.openrefine.wikibase.schema.strategies.StatementMerger;
-import org.openrefine.wikibase.schema.validation.ValidationState;
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.testing.WikidataRefineTest;
-import org.openrefine.wikibase.updates.ItemEditBuilder;
-import org.openrefine.wikibase.updates.StatementEdit;
-import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -54,6 +45,16 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
+
+import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
+import org.openrefine.wikibase.schema.strategies.StatementMerger;
+import org.openrefine.wikibase.schema.validation.ValidationState;
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.testing.WikidataRefineTest;
+import org.openrefine.wikibase.updates.ItemEditBuilder;
+import org.openrefine.wikibase.updates.StatementEdit;
+import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
 
 public class QuickStatementsExporterTest extends WikidataRefineTest {
 

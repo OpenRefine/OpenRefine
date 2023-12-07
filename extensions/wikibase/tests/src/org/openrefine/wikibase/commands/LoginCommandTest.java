@@ -3,8 +3,11 @@ package org.openrefine.wikibase.commands;
 
 import static com.google.refine.util.TestUtils.assertEqualsAsJson;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.openrefine.wikibase.commands.LoginCommand.ACCESS_SECRET;
 import static org.openrefine.wikibase.commands.LoginCommand.ACCESS_TOKEN;
 import static org.openrefine.wikibase.commands.LoginCommand.API_ENDPOINT;
@@ -16,9 +19,6 @@ import static org.openrefine.wikibase.commands.LoginCommand.WIKIBASE_COOKIE_PREF
 import static org.openrefine.wikibase.commands.LoginCommand.getCookieValue;
 import static org.openrefine.wikibase.commands.LoginCommand.removeCRLF;
 import static org.openrefine.wikibase.commands.LoginCommand.sanitizeCookieKey;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;

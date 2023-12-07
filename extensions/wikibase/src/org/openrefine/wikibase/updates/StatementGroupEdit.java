@@ -7,15 +7,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.Validate;
-import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
-import org.openrefine.wikibase.schema.strategies.StatementMerger;
 import org.wikidata.wdtk.datamodel.helpers.StatementUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
+import org.openrefine.wikibase.schema.strategies.StatementMerger;
 
 /**
  * A list of statement edits which share the same property, and will therefore affect the same statement group on the

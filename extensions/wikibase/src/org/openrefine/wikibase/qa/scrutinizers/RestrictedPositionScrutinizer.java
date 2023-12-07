@@ -24,7 +24,9 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.qa.QAWarning;
+import java.util.Iterator;
+import java.util.List;
+
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -35,8 +37,7 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
-import java.util.Iterator;
-import java.util.List;
+import org.openrefine.wikibase.qa.QAWarning;
 
 public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 

@@ -39,7 +39,6 @@ import org.testng.annotations.Test;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.util.TestUtils;
 
 public class SmartSplitTests {
 

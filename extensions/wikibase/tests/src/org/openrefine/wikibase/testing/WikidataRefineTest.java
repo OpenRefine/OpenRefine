@@ -8,9 +8,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.BeforeMethod;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;

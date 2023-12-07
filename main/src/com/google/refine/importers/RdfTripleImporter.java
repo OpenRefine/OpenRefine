@@ -40,12 +40,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;

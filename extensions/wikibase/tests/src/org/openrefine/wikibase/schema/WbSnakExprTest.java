@@ -24,16 +24,17 @@
 
 package org.openrefine.wikibase.schema;
 
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.ModelException;
+
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 
 public class WbSnakExprTest extends WbExpressionTest<Snak> {
 

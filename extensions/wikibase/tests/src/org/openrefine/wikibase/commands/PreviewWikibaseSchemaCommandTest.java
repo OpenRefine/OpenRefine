@@ -32,15 +32,16 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.openrefine.wikibase.utils.EntityCache;
-import org.openrefine.wikibase.utils.EntityCacheStub;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.ParsingUtilities;
+
+import org.openrefine.wikibase.utils.EntityCache;
+import org.openrefine.wikibase.utils.EntityCacheStub;
 
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 

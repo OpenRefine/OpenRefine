@@ -1,20 +1,23 @@
 
 package org.openrefine.wikibase.commands;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.commands.Command;
-import com.google.refine.util.ParsingUtilities;
-import org.apache.commons.lang.Validate;
-import org.openrefine.wikibase.schema.WikibaseSchema;
+import static org.openrefine.wikibase.commands.CommandUtilities.respondError;
+
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-import static org.openrefine.wikibase.commands.CommandUtilities.respondError;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang.Validate;
+
+import com.google.refine.commands.Command;
+import com.google.refine.util.ParsingUtilities;
+
+import org.openrefine.wikibase.schema.WikibaseSchema;
 
 /**
  * Command to check whether a given schema template is syntactically valid. This uses POST because schema templates can

@@ -69,6 +69,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
   elmts.dropdownMenu.on('click',function() {
     self._createMenuForColumnHeader(this);
   });
+
   var serviceUrl = null;
   var service = null;
   var serviceLogo=null;
@@ -96,6 +97,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
   catch {
     console.log("The URL is not valid");
   }
+
   if ("reconStats" in this._column) {
     var stats = this._column.reconStats;
     if (stats.nonBlanks > 0) {

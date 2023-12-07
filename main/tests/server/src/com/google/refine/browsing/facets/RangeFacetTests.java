@@ -29,13 +29,12 @@ package com.google.refine.browsing.facets;
 
 import java.io.IOException;
 
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.Test;
+
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.facets.RangeFacet;
 import com.google.refine.browsing.facets.RangeFacet.RangeFacetConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;

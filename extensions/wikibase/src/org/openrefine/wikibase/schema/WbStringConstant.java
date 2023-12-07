@@ -24,12 +24,12 @@
 
 package org.openrefine.wikibase.schema;
 
-import org.openrefine.wikibase.schema.validation.ValidationState;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openrefine.wikibase.schema.validation.ValidationState;
 
 public class WbStringConstant implements WbExpression<StringValue> {
 

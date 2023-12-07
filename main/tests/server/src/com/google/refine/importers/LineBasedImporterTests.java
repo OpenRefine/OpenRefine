@@ -27,12 +27,17 @@
 
 package com.google.refine.importers;
 
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.io.StringReader;
 
-import static org.testng.Assert.*;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 public class LineBasedImporterTests extends ImporterTest {
 

@@ -32,7 +32,11 @@ import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;

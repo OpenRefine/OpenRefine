@@ -33,8 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var columnIndex = Refine.columnNameToColumnIndex(column.name);
+  var serviceUrl = null;
+  var service = null;
+  if (column.reconConfig) {
+    serviceUrl = column.reconConfig.service;
+  }
+  if (serviceUrl) {
+    service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+  }
   var doReconcile = function() {
-    new ReconDialog(column);
+      new ReconDialog(column, serviceUrl);
   };
 
   var doReconDiscardJudgments = function() {

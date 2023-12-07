@@ -27,8 +27,9 @@ package org.openrefine.wikibase.schema;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
+
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 
 public class WbLanguageConstantTest extends WbExpressionTest<String> {
 

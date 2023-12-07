@@ -47,6 +47,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -54,7 +59,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -72,11 +76,6 @@ import com.google.refine.process.LongRunningProcessStub;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
-
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 
 public class ExtendDataOperationTests extends RefineTest {
 

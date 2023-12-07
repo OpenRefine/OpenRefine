@@ -31,7 +31,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.ParsingException;
-import com.google.refine.util.TestUtils;
 
 public class UniquesTests extends RefineTest {
 

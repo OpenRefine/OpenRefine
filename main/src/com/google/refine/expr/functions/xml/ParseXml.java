@@ -35,14 +35,14 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
-import com.google.refine.grel.EvalErrorMessage;
-import com.google.refine.grel.FunctionDescription;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.FunctionDescription;
 
 public class ParseXml implements Function {
 

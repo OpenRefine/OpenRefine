@@ -26,16 +26,17 @@ package org.openrefine.wikibase.schema;
 
 import java.util.Collections;
 
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.QAWarning.Severity;
-import org.openrefine.wikibase.schema.entityvalues.ReconItemIdValue;
-import org.openrefine.wikibase.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
+
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.qa.QAWarning.Severity;
+import org.openrefine.wikibase.schema.entityvalues.ReconItemIdValue;
+import org.openrefine.wikibase.testing.JacksonSerializationTest;
 
 public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
 

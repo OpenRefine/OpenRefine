@@ -3,13 +3,13 @@ package org.openrefine.wikibase.commands;
 
 import java.util.List;
 
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.QAWarning.Severity;
-import org.openrefine.wikibase.updates.EntityEdit;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.qa.QAWarning.Severity;
+import org.openrefine.wikibase.updates.EntityEdit;
 
 public class PreviewResults {
 

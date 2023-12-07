@@ -69,6 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #projects-container .project .project-name {
   font-size: 120%;
+  white-space: nowrap;
 }
 
 #projects-container .project .last-modified {
@@ -84,22 +85,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   border: 0;
 }
 
-#projects-container>table thead th:nth-child(2) {
+#projects-container table thead th:nth-child(2) {
   border-left: 0;
 }
 
-#projects-container>table thead th:nth-child(3) {
+#projects-container table thead th:nth-child(3) {
   white-space: nowrap;
 }
 
-/* Name */
-#projects-container>table td:nth-child(4) {
-  white-space: nowrap;
+#projects-container table thead th:nth-child(9) {
+  text-align: end;
 }
 
 /* Subject */
-#projects-container>table td:nth-child(6) {
+#projects-container table tbody td:nth-child(7) {
   white-space: nowrap;
+}
+
+/* Row Count is right aligned for numbers */
+#projects-container table tbody td:nth-child(9) {
+  text-align: end;
 }
 
 #projects-container>table>tbody>tr>td {

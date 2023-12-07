@@ -27,6 +27,13 @@
 
 package com.google.refine;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFieldsListImpl;
 import com.google.refine.expr.WrappedRow;
@@ -35,8 +42,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.LookupException;
-
-import java.util.*;
 
 /**
  * Manage the cache of project's lookups.

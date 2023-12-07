@@ -38,9 +38,9 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.text.StringEscapeUtils;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;

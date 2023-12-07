@@ -31,6 +31,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+
 import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.ItemEdit;
@@ -39,8 +42,6 @@ import org.openrefine.wikibase.updates.MediaInfoEdit;
 import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
 import org.openrefine.wikibase.updates.StatementEdit;
 import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 /**
  * A simple scheduler for batches committed via the Wikibase API.

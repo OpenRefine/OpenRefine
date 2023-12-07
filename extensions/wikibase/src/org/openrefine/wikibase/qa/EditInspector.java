@@ -31,19 +31,43 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikibase.manifests.Manifest;
-import org.openrefine.wikibase.qa.scrutinizers.*;
-import org.openrefine.wikibase.schema.WikibaseSchema;
-import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
-import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
-import org.openrefine.wikibase.utils.EntityCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
+
+import org.openrefine.wikibase.manifests.Manifest;
+import org.openrefine.wikibase.qa.scrutinizers.CalendarScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.CommonDescriptionScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.ConflictsWithScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.DifferenceWithinRangeScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.DistinctValuesScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.EditScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.EnglishDescriptionScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.EntityTypeScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.FileNameScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.FormatScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.InverseConstraintScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.ItemRequiresScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.MultiValueScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.NewEntityScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.NoEditsMadeScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.QualifierCompatibilityScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.QuantityScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.RestrictedPositionScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.RestrictedValuesScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.SelfReferentialScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.SingleValueScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.UnsourcedScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.UseAsQualifierScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.WhitespaceScrutinizer;
+import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
+import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
+import org.openrefine.wikibase.utils.EntityCache;
 
 /**
  * Runs a collection of edit scrutinizers on an edit batch.

@@ -85,7 +85,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Java ${{ matrix.java }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -94,7 +94,7 @@ jobs:
       - name: Check Java linting
         id: java_linting
         run: |
-          mvn -B compile formatter:validate javadoc:javadoc -Ddoclint=all
+          mvn -B compile formatter:validate impsort:check javadoc:javadoc -Ddoclint=all
 
       - name: Configure connections to databases
         id: configure_db_connections
@@ -123,7 +123,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Java 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 21
@@ -132,7 +132,7 @@ jobs:
       - name: Check Java linting
         id: java_linting
         run: |
-          mvn -B formatter:validate
+          mvn -B formatter:validate impsort:check
 
       - name: Build and test with Maven
         run: mvn -B jacoco:prepare-agent test

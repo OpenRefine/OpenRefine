@@ -24,7 +24,11 @@
 
 package org.openrefine.wikibase.qa;
 
-import org.openrefine.wikibase.utils.EntityCache;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -32,10 +36,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.openrefine.wikibase.utils.EntityCache;
 
 /**
  * This class provides an abstraction over the way constraint definitions are stored in a Wikibase instance.

@@ -39,12 +39,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.grel.Parser;
-
 import clojure.lang.IFn;
 import clojure.lang.RT;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.refine.grel.Parser;
 
 abstract public class MetaParser {
 
