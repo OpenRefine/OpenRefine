@@ -613,9 +613,9 @@ public class ExcelImporterTests extends ImporterTest {
         c.setCellValue(1234.56);
         c.setCellStyle(currencyStyle); // currency should import as float
 
-        //    HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
-        //    hl.setLabel(cellData.text);
-        //    hl.setAddress(cellData.link);
+        // HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+        // hl.setLabel(cellData.text);
+        // hl.setAddress(cellData.link);
 
         // Create extra columns to ensure sheet(i+1) has more columns than sheet(i)
         for (int i = 0; i < extra_columns; i++) {
