@@ -437,25 +437,35 @@ SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI, recon
   var serviceUrl = null;
   var service = null;
   var serviceLogo=null;
+  var urlIsValid=false;
   if (reconConfig) {
     serviceUrl =reconConfig.service;
   }
-  if (serviceUrl) {
-    service = ReconciliationManager.getServiceFromUrl(serviceUrl);
-  }
-  if(service){
-    serviceLogo=service.logo;
-  }
+  try {
     
-  var img =$("<img>");
-  if(serviceLogo ){
-    var imageUrl = serviceLogo;
-    img.attr("src", imageUrl);
-    img.attr("title", service.name);
-    img.addClass("serviceLogo-for-schema")
-  };
+    if (new URL(serviceUrl)) {
+      service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+    }
+    if(service) {
+      serviceLogo=service.logo;
+    }
+    urlIsValid=true;
+  }
+  catch {
+    console.log("The URL is not valid");
+  }
+  
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
-  cell.append(img);
+  if(urlIsValid) {
+    var img =$("<img>");
+    if(serviceLogo) {
+      var imageUrl = serviceLogo;
+      img.attr("src", imageUrl);
+      img.attr("title", service.name);
+      img.addClass("serviceLogo-for-schema")
+   }
+    cell.append(img);
+  }
   cell.data({
         'columnName': name,
         'reconciledSiteIRI': reconciledSiteIRI
