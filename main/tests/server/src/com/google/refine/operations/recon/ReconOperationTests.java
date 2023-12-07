@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.messages.OpenRefineMessage;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -82,7 +83,7 @@ public class ReconOperationTests extends RefineTest {
             "           \"columnName\" : \"researcher\",\n" +
             "           \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n"
             +
-            "           \"name\" : \"researcher: judgment\"\n" +
+            "           \"name\" : \"researcher: "+ OpenRefineMessage.recon_operation_judgement_facet_name() + "\"\n" +
             "         },\n" +
             "         \"facetOptions\" : {\n" +
             "           \"scroll\" : true\n" +
@@ -94,7 +95,7 @@ public class ReconOperationTests extends RefineTest {
             "           \"columnName\" : \"researcher\",\n" +
             "           \"expression\" : \"cell.recon.best.score\",\n" +
             "           \"mode\" : \"range\",\n" +
-            "           \"name\" : \"researcher: best candidate's score\"\n" +
+            "           \"name\" : \"researcher: " + OpenRefineMessage.recon_operation_score_facet_name() + "\"\n" +
             "         },\n" +
             "         \"facetType\" : \"range\"\n" +
             "       } ],\n" +
