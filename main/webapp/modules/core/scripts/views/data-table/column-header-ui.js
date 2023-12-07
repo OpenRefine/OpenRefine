@@ -69,7 +69,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
   elmts.dropdownMenu.on('click',function() {
     self._createMenuForColumnHeader(this);
   });
-
+  
   if ("reconStats" in this._column) {
     var stats = this._column.reconStats;
     if (stats.nonBlanks > 0) {

@@ -483,6 +483,7 @@ function init() {
 
       "scripts/reconciliation/recon-manager.js",
       "scripts/reconciliation/recon-dialog.js",
+      "scripts/reconciliation/recon-dialog-2.js",
       "scripts/reconciliation/standard-service-panel.js",
 
       "scripts/dialogs/expression-preview-dialog.js",
