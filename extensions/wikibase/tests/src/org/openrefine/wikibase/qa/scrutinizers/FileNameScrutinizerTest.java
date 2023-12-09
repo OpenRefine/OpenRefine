@@ -78,6 +78,16 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
         assertNoWarningRaised();
     }
 
+    @Test
+    public void testValidCharactersInFilenameNonAscii() {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("সমাচার দর্পণ - ৮ অক্টোবর ১৮৩৬.pdf")
+                .build();
+
+        scrutinize(edit);
+        assertNoWarningRaised();
+    }
+
     @Test()
     public void testInvalidCharactersInFilenameTab() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
