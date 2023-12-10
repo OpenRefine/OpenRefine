@@ -42,17 +42,18 @@ Options
     --jmx                         Enable JMX monitoring.
 
 Actions
+    run                           Run OpenRefine [default].
     build                         Build OpenRefine.
     clean                         Clean compiled classes.
-    dist <version>                Make all distributions.
-    extensions_test               Run the extensions tests.
-    linux_dist <version>          Make Linux binary distribution.
-    mac_dist <version>            Make MacOSX binary distribution.
-    run                           Run OpenRefine [default].
-    server_test                   Run the server tests.
     test                          Run all tests.
-    e2e_tests                      Run the e2e tests.
+    extensions_test               Run the extensions tests.
+    server_test                   Run the server tests.
+    e2e_tests                     Run the e2e tests.
+    lint                          Reformat the source code according to OpenRefine's conventions.
+    mac_dist <version>            Make MacOS binary distribution.
     windows_dist <version>        Make Windows binary distribution.
+    linux_dist <version>          Make Linux binary distribution.
+    dist <version>                Make all distributions.
 EOF
 exit 1
 }
@@ -240,6 +241,13 @@ do_mvn() {
     mvn_prepare
 
     "$MVN" $MVN_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running maven task '$1'"
+}
+
+# ----------------------------------------------------------------------------------------------
+
+lint() {
+    mvn_prepare
+    "$MVN" formatter:format impsort:sort
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -720,12 +728,13 @@ case "$ACTION" in
   clean) do_mvn clean;;
   test) test $1;;
   tests) test $1;;
-  e2e_tests) e2e_tests;;    
+  e2e_tests) e2e_tests;;
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
   extensions_tests) extensions_test $1;;
   run) run;;
+  lint) lint;;
   mac_dist) mac_dist $1;;
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;
