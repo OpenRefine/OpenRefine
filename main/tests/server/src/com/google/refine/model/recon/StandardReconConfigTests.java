@@ -298,8 +298,7 @@ public class StandardReconConfigTests extends RefineTest {
             Cell cell = row.cells.get(1);
             assertNotNull(cell.value);
             assertNotNull(cell.recon.error);
-            // the recon object is left null, so that it can be told apart from
-            // empty recon objects (the service legitimately did not return any candidate)
+            // the recon object has error attribute
         }
     }
 
@@ -647,10 +646,9 @@ public class StandardReconConfigTests extends RefineTest {
         jobList.add(job);
 
         List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
-        // assertions
-        // assertEquals(returnReconList.get(0).error, url.host() + ": nodename nor servname provided, or not known");
         assertNotNull(returnReconList);
         assertNotNull(returnReconList.get(0).error);
+        // the error message is unstable and system-dependent, so we are not asserting for its exact contents.
 
     }
 
