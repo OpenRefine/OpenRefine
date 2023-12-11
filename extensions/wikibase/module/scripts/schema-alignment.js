@@ -30,7 +30,29 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-
+function returnServiceLogo(reconConfig){
+  var serviceUrl = null;
+  var service = null;
+  var serviceLogo=null;
+  if (reconConfig) {
+    serviceUrl =reconConfig.service;
+  }
+  if (serviceUrl) {
+    service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+  }
+  if(service) {
+    serviceLogo=service.logo;
+  }
+  try {
+    if(new URL(serviceLogo)){
+      return serviceLogo;
+    }
+  }
+  catch {
+    console.warn("Invalid logo URL supplied by service "+serviceUrl)
+  }
+  
+};
 var SchemaAlignment = {
   _isSetUp: false
 };
@@ -434,29 +456,9 @@ SchemaAlignment._changesCleared = function() {
 };
 
 SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI, reconConfig) {
-  var serviceUrl = null;
-  var service = null;
-  var serviceLogo=null;
-  var urlIsValid=false;
-  if (reconConfig) {
-    serviceUrl =reconConfig.service;
-  }
-  try {
-    
-    if (new URL(serviceUrl)) {
-      service = ReconciliationManager.getServiceFromUrl(serviceUrl);
-    }
-    if(service) {
-      serviceLogo=service.logo;
-    }
-    urlIsValid=true;
-  }
-  catch {
-    console.log("The URL is not valid");
-  }
-  
+  var Logo=returnServiceLogo(reconConfig);
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
-  if(urlIsValid) {
+  if(Logo) {
     var img =$("<img>");
     if(serviceLogo) {
       var imageUrl = serviceLogo;
@@ -1498,27 +1500,15 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
   }
 
   var acceptDraggableColumn = function(column) {
-    var serviceUrl = null;
-  var service = null;
-  var serviceLogo=null;
-  if (reconConfig) {
-    serviceUrl =reconConfig.service;
-  }
-  if (serviceUrl) {
-    service = ReconciliationManager.getServiceFromUrl(serviceUrl);
-  }
-  if(service){
-    serviceLogo=service.logo;
-  }
-    
-  var img =$("<img>");
-  if(serviceLogo ){
-    var imageUrl = serviceLogo;
-    img.attr("src", imageUrl);
-    img.attr("title", service.name);
-    img.addClass("serviceLogo-for-schema")
+    var Logo=returnServiceLogo(reconConfig);
+    var img =$("<img>");
+    if(Logo ){
+      var imageUrl = serviceLogo;
+      img.attr("src", imageUrl);
+      img.attr("title", service.name);
+      img.addClass("serviceLogo-for-schema")
   
-  };
+    };
 
     input.hide();
     input.val("");
