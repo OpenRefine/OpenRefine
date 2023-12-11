@@ -53,6 +53,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.refine.messages.OpenRefineMessage;
 import com.google.refine.util.ParsingUtilities;
 
 public class SeparatorBasedImporterTests extends ImporterTest {
@@ -164,9 +165,9 @@ public class SeparatorBasedImporterTests extends ImporterTest {
             Assert.fail("Exception during file parse", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 3");
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), OpenRefineMessage.importer_utilities_column() + " 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), OpenRefineMessage.importer_utilities_column() + " 2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), OpenRefineMessage.importer_utilities_column() + " 3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -337,9 +338,9 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "Column 4");
-        Assert.assertEquals(project.columnModel.columns.get(4).getName(), "Column 5");
-        Assert.assertEquals(project.columnModel.columns.get(5).getName(), "Column 6");
+        Assert.assertEquals(project.columnModel.columns.get(3).getName(), OpenRefineMessage.importer_utilities_column() + " 4");
+        Assert.assertEquals(project.columnModel.columns.get(4).getName(), OpenRefineMessage.importer_utilities_column() + " 5");
+        Assert.assertEquals(project.columnModel.columns.get(5).getName(), OpenRefineMessage.importer_utilities_column() + " 6");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 6);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
