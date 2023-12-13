@@ -360,7 +360,7 @@ class ReconCellRenderer {
       command,
       params,
       bodyParams,
-      { columnStatsChanged: columnStatsChanged },
+      { cellsChanged: true, columnStatsChanged: columnStatsChanged },
       {
         onDone: function(o) {
           if (o.cell.r) {
