@@ -276,9 +276,9 @@ public abstract class Command {
 
         HistoryEntry historyEntry = project.processManager.queueProcess(process);
         if (historyEntry != null) {
-            Writer w = response.getWriter();
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
+            Writer w = response.getWriter();
             ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
 
             w.flush();
@@ -307,7 +307,7 @@ public abstract class Command {
 
     static protected void respond(HttpServletResponse response, String status, String message)
             throws IOException {
-
+        response.setCharacterEncoding("UTF-8");
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         writer.writeStartObject();
