@@ -283,7 +283,11 @@ a.data-table-recon-action, .data-table-recon-extra>a {
   text-decoration: none;
   color: var(--link-secondary);
 }
-
+.data-table-error-extra>a{
+  font-size: 0.8em;;
+  text-decoration: none;
+  color: var(--link-secondary);
+}
 a.data-table-recon-action, .data-table-recon-extra {
   font-size: 0.8em;
   display: block;
