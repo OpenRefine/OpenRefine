@@ -290,6 +290,17 @@ a.data-table-recon-action, .data-table-recon-extra {
   margin: 3px 0 0;
 }
 
+a.data-table-recon-action, .data-table-recon-visibility>a {
+  text-decoration: none;
+  color: var(--link-secondary);
+}
+
+a.data-table-recon-action, .data-table-recon-visibility {
+  font-size: 0.8em;
+  display: block;
+  margin: 3px 0 0;
+}
+
 a.data-table-recon-match, a.data-table-recon-match-similar {
   position: absolute;
   top: 0;
@@ -301,6 +312,7 @@ a.data-table-recon-match, a.data-table-recon-match-similar {
   background-repeat: no-repeat;
   background-position: -16px 0;
   text-decoration: none;
+
 }
 
 a.data-table-recon-match:hover {
