@@ -416,10 +416,16 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Test
     public void importUnsupportedZipFile() throws IOException {
-        String filename = "unsupportedPPMD.zip";
+        for (String basename : new String[] { "unsupportedPPMD", "notazip" }) {
+            testInvalidZipFile(basename);
+        }
+    }
+
+    private void testInvalidZipFile(String basename) throws IOException {
+        String filename = basename + ".zip";
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
-        File tmp = File.createTempFile("openrefine-test-unsupportedPPMD", ".zip", job.getRawDataDir());
+        File tmp = File.createTempFile("openrefine-test-" + basename, ".zip", job.getRawDataDir());
         tmp.deleteOnExit();
         FileUtils.copyFile(new File(filepath), tmp);
 
@@ -446,13 +452,13 @@ public class ImportingUtilitiesTests extends ImporterTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        assertThrows(IOException.class,
+        assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
-        assertThrows(FileUploadBase.InvalidContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request,
-                new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
-        assertThrows(IOException.class,
+        assertThrows("Failed to throw for " + filename, FileUploadBase.InvalidContentTypeException.class,
+                () -> ImportingUtilities.retrieveContentFromPostRequest(request,
+                        new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
+        assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
-
     }
 
     @Test
