@@ -12,6 +12,7 @@ on:
 
 jobs:
   analyze:
+    if: github.repository == 'OpenRefine/OpenRefine'
     name: Analyze Java
     runs-on: ubuntu-latest
     permissions:
