@@ -30,7 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-function returnServiceLogo(reconConfig){
+function serviceLogoFromReconConfig(reconConfig){
   var serviceUrl = null;
   var service = null;
   var serviceLogo=null;
@@ -40,13 +40,11 @@ function returnServiceLogo(reconConfig){
   if (serviceUrl) {
     service = ReconciliationManager.getServiceFromUrl(serviceUrl);
   }
-  if(service) {
+  if (service) {
     serviceLogo=service.logo;
   }
   try {
-    if(new URL(serviceLogo)){
-      return serviceLogo;
-    }
+    return new URL(serviceLogo);  
   }
   catch {
     console.warn("Invalid logo URL supplied by service "+serviceUrl)
@@ -456,9 +454,9 @@ SchemaAlignment._changesCleared = function() {
 };
 
 SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI, reconConfig) {
-  var Logo=returnServiceLogo(reconConfig);
+  var logo=serviceLogoFromReconConfig(reconConfig);
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
-  if(Logo) {
+  if(logo) {
     var img =$("<img>");
     if(serviceLogo) {
       var imageUrl = serviceLogo;
@@ -1500,7 +1498,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
   }
 
   var acceptDraggableColumn = function(column) {
-    var Logo=returnServiceLogo(reconConfig);
+    var Logo=serviceLogoFromReconConfig(reconConfig);
     var img =$("<img>");
     if(Logo ){
       var imageUrl = serviceLogo;
