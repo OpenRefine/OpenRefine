@@ -286,7 +286,7 @@ a.data-table-recon-action, .data-table-recon-extra>a {
 
 a.data-table-recon-action, .data-table-recon-extra {
   font-size: 0.8em;
-  display: block;
+  display: inline;
   margin: 3px 0 0;
 }
 
@@ -297,7 +297,7 @@ a.data-table-recon-action, .data-table-recon-visibility>a {
 
 a.data-table-recon-action, .data-table-recon-visibility {
   font-size: 0.8em;
-  display: block;
+  display: inline;
   margin: 3px 0 0;
 }
 

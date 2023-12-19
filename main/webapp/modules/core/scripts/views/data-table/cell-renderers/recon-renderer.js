@@ -164,7 +164,7 @@ class ReconCellRenderer {
             }
             addSuggest = true;
           }
-
+          var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(visibilityChoices);
           if (addSuggest) {
             $('<a href="javascript:{}"></a>')
             .on('click',function(evt) {
@@ -172,7 +172,7 @@ class ReconCellRenderer {
               return false;
             })
             .text($.i18n('core-views/search-match'))
-            .appendTo(visibilityChoices);
+            .appendTo(extraChoices);
           }
          
 
