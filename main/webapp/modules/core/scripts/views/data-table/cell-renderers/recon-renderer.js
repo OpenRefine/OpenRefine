@@ -443,25 +443,39 @@ class ReconCellRenderer {
    * Sets up a preview widget to appear when hovering the given DOM element.
    */
   previewOnHover(service, candidate, hoverElement, coreElement, showActions, rowIndex, cellIndex, cell, cellUI) {
-      var self = this;
-      var preview = null;
-      if ((service) && (service.preview)) {
-          preview = service.preview;
-      }
+    var self = this;
+    var preview = null;
+    if (service && service.preview) {
+        preview = service.preview;
+    }
 
-      if (preview) {
-          var dismissCallback = null;
-          hoverElement.on('mouseenter',function(evt) {
-          if (!evt.metaKey && !evt.ctrlKey) {
-              dismissCallback = self.previewCandidateTopic(candidate, coreElement, preview, showActions, rowIndex, cellIndex, cell, cellUI);
-              evt.preventDefault();
-          }
-          }).on('mouseleave',function(evt) {
-          if(dismissCallback !== null) {
-              dismissCallback();
-          }
-          });
-      }
-  };
+    var dismissCallback = null;
+    var previewDelay = 250; // Set the delay time in milliseconds 
+
+    hoverElement.on('mouseenter', function (evt) {
+        if (!evt.metaKey && !evt.ctrlKey) {
+          
+            if (dismissCallback !== null) {
+                clearTimeout(dismissCallback);
+            }
+
+            dismissCallback = self.previewCandidateTopic(candidate, coreElement, preview, showActions, rowIndex, cellIndex, cell, cellUI);
+            evt.preventDefault();
+        }
+    }).on('mouseleave', function (evt) {
+        if (dismissCallback !== null) {
+            setTimeout(function () {
+                self.dismissPreview(dismissCallback);
+            }, previewDelay);
+        }
+    });
+};
+
+dismissPreview(dismissCallback) {
+    if (dismissCallback !== null) {
+        dismissCallback();
+        dismissCallback = null;
+    }
+}
 
 }
