@@ -92,7 +92,7 @@
     <commons-compress.version>1.25.0</commons-compress.version>
     <velocity.version>2.3</velocity.version>
     <marc4j.version>2.9.5</marc4j.version>
-    <jsoup.version>1.17.1</jsoup.version>
+    <jsoup.version>1.17.2</jsoup.version>
     <odfdom-java.version>0.9.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
     <clojure.version>1.11.1</clojure.version>
