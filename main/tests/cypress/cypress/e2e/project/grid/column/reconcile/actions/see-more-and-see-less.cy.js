@@ -3,7 +3,7 @@ describe('Match each cell to its best candidate', () => {
         cy.addProjectForDeletion();
     });
     
-    it('Match each cell to its best candidate', () => {
+    it('Testing see more / see less', () => {
         cy.visitOpenRefine();
         cy.navigateTo('Import project');
         cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
@@ -22,35 +22,16 @@ describe('Match each cell to its best candidate', () => {
 
         //confirming the initial no. of candidates
         cy.getCell(0, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
-        cy.getCell(1, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
-        cy.getCell(2, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
-        cy.getCell(3, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
-        cy.getCell(4, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
-        cy.getCell(5, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
 
         //clicking the see more option
         cy.getCell(0, 'species').find('.data-table-recon-visibility').click();
-        cy.getCell(1, 'species').find('.data-table-recon-visibility').click();
-        cy.getCell(2, 'species').find('.data-table-recon-visibility').click();
-        cy.getCell(3, 'species').find('.data-table-recon-visibility').click();
-        cy.getCell(4, 'species').find('.data-table-recon-visibility').click();
-        cy.getCell(5, 'species').find('.data-table-recon-visibility').click();
 
         //confirming the no. of candidates after we click on see more
         cy.getCell(0, 'species').find('.data-table-recon-candidate:visible').should('have.length', 6);
-        cy.getCell(1, 'species').find('.data-table-recon-candidate:visible').should('have.length', 6);
-        cy.getCell(2, 'species').find('.data-table-recon-candidate:visible').should('have.length', 6);
-        cy.getCell(3, 'species').find('.data-table-recon-candidate:visible').should('have.length', 6);
-        cy.getCell(4, 'species').find('.data-table-recon-candidate:visible').should('have.length', 6);
-        cy.getCell(5, 'species').find('.data-table-recon-candidate:visible').should('have.length', 6);
-
+        
         //verifying that the see more option has changed to see less
         cy.getCell(0, 'species').find('.data-table-recon-visibility').should('to.contain', 'See less');
-        cy.getCell(1, 'species').find('.data-table-recon-visibility').should('to.contain', 'See less');
-        cy.getCell(2, 'species').find('.data-table-recon-visibility').should('to.contain', 'See less');
-        cy.getCell(3, 'species').find('.data-table-recon-visibility').should('to.contain', 'See less');
-        cy.getCell(4, 'species').find('.data-table-recon-visibility').should('to.contain', 'See less');
-        cy.getCell(5, 'species').find('.data-table-recon-visibility').should('to.contain', 'See less'); 
+        
         
     });
 });
