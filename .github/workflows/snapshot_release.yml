@@ -266,7 +266,7 @@ jobs:
 
     - name: Upload build artifact for Windows (without Java)
       id: upload-build-artifact-win
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-win-${{ steps.version_string_variable.outputs.output_value }}.zip"
         name: openrefine-win-archive-${{ steps.version_string_variable.outputs.output_value }}
@@ -283,7 +283,7 @@ jobs:
 
     - name: Upload build artifact for Windows (with Java)
       id: upload-build-artifact-win-with-java
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip"
         name: openrefine-win-with-java-archive-${{ steps.version_string_variable.outputs.output_value }}
@@ -294,7 +294,7 @@ jobs:
 
     - name: Upload build artifact for Windows (with Java) for Installer
       id: upload-build-artifact-win-with-java-for-installer
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: installertemp-win-with-java-${{ steps.version_string_variable.outputs.output_value }}
         path: ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}/openrefine-${{ steps.version_string_variable.outputs.output_value }}
@@ -311,7 +311,7 @@ jobs:
 
     - name: Upload build artifact for Linux
       id: upload-build-artifact-linux
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}.tar.gz"
         name: openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}
@@ -328,7 +328,7 @@ jobs:
 
     - name: Upload build artifact for Mac
       id: upload-build-artifact-mac
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}.dmg"
         name: openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}
@@ -399,7 +399,7 @@ jobs:
 
     - name: Upload the installer as an artifact
       id: upload-build-artifact-win-with-java-installer
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}.exe"
         name: openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
