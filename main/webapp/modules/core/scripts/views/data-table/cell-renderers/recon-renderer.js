@@ -116,8 +116,7 @@ class ReconCellRenderer {
                 if (isExpanded) {
                   ul.find('.data-table-recon-candidate').show(); // Show all candidates
                   seeMoreLink.text($.i18n('core-views/see-less')); // Change link text to "See Less"
-                } 
-                else {
+                } else {
                   ul.find('.data-table-recon-candidate:not(:lt(' + visibleCandidate + '))').hide();
                   ul.find('.data-table-recon-candidate:last').show();
                   seeMoreLink.text($.i18n('core-views/see-more')); // Change link text to "See More"
@@ -174,8 +173,6 @@ class ReconCellRenderer {
             .text($.i18n('core-views/search-match'))
             .appendTo(extraChoices);
           }
-         
-
         }
       }//end of else
 
@@ -183,7 +180,7 @@ class ReconCellRenderer {
     }
 
   }
-  
+
   doRematch(rowIndex, cellIndex, cell, cellUI) {
     this.doJudgment("none", {}, {}, rowIndex, cellIndex, cell, cellUI);
   }
