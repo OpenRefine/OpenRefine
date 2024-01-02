@@ -381,6 +381,15 @@ e2e_tests() {
     add_option "-Drefine.autoreload=false"
     add_option "-Dbutterfly.autoreload=false"
 
+    check_running
+
+    if [ "$RUNNING" ] ; then
+        echo "An OpenRefine server is already running. Please shut it down so that we can start a test server."
+        exit
+    fi
+
+    echo "Starting OpenRefine server"
+
     run fork > /dev/null
 
     echo "Waiting for OpenRefine to load..."
