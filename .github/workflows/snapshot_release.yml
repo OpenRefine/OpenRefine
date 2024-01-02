@@ -375,7 +375,7 @@ jobs:
 
     - name: Cleanup unused installer build artifact (delete)
       id: delete-build-artifact-win-with-java
-      uses: geekyeggo/delete-artifact@v2
+      uses: geekyeggo/delete-artifact@v4
       with:
         name: installertemp-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
         useGlob: false
