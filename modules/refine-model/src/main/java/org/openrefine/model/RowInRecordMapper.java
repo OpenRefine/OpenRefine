@@ -47,10 +47,6 @@ public abstract class RowInRecordMapper
     @Override
     public abstract boolean preservesRecordStructure();
 
-    public boolean persistResults() {
-        return false;
-    }
-
     /**
      * Computes the function on a batch of rows, as a batched version of {@link #call(Record, long, Row)}. The supplied
      * lists must all have the same size. By default, this just calls {@link #call(Record, long, Row)} for each element

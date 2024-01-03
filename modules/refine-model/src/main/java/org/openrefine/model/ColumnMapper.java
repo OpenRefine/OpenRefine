@@ -141,11 +141,6 @@ public class ColumnMapper implements Serializable {
             }
 
             @Override
-            public boolean persistResults() {
-                return mapper.persistResults();
-            }
-
-            @Override
             public int getBatchSize() {
                 return mapper.getBatchSize();
             }

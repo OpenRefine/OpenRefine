@@ -66,7 +66,7 @@ import org.openrefine.overlay.OverlayModel;
  * <li>In the case when {@link #getColumnInsertions()} is not null, it is also possible to specify which of the original
  * columns should be deleted from the resulting rows. This setting is otherwise ignored.</li>
  * </ul>
- * 
+ *
  * This class can also be subclassed by operations which ignore the engine, by initializing the engine config with
  * {@link EngineConfig#ALL_ROWS}.
  */
@@ -116,6 +116,13 @@ abstract public class RowMapOperation extends EngineDependentOperation {
     }
 
     /**
+     * Whether the results of this operation should be saved to avoid repeated computation.
+     */
+    public boolean persistResults() {
+        return false;
+    }
+
+    /**
      * Returns the column model after the change is applied to the given grid. This only used if
      * {@link #getColumnInsertions()} is not null, in which case the new column model is directly derived from the
      * supplied insertions.
@@ -127,7 +134,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
 
     /**
      * Returns the row mapper applied to the rows matched by the filter.
-     * 
+     *
      * @param estimatedRowCount
      *            TODO
      */
@@ -138,7 +145,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
 
     /**
      * Returns the row mapper applied to the rows not matched by the filter.
-     * 
+     *
      * @param estimatedRowCount
      *            TODO
      */
@@ -160,44 +167,63 @@ abstract public class RowMapOperation extends EngineDependentOperation {
         return Collections.emptyList();
     }
 
-    @Override
-    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
-        Engine engine = getEngine(projectState, context.getProjectId());
+    private List<ColumnId> getReadColumnIds(ColumnModel columnModel) throws MissingColumnException {
+        List<String> dependencies = getColumnDependencies();
+        if (dependencies == null) {
+            return null;
+        }
+        List<ColumnId> dependencyIds = new ArrayList<>(dependencies.size());
+        for (String columnName : dependencies) {
+            ColumnMetadata metadata = columnModel.getColumnByName(columnName);
+            if (metadata == null) {
+                throw new MissingColumnException(columnName);
+            }
+            dependencyIds.add(metadata.getColumnId());
+        }
+        return dependencyIds;
+    }
 
-        ColumnModel columnModel = projectState.getColumnModel();
-        Map<String, OverlayModel> overlayModels = projectState.getOverlayModels();
-        long rowCount = projectState.rowCount();
+    private List<ColumnId> getEngineColumnIds(ColumnModel columnModel) throws MissingColumnException {
+        List<ColumnId> dependencyIds = null;
+        Set<String> engineColumnDependencies = _engineConfig.getColumnDependencies();
+        if (engineColumnDependencies != null) {
+            dependencyIds = new ArrayList<>();
+            for (String columnName : engineColumnDependencies) {
+                ColumnMetadata metadata = columnModel.getColumnByName(columnName);
+                if (metadata == null) {
+                    throw new MissingColumnException(columnName);
+                }
+                dependencyIds.add(metadata.getColumnId());
+            }
+        }
+        return dependencyIds;
+    }
 
-        ColumnModel newColumnModel;
+    private class MappersAndColumnModel {
+
         RowInRecordMapper positiveMapper;
         RowInRecordMapper negativeMapper;
-        boolean preservesRecords;
+        ColumnModel newColumnModel;
+    }
+
+    private MappersAndColumnModel getMappersAndColumnModel(Grid state, ChangeContext context) throws OperationException {
+        ColumnModel columnModel = state.getColumnModel();
+        Map<String, OverlayModel> overlayModels = state.getOverlayModels();
+        long rowCount = state.rowCount();
+
+        MappersAndColumnModel result = new MappersAndColumnModel();
 
         List<String> dependencies = getColumnDependencies();
-        List<ColumnId> dependencyIds = null;
-        List<ColumnId> dependencyIdsWithEngine = null;
         if (dependencies != null) {
+            List<ColumnId> dependencyIds = getReadColumnIds(columnModel);
             // Isolate mappers so that they only read the dependencies that they declare
-            dependencyIds = new ArrayList<>(dependencies.size());
             List<ColumnMetadata> inputColumns = new ArrayList<>();
             for (String columnName : dependencies) {
                 ColumnMetadata metadata = columnModel.getColumnByName(columnName);
                 if (metadata == null) {
                     throw new MissingColumnException(columnName);
                 }
-                dependencyIds.add(metadata.getColumnId());
                 inputColumns.add(metadata);
-            }
-            Set<String> engineColumnDependencies = _engineConfig.getColumnDependencies();
-            if (engineColumnDependencies != null) {
-                dependencyIdsWithEngine = new ArrayList<>(dependencyIds);
-                for (String columnName : engineColumnDependencies) {
-                    ColumnMetadata metadata = columnModel.getColumnByName(columnName);
-                    if (metadata == null) {
-                        throw new MissingColumnException(columnName);
-                    }
-                    dependencyIdsWithEngine.add(metadata.getColumnId());
-                }
             }
 
             ColumnModel inputColumnModel = new ColumnModel(inputColumns,
@@ -205,121 +231,144 @@ abstract public class RowMapOperation extends EngineDependentOperation {
                     columnModel.hasRecords());
             ColumnMapper columnMapper = new ColumnMapper(dependencyIds, columnModel);
 
-            newColumnModel = getNewColumnModel(inputColumnModel, overlayModels, context);
-            positiveMapper = columnMapper.translateRowInRecordMapper(
+            result.newColumnModel = getNewColumnModel(inputColumnModel, overlayModels, context);
+            result.positiveMapper = columnMapper.translateRowInRecordMapper(
                     getPositiveRowMapper(inputColumnModel, overlayModels, rowCount, context));
-            negativeMapper = columnMapper.translateRowInRecordMapper(
+            result.negativeMapper = columnMapper.translateRowInRecordMapper(
                     getNegativeRowMapper(inputColumnModel, overlayModels, rowCount, context));
         } else {
             // expose the full column model to the row mapper
-            positiveMapper = getPositiveRowMapper(columnModel, overlayModels, rowCount, context);
-            negativeMapper = getNegativeRowMapper(columnModel, overlayModels, rowCount, context);
-            newColumnModel = getNewColumnModel(columnModel, overlayModels, context);
+            result.positiveMapper = getPositiveRowMapper(columnModel, overlayModels, rowCount, context);
+            result.negativeMapper = getNegativeRowMapper(columnModel, overlayModels, rowCount, context);
+            result.newColumnModel = getNewColumnModel(columnModel, overlayModels, context);
+        }
+        return result;
+    }
+
+    private class InsertionIndexMap {
+
+        List<ColumnMetadata> columns;
+        List<String> newColumnNames;
+        List<ColumnMetadata> newColumnMetadata;
+
+        // Build new column model while keeping track of the indices of the columns to be written.
+        // In the following two lists, each value is either:
+        // - a non-negative integer, interpreted as a column index from the original grid
+        // - a negative integer, interpreted as a "-(i + 1)" where i is a column index from the mapper
+
+        // indicesMap stores the column sources for rows in view (filtered by the engine)
+        List<Integer> indicesMap;
+        // negativeIndicesMap stores the column sources for rows outside of the view (filtered out by the engine)
+        List<Integer> negativeIndicesMap;
+    }
+
+    private InsertionIndexMap buildInsertionIndexMap(ColumnModel columnModel, List<ColumnInsertion> insertions, ChangeContext context,
+            boolean neutralEngine) throws OperationException {
+        InsertionIndexMap result = new InsertionIndexMap();
+        result.columns = columnModel.getColumns();
+        result.newColumnNames = new ArrayList<>(columnModel.getColumnNames());
+        result.newColumnMetadata = new ArrayList<>(columnModel.getColumns());
+        result.indicesMap = new ArrayList<>(IntStream.range(0, result.columns.size()).boxed().collect(Collectors.toList()));
+        result.negativeIndicesMap = new ArrayList<>(IntStream.range(0, result.columns.size()).boxed().collect(Collectors.toList()));
+
+        // process deletions first
+        for (String deletedColumn : getColumnDeletions()) {
+            int index = result.newColumnNames.indexOf(deletedColumn);
+            if (index != -1) {
+                result.indicesMap.remove(index);
+                result.negativeIndicesMap.remove(index);
+                result.newColumnNames.remove(index);
+                result.newColumnMetadata.remove(index);
+            } else {
+                throw new MissingColumnException(deletedColumn);
+            }
         }
 
-        boolean persistResults = positiveMapper.persistResults();
-        RowInRecordMapper changeDataProducer = null;
-        if (persistResults) {
-            changeDataProducer = positiveMapper;
+        // insert columns declared by the operation
+        int mapperColumnIndex = 0;
+        for (ColumnInsertion insertion : insertions) {
+            int insertionIndex = insertion.getInsertAt() != null ? (result.newColumnNames.indexOf(insertion.getInsertAt()) + 1)
+                    : 0;
+
+            ColumnMetadata columnMetadata;
+            int sourceColumnIndex;
+            if (insertion.getCopiedFrom() == null) {
+                sourceColumnIndex = -(mapperColumnIndex + 1);
+                mapperColumnIndex++;
+                columnMetadata = new ColumnMetadata(insertion.getName())
+                        .withLastModified(context.getHistoryEntryId());
+            } else {
+                sourceColumnIndex = columnModel.getRequiredColumnIndex(insertion.getCopiedFrom());
+                columnMetadata = columnModel.getColumnByIndex(sourceColumnIndex)
+                        .withName(insertion.getName());
+                if (!neutralEngine) {
+                    columnMetadata = columnMetadata.withLastModified(context.getHistoryEntryId());
+                }
+            }
+
+            if (insertion.isReplace()) {
+                int replacingIndex = insertionIndex - 1;
+                if (replacingIndex == -1) {
+                    throw new MissingColumnException(insertion.getInsertAt());
+                }
+                int existingName = result.newColumnNames.indexOf(insertion.getName());
+                if (existingName != -1 && existingName != replacingIndex) {
+                    throw new DuplicateColumnException(insertion.getName());
+                }
+                ColumnMetadata replacedColumn = result.newColumnMetadata.get(replacingIndex);
+                if (columnMetadata.getReconConfig() == null && replacedColumn.getReconConfig() != null) {
+                    columnMetadata = columnMetadata.withReconConfig(replacedColumn.getReconConfig());
+                }
+                if ((columnMetadata.getReconConfig() == null && insertion.getReconConfig() != null)
+                        || insertion.getOverrideReconConfig()) {
+                    columnMetadata = columnMetadata.withReconConfig(insertion.getReconConfig());
+                }
+                result.indicesMap.set(replacingIndex, sourceColumnIndex);
+                // no need to change negativeIndicesMap, since we will not touch the column for rows outside of the
+                // view
+                result.newColumnNames.set(replacingIndex, insertion.getName());
+                result.newColumnMetadata.set(replacingIndex, columnMetadata);
+            } else {
+                int existingName = result.newColumnNames.indexOf(insertion.getName());
+                if (existingName != -1) {
+                    throw new DuplicateColumnException(insertion.getName());
+                }
+                result.indicesMap.add(insertionIndex, sourceColumnIndex);
+                result.negativeIndicesMap.add(insertionIndex, sourceColumnIndex);
+                result.newColumnNames.add(insertionIndex, insertion.getName());
+                result.newColumnMetadata.add(insertionIndex, columnMetadata);
+            }
         }
-        RowInRecordChangeDataJoiner joiner = defaultJoiner(negativeMapper);
+
+        return result;
+    }
+
+    @Override
+    public ChangeResult apply(Grid projectState, ChangeContext context) throws OperationException {
+        Engine engine = getEngine(projectState, context.getProjectId());
+
+        ColumnModel columnModel = projectState.getColumnModel();
+
+        ColumnModel newColumnModel;
+        RowInRecordMapper positiveMapper;
+        RowInRecordMapper negativeMapper;
+
+        MappersAndColumnModel mappersAndColumnModel = getMappersAndColumnModel(projectState, context);
+        newColumnModel = mappersAndColumnModel.newColumnModel;
+        positiveMapper = mappersAndColumnModel.positiveMapper;
+        negativeMapper = mappersAndColumnModel.negativeMapper;
+
+        boolean persistResults = persistResults();
 
         // Complete mappers so that they also add the columns that they do not touch
         List<ColumnInsertion> insertions = getColumnInsertions();
+        InsertionIndexMap insertionIndexMap = null;
         if (insertions != null) {
-            List<ColumnMetadata> columns = columnModel.getColumns();
-            // Build new column model while keeping track of the indices of the columns to be written.
-            // Each value is either:
-            // - a non-negative integer, interpreted as a column index from the original grid
-            // - a negative integer, interpreted as a "-(i + 1)" where i is a column index from the mapper
-            List<Integer> indicesMap = new ArrayList<>(IntStream.range(0, columns.size()).boxed().collect(Collectors.toList()));
-            List<Integer> negativeIndicesMap = new ArrayList<>(IntStream.range(0, columns.size()).boxed().collect(Collectors.toList()));
-            List<String> newColumnNames = new ArrayList<>(columnModel.getColumnNames());
-            List<ColumnMetadata> newColumnMetadata = new ArrayList<>(columnModel.getColumns());
-
-            // process deletions first
-            for (String deletedColumn : getColumnDeletions()) {
-                int index = newColumnNames.indexOf(deletedColumn);
-                if (index != -1) {
-                    indicesMap.remove(index);
-                    negativeIndicesMap.remove(index);
-                    newColumnNames.remove(index);
-                    newColumnMetadata.remove(index);
-                } else {
-                    throw new MissingColumnException(deletedColumn);
-                }
-            }
-
-            // insert columns declared by the operation
-            int mapperColumnIndex = 0;
-            for (ColumnInsertion insertion : insertions) {
-                int insertionIndex = insertion.getInsertAt() != null ? (newColumnNames.indexOf(insertion.getInsertAt()) + 1)
-                        : 0;
-
-                ColumnMetadata columnMetadata;
-                int sourceColumnIndex;
-                if (insertion.getCopiedFrom() == null) {
-                    sourceColumnIndex = -(mapperColumnIndex + 1);
-                    mapperColumnIndex++;
-                    columnMetadata = new ColumnMetadata(insertion.getName())
-                            .withLastModified(context.getHistoryEntryId());
-                } else {
-                    sourceColumnIndex = columnModel.getRequiredColumnIndex(insertion.getCopiedFrom());
-                    columnMetadata = columnModel.getColumnByIndex(sourceColumnIndex)
-                            .withName(insertion.getName());
-                    if (!engine.isNeutral()) {
-                        columnMetadata = columnMetadata.withLastModified(context.getHistoryEntryId());
-                    }
-                }
-
-                if (insertion.isReplace()) {
-                    int replacingIndex = insertionIndex - 1;
-                    if (replacingIndex == -1) {
-                        throw new MissingColumnException(insertion.getInsertAt());
-                    }
-                    int existingName = newColumnNames.indexOf(insertion.getName());
-                    if (existingName != -1 && existingName != replacingIndex) {
-                        throw new DuplicateColumnException(insertion.getName());
-                    }
-                    ColumnMetadata replacedColumn = newColumnMetadata.get(replacingIndex);
-                    if (columnMetadata.getReconConfig() == null && replacedColumn.getReconConfig() != null) {
-                        columnMetadata = columnMetadata.withReconConfig(replacedColumn.getReconConfig());
-                    }
-                    if ((columnMetadata.getReconConfig() == null && insertion.getReconConfig() != null)
-                            || insertion.getOverrideReconConfig()) {
-                        columnMetadata = columnMetadata.withReconConfig(insertion.getReconConfig());
-                    }
-                    indicesMap.set(replacingIndex, sourceColumnIndex);
-                    // no need to change negativeIndicesMap, since we will not touch the column for rows outside of the
-                    // view
-                    newColumnNames.set(replacingIndex, insertion.getName());
-                    newColumnMetadata.set(replacingIndex, columnMetadata);
-                } else {
-                    int existingName = newColumnNames.indexOf(insertion.getName());
-                    if (existingName != -1) {
-                        throw new DuplicateColumnException(insertion.getName());
-                    }
-                    indicesMap.add(insertionIndex, sourceColumnIndex);
-                    negativeIndicesMap.add(insertionIndex, sourceColumnIndex);
-                    newColumnNames.add(insertionIndex, insertion.getName());
-                    newColumnMetadata.add(insertionIndex, columnMetadata);
-                }
-            }
-
-            if (!persistResults) {
-                positiveMapper = mapperWithInsertions(positiveMapper, indicesMap);
-                negativeMapper = mapperWithInsertions(negativeMapper, negativeIndicesMap);
-            } else {
-                joiner = joinerWithInsertions(indicesMap, negativeIndicesMap, columnModel, engine);
-            }
+            insertionIndexMap = buildInsertionIndexMap(columnModel, insertions, context, engine.isNeutral());
             // build new column model
-            newColumnModel = new ColumnModel(newColumnMetadata, columnModel.getKeyColumnIndex(), columnModel.hasRecords());
-            int origKeyIndex = columnModel.getKeyColumnIndex();
-            preservesRecords = 0 <= origKeyIndex && origKeyIndex < indicesMap.size()
-                    && indicesMap.get(origKeyIndex) == newColumnModel.getKeyColumnIndex();
+            newColumnModel = new ColumnModel(insertionIndexMap.newColumnMetadata, columnModel.getKeyColumnIndex(),
+                    columnModel.hasRecords());
         } else {
-            preservesRecords = positiveMapper.preservesRecordStructure() && negativeMapper.preservesRecordStructure();
-
             // mark all columns as being modified
             newColumnModel = new ColumnModel(
                     newColumnModel.getColumns().stream()
@@ -331,51 +380,91 @@ abstract public class RowMapOperation extends EngineDependentOperation {
         Map<String, OverlayModel> newOverlayModels = getNewOverlayModels(columnModel, projectState.getOverlayModels(),
                 context);
         Grid mappedState;
-        RowInRecordMapper producer = changeDataProducer;
-        if (Mode.RowBased.equals(engine.getMode())) {
-            RowFilter rowFilter = engine.combinedRowFilters();
-            if (persistResults) {
+
+        if (persistResults) {
+            List<ColumnId> dependencyIdsWithEngine = null;
+            List<ColumnId> readDependencyIds = getReadColumnIds(columnModel);
+            List<ColumnId> engineDependencyIds = getEngineColumnIds(columnModel);
+            if (readDependencyIds != null && engineDependencyIds != null) {
+                dependencyIdsWithEngine = new ArrayList<>(readDependencyIds);
+                dependencyIdsWithEngine.addAll(engineDependencyIds);
+            }
+
+            RowInRecordChangeDataJoiner joiner;
+            if (insertions != null) {
+                joiner = joinerWithInsertions(insertionIndexMap.indicesMap, insertionIndexMap.negativeIndicesMap, columnModel, engine);
+            } else {
+                joiner = defaultJoiner(negativeMapper);
+            }
+
+            if (Mode.RowBased.equals(engine.getMode())) {
                 ChangeData<Row> changeData;
                 try {
                     changeData = context.getChangeData("eval", new RowChangeDataSerializer(), (grid, partialChangeData) -> {
                         Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
                         RowFilter filter = localEngine.combinedRowFilters();
-                        return grid.mapRows(filter, producer, partialChangeData);
+                        try {
+                            RowInRecordMapper producer = getMappersAndColumnModel(grid, context).positiveMapper;
+                            return grid.mapRows(filter, producer, partialChangeData);
+                        } catch (OperationException e) {
+                            // this exception should have been thrown earlier already, when applying the operation
+                            throw new IllegalStateException(e);
+                        }
                     }, dependencyIdsWithEngine, Engine.Mode.RowBased);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
                 mappedState = projectState.join(changeData, joiner, newColumnModel);
             } else {
-                mappedState = projectState.mapRows(RowMapper.conditionalMapper(rowFilter, positiveMapper, negativeMapper), newColumnModel);
-            }
-        } else {
-            RecordFilter recordFilter = engine.combinedRecordFilters();
-            if (persistResults) {
                 ChangeData<List<Row>> changeData;
                 try {
                     changeData = context.getChangeData("eval", new RowListChangeDataSerializer(), (grid, partialChangeData) -> {
                         Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
                         RecordFilter filter = localEngine.combinedRecordFilters();
-                        return grid.mapRecords(filter, producer, partialChangeData);
+                        try {
+                            RowInRecordMapper producer = getMappersAndColumnModel(grid, context).positiveMapper;
+                            return grid.mapRecords(filter, producer, partialChangeData);
+                        } catch (OperationException e) {
+                            // this exception should have been thrown earlier already, when applying the operation
+                            throw new IllegalStateException(e);
+                        }
                     }, dependencyIdsWithEngine, Engine.Mode.RecordBased);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
                 mappedState = projectState.join(changeData, joiner, newColumnModel);
+            }
+            return new ChangeResult(
+                    mappedState.withOverlayModels(newOverlayModels),
+                    joiner.preservesRecordStructure() ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS,
+                    getCreatedFacets());
+        } else {
+            if (insertions != null) {
+                positiveMapper = mapperWithInsertions(positiveMapper, insertionIndexMap.indicesMap, columnModel.getKeyColumnIndex(),
+                        newColumnModel.getKeyColumnIndex());
+                negativeMapper = mapperWithInsertions(negativeMapper, insertionIndexMap.negativeIndicesMap, columnModel.getKeyColumnIndex(),
+                        newColumnModel.getKeyColumnIndex());
+            }
+
+            if (Mode.RowBased.equals(engine.getMode())) {
+                RowFilter rowFilter = engine.combinedRowFilters();
+                mappedState = projectState.mapRows(RowMapper.conditionalMapper(rowFilter, positiveMapper, negativeMapper), newColumnModel);
             } else {
+                RecordFilter recordFilter = engine.combinedRecordFilters();
                 mappedState = projectState.mapRecords(
                         RecordMapper.conditionalMapper(recordFilter, positiveMapper, negativeMapper),
                         newColumnModel);
             }
+            return new ChangeResult(
+                    mappedState.withOverlayModels(newOverlayModels),
+                    positiveMapper.preservesRecordStructure() && negativeMapper.preservesRecordStructure()
+                            ? GridPreservation.PRESERVES_RECORDS
+                            : GridPreservation.PRESERVES_ROWS,
+                    getCreatedFacets());
         }
-        return new ChangeResult(
-                mappedState.withOverlayModels(newOverlayModels),
-                preservesRecords ? GridPreservation.PRESERVES_RECORDS : GridPreservation.PRESERVES_ROWS,
-                getCreatedFacets());
     }
 
-    protected static RowInRecordChangeDataJoiner joinerWithInsertions(List<Integer> positiveIndexMap, List<Integer> negativeIndexMap,
+    protected static RowInRecordChangeDataJoiner joinerWithInsertions(List<Integer> positiveIndicesMap, List<Integer> negativeIndicesMap,
             ColumnModel columnModel, Engine engine) {
         RowFilter rowFilter = Mode.RowBased.equals(engine.getMode()) ? engine.combinedRowFilters() : null;
         RecordFilter recordFilter = Mode.RecordBased.equals(engine.getMode()) ? engine.combinedRecordFilters() : null;
@@ -398,7 +487,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
             public Row call(Record record, Row row, IndexedData<Row> indexedData) {
                 if (indexedData != null && (rowFilter == null || rowFilter.filterRow(indexedData.getId(), row))) {
                     Row mapped = indexedData.getData();
-                    List<Cell> newCells = positiveIndexMap.stream()
+                    List<Cell> newCells = positiveIndicesMap.stream()
                             .map(i -> i >= 0 ? row.getCell(i) : (mapped == null ? Cell.PENDING_NULL : mapped.getCell(-(i + 1))))
                             .collect(Collectors.toList());
                     return new Row(newCells, row.flagged, row.starred);
@@ -408,7 +497,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
             }
 
             private Row negativeRowMap(Row row) {
-                List<Cell> newCells = negativeIndexMap.stream()
+                List<Cell> newCells = negativeIndicesMap.stream()
                         .map(i -> i >= 0 ? row.getCell(i) : null)
                         .collect(Collectors.toList());
                 return new Row(newCells, row.flagged, row.starred);
@@ -417,7 +506,7 @@ abstract public class RowMapOperation extends EngineDependentOperation {
             @Override
             public boolean preservesRecordStructure() {
                 int keyIndex = columnModel.getKeyColumnIndex();
-                return positiveIndexMap.size() <= keyIndex || positiveIndexMap.get(keyIndex) == keyIndex;
+                return positiveIndicesMap.size() <= keyIndex || negativeIndicesMap.get(keyIndex) == keyIndex;
             }
 
         };
@@ -445,14 +534,17 @@ abstract public class RowMapOperation extends EngineDependentOperation {
         };
     }
 
-    protected static RowInRecordMapper mapperWithInsertions(RowInRecordMapper mapper, List<Integer> indexMap) {
+    protected static RowInRecordMapper mapperWithInsertions(RowInRecordMapper mapper, List<Integer> indexMap, int originalKeyColumnIndex,
+            int newKeyColumnIndex) {
+        boolean preservesRecords = 0 <= originalKeyColumnIndex && originalKeyColumnIndex < indexMap.size()
+                && indexMap.get(originalKeyColumnIndex) == newKeyColumnIndex;
         return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 1807833316147737273L;
 
             @Override
             public boolean preservesRecordStructure() {
-                return mapper.preservesRecordStructure();
+                return preservesRecords;
             }
 
             @Override

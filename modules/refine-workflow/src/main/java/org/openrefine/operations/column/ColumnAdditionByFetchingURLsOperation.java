@@ -55,12 +55,10 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.EvalError;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnInsertion;
-import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
-import org.openrefine.model.changes.CellAtRow;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
@@ -147,6 +145,11 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
     }
 
     @Override
+    public boolean persistResults() {
+        return true;
+    }
+
+    @Override
     protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
             long estimatedRowCount, ChangeContext context) throws OperationException {
         RowInRecordMapper parentMapper = super.getPositiveRowMapper(columnModel, overlayModels, estimatedRowCount, context);
@@ -202,13 +205,6 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
                 " using expression " + _urlExpression;
     }
 
-    protected String createDescription(ColumnMetadata column, List<CellAtRow> cellsAtRows) {
-        return "Create new column " + _newColumnName +
-                ", filling " + cellsAtRows.size() +
-                " rows by fetching URLs based on column " + column.getName() +
-                " and formulated as " + _urlExpression;
-    }
-
     protected static class URLFetchingChangeProducer extends RowInRecordMapper {
 
         private static final long serialVersionUID = 131571544240263338L;
@@ -235,11 +231,6 @@ public class ColumnAdditionByFetchingURLsOperation extends ExpressionBasedOperat
             _evaluatingMapper = evaluatingMapper;
             _headers = null;
             _httpClient = null;
-        }
-
-        @Override
-        public boolean persistResults() {
-            return true;
         }
 
         protected HttpClient getHttpClient() {
