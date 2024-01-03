@@ -364,6 +364,10 @@ e2e_tests() {
         CYPRESS_BROWSER="electron"
     fi
 
+    if [ -z "$CYPRESS_SPECS" ] ; then
+        CYPRESS_SPECS="cypress/e2e/**/*.cy.js"
+    fi
+
     if [ ! -z "$CYPRESS_PROJECT_ID" ] && [ ! -z "$CYPRESS_RECORD_KEY" ] ; then
         CYPRESS_RECORD=1
         echo "Tests will be recorded in Cypress Dashboard"
@@ -376,6 +380,15 @@ e2e_tests() {
     add_option "-Drefine.headless=true"
     add_option "-Drefine.autoreload=false"
     add_option "-Dbutterfly.autoreload=false"
+
+    check_running
+
+    if [ "$RUNNING" ] ; then
+        echo "An OpenRefine server is already running. Please shut it down so that we can start a test server."
+        exit
+    fi
+
+    echo "Starting OpenRefine server"
 
     run fork > /dev/null
 
@@ -392,11 +405,11 @@ e2e_tests() {
     # Cypress needs a unique group id
     # We're hashing the list of files to generate such Group Id
     CYPRESS_GROUP=$(echo $CYPRESS_BROWSER$CYPRESS_SPECS | shasum)
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER  --headless --quiet --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
-        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --ci-build-id=$CYPRESS_CI_BUILD_ID --tag $CYPRESS_BROWSER"
+        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --ci-build-id=$CYPRESS_CI_BUILD_ID --tag $CYPRESS_BROWSER --group "$CYPRESS_GROUP""
     fi
     export MOZ_FORCE_DISABLE_E10S=1
     echo $CYPRESS_RUN_CMD
