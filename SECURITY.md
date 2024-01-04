@@ -15,3 +15,5 @@ You can privately report a vulnerability to the OpenRefine team by [creating a s
 
 Keep in mind that OpenRefine is designed to run locally on a user's PC, while also making network calls across the internet only upon a user's choice or command.
 As such, certain vulnerabilities might not apply to OpenRefine's design. In doubt, please submit a report anyway.
+
+## Clear change to the document ........
