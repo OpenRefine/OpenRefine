@@ -29,19 +29,9 @@ import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
-import org.openrefine.wikibase.schema.WbLanguageConstant;
-import org.openrefine.wikibase.schema.WbMonolingualExpr;
-import org.openrefine.wikibase.schema.WbStringConstant;
-import org.openrefine.wikibase.schema.entityvalues.ReconItemIdValue;
-import org.openrefine.wikibase.schema.entityvalues.ReconMediaInfoIdValue;
-import org.openrefine.wikibase.schema.entityvalues.ReconPropertyIdValue;
-import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
-import org.openrefine.wikibase.schema.strategies.StatementMerger;
-import org.openrefine.wikibase.updates.StatementEdit;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-//import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -53,6 +43,16 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
+
+import org.openrefine.wikibase.schema.WbLanguageConstant;
+import org.openrefine.wikibase.schema.WbMonolingualExpr;
+import org.openrefine.wikibase.schema.WbStringConstant;
+import org.openrefine.wikibase.schema.entityvalues.ReconItemIdValue;
+import org.openrefine.wikibase.schema.entityvalues.ReconMediaInfoIdValue;
+import org.openrefine.wikibase.schema.entityvalues.ReconPropertyIdValue;
+import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
+import org.openrefine.wikibase.schema.strategies.StatementMerger;
+import org.openrefine.wikibase.updates.StatementEdit;
 
 public class TestingData {
 

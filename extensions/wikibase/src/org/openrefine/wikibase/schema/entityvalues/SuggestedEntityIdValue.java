@@ -27,13 +27,12 @@ package org.openrefine.wikibase.schema.entityvalues;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Hash;
 import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * An EntityIdValue that we have obtained from a suggest widget in the schema alignment dialog.

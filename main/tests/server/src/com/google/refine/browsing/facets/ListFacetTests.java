@@ -28,14 +28,18 @@
 package com.google.refine.browsing.facets;
 
 import java.io.IOException;
-
-import org.testng.annotations.Test;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.testng.annotations.Test;
+
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.facets.Facet;
 import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
@@ -70,8 +74,8 @@ public class ListFacetTests extends RefineTest {
             + "\"columnName\":\"Column A\","
             + "\"invert\":false,"
             + "\"choices\":["
-            + "     {\"v\":{\"v\":\"foobar\",\"l\":\"foobar\"},\"c\":1,\"s\":true},"
-            + "     {\"v\":{\"v\":\"barbar\",\"l\":\"barbar\"},\"c\":1,\"s\":false}"
+            + "     {\"v\":{\"v\":\"barbar\",\"l\":\"barbar\"},\"c\":1,\"s\":false},"
+            + "     {\"v\":{\"v\":\"foobar\",\"l\":\"foobar\"},\"c\":1,\"s\":true}"
             + "]}";
 
     private static String selectedEmptyChoiceFacet = "{"
@@ -80,9 +84,9 @@ public class ListFacetTests extends RefineTest {
             + "\"columnName\":\"Column A\","
             + "\"invert\":false,"
             + "\"choices\":["
-            + "    {\"v\":{\"v\":\"ebar\",\"l\":\"ebar\"},\"c\":1,\"s\":false},"
-            + "    {\"v\":{\"v\":\"cbar\",\"l\":\"cbar\"},\"c\":1,\"s\":false},"
             + "    {\"v\":{\"v\":\"abar\",\"l\":\"abar\"},\"c\":1,\"s\":false},"
+            + "    {\"v\":{\"v\":\"cbar\",\"l\":\"cbar\"},\"c\":1,\"s\":false},"
+            + "    {\"v\":{\"v\":\"ebar\",\"l\":\"ebar\"},\"c\":1,\"s\":false},"
             + "    {\"v\":{\"v\":\"foobar\",\"l\":\"true\"},\"c\":0,\"s\":true}"
             + "]}";
 
@@ -104,7 +108,14 @@ public class ListFacetTests extends RefineTest {
         Facet facet = facetConfig.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
 
-        TestUtils.isSerializedTo(facet, jsonFacet);
+        ObjectNode actual = ParsingUtilities.mapper.valueToTree(facet);
+        List<JsonNode> choicesList = new ArrayList<>();
+
+        actual.findValues("choices").get(0).forEach(choicesList::add);
+        choicesList.sort(Comparator.comparing(JsonNode::toString));
+        actual.replace("choices", ParsingUtilities.mapper.createArrayNode().addAll(choicesList));
+
+        TestUtils.assertEqualsAsJson(actual.toString(), jsonFacet);
     }
 
     @Test
@@ -129,6 +140,14 @@ public class ListFacetTests extends RefineTest {
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         Facet facet = facetConfig.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
-        TestUtils.isSerializedTo(facet, selectedEmptyChoiceFacet);
+
+        ObjectNode actual = ParsingUtilities.mapper.valueToTree(facet);
+        List<JsonNode> choicesList = new ArrayList<>();
+
+        actual.findValues("choices").get(0).forEach(choicesList::add);
+        choicesList.sort(Comparator.comparing(n -> n.get("v").toString()));
+        actual.replace("choices", ParsingUtilities.mapper.createArrayNode().addAll(choicesList));
+
+        TestUtils.assertEqualsAsJson(actual.toString(), selectedEmptyChoiceFacet);
     }
 }

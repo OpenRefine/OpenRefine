@@ -36,6 +36,7 @@ package com.google.refine.importing;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 

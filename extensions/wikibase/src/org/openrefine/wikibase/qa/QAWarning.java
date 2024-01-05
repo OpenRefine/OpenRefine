@@ -24,13 +24,13 @@
 
 package org.openrefine.wikibase.qa;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jsoup.helper.Validate;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jsoup.helper.Validate;
 
 /**
  * A class to represent a QA warning emitted by the Wikidata schema This could probably be reused at a broader scale,

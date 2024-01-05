@@ -12,6 +12,7 @@ on:
 
 jobs:
   prepare_e2e_test_matrix:
+    if: github.repository == 'OpenRefine/OpenRefine'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -21,7 +22,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Setup Node
-        uses: actions/setup-node@v4.0.0
+        uses: actions/setup-node@v4.0.1
         with:
           node-version: '16'
       - id: set-matrix
@@ -29,6 +30,7 @@ jobs:
         env:
           browsers: chrome
   e2e_test:
+    if: github.repository == 'OpenRefine/OpenRefine'
     name: e2e_test ${{ matrix.specs.group }}
     needs: prepare_e2e_test_matrix
     runs-on: ubuntu-latest
@@ -46,7 +48,7 @@ jobs:
           echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
 
       - name: Set up Java 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 11
@@ -56,7 +58,7 @@ jobs:
         run: ./refine build
 
       - name: Setup Node
-        uses: actions/setup-node@v4.0.0
+        uses: actions/setup-node@v4.0.1
         with:
           node-version: '16'
 
@@ -93,7 +95,7 @@ jobs:
 
 
   build:
-
+    if: github.repository == 'OpenRefine/OpenRefine'
     services:
       postgres:
         image: postgres
@@ -132,7 +134,7 @@ jobs:
         echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
 
     - name: Set up Java 11
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: 11
@@ -175,6 +177,7 @@ jobs:
       run: mvn -B package -DskipTests=true
 
   mac_test_and_deploy:
+    if: github.repository == 'OpenRefine/OpenRefine'
     runs-on: macos-12
 
     outputs: 
@@ -184,7 +187,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up Java 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: 17
@@ -196,7 +199,7 @@ jobs:
         gpg-passphrase: GPG_PASSPHRASE
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3' 
 
@@ -263,7 +266,7 @@ jobs:
 
     - name: Upload build artifact for Windows (without Java)
       id: upload-build-artifact-win
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-win-${{ steps.version_string_variable.outputs.output_value }}.zip"
         name: openrefine-win-archive-${{ steps.version_string_variable.outputs.output_value }}
@@ -280,7 +283,7 @@ jobs:
 
     - name: Upload build artifact for Windows (with Java)
       id: upload-build-artifact-win-with-java
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip"
         name: openrefine-win-with-java-archive-${{ steps.version_string_variable.outputs.output_value }}
@@ -291,7 +294,7 @@ jobs:
 
     - name: Upload build artifact for Windows (with Java) for Installer
       id: upload-build-artifact-win-with-java-for-installer
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: installertemp-win-with-java-${{ steps.version_string_variable.outputs.output_value }}
         path: ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}/openrefine-${{ steps.version_string_variable.outputs.output_value }}
@@ -308,7 +311,7 @@ jobs:
 
     - name: Upload build artifact for Linux
       id: upload-build-artifact-linux
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}.tar.gz"
         name: openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}
@@ -325,12 +328,13 @@ jobs:
 
     - name: Upload build artifact for Mac
       id: upload-build-artifact-mac
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}.dmg"
         name: openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}
 
   windows_installer:
+    if: github.repository == 'OpenRefine/OpenRefine'
     runs-on: windows-2022
     needs: mac_test_and_deploy
 
@@ -371,7 +375,7 @@ jobs:
 
     - name: Cleanup unused installer build artifact (delete)
       id: delete-build-artifact-win-with-java
-      uses: geekyeggo/delete-artifact@v2
+      uses: geekyeggo/delete-artifact@v4
       with:
         name: installertemp-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
         useGlob: false
@@ -395,7 +399,7 @@ jobs:
 
     - name: Upload the installer as an artifact
       id: upload-build-artifact-win-with-java-installer
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: "./packaging/target/openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}.exe"
         name: openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}

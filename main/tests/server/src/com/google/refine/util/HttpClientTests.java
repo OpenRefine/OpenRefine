@@ -1,9 +1,10 @@
 
 package com.google.refine.util;
 
+import java.util.regex.Pattern;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import java.util.regex.Pattern;
 
 public class HttpClientTests {
 

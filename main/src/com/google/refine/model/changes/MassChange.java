@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.google.common.collect.Lists;
+
 import com.google.refine.history.Change;
 import com.google.refine.history.History;
 import com.google.refine.model.Project;

@@ -63,7 +63,7 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
       null,
       function(data) {
         self._renderProjects(data);
-        self.resize();
+        self.resize(); // other version of this function excludes this resize
       },
       "json"
   );
@@ -119,7 +119,7 @@ Refine.OpenProjectUI._filterTags = function(tag) {
   });
 };
 
-
+// FIXME: This is overwriting an earlier function definition
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
     var self = this;
     $.ajax({
@@ -135,6 +135,8 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
 };
 
 Refine.OpenProjectUI.prototype._renderProjects = function(data) {
+  const options  = { dateStyle: 'medium', timeStyle: 'medium' };
+  const dateFormatter = new Intl.DateTimeFormat(Refine.userLang || navigator.language, options);
   var self = this;
   var projects = [];
   for (var n in data.projects) {
@@ -149,7 +151,10 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
          console.log('Project '+project.id+' name is not set. skipping...');
          continue;
       }
-      project.date = moment(project.modified).format('YYYY-MM-DD HH:mm A');
+
+      // project.modified is ISO 8601 format string
+      const date = new Date(project.modified);
+      project.date = dateFormatter.format(date);
       
       if (typeof project.userMetadata !== "undefined")  {
           for (var m in data.customMetadataColumns) {
@@ -162,7 +167,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
                   if (!found) {
                       project.userMetadata.push({
                           name: data.customMetadataColumns[m].name,
-                          dispay: data.customMetadataColumns[m].display,
+                          display: data.customMetadataColumns[m].display,
                           value: ""
                       });
                   }
@@ -243,7 +248,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       );
       
       $('<div></div>')
-      .html(project.date)
+      .html('<span style="display:none">' + project.modified + '</span>' + project.date)
       .addClass("last-modified")
       .appendTo($(tr.insertCell(tr.cells.length)));
       

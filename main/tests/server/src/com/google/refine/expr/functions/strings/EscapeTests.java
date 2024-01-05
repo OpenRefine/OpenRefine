@@ -33,7 +33,6 @@ import static org.testng.Assert.assertNull;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.util.TestUtils;
 
 public class EscapeTests extends RefineTest {
 

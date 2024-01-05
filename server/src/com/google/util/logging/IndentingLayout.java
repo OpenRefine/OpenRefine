@@ -32,7 +32,6 @@
 package com.google.util.logging;
 
 import java.nio.charset.Charset;
-
 import java.util.Calendar;
 import java.util.Date;
 

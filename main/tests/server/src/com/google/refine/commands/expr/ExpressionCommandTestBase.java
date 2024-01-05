@@ -38,11 +38,11 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.BeforeMethod;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.commands.Command;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.util.TestUtils;

@@ -26,9 +26,8 @@ package org.openrefine.wikibase.schema.entityvalues;
 
 import java.util.List;
 
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 /**
  * An entity id value that also comes with a label and possibly types.

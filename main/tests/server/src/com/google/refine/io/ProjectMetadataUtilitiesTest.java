@@ -27,13 +27,14 @@
 
 package com.google.refine.io;
 
-import com.google.refine.ProjectMetadata;
+import java.io.File;
+import java.io.IOException;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
+import com.google.refine.ProjectMetadata;
 
 public class ProjectMetadataUtilitiesTest {
 

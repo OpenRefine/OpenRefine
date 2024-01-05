@@ -42,17 +42,18 @@ Options
     --jmx                         Enable JMX monitoring.
 
 Actions
+    run                           Run OpenRefine [default].
     build                         Build OpenRefine.
     clean                         Clean compiled classes.
-    dist <version>                Make all distributions.
-    extensions_test               Run the extensions tests.
-    linux_dist <version>          Make Linux binary distribution.
-    mac_dist <version>            Make MacOSX binary distribution.
-    run                           Run OpenRefine [default].
-    server_test                   Run the server tests.
     test                          Run all tests.
-    e2e_tests                      Run the e2e tests.
+    extensions_test               Run the extensions tests.
+    server_test                   Run the server tests.
+    e2e_tests                     Run the e2e tests.
+    lint                          Reformat the source code according to OpenRefine's conventions.
+    mac_dist <version>            Make MacOS binary distribution.
     windows_dist <version>        Make Windows binary distribution.
+    linux_dist <version>          Make Linux binary distribution.
+    dist <version>                Make all distributions.
 EOF
 exit 1
 }
@@ -244,6 +245,13 @@ do_mvn() {
 
 # ----------------------------------------------------------------------------------------------
 
+lint() {
+    mvn_prepare
+    "$MVN" formatter:format impsort:sort
+}
+
+# ----------------------------------------------------------------------------------------------
+
 dist() {
     get_version $1
     build_prepare
@@ -356,6 +364,10 @@ e2e_tests() {
         CYPRESS_BROWSER="electron"
     fi
 
+    if [ -z "$CYPRESS_SPECS" ] ; then
+        CYPRESS_SPECS="cypress/e2e/**/*.cy.js"
+    fi
+
     if [ ! -z "$CYPRESS_PROJECT_ID" ] && [ ! -z "$CYPRESS_RECORD_KEY" ] ; then
         CYPRESS_RECORD=1
         echo "Tests will be recorded in Cypress Dashboard"
@@ -368,6 +380,15 @@ e2e_tests() {
     add_option "-Drefine.headless=true"
     add_option "-Drefine.autoreload=false"
     add_option "-Dbutterfly.autoreload=false"
+
+    check_running
+
+    if [ "$RUNNING" ] ; then
+        echo "An OpenRefine server is already running. Please shut it down so that we can start a test server."
+        exit
+    fi
+
+    echo "Starting OpenRefine server"
 
     run fork > /dev/null
 
@@ -384,11 +405,11 @@ e2e_tests() {
     # Cypress needs a unique group id
     # We're hashing the list of files to generate such Group Id
     CYPRESS_GROUP=$(echo $CYPRESS_BROWSER$CYPRESS_SPECS | shasum)
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER  --headless --quiet --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
-        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --ci-build-id=$CYPRESS_CI_BUILD_ID --tag $CYPRESS_BROWSER"
+        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --ci-build-id=$CYPRESS_CI_BUILD_ID --tag $CYPRESS_BROWSER --group "$CYPRESS_GROUP""
     fi
     export MOZ_FORCE_DISABLE_E10S=1
     echo $CYPRESS_RUN_CMD
@@ -720,12 +741,13 @@ case "$ACTION" in
   clean) do_mvn clean;;
   test) test $1;;
   tests) test $1;;
-  e2e_tests) e2e_tests;;    
+  e2e_tests) e2e_tests;;
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
   extensions_tests) extensions_test $1;;
   run) run;;
+  lint) lint;;
   mac_dist) mac_dist $1;;
   windows_dist) windows_dist $1;;
   linux_dist) linux_dist $1;;

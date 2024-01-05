@@ -27,8 +27,8 @@
 
 package com.google.refine.preference;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * Interface to be extended by all objects stored in the preferences. This ensures that their full class name is

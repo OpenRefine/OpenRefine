@@ -29,12 +29,13 @@ import static org.testng.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
+import org.testng.annotations.Test;
+
 import org.openrefine.wikibase.testing.TestingData;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.ItemEdit;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
 import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
-import org.testng.annotations.Test;
 
 public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
 

@@ -29,6 +29,9 @@ package com.google.refine.expr.functions;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -37,13 +40,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import com.google.refine.util.TestUtils;
 
 public class TypeTests extends RefineTest {
 

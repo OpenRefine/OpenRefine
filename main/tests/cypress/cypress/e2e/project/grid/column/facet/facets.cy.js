@@ -330,7 +330,7 @@ describe(__filename, function () {
       .find('.facet-body-controls')
       .contains('Facet by choice counts')
       .click();
-
+    // TODO: This can be flaky, but not sure why. Not reproducible in isolated testing.
     cy.get(`#refine-tabs-facets .facets-container .facet-container#facet-1`)
       .should('exist')
       .contains('Shrt_Desc');

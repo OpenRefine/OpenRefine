@@ -36,6 +36,7 @@ package com.google.refine.expr.functions;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.google.refine.expr.HasFields;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;

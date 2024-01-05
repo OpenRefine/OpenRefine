@@ -1,12 +1,11 @@
 
 package org.openrefine.wikibase.schema.entityvalues;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.implementation.SnakImpl;
 import org.wikidata.wdtk.datamodel.implementation.ValueSnakImpl;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A tweaked version of {@link SnakImpl} that serializes the full property (not just its PID), so that we can also get

@@ -39,18 +39,18 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
-import com.google.refine.model.Cell;
-import com.google.refine.model.Row;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.NotImplementedException;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterUtilities;
 import com.google.refine.importers.ImporterUtilities.MultiFileReadingProgress;
 import com.google.refine.importers.ImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
+import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 
 /**

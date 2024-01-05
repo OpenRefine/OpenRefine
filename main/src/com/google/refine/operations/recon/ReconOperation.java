@@ -40,14 +40,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.google.refine.expr.EvalError;
-import com.google.refine.messages.OpenRefineMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -55,6 +53,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.messages.OpenRefineMessage;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -299,6 +298,8 @@ public class ReconOperation extends EngineDependentOperation {
                             // TODO add EvalError instead? That is not so convenient
                             // for users because they would lose the cell contents.
                             // Better leave the cell unreconciled so they can be reconciled again later.
+                            Cell oldCell = entry.cell;
+                            logger.warn("We have a null recon here" + " " + oldCell + " " + entry.rowIndex);
                             continue;
                         }
                         Cell oldCell = entry.cell;

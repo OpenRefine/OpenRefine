@@ -44,5 +44,7 @@
     "gdata-exporter/enter-filename": "Entreu un nom d'arxiu per l'exportació del projecte al Google Drive",
     "gdata-source/type": "Tipus",
     "gdata-exporter/export-to-google-drive": "Arxiu del projecte d'OpenRefine a Google Drive…",
-    "gdata-parsing/store-row": "Emmagatzema files buides"
+    "gdata-parsing/store-row": "Emmagatzema files buides",
+    "gdata-import/errors": "Errors:\n $1",
+    "gdata-import/please-name-project": "Si us plau, anomena el projecte."
 }

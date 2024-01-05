@@ -32,10 +32,10 @@ package com.google.refine.exporters.sql;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.util.JSONUtilities;
 
 public class SqlCreateBuilder {
