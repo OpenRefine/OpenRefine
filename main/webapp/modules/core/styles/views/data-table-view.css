@@ -279,27 +279,24 @@ a.data-table-recon-topic {
   margin: 0 0.5em;
 }
 
-a.data-table-recon-action, .data-table-recon-extra>a {
+a.data-table-recon-action, .data-table-recon-extra>a, .data-table-recon-visibility>a {
   text-decoration: none;
   color: var(--link-secondary);
 }
-
-a.data-table-recon-action, .data-table-recon-extra {
+.data-table-recon-visibility{
   font-size: 0.8em;
+}
+.data-table-recon-extra,.data-table-recon-visibily {
   display: inline;
   margin: 3px 0 0;
 }
 
-a.data-table-recon-action, .data-table-recon-visibility>a {
-  text-decoration: none;
-  color: var(--link-secondary);
-}
-
-a.data-table-recon-action, .data-table-recon-visibility {
+a.data-table-recon-action{
   font-size: 0.8em;
-  display: inline;
+  display: block;
   margin: 3px 0 0;
 }
+
 
 a.data-table-recon-match, a.data-table-recon-match-similar {
   position: absolute;

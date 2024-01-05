@@ -118,7 +118,7 @@ class ReconCellRenderer {
                   seeMoreLink.text($.i18n('core-views/see-less')); // Change link text to "See Less"
                 } 
                 else {
-                  ul.find('.data-table-recon-candidate:not(:lt(' + visibleCandidate + '))').hide();
+                  ul.find('.data-table-recon-candidate:not(:lt(' + visibleCandidates + '))').hide();
                   ul.find('.data-table-recon-candidate:last').show();
                   seeMoreLink.text($.i18n('core-views/see-more')); // Change link text to "See More"
                 }

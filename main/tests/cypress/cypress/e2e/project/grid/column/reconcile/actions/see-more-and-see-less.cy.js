@@ -31,6 +31,14 @@ describe('Match each cell to its best candidate', () => {
         
         //verifying that the see more option has changed to see less
         cy.getCell(0, 'species').find('.data-table-recon-visibility').should('to.contain', 'See less');
+
+        //clicking the see less option
+        cy.getCell(0, 'species').find('.data-table-recon-visibility').click();
+
+        //confirming the no. of candidates after we click on see less
+        cy.getCell(0, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
+
+         
         
         
     });
