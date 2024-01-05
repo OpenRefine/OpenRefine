@@ -24,7 +24,7 @@ describe('Show more or less reconciliation candidates', () => {
         cy.getCell(0, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
 
         //clicking the see more option
-        cy.getCell(0, 'species').find('.data-table-recon-visibility').click();
+        cy.getCell(0, 'species').find('.data-table-recon-visibility').contains('See more').click();
 
         //confirming the no. of candidates after we click on see more
         cy.getCell(0, 'species').find('.data-table-recon-candidate:visible').should('have.length', 6);
@@ -33,7 +33,7 @@ describe('Show more or less reconciliation candidates', () => {
         cy.getCell(0, 'species').find('.data-table-recon-visibility').should('to.contain', 'See less');
 
         //clicking the see less option
-        cy.getCell(0, 'species').find('.data-table-recon-visibility').click();
+        cy.getCell(0, 'species').find('.data-table-recon-visibility').contains('See less').click();
 
         //confirming the no. of candidates after we click on see less
         cy.getCell(0, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
