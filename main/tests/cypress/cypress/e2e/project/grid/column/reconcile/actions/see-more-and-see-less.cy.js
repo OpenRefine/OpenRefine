@@ -1,4 +1,4 @@
-describe('Match each cell to its best candidate', () => {
+describe('Show more or less reconciliation candidates', () => {
     afterEach(() => {
         cy.addProjectForDeletion();
     });
