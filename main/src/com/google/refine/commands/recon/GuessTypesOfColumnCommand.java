@@ -56,6 +56,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.CharMatcher;
+
 import com.google.refine.commands.Command;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;

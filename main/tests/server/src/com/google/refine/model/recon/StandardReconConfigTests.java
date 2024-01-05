@@ -27,8 +27,6 @@
 
 package com.google.refine.model.recon;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -41,18 +39,20 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.model.changes.CellChange;
-import org.mockito.Mockito;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+import okhttp3.mockwebserver.SocketPolicy;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Cell;
@@ -67,11 +67,6 @@ import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
-
-import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 
 public class StandardReconConfigTests extends RefineTest {
 
@@ -302,9 +297,8 @@ public class StandardReconConfigTests extends RefineTest {
             Row row = project.rows.get(0);
             Cell cell = row.cells.get(1);
             assertNotNull(cell.value);
-            assertNull(cell.recon);
-            // the recon object is left null, so that it can be told apart from
-            // empty recon objects (the service legitimally did not return any candidate)
+            assertNotNull(cell.recon.error);
+            // the recon object has error attribute
         }
     }
 
@@ -421,8 +415,8 @@ public class StandardReconConfigTests extends RefineTest {
     }
 
     @Test
-    public void BatchReconTest() throws Exception {
 
+    public void batchReconTestSuccessful() throws Exception {
         String reconResponse = "{\n" +
                 "q0: {\n" +
                 "  result: [\n" +
@@ -517,7 +511,8 @@ public class StandardReconConfigTests extends RefineTest {
     }
 
     @Test
-    public void BatchReconTestError() throws Exception {
+    public void batchReconTestError() throws Exception {
+
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
@@ -570,9 +565,91 @@ public class StandardReconConfigTests extends RefineTest {
                     "}\n";
             server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
             returnReconList = config.batchRecon(jobList, 1000000000);
+            assertEquals(query, expected);
             assertNotNull(returnReconList.get(0));
             assertNotNull(returnReconList.get(0).error);
+            assertEquals(returnReconList.get(0).error, "The service returned a JSON response without \"result\" field for query q0");
         }
+    }
+
+    @Test
+    public void batchReconTestConnectionError() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
+
+            String configJson = " {\n" +
+                    "        \"mode\": \"standard-service\",\n" +
+                    "        \"service\": \"" + url + "\",\n" +
+                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+                    "        \"type\": {\n" +
+                    "                \"id\": \"Q11424\",\n" +
+                    "                \"name\": \"film\"\n" +
+                    "        },\n" +
+                    "        \"autoMatch\": true,\n" +
+                    "        \"columnDetails\": [\n" +
+                    "           {\n" +
+                    "             \"column\": \"director\",\n" +
+                    "             \"propertyName\": \"Director\",\n" +
+                    "             \"propertyID\": \"P57\"\n" +
+                    "           }\n" +
+                    "        ]}";
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+            StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
+            job.text = "david lynch";
+            job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+            List<ReconJob> jobList = new ArrayList<ReconJob>();
+            jobList.add(job);
+
+            // calling the batchRecon
+            List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
+
+            RecordedRequest request1 = server.takeRequest();
+            assertNotNull(request1);
+            String query = request1.getBody().readUtf8Line();
+
+            // assertions
+            assertNotNull(returnReconList.get(0).error);
+            assertEquals(returnReconList.get(0).error, "Read timed out");
+            assertNotNull(returnReconList);
+        }
+    }
+
+    @Test
+    public void batchReconTestDNSError() throws Exception {
+        HttpUrl url = HttpUrl.parse("https://hewsjsajsajk.com/search?q=ujdjsaoiksa");
+
+        String configJson = " {\n" +
+                "        \"mode\": \"standard-service\",\n" +
+                "        \"service\": \"" + url + "\",\n" +
+                "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+                "        \"type\": {\n" +
+                "                \"id\": \"Q11424\",\n" +
+                "                \"name\": \"film\"\n" +
+                "        },\n" +
+                "        \"autoMatch\": true,\n" +
+                "        \"columnDetails\": [\n" +
+                "           {\n" +
+                "             \"column\": \"director\",\n" +
+                "             \"propertyName\": \"Director\",\n" +
+                "             \"propertyID\": \"P57\"\n" +
+                "           }\n" +
+                "        ]}";
+        StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+        StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
+        job.text = "david lynch";
+        job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+        List<ReconJob> jobList = new ArrayList<ReconJob>();
+        jobList.add(job);
+
+        List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
+        assertNotNull(returnReconList);
+        assertNotNull(returnReconList.get(0).error);
+        // the error message is unstable and system-dependent, so we are not asserting for its exact contents.
+
     }
 
     /**

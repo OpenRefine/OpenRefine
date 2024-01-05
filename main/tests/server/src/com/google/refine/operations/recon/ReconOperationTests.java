@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
@@ -41,6 +42,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.messages.OpenRefineMessage;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -82,7 +84,8 @@ public class ReconOperationTests extends RefineTest {
             "           \"columnName\" : \"researcher\",\n" +
             "           \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n"
             +
-            "           \"name\" : \"researcher: judgment\"\n" +
+            "           \"name\" : \"researcher: " +
+            StringEscapeUtils.escapeJson(OpenRefineMessage.recon_operation_judgement_facet_name()) + "\"\n" +
             "         },\n" +
             "         \"facetOptions\" : {\n" +
             "           \"scroll\" : true\n" +
@@ -94,7 +97,8 @@ public class ReconOperationTests extends RefineTest {
             "           \"columnName\" : \"researcher\",\n" +
             "           \"expression\" : \"cell.recon.best.score\",\n" +
             "           \"mode\" : \"range\",\n" +
-            "           \"name\" : \"researcher: best candidate's score\"\n" +
+            "           \"name\" : \"researcher: " +
+            StringEscapeUtils.escapeJson(OpenRefineMessage.recon_operation_score_facet_name()) + "\"\n" +
             "         },\n" +
             "         \"facetType\" : \"range\"\n" +
             "       } ],\n" +

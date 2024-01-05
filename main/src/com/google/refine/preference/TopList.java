@@ -37,11 +37,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.collections.list.UnmodifiableList;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.collections.list.UnmodifiableList;
 
 public class TopList implements Iterable<String>, PreferenceValue {
 

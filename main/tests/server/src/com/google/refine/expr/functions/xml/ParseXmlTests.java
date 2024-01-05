@@ -27,19 +27,17 @@
 
 package com.google.refine.expr.functions.xml;
 
-import org.jsoup.parser.Parser;
-import org.jsoup.Jsoup;
-import org.testng.annotations.Test;
-
 import java.util.Properties;
 
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import com.google.refine.util.TestUtils;
 
 public class ParseXmlTests extends RefineTest {
 

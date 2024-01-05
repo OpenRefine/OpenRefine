@@ -59,7 +59,7 @@
 
 .wikibase-list .wikibase-url {
   padding-left: 13px;
-  color: gray;
+  color: var(--light-grey);
 }
 
 .wikibase-list li a, .wikibase-list li span {

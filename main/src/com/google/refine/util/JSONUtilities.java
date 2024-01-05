@@ -40,6 +40,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
+
 import com.google.refine.expr.util.JsonValueConverter;
 
 public class JSONUtilities {

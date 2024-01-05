@@ -33,18 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.ProjectManagerStub;
-import com.google.refine.ProjectMetadata;
-import com.google.refine.RefineTest;
-import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.Engine.Mode;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import static org.mockito.Mockito.mock;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Properties;
+
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.slf4j.LoggerFactory;
@@ -54,14 +51,16 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Properties;
-
-import static org.mockito.Mockito.mock;
+import com.google.refine.ProjectManager;
+import com.google.refine.ProjectManagerStub;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.RefineTest;
+import com.google.refine.browsing.Engine;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
+import com.google.refine.model.ModelException;
+import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 
 public class OdsExporterTests extends RefineTest {
 

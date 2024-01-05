@@ -10,6 +10,8 @@
     "gdata-import/sign-out": "Sign out",
     "gdata-import/retrieving": "Retrieving Google Docs documents …",
     "gdata-import/re-sign-in-another": "Sign in with different account",
+    "gdata-import/please-name-project": "Please name the project.",
+    "gdata-import/errors": "Errors:\n $1",
     "gdata-parsing/start-over": "&laquo; Start Over",
     "gdata-parsing/conf-pars": "Configure Parsing Options",
     "gdata-parsing/proj-name": "Project&nbsp;name",

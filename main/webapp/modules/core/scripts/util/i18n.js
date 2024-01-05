@@ -37,5 +37,7 @@ I18NUtil.init = function (module) {
     $('html').attr('lang', lang.replace('_', '-'));
     if (module === 'core') {
       $.i18n({locale: lang});
+      // TODO: This should be globally accessible, but this is OK for our current needs
+      Refine.userLang = lang;
     }
 }

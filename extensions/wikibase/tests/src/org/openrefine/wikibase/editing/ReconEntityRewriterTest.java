@@ -26,17 +26,18 @@ package org.openrefine.wikibase.editing;
 
 import static org.testng.Assert.assertEquals;
 
-import org.openrefine.wikibase.schema.exceptions.NewEntityNotCreatedYetException;
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.updates.LabeledStatementEntityEdit;
-import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
-import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.ItemEditBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
+import org.openrefine.wikibase.schema.exceptions.NewEntityNotCreatedYetException;
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.updates.ItemEditBuilder;
+import org.openrefine.wikibase.updates.LabeledStatementEntityEdit;
+import org.openrefine.wikibase.updates.TermedStatementEntityEdit;
 
 public class ReconEntityRewriterTest {
 

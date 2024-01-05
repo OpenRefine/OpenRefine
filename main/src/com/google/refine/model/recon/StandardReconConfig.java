@@ -44,10 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -57,6 +53,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -434,12 +434,7 @@ public class StandardReconConfig extends ReconConfig {
     }
 
     private String postQueries(String url, String queriesString) throws IOException {
-        try {
-            return getHttpClient().postNameValue(url, "queries", queriesString);
-
-        } catch (IOException e) {
-            throw new IOException("Failed to batch recon with load:\n" + queriesString, e);
-        }
+        return getHttpClient().postNameValue(url, "queries", queriesString);
     }
 
     @Override
@@ -460,48 +455,58 @@ public class StandardReconConfig extends ReconConfig {
         stringWriter.write("}");
         String queriesString = stringWriter.toString();
 
+        String responseString = "";
+        ObjectNode o = null;
         try {
-            String responseString = postQueries(service, queriesString);
-            ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(responseString);
 
-            if (o == null) { // utility method returns null instead of throwing
-                logger.error("Failed to parse string as JSON: " + responseString);
-            } else {
-                for (int i = 0; i < jobs.size(); i++) {
-                    StandardReconJob job = (StandardReconJob) jobs.get(i);
-                    Recon recon = null;
-
-                    String text = job.text;
-                    String key = "q" + i;
-                    if (o.has(key) && o.get(key) instanceof ObjectNode) {
-                        ObjectNode o2 = (ObjectNode) o.get(key);
-                        if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
-                            ArrayNode results = (ArrayNode) o2.get("result");
-
-                            recon = createReconServiceResults(text, results, historyEntryID);
-                        } else {
-                            recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-                            recon.error = o2.toString();
-                        }
-                    } else {
-                        recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-                        recon.error = o.toString();
-                    }
-
-                    if (recon != null) {
-                        recon.service = service;
-                    }
-                    recons.add(recon);
-                }
-            }
+            responseString = postQueries(service, queriesString);
+            o = ParsingUtilities.mapper.readValue(responseString, ObjectNode.class);
         } catch (IOException e) {
             Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-            recon.error = e.toString();
+            recon.error = e.getMessage();
             recons.add(recon);
         }
 
+        if (o == null) { // utility method returns null instead of throwing
+            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+            recon.error = "The reconciliation service returned an invalid response";
+            recons.add(recon);
+
+        } else {
+            for (int i = 0; i < jobs.size(); i++) {
+                StandardReconJob job = (StandardReconJob) jobs.get(i);
+                Recon recon = null;
+
+                String text = job.text;
+                String key = "q" + i;
+                if (o.has(key) && o.get(key) instanceof ObjectNode) {
+                    ObjectNode o2 = (ObjectNode) o.get(key);
+                    if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
+                        ArrayNode results = (ArrayNode) o2.get("result");
+
+                        recon = createReconServiceResults(text, results, historyEntryID);
+                    } else {
+                        recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                        recon.error = "The service returned a JSON response without \"result\" field for query " + key;
+
+                    }
+                } else {
+                    recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                    recon.error = "The service returned a JSON response without \"" + key + "\" field ";
+                }
+
+                if (recon != null) {
+                    recon.service = service;
+                }
+                recons.add(recon);
+            }
+
+        }
+
         while (recons.size() < jobs.size()) {
-            recons.add(null);
+            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+            recon.error = "No. of recon objects was less than no. of jobs";
+            recons.add(recon);
         }
 
         return recons;

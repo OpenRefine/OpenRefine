@@ -32,7 +32,6 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.util.TestUtils;
 
 public class ChompTests extends RefineTest {
 

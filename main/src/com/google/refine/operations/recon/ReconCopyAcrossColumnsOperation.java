@@ -40,11 +40,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.refine.operations.OperationDescription;
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -59,6 +58,7 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OperationDescription;
 
 public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
 

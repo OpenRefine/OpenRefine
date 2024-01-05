@@ -4,7 +4,6 @@ package com.google.refine.extension.database;
 import java.sql.Connection;
 import java.util.List;
 
-import com.google.refine.extension.database.sqlite.SQLiteDatabaseService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -17,6 +16,7 @@ import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.extension.database.model.DatabaseRow;
 import com.google.refine.extension.database.mysql.MySQLDatabaseService;
 import com.google.refine.extension.database.pgsql.PgSQLDatabaseService;
+import com.google.refine.extension.database.sqlite.SQLiteDatabaseService;
 
 public class DatabaseServiceTest extends DBExtensionTests {
 

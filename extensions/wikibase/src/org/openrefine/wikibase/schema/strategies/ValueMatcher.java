@@ -1,11 +1,10 @@
 
 package org.openrefine.wikibase.schema.strategies;
 
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 /**
  * Determines if two statement values should be considered identical or not.

@@ -29,9 +29,9 @@ describe(__filename, function () {
 
     cy.get('input[bind="columnNameInput"]').type('Test_Python_toLower');
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    cy.typeExpression('return value.lower()');
+    cy.typeExpression('return value.lower()',{timeout: 10000});
     cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
+      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child',{timeout: 10000}
     ).should('to.contain', 'butter,with salt');
     cy.confirmDialogPanel();
 

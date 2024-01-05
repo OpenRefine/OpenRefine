@@ -1,12 +1,6 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
-import org.openrefine.wikibase.editing.MediaFileUtils;
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.updates.ItemEdit;
-import org.openrefine.wikibase.updates.MediaInfoEdit;
-import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -16,12 +10,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+
+import org.openrefine.wikibase.editing.MediaFileUtils;
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.updates.ItemEdit;
+import org.openrefine.wikibase.updates.MediaInfoEdit;
+
 public class FileNameScrutinizer extends EditScrutinizer {
 
     // see https://commons.wikimedia.org/wiki/Commons:File_naming
     public static final int maxFileNameBytes = 240;
     public static final Pattern forbiddenFileNameChars = Pattern.compile(
-            ".*([^ %!\"$&'()*,\\-./\\d:;=?@\\p{L}\\p{Mc}\\\\^_`~\\x80-\\xFF+]|%[0-9A-Fa-f]{2}|&[A-Za-z0-9\\x80-\\xff]+;|&#[0-9]+;|&#x[0-9A-Fa-f]+;).*");
+            ".*([^ %!\"$&'()*,\\-./\\d:;=?@\\p{L}\\p{M}\\p{N}\\\\^_`~\\x80-\\xFF+]|%[0-9A-Fa-f]{2}|&[A-Za-z0-9\\x80-\\xff]+;|&#[0-9]+;|&#x[0-9A-Fa-f]+;).*");
 
     public static final String duplicateFileNamesInBatchType = "duplicate-file-names-in-batch";
     public static final String fileNamesAlreadyExistOnWikiType = "file-names-already-exist-on-wiki";
@@ -97,7 +98,7 @@ public class FileNameScrutinizer extends EditScrutinizer {
             // Invalid characters
             Matcher matcher = forbiddenFileNameChars.matcher(fileName);
             if (matcher.matches()) {
-                QAWarning issue = new QAWarning(invalidCharactersInFileNameType, null, QAWarning.Severity.CRITICAL,
+                QAWarning issue = new QAWarning(invalidCharactersInFileNameType, null, QAWarning.Severity.IMPORTANT,
                         1);
                 issue.setProperty("example_filename", fileName);
                 issue.setProperty("invalid_character", matcher.group(1));

@@ -33,13 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
-import java.time.Instant;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.lang.reflect.Field;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Set;
 
-import com.google.refine.model.Row;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -50,12 +58,14 @@ import org.testng.annotations.Test;
 
 import com.google.refine.model.Project;
 import com.google.refine.model.ProjectStub;
+import com.google.refine.model.Row;
 import com.google.refine.process.ProcessManager;
 
 public class ProjectManagerTests extends RefineTest {
 
     private static final Instant BASE_DATE = Instant.parse("1970-01-02T00:30:00Z");
     private static final int ROW_COUNT = 3;
+    private static final String[] TAGS = { "testtag1", "testtag2" };
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -81,6 +91,7 @@ public class ProjectManagerTests extends RefineTest {
         addRows(project);
 
         metadata = mock(ProjectMetadata.class);
+        when(metadata.getTags()).thenReturn(TAGS);
         procmgr = mock(ProcessManager.class);
         when(project.getProcessManager()).thenReturn(procmgr);
         when(procmgr.hasPending()).thenReturn(false); // always false for now, but should test separately
@@ -111,6 +122,7 @@ public class ProjectManagerTests extends RefineTest {
 
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
+        assertEquals(SUT.getAllProjectsTags().keySet(), Set.of(TAGS));
     }
 
     // TODO test registerProject in race condition

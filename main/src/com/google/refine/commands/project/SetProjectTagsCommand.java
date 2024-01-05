@@ -26,15 +26,12 @@
 package com.google.refine.commands.project;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.CharMatcher;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
@@ -65,43 +62,16 @@ public class SetProjectTagsCommand extends Command {
         String oldT = request.getParameter("old");
         String newT = request.getParameter("new");
 
-        Map<String, Integer> allProjectTags = ProjectManager.singleton.getAllProjectTags();
+        String[] oldTags = oldT == null ? new String[0] : oldT.split(",");
+        ProjectManager.singleton.removeProjectTags(oldTags);
 
-        // Lets remove the old tags from the general map
-        String[] oldTags = oldT.split(",");
-        for (String tag : oldTags) {
-            if (allProjectTags != null && allProjectTags.containsKey(tag)) {
-                int occurrence = allProjectTags.get(tag);
+        String[] newTags = newT == null ? new String[0]
+                : Stream.of(newT.split(" |\\,")).map(String::trim).filter(t -> !t.isEmpty()).toArray(String[]::new);
+        ProjectManager.singleton.addProjectTags(newTags);
 
-                if (occurrence == 1) {
-                    allProjectTags.remove(tag);
-                } else {
-                    allProjectTags.put(tag, occurrence - 1);
-                }
-            }
-        }
+        metadata.setTags(newTags);
 
-        // Lets add the new tags to the general map
-        String[] newTags = newT.split(" |\\,");
-        List<String> polishedTags = new ArrayList<String>(newTags.length);
-        for (String tag : newTags) {
-            tag = CharMatcher.whitespace().trimFrom(tag);
-
-            if (!tag.isEmpty()) {
-                if (allProjectTags != null) {
-                    if (allProjectTags.containsKey(tag)) {
-                        allProjectTags.put(tag, allProjectTags.get(tag) + 1);
-                    } else {
-                        allProjectTags.put(tag, 1);
-                    }
-                }
-                polishedTags.add(tag);
-            }
-        }
-
-        // Let's update the project tags
-        metadata.setTags(polishedTags.toArray(new String[polishedTags.size()]));
-
-        respond(response, "{ \"code\" : \"ok\" }");
+        respond(response, "{\"code\":\"ok\"}");
     }
+
 }

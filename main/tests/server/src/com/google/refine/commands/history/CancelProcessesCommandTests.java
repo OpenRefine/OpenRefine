@@ -1,13 +1,14 @@
 
 package com.google.refine.commands.history;
 
-import com.google.refine.commands.CommandTestBase;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.refine.commands.CommandTestBase;
 
 public class CancelProcessesCommandTests extends CommandTestBase {
 

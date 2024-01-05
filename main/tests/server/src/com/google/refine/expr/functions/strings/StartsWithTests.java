@@ -33,7 +33,6 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.util.TestUtils;
 
 public class StartsWithTests extends RefineTest {
 

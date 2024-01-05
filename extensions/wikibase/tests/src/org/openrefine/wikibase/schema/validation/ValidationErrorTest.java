@@ -3,10 +3,11 @@ package org.openrefine.wikibase.schema.validation;
 
 import java.util.Arrays;
 
-import org.openrefine.wikibase.schema.validation.PathElement.Type;
 import org.testng.annotations.Test;
 
 import com.google.refine.util.TestUtils;
+
+import org.openrefine.wikibase.schema.validation.PathElement.Type;
 
 public class ValidationErrorTest {
 

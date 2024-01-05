@@ -46,13 +46,13 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import edu.mit.simile.butterfly.ButterflyModule;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.Command;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.ParsingUtilities;
-
-import edu.mit.simile.butterfly.ButterflyModule;
 
 public class LoadLanguageCommand extends Command {
 

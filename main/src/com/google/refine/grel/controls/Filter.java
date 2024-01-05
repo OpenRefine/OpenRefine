@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;

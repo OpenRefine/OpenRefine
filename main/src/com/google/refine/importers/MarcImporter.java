@@ -41,12 +41,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.marc4j.MarcPermissiveStreamReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
 import org.marc4j.marc.Record;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.util.JSONUtilities;

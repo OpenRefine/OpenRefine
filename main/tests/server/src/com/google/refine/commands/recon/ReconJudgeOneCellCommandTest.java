@@ -45,7 +45,6 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.recon.ReconJudgeOneCellCommand;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;

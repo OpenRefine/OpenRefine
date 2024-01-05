@@ -43,12 +43,15 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import edu.mit.simile.vicino.clustering.NGramClusterer;
+import edu.mit.simile.vicino.clustering.VPTreeClusterer;
+import edu.mit.simile.vicino.distances.Distance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
@@ -58,10 +61,6 @@ import com.google.refine.clustering.ClustererConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-
-import edu.mit.simile.vicino.clustering.NGramClusterer;
-import edu.mit.simile.vicino.clustering.VPTreeClusterer;
-import edu.mit.simile.vicino.distances.Distance;
 
 public class kNNClusterer extends Clusterer {
 

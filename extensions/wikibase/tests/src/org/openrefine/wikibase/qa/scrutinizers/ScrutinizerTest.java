@@ -38,17 +38,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikibase.manifests.Manifest;
-import org.openrefine.wikibase.manifests.ManifestException;
-import org.openrefine.wikibase.manifests.ManifestParser;
-import org.openrefine.wikibase.qa.ConstraintFetcher;
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.QAWarningStore;
-import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
-import org.openrefine.wikibase.schema.strategies.StatementMerger;
-import org.openrefine.wikibase.testing.TestingData;
-import org.openrefine.wikibase.updates.EntityEdit;
-import org.openrefine.wikibase.updates.StatementEdit;
 import org.testng.annotations.BeforeMethod;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -60,6 +49,18 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+
+import org.openrefine.wikibase.manifests.Manifest;
+import org.openrefine.wikibase.manifests.ManifestException;
+import org.openrefine.wikibase.manifests.ManifestParser;
+import org.openrefine.wikibase.qa.ConstraintFetcher;
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.qa.QAWarningStore;
+import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
+import org.openrefine.wikibase.schema.strategies.StatementMerger;
+import org.openrefine.wikibase.testing.TestingData;
+import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.updates.StatementEdit;
 
 public abstract class ScrutinizerTest {
 

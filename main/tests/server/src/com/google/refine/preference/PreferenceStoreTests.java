@@ -32,10 +32,10 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.Test;
+
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 

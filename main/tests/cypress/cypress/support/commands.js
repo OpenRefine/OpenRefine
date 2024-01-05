@@ -276,6 +276,13 @@ Cypress.Commands.add('waitForOrOperation', () => {
 
 /**
  * Wait for OpenRefine parsing options to be updated
+ *
+ * @deprecated
+ *
+ * NOTE: This command is unreliable because if you call it after starting an operation e.g. with a click(), the loading
+ * indicator may have come and gone already by the time waitForImportUpdate() is called, causing the cypress test to
+ * wait forever on ('#or-import-updating').should('be.visible') until it fails due to timeout.
+ *
  */
 Cypress.Commands.add('waitForImportUpdate', () => {
   cy.get('#or-import-updating').should('be.visible');
@@ -287,15 +294,10 @@ Cypress.Commands.add('waitForImportUpdate', () => {
  * Utility method to fill something into the expression input
  * Need to wait for OpenRefine to preview the result, hence the cy.wait
  */
-Cypress.Commands.add('typeExpression', (expression) => {
-  if (expression.length <= 30) {
-    cy.get('textarea.expression-preview-code').type(expression);
-    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)').should('contain',expression);
-  } else {
-    cy.get('textarea.expression-preview-code').type(expression);
-    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)').should('contain',expression.substring(0,30) + ' ...');
-  }
-
+Cypress.Commands.add('typeExpression', (expression, options = {}) => {
+    cy.get('textarea.expression-preview-code', options).type(expression);
+    const expectedText = expression.length <= 30 ? expression : `${expression.substring(0, 30)} ...`;
+    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)', options).should('contain', expectedText);
 });
 
 /**

@@ -1,17 +1,18 @@
 
 package org.openrefine.wikibase.qa;
 
-import org.openrefine.wikibase.schema.WikibaseSchema;
-import org.openrefine.wikibase.testing.TestingData;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.testing.TestingData;
 
 public class SchemaPropertyExtractorTest {
 

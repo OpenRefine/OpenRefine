@@ -30,7 +30,6 @@ package com.google.refine.browsing.facets;
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.DecoratedValue;
-import com.google.refine.browsing.facets.NominalFacetChoice;
 import com.google.refine.util.TestUtils;
 
 public class NominalFacetChoiceTests {

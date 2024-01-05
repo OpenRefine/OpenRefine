@@ -228,8 +228,8 @@
       <version>${commons-validator.version}</version>
     </dependency>
     <dependency>
-      <groupId>velocity</groupId>
-      <artifactId>velocity</artifactId>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity-engine-core</artifactId>
       <version>${velocity.version}</version>
     </dependency>
     <dependency>

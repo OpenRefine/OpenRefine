@@ -36,6 +36,7 @@ package com.google.refine.grel.ast;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.TextNode;
+
 import com.google.refine.expr.Evaluable;
 
 /**

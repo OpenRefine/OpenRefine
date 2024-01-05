@@ -283,6 +283,7 @@ a.data-table-recon-action, .data-table-recon-extra>a, .data-table-recon-visibili
   text-decoration: none;
   color: var(--link-secondary);
 }
+
 .data-table-recon-visibility{
   font-size: 0.8em;
 }

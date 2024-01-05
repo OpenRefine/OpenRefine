@@ -1,14 +1,15 @@
 
 package com.google.refine.expr.functions.strings;
 
-import com.google.refine.RefineTest;
-import com.google.refine.expr.EvalError;
+import java.util.Map;
+
 import com.optimaize.langdetect.i18n.LdLocale;
 import org.junit.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.Map;
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
 
 public class DetectLanguageTest extends RefineTest {
 
