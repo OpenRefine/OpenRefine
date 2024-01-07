@@ -40,7 +40,7 @@ import java.io.Reader;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterUtilities;

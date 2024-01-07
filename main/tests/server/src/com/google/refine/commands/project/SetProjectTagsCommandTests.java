@@ -12,10 +12,9 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import jakarta.servlet.ServletException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

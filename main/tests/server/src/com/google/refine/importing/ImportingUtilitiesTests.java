@@ -49,13 +49,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -63,7 +62,7 @@ import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload2.core.FileUploadContentTypeException;
 import org.apache.commons.io.FileSystem;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
@@ -446,7 +445,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         assertThrows(IOException.class,
                 () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
-        assertThrows(FileUploadBase.InvalidContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request,
+        assertThrows(FileUploadContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request,
                 new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
         assertThrows(IOException.class,
                 () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
