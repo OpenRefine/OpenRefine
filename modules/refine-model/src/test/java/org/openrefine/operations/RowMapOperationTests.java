@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -84,6 +85,7 @@ public class RowMapOperationTests {
     LazyRowMapOperation SUT_recordsLazy = new LazyRowMapOperation(EngineConfig.ALL_RECORDS);
     EagerRowMapOperation SUT_rowsEager = new EagerRowMapOperation(EngineConfig.ALL_ROWS);
     EagerRowMapOperation SUT_rowsEagerWithFacet;
+    EagerRowMapOperation SUT_rowsEagerInRecordsMode;
     EagerRowMapOperation SUT_recordsEager = new EagerRowMapOperation(EngineConfig.ALL_RECORDS);
     OpaqueRowMapOperation SUT_rowsOpaque = new OpaqueRowMapOperation(EngineConfig.ALL_ROWS);
 
@@ -93,6 +95,10 @@ public class RowMapOperationTests {
     static ReconConfig reconConfigB = mock(ReconConfig.class);
 
     private static class LazyRowMapOperation extends RowMapOperation {
+
+        ColumnModel lazyRowColumnDependencies = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("A", "A", 0L, null),
+                new ColumnMetadata("C")));
 
         protected LazyRowMapOperation(EngineConfig config) {
             super(config);
@@ -125,6 +131,7 @@ public class RowMapOperationTests {
         @Override
         protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
                 long estimatedRowCount, ChangeContext context) throws OperationException {
+            Assert.assertEquals(columnModel, lazyRowColumnDependencies);
             return new RowInRecordMapper() {
 
                 private static final long serialVersionUID = 4306016663853788347L;
@@ -167,6 +174,12 @@ public class RowMapOperationTests {
 
     private static class EagerRowMapOperation extends RowMapOperation {
 
+        ColumnModel eagerRowColumnDependencies = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("D").withReconConfig(reconConfigA)));
+        ColumnModel eagerRecordColumnDependencies = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("A", "A", 0L, null),
+                new ColumnMetadata("D").withReconConfig(reconConfigA)));
+
         protected EagerRowMapOperation(EngineConfig config) {
             super(config);
         }
@@ -183,7 +196,7 @@ public class RowMapOperationTests {
 
         @Override
         public List<String> getColumnDependencies() {
-            return Arrays.asList("A", "D");
+            return Arrays.asList("D");
         }
 
         @Override
@@ -200,6 +213,11 @@ public class RowMapOperationTests {
         @Override
         protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
                 long estimatedRowCount, ChangeContext context) throws OperationException {
+            if (Mode.RowBased.equals(getEngineConfig().getMode())) {
+                Assert.assertEquals(columnModel, eagerRowColumnDependencies);
+            } else {
+                Assert.assertEquals(columnModel, eagerRecordColumnDependencies);
+            }
             return new RowInRecordMapper() {
 
                 private static final long serialVersionUID = 4306016663853788347L;
@@ -330,6 +348,7 @@ public class RowMapOperationTests {
                 new ColumnMetadata("B").withReconConfig(reconConfigA).withLastModified(historyEntryId),
                 new ColumnMetadata("C").withLastModified(historyEntryId),
                 new ColumnMetadata("D").withReconConfig(reconConfigA).withLastModified(historyEntryId)));
+
         when(rowMappedGrid.getColumnModel()).thenReturn(mappedColumnModelLazy);
         when(recordMappedGrid.getColumnModel()).thenReturn(mappedColumnModelLazy);
 
@@ -375,6 +394,7 @@ public class RowMapOperationTests {
         engineConfigWithFacet = new EngineConfig(Collections.singletonList(facetConfig), Mode.RowBased);
 
         SUT_rowsEagerWithFacet = new EagerRowMapOperation(engineConfigWithFacet);
+        SUT_rowsEagerInRecordsMode = new EagerRowMapOperation(EngineConfig.ALL_RECORDS);
     }
 
     @Test
@@ -407,7 +427,7 @@ public class RowMapOperationTests {
         verify(initialGrid, times(0)).mapRows(any(RowMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRecords(any(RecordMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRecords(any(RecordFilter.class), any(), any());
-        List<ColumnId> columnIds = Arrays.asList(new ColumnId("A", 0L), new ColumnId("D", 0L));
+        List<ColumnId> columnIds = Arrays.asList(new ColumnId("D", 0L));
         verify(changeContext, times(1)).getChangeData(eq("eval"), any(), any(), eq(columnIds), eq(Mode.RowBased));
         assertEquals(result.getGrid(), rowJoinedGridNeutralEngine);
     }
@@ -433,7 +453,7 @@ public class RowMapOperationTests {
         verify(initialGrid, times(0)).mapRows(any(RowMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRecords(any(RecordMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRecords(any(RecordFilter.class), any(), any());
-        List<ColumnId> columnIds = Arrays.asList(new ColumnId("A", 0L), new ColumnId("D", 0L));
+        List<ColumnId> columnIds = Arrays.asList(new ColumnId("D", 0L));
         verify(changeContext, times(1)).getChangeData(eq("eval"), any(), any(), eq(columnIds), eq(Mode.RowBased));
         assertEquals(result.getGrid(), joinedGrid);
     }
@@ -446,9 +466,22 @@ public class RowMapOperationTests {
         verify(initialGrid, times(0)).mapRows(any(RowMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRecords(any(RecordMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRecords(any(RecordFilter.class), any(), any());
-        List<ColumnId> columnIds = Arrays.asList(new ColumnId("A", 0L), new ColumnId("D", 0L), new ColumnId("C", 0L));
+        List<ColumnId> columnIds = Arrays.asList(new ColumnId("D", 0L), new ColumnId("C", 0L));
         verify(changeContext, times(1)).getChangeData(eq("eval"), any(), any(), eq(columnIds), eq(Mode.RowBased));
         assertEquals(result.getGrid(), rowJoinedGridWithFacet);
+    }
+
+    @Test
+    public void testApplyRowsEagerlyInRecordsMode() throws OperationException, IOException {
+        ChangeResult result = SUT_rowsEagerInRecordsMode.apply(initialGrid, changeContext);
+
+        verify(initialGrid, times(1)).mapRecords(any(RecordFilter.class), any(), eq(Optional.empty()));
+        verify(initialGrid, times(0)).mapRecords(any(RecordMapper.class), any(ColumnModel.class));
+        verify(initialGrid, times(0)).mapRows(any(RowMapper.class), any(ColumnModel.class));
+        verify(initialGrid, times(0)).mapRows(any(RowFilter.class), any(), any());
+        List<ColumnId> columnIds = Arrays.asList(new ColumnId("A", 0L), new ColumnId("D", 0L));
+        verify(changeContext, times(1)).getChangeData(eq("eval"), any(), any(), eq(columnIds), eq(Mode.RecordBased));
+        assertEquals(result.getGrid(), recordJoinedGrid);
     }
 
     @Test
@@ -480,7 +513,7 @@ public class RowMapOperationTests {
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("A"),
                 new ColumnMetadata("B"),
-                new ColumnMetadata("D")));
+                new ColumnMetadata("C")));
         Grid grid = mock(Grid.class);
         when(grid.getColumnModel()).thenReturn(columnModel);
 

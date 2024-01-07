@@ -172,7 +172,11 @@ abstract public class RowMapOperation extends EngineDependentOperation {
         if (dependencies == null) {
             return null;
         }
-        List<ColumnId> dependencyIds = new ArrayList<>(dependencies.size());
+        List<ColumnId> dependencyIds = new ArrayList<>(dependencies.size() + 1);
+        // Add the key column if we are in records mode
+        if (Mode.RecordBased == _engineConfig.getMode() && !dependencies.contains(columnModel.getKeyColumnName())) {
+            dependencyIds.add(columnModel.getColumnByName(columnModel.getKeyColumnName()).getColumnId());
+        }
         for (String columnName : dependencies) {
             ColumnMetadata metadata = columnModel.getColumnByName(columnName);
             if (metadata == null) {
@@ -218,10 +222,11 @@ abstract public class RowMapOperation extends EngineDependentOperation {
             List<ColumnId> dependencyIds = getReadColumnIds(columnModel);
             // Isolate mappers so that they only read the dependencies that they declare
             List<ColumnMetadata> inputColumns = new ArrayList<>();
-            for (String columnName : dependencies) {
-                ColumnMetadata metadata = columnModel.getColumnByName(columnName);
+            for (ColumnId columnId : dependencyIds) {
+                int columnIndex = columnModel.getRequiredColumnIndex(columnId);
+                ColumnMetadata metadata = columnModel.getColumnByIndex(columnIndex);
                 if (metadata == null) {
-                    throw new MissingColumnException(columnName);
+                    throw new MissingColumnException(columnId.getColumnName());
                 }
                 inputColumns.add(metadata);
             }
