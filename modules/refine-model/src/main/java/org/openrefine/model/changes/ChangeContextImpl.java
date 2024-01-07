@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.openrefine.browsing.Engine;
 import org.openrefine.history.History;
 import org.openrefine.model.ColumnId;
@@ -13,6 +16,8 @@ import org.openrefine.model.Grid;
 import org.openrefine.operations.exceptions.OperationException;
 
 public class ChangeContextImpl implements ChangeContext {
+
+    private final Logger logger = LoggerFactory.getLogger(ChangeContext.class);
 
     private final long _historyEntryId;
     private final long _projectId;
@@ -54,6 +59,7 @@ public class ChangeContextImpl implements ChangeContext {
             List<ColumnId> dependencies,
             Engine.Mode mode) throws IOException {
         int applicationIndex = _history.earliestStepContainingDependencies(_stepIndex, dependencies, mode);
+        logger.debug("Earliest step containing dependencies is {} for {}", applicationIndex, dependencies);
         try {
             Grid grid = _history.getGrid(applicationIndex, false);
             return _dataStore.retrieveOrCompute(

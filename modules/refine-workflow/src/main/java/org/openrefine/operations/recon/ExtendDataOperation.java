@@ -35,6 +35,7 @@ package org.openrefine.operations.recon;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +53,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.GridPreservation;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnId;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
@@ -134,9 +136,12 @@ public class ExtendDataOperation extends EngineDependentOperation {
         if (Engine.Mode.RowBased.equals(engine.getMode())) {
             rowFilter = engine.combinedRowFilters();
         }
-        int baseColumnId = projectState.getColumnModel().getRequiredColumnIndex(_baseColumnName);
+        ColumnModel columnModel = projectState.getColumnModel();
+        int baseColumnIndex = columnModel.getColumnIndexByName(_baseColumnName);
+        ColumnId baseColumnId = columnModel.getColumnByName(_baseColumnName).getColumnId();
+        ColumnId keyColumnId = columnModel.getColumnByName(columnModel.getKeyColumnName()).getColumnId();
         ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(_extension, _endpoint, _identifierSpace, _schemaSpace);
-        DataExtensionProducer producer = new DataExtensionProducer(job, baseColumnId, rowFilter);
+        DataExtensionProducer producer = new DataExtensionProducer(job, keyColumnId, baseColumnId, rowFilter);
         BiFunction<Grid, Optional<ChangeData<RecordDataExtension>>, ChangeData<RecordDataExtension>> changeDataCompletion = (grid,
                 incompleteChangeData) -> {
             Engine localEngine = new Engine(grid, _engineConfig, context.getProjectId());
@@ -156,7 +161,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             throw new IOOperationException(e);
         }
 
-        ColumnModel newColumnModel = projectState.getColumnModel().withHasRecords(true);
+        ColumnModel newColumnModel = columnModel.withHasRecords(true);
         for (int i = 0; i != columnNames.size(); i++) {
             newColumnModel = newColumnModel.insertUnduplicatedColumn(
                     _columnInsertIndex + i,
@@ -167,7 +172,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
                                     _schemaSpace,
                                     columnTypes.get(i))));
         }
-        RecordChangeDataJoiner<RecordDataExtension> joiner = new DataExtensionJoiner(baseColumnId, _columnInsertIndex, columnNames.size());
+        RecordChangeDataJoiner<RecordDataExtension> joiner = new DataExtensionJoiner(baseColumnIndex, _columnInsertIndex,
+                columnNames.size());
         Grid state = projectState.join(changeData, joiner, newColumnModel);
 
         return new ChangeResult(state, GridPreservation.NO_ROW_PRESERVATION);
@@ -260,12 +266,14 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
         private static final long serialVersionUID = -7946297987163653933L;
         private final ReconciledDataExtensionJob _job;
-        private final int _cellIndex;
+        private final ColumnId _keyColumnId;
+        private final ColumnId _baseColumnId;
         private final RowFilter _rowFilter;
 
-        public DataExtensionProducer(ReconciledDataExtensionJob job, int cellIndex, RowFilter rowFilter) {
+        public DataExtensionProducer(ReconciledDataExtensionJob job, ColumnId keyColumnId, ColumnId baseColumnId, RowFilter rowFilter) {
             _job = job;
-            _cellIndex = cellIndex;
+            _keyColumnId = keyColumnId;
+            _baseColumnId = baseColumnId;
             _rowFilter = rowFilter;
         }
 
@@ -276,7 +284,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
         @Override
         public List<RecordDataExtension> callRecordBatch(List<Record> records, ColumnModel columnModel) {
-
+            int cellIndex = columnModel.getRequiredColumnIndex(_baseColumnId);
             Set<String> ids = new HashSet<>();
 
             for (Record record : records) {
@@ -285,7 +293,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     if (!_rowFilter.filterRow(indexedRow.getIndex(), row)) {
                         continue;
                     }
-                    Cell cell = row.getCell(_cellIndex);
+                    Cell cell = row.getCell(cellIndex);
                     if (cell != null && cell.recon != null && cell.recon.match != null) {
                         ids.add(cell.recon.match.id);
                     }
@@ -307,7 +315,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     if (!_rowFilter.filterRow(indexedRow.getIndex(), indexedRow.getRow())) {
                         continue;
                     }
-                    Cell cell = indexedRow.getRow().getCell(_cellIndex);
+                    Cell cell = indexedRow.getRow().getCell(cellIndex);
                     if (cell != null && cell.recon != null && cell.recon.match != null) {
                         recordExtensions.put(indexedRow.getIndex(), extensions.get(cell.recon.match.id));
                     }
@@ -320,6 +328,15 @@ public class ExtendDataOperation extends EngineDependentOperation {
         @Override
         public int getBatchSize() {
             return _job.getBatchSize();
+        }
+
+        @Override
+        public List<ColumnId> getColumnDependencies() {
+            if (_baseColumnId.equals(_keyColumnId)) {
+                return Collections.singletonList(_baseColumnId);
+            } else {
+                return Arrays.asList(_baseColumnId, _keyColumnId);
+            }
         }
 
     }
