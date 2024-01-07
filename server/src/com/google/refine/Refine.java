@@ -37,18 +37,19 @@ import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.BindException;
 import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JFrame;
 
@@ -57,16 +58,19 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.eclipse.jetty.ee8.servlet.ServletHolder;
+import org.eclipse.jetty.ee8.webapp.WebAppContext;
+import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.unixdomain.server.UnixDomainServerConnector;
 import org.eclipse.jetty.util.Scanner;
+import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,6 +175,7 @@ class RefineServer extends Server {
         super(createThreadPool());
     }
 
+    // TODO: Can this be replaced with built-in Jetty functionality?
     private static ThreadPool createThreadPool() {
         int maxThreads = Configurations.getInteger("refine.queue.size", 30);
         int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
@@ -212,6 +217,14 @@ class RefineServer extends Server {
             logger.info("Starting Server bound to Unix domain socket at {}", socket);
         }
 
+        // Create and link the StatisticsHandler to the Server.
+        StatisticsHandler statsHandler = new StatisticsHandler();
+        this.setHandler(statsHandler);
+
+        // Create an MBeanContainer with the platform MBeanServer & add it to the root to expose statistics
+        MBeanContainer mbeanContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
+        this.addBean(mbeanContainer);
+
         File webapp = new File(Configurations.get("refine.webapp", "main/webapp"));
 
         if (!isWebapp(webapp)) {
@@ -232,25 +245,28 @@ class RefineServer extends Server {
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(maxFormContentSize);
 
+        // Create and configure GzipHandler.
+        GzipHandler gzipHandler = new GzipHandler();
+        statsHandler.setHandler(gzipHandler);
+        gzipHandler.setMinGzipSize(1024); // Don't bother compressing tiny pages
+
         if ("*".equals(host)) {
-            this.setHandler(context);
+            gzipHandler.setHandler(context);
         } else {
             ValidateHostHandler wrapper = new ValidateHostHandler(host);
             wrapper.setHandler(context);
-            this.setHandler(wrapper);
+            gzipHandler.setHandler(wrapper);
         }
 
         this.setStopAtShutdown(true);
-        StatisticsHandler handler = new StatisticsHandler();
-        handler.setServer(this);
-        handler.setHandler(this.getHandler());
-        this.addBean(handler);
+
         // Tell the server we want to try and shutdown gracefully
         // this means that the server will stop accepting new connections
         // right away, but it will continue to process the ones that
         // are in execution for the given timeout before attempting to stop
         // NOTE: this is *not* a blocking method, it just sets a parameter
         // that _server.stop() will rely on
+        // (increased from 3000 to 300000 as part of Jetty 9 update)
         this.setStopTimeout(30000);
 
         // Enable context autoreloading
@@ -267,6 +283,19 @@ class RefineServer extends Server {
         }
 
         configure(context);
+    }
+
+    @Override
+    public Resource getDefaultStyleSheet() {
+        String name = "jetty-dir.css";
+        // TODO WORKAROUND: Default style sheet isn't where Jetty thinks it should be
+        // Look in the context instead
+        URL url = this.getContext().getClass().getResource(name);
+        if (url == null) {
+            throw new IllegalStateException("Missing server resource: " + name);
+        } else {
+            return ResourceFactory.root().newMemoryResource(url);
+        }
     }
 
     @Override
@@ -297,21 +326,23 @@ class RefineServer extends Server {
     }
 
     static private void scanForUpdates(final File contextRoot, final WebAppContext context) {
-        List<File> scanList = new ArrayList<File>();
-
-        scanList.add(new File(contextRoot, "WEB-INF/web.xml"));
-        findFiles(".class", new File(contextRoot, "WEB-INF/classes"), scanList);
-        findFiles(".jar", new File(contextRoot, "WEB-INF/lib"), scanList);
-
         logger.info("Starting autoreloading scanner... ");
+
+        File webInf = new File(contextRoot, "WEB-INF");
+        Stream<Path> scanList = Stream.concat(
+                Stream.concat(
+                        Stream.of(Path.of(webInf.getPath(), "web.xml")),
+                        findFiles(new File(contextRoot, "classes"), ".class")),
+                findFiles(new File(contextRoot, "lib"), ".jar"));
 
         Scanner scanner = new Scanner();
         scanner.setScanInterval(Configurations.getInteger("refine.scanner.period", 1));
-        scanner.setScanDirs(scanList);
+        scanner.setScanDirs(scanList.collect(Collectors.toList()));
         scanner.setReportExistingFilesOnStartup(false);
 
         scanner.addListener(new Scanner.BulkListener() {
 
+            // This was just deprecated in Jetty 12.1 so hopefully we have a little time to deal with it.
             @Override
             public void filesChanged(Set<String> set) {
                 try {
@@ -331,23 +362,17 @@ class RefineServer extends Server {
         try {
             scanner.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("File scanner start failed", e);
         }
     }
 
-    static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
-        baseDir.listFiles(new FileFilter() {
-
-            @Override
-            public boolean accept(File pathname) {
-                if (pathname.isDirectory()) {
-                    findFiles(extension, pathname, found);
-                } else if (pathname.getName().endsWith(extension)) {
-                    found.add(pathname);
-                }
-                return false;
-            }
-        });
+    static private Stream<Path> findFiles(File baseDir, final String extension) {
+        try {
+            return Files.find(baseDir.toPath(), 999, (p, bfa) -> bfa.isRegularFile()
+                    && p.getFileName().toString().endsWith(extension));
+        } catch (IOException e) {
+            return Stream.empty();
+        }
     }
 
     // inject configuration parameters in the servlets
