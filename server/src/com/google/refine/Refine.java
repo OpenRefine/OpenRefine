@@ -54,6 +54,7 @@ import javax.swing.JFrame;
 import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -79,7 +80,7 @@ public class Refine {
     static private String host;
     static private String iface;
 
-    final static Logger logger = LoggerFactory.getLogger("refine");
+    final static org.apache.log4j.Logger logger = LogManager.getLogger("refine");
 
     public static void main(String[] args) throws Exception {
 
