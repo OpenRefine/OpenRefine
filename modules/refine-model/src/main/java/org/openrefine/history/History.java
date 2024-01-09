@@ -118,11 +118,17 @@ public class History {
         protected boolean cachedOnDisk;
         // stores whether the grid depends on change data being fetched, and is therefore worth refreshing regularly
         protected boolean inProgress;
+        // if in progress, this flag stores whether all the operations since the last step that is fully computed are
+        // row/record wise.
+        // If this is the case, then it is safe to iterate synchronously from this step to compute another long-running
+        // operation
+        protected boolean streamable;
 
-        protected Step(Grid grid, boolean cachedOnDisk, boolean inProgress) {
+        protected Step(Grid grid, boolean cachedOnDisk, boolean inProgress, boolean streamable) {
             this.grid = grid;
             this.cachedOnDisk = cachedOnDisk;
             this.inProgress = inProgress;
+            this.streamable = streamable;
         }
     }
 
@@ -139,7 +145,7 @@ public class History {
     public History(Grid initialGrid, ChangeDataStore dataStore, GridCache gridStore, long projectId) {
         _entries = new ArrayList<>();
         _steps = new ArrayList<>();
-        _steps.add(new Step(initialGrid, false, false));
+        _steps.add(new Step(initialGrid, false, false, false));
         _position = 0;
         _dataStore = dataStore;
         _gridStore = gridStore;
@@ -182,7 +188,7 @@ public class History {
                     e.printStackTrace();
                 }
             }
-            _steps.add(new Step(grid, grid != null, false));
+            _steps.add(new Step(grid, grid != null, false, false));
             _entries.add(entry);
         }
 
@@ -269,8 +275,10 @@ public class History {
                         entry.getId(), entry.getOperation(), entry.getTime(), changeResult.getGridPreservation()));
             }
             step.grid = markColumnsAsModified(changeResult, operation, entry.getId());
+            Step previousStep = _steps.get(position - 1);
             step.changeResult = changeResult;
-            step.inProgress = _steps.get(position - 1).inProgress || _dataStore.needsRefreshing(entry.getId());
+            step.inProgress = previousStep.inProgress || _dataStore.needsRefreshing(entry.getId());
+            step.streamable = (previousStep.streamable || !previousStep.inProgress) && operation instanceof RowMapOperation;
             step.cachedOnDisk = false;
             return step.grid;
         }
@@ -357,7 +365,7 @@ public class History {
 
         HistoryEntry entry = new HistoryEntry(id, operation, null);
         _entries.add(entry);
-        _steps.add(new Step(null, false, false));
+        _steps.add(new Step(null, false, false, false));
         try {
             // compute the grid at the new position (this applies the operation properly speaking)
             getGrid(_position + 1, false);
@@ -611,6 +619,19 @@ public class History {
     public boolean isFullyComputedAtStep(int stepIndex) {
         refreshGrid(stepIndex);
         return !_steps.get(stepIndex).inProgress;
+    }
+
+    /**
+     * Is it possible to iterate from the grid synchronously at this step in the history? If the grid is already fully
+     * computed, then it is possible. Otherwise, it is only possible if all the operations leading to this step which
+     * have not been fully computed yet are row/record wise (instances of {@link RowMapOperation}).
+     *
+     * @param stepIndex
+     *            the 0-based index of the requested step
+     */
+    public boolean isStreamableAtStep(int stepIndex) {
+        refreshGrid(stepIndex);
+        return isFullyComputedAtStep(stepIndex) || _steps.get(stepIndex).streamable;
     }
 
     public void refreshCurrentGrid() {

@@ -57,14 +57,14 @@ public class ChangeDataStoringProcessTests {
 
     @Test
     public void testRequirementsSatisfied() {
-        when(history.isFullyComputedAtStep(3)).thenReturn(true);
+        when(history.isStreamableAtStep(3)).thenReturn(true);
 
         assertTrue(SUT.hasSatisfiedDependencies());
     }
 
     @Test
     public void testRequirementsNotSatisfied() {
-        when(history.isFullyComputedAtStep(3)).thenReturn(false);
+        when(history.isStreamableAtStep(3)).thenReturn(false);
 
         assertFalse(SUT.hasSatisfiedDependencies());
     }

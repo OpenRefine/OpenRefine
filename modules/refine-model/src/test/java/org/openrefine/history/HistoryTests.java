@@ -430,6 +430,8 @@ public class HistoryTests {
         Assert.assertEquals(history.getCurrentGrid(), intermediateState);
         Assert.assertTrue(history.isFullyComputedAtStep(0));
         Assert.assertFalse(history.isFullyComputedAtStep(1));
+        Assert.assertTrue(history.isStreamableAtStep(0)); // because the initial grid is always already computed
+        Assert.assertTrue(history.isStreamableAtStep(1)); // because the first operation is a RowMapOperation
     }
 
     @Test
@@ -537,6 +539,22 @@ public class HistoryTests {
         Grid notModified = History.markColumnsAsModified(changeResult, rowMapOperation, historyEntryId);
 
         Assert.assertEquals(notModified, grid);
+    }
+
+    @Test
+    public void testNonStreamableChange() throws OperationException, ParsingException {
+        // none of the operations used in this test are complete
+        when(dataStore.needsRefreshing(firstChangeId)).thenReturn(true);
+        when(dataStore.needsRefreshing(newChangeId)).thenReturn(true);
+        
+        History history = new History(initialState, dataStore, gridStore, Arrays.asList(firstEntry, newEntry), 2, 1234L);
+
+        Assert.assertEquals(history.getPosition(), 2);
+        Assert.assertEquals(history.getCurrentGrid(), newStateModified);
+        Assert.assertEquals(history.isFullyComputedAtStep(1), false);
+        Assert.assertEquals(history.isFullyComputedAtStep(2), false);
+        Assert.assertEquals(history.isStreamableAtStep(1), true); // the first operation is row-wise
+        Assert.assertEquals(history.isStreamableAtStep(2), false); // the second is not
     }
 
     @Test

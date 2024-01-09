@@ -103,7 +103,7 @@ public class ChangeDataStoringProcess<T> extends Process {
 
     @Override
     public boolean hasSatisfiedDependencies() {
-        return history.isFullyComputedAtStep(requiredStepIndex);
+        return history.isStreamableAtStep(requiredStepIndex);
     }
 
     @Override
