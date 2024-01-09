@@ -59,6 +59,11 @@ class TimeRangeFacet extends Facet{
   };
 
   reset() {
+    // there is a difference between this._config.from and this._from:
+    // - this._config.from is the minimum value selected by the user (null if the user never used the min slider)
+    // - this._from is the actual position of the slider (the minimum currently seen)
+    this._config.from = null;
+    this._config.to = null;
     this._from = this._config.min;
     this._to = this._config.max;
     this._sliderWidget.update(
@@ -98,11 +103,11 @@ class TimeRangeFacet extends Facet{
         selectError: this._selectError
     };
 
-    if (this._from !== null) {
-      o.from = this._from;
+    if (this._config.from != null) {
+      o.from = this._config.from;
     }
-    if (this._to !== null) {
-      o.to = this._to;
+    if (this._config.to != null) {
+      o.to = this._config.to;
     }
 
     return o;
@@ -113,8 +118,8 @@ class TimeRangeFacet extends Facet{
       return true;
     }
 
-    return (this._from !== null && (!this._initializedUI || this._from > this._config.min)) ||
-    (this._to !== null && (!this._initializedUI || this._to < this._config.max));
+    return (this._config.from != null && (!this._initializedUI || this._config.from > this._config.min)) ||
+    (this._config.to != null && (!this._initializedUI || this._config.to < this._config.max));
   };
 
   _initializeUI() {
@@ -175,11 +180,15 @@ class TimeRangeFacet extends Facet{
 
     this._elmts.sliderWidgetDiv.on("slide", function(evt, data) {
       self._from = data.from;
+      self._config.from = data.from;
       self._to = data.to;
+      self._config.to = data.to;
       self._setRangeIndicators();
     }).on("stop", function(evt, data) {
       self._from = data.from;
+      self._config.from = data.from;
       self._to = data.to;
+      self._config.to = data.to;
       self._selectTime = true;
       self._updateRest();
     });
