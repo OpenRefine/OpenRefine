@@ -96,6 +96,7 @@ public class CancelProcessCommandTests extends CommandTestBase {
 
         verify(response).setStatus(202);
         verify(history, times(1)).undoRedo(5678L);
+        verify(history, times(1)).deleteFutureEntries();
         verify(process, times(1)).cancel();
         TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\",\"newHistoryEntryId\":5678}");
     }

@@ -311,7 +311,7 @@ public class HistoryTests {
     }
 
     @Test
-    public void testEraseUndoneChanges() throws OperationException, ParsingException {
+    public void testApplyingAfterUndoEraseUndoneChanges() throws OperationException, ParsingException {
         History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
 
         Assert.assertEquals(history.getPosition(), 1);
@@ -324,6 +324,18 @@ public class HistoryTests {
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCurrentGrid(), newState);
         Assert.assertEquals(history.getEntries().size(), 2);
+        verify(dataStore, times(1)).discardAll(secondChangeId);
+    }
+
+    @Test
+    public void testDeleteFutureEntries() throws OperationException {
+        History history = new History(initialState, dataStore, gridStore, entries, 1, 1234L);
+
+        history.deleteFutureEntries();
+
+        Assert.assertEquals(history.getPosition(), 1);
+        Assert.assertEquals(history.getCurrentGrid(), intermediateState);
+        Assert.assertEquals(history.getEntries().size(), 1);
         verify(dataStore, times(1)).discardAll(secondChangeId);
     }
 

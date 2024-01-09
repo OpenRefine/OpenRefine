@@ -57,6 +57,7 @@ public class CancelProcessCommand extends Command {
             long precedingEntryID = history.getPrecedingEntryID(historyEntryId);
             newHistoryEntryId = Math.max(precedingEntryID, 0L);
             history.undoRedo(newHistoryEntryId);
+            history.deleteFutureEntries();
         }
         process.cancel();
         processManager.update();

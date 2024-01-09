@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -123,7 +123,7 @@ public class History {
 
     /**
      * Creates an empty on an initial grid.
-     * 
+     *
      * @param initialGrid
      *            the initial state of the project
      * @param dataStore
@@ -145,7 +145,7 @@ public class History {
 
     /**
      * Constructs a history with an initial grid and a list of history entries.
-     * 
+     *
      * @param initialGrid
      *            the first grid of the project, at creation time
      * @param dataStore
@@ -188,7 +188,7 @@ public class History {
 
     /**
      * Wait for any caching operation currently being executed asynchronously. Mostly for testing purposes.
-     * 
+     *
      * @throws ExecutionException
      * @throws InterruptedException
      */
@@ -311,7 +311,7 @@ public class History {
     /**
      * Applies an operation on top of the existing history. This will modify this instance. If the operation application
      * failed, the exception will be returned in {@link OperationApplicationResult#getException()}.
-     * 
+     *
      * @param operation
      *            the operation to apply.
      */
@@ -325,6 +325,30 @@ public class History {
      */
     public synchronized OperationApplicationResult addEntry(long id, Operation operation) {
         // Any new change will clear all future entries.
+        deleteFutureEntries();
+
+        // TODO refactor this so that it does not duplicate the logic of getGrid
+        ChangeContext context = ChangeContext.create(id, _projectId, _dataStore, operation.getDescription());
+        ChangeResult changeResult = null;
+        try {
+            changeResult = operation.apply(getCurrentGrid(), context);
+        } catch (OperationException e) {
+            return new OperationApplicationResult(e);
+        }
+        Grid newState = changeResult.getGrid();
+        HistoryEntry entry = new HistoryEntry(id, operation, changeResult.getGridPreservation());
+        _steps.add(new Step(newState, false, _steps.get(_position).inProgress || _dataStore.needsRefreshing(entry.getId())));
+        _entries.add(entry);
+        _position++;
+        updateCachedPosition();
+        updateModified();
+        return new OperationApplicationResult(entry, changeResult);
+    }
+
+    /**
+     * Permanently discards all history entries that are in the future.
+     */
+    public synchronized void deleteFutureEntries() {
         if (_position != _entries.size()) {
             logger.warn(String.format("Removing undone history entries from %d to %d", _position, _entries.size()));
             // stop the caching process if we are caching a grid in the future
@@ -352,23 +376,6 @@ public class History {
             _entries = _entries.subList(0, _position);
             _steps = _steps.subList(0, _position + 1);
         }
-
-        // TODO refactor this so that it does not duplicate the logic of getGrid
-        ChangeContext context = ChangeContext.create(id, _projectId, _dataStore, operation.getDescription());
-        ChangeResult changeResult = null;
-        try {
-            changeResult = operation.apply(getCurrentGrid(), context);
-        } catch (OperationException e) {
-            return new OperationApplicationResult(e);
-        }
-        Grid newState = changeResult.getGrid();
-        HistoryEntry entry = new HistoryEntry(id, operation, changeResult.getGridPreservation());
-        _steps.add(new Step(newState, false, _steps.get(_position).inProgress || _dataStore.needsRefreshing(entry.getId())));
-        _entries.add(entry);
-        _position++;
-        updateCachedPosition();
-        updateModified();
-        return new OperationApplicationResult(entry, changeResult);
     }
 
     protected void cacheGridOnDisk(int position) throws OperationException, IOException {
