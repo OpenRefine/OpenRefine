@@ -53,8 +53,10 @@ import javax.swing.JFrame;
 
 import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -80,7 +82,7 @@ public class Refine {
     static private String host;
     static private String iface;
 
-    final static org.apache.log4j.Logger logger = LogManager.getLogger("refine");
+    final static Logger logger = LoggerFactory.getLogger("refine");
 
     public static void main(String[] args) throws Exception {
 
@@ -97,7 +99,7 @@ public class Refine {
         // System.setProperty("debug","true");
 
         // set the log verbosity level
-        logger.setLevel(Level.toLevel(Configurations.get("refine.verbosity", "info")));
+        setRootLoggerLevel(Configurations.get("refine.verbosity"));
 
         port = Configurations.getInteger("refine.port", DEFAULT_PORT);
         iface = Configurations.get("refine.interface", DEFAULT_IFACE);
@@ -112,7 +114,26 @@ public class Refine {
         refine.init(args);
     }
 
-    public void init(String[] args) throws Exception {
+    private static void setRootLoggerLevel(String logLevelArg) {
+        Level rootLogLevel = Level.toLevel(logLevelArg);
+
+        if (logLevelArg != null && !logLevelArg.isEmpty()) {
+            // Set root logger level
+            LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+            loggerContext.getRootLogger().setLevel(rootLogLevel);
+
+            // Set level for all loggers
+            Configuration configuration = loggerContext.getConfiguration();
+            configuration.getLoggers().forEach((name, loggerConfig) -> {
+                org.apache.logging.log4j.Logger logger = LogManager.getLogger(name);
+                ((org.apache.logging.log4j.core.Logger) logger).setLevel(rootLogLevel);
+            });
+        }
+    }
+
+
+
+        public void init(String[] args) throws Exception {
 
         RefineServer server = new RefineServer();
         server.init(iface, port, host);
