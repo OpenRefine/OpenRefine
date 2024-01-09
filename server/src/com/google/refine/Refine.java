@@ -131,9 +131,7 @@ public class Refine {
         }
     }
 
-
-
-        public void init(String[] args) throws Exception {
+    public void init(String[] args) throws Exception {
 
         RefineServer server = new RefineServer();
         server.init(iface, port, host);
