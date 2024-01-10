@@ -295,6 +295,11 @@ public class ReconOperation extends EngineDependentOperation {
         public int getBatchSize() {
             return reconConfig.getBatchSize();
         }
+        
+        @Override
+        public int getMaxConcurrency() {
+            return 1;
+        }
 
     }
 
