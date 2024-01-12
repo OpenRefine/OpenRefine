@@ -5,6 +5,7 @@ import java.io.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -540,8 +541,13 @@ public abstract class PLL<T> {
      * @return
      */
     public PLL<T> limitPartitions(long limit) {
-        return new MapPartitionsPLL<T, T>(this, (i, iterator) -> iterator.take((int) limit),
+        if (limit == 0L) {
+            // We preserve the number of partitions
+            return new InMemoryPLL<T>(this.context, Collections.emptyList(), numPartitions());
+        } else {
+            return new MapPartitionsPLL<T, T>(this, (i, iterator) -> iterator.take((int) limit),
                 String.format("Limit each partition to %d", limit));
+        }
     }
 
     /**
