@@ -55,8 +55,7 @@ import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -99,7 +98,10 @@ public class Refine {
         // System.setProperty("debug","true");
 
         // set the log verbosity level
-        setRootLoggerLevel(Configurations.get("refine.verbosity"));
+        String logLevelArg = Configurations.get("refine.verbosity");
+        if (logLevelArg != null && !logLevelArg.isEmpty()) {
+            Configurator.setAllLevels(LogManager.getRootLogger().getName(),Level.toLevel(Configurations.get("refine.verbosity", "info")));
+        }
 
         port = Configurations.getInteger("refine.port", DEFAULT_PORT);
         iface = Configurations.get("refine.interface", DEFAULT_IFACE);
@@ -112,23 +114,6 @@ public class Refine {
         Refine refine = new Refine();
 
         refine.init(args);
-    }
-
-    private static void setRootLoggerLevel(String logLevelArg) {
-        Level rootLogLevel = Level.toLevel(logLevelArg);
-
-        if (logLevelArg != null && !logLevelArg.isEmpty()) {
-            // Set root logger level
-            LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
-            loggerContext.getRootLogger().setLevel(rootLogLevel);
-
-            // Set level for all loggers
-            Configuration configuration = loggerContext.getConfiguration();
-            configuration.getLoggers().forEach((name, loggerConfig) -> {
-                org.apache.logging.log4j.Logger logger = LogManager.getLogger(name);
-                ((org.apache.logging.log4j.core.Logger) logger).setLevel(rootLogLevel);
-            });
-        }
     }
 
     public void init(String[] args) throws Exception {
