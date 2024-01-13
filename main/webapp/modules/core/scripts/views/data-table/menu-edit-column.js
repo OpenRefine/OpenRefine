@@ -185,7 +185,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             "extend-data", 
             {
               baseColumnName: column.name,
-	          endpoint: endpoint,
+	      endpoint: endpoint,
               identifierSpace: identifierSpace,
               schemaSpace: schemaSpace,
               columnInsertIndex: columnIndex + 1
@@ -596,7 +596,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         id: "core/add-column-by-reconciliation",
         label: $.i18n('core-views/add-col-recon-val'),
         click: doAddColumnByReconciliation
-
       },
       {},
       {
