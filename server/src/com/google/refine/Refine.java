@@ -100,7 +100,7 @@ public class Refine {
         // set the log verbosity level
         String logLevelArg = Configurations.get("refine.verbosity");
         if (logLevelArg != null && !logLevelArg.isEmpty()) {
-            Configurator.setAllLevels(LogManager.getRootLogger().getName(),Level.toLevel(Configurations.get("refine.verbosity", "info")));
+            Configurator.setAllLevels(LogManager.getRootLogger().getName(),Level.toLevel(logLevelArg));
         }
 
         port = Configurations.getInteger("refine.port", DEFAULT_PORT);
