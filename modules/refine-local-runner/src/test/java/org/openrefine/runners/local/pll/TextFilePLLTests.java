@@ -359,12 +359,13 @@ public class TextFilePLLTests extends PLLTestsBase {
                 writer2.write("the\n");
                 writer2.write("second\n");
                 writer2.write("partition\n");
+                writer2.write("end\n");
                 writer2.flush();
 
                 // give the reader a bit of time to catch up
                 sleep(200);
                 synchronized (readStrings) {
-                    // we should have read all the lines (without the end marker)
+                    // we should have read all the lines (without the end markers)
                     assertTrue(readStrings.size() >= 11);
                     assertEquals(readStrings.get(10), "hi");
                 }

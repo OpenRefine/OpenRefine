@@ -250,53 +250,59 @@ public class TextFilePLL extends PLL<String> {
 
                 @Override
                 public boolean hasNext() {
-                    long currentPosition = textPartition.start + (countingIs == null ? 0 : countingIs.getCount());
-                    try {
-                        if (!nextLineAttempted && ((currentPosition <= textPartition.getEnd() || textPartition.getEnd() < 0) || synchronous)) {
-                            if (synchronous) {
-                                lineNumberReader.mark(4096);
-                                // TODO add logic to bump this readAheadLimit (restart from the beginning of the
-                                // stream…)
-                            }
-                            if (lineNumberReader != null) {
-                                nextLine = lineNumberReader.readLine();
-                            } else {
-                                nextLine = lineReader.readLine();
-                            }
-                            nextLineAttempted = true;
-                            lastOffsetSeen = currentPosition;
-                            if (endMarker != null && nextLine != null && nextLine.startsWith(endMarker)) {
-                                endMarkerFound = true;
-                                nextLine = null;
-                            }
-                        }
-                        if (nextLine == null && lastOffsetSeen > lastOffsetReported) {
-                            reportProgress();
-                        }
-                    } catch (EOFException | ZipException e) {
-                        if (ignoreEarlyEOF) {
-                            nextLine = null;
-                        } else {
-                            throw new UncheckedIOException(e);
-                        }
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                    if (nextLineAttempted && nextLine == null && synchronous && !endMarkerFound) {
+                    while (!nextLineAttempted && nextLine == null && !endMarkerFound) {
+                        long currentPosition = textPartition.start + (countingIs == null ? 0 : countingIs.getCount());
                         try {
-                            lineNumberReader.reset();
-                            if (watchService == null) {
-                                watchService = FileSystems.getDefault().newWatchService();
+                            if (!nextLineAttempted && ((currentPosition <= textPartition.getEnd() || textPartition.getEnd() < 0) || synchronous)) {
+                                if (synchronous) {
+                                    lineNumberReader.mark(4096);
+                                    // TODO add logic to bump this readAheadLimit (restart from the beginning of the
+                                    // stream…)
+                                }
+                                nextLineAttempted = true;
+                                if (lineNumberReader != null) {
+                                    nextLine = lineNumberReader.readLine();
+                                } else {
+                                    nextLine = lineReader.readLine();
+                                }
+                                lastOffsetSeen = currentPosition;
+                                if (endMarker != null && nextLine != null && nextLine.startsWith(endMarker)) {
+                                    endMarkerFound = true;
+                                    nextLine = null;
+                                }
                             }
-                            Path pathToWatch = Paths.get(textPartition.getPath().getParent());
-                            pathToWatch.register(watchService, ENTRY_MODIFY);
-                            WatchKey key = watchService.poll(1000, TimeUnit.MILLISECONDS);
-                            nextLineAttempted = false;
-                            return hasNext();
+                            if (nextLine == null && lastOffsetSeen > lastOffsetReported) {
+                                reportProgress();
+                            }
+                        } catch (EOFException | ZipException e) {
+                            if (ignoreEarlyEOF) {
+                                nextLine = null;
+                            } else {
+                                throw new UncheckedIOException(e);
+                            }
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
+                        }
+                        if (nextLine == null && synchronous && !endMarkerFound) {
+                            try {
+                                lineNumberReader.reset();
+                                if (watchService == null) {
+                                    watchService = FileSystems.getDefault().newWatchService();
+                                    Path pathToWatch = Paths.get(textPartition.getPath().getParent());
+                                    pathToWatch.register(watchService, ENTRY_MODIFY);
+                                }
+                                WatchKey key = watchService.poll(1000, TimeUnit.MILLISECONDS);
+                                if (key != null) {
+                                    key.reset();
+                                }
+                                nextLineAttempted = false;
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                        } else {
+                            nextLineAttempted = true;
                         }
                     }
                     return nextLine != null;
