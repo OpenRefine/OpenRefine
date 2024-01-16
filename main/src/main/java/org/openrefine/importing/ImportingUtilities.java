@@ -779,11 +779,12 @@ public class ImportingUtilities {
 
         progress.setProgress("Uncompressing " + fileName, -1);
 
-        saveStreamToFile(uncompressedIS, file2, null);
+        long decompressedSize = saveStreamToFile(uncompressedIS, file2, null);
 
         fileRecord.setDeclaredEncoding(null);
         fileRecord.setDeclaredMimeType(null);
         fileRecord.setLocation(getRelativePath(file2, rawDataDir));
+        fileRecord.setSize(decompressedSize);
 
         return file2;
     }
