@@ -463,6 +463,8 @@
     "core-views/create-topic-cell": "Create a new item for this cell",
     "core-views/create-topic": "Create new item",
     "core-views/search-match": "Search for match",
+    "core-views/see-more": "See more",
+    "core-views/see-less": "See less",
     "core-views/item-to-match": "Item to match",
     "core-views/not-valid-number": "Not a valid number.",
     "core-views/not-valid-date": "Not a valid date.",

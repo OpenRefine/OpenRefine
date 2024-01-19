@@ -75,7 +75,7 @@
     <jackson.version>2.16.1</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.5</butterfly.version>
-    <slf4j.version>2.0.10</slf4j.version>
+    <slf4j.version>2.0.11</slf4j.version>
     <log4j.version>2.22.1</log4j.version>
     <jetty.version>10.0.16</jetty.version>
     <okhttp.version>4.12.0</okhttp.version>
@@ -108,7 +108,7 @@
     <httpmime.version>4.5.14</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>5.8.0</mockito.version>
+    <mockito.version>5.9.0</mockito.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
@@ -118,7 +118,7 @@
     <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-    <surefire.version>3.2.3</surefire.version>
+    <surefire.version>3.2.5</surefire.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>

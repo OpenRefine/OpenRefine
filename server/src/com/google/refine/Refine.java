@@ -53,8 +53,14 @@ import javax.swing.JFrame;
 
 import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.apache.commons.lang.SystemUtils;
+<<<<<<< HEAD
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
+=======
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
+>>>>>>> upstream/master
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -97,11 +103,10 @@ public class Refine {
         // System.setProperty("debug","true");
 
         // set the log verbosity level
-        logger.setLevel(Level.toLevel(Configurations.get("refine.verbosity", "info")));
-
-        logger.info("This is info");
-        logger.warn("This is warning");
-        logger.debug("This is debug");
+        String logLevelArg = Configurations.get("refine.verbosity");
+        if (logLevelArg != null && !logLevelArg.isEmpty()) {
+            Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.toLevel(logLevelArg));
+        }
 
         port = Configurations.getInteger("refine.port", DEFAULT_PORT);
         iface = Configurations.get("refine.interface", DEFAULT_IFACE);
