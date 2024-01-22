@@ -64,7 +64,7 @@ public class ColumnTests {
                 + "    \"nonBlanks\":299,"
                 + "    \"newTopics\":0,"
                 + "    \"matchedTopics\":222,"
-                + "    \"errorsTopics\":0"
+                + "    \"errorTopics\":0"
                 + "}}";
         TestUtils.isSerializedTo(Column.load(json), json);
     }
