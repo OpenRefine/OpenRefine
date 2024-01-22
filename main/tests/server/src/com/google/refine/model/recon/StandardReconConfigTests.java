@@ -298,6 +298,7 @@ public class StandardReconConfigTests extends RefineTest {
             Cell cell = row.cells.get(1);
             assertNotNull(cell.value);
             assertNotNull(cell.recon.error);
+            assertEquals(cell.recon.judgment, Recon.Judgment.Error);
             // the recon object has error attribute
         }
     }

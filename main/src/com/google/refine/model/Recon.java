@@ -69,7 +69,8 @@ public class Recon implements HasFields {
         @JsonProperty("none")
         None, @JsonProperty("matched")
         Matched, @JsonProperty("new")
-        New
+        New, @JsonProperty("errors")
+        Error
     }
 
     @Deprecated
@@ -78,6 +79,8 @@ public class Recon implements HasFields {
             return "matched";
         } else if (judgment == Judgment.New) {
             return "new";
+        } else if (judgment == Judgment.Error) {
+            return "errors";
         } else {
             return "none";
         }
@@ -89,6 +92,8 @@ public class Recon implements HasFields {
             return Judgment.Matched;
         } else if ("new".equals(s)) {
             return Judgment.New;
+        } else if ("errors".equals(s)) {
+            return Judgment.Error;
         } else {
             return Judgment.None;
         }
@@ -198,6 +203,7 @@ public class Recon implements HasFields {
 
         r.match = match;
         r.matchRank = matchRank;
+        r.error = error;
     }
 
     public void addCandidate(ReconCandidate candidate) {

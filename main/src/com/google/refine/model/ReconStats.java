@@ -51,21 +51,26 @@ public class ReconStats {
     final public int newTopics;
     @JsonProperty("matchedTopics")
     final public int matchedTopics;
+    @JsonProperty("errorTopics")
+    final public int errorsTopics;
 
     @JsonCreator
     public ReconStats(
             @JsonProperty("nonBlanks") int nonBlanks,
             @JsonProperty("newTopics") int newTopics,
-            @JsonProperty("matchedTopics") int matchedTopics) {
+            @JsonProperty("matchedTopics") int matchedTopics,
+            @JsonProperty("errorsTopics") int errorsTopics) {
         this.nonBlanks = nonBlanks;
         this.newTopics = newTopics;
         this.matchedTopics = matchedTopics;
+        this.errorsTopics = errorsTopics;
     }
 
     static public ReconStats create(Project project, int cellIndex) {
         int nonBlanks = 0;
         int newTopics = 0;
         int matchedTopics = 0;
+        int errorsTopics = 0;
 
         for (Row row : project.rows) {
             Cell cell = row.getCell(cellIndex);
@@ -77,12 +82,14 @@ public class ReconStats {
                         newTopics++;
                     } else if (cell.recon.judgment == Judgment.Matched) {
                         matchedTopics++;
+                    } else if (cell.recon.judgment == Judgment.Error) {
+                        errorsTopics++;
                     }
                 }
             }
         }
 
-        return new ReconStats(nonBlanks, newTopics, matchedTopics);
+        return new ReconStats(nonBlanks, newTopics, matchedTopics, errorsTopics);
     }
 
     public void save(Writer writer) {

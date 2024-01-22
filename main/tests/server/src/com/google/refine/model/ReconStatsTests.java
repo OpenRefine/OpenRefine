@@ -35,7 +35,7 @@ public class ReconStatsTests {
 
     @Test
     public void serializeReconStats() {
-        ReconStats rs = new ReconStats(3, 1, 2);
+        ReconStats rs = new ReconStats(3, 1, 2, 0);
         TestUtils.isSerializedTo(rs, "{\"nonBlanks\":3,\"newTopics\":1,\"matchedTopics\":2}");
     }
 }

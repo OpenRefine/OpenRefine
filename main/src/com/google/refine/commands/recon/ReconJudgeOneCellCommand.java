@@ -190,10 +190,19 @@ public class ReconJudgeOneCellCommand extends Command {
             newCell.recon.judgmentBatchSize = 1;
 
             if (judgment == Judgment.None) {
-                newCell.recon.judgment = Recon.Judgment.None;
+                if (cell.recon.error == null) {
+                    newCell.recon.judgment = Recon.Judgment.None;
+                } else {
+                    newCell.recon.judgment = Recon.Judgment.Error;
+                }
+                newCell.recon.match = null;
+                description = "Discard recon judgment for " + cellDescription;
+
+            } else if (judgment == Judgment.Error) {
+                newCell.recon.judgment = Recon.Judgment.Error;
                 newCell.recon.match = null;
 
-                description = "Discard recon judgment for " + cellDescription;
+                description = "Errors in recon judgment for " + cellDescription;
             } else if (judgment == Judgment.New) {
                 newCell.recon.judgment = Recon.Judgment.New;
                 newCell.recon.match = null;
@@ -222,6 +231,7 @@ public class ReconJudgeOneCellCommand extends Command {
             } else {
                 int newChange = 0;
                 int matchChange = 0;
+                int errorsChange = 0;
 
                 if (oldJudgment == Judgment.New) {
                     newChange--;
@@ -229,17 +239,24 @@ public class ReconJudgeOneCellCommand extends Command {
                 if (oldJudgment == Judgment.Matched) {
                     matchChange--;
                 }
+                if (oldJudgment == Judgment.Error) {
+                    errorsChange--;
+                }
                 if (newCell.recon.judgment == Judgment.New) {
                     newChange++;
                 }
                 if (newCell.recon.judgment == Judgment.Matched) {
                     matchChange++;
                 }
+                if (newCell.recon.judgment == Judgment.Error) {
+                    errorsChange++;
+                }
 
                 stats = new ReconStats(
                         stats.nonBlanks,
                         stats.newTopics + newChange,
-                        stats.matchedTopics + matchChange);
+                        stats.matchedTopics + matchChange,
+                        stats.errorsTopics + errorsChange);
             }
 
             Change change = new ReconChange(
