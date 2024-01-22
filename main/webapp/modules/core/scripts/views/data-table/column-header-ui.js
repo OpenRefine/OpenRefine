@@ -102,7 +102,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
        serviceName=service.name;
      }
      if(serviceName){
-      elmts.nameContainer.attr("title","Data extended from "+service.name);
+      elmts.nameContainer.attr("title",$.i18n('core-views/data-extended-from',service.name));
       }
     }
   }

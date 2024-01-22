@@ -524,6 +524,7 @@
     "core-views/warning-sel-judg": "Please select at least one kind of judgment to copy.",
     "core-views/start-recon": "Start reconciling…",
     "core-views/recon-text-fb": "Reconcile text in this column with items in another data source",
+    "core-views/data-extended-from" : "Data extended from $1",
     "core-views/facets": "Facets",
     "core-views/by-judg": "By judgment",
     "core-views/judgment": "$1: judgment",
