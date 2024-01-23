@@ -859,5 +859,7 @@
     "core-views/column-join-before-column-picker": "Seleccioneu i ordeneu les columnes a unir",
     "core-views/column-join-before-options": "Selecciona les opcions",
     "core-views/column-join-field-separator": "Separador entre el contingut de cada columna",
-    "core-views/column-join-field-separator-advice": "Introduïu un o més caràcters, o manteniu-lo en blanc per a unir les columnes sense separador."
+    "core-views/column-join-field-separator-advice": "Introduïu un o més caràcters, o manteniu-lo en blanc per a unir les columnes sense separador.",
+    "core-views/see-more": "Veure més",
+    "core-views/see-less": "Veure menys"
 }
