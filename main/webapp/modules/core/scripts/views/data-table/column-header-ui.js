@@ -94,6 +94,18 @@ DataTableColumnHeaderUI.prototype._render = function() {
       .appendTo(whole);
     }
   }
+  if("sourceReconConfig" in this._column) {
+    if(this._column.sourceReconConfig.service){
+     var service = ReconciliationManager.getServiceFromUrl(this._column.sourceReconConfig.service);
+     var serviceName;
+     if(service) {
+       serviceName=service.name;
+     }
+     if(serviceName){
+      elmts.nameContainer.attr("title",$.i18n('core-views/data-extended-from',service.name));
+      }
+    }
+  }
 };
 
 DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {

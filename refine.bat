@@ -171,7 +171,6 @@ set REFINE_LIB_DIR=server\target\lib
 :gotLibDir
 
 if not "%REFINE_VERBOSITY%" == "" goto gotVerbosity
-set REFINE_VERBOSITY=info
 :gotVerbosity
 set OPTS=%OPTS% -Drefine.verbosity=%REFINE_VERBOSITY%
 
