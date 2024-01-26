@@ -32,7 +32,6 @@ import java.io.IOException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.recon.ReconType;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

@@ -29,7 +29,6 @@ package org.openrefine.model.recon;
 
 import org.testng.annotations.Test;
 
-import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

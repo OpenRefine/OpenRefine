@@ -34,7 +34,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.testng.annotations.Test;
 
-import org.openrefine.preference.PreferenceValue;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

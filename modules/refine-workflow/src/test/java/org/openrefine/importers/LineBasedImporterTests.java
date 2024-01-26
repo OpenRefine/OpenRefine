@@ -9,6 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import org.openrefine.messages.OpenRefineMessage;
 import org.openrefine.model.Grid;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -37,7 +38,7 @@ public class LineBasedImporterTests extends ImporterTest {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         Grid parsed = parseOneString(SUT, contents, options);
 
-        Grid expected = createGrid(new String[] { "Column 1" },
+        Grid expected = createGrid(new String[] { OpenRefineMessage.importer_utilities_column() + " 1" },
                 new Serializable[][] {
                         { "foo" },
                         { "bar" },
@@ -62,7 +63,9 @@ public class LineBasedImporterTests extends ImporterTest {
 
         Grid parsed = parseOneString(SUT, contents, options);
 
-        Grid expected = createGrid(new String[] { "Column 1", "Column 2" },
+        Grid expected = createGrid(new String[] {
+                OpenRefineMessage.importer_utilities_column() + " 1",
+                OpenRefineMessage.importer_utilities_column() + " 2" },
                 new Serializable[][] {
                         { "a", "b" },
                         { "c", "d" },
@@ -95,7 +98,7 @@ public class LineBasedImporterTests extends ImporterTest {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         Grid parsed = parseOneString(SUT, contents, options);
 
-        Grid expected = createGrid(new String[] { "Column 1" },
+        Grid expected = createGrid(new String[] { OpenRefineMessage.importer_utilities_column() + " 1" },
                 new Serializable[][] {
                         { "data1" },
                         { "data2" },
@@ -115,7 +118,7 @@ public class LineBasedImporterTests extends ImporterTest {
         options.put("separator", pattern);
         Grid parsed = parseOneString(SUT, input, options);
 
-        Grid expected = createGrid(new String[] { "Column 1" },
+        Grid expected = createGrid(new String[] { OpenRefineMessage.importer_utilities_column() + " 1" },
                 new Serializable[][] {
                         { "dataa" },
                         { "datab" },

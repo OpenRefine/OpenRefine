@@ -34,7 +34,6 @@ import java.util.stream.LongStream;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -100,6 +99,22 @@ public class ReconTests {
                 + "]"
                 + "}";
         Recon r = Recon.loadStreaming(fullJson).withMatch(null).withJudgment(Judgment.None);
+        TestUtils.isSerializedTo(r, json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testsErrorSerialization() throws Exception {
+        String json = "{\"id\":1533651559492945033,"
+                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+                + "\"j\":\"none\","
+                + "\"e\":\"fictional error message\","
+                + "\"c\":["
+                + "]"
+                + "}";
+        Recon r = Recon.loadStreaming(json);
+        Assert.assertEquals(r.error, "fictional error message");
         TestUtils.isSerializedTo(r, json, ParsingUtilities.defaultWriter);
     }
 

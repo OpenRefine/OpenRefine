@@ -43,7 +43,6 @@
     "database-parsing/limit": "rad(er) med data",
     "database-parsing/store-row": "Lagre blanke rader",
     "database-parsing/store-cell": "Lagre blanke celler som null",
-    "database-source/alert-invalid-query-keyword": "Spørring kan ikke inneholde datamanipuleringsnøkkelord:",
     "database-source/form-validation-failure": "Nytt tilkoblingsskjema ugyldig!",
     "database-parsing/worksheet": "Regneark",
     "database-source/databaseHostPlaceholder": "Skriv inn databasetjener eller IP",

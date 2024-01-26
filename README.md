@@ -20,11 +20,8 @@ Community forum: **https://forum.openrefine.org**
 
 ## Snapshot releases
 
-Latest development version, packaged for:
-* [Linux](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=linux&p=tar.gz)
-* [MacOS](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=mac&p=dmg)
-* [Windows without embedded JRE](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=win&p=zip)
-* [Windows with embedded JRE](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.8-SNAPSHOT&c=win-with-java&p=zip)
+You can download snapshots of the development version of OpenRefine.
+To do so, you need to be logged in to GitHub. Then, click on the first item with a green tick / check mark on [this page](https://github.com/OpenRefine/OpenRefine/actions/workflows/snapshot_release.yml) and scroll down to the Artifacts section to find the version that matches your operating system.
 
 ## Run from source
 

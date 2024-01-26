@@ -364,7 +364,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
       } else if (mode === "cases") {
         config.mode = "separator";
-        if(elmts.reversTranistionCases[0].checked) {
+        if(elmts.reverseTransitionCases[0].checked) {
           config.separator = "(?<=\\p{Upper}|[\\p{Upper}][\\s])(?=\\p{Lower})";
         } else {
           config.separator = "(?<=\\p{Lower}|[\\p{Lower}][\\s])(?=\\p{Upper})";
@@ -372,7 +372,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         config.regex = true;
       } else if (mode === "number") {
         config.mode = "separator";
-        if(elmts.reversTranistionNumbers[0].checked) {
+        if(elmts.reverseTransitionNumbers[0].checked) {
           config.separator = "(?<=\\p{L}|[\\p{L}][\\s])(?=\\p{Digit})";
         } else {
           config.separator = "(?<=\\p{Digit}|[\\p{Digit}][\\s])(?=\\p{L})";

@@ -220,8 +220,8 @@
       <version>${commons-validator.version}</version>
     </dependency>
     <dependency>
-      <groupId>velocity</groupId>
-      <artifactId>velocity</artifactId>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity-engine-core</artifactId>
       <version>${velocity.version}</version>
     </dependency>
     <dependency>
@@ -238,11 +238,6 @@
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
       <version>${jsoup.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>opencsv-multichar</artifactId>
-      <version>${opencsv-multichar.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>

@@ -34,7 +34,6 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.util.ParsingUtilities;
 
 public class JsonValueConverterTests {

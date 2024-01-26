@@ -2,7 +2,11 @@
 package org.openrefine;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.HasFieldsListImpl;

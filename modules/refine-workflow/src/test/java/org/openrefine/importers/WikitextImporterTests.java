@@ -49,6 +49,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import org.openrefine.messages.OpenRefineMessage;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Row;
@@ -95,7 +96,11 @@ public class WikitextImporterTests extends ImporterTest {
         Grid parsed = parse(input);
 
         Grid expected = createGrid(
-                new String[] { "Column 1", "Column 2", "Column 3" },
+                new String[] {
+                        OpenRefineMessage.importer_utilities_column() + " 1",
+                        OpenRefineMessage.importer_utilities_column() + " 2",
+                        OpenRefineMessage.importer_utilities_column() + " 3"
+                },
                 new Serializable[][] {
                         { "a", "b\n2", "c" },
                         { "d", "e", "f" }
@@ -126,7 +131,11 @@ public class WikitextImporterTests extends ImporterTest {
         Grid parsed = parse(input);
 
         Grid expected = createGrid(
-                new String[] { "Column 1", "Column 2", "Column 3" },
+                new String[] {
+                        OpenRefineMessage.importer_utilities_column() + " 1",
+                        OpenRefineMessage.importer_utilities_column() + " 2",
+                        OpenRefineMessage.importer_utilities_column() + " 3"
+                },
                 new Serializable[][] {
                         { "a", "b\n2", "c" },
                         { "d", "e", "f" }
@@ -328,7 +337,9 @@ public class WikitextImporterTests extends ImporterTest {
 
         Grid expected = createGrid(
                 new String[] {
-                        "Column 1", "Column 2", "Column 3"
+                        OpenRefineMessage.importer_utilities_column() + " 1",
+                        OpenRefineMessage.importer_utilities_column() + " 2",
+                        OpenRefineMessage.importer_utilities_column() + " 3"
                 },
                 new Serializable[][] {
                         { "{{free to read}}", "b", "c" },

@@ -39,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -152,19 +151,7 @@ public class FileProjectManager extends ProjectManager {
 
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
-                if (_projectsTags == null) {
-                    _projectsTags = new HashMap<String, Integer>();
-                }
-
-                if (metadata != null && metadata.getTags() != null) {
-                    for (String tag : metadata.getTags()) {
-                        if (_projectsTags.containsKey(tag)) {
-                            _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                        } else {
-                            _projectsTags.put(tag, 1);
-                        }
-                    }
-                }
+                addProjectTags(metadata.getTags());
                 return true;
             } else {
                 return false;
@@ -191,6 +178,9 @@ public class FileProjectManager extends ProjectManager {
 
         while ((tarEntry = tin.getNextTarEntry()) != null) {
             File destEntry = new File(destDir, tarEntry.getName());
+            if (!destEntry.toPath().normalize().startsWith(destDir.toPath().normalize())) {
+                throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
+            }
             File parent = destEntry.getParentFile();
 
             if (!parent.exists()) {
@@ -302,39 +292,50 @@ public class FileProjectManager extends ProjectManager {
     @Override
     protected void saveWorkspace() {
         synchronized (this) {
-            // TODO refactor this so that we check if the save is needed before writing to the file!
-            File tempFile = new File(_workspaceDir, "workspace.temp.json");
-            try {
-                if (!saveToFile(tempFile)) {
-                    // If the save wasn't really needed, just keep what we had
-                    tempFile.delete();
-                    logger.info("Skipping unnecessary workspace save");
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                logger.warn("Failed to save workspace");
+            List<Long> modified = getModifiedProjectIds();
+            boolean saveNeeded = (modified.size() > 0) || _preferenceStore.isDirty() || projectRemoved;
+            if (!saveNeeded) {
+                logger.info("Skipping unnecessary workspace save");
                 return;
             }
-            // set the workspace to owner-only readable, because it can contain credentials
-            tempFile.setReadable(false, false);
-            tempFile.setReadable(true, true);
+            File tempFile = saveWorkspaceToTempFile();
+            if (tempFile == null) return;
             File file = new File(_workspaceDir, "workspace.json");
             File oldFile = new File(_workspaceDir, "workspace.old.json");
 
             if (oldFile.exists()) {
-                oldFile.delete();
+                if (!oldFile.delete()) {
+                    logger.warn("Failed to delete previous backup workspace.old.json");
+                }
             }
 
             if (file.exists()) {
-                file.renameTo(oldFile);
+                if (!file.renameTo(oldFile)) {
+                    logger.error("Failed to rename workspace.json to workspace.old.json");
+                }
             }
 
-            tempFile.renameTo(file);
+            if (!tempFile.renameTo(file)) {
+                logger.error("Failed to rename new temp workspace file to workspace.json");
+            }
             projectRemoved = false;
             logger.info("Saved workspace");
         }
+    }
+
+    private File saveWorkspaceToTempFile() {
+        File tempFile = new File(_workspaceDir, "workspace.temp.json");
+        try {
+            saveToFile(tempFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.warn("Failed to save workspace");
+            return null;
+        }
+        // set the workspace to owner-only readable, because it can contain credentials
+        tempFile.setReadable(false, false);
+        tempFile.setReadable(true, true);
+        return tempFile;
     }
 
     protected List<Long> getModifiedProjectIds() {
@@ -356,23 +357,27 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
-    protected boolean saveToFile(File file) throws IOException {
-        OutputStream stream = new FileOutputStream(file);
-        List<Long> modified = getModifiedProjectIds();
-        boolean saveWasNeeded = (modified.size() > 0) || (_preferenceStore.isDirty());
-        try {
+    protected void saveToFile(File file) throws IOException {
+        try (OutputStream stream = new FileOutputStream(file)) {
             // writeValue(OutputStream) is documented to use JsonEncoding.UTF8
             ParsingUtilities.defaultWriter.writeValue(stream, this);
-            saveProjectMetadata(modified);
-        } finally {
-            stream.close();
+            saveProjectMetadata(getModifiedProjectIds());
         }
-        return saveWasNeeded;
     }
 
     @Override
     public void deleteProject(long projectID) {
         synchronized (this) {
+
+            // Remove this project's tags from the overall map
+            ProjectMetadata metadata = getProjectMetadata(projectID);
+            if (metadata != null) {
+                String[] tags = metadata.getTags();
+                if (tags != null) { // should only ever happen during tests with mocked ProjectMetadata
+                    removeProjectTags(tags);
+                }
+            }
+
             removeProject(projectID);
 
             File dir = getProjectDir(projectID);
@@ -502,14 +507,8 @@ public class FileProjectManager extends ProjectManager {
 
             _projectsMetadata.put(id, metadata);
 
-            if (metadata != null && metadata.getTags() != null) {
-                for (String tag : metadata.getTags()) {
-                    if (_projectsTags.containsKey(tag)) {
-                        _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                    } else {
-                        _projectsTags.put(tag, 1);
-                    }
-                }
+            if (metadata != null) {
+                addProjectTags(metadata.getTags());
             }
         }
     }

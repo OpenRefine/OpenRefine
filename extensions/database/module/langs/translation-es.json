@@ -13,7 +13,6 @@
     "database-source/alert-host": "Debe especificar un host de base de datos",
     "database-source/alert-password": "Tienes que especificar una contraseña de base de datos",
     "database-source/alert-connection-name": "Debe especificar un nombre de conexión",
-    "database-source/alert-invalid-query-keyword": "La consulta no puede contener palabras clave de manipulación de datos:",
     "database-source/alert-initial-database": "Debe especificar una base de datos inicial",
     "database-source/alert-query": "Debe especificar una consulta válida",
     "database-source/databaseFileNameLabel": "Archivo de base de datos",
@@ -60,5 +59,6 @@
     "database-source/alert-conn-name-invalid-character": "Error al introducir el nombre de la conexión: Carácter ilegal en la entrada. Sólo se permite [a-zA-Z0-9._-]",
     "database-source/alert-db-host-invalid-character": "Error de host de base de datos: Carácter ilegal en la entrada. Sólo se permiten caracteres alfanuméricos",
     "database-source/alert-db-user-invalid-character": "Error en usuario de base de datos: Carácter ilegal en la entrada. Sólo se permiten caracteres alfanuméricos",
-    "database-source/alert-db-port-invalid-character": "Error en el puerto de base de datos: Carácter ilegal en la entrada. Sólo se permiten valores numéricos."
+    "database-source/alert-db-port-invalid-character": "Error en el puerto de base de datos: Carácter ilegal en la entrada. Sólo se permiten valores numéricos.",
+    "database-parsing/limit-next": "Carga como máximo"
 }

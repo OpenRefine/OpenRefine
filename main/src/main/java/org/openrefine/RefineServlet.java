@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -206,6 +206,8 @@ public class RefineServlet extends Butterfly {
                         command.doPut(request, response);
                     } else if ("DELETE".equals(method)) {
                         command.doDelete(request, response);
+                    } else if ("HEAD".equals(method)) {
+                        command.doHead(request, response);
                     } else {
                         response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
                     }
@@ -228,6 +230,7 @@ public class RefineServlet extends Butterfly {
                     Command.respondJSON(response, status, new ExceptionResponse(e));
                 } finally {
                     Thread.currentThread().setContextClassLoader(oldClassLoader);
+
                 }
 
             } else {
@@ -352,7 +355,7 @@ public class RefineServlet extends Butterfly {
      *            command verb for command
      * @param commandObject
      *            object implementing the command
-     * 
+     *
      * @return true if command was loaded and registered successfully
      */
     static public boolean registerCommand(ButterflyModule module, String commandName, Command commandObject) {

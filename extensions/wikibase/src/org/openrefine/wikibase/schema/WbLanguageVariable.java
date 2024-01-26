@@ -28,9 +28,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import org.openrefine.model.Cell;
 import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.schema.ExpressionContext;
-import org.openrefine.wikibase.schema.WbLanguageConstant;
-import org.openrefine.wikibase.schema.WbVariableExpr;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
 
 /**

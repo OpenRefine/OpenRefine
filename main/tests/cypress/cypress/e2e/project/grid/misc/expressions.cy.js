@@ -47,10 +47,10 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    cy.typeExpression('return value.lower()');
+    cy.typeExpression('return value.lower()',{timeout: 10000});
     cy.get('.expression-preview-parsing-status').contains('No syntax error.');
     cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
+      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child',{timeout: 10000}
     ).should('to.contain', 'butter,with salt');
   });
 
@@ -76,7 +76,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    cy.typeExpression('(;)');
+    cy.typeExpression('(;)',{timeout: 10000});
     cy.get('.expression-preview-parsing-status').contains(
       "SyntaxError: no viable alternative at input ';'"
     );
@@ -105,7 +105,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    cy.typeExpression('return value.thisPythonFunctionDoesNotExists()');
+    cy.typeExpression('return value.thisPythonFunctionDoesNotExists()',{timeout: 10000});
 
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'

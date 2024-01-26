@@ -64,7 +64,7 @@ public class WikibaseIssuesFunctionTests extends RefineTest {
                         { "c", "d" },
                         { "e", "f" }
                 })
-                .withOverlayModels(Collections.singletonMap("wikibaseSchema", schema));
+                        .withOverlayModels(Collections.singletonMap("wikibaseSchema", schema));
         ProjectManager.singleton.getPreferenceStore().put("wikibase.manifests", ParsingUtilities.mapper.readTree("[" + manifestJson + "]"));
         row = grid.getRow(0L);
         rowId = 0;

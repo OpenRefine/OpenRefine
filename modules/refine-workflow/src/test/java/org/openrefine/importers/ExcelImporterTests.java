@@ -44,12 +44,18 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -87,7 +93,6 @@ public class ExcelImporterTests extends ImporterTest {
 
     private static final File xlsFileWithMultiSheets = createSheetsWithDifferentColumns(false);
     private static final File xlsxFileWithMultiSheets = createSheetsWithDifferentColumns(true);
-    private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getInstance();
 
     @Override
     @BeforeTest
@@ -268,8 +273,10 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertEquals(rows.size(), ROWS);
         Assert.assertEquals(rows.get(1).cells.size(), COLUMNS);
-        Assert.assertEquals(((String) rows.get(1).getCellValue(0)), NUMBER_FORMAT.format(1.1));
-        Assert.assertEquals(((String) rows.get(2).getCellValue(0)), NUMBER_FORMAT.format(2.2));
+
+        final NumberFormat numberFormat = DecimalFormat.getInstance(Locale.getDefault());
+        Assert.assertEquals(((String) rows.get(1).getCellValue(0)), numberFormat.format(1.1));
+        Assert.assertEquals(((String) rows.get(2).getCellValue(0)), numberFormat.format(2.2));
 
         assertEquals((String) rows.get(1).getCellValue(1), "FALSE");
         assertEquals((String) rows.get(2).getCellValue(1), "TRUE");
@@ -286,8 +293,10 @@ public class ExcelImporterTests extends ImporterTest {
         assertEquals(rows.get(1).getCellValue(7), "1");
         assertEquals(rows.get(2).getCellValue(7), "2");
 
-        assertEquals(rows.get(1).getCellValue(8), String.format("%.2f", 100.0) + "%");
-        assertEquals(rows.get(2).getCellValue(8), String.format("%.2f", 200.0) + "%");
+        final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
+        decimalFormat.applyPattern("0.00");
+        assertEquals(rows.get(1).getCellValue(8), decimalFormat.format(100.0) + "%");
+        assertEquals(rows.get(2).getCellValue(8), decimalFormat.format(200.0) + "%");
 
         assertEquals(rows.get(1).getCellValue(9), "0001");
         assertEquals(rows.get(2).getCellValue(9), "0002");
@@ -296,7 +305,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         assertEquals(rows.get(ROWS - 1).getCellValue(11), NOW_STRING.substring(0, 10)); // date only
 
-        assertEquals(rows.get(ROWS - 1).getCellValue(12), "$" + NUMBER_FORMAT.format(1234.56));
+        assertEquals(rows.get(ROWS - 1).getCellValue(12), "$" + numberFormat.format(1234.56));
     }
 
     @Test

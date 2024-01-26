@@ -5,12 +5,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -132,8 +132,8 @@ public class GuessTypesOfColumnCommandTests extends CommandTestBase {
             verify(response).setStatus(200);
             TestUtils.assertEqualsAsJson(guessedTypes, writer.toString());
 
-            RecordedRequest request = server.takeRequest();
-            Assert.assertEquals(request.getBody().readUtf8(), expectedQuery);
+            RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
+            TestUtils.assertEqualAsQueries(request.getBody().readUtf8(), expectedQuery);
         }
     }
 }

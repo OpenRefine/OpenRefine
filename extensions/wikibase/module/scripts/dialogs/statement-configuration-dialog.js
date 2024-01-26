@@ -18,7 +18,7 @@ class PropertyStrategy {
 
 class SnakStrategy {
   id() {
-    return 'property';
+    return 'snak';
   }
 
   initialState() {

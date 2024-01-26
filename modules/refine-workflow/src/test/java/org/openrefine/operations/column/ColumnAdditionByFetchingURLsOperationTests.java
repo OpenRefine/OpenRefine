@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import okhttp3.HttpUrl;
@@ -56,6 +57,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
@@ -190,7 +192,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             project = createProject("UrlFetchingTests",
                     new String[] { "fruits" },
                     new Serializable[][] {
-                            { "malformed" }, // malformed -> null
+                            { "malformed" }, // malformed -> error
                             { url.toString() }, // fine
                             { url404.toString() } // well-formed but invalid
                     });
@@ -211,8 +213,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             int newCol = 1;
             // Inspect rows
             List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
-            Assert.assertEquals(rows.get(0).getCellValue(newCol), null);
-            Assert.assertTrue(rows.get(1).getCellValue(newCol) != null);
+            Assert.assertTrue(rows.get(0).getCellValue(newCol) instanceof EvalError);
+            Assert.assertNotNull(rows.get(1).getCellValue(newCol));
             Assert.assertTrue(ExpressionUtils.isError(rows.get(2).getCellValue(newCol)));
         }
     }
@@ -255,7 +257,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             List<IndexedRow> rows = project.getCurrentGrid().collectRows();
             Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "first");
 
-            RecordedRequest request = server.takeRequest();
+            RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
             Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);
             Assert.assertEquals(request.getHeader("authorization"), authorizationValue);
             Assert.assertEquals(request.getHeader("accept"), acceptValue);

@@ -77,6 +77,7 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 "http://my.service.com/schemaSpace",
                 null,
                 true,
+                10,
                 Collections.emptyList(),
                 5);
         initialState = createGrid(

@@ -63,6 +63,15 @@ ReconciliationManager.registerService = function(service) {
 };
 
 ReconciliationManager.registerStandardService = function(url, f, silent) {
+
+  if (ReconciliationManager._urlMap.hasOwnProperty(url)) {
+    if (!silent) {
+      alert($.i18n('core-recon/url-already-registered'));
+    }
+    if (f) { f(url); }
+    return;
+  }
+
   var dismissBusy = function() {};
   if (!silent) {
     dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
@@ -76,7 +85,7 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
     };
 
     index = ReconciliationManager.customServices.length + 
-    ReconciliationManager.standardServices.length;
+      ReconciliationManager.standardServices.length;
 
     ReconciliationManager.standardServices.push(data);
     ReconciliationManager._rebuildMap();

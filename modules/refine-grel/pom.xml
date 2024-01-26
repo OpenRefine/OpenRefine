@@ -103,9 +103,9 @@
       <version>1.14.2</version>
     </dependency>
     <dependency>
-      <groupId>com.opencsv</groupId>
-      <artifactId>opencsv</artifactId>
-      <version>5.0</version>
+      <groupId>com.univocity</groupId>
+      <artifactId>univocity-parsers</artifactId>
+      <version>${univocity-csv.version}</version>
     </dependency>
     <!-- Language detector api -->
     <dependency>

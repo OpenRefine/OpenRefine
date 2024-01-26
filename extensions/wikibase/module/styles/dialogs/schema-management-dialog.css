@@ -1,5 +1,6 @@
 .schema-template-list {
-  list-style: none;
+  list-style: decimal;
+  list-style-position: inside;
   max-height: 450px;
   overflow-y: auto;
 }
@@ -10,8 +11,7 @@
 
 .schema-template-list li {
   padding: .5em;
-  display: flex;
-  justify-content: space-between;
+  display: list-item;
 }
 
 .schema-template-list li:nth-child(odd) {

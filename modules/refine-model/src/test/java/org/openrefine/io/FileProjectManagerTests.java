@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (C) 2018, OpenRefine contributors
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,7 +32,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertThrows;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,7 +68,7 @@ public class FileProjectManagerTests {
     @BeforeMethod
     public void createDirectory() throws IOException {
         workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-        workspaceFile = File.createTempFile(workspaceDir.getPath(), "workspace.json");
+        workspaceFile = new File(workspaceDir, "workspace.json");
     }
 
     @BeforeMethod
@@ -79,7 +82,6 @@ public class FileProjectManagerTests {
         protected FileProjectManagerStub(File dir) {
             super(dir, mock(Runner.class));
             _projectsMetadata.put(5555L, mock(ProjectMetadata.class));
-
         }
     }
 
@@ -126,13 +128,14 @@ public class FileProjectManagerTests {
     @Test
     public void deleteProjectAndSaveWorkspace() throws IOException {
         FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
-        manager.saveToFile(workspaceFile);
+        manager.saveWorkspace();
+        // TODO: Test tag updating on project deletion
         manager.deleteProject(5555);
-        manager.saveToFile(workspaceFile);
+        manager.saveWorkspace();
 
         InputStream inputStream = new FileInputStream(workspaceFile);
         ObjectNode json = (ObjectNode) ParsingUtilities.mapper.readTree(inputStream);
-        assertTrue(json.get("projectIDs").isEmpty());
+        assertTrue(json.get("projectIDs").isEmpty(), "deleted project still in workspace.json");
     }
 
     /**
@@ -156,19 +159,35 @@ public class FileProjectManagerTests {
         manager.saveWorkspace();
         long idA = manager.getProjectID("A");
         long idB = manager.getProjectID("B");
-        Path pathA = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idA) + ".project", "metadata.json");
-        Path pathB = Paths.get(workspaceDir.getAbsolutePath(), String.valueOf(idB) + ".project", "metadata.json");
+
+        Path pathA = Paths.get(manager.getProjectDir(idA).getAbsolutePath(), ProjectMetadata.DEFAULT_FILE_NAME);
+        Path pathB = Paths.get(manager.getProjectDir(idB).getAbsolutePath(), ProjectMetadata.DEFAULT_FILE_NAME);
         File metaAFile = pathA.toFile();
         File metaBFile = pathB.toFile();
         long timeBeforeA = metaAFile.lastModified();
         long timeBeforeB = metaBFile.lastModified();
+        // Reload fresh copy of the workspace
+        manager = new FileProjectManager(workspaceDir, mock(Runner.class));
         Thread.sleep(1000);
         manager.getProjectMetadata(idA).setName("ModifiedA");
         manager.saveWorkspace();
         long timeAfterA = metaAFile.lastModified();
         long timeAfterB = metaBFile.lastModified();
-        assertEquals(timeBeforeB, timeAfterB);
-        assertNotEquals(timeBeforeA, timeAfterA);
+        assertEquals(timeBeforeB, timeAfterB, "Unmodified project written when it didn't need to be");
+        assertNotEquals(timeBeforeA, timeAfterA, "Modified project not written");
+    }
+
+    @Test
+    public void testUntarZipSlip() throws IOException {
+        FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
+
+        File tempDir = TestUtils.createTempDirectory("openrefine-project-import-zip-slip-test");
+        try (InputStream stream = FileProjectManagerTests.class.getClassLoader().getResourceAsStream("zip-slip.tar")) {
+            File subDir = new File(tempDir, "dest");
+            assertThrows(IllegalArgumentException.class, () -> manager.untar(subDir, stream));
+        } finally {
+            tempDir.delete();
+        }
     }
 
     @Test

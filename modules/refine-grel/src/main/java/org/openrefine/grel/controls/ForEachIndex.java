@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -34,11 +34,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.grel.controls;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.grel.Control;
@@ -60,6 +65,8 @@ public class ForEachIndex implements Control {
         } else if (!(args[2] instanceof VariableExpr)) {
             // variable name";
             return ControlEvalError.expects_third_arg_element_var_name(ControlFunctionRegistry.getControlName(this));
+        } else if (args[1].equals(args[2])) {
+            return ControlEvalError.expects_second_third_args_different(ControlFunctionRegistry.getControlName(this));
         }
         return null;
     }
@@ -69,8 +76,8 @@ public class ForEachIndex implements Control {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;
-        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return ControlEvalError.foreach_index();
+        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode) && !(o instanceof ObjectNode)) {
+            return new EvalError(ControlEvalError.foreach_index());
         }
 
         String indexName = ((VariableExpr) args[1]).getName();
@@ -109,6 +116,21 @@ public class ForEachIndex implements Control {
 
                     Object r = args[3].evaluate(bindings);
 
+                    results.add(r);
+                }
+            } else if (o instanceof ObjectNode) {
+                ObjectNode obj = (ObjectNode) o;
+                results = new ArrayList<>(obj.size());
+                for (Iterator<Map.Entry<String, JsonNode>> it = obj.fields(); it.hasNext();) {
+                    Map.Entry<String, JsonNode> entry = it.next();
+                    if (entry != null) {
+                        bindings.put(indexName, entry.getKey());
+                        bindings.put(elementName, entry.getValue());
+                    } else {
+                        bindings.remove(indexName);
+                        bindings.remove(elementName);
+                    }
+                    Object r = args[3].evaluate(bindings);
                     results.add(r);
                 }
             } else {

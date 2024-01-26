@@ -11,7 +11,6 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.scrutinizers.SnakScrutinizer;
 
 public class EntityTypeScrutinizer extends SnakScrutinizer {
 

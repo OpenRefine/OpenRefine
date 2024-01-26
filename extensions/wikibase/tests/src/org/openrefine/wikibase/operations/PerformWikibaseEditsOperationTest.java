@@ -89,8 +89,8 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
                 new Serializable[][] {
                         { TestingData.makeNewItemCell(1234L, "my new item"), "hey" }
                 })
-                .withColumnModel(columnModel)
-                .withOverlayModels(overlayModels);
+                        .withColumnModel(columnModel)
+                        .withOverlayModels(overlayModels);
 
         operation = new PerformWikibaseEditsOperation(
                 EngineConfig.reconstruct("{}"), "summary", 5, 50, "", 60, "tag");
@@ -125,7 +125,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
         when(context.<PerformWikibaseEditsOperation.RowEditingResults> getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId),
                 Mockito.any(), Mockito.any()))
-                .thenReturn(changeData);
+                        .thenReturn(changeData);
 
         ChangeResult changeResult = operation.apply(grid, context);
         assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
@@ -143,7 +143,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
         when(context.<PerformWikibaseEditsOperation.RowEditingResults> getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId),
                 Mockito.any(), Mockito.any()))
-                .thenReturn(changeData);
+                        .thenReturn(changeData);
 
         ChangeResult changeResult = operation.apply(grid, context);
         assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);

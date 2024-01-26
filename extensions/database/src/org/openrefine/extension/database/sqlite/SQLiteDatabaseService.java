@@ -29,14 +29,21 @@
 
 package org.openrefine.extension.database.sqlite;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrefine.extension.database.*;
+import org.openrefine.extension.database.DatabaseConfiguration;
+import org.openrefine.extension.database.DatabaseService;
+import org.openrefine.extension.database.DatabaseServiceException;
+import org.openrefine.extension.database.DatabaseUtils;
 import org.openrefine.extension.database.SQLType;
 import org.openrefine.extension.database.model.DatabaseColumn;
 import org.openrefine.extension.database.model.DatabaseInfo;

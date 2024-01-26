@@ -121,6 +121,12 @@ public class MultiValuedCellSplitOperation implements Operation {
         _separator = null;
         _regex = null;
 
+        // Make sure all of our lengths are non-negative
+        for (int i = 0; i < fieldLengths.length; i++) {
+            if (fieldLengths[i] < 0) {
+                fieldLengths[i] = 0;
+            }
+        }
         _fieldLengths = fieldLengths;
     }
 

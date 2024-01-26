@@ -41,7 +41,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.scrutinizers.StatementScrutinizer;
 
 /**
  * A scrutinizer that checks for missing inverse statements in edit batches.

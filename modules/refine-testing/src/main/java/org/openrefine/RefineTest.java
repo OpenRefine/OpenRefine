@@ -275,6 +275,7 @@ public class RefineTest {
                 3478L,
                 judgment,
                 match,
+                null,
                 new Object[3],
                 candidates,
                 "http://my.service.com/api",
@@ -335,5 +336,9 @@ public class RefineTest {
     @AfterMethod
     public void TearDown() throws Exception {
         bindings = null;
+    }
+
+    public static void assertEqualsSystemLineEnding(String actual, String expected) {
+        Assert.assertEquals(actual, expected.replaceAll("\n", System.lineSeparator()));
     }
 }

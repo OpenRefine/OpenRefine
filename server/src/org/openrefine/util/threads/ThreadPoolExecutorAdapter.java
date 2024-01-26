@@ -1,7 +1,3 @@
-
-package org.openrefine.util.threads;
-
-//========================================================================
 //$$Id: ThreadPoolExecutorAdapter.java,v 1.3 2007/11/02 12:39:41 ludovic_orban Exp $$
 //
 //------------------------------------------------------------------------
@@ -15,13 +11,17 @@ package org.openrefine.util.threads;
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //========================================================================
+
+package org.openrefine.util.threads;
+
+import java.util.EventListener;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.slf4j.LoggerFactory;
 
 /**
  * Jetty {@link ThreadPool} that bridges requests to a {@link ThreadPoolExecutor}.
@@ -39,7 +39,7 @@ public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
         try {
             executor.execute(job);
         } catch (RejectedExecutionException e) {
-            Log.getLog().warn(e);
+            LoggerFactory.getLogger(this.toString()).warn("Execute failed", e);
         }
     }
 
@@ -110,12 +110,12 @@ public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
     }
 
     @Override
-    public void addLifeCycleListener(Listener listener) {
-        System.err.println("we should implement this!");
+    public boolean addEventListener(EventListener eventListener) {
+        return false;
     }
 
     @Override
-    public void removeLifeCycleListener(Listener listener) {
-        System.err.println("we should implement this!");
+    public boolean removeEventListener(EventListener eventListener) {
+        return false;
     }
 }

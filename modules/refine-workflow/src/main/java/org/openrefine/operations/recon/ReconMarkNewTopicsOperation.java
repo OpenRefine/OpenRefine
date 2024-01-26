@@ -139,6 +139,7 @@ public class ReconMarkNewTopicsOperation extends RowMapOperation {
                         _schemaSpace,
                         null,
                         false,
+                        10,
                         Collections.emptyList(),
                         0);
     }

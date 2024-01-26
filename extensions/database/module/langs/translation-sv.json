@@ -10,7 +10,6 @@
     "database-source/alert-connection-name": "Du måste ange ett anslutningsnamn",
     "database-source/alert-initial-database": "Du måste ange en första databas",
     "database-source/alert-query": "Du måste ange en giltig fråga",
-    "database-source/alert-invalid-query-keyword": "Fråga kan inte innehålla nyckelord för datamanipulering:",
     "database-source/alert-invalid-query-select": "Frågan måste börja med nyckelordet SELECT",
     "database-source/form-validation-failure": "Ny anslutningsform är ogiltig!",
     "database-source/alert-connection-edit": "Anslutning redigerad",

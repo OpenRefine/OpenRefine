@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -34,14 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.project;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.ProjectManager;
-import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
 
 public class DeleteProjectCommand extends Command {
@@ -57,26 +55,9 @@ public class DeleteProjectCommand extends Command {
         response.setHeader("Content-Type", "application/json");
         long projectID = Long.parseLong(request.getParameter("project"));
 
-        // Remove the project tags from the general map
-        Map<String, Integer> allProjectTags = ProjectManager.singleton.getAllProjectTags();
-        ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(projectID);
-        String[] tags = metadata == null ? null : metadata.getTags();
-        if (tags != null) {
-            for (String tag : tags) {
-                if (allProjectTags.containsKey(tag)) {
-                    int occurrence = allProjectTags.get(tag);
-
-                    if (occurrence == 1)
-                        allProjectTags.remove(tag);
-                    else {
-                        allProjectTags.put(tag, occurrence - 1);
-                    }
-                }
-            }
-        }
-
         ProjectManager.singleton.deleteProject(projectID);
 
         respondOK(response);
     }
+
 }

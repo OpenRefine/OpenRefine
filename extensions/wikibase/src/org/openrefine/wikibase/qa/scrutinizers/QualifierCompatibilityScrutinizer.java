@@ -38,7 +38,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.scrutinizers.StatementScrutinizer;
 
 /**
  * A scrutinizer that checks the compatibility of the qualifiers and the property of a statement, and looks for

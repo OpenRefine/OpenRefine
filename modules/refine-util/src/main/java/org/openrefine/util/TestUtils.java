@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (C) 2018, OpenRefine contributors
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,6 +35,8 @@ import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,6 +51,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.testng.Assert;
 
 public class TestUtils {
 
@@ -64,7 +67,7 @@ public class TestUtils {
     /**
      * Create a temporary directory. NOTE: This is a quick and dirty implementation suitable for tests, not production
      * code.
-     * 
+     *
      * @param name
      * @return
      * @throws IOException
@@ -81,7 +84,7 @@ public class TestUtils {
      * Creates a temporary file with the given contents. This is useful in the case where Java's resource mechanism is
      * not applicable, for instance when importing from files with Spark (as they need to be located by path, not using
      * an InputStream).
-     * 
+     *
      * @param filename
      *            the filename of the temporary file to create
      * @param contents
@@ -188,5 +191,13 @@ public class TestUtils {
     @SafeVarargs
     public static <T> Set<T> set(T... values) {
         return Arrays.asList(values).stream().collect(Collectors.toSet());
+    }
+
+    public static void assertEqualAsQueries(String expectedQuery, String actualQuery) throws UnsupportedEncodingException {
+        String actualResponse[] = URLDecoder.decode(actualQuery, "UTF-8").split("=");
+        String expected[] = URLDecoder.decode(expectedQuery, "UTF-8").split("=");
+
+        Assert.assertEquals(actualResponse[0], expected[0]);
+        TestUtils.assertEqualsAsJson(actualResponse[1], expected[1]);
     }
 }

@@ -35,6 +35,7 @@ package org.openrefine.importers;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,8 @@ import org.testng.annotations.Test;
 
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Grid;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 
 public class RdfTripleImporterTests extends ImporterTest {
@@ -75,9 +78,7 @@ public class RdfTripleImporterTests extends ImporterTest {
 
         ColumnModel columnModel = grid.getColumnModel();
 
-        Assert.assertEquals(columnModel.getColumns().size(), 2);
-        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.mybase.com/ns/music.artist.album");
+        assertColumnNamesMatch(grid, new String[] { "subject", "http://rdf.mybase.com/ns/music.artist.album" });
         Assert.assertEquals(grid.rowCount(), 1);
         Assert.assertEquals(grid.getRow(0).cells.size(), 2);
         Assert.assertEquals(grid.getRow(0).getCell(0).value, "http://rdf.mybase.com/ns/en.bob_dylan");
@@ -94,11 +95,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         Supplier<Reader> input = () -> new StringReader(sampleRdf);
         Grid grid = parseOneFile(SUT, input);
 
-        ColumnModel columnModel = grid.getColumnModel();
-        // columns
-        Assert.assertEquals(columnModel.getColumns().size(), 2);
-        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.mybase.com/ns/music.artist.album");
+        assertColumnNamesMatch(grid, new String[] { "subject", "http://rdf.mybase.com/ns/music.artist.album" });
 
         // rows
         Assert.assertEquals(grid.rowCount(), 3);
@@ -129,12 +126,13 @@ public class RdfTripleImporterTests extends ImporterTest {
         Supplier<Reader> input = () -> new StringReader(sampleRdf);
         Grid grid = parseOneFile(SUT, input);
 
-        ColumnModel columnModel = grid.getColumnModel();
         // columns
-        Assert.assertEquals(columnModel.getColumns().size(), 3);
-        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.mybase.com/ns/music.artist.album");
-        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://rdf.mybase.com/ns/music.artist.genre");
+        String[] columns = {
+                "subject",
+                "http://rdf.mybase.com/ns/music.artist.album",
+                "http://rdf.mybase.com/ns/music.artist.genre"
+        };
+        assertColumnNamesMatch(grid, columns);
 
         // rows
         Assert.assertEquals(grid.rowCount(), 2);
@@ -159,10 +157,11 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         Grid grid = parseOneFile(SUT, input);
 
-        ColumnModel columnModel = grid.getColumnModel();
-        Assert.assertEquals(columnModel.getColumns().size(), 2);
-        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.mybase.com/ns/common.topic.alias");
+        String[] columns = {
+                "subject",
+                "http://rdf.mybase.com/ns/common.topic.alias",
+        };
+        assertColumnNamesMatch(grid, columns);
         Assert.assertEquals(grid.rowCount(), 1);
         Assert.assertEquals(grid.getRow(0).cells.size(), 2);
         Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://rdf.mybase.com/ns/en.bob_dylan");
@@ -193,19 +192,25 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.RDFXML);
         Grid grid = parseOneFile(SUT, input);
 
-        ColumnModel columnModel = grid.getColumnModel();
-        Assert.assertEquals(columnModel.getColumns().size(), 3);
-        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://purl.org/dc/elements/1.1/title");
-        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://purl.org/dc/elements/1.1/description");
+        String[] columns = {
+                "subject",
+                "http://purl.org/dc/elements/1.1/title",
+                "http://purl.org/dc/elements/1.1/description"
+        };
+        assertColumnNamesMatch(grid, columns);
         Assert.assertEquals(grid.rowCount(), 5);
-        Assert.assertEquals(grid.getRow(0).cells.size(), 3);
-        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://www.w3.org/TR/rdf-syntax-grammar");
-        Assert.assertEquals(grid.getRow(0).getCellValue(1), "RDF/XML Syntax Specification (Revised)@en-US");
-        Assert.assertEquals(grid.getRow(3).cells.size(), 3);
-        Assert.assertEquals(grid.getRow(3).getCellValue(0), "http://example.org/buecher/baum");
-        Assert.assertEquals(grid.getRow(3).getCellValue(1), "The Tree@en");
-        Assert.assertEquals(grid.getRow(3).getCellValue(2), "Das Buch ist außergewöhnlich@de");
+        // We can't assume any particular row order here
+        boolean found = false;
+        for (IndexedRow indexedRow : grid.collectRows()) {
+            Row row = indexedRow.getRow();
+            if (row.getCellValue(0) != null && row.getCellValue(0).toString().contains("baum")) {
+                Assert.assertEquals(row.cells.get(0).value, "http://example.org/buecher/baum");
+                Assert.assertEquals(row.cells.get(1).value, "The Tree@en");
+                Assert.assertEquals(row.cells.get(2).value, "Das Buch ist außergewöhnlich@de");
+                found = true;
+            }
+        }
+        Assert.assertTrue(found, "row with 'baum' not found");
     }
 
     @Test
@@ -222,12 +227,13 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         Grid grid = parseOneFile(SUT, input);
 
-        ColumnModel columnModel = grid.getColumnModel();
-        Assert.assertEquals(columnModel.getColumns().size(), 4);
-        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://www.example.org/meeting_organization#attending");
-        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(columnModel.getColumns().get(3).getName(), "http://www.example.org/personal_details#GivenName");
+        String[] columns = {
+                "subject",
+                "http://www.example.org/meeting_organization#attending",
+                "http://www.example.org/personal_details#hasEmail",
+                "http://www.example.org/personal_details#GivenName",
+        };
+        assertColumnNamesMatch(grid, columns);
         Assert.assertEquals(grid.rowCount(), 1);
         Assert.assertEquals(grid.getRow(0).cells.size(), 4);
         Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://www.example.org/people#fred");
@@ -250,12 +256,13 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
         Grid grid = parseOneFile(SUT, input);
 
-        ColumnModel columnModel = grid.getColumnModel();
-        Assert.assertEquals(columnModel.getColumns().size(), 4);
-        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://www.example.org/meeting_organization#attending");
-        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(columnModel.getColumns().get(3).getName(), "http://www.example.org/personal_details#GivenName");
+        String[] columns = {
+                "subject",
+                "http://www.example.org/meeting_organization#attending",
+                "http://www.example.org/personal_details#hasEmail",
+                "http://www.example.org/personal_details#GivenName",
+        };
+        assertColumnNamesMatch(grid, columns);
         Assert.assertEquals(grid.rowCount(), 1);
         Assert.assertEquals(grid.getRow(0).cells.size(), 4);
         Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://www.example.org/people#fred");
@@ -276,13 +283,13 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.NT);
         Grid grid = parseOneFile(SUT, input);
 
-        ColumnModel columnModel = grid.getColumnModel();
-        Assert.assertEquals(columnModel.getColumns().size(), 4);
-        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://www.example.org/personal_details#GivenName");
-        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(columnModel.getColumns().get(3).getName(), "http://www.example.org/meeting_organization#attending");
-
+        String[] columns = {
+                "subject",
+                "http://www.example.org/personal_details#GivenName",
+                "http://www.example.org/personal_details#hasEmail",
+                "http://www.example.org/meeting_organization#attending"
+        };
+        assertColumnNamesMatch(grid, columns);
         Assert.assertEquals(grid.rowCount(), 1);
         Assert.assertEquals(grid.getRow(0).cells.size(), 4);
         Assert.assertEquals(grid.getRow(0).getCell(0).value, "http://www.example.org/people#fred");
@@ -303,25 +310,42 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
         Grid grid = parseOneFile(SUT, input);
 
-        String[] columns = { "subject",
+        String[] columns = {
+                "subject",
                 "http://example.org/data#professor",
                 "http://example.org/data#title",
                 "http://example.org/data#homePage",
                 "http://example.org/data#fullName",
         };
-
-        ColumnModel columnModel = grid.getColumnModel();
-        Assert.assertEquals(columnModel.getColumns().size(), columns.length);
-        for (int i = 0; i < columns.length; i++) {
-            Assert.assertEquals(columnModel.getColumns().get(i).getName(), columns[i]);
-        }
+        assertColumnNamesMatchUnordered(grid, columns);
 
         Assert.assertEquals(grid.rowCount(), 2);
         Assert.assertEquals(grid.getRow(0).getCells().size(), 5);
         Assert.assertEquals(grid.getRow(1).getCells().size(), 5);
-        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://example.org/web-data");
-        // Generated blank node ID is random, but should match
-        Assert.assertEquals(grid.getRow(0).getCellValue(1), grid.getRow(1).getCellValue(0));
+        Assert.assertEquals(grid.getRow(1).getCellValue(0), "http://example.org/web-data");
+        // Generated blank node ID is random, but should match (professor column of one row == subject of other)
+        int profColumn = grid.getColumnModel().getColumnNames().indexOf("http://example.org/data#professor");
+        int subjColumn = grid.getColumnModel().getColumnNames().indexOf("subject");
+        // FIXME: Rows can be reordered as well
+        Assert.assertEquals(grid.getRow(0).getCellValue(subjColumn),
+                grid.getRow(1).getCellValue(profColumn));
+    }
+
+    private void assertColumnNamesMatch(Grid grid, String[] columns) {
+        assertColumnNamesMatch(grid, columns, false);
+    }
+
+    private void assertColumnNamesMatchUnordered(Grid grid, String[] columns) {
+        assertColumnNamesMatch(grid, columns, true);
+    }
+
+    private void assertColumnNamesMatch(Grid grid, String[] columns, boolean sortNames) {
+        String[] projectColumns = grid.getColumnModel().getColumnNames().toArray(new String[columns.length]);
+        if (sortNames) {
+            Arrays.sort(columns);
+            Arrays.sort(projectColumns);
+        }
+        Assert.assertTrue(Arrays.deepEquals(projectColumns, columns));
     }
 
     @Test
@@ -348,12 +372,13 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.JSONLD);
         Grid grid = parseOneFile(SUT, input);
 
-        ColumnModel columnModel = grid.getColumnModel();
-        Assert.assertEquals(columnModel.getColumns().size(), 4);
-        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#GivenName");
-        Assert.assertEquals(columnModel.getColumns().get(3).getName(), "http://www.example.org/meeting_organization#attending");
+        String[] columns = {
+                "subject",
+                "http://www.example.org/personal_details#hasEmail",
+                "http://www.example.org/personal_details#GivenName",
+                "http://www.example.org/meeting_organization#attending"
+        };
+        assertColumnNamesMatch(grid, columns);
         Assert.assertEquals(grid.rowCount(), 1);
         Assert.assertEquals(grid.getRow(0).cells.size(), 4);
         Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://www.example.org/people#fred");

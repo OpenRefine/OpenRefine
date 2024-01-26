@@ -29,13 +29,19 @@ package org.openrefine.browsing.facets;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -148,15 +154,15 @@ public class ListFacetTests extends RefineTest {
                 "         \"c\" : 1,\n" +
                 "         \"s\" : false,\n" +
                 "         \"v\" : {\n" +
-                "           \"l\" : \"d\",\n" +
-                "           \"v\" : \"d\"\n" +
+                "           \"l\" : \"b\",\n" +
+                "           \"v\" : \"b\"\n" +
                 "         }\n" +
                 "       }, {\n" +
                 "         \"c\" : 1,\n" +
                 "         \"s\" : false,\n" +
                 "         \"v\" : {\n" +
-                "           \"l\" : \"b\",\n" +
-                "           \"v\" : \"b\"\n" +
+                "           \"l\" : \"d\",\n" +
+                "           \"v\" : \"d\"\n" +
                 "         }\n" +
                 "       } ],\n" +
                 "       \"columnName\" : \"bar\",\n" +
@@ -193,7 +199,20 @@ public class ListFacetTests extends RefineTest {
                 false);
         EngineConfig config = new EngineConfig(Arrays.asList(firstColumn, secondColumn), Engine.Mode.RowBased);
         Engine engine = new Engine(project.getCurrentGrid(), config, 1234L);
-        TestUtils.isSerializedTo(engine.getFacetResults(), expectedJson, ParsingUtilities.defaultWriter);
+
+        ArrayNode actual = ParsingUtilities.mapper.valueToTree(engine.getFacetResults());
+
+        List<JsonNode> choicesList = new ArrayList<>();
+        actual.get(0).findValues("choices").get(0).forEach(choicesList::add);
+        choicesList.sort(Comparator.comparing(JsonNode::toString));
+        ((ObjectNode) actual.get(0)).replace("choices", ParsingUtilities.mapper.createArrayNode().addAll(choicesList));
+
+        choicesList = new ArrayList<>();
+        actual.get(1).findValues("choices").get(0).forEach(choicesList::add);
+        choicesList.sort(Comparator.comparing(JsonNode::toString));
+        ((ObjectNode) actual.get(1)).replace("choices", ParsingUtilities.mapper.createArrayNode().addAll(choicesList));
+
+        TestUtils.assertEqualsAsJson(actual.toString(), expectedJson);
     }
 
     @Test

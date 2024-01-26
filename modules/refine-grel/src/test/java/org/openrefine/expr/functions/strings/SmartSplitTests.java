@@ -78,8 +78,9 @@ public class SmartSplitTests extends FunctionTestBase {
     @Test
     public void testSmartSplitStringSepGiven() {
         String testString = "teststring1#@$teststring2#@$teststring3#@$teststring4";
+        String[] expected = { "teststring1", "teststring2", "teststring3", "teststring4" };
         Object actual = invoke("smartSplit", testString, "#@$");
-        assertTrue(actual instanceof EvalError);
+        assertEquals(expected, actual);
     }
 
 }

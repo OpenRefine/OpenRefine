@@ -6,8 +6,8 @@
     "author": "OpenRefine",
     "private": true,
     "engines": {
-        "node": ">=14.0.0",
-        "npm":  ">=8.11.0",
+        "node": ">=16.0.0",
+        "npm": ">=8.11.0",
         "yarn": ">=1.22.15"
     },
     "scripts": {
@@ -16,14 +16,14 @@
         "lint": "prettier --check . && eslint ."
     },
     "dependencies": {
-        "cypress": "12.17.0",
+        "cypress": "13.6.3",
         "cypress-file-upload": "^5.0.8"
     },
     "devDependencies": {
-        "eslint": "^8.44.0",
+        "eslint": "^8.56.0",
         "eslint-config-google": "^0.14.0",
-        "eslint-config-prettier": "^8.8.0",
-        "eslint-plugin-cypress": "^2.13.3",
-        "prettier": "3.0.0"
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-cypress": "^2.15.1",
+        "prettier": "3.2.4"
     }
 }

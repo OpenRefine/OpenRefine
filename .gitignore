@@ -1,4 +1,8 @@
 .idea/
+# Leave .idea settings ignored and force users to use `git add -f` to update
+#!*/
+#!.idea/codeStyles/
+*.iml
 *.log
 logs
 *~
@@ -19,16 +23,13 @@ tools/
 tmp/
 /test-output
 test-out/
-/bin
+**/bin
 open-refine.log
 .vscode
 .metadata # Eclipse plugins specific
 
 # Locally stored "Eclipse launch configurations"
 *.launch
-
-.idea
-*.iml
 
 main/target/
 main/webapp/WEB-INF/lib/
@@ -46,6 +47,9 @@ target/
 *.classpath
 *.project
 *.settings
+#.settings/
+#!/*
+#!.settings/org.eclipse.jdt.ui.prefs
 
 # Ignore Apache Maven default download path
 apache-maven-*/
@@ -68,6 +72,10 @@ node_modules/
 
 # Ignore the node_modules folder as they are dependencies to be installed by end-user
 main/webapp/node_modules
+
+# Yarn internal files
+**/.yarn
+**/.yarnrc.yml
 
 # Ignore .gitignore among extensions as it can be used to ignore custom extensions
 

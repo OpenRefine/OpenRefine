@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -323,7 +323,6 @@ public class ImportingUtilities {
                         if (httpClient.getResponse(urlString, null, responseHandler) != null) {
                             archiveCount++;
                         }
-                        ;
                         downloadCount++;
                     } else {
                         // Fallback handling for non HTTP connections (only FTP?)
@@ -401,7 +400,7 @@ public class ImportingUtilities {
 
     /**
      * Attempts to extract a filename from a Spark URI.
-     * 
+     *
      * @param uri
      *            the spark URI
      * @return null if it does not succeed, or if there is no final name in the path
@@ -429,19 +428,19 @@ public class ImportingUtilities {
 
         update.totalExpectedSize += length;
 
-        progress.setProgress("Downloading " + url.toString(),
+        progress.setProgress("Downloading " + url, // TODO: Localize
                 calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
         long actualLength = saveStreamToFile(stream, file, update);
         fileRecord.setSize(actualLength);
         if (actualLength == 0) {
-            throw new IOException("No content found in " + url.toString());
+            throw new IOException("No content found in " + url);
         } else if (length >= 0) {
             update.totalExpectedSize += (actualLength - length);
         } else {
             update.totalExpectedSize += actualLength;
         }
-        progress.setProgress("Saving " + url.toString() + " locally",
+        progress.setProgress("Saving " + url + " locally", // TODO: Localize
                 calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
         return postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress);
     }
@@ -453,7 +452,7 @@ public class ImportingUtilities {
 
     /**
      * Replace the illegal character with '-' in the path in Windows
-     * 
+     *
      * @param path:
      *            file path
      * @return the replaced path or original path if the OS is not Windows
@@ -642,7 +641,7 @@ public class ImportingUtilities {
                     || "application/x-zip-compressed".equals(contentType)
                     || "application/zip".equals(contentType)
                     || "application/x-compressed".equals(contentType)
-                    || "multipar/x-zip".equals(contentType)) {
+                    || "multipart/x-zip".equals(contentType)) {
                 return new ZipInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".kmz")) {
                 return new ZipInputStream(new FileInputStream(file));
@@ -654,7 +653,7 @@ public class ImportingUtilities {
 
     private static boolean isFileGZipped(File file) {
         int magic = 0;
-        try (RandomAccessFile raf = new RandomAccessFile(file, "r");) {
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
             magic = raf.read() & 0xff | ((raf.read() << 8) & 0xff00);
         } catch (IOException ignored) {
         }
@@ -746,15 +745,10 @@ public class ImportingUtilities {
                 return new GZIPInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".bz2")
                     || "application/x-bzip2".equals(mimeType)) {
-                InputStream is = new FileInputStream(file);
-                is.mark(4);
-                if (!(is.read() == 'B' && is.read() == 'Z')) {
-                    // No BZ prefix as appended by command line tools. Reset and hope for the best
-                    is.reset();
-                }
-                return new BZip2CompressorInputStream(is);
+                return new BZip2CompressorInputStream(new FileInputStream(file), true);
             }
         } catch (IOException e) {
+            // TODO: We need to get this error back to the user
             logger.warn("Something that looked like a compressed file gave an error on open: " + file, e);
         }
         return null;
@@ -800,6 +794,7 @@ public class ImportingUtilities {
     static public void previewParse(ImportingJob job, String format, ObjectNode optionObj, Runner runner,
             List<Exception> exceptions) {
         ImportingFormat record = FormatRegistry.getFormatToRecord().get(format);
+
         if (record == null || record.parser == null) {
             // TODO: what to do?
             return;

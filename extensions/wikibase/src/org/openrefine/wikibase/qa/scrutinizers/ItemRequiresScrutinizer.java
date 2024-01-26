@@ -16,7 +16,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.scrutinizers.EditScrutinizer;
 import org.openrefine.wikibase.updates.ItemEdit;
 import org.openrefine.wikibase.updates.MediaInfoEdit;
 import org.openrefine.wikibase.updates.StatementEntityEdit;

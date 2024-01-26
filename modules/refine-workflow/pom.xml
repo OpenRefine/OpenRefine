@@ -108,11 +108,6 @@
       <version>${commons-validator.version}</version>
     </dependency>
     <dependency>
-      <groupId>velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>${velocity.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.marc4j</groupId>
       <artifactId>marc4j</artifactId>
       <version>${marc4j.version}</version>
@@ -128,9 +123,9 @@
       <version>${jsoup.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>opencsv-multichar</artifactId>
-      <version>${opencsv-multichar.version}</version>
+      <groupId>com.univocity</groupId>
+      <artifactId>univocity-parsers</artifactId>
+      <version>${univocity-csv.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>

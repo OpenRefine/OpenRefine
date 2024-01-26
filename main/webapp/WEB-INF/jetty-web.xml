@@ -1,0 +1,29 @@
+<!DOCTYPE Configure SYSTEM "https://www.eclipse.org/jetty/configure_10_0.dtd">
+<!-- =============================================================== -->
+<!-- Mixin the GZIP Handler                                          -->
+<!-- This applies the GZIP Handler to the entire server              -->
+<!-- If a GZIP handler is required for an individual context, then   -->
+<!-- use a context XML (see test.xml example in distribution)        -->
+<!-- =============================================================== -->
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+    <Call name="insertHandler">
+        <Arg>
+            <New id="GzipHandler" class="org.eclipse.jetty.server.handler.gzip.GzipHandler">
+                <Set name="minGzipSize"><Property name="jetty.gzip.minGzipSize" deprecated="gzip.minGzipSize" default="2048"/></Set>
+                <Set name="inflateBufferSize"><Property name="jetty.gzip.inflateBufferSize" default="0"/></Set>
+                <Set name="syncFlush"><Property name="jetty.gzip.syncFlush" default="false" /></Set>
+
+                <Set name="includedMethodList"><Property name="jetty.gzip.includedMethodList" default="GET" /></Set>
+                <Set name="excludedMethodList"><Property name="jetty.gzip.excludedMethodList" default="" /></Set>
+
+                <Set name="dispatcherTypes" property="jetty.gzip.dispatcherTypes"/>
+                <Set name="includedMimeTypesList">
+                    <Property name="jetty.gzip.includedMimeTypeList" default="text/html,text/plain,text/xml,application/xhtml+xml,text/css,text/javascript,application/javascript,application/json,image/svg+xml"/>
+                </Set>
+                <Set name="excludedMimeTypesList" property="jetty.gzip.excludedMimeTypeList"/>
+                <Set name="includedPaths" property="jetty.gzip.includedPathList"/>
+                <Set name="excludedPaths" property="jetty.gzip.excludedPathList"/>
+            </New>
+        </Arg>
+    </Call>
+</Configure>

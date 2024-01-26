@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -47,7 +47,11 @@ public class VariableExpr implements GrelExpr {
     final protected String _name;
 
     public VariableExpr(String name) {
-        _name = name;
+        if (name != null || !name.isEmpty()) {
+            _name = name;
+        } else {
+            throw new IllegalArgumentException("Illegal variable name ");
+        }
     }
 
     @Override
@@ -66,7 +70,7 @@ public class VariableExpr implements GrelExpr {
 
     @Override
     public boolean equals(Object other) {
-        return (other instanceof GrelExpr) && toString().equals(other.toString());
+        return other instanceof VariableExpr && getName().equals(((VariableExpr) other).getName());
     }
 
     @Override
@@ -92,5 +96,10 @@ public class VariableExpr implements GrelExpr {
     @Override
     public boolean isLocal() {
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return _name.hashCode();
     }
 }

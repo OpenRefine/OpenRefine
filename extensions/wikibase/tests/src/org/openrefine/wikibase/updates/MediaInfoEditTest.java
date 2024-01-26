@@ -157,7 +157,7 @@ public class MediaInfoEditTest {
                 .thenReturn(mid);
         when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}\n[[Category:Uploaded with OpenRefine]]", "summary",
                 Collections.emptyList()))
-                .thenReturn(response);
+                        .thenReturn(response);
 
         MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList());
         assertEquals(returnedMid, mid);

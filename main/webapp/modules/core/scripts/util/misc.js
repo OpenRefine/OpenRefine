@@ -87,37 +87,30 @@ function deepCopy(obj) {
   }
 };
 
+const rtf = new Intl.RelativeTimeFormat(navigator.languages, { numeric: 'auto' });
+
 function formatRelativeDate(d) {
-  var d = new Date(d);
-  var almost_last_year = Date.today().add({ months: -11 });
-  var last_month = Date.today().add({ months: -1 });
-  var last_week = Date.today().add({ days: -7 });
-  var today = Date.today();
-  var tomorrow = Date.today().add({ days: 1 });
+  const date = new Date(d);
+  const now = new Date();
+  const diffTime = now - date;
 
-  if (d.between(today, tomorrow)) {
-    return $.i18n('core-util-enc/today', d.toString("h:mm tt"));
-  } else if (d.between(last_week, today)) {
-    var diff = Math.floor(daysIntoYear(today) - daysIntoYear(d));
-    return (diff <= 1) ? ($.i18n('core-util-enc/yesterday', d.toString("h:mm tt"))) : $.i18n('core-util-enc/days-ago', diff);
-  } else if (d.between(last_month, today)) {
-    var diff = Math.floor((daysIntoYear(today) - daysIntoYear(d)) / 7);
-    if (diff < 1) {diff += 52};
-    return $.i18n('core-util-enc/weeks-ago', diff) ;
-  } else if (d.between(almost_last_year, today)) {
-    var diff = today.getMonth() - d.getMonth();
-    if (diff < 1) {
-      diff += 12;
-    }
-    return $.i18n('core-util-enc/months-ago', diff);
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (Math.abs(diffDays) < 1) {
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    return rtf.format(-diffHours, 'hour');
+  } else if (Math.abs(diffDays) < 7) {
+    return rtf.format(-diffDays, 'day');
+  } else if (Math.abs(diffDays) < 30) {
+    const diffWeeks = Math.floor(diffDays / 7);
+    return rtf.format(-diffWeeks, 'week');
+  } else if (Math.abs(diffDays) < 365) {
+    const diffMonths = Math.floor(diffDays / 30); // Approximation
+    return rtf.format(-diffMonths, 'month');
   } else {
-    var diff = Math.floor(today.getYear() - d.getYear());
-    return $.i18n('core-util-enc/years-ago', diff);
+    const diffYears = diffDays / 365; // Approximation
+    return rtf.format(-Math.floor(diffYears), 'year');
   }
-}
-
-function daysIntoYear(date){
-  return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000;
 }
 
 function setInitialHeightTextArea(textarea) {

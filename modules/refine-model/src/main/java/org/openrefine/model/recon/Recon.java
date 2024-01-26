@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -136,9 +136,10 @@ public class Recon implements HasFields, Serializable {
     final public String judgmentAction;
     @JsonIgnore
     final public long judgmentHistoryEntry;
-
     @JsonIgnore
     final public ReconCandidate match;
+    @JsonIgnore
+    final public String error;
     @JsonIgnore
     final public int matchRank;
 
@@ -169,6 +170,7 @@ public class Recon implements HasFields, Serializable {
         judgmentAction = "unknown";
         judgmentHistoryEntry = 0;
         match = null;
+        error = null;
         matchRank = -1;
     }
 
@@ -209,6 +211,8 @@ public class Recon implements HasFields, Serializable {
             return judgment == Judgment.New;
         } else if ("match".equals(name)) {
             return match;
+        } else if ("error".equals(name)) {
+            return error;
         } else if ("matchRank".equals(name)) {
             return matchRank;
         } else if ("features".equals(name)) {
@@ -284,6 +288,12 @@ public class Recon implements HasFields, Serializable {
         return match;
     }
 
+    @JsonProperty("e")
+    @JsonInclude(Include.NON_NULL)
+    public String getError() {
+        return error;
+    }
+
     @JsonProperty("c")
     // @JsonView(JsonViews.SaveMode.class)
     public List<ReconCandidate> getCandidates() {
@@ -325,6 +335,7 @@ public class Recon implements HasFields, Serializable {
             @JsonProperty("judgmentHistoryEntry") long judgmentHistoryEntry,
             @JsonProperty("j") Judgment judgment,
             @JsonProperty("m") ReconCandidate match,
+            @JsonProperty("e") String error,
             @JsonProperty("f") Object[] features,
             @JsonProperty("c") List<ReconCandidate> candidates,
             @JsonProperty("service") String service,
@@ -336,6 +347,10 @@ public class Recon implements HasFields, Serializable {
         this.judgmentHistoryEntry = judgmentHistoryEntry;
         this.judgment = judgment != null ? judgment : Judgment.None;
         this.match = match;
+        this.error = error;
+        if (error != null && match != null) {
+            throw new IllegalArgumentException("there is a match hence no error");
+        }
         this.features = features != null ? features : new Object[Feature_max];
         this.candidates = candidates != null ? ImmutableList.copyOf(candidates) : ImmutableList.of();
         this.service = service != null ? service : "unknown";
@@ -351,6 +366,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 judgment,
                 match,
+                error,
                 features,
                 candidates,
                 service,
@@ -366,6 +382,7 @@ public class Recon implements HasFields, Serializable {
                 newJudgmentHistoryEntry,
                 judgment,
                 match,
+                error,
                 features,
                 candidates,
                 service,
@@ -381,6 +398,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 newJudgment,
                 match,
+                error,
                 features,
                 candidates,
                 service,
@@ -396,6 +414,23 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 judgment,
                 newMatch,
+                error,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                matchRank);
+    }
+
+    public Recon withError(String newError) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                newError,
                 features,
                 candidates,
                 service,
@@ -411,6 +446,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 judgment,
                 match,
+                error,
                 newFeatures,
                 candidates,
                 service,
@@ -426,6 +462,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 judgment,
                 match,
+                error,
                 features,
                 newCandidates,
                 service,
@@ -453,6 +490,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 judgment,
                 match,
+                error,
                 features,
                 candidates,
                 service,
@@ -468,6 +506,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 judgment,
                 match,
+                error,
                 features,
                 candidates,
                 service,
@@ -483,6 +522,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 judgment,
                 match,
+                error,
                 features,
                 candidates,
                 service,
@@ -498,6 +538,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 judgment,
                 match,
+                error,
                 features,
                 candidates,
                 service,
@@ -513,6 +554,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry,
                 judgment,
                 match,
+                error,
                 features,
                 candidates,
                 service,
@@ -532,6 +574,7 @@ public class Recon implements HasFields, Serializable {
                 judgmentHistoryEntry == otherRecon.judgmentHistoryEntry &&
                 judgment.equals(otherRecon.judgment) &&
                 ((match == null && otherRecon.match == null) || match.equals(otherRecon.match)) &&
+                ((error == null && otherRecon.error == null) || error.equals(otherRecon.error)) &&
                 candidates.equals(otherRecon.candidates) &&
                 service.equals(otherRecon.service) &&
                 identifierSpace.equals(otherRecon.identifierSpace) &&
@@ -547,7 +590,12 @@ public class Recon implements HasFields, Serializable {
 
     @Override
     public String toString() {
-        return String.format("[Recon %d %d %s %s %s %s]",
-                id, judgmentHistoryEntry, judgment, match, StringUtils.join(", ", candidates), judgmentAction);
+        if (error == null) {
+            return String.format("[Recon %d %d %s %s %s %s]",
+                    id, judgmentHistoryEntry, judgment, match, StringUtils.join(", ", candidates), judgmentAction);
+        } else {
+            return String.format("[Recon %d %d with error: %s]", id, judgmentHistoryEntry, error);
+        }
     }
+
 }

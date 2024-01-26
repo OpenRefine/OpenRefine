@@ -29,6 +29,8 @@
 
 package org.openrefine.extension.database.sqlite;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -67,7 +69,12 @@ public class SQLiteConnectionManager {
     }
 
     public static String getDatabaseUrl(DatabaseConfiguration dbConfig) {
-        return "jdbc:" + dbConfig.getDatabaseType().toLowerCase() + ":" + dbConfig.getDatabaseName();
+        try {
+            URI uri = new URI("jdbc:" + dbConfig.getDatabaseType().toLowerCase(), dbConfig.getDatabaseName(), null);
+            return uri.toASCIIString();
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**

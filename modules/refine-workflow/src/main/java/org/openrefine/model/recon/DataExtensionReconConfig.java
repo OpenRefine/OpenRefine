@@ -39,7 +39,6 @@ import java.util.List;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
-import org.openrefine.model.recon.ReconJob;
 
 public class DataExtensionReconConfig extends StandardReconConfig {
 
@@ -54,13 +53,7 @@ public class DataExtensionReconConfig extends StandardReconConfig {
             String identifierSpace,
             String schemaSpace,
             ReconType type) {
-        super(
-                service,
-                identifierSpace,
-                schemaSpace,
-                type != null ? type.id : null,
-                type != null ? type.name : null,
-                true,
+        super(service, identifierSpace, schemaSpace, type != null ? type.id : null, type != null ? type.name : null, true, 10,
                 new ArrayList<ColumnDetail>());
         this.type = type;
     }
@@ -72,7 +65,7 @@ public class DataExtensionReconConfig extends StandardReconConfig {
     }
 
     @Override
-    public int getBatchSize() {
+    public int getBatchSize(long rowCount) {
         throw new RuntimeException(WARN);
     }
 

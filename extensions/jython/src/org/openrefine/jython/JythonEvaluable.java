@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -51,6 +51,8 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PySyntaxError;
 import org.python.util.PythonInterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
@@ -61,6 +63,7 @@ import org.openrefine.expr.ParsingException;
 public class JythonEvaluable implements Evaluable {
 
     private static final long serialVersionUID = -3876851358431764559L;
+    final static Logger logger = LoggerFactory.getLogger("jython");
 
     static public LanguageSpecificParser createParser() {
         return new LanguageSpecificParser() {
@@ -89,6 +92,7 @@ public class JythonEvaluable implements Evaluable {
     // don't have access to the servlet context from this class this is
     // the best we can do for now.
     static {
+        logger.debug("Executing static block in JythonEvaluable");
         File libPath = new File("webapp/WEB-INF/lib/jython");
         if (!libPath.exists() && !libPath.canRead()) {
             libPath = new File("main/webapp/WEB-INF/lib/jython");
@@ -103,10 +107,16 @@ public class JythonEvaluable implements Evaluable {
             PythonInterpreter.initialize(System.getProperties(), props, new String[] { "" });
         }
 
-        _engine = new PythonInterpreter();
+        logger.debug("Done with static block in Jython initialization");
     }
 
     public JythonEvaluable(String source, String languagePrefix) {
+        if (_engine == null) {
+            // TODO: This could potentially be done in the background, after startup, but before the user needs it
+            logger.debug("Invoking constructor for PythonInterpreter()");
+            _engine = new PythonInterpreter();
+            logger.debug("Done constructor for PythonInterpreter()");
+        }
         this.functionName = String.format("__temp_%d__", Math.abs(source.hashCode()));
         this.source = source;
         this.languagePrefix = languagePrefix;

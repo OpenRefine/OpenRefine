@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -40,14 +40,18 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectManager;
@@ -59,6 +63,12 @@ import org.openrefine.util.ParsingUtilities;
 
 public class SetProjectMetadataCommandTests extends CommandTestBase {
 
+    @Override
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
+
     // System Under Test
     SetProjectMetadataCommand SUT = null;
 
@@ -67,12 +77,11 @@ public class SetProjectMetadataCommandTests extends CommandTestBase {
 
     // variables
     long PROJECT_ID_LONG = 1234;
-    String PROJECT_ID = "1234";
+    String PROJECT_ID = Long.toString(PROJECT_ID_LONG);
     String SUBJECT = "subject for project";
 
     @BeforeMethod
     public void SetUp() throws Exception {
-
         SUT = new SetProjectMetadataCommand();
 
         proj = createProject(new String[] { "column 1", "column 2" }, new Serializable[][] { { "foo", "bar" }, { "test", "data" } });
@@ -156,5 +165,57 @@ public class SetProjectMetadataCommandTests extends CommandTestBase {
 
         // verify
         verify(request, times(2)).getParameter("project");
+    }
+
+    @Test
+    public void setCustomMetadataTest() {
+        String customMetadata = this.getValidCustomMetadata();
+        ProjectMetadata meta = proj.getMetadata();
+        meta.setAnyField("customMetadata", customMetadata);
+
+        Assert.assertEquals(meta.getCustomMetadata("name"), "test");
+        Assert.assertEquals(meta.getCustomMetadata("isValid"), true);
+        Assert.assertEquals(meta.getCustomMetadata("id"), 1);
+        Assert.assertTrue(meta.getCustomMetadata("companies") instanceof List);
+        Assert.assertTrue(meta.getCustomMetadata("information") instanceof Map);
+    }
+
+    @Test
+    public void setInvalidCustomMetadataTest() {
+        String customMetadata = this.getInvalidCustomMetadata();
+        ProjectMetadata meta = proj.getMetadata();
+
+        Assert.assertThrows(() -> meta.setAnyField("customMetadata", customMetadata));
+    }
+
+    @Test
+    public void testCSRFProtection() throws Exception {
+        when(request.getParameter("csrf_token")).thenReturn("");
+        SUT.doPost(request, response);
+        assertCSRFCheckFailed();
+    }
+
+    @Test
+    public void testNoProjectId() throws Exception {
+        when(request.getParameter("project")).thenReturn(null);
+        SUT.doPost(request, response);
+        assertErrorNotCSRF();
+    }
+
+    private String getValidCustomMetadata() {
+        return "{\n" + //
+                "  \"name\":\"test\",\n" + //
+                "  \"companies\":[\"Google\", \"IBM\", \"meta\"],\n" + //
+                "  \"isValid\": true,\n" + //
+                "  \"information\": {\n" + //
+                "    \"text-field\":\"value\",\n" + //
+                "    \"numeric-field\": 1\n" + //
+                "  },\n" + //
+                "  \"id\":1\n" + //
+                "}";
+    }
+
+    private String getInvalidCustomMetadata() {
+        return "{\n  \"name\":test\n}";
     }
 }

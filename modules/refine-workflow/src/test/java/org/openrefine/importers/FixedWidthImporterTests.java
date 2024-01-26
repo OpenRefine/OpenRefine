@@ -36,6 +36,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.messages.OpenRefineMessage;
 import org.openrefine.model.Grid;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.util.JSONUtilities;
@@ -127,7 +128,10 @@ public class FixedWidthImporterTests extends ImporterTest {
         Assert.assertEquals((String) rows.get(1).getRow().getCellValue(1), "rt");
         Assert.assertNull(rows.get(1).getRow().getCellValue(2));
 
-        Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("Column 1", "Column 2", "Column 3"));
+        Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList(
+                OpenRefineMessage.importer_utilities_column() + " 1",
+                OpenRefineMessage.importer_utilities_column() + " 2",
+                OpenRefineMessage.importer_utilities_column() + " 3"));
     }
 
     @Test

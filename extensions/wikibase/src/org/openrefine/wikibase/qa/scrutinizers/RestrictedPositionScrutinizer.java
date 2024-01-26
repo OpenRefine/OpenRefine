@@ -38,7 +38,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.scrutinizers.StatementScrutinizer;
 
 public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 

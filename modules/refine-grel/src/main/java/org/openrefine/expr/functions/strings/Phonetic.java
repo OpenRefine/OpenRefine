@@ -33,7 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.strings;
 
-import org.openrefine.clustering.binning.*;
+import org.openrefine.clustering.binning.ColognePhoneticKeyer;
+import org.openrefine.clustering.binning.DoubleMetaphoneKeyer;
+import org.openrefine.clustering.binning.Metaphone3Keyer;
+import org.openrefine.clustering.binning.MetaphoneKeyer;
+import org.openrefine.clustering.binning.SoundexKeyer;
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.EvalErrorMessage;

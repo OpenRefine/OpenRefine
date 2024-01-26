@@ -63,7 +63,7 @@ public class PreviewExtendDataCommandTests extends CommandTestBase {
 
             server.enqueue(new MockResponse().setBody(serviceResponse));
 
-            StandardReconConfig reconConfig = new StandardReconConfig(endpoint, endpoint, endpoint, null, false, null, 0);
+            StandardReconConfig reconConfig = new StandardReconConfig(endpoint, endpoint, endpoint, null, false, 10, null, 0);
             ColumnModel columnModel = grid.getColumnModel().withReconConfig(0, reconConfig);
             grid = grid.withColumnModel(columnModel);
             Project project = createProject("test project", grid);
@@ -102,6 +102,7 @@ public class PreviewExtendDataCommandTests extends CommandTestBase {
                 3478L,
                 Judgment.Matched,
                 match,
+                null,
                 new Object[3],
                 candidates,
                 endpoint,

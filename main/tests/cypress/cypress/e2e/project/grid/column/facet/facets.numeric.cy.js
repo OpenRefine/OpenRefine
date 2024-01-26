@@ -31,8 +31,6 @@ describe(__filename, function () {
     cy.get('.dialog-footer button').contains('OK').click();
     cy.get('#refine-tabs-facets').should('exist');
 
-    cy.waitForOrOperation();
-
     //sliding the right slider
     cy.get('.slider-widget-bracket').eq(1)
     .trigger('mousedown',{ force: true })
@@ -44,7 +42,7 @@ describe(__filename, function () {
     cy.get('.slider-widget-draggable').eq(0)
     .trigger('mousedown',{ force: true })
     .trigger('mousemove',130,0,{ force: true })
-    .trigger('mouseup',{ force: true }).waitForOrOperation();
+    .trigger('mouseup',{ force: true });
     cy.get('#summary-bar').contains('77 matching rows');
 
     //sliding the left slider

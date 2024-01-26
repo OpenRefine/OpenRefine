@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,10 @@ public abstract class ProjectManager {
     static protected final Duration QUICK_SAVE_MAX_TIME = Duration.ofSeconds(30);
 
     protected Map<Long, ProjectMetadata> _projectsMetadata;
-    protected Map<String, Integer> _projectsTags;// TagName, number of projects having that tag
+    /**
+     * Count of projects which have the given tag
+     */
+    private Map<String, Integer> _projectsTags;
     protected PreferenceStore _preferenceStore;
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -105,7 +109,7 @@ public abstract class ProjectManager {
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
         _preferenceStore = new PreferenceStore();
         _projects = new HashMap<Long, Project>();
-        _projectsTags = new HashMap<String, Integer>();
+        _projectsTags = new HashMap<>();
 
         preparePreferenceStore(_preferenceStore);
     }
@@ -132,18 +136,7 @@ public abstract class ProjectManager {
             projectMetadata.setRowCount(project.getCurrentGrid().rowCount());
             _projects.put(project.getId(), project);
             _projectsMetadata.put(project.getId(), projectMetadata);
-            if (_projectsTags == null)
-                _projectsTags = new HashMap<>();
-            String[] tags = projectMetadata.getTags();
-            if (tags != null) {
-                for (String tag : tags) {
-                    if (_projectsTags.containsKey(tag)) {
-                        _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                    } else {
-                        _projectsTags.put(tag, 1);
-                    }
-                }
-            }
+            addProjectTags(projectMetadata.getTags());
         }
     }
 
@@ -337,14 +330,14 @@ public abstract class ProjectManager {
     }
 
     /**
-     * Gets the project metadata from memory Requires that the metadata has already been loaded from the data store
+     * Gets the project metadata from memory. Requires that the metadata has already been loaded from the data store
      */
     public ProjectMetadata getProjectMetadata(long id) {
         return _projectsMetadata.get(id);
     }
 
     /**
-     * Gets the project metadata from memory Requires that the metadata has already been loaded from the data store
+     * Gets the project metadata from memory. Requires that the metadata has already been loaded from the data store
      */
     public ProjectMetadata getProjectMetadata(String name) {
         for (ProjectMetadata pm : _projectsMetadata.values()) {
@@ -465,8 +458,58 @@ public abstract class ProjectManager {
     }
 
     /**
-     * Gets all the project tags currently held in memory
+     * Increment usage count for all tags in the list.
+     *
+     * @param tags
+     *            String[] array containing all tag names to be updated
      */
+    public void addProjectTags(String[] tags) {
+        if (tags != null) {
+            for (String tag : tags) {
+                if (_projectsTags.containsKey(tag)) {
+                    _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                } else {
+                    _projectsTags.put(tag, 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * Decrement usage count for all tags in the list and remove any which are no longer used at all.
+     *
+     * @param tags
+     *            String[] array containing all tag names to be updated
+     */
+    public void removeProjectTags(String[] tags) {
+        for (String tag : tags) {
+            if (_projectsTags.containsKey(tag)) {
+                int occurrence = _projectsTags.get(tag);
+                if (occurrence <= 1)
+                    _projectsTags.remove(tag);
+                else {
+                    _projectsTags.put(tag, occurrence - 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get tag names and usage counts for all projects
+     *
+     * @return unmodifiable map keyed by tag name with usage counts as the values
+     */
+    @JsonIgnore
+    public Map<String, Integer> getAllProjectsTags() {
+        return Collections.unmodifiableMap(_projectsTags);
+    }
+
+    /**
+     * Gets all the project tags currently held in memory
+     *
+     * @deprecated Deprecated for v3.8. Use {@link #getAllProjectsTags()}
+     */
+    @Deprecated
     @JsonIgnore
     public Map<String, Integer> getAllProjectTags() {
         return _projectsTags;

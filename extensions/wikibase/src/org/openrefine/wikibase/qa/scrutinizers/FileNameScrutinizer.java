@@ -3,6 +3,7 @@ package org.openrefine.wikibase.qa.scrutinizers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -19,9 +20,9 @@ import org.openrefine.wikibase.updates.MediaInfoEdit;
 public class FileNameScrutinizer extends EditScrutinizer {
 
     // see https://commons.wikimedia.org/wiki/Commons:File_naming
-    public static final int maxFileNameLength = 240;
+    public static final int maxFileNameBytes = 240;
     public static final Pattern forbiddenFileNameChars = Pattern.compile(
-            ".*([^ %!\"$&'()*,\\-./0-9:;=?@A-Z\\\\^_`a-z~\\x80-\\xFF+]|%[0-9A-Fa-f]{2}|&[A-Za-z0-9\\x80-\\xff]+;|&#[0-9]+;|&#x[0-9A-Fa-f]+;).*");
+            ".*([^ %!\"$&'()*,\\-./\\d:;=?@\\p{L}\\p{M}\\p{N}\\\\^_`~\\x80-\\xFF+]|%[0-9A-Fa-f]{2}|&[A-Za-z0-9\\x80-\\xff]+;|&#[0-9]+;|&#x[0-9A-Fa-f]+;).*");
 
     public static final String duplicateFileNamesInBatchType = "duplicate-file-names-in-batch";
     public static final String fileNamesAlreadyExistOnWikiType = "file-names-already-exist-on-wiki";
@@ -79,21 +80,25 @@ public class FileNameScrutinizer extends EditScrutinizer {
                 seenFileNames.add(normalizedFileName);
             }
 
-            // check whether filenames exceed the maximum length (240 bytes, which we take to be 240 characters)
-            // TODO check for the length as bytes in the corresponding enconding (which one?)
+            // check whether filenames exceed the maximum length (240 bytes, coded as UTF-8)
             // see https://commons.wikimedia.org/wiki/Commons:File_naming
-            if (fileName.length() > maxFileNameLength) {
-                QAWarning issue = new QAWarning(fileNameTooLongType, null, QAWarning.Severity.CRITICAL,
-                        1);
-                issue.setProperty("example_filename", fileName);
-                issue.setProperty("max_length", Integer.toString(maxFileNameLength));
-                addIssue(issue);
+            try {
+                byte[] utf8Bytes = fileName.getBytes("UTF-8");
+                if (utf8Bytes.length > maxFileNameBytes) {
+                    QAWarning issue = new QAWarning(fileNameTooLongType, null,
+                            QAWarning.Severity.CRITICAL, 1);
+                    issue.setProperty("example_filename", fileName);
+                    // This is only accurate for 1 byte characters
+                    issue.setProperty("max_length", Integer.toString(maxFileNameBytes));
+                    addIssue(issue);
+                }
+            } catch (UnsupportedEncodingException e) {
             }
 
             // Invalid characters
             Matcher matcher = forbiddenFileNameChars.matcher(fileName);
             if (matcher.matches()) {
-                QAWarning issue = new QAWarning(invalidCharactersInFileNameType, null, QAWarning.Severity.CRITICAL,
+                QAWarning issue = new QAWarning(invalidCharactersInFileNameType, null, QAWarning.Severity.IMPORTANT,
                         1);
                 issue.setProperty("example_filename", fileName);
                 issue.setProperty("invalid_character", matcher.group(1));

@@ -33,8 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -46,7 +49,9 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.CharMatcher;
+import org.mozilla.universalchardet.UnicodeBOMInputStream;
 
+import org.openrefine.importing.EncodingGuesser;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.messages.OpenRefineMessage;
@@ -276,10 +281,21 @@ public class ImporterUtilities {
             encoding = commonEncoding;
         }
         if (encoding != null) {
-            try {
-                return new InputStreamReader(inputStream, encoding);
-            } catch (UnsupportedEncodingException e) {
-                // Ignore and fall through
+
+            // Special case for UTF-8 with BOM
+            if (EncodingGuesser.UTF_8_BOM.equals(encoding)) {
+                try {
+                    return new InputStreamReader(new UnicodeBOMInputStream(inputStream, true), UTF_8);
+                } catch (IOException e) {
+                    throw new RuntimeException("Exception from UnicodeBOMInputStream", e);
+                }
+            } else {
+                try {
+                    return new InputStreamReader(inputStream, encoding);
+                } catch (UnsupportedEncodingException e) {
+                    // This should never happen since they picked from a list of supported encodings
+                    throw new RuntimeException("Unsupported encoding: " + encoding, e);
+                }
             }
         }
         return new InputStreamReader(inputStream);
@@ -330,6 +346,22 @@ public class ImporterUtilities {
             JSONUtilities.append(a, o);
         }
         return a;
+    }
+
+    public static boolean isCompressed(File file) throws IOException {
+        // Check for common compressed file types to protect ourselves from binary data
+        try (InputStream is = new FileInputStream(file)) {
+            byte[] magic = new byte[4];
+            int count = is.read(magic);
+            if (count == 4 && Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x03, 0x04 }) || // zip
+                    Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x07, 0x08 }) ||
+                    (magic[0] == 0x1F && magic[1] == (byte) 0x8B) || // gzip
+                    (magic[0] == 'B' && magic[1] == 'Z' && magic[2] == 'h') // bzip2
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

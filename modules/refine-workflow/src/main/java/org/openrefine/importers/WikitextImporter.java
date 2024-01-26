@@ -772,6 +772,7 @@ public class WikitextImporter extends ReaderImporter {
                 "",
                 "entity",
                 true,
+                10,
                 new ArrayList<ColumnDetail>(),
                 1);
         return cfg;

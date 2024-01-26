@@ -39,8 +39,6 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 
 import org.openrefine.wikibase.manifests.Manifest;
-import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.QAWarningStore;
 import org.openrefine.wikibase.qa.scrutinizers.CalendarScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.CommonDescriptionScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.ConflictsWithScrutinizer;
@@ -73,7 +71,7 @@ import org.openrefine.wikibase.utils.EntityCache;
 
 /**
  * Runs a collection of edit scrutinizers on an edit batch.
- * 
+ *
  * @author Antonin Delpeuch
  */
 public class EditInspector {
@@ -144,7 +142,7 @@ public class EditInspector {
      * Adds a new scrutinizer to the inspector.
      *
      * If any necessary dependency is missing, the scrutinizer will not be added.
-     * 
+     *
      * @param scrutinizer
      */
     public void register(EditScrutinizer scrutinizer) {
@@ -164,7 +162,7 @@ public class EditInspector {
 
     /**
      * Inspect a batch of edits with the registered scrutinizers
-     * 
+     *
      * @param editBatch
      */
     public void inspect(List<EntityEdit> editBatch, WikibaseSchema schema) throws ExecutionException {

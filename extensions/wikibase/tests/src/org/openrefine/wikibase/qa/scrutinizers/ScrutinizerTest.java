@@ -56,7 +56,6 @@ import org.openrefine.wikibase.manifests.ManifestParser;
 import org.openrefine.wikibase.qa.ConstraintFetcher;
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.qa.QAWarningStore;
-import org.openrefine.wikibase.qa.scrutinizers.EditScrutinizer;
 import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
 import org.openrefine.wikibase.schema.strategies.StatementMerger;
 import org.openrefine.wikibase.testing.TestingData;

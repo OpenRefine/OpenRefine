@@ -7,8 +7,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.Runner;
-import org.openrefine.runners.testing.RunnerTestBase;
-import org.openrefine.runners.testing.TestingRunner;
 
 public class TestingRunnerTests extends RunnerTestBase {
 

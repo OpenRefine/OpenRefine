@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (C) 2018, OpenRefine contributors
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -52,6 +53,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.history.OperationApplicationResult;
+import org.openrefine.messages.OpenRefineMessage;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -83,6 +85,7 @@ public class ReconOperationTests extends RefineTest {
             + "   \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
             + "   \"type\":{\"id\":\"Q5\",\"name\":\"human\"},"
             + "   \"autoMatch\":true,"
+            + "   \"batchSize\":10,"
             + "   \"columnDetails\":[],"
             + "   \"limit\":0"
             + "},"
@@ -114,7 +117,8 @@ public class ReconOperationTests extends RefineTest {
             "           \"columnName\" : \"researcher\",\n" +
             "           \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n"
             +
-            "           \"name\" : \"researcher: judgment\"\n" +
+            "           \"name\" : \"researcher: " +
+            StringEscapeUtils.escapeJson(OpenRefineMessage.recon_operation_judgement_facet_name()) + "\"\n" +
             "         },\n" +
             "         \"facetOptions\" : {\n" +
             "           \"scroll\" : false\n" +
@@ -126,7 +130,8 @@ public class ReconOperationTests extends RefineTest {
             "           \"columnName\" : \"researcher\",\n" +
             "           \"expression\" : \"cell.recon.best.score\",\n" +
             "           \"mode\" : \"range\",\n" +
-            "           \"name\" : \"researcher: best candidate's score\"\n" +
+            "           \"name\" : \"researcher: " +
+            StringEscapeUtils.escapeJson(OpenRefineMessage.recon_operation_score_facet_name()) + "\"\n" +
             "         },\n" +
             "         \"facetType\" : \"range\"\n" +
             "       } ],\n" +
@@ -167,7 +172,7 @@ public class ReconOperationTests extends RefineTest {
                 .withJudgment(Judgment.Matched);
 
         reconConfig = mock(StandardReconConfig.class, withSettings().serializable());
-        doReturn(2).when(reconConfig).getBatchSize();
+        doReturn(2).when(reconConfig).getBatchSize(anyLong());
         // mock identifierSpace, service and schemaSpace
         when(reconConfig.batchRecon(eq(Arrays.asList(job1, job2)), anyLong())).thenReturn(Arrays.asList(recon1, recon2));
         when(reconConfig.batchRecon(eq(Arrays.asList(job3)), anyLong())).thenReturn(Arrays.asList(recon3));
@@ -202,7 +207,7 @@ public class ReconOperationTests extends RefineTest {
                 new IndexedRow(3L, row3),
                 new IndexedRow(4L, row4));
 
-        ReconChangeDataProducer producer = new ReconChangeDataProducer("column", 0, reconConfig, 1234L, project.getColumnModel());
+        ReconChangeDataProducer producer = new ReconChangeDataProducer("column", 0, reconConfig, 1234L, 100L, project.getColumnModel());
         List<Cell> results1 = producer.callRowBatch(batch1);
         List<Cell> results2 = producer.callRowBatch(batch2);
 
@@ -233,7 +238,7 @@ public class ReconOperationTests extends RefineTest {
                         { new Cell("value3", recon3) },
                         { null }
                 })
-                .withColumnModel(reconciledColumnModel);
+                        .withColumnModel(reconciledColumnModel);
 
         assertGridEquals(project.getCurrentGrid(), expectedGrid);
         Assert.assertEquals(operationResults.getChangeResult().getCreatedFacets().size(), 2);
@@ -242,7 +247,7 @@ public class ReconOperationTests extends RefineTest {
     private static class ReconConfigStub extends ReconConfig {
 
         @Override
-        public int getBatchSize() {
+        public int getBatchSize(long rowCount) {
             return 10;
         }
 

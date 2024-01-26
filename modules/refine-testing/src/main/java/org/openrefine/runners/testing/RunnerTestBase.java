@@ -510,7 +510,7 @@ public abstract class RunnerTestBase {
         ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("foo")));
         ReconCandidate candidate = new ReconCandidate("Q2334", "Hello World", new String[] {}, 89.3);
         Recon recon = new Recon(
-                1234L, 5678L, Judgment.Matched, candidate, new Object[] {},
+                1234L, 5678L, Judgment.Matched, candidate, null, new Object[] {},
                 Collections.singletonList(candidate), "http://my.service/api",
                 "http://my.service/space", "http://my.service/schema", "batch", 0);
         Cell cell = new Cell("value", recon);

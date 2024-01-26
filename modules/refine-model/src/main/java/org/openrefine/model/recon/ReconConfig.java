@@ -99,7 +99,8 @@ abstract public class ReconConfig implements Serializable {
         return ParsingUtilities.mapper.readValue(json, ReconConfig.class);
     }
 
-    abstract public int getBatchSize();
+    @JsonIgnore
+    public abstract int getBatchSize(long rowCount);
 
     abstract public String getBriefDescription(String columnName);
 

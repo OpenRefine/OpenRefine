@@ -38,7 +38,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <title>OpenRefine</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
     $styleInjection
-    <script type="text/javascript">var theProject = { id : $projectID };</script>
+    <script type="text/javascript">
+      const urlParams = new URLSearchParams(window.location.search);
+      var theProject = { id : urlParams.get("project") };
+    </script>
     <script type="text/javascript" src="wirings.js"></script>
     $scriptInjection
     <script>Refine.encodings = $encodingJson; Refine.defaultEncoding = $defaultEncoding;</script>

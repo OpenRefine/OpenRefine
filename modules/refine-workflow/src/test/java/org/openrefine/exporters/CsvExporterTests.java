@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -104,7 +104,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1\n" +
                 "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
     }
@@ -119,7 +119,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "row0cell0,row0cell1\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
 
         verify(options, times(2)).getProperty("printColumnHeader");
@@ -152,7 +152,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\"\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "\"column0\",\"column1\"\n" +
                 "\"row0cell0\",\"row0cell1\"\n" +
                 "\"row1cell0\",\"row1cell1\"\n");
     }
@@ -175,7 +175,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
                 "row1cell0,\"line\n\n\nbreak\",row1cell2\n" +
                 "row2cell0,row2cell1,row2cell2\n");
@@ -199,7 +199,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
                 "row1cell0,\"with, comma\",row1cell2\n" +
                 "row2cell0,row2cell1,row2cell2\n");
@@ -223,7 +223,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
                 "row1cell0,\"line has \"\"quote\"\"\",row1cell2\n" +
                 "row2cell0,row2cell1,row2cell2\n");
@@ -247,7 +247,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
                 "row1cell0,,row1cell2\n" +
                 ",row2cell1,row2cell2\n");

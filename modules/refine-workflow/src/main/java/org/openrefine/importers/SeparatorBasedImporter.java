@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,15 +39,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import au.com.bytecode.opencsv.CSVParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.CharMatcher;
+import com.univocity.parsers.common.record.Record;
+import com.univocity.parsers.csv.CsvFormat;
+import com.univocity.parsers.csv.CsvParser;
+import com.univocity.parsers.csv.CsvParserSettings;
+import com.univocity.parsers.csv.UnescapedQuoteHandling;
 import org.apache.commons.text.StringEscapeUtils;
 
 import org.openrefine.ProjectMetadata;
@@ -61,6 +64,8 @@ import org.openrefine.util.JSONUtilities;
 public class SeparatorBasedImporter extends ReaderImporter {
 
     private final TabularParserHelper tabularParserHelper;
+
+    char DEFAULT_QUOTE_CHAR = new CsvParserSettings().getFormat().getQuote();
 
     public SeparatorBasedImporter() {
         tabularParserHelper = new TabularParserHelper();
@@ -78,7 +83,7 @@ public class SeparatorBasedImporter extends ReaderImporter {
 
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", !nonNullSeparator.equals("\\t"));
-        JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
+        JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(DEFAULT_QUOTE_CHAR));
         JSONUtilities.safePut(options, "trimStrings", true);
         JSONUtilities.safePut(options, "multiLine", true);
 
@@ -102,25 +107,31 @@ public class SeparatorBasedImporter extends ReaderImporter {
         sep = StringEscapeUtils.unescapeJava(sep);
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
         boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
-        boolean multiLine = JSONUtilities.getBoolean(options, "multiLine", true);
 
-        Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
+        Character quote = DEFAULT_QUOTE_CHAR;
         String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
         if (quoteCharacter != null && CharMatcher.whitespace().trimFrom(quoteCharacter).length() == 1) {
             quote = CharMatcher.whitespace().trimFrom(quoteCharacter).charAt(0);
         }
 
-        final CSVParser parser = new CSVParser(
-                sep,
-                quote,
-                (char) 0, // we don't want escape processing
-                strictQuotes,
-                CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-                !processQuotes);
+        CsvParserSettings settings = new CsvParserSettings();
+        CsvFormat format = settings.getFormat();
+        format.setDelimiter(sep);
+        format.setQuote(quote);
+        format.setLineSeparator("\n");
+        settings.setIgnoreLeadingWhitespaces(false);
+        settings.setIgnoreTrailingWhitespaces(false);
+        if (strictQuotes) {
+            settings.setUnescapedQuoteHandling(UnescapedQuoteHandling.RAISE_ERROR);
+        }
+        settings.setKeepQuotes(!processQuotes);
+        settings.setMaxCharsPerColumn(256 * 1024); // TODO: Perhaps use a lower default and make user configurable?
 
         CloseableIterable<Row> rowIterable = () -> {
             Reader freshReader = reader.get();
             final LineNumberReader lnReader = new LineNumberReader(freshReader);
+            CsvParser parser = new CsvParser(settings);
+            parser.beginParsing(lnReader);
             return new CloseableIterator<Row>() {
 
                 Row nextRow = null;
@@ -144,32 +155,17 @@ public class SeparatorBasedImporter extends ReaderImporter {
                         return;
                     }
                     nextRow = null;
-                    try {
-                        List<String> cells = new ArrayList<>();
-                        String line;
-                        while ((line = lnReader.readLine()) != null) {
-                            cells.addAll(Arrays.asList(parser.parseLineMulti(line)));
-                            if (parser.isPending() && !multiLine) {
-                                // if each line of the file should correspond to a row, but the parsing of this
-                                // row is not finished because of an earlier quote character, we artificially
-                                // complete the row by feeding the CSV parser the required escape character
-                                cells.addAll(Arrays.asList(parser.parseLineMulti(quoteCharacter)));
-                            }
-                            if (!parser.isPending()) {
-                                break;
-                            }
-                        }
-                        if (line != null || !cells.isEmpty()) {
-                            nextRow = new Row(cells.stream().map(str -> new Cell(str, null)).collect(Collectors.toList()));
-                        }
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+                    Record record = parser.parseNextRecord();
+                    if (record != null) {
+                        List<String> cells = Arrays.asList(record.getValues());
+                        nextRow = new Row(cells.stream().map(str -> new Cell(str, null)).collect(Collectors.toList()));
                     }
                 }
 
                 @Override
                 public void close() {
                     try {
+                        lnReader.close();
                         freshReader.close();
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
@@ -178,20 +174,7 @@ public class SeparatorBasedImporter extends ReaderImporter {
             };
         };
 
-        return tabularParserHelper.parseOneFile(runner, fileSource, archiveFileName, rowIterable, limit, options);
-    }
-
-    static protected ArrayList<Object> getCells(String line, CSVParser parser, Iterator<IndexedRow> lines)
-            throws IOException {
-
-        ArrayList<Object> cells = new ArrayList<Object>();
-        String[] tokens = parser.parseLineMulti(line);
-        cells.addAll(Arrays.asList(tokens));
-        while (parser.isPending() && lines.hasNext()) {
-            tokens = parser.parseLineMulti((String) lines.next().getRow().getCellValue(0));
-            cells.addAll(Arrays.asList(tokens));
-        }
-        return cells;
+        return TabularParserHelper.parseOneFile(runner, fileSource, archiveFileName, rowIterable, limit, options);
     }
 
     static public String guessSeparator(ImportingJob job, List<ImportingFileRecord> fileRecords) {
@@ -204,9 +187,27 @@ public class SeparatorBasedImporter extends ReaderImporter {
                 File file = new File(job.getRawDataDir(), location);
                 // Quotes are turned on by default, so use that for guessing
                 Separator separator = guessSeparator(file, encoding, true);
-                if (separator != null) {
-                    return StringEscapeUtils.escapeJava(Character.toString(separator.separator));
+                CsvFormat format = guessFormat(file, encoding);
+                if (format != null) {
+                    if (separator != null) {
+                        if (format.getDelimiter() == separator.separator) {
+                            // They both agree - yay!
+                            return StringEscapeUtils.escapeJava(Character.toString(separator.separator));
+                        } else {
+                            logger.warn("Delimiter guesses disagree - uniVocity: {} - internal: {}", format.getDelimiter(),
+                                    separator.separator);
+                        }
+                    } else {
+                        // We got a guess from CsvParser, but not ours, so let's use that
+                        return StringEscapeUtils.escapeJava(format.getDelimiterString());
+                    }
+                } else {
+                    if (separator != null) {
+                        // Our guesser worked when CsvParser's didn't
+                        return StringEscapeUtils.escapeJava(Character.toString(separator.separator));
+                    }
                 }
+
             }
         }
         return null;
@@ -223,20 +224,39 @@ public class SeparatorBasedImporter extends ReaderImporter {
         double stddev;
     }
 
+    static public CsvFormat guessFormat(File file, String encoding) {
+        try (InputStream is = new FileInputStream(file);
+                Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+                LineNumberReader lineNumberReader = new LineNumberReader(reader)) {
+            CsvParserSettings settings = new CsvParserSettings();
+            settings.detectFormatAutomatically();
+            settings.setFormatDetectorRowSampleCount(100);
+            CsvParser parser = new CsvParser(settings);
+            parser.beginParsing(lineNumberReader);
+            for (int i = 0; i < 20; i++) {
+                if (parser.parseNext() == null) {
+                    break;
+                }
+            }
+            return parser.getDetectedFormat();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     static public Separator guessSeparator(File file, String encoding) {
         return guessSeparator(file, encoding, false); // quotes off for backward compatibility
     }
 
-    // TODO: Move this to the CSV project?
     static public Separator guessSeparator(File file, String encoding, boolean handleQuotes) {
         try {
-            InputStream is = new FileInputStream(file);
-            Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
-            LineNumberReader lineNumberReader = new LineNumberReader(reader);
+            try (InputStream is = new FileInputStream(file);
+                    Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+                    LineNumberReader lineNumberReader = new LineNumberReader(reader)) {
 
-            try {
-                List<Separator> separators = new ArrayList<SeparatorBasedImporter.Separator>();
-                Map<Character, Separator> separatorMap = new HashMap<Character, SeparatorBasedImporter.Separator>();
+                List<Separator> separators = new ArrayList<>();
+                Map<Character, Separator> separatorMap = new HashMap<>();
 
                 int totalChars = 0;
                 int lineCount = 0;
@@ -291,14 +311,7 @@ public class SeparatorBasedImporter extends ReaderImporter {
                                         / ((double) lineCount * (lineCount - 1)));
                     }
 
-                    Collections.sort(separators, new Comparator<Separator>() {
-
-                        @Override
-                        public int compare(Separator sep0, Separator sep1) {
-                            return Double.compare(sep0.stddev / sep0.averagePerLine,
-                                    sep1.stddev / sep1.averagePerLine);
-                        }
-                    });
+                    Collections.sort(separators, Comparator.comparingDouble(sep0 -> sep0.stddev / sep0.averagePerLine));
 
                     Separator separator = separators.get(0);
                     if (separator.stddev / separator.averagePerLine < 0.1) {
@@ -306,10 +319,6 @@ public class SeparatorBasedImporter extends ReaderImporter {
                     }
 
                 }
-            } finally {
-                lineNumberReader.close();
-                reader.close();
-                is.close();
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

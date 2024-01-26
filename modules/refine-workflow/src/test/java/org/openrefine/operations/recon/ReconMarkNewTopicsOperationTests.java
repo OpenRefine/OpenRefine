@@ -78,6 +78,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 schemaSpace,
                 null,
                 false,
+                10,
                 Collections.emptyList(),
                 0);
 

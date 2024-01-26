@@ -36,7 +36,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.scrutinizers.StatementScrutinizer;
 
 /**
  * A scrutinizer that checks for properties using the same value on different entities.

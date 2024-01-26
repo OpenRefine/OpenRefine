@@ -70,6 +70,83 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
         assertWarningsRaised(FileNameScrutinizer.fileNameTooLongType);
     }
 
+    @Test()
+    public void testValidCharactersInFilenameOdiaScript() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("ଫାଇଲ.wav")
+                .addContributingRowId(123L)
+                .build();
+
+        scrutinize(edit);
+        assertNoWarningRaised();
+    }
+
+    @Test
+    public void testValidCharactersInFilenameNonAscii() {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("সমাচার দর্পণ - ৮ অক্টোবর ১৮৩৬.pdf")
+                .addContributingRowId(123L)
+                .build();
+
+        scrutinize(edit);
+        assertNoWarningRaised();
+    }
+
+    @Test()
+    public void testInvalidCharactersInFilenameTab() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("Tabs (\t) are not allowed.png")
+                .addContributingRowId(123L)
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test()
+    public void testInvalidCharactersInFilenameNewLine() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("New lines (\n) are not allowed.png")
+                .addContributingRowId(123L)
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test()
+    public void testInvalidCharactersInFilenameCarriageReturn() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("Carriage returns (\r) are not allowed.png")
+                .addContributingRowId(123L)
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test()
+    public void testInvalidCharactersInFilenameFormFeed() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("Form feeds (\f) are not allowed.png")
+                .addContributingRowId(123L)
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
+    @Test()
+    public void testInvalidCharactersInFilenameBackspace() throws IOException, MediaWikiApiErrorException {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFileName("Backspaces (\b) are not allowed.png")
+                .addContributingRowId(123L)
+                .build();
+
+        scrutinize(edit);
+        assertWarningsRaised(FileNameScrutinizer.invalidCharactersInFileNameType);
+    }
+
     @Test
     public void testInvalidCharactersInFilenameVerticalBar() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)

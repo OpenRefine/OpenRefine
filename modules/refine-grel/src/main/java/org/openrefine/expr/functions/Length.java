@@ -36,6 +36,7 @@ package org.openrefine.expr.functions;
 import java.util.Collection;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.HasFieldsList;
@@ -63,6 +64,8 @@ public class Length extends PureFunction {
                     return ((HasFieldsList) v).length();
                 } else if (v instanceof ArrayNode) {
                     return ((ArrayNode) v).size();
+                } else if (v instanceof ObjectNode) {
+                    return ((ObjectNode) v).size();
                 } else {
                     String s = (v instanceof String ? (String) v : v.toString());
                     return s.length();

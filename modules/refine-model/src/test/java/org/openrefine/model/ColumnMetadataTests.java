@@ -43,11 +43,6 @@ public class ColumnMetadataTests {
     protected static class MyReconConfig extends ReconConfig {
 
         @Override
-        public int getBatchSize() {
-            return 40;
-        }
-
-        @Override
         public String getBriefDescription(String columnName) {
             return "My description";
         }
@@ -72,6 +67,11 @@ public class ColumnMetadataTests {
             return "my-recon";
         }
 
+        @Override
+        public int getBatchSize(long rowCount) {
+            return 40;
+        }
+
     }
 
     ReconConfig reconConfig = new MyReconConfig();
@@ -84,8 +84,7 @@ public class ColumnMetadataTests {
                 + "\"originalName\":\"name\","
                 + "\"name\":\"organization_name\","
                 + "\"reconConfig\":{"
-                + "   \"mode\":\"my-recon\","
-                + "    \"batchSize\":40"
+                + "   \"mode\":\"my-recon\""
                 + "    }}";
         TestUtils.isSerializedTo(ColumnMetadata.load(json), json, ParsingUtilities.defaultWriter);
     }

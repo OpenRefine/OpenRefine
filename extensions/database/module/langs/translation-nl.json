@@ -9,7 +9,6 @@
     "database-source/alert-user": "Je moet een databasegebruiker opgeven",
     "database-source/alert-password": "Je moet een wachtwoord voor de database opgeven",
     "database-source/alert-query": "Je moet een geldige query opgeven",
-    "database-source/alert-invalid-query-keyword": "De query mag niet het volgende datamanipulatie-trefwoord bevatten:",
     "database-source/alert-invalid-query-select": "De query moet met het woord SELECT beginnen",
     "database-source/form-validation-failure": "Nieuw verbindingsformulier is ongeldig!",
     "database-source/alert-connection-edit": "Verbinding is bewerkt",

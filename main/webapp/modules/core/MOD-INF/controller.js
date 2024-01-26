@@ -371,9 +371,7 @@ function init() {
     "index/scripts",
     module,
     commonModules.concat([
-      "3rdparty/date.js",
       "3rdparty/tablesorter/jquery.tablesorter.js",
-      "3rdparty/moment-with-locales.js",
       "3rdparty/select2/select2.js",
 
       "scripts/util/misc.js",
@@ -451,7 +449,6 @@ function init() {
     module,
     commonModules.concat([
       "externals/suggest/suggest-4_3a.js",
-      "3rdparty/date.js",
       "scripts/util/i18n.js",
       "scripts/util/csrf.js",
       "scripts/project.js",
@@ -501,6 +498,7 @@ function init() {
 
       "scripts/reconciliation/recon-manager.js",
       "scripts/reconciliation/recon-dialog.js",
+      "scripts/reconciliation/recon-dialog-2.js",
       "scripts/reconciliation/standard-service-panel.js",
 
       "scripts/dialogs/expression-preview-dialog.js",

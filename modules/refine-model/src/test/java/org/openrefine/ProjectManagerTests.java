@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -44,8 +44,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.time.Instant;
+import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -64,6 +66,7 @@ public class ProjectManagerTests {
 
     private static final Instant BASE_DATE = Instant.parse("1970-01-02T00:30:00Z");
     private static final int ROW_COUNT = 3;
+    private static final String[] TAGS = { "testtag1", "testtag2" };
 
     Runner runner;
     ProjectManagerStub pm;
@@ -84,6 +87,7 @@ public class ProjectManagerTests {
         project = mock(Project.class);
         history = mock(History.class);
         metadata = mock(ProjectMetadata.class);
+        when(metadata.getTags()).thenReturn(TAGS);
         procmgr = mock(ProcessManager.class);
         progressReporter = mock(ProgressReporter.class);
         grid = mock(Grid.class);
@@ -116,6 +120,7 @@ public class ProjectManagerTests {
 
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
+        assertEquals(SUT.getAllProjectsTags().keySet(), Set.of(TAGS));
     }
 
     // TODO test registerProject in race condition

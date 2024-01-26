@@ -14,7 +14,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikibase.qa.QAWarning;
-import org.openrefine.wikibase.qa.scrutinizers.SnakScrutinizer;
 
 public class RestrictedValuesScrutinizer extends SnakScrutinizer {
 

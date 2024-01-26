@@ -114,8 +114,9 @@ public class ReconOperation extends EngineDependentOperation {
 
         Grid joined;
         Engine engine = new Engine(projectState, _engineConfig, context.getProjectId());
+        long rowCount = projectState.rowCount();
         ReconChangeDataProducer producer = new ReconChangeDataProducer(_columnName, baseColumnIndex, _reconConfig,
-                context.getHistoryEntryId(), columnModel);
+                context.getHistoryEntryId(), rowCount, columnModel);
         if (Engine.Mode.RowBased.equals(_engineConfig.getMode())) {
             ChangeData<Cell> changeData = null;
             try {
@@ -216,6 +217,7 @@ public class ReconOperation extends EngineDependentOperation {
         private final String columnName;
         private final int columnIndex;
         private final long historyEntryId;
+        private final long rowCountEstimate;
         private final ColumnModel columnModel;
 
         protected ReconChangeDataProducer(
@@ -223,11 +225,13 @@ public class ReconOperation extends EngineDependentOperation {
                 int columnIndex,
                 ReconConfig reconConfig,
                 long historyEntryId,
+                long rowCountEstimate,
                 ColumnModel columnModel) {
             this.reconConfig = reconConfig;
             this.columnName = columnName;
             this.columnIndex = columnIndex;
             this.historyEntryId = historyEntryId;
+            this.rowCountEstimate = rowCountEstimate;
             this.columnModel = columnModel;
         }
 
@@ -293,9 +297,9 @@ public class ReconOperation extends EngineDependentOperation {
 
         @Override
         public int getBatchSize() {
-            return reconConfig.getBatchSize();
+            return reconConfig.getBatchSize(rowCountEstimate);
         }
-        
+
         @Override
         public int getMaxConcurrency() {
             return 1;

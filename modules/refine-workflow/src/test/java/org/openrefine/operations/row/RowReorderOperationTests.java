@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (C) 2018, OpenRefine contributors
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -68,7 +68,10 @@ public class RowReorderOperationTests extends RefineTest {
                         { "8", "b" },
                         { "", "d" },
                         { "2", "f" },
-                        { "1", "h" } });
+                        { "1", "h" },
+                        { "9", "F" },
+                        { "10", "f" } });
+
     }
 
     @Test
@@ -82,10 +85,50 @@ public class RowReorderOperationTests extends RefineTest {
         Grid applied = changeResult.getGrid();
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
 
-        Assert.assertEquals("h", rows.get(0).cells.get(1).value);
-        Assert.assertEquals("f", rows.get(1).cells.get(1).value);
-        Assert.assertEquals("b", rows.get(2).cells.get(1).value);
-        Assert.assertEquals("d", rows.get(3).cells.get(1).value);
+        Assert.assertEquals(rows.get(0).cells.get(1).value, "h");
+        Assert.assertEquals(rows.get(1).cells.get(1).value, "f");
+        Assert.assertEquals(rows.get(2).cells.get(1).value, "b");
+        Assert.assertEquals(rows.get(3).cells.get(1).value, "F");
+        Assert.assertEquals(rows.get(4).cells.get(1).value, "f");
+        Assert.assertEquals(rows.get(5).cells.get(1).value, "d");
+    }
+
+    @Test
+    public void testReverseSort() throws Exception {
+        String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":true,\"blankPosition\":-1,\"errorPosition\":1}]}";
+        SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
+        Operation op = new RowReorderOperation(
+                Mode.RowBased, sortingConfig);
+        ChangeResult changeResult = op.apply(initial, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
+        List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+
+        Assert.assertEquals(rows.get(5).cells.get(1).value, "h");
+        Assert.assertEquals(rows.get(4).cells.get(1).value, "f");
+        Assert.assertEquals(rows.get(3).cells.get(1).value, "b");
+        Assert.assertEquals(rows.get(2).cells.get(1).value, "F");
+        Assert.assertEquals(rows.get(1).cells.get(1).value, "f");
+        Assert.assertEquals(rows.get(0).cells.get(1).value, "d"); // controlled by blankPosition, not reverse
+    }
+
+    @Test
+    public void testStringSort() throws Exception {
+        String sortingJson = "{\"criteria\":[{\"column\":\"first\",\"valueType\":\"string\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1,\"caseSensitive\":true}]}";
+        SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
+        Operation op = new RowReorderOperation(
+                Mode.RowBased, sortingConfig);
+        ChangeResult changeResult = op.apply(initial, mock(ChangeContext.class));
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.NO_ROW_PRESERVATION);
+        Grid applied = changeResult.getGrid();
+        List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+
+        Assert.assertEquals(rows.get(0).cells.get(1).value, "b");
+        Assert.assertEquals(rows.get(1).cells.get(1).value, "d");
+        Assert.assertEquals(rows.get(2).cells.get(1).value, "f");
+        Assert.assertEquals(rows.get(3).cells.get(1).value, "f");
+        Assert.assertEquals(rows.get(4).cells.get(1).value, "F");
+        Assert.assertEquals(rows.get(5).cells.get(1).value, "h");
     }
 
     @Test

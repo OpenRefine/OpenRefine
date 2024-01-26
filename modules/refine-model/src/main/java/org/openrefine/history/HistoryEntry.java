@@ -34,8 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.history;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
+import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -55,7 +54,7 @@ public class HistoryEntry {
 
     final static Logger logger = LoggerFactory.getLogger("HistoryEntry");
     private final long id;
-    private final OffsetDateTime time;
+    private final Instant time;
 
     // the operation applied at this step
     private final Operation operation;
@@ -74,14 +73,14 @@ public class HistoryEntry {
             @JsonProperty("gridPreservation") GridPreservation gridPreservation) {
         this(id,
                 operation,
-                OffsetDateTime.now(ZoneId.of("Z")),
+                Instant.now(),
                 gridPreservation);
     }
 
     protected HistoryEntry(
             long id,
             Operation operation,
-            OffsetDateTime time,
+            Instant time,
             GridPreservation gridPreservation) {
         this.id = id;
         Validate.notNull(operation);
@@ -105,7 +104,7 @@ public class HistoryEntry {
     }
 
     @JsonProperty("time")
-    public OffsetDateTime getTime() {
+    public Instant getTime() {
         return time;
     }
 

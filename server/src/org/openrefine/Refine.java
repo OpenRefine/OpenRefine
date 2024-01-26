@@ -44,6 +44,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -53,7 +54,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JFrame;
 
 import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -98,7 +101,10 @@ public class Refine {
         // System.setProperty("debug","true");
 
         // set the log verbosity level
-        org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("refine.verbosity", "info")));
+        String logLevelArg = Configurations.get("refine.verbosity");
+        if (logLevelArg != null && !logLevelArg.isEmpty()) {
+            Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.toLevel(logLevelArg));
+        }
 
         port = Configurations.getInteger("refine.port", DEFAULT_PORT);
         iface = Configurations.get("refine.interface", DEFAULT_IFACE);
@@ -223,7 +229,7 @@ class RefineServer extends Server {
         this.addBean(handler);
         // Tell the server we want to try and shutdown gracefully
         // this means that the server will stop accepting new connections
-        // right away but it will continue to process the ones that
+        // right away, but it will continue to process the ones that
         // are in execution for the given timeout before attempting to stop
         // NOTE: this is *not* a blocking method, it just sets a parameter
         // that _server.stop() will rely on
@@ -289,7 +295,7 @@ class RefineServer extends Server {
         scanner.addListener(new Scanner.BulkListener() {
 
             @Override
-            public void filesChanged(@SuppressWarnings("rawtypes") List changedFiles) {
+            public void filesChanged(Set<String> set) {
                 try {
                     logger.info("Stopping context: " + contextRoot.getAbsolutePath());
                     context.stop();
@@ -448,7 +454,7 @@ class RefineClient extends JFrame implements ActionListener {
     }
 
     private void openBrowser() {
-        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) || System.getenv("SNAP") != null) {
             try {
                 openBrowserFallback();
             } catch (IOException e) {

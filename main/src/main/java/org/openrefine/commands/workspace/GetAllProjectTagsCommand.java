@@ -55,7 +55,7 @@ public class GetAllProjectTagsCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Map<String, Integer> tagMap = ProjectManager.singleton.getAllProjectTags();
+        Map<String, Integer> tagMap = ProjectManager.singleton.getAllProjectsTags();
         Set<String> tags = tagMap == null ? Collections.emptySet() : tagMap.keySet();
         respondJSON(response, 200, new AllProjectsTags(tags));
     }

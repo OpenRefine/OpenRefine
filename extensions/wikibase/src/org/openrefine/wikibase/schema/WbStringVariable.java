@@ -29,8 +29,6 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
 import org.openrefine.model.Cell;
-import org.openrefine.wikibase.schema.ExpressionContext;
-import org.openrefine.wikibase.schema.WbVariableExpr;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
 
 /**

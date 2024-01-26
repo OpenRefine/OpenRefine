@@ -64,9 +64,9 @@ public class ImportProjectCommandTests extends CommandTestBase {
         // Build expected grid
         ReconCandidate match = new ReconCandidate("Q573", "day", null, 100.0);
         StandardReconConfig reconConfig = ParsingUtilities.mapper.readValue(reconConfigJson, StandardReconConfig.class);
-        Recon matchedRecon = new Recon(1609493969067968688L, 1609494792472L, Judgment.Matched, match, null, Collections.emptyList(),
+        Recon matchedRecon = new Recon(1609493969067968688L, 1609494792472L, Judgment.Matched, match, null, null, Collections.emptyList(),
                 reconConfig.service, reconConfig.identifierSpace, reconConfig.schemaSpace, "similar", -1);
-        Recon unmatchedRecon = new Recon(1609493961679556613L, 1609494430802L, Judgment.None, null, null, Collections.emptyList(),
+        Recon unmatchedRecon = new Recon(1609493961679556613L, 1609494430802L, Judgment.None, null, null, null, Collections.emptyList(),
                 reconConfig.service, reconConfig.identifierSpace, reconConfig.schemaSpace, "unknown", -1);
         expectedGrid = createGrid(new String[] { "a", "b", "trim" },
                 new Serializable[][] {

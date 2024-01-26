@@ -129,7 +129,7 @@ public class MySQLConnectionManager {
                     return connection;
                 }
             }
-            String dbURL = getDatabaseUrl(databaseConfiguration);
+            String dbURL = databaseConfiguration.toURI().toString();
             Class.forName(type.getClassPath());
 
             // logger.info("*** type.getClassPath() ::{}, {}**** ", type.getClassPath());
@@ -166,11 +166,4 @@ public class MySQLConnectionManager {
 
     }
 
-    private String getDatabaseUrl(DatabaseConfiguration dbConfig) {
-
-        int port = dbConfig.getDatabasePort();
-        return "jdbc:" + dbConfig.getDatabaseType() + "://" + dbConfig.getDatabaseHost()
-                + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName() + "?useSSL=" + dbConfig.isUseSSL();
-
-    }
 }
