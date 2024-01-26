@@ -238,8 +238,9 @@ EditRenderer._renderStatement = function(json, container) {
   var referencesToggle = $('<a></a>').appendTo(referencesToggleContainer);
   right = $('<div></div>').addClass('wbs-right').appendTo(referencesSection);
   var referenceContainer = $('<div></div>').addClass('wbs-reference-container').appendTo(right);
-  referencesToggleContainer.on('click', function () {
-      triangle.toggleClass('pointing-down pointing-right');
+  referencesToggleContainer.on('click',function () {
+      triangle.toggleClass('pointing-down');
+      triangle.toggleClass('pointing-right');
       referenceContainer.toggle(100);
   });
   referenceContainer.hide();
