@@ -114,19 +114,19 @@ ReconStandardServicePanel.prototype._constructUI = function() {
     self._rewirePropertySuggests(null) // Clear any selected type
   });
   self._populateProperties();
+  self._wireEvents();
+  self._elmts.editMappedType.on('click', function() {
+        $input = self._elmts.typeInput;
+        $mappedValue = $(this).parent();
+        $input.removeData('data.suggest');
+        $label = $mappedValue.parent().find('.mapped-value > a:not(.edit-mapped-value)');
+        $input.val($label.text()).prop('disabled',false);
+        $mappedValue.toggle();
+        $input.trigger('focus');
+  });
   this._guessTypes(function () {
     self._populatePanel();
-    self._wireEvents();
-    self._elmts.editMappedType.on('click', function() {
-          $input = self._elmts.typeInput;
-          $mappedValue = $(this).parent();
-          $input.removeData('data.suggest');
-          $label = $mappedValue.parent().find('.mapped-value > a:not(.edit-mapped-value)');
-          $input.val($label.text()).prop('disabled',false);
-          $mappedValue.toggle();
-          $input.trigger('focus');
-        })
-  });
+   });
 };
 
 ReconStandardServicePanel.prototype.activate = function() {
