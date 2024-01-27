@@ -21,7 +21,7 @@ public class ColumnInsertionTests {
                 + "  \"name\" : \"foo\""
                 + "}";
 
-        ColumnInsertion SUT = new ColumnInsertion("foo", "bar", true, "original", null);
+        ColumnInsertion SUT = new ColumnInsertion("foo", "bar", true, "original", null, false);
 
         TestUtils.isSerializedTo(SUT, json, ParsingUtilities.defaultWriter);
         assertEquals(ParsingUtilities.mapper.readValue(json, ColumnInsertion.class), SUT);
@@ -31,7 +31,7 @@ public class ColumnInsertionTests {
     public void testSerializeMinimal() throws JsonMappingException, JsonProcessingException {
         String json = "{\"name\":\"foo\", \"replace\": false}";
 
-        ColumnInsertion SUT = new ColumnInsertion("foo", null, false, null, null);
+        ColumnInsertion SUT = new ColumnInsertion("foo", null, false, null, null, false);
 
         TestUtils.isSerializedTo(SUT, json, ParsingUtilities.defaultWriter);
         assertEquals(ParsingUtilities.mapper.readValue(json, ColumnInsertion.class), SUT);

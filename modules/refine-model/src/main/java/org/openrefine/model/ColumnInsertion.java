@@ -30,6 +30,7 @@ public class ColumnInsertion implements Serializable {
     private final boolean replace;
     private final String copiedFrom;
     private final ReconConfig reconConfig;
+    private final boolean overrideReconConfig;
 
     @JsonCreator
     public ColumnInsertion(
@@ -37,13 +38,15 @@ public class ColumnInsertion implements Serializable {
             @JsonProperty("insertAt") String insertAt,
             @JsonProperty("replace") boolean replace,
             @JsonProperty("copiedFrom") String copiedFrom,
-            @JsonProperty("reconConfig") ReconConfig reconConfig) {
+            @JsonProperty("reconConfig") ReconConfig reconConfig,
+            @JsonProperty("overrideReconConfig") boolean overrideReconConfig) {
         Validate.notNull(name, "no name provided for column to insert");
         this.name = name;
         this.insertAt = insertAt;
         this.replace = replace;
         this.copiedFrom = copiedFrom;
         this.reconConfig = reconConfig;
+        this.overrideReconConfig = overrideReconConfig;
     }
 
     public static Builder builder() {
@@ -105,11 +108,21 @@ public class ColumnInsertion implements Serializable {
     }
 
     /**
-     * The recon config to set on the column. If null, it is not touched.
+     * The recon config to set on the column. If null, the recon config on the column will only be set to null if
+     * {@link #getOverrideReconConfig()} is set to true.
      */
     @JsonIgnore
     public ReconConfig getReconConfig() {
         return reconConfig;
+    }
+
+    /**
+     * Controls whether the value of {@link #getReconConfig()} should override any present {@link ReconConfig} on the
+     * column or not.
+     */
+    @JsonIgnore
+    public boolean getOverrideReconConfig() {
+        return overrideReconConfig;
     }
 
     @Override
@@ -143,6 +156,7 @@ public class ColumnInsertion implements Serializable {
         private boolean replace = false;
         private String copiedFrom = null;
         private ReconConfig reconConfig = null;
+        private boolean overrideReconConfig = false;
 
         private Builder() {
         }
@@ -172,10 +186,15 @@ public class ColumnInsertion implements Serializable {
             return this;
         }
 
+        public Builder withOverrideReconConfig(boolean overrideReconConfig) {
+            this.overrideReconConfig = overrideReconConfig;
+            return this;
+        }
+
         public ColumnInsertion build() {
             return new ColumnInsertion(
                     this.name, this.insertAt, this.replace,
-                    this.copiedFrom, this.reconConfig);
+                    this.copiedFrom, this.reconConfig, this.overrideReconConfig);
         }
     }
 

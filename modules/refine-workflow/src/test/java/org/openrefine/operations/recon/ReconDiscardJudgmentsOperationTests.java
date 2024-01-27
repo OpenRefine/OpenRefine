@@ -77,6 +77,12 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
         String json = "{\n" +
                 "    \"op\": \"core/recon-discard-judgments\",\n" +
                 "    \"description\": \"Discard recon judgments and clear recon data for cells in column researcher\",\n" +
+                "    \"columnDependencies\" : [ \"researcher\" ],\n" +
+                "    \"columnInsertions\" : [ {\n" +
+                "      \"insertAt\" : \"researcher\",\n" +
+                "      \"name\" : \"researcher\",\n" +
+                "      \"replace\" : true\n" +
+                "    } ]," +
                 "    \"engineConfig\": {\n" +
                 "      \"mode\": \"record-based\",\n" +
                 "      \"facets\": []\n" +
@@ -107,6 +113,7 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
                         { "c", new Cell("d",
                                 testRecon("b", "j", Recon.Judgment.None).withJudgmentAction("mass").withJudgmentHistoryEntry(2891L)) }
                 });
+        expected = markAsModified(expected, "bar", context.getHistoryEntryId());
 
         assertGridEquals(applied, expected);
     }
@@ -128,7 +135,7 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
                         { "a", "b" },
                         { "c", "d" }
                 });
-
+        expected = markAsModified(expected, "bar", context.getHistoryEntryId());
         assertGridEquals(applied, expected);
     }
 

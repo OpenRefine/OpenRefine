@@ -46,6 +46,7 @@ import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.changes.RecordChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowInRecordChangeDataJoiner;
+import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.operations.exceptions.DuplicateColumnException;
 import org.openrefine.operations.exceptions.MissingColumnException;
 import org.openrefine.operations.exceptions.OperationException;
@@ -62,6 +63,7 @@ public class RowMapOperationTests {
     Grid recordMappedGrid;
     Grid rowJoinedGrid;
     Grid recordJoinedGrid;
+    Grid opaquelyMappedGrid;
 
     ChangeData<Row> rowMappedChangeData;
     ChangeData<List<Row>> recordMappedChangeData;
@@ -69,15 +71,20 @@ public class RowMapOperationTests {
     ColumnModel initialColumnModel;
     ColumnModel mappedColumnModelLazy;
     ColumnModel mappedColumnModelEager;
+    ColumnModel mappedColumnModelOpaque;
 
-    GenericRowMapOperation SUT_rowsLazy = new GenericRowMapOperation(EngineConfig.ALL_ROWS);
-    GenericRowMapOperation SUT_recordsLazy = new GenericRowMapOperation(EngineConfig.ALL_RECORDS);
-    PersistingRowMapOperation SUT_rowsEager = new PersistingRowMapOperation(EngineConfig.ALL_ROWS);
-    PersistingRowMapOperation SUT_recordsEager = new PersistingRowMapOperation(EngineConfig.ALL_RECORDS);
+    LazyRowMapOperation SUT_rowsLazy = new LazyRowMapOperation(EngineConfig.ALL_ROWS);
+    LazyRowMapOperation SUT_recordsLazy = new LazyRowMapOperation(EngineConfig.ALL_RECORDS);
+    EagerRowMapOperation SUT_rowsEager = new EagerRowMapOperation(EngineConfig.ALL_ROWS);
+    EagerRowMapOperation SUT_recordsEager = new EagerRowMapOperation(EngineConfig.ALL_RECORDS);
+    OpaqueRowMapOperation SUT_rowsOpaque = new OpaqueRowMapOperation(EngineConfig.ALL_ROWS);
 
-    public static class GenericRowMapOperation extends RowMapOperation {
+    static ReconConfig reconConfigA = mock(ReconConfig.class);
+    static ReconConfig reconConfigB = mock(ReconConfig.class);
 
-        protected GenericRowMapOperation(EngineConfig config) {
+    private static class LazyRowMapOperation extends RowMapOperation {
+
+        protected LazyRowMapOperation(EngineConfig config) {
             super(config);
         }
 
@@ -99,10 +106,10 @@ public class RowMapOperationTests {
         @Override
         public List<ColumnInsertion> getColumnInsertions() {
             return Arrays.asList(
-                    new ColumnInsertion("new B", "D", false, "B", null),
-                    new ColumnInsertion("E", "A", false, null, null),
-                    new ColumnInsertion("overwritten B", "B", true, null, null),
-                    new ColumnInsertion("D", "D", true, "A", null));
+                    new ColumnInsertion("new B", "D", false, "B", null, false),
+                    new ColumnInsertion("E", "A", false, null, null, false),
+                    new ColumnInsertion("overwritten B", "B", true, null, reconConfigB, true),
+                    new ColumnInsertion("D", "D", true, "A", reconConfigB, false));
         }
 
         @Override
@@ -148,6 +155,94 @@ public class RowMapOperationTests {
         }
     }
 
+    private static class EagerRowMapOperation extends RowMapOperation {
+
+        protected EagerRowMapOperation(EngineConfig config) {
+            super(config);
+        }
+
+        @Override
+        public String getDescription() {
+            return "some funny operation doing a lot of things on the grid and persisting them";
+        }
+
+        @Override
+        public List<String> getColumnDependencies() {
+            return Arrays.asList("A", "D");
+        }
+
+        @Override
+        public Set<String> getColumnDeletions() {
+            return Collections.singleton("C");
+        }
+
+        @Override
+        public List<ColumnInsertion> getColumnInsertions() {
+            return Arrays.asList(
+                    new ColumnInsertion("new B", null, false, "B", null, false));
+        }
+
+        @Override
+        protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+                long estimatedRowCount, ChangeContext context) throws OperationException {
+            return new RowInRecordMapper() {
+
+                private static final long serialVersionUID = 4306016663853788347L;
+
+                @Override
+                public Row call(Record record, long rowId, Row row) {
+                    return new Row(Arrays.asList(
+                            new Cell(Objects.toString(row.getCellValue(1)), null),
+                            new Cell(Objects.toString(row.getCellValue(0)), null)));
+                }
+
+                @Override
+                public boolean preservesRecordStructure() {
+                    return true;
+                }
+
+                @Override
+                public boolean persistResults() {
+                    return true;
+                }
+
+            };
+        }
+
+        @Override
+        protected RowInRecordMapper getNegativeRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
+                long estimatedRowCount, ChangeContext context) throws OperationException {
+            return new RowInRecordMapper() {
+
+                private static final long serialVersionUID = 4306016663853788347L;
+
+                @Override
+                public Row call(Record record, long rowId, Row row) {
+                    return new Row(Arrays.asList(null, null));
+                }
+
+                @Override
+                public boolean preservesRecordStructure() {
+                    return true;
+                }
+
+            };
+        }
+    }
+
+    private class OpaqueRowMapOperation extends RowMapOperation {
+
+        protected OpaqueRowMapOperation(EngineConfig engineConfig) {
+            super(engineConfig);
+        }
+
+        @Override
+        public String getDescription() {
+            return "an operation which does not declare its dependencies or the columns it touches";
+        }
+
+    }
+
     @SuppressWarnings("unchecked")
     @BeforeMethod
     public void setUp() {
@@ -183,28 +278,34 @@ public class RowMapOperationTests {
         recordMappedGrid = mock(Grid.class);
         rowJoinedGrid = mock(Grid.class);
         recordJoinedGrid = mock(Grid.class);
+        opaquelyMappedGrid = mock(Grid.class);
 
         rowMappedChangeData = mock(ChangeDataRow.class);
         recordMappedChangeData = mock(ChangeDataListRow.class);
 
         initialColumnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("A"),
-                new ColumnMetadata("B"),
+                new ColumnMetadata("B").withReconConfig(reconConfigA),
                 new ColumnMetadata("C"),
-                new ColumnMetadata("D")));
+                new ColumnMetadata("D").withReconConfig(reconConfigA)));
         when(initialGrid.getColumnModel()).thenReturn(initialColumnModel);
 
         mappedColumnModelLazy = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("A", "A", 0L, null),
                 new ColumnMetadata("E", "E", 1234L, null),
-                new ColumnMetadata("overwritten B", "overwritten B", 1234L, null),
-                new ColumnMetadata("A", "D", 0L, null),
-                new ColumnMetadata("B", "new B", 0L, null)));
+                new ColumnMetadata("overwritten B", "overwritten B", 1234L, reconConfigB),
+                new ColumnMetadata("A", "D", 0L, reconConfigA),
+                new ColumnMetadata("B", "new B", 0L, reconConfigA)));
         mappedColumnModelEager = new ColumnModel(Arrays.asList(
-                new ColumnMetadata("B", "new B", 0L, null),
+                new ColumnMetadata("B", "new B", 0L, reconConfigA),
                 new ColumnMetadata("A"),
-                new ColumnMetadata("B"),
-                new ColumnMetadata("D")));
+                new ColumnMetadata("B").withReconConfig(reconConfigA),
+                new ColumnMetadata("D").withReconConfig(reconConfigA)));
+        mappedColumnModelOpaque = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("A").withLastModified(historyEntryId),
+                new ColumnMetadata("B").withReconConfig(reconConfigA).withLastModified(historyEntryId),
+                new ColumnMetadata("C").withLastModified(historyEntryId),
+                new ColumnMetadata("D").withReconConfig(reconConfigA).withLastModified(historyEntryId)));
         when(rowMappedGrid.getColumnModel()).thenReturn(mappedColumnModelLazy);
         when(recordMappedGrid.getColumnModel()).thenReturn(mappedColumnModelLazy);
 
@@ -214,6 +315,9 @@ public class RowMapOperationTests {
         RecordMapper anyRecordMapper = any();
         when(initialGrid.mapRecords(anyRecordMapper, eq(mappedColumnModelLazy)))
                 .thenReturn(recordMappedGrid);
+        anyRowMapper = any();
+        when(initialGrid.mapRows(anyRowMapper, eq(mappedColumnModelOpaque)))
+                .thenReturn(opaquelyMappedGrid);
         when(initialGrid.mapRows(any(RowFilter.class), any(), any(Optional.class)))
                 .thenReturn(rowMappedChangeData);
         when(initialGrid.mapRecords(any(RecordFilter.class), any(), any(Optional.class)))
@@ -231,6 +335,8 @@ public class RowMapOperationTests {
                 .thenReturn(rowJoinedGrid);
         when(recordJoinedGrid.withOverlayModels(any()))
                 .thenReturn(recordJoinedGrid);
+        when(opaquelyMappedGrid.withOverlayModels(any()))
+                .thenReturn(opaquelyMappedGrid);
 
     }
 
@@ -276,6 +382,17 @@ public class RowMapOperationTests {
         verify(initialGrid, times(0)).mapRows(any(RowMapper.class), any(ColumnModel.class));
         verify(initialGrid, times(0)).mapRows(any(RowFilter.class), any(), any());
         assertEquals(result.getGrid(), recordJoinedGrid);
+    }
+
+    @Test
+    public void testApplyRowsOpaquely() throws OperationException {
+        ChangeResult result = SUT_rowsOpaque.apply(initialGrid, changeContext);
+
+        verify(initialGrid, times(1)).mapRows(any(RowMapper.class), eq(mappedColumnModelOpaque));
+        verify(initialGrid, times(0)).mapRecords(any(RecordMapper.class), any(ColumnModel.class));
+        verify(initialGrid, times(0)).mapRows(any(RowFilter.class), any(), any());
+        verify(initialGrid, times(0)).mapRecords(any(RecordFilter.class), any(), any());
+        assertEquals(result.getGrid(), opaquelyMappedGrid);
     }
 
     @Test
@@ -448,80 +565,6 @@ public class RowMapOperationTests {
                 new Cell("a", null), new Cell("c", null), new Cell("A", null), new Cell("b", null), new Cell("B", null)), true, false));
     }
 
-    public static class PersistingRowMapOperation extends RowMapOperation {
-
-        protected PersistingRowMapOperation(EngineConfig config) {
-            super(config);
-        }
-
-        @Override
-        public String getDescription() {
-            return "some funny operation doing a lot of things on the grid and persisting them";
-        }
-
-        @Override
-        public List<String> getColumnDependencies() {
-            return Arrays.asList("A", "D");
-        }
-
-        @Override
-        public Set<String> getColumnDeletions() {
-            return Collections.singleton("C");
-        }
-
-        @Override
-        public List<ColumnInsertion> getColumnInsertions() {
-            return Arrays.asList(
-                    new ColumnInsertion("new B", null, false, "B", null));
-        }
-
-        @Override
-        protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-                long estimatedRowCount, ChangeContext context) throws OperationException {
-            return new RowInRecordMapper() {
-
-                private static final long serialVersionUID = 4306016663853788347L;
-
-                @Override
-                public Row call(Record record, long rowId, Row row) {
-                    return new Row(Arrays.asList(
-                            new Cell(Objects.toString(row.getCellValue(1)), null),
-                            new Cell(Objects.toString(row.getCellValue(0)), null)));
-                }
-
-                @Override
-                public boolean preservesRecordStructure() {
-                    return true;
-                }
-
-                @Override
-                public boolean persistResults() {
-                    return true;
-                }
-
-            };
-        }
-
-        @Override
-        protected RowInRecordMapper getNegativeRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
-                long estimatedRowCount, ChangeContext context) throws OperationException {
-            return new RowInRecordMapper() {
-
-                private static final long serialVersionUID = 4306016663853788347L;
-
-                @Override
-                public Row call(Record record, long rowId, Row row) {
-                    return new Row(Arrays.asList(null, null));
-                }
-
-                @Override
-                public boolean preservesRecordStructure() {
-                    return true;
-                }
-
-            };
-        }
-    }
 
     private static abstract class ChangeDataRow implements ChangeData<Row> {
 

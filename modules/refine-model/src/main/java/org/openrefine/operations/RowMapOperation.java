@@ -178,16 +178,16 @@ abstract public class RowMapOperation extends EngineDependentOperation {
         if (dependencies != null) {
             // Isolate mappers so that they only read the dependencies that they declare
             dependencyIds = new ArrayList<>(dependencies.size());
+            List<ColumnMetadata> inputColumns = new ArrayList<>();
             for (String columnName : dependencies) {
                 ColumnMetadata metadata = columnModel.getColumnByName(columnName);
                 if (metadata == null) {
                     throw new MissingColumnException(columnName);
                 }
                 dependencyIds.add(metadata.getColumnId());
+                inputColumns.add(metadata);
             }
-            ColumnModel inputColumnModel = new ColumnModel(dependencyIds.stream()
-                    .map(dId -> new ColumnMetadata(dId.getColumnName()))
-                    .collect(Collectors.toList()),
+            ColumnModel inputColumnModel = new ColumnModel(inputColumns,
                     columnModel.getKeyColumnIndex(),
                     columnModel.hasRecords());
             ColumnMapper columnMapper = new ColumnMapper(dependencyIds, columnModel);
@@ -268,7 +268,12 @@ abstract public class RowMapOperation extends EngineDependentOperation {
                     if (existingName != -1 && existingName != replacingIndex) {
                         throw new DuplicateColumnException(insertion.getName());
                     }
-                    if (columnMetadata.getReconConfig() == null && insertion.getReconConfig() != null) {
+                    ColumnMetadata replacedColumn = newColumnMetadata.get(replacingIndex);
+                    if (columnMetadata.getReconConfig() == null && replacedColumn.getReconConfig() != null) {
+                        columnMetadata = columnMetadata.withReconConfig(replacedColumn.getReconConfig());
+                    }
+                    if ((columnMetadata.getReconConfig() == null && insertion.getReconConfig() != null)
+                            || insertion.getOverrideReconConfig()) {
                         columnMetadata = columnMetadata.withReconConfig(insertion.getReconConfig());
                     }
                     indicesMap.set(replacingIndex, sourceColumnIndex);
@@ -301,6 +306,13 @@ abstract public class RowMapOperation extends EngineDependentOperation {
                     && indicesMap.get(origKeyIndex) == newColumnModel.getKeyColumnIndex();
         } else {
             preservesRecords = positiveMapper.preservesRecordStructure() && negativeMapper.preservesRecordStructure();
+
+            // mark all columns as being modified
+            newColumnModel = new ColumnModel(
+                    newColumnModel.getColumns().stream()
+                            .map(c -> c.withLastModified(context.getHistoryEntryId()))
+                            .collect(Collectors.toList()),
+                    newColumnModel.getKeyColumnIndex(), newColumnModel.hasRecords());
         }
 
         Map<String, OverlayModel> newOverlayModels = getNewOverlayModels(columnModel, projectState.getOverlayModels(),

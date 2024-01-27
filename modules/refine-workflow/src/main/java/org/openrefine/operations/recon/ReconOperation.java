@@ -113,7 +113,7 @@ public class ReconOperation extends RowMapOperation {
 
     @Override
     public List<ColumnInsertion> getColumnInsertions() {
-        return Collections.singletonList(new ColumnInsertion(_columnName, _columnName, true, null, _reconConfig));
+        return Collections.singletonList(new ColumnInsertion(_columnName, _columnName, true, null, _reconConfig, true));
     }
 
     @Override

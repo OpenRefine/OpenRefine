@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.recon;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -43,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
@@ -121,30 +123,39 @@ public class ReconMarkNewTopicsOperation extends RowMapOperation {
     }
 
     @Override
-    protected ColumnModel getNewColumnModel(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, ChangeContext context)
-            throws OperationException {
-        int columnIndex = columnModel.getRequiredColumnIndex(_columnName);
-        return columnModel.withReconConfig(columnIndex, getNewReconConfig(columnModel.getColumnByIndex(columnIndex)));
-    }
-
-    protected ReconConfig getNewReconConfig(ColumnMetadata column) {
-        return column.getReconConfig() != null ? column.getReconConfig()
-                : new StandardReconConfig(
-                        _service,
-                        _identifierSpace,
-                        _schemaSpace,
-                        null,
-                        false,
-                        10,
-                        Collections.emptyList(),
-                        0);
+    public List<String> getColumnDependencies() {
+        return Collections.singletonList(_columnName);
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(ColumnInsertion.builder()
+                .withName(_columnName)
+                .withInsertAt(_columnName)
+                .withReplace(true)
+                .withReconConfig(getNewReconConfig())
+                .build());
+    }
+
+    protected ReconConfig getNewReconConfig() {
+        return new StandardReconConfig(
+                _service,
+                _identifierSpace,
+                _schemaSpace,
+                null,
+                false,
+                10,
+                Collections.emptyList(),
+                0);
+    }
+
+    @Override
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount,
+            ChangeContext context)
             throws OperationException {
         int columnIndex = columnModel.getRequiredColumnIndex(_columnName);
-        ReconConfig reconConfig = getNewReconConfig(columnModel.getColumnByName(_columnName));
+        ColumnMetadata column = columnModel.getColumnByName(_columnName);
+        ReconConfig reconConfig = column.getReconConfig() != null ? column.getReconConfig() : getNewReconConfig();
         long historyEntryId = context.getHistoryEntryId();
         long seedId = new Recon(0L, "", "").getId();
 

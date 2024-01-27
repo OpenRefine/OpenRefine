@@ -100,6 +100,12 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 + "\"op\":\"core/recon-mark-new-topics\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\","
+                + "\"columnDependencies\" : [ \"my column\" ],"
+                + "\"columnInsertions\" : [ {"
+                + "  \"insertAt\" : \"my column\","
+                + "  \"name\" : \"my column\","
+                + "  \"replace\" : true"
+                + "} ],"
                 + "\"shareNewTopics\":true,"
                 + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\","
                 + "\"service\":\"http://my.service.com/api\","
@@ -145,6 +151,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                                 .withJudgment(Judgment.New)) },
                         { "d", "" }
                 });
+        expected = markAsModified(expected, "bar", context.getHistoryEntryId());
         ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
         expected = expected.withColumnModel(columnModel);
 
@@ -183,6 +190,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                                 .withJudgmentAction("mass")) },
                         { "d", "" }
                 });
+        expected = markAsModified(expected, "bar", context.getHistoryEntryId());
         ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
         expected = expected.withColumnModel(columnModel);
 
@@ -229,6 +237,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                                 .withJudgment(Judgment.New)) },
                         { "d", "" }
                 });
+        expected = markAsModified(expected, "bar", context.getHistoryEntryId());
         ColumnModel columnModel = expected.getColumnModel().withReconConfig(1, reconConfig);
         expected = expected.withColumnModel(columnModel);
 
