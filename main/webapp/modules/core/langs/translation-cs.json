@@ -550,7 +550,6 @@
     "core-recon/against-type": "Vyhodnotit vůči druhu:",
     "core-recon/col-detail": "Využít relevantní detaily z dalších sloupců:",
     "core-recon/cell-type": "Vyhodnotit každou buňku na entitu jednoho z těchto druhů:",
-    "core-recon/access-service": "API služby přístupu",
     "core-project/continue-remaining": "Mají zbývající operace pokračovat?",
     "core-project/last-op-er": "Při poslední operaci se objevily chyby:",
     "core-project/other-processes": "(další probíhající $1 {{plural:$1|proces|procesy}})",

@@ -760,7 +760,6 @@
     "core-views/by-case": "小文字から大文字に変わる場所で分割",
     "core-index/prefs-loading-failed": "設定ファイルの読み込みに失敗しました.",
     "core-views/judgment": "$1: 照合判断",
-    "core-recon/access-service": "アクセスAPI",
     "core-dialogs/cluster-rows": "（$1 行）",
     "core-buttons/previous": "戻る",
     "core-views/best-cand-types": "$1: 最良候補の型",

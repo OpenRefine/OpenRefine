@@ -777,7 +777,6 @@
     "core-views/best-cand-types": "$1: tipos del mejor candidato",
     "core-views/judgment": "$1: parámetro",
     "core-views/recon-stats": "$1 % coincidentes, $2 % nuevos, $3 % pendientes de cotejar",
-    "core-recon/access-service": "API del servicio de acceso",
     "core-project/percent-complete": "$1 % completado",
     "core-facets/value-range": "$1 - $2",
     "core-dialogs/focusing-on-column": " (centrada en $1)",
