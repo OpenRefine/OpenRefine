@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openrefine.browsing.Engine;
 import org.openrefine.history.History;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
@@ -127,7 +128,9 @@ public class FileChangeDataStore implements ChangeDataStore {
             Grid baseGrid,
             Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
             String description,
-            History history, int requiredStepIndex) throws IOException {
+            History history,
+            int requiredStepIndex,
+            Engine.Mode engineMode) throws IOException {
         File changeDataDir = idsToFile(changeDataId, false);
         registerId(changeDataId);
         File incompleteDir = null;
@@ -179,7 +182,8 @@ public class FileChangeDataStore implements ChangeDataStore {
                     completionProcess,
                     incompleteDir,
                     history,
-                    requiredStepIndex);
+                    requiredStepIndex,
+                    engineMode);
             processManager.queueProcess(process);
             _toRefresh.add(changeDataId);
         } else if (storedChangeDataIsComplete) {

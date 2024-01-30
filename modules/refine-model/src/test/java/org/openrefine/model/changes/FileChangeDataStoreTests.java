@@ -21,6 +21,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.history.History;
 import org.openrefine.model.Grid;
 import org.openrefine.model.Runner;
@@ -113,7 +114,7 @@ public class FileChangeDataStoreTests {
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> oldChangeData.get());
 
         ChangeData<String> returnedChangeData = SUT.retrieveOrCompute(changeDataId, serializer, baseGrid, completionProcess, "description",
-                history, 2);
+                history, 2, Mode.RowBased);
 
         Assert.assertTrue(SUT.needsRefreshing(198));
         Assert.assertTrue(newChangeDataLocation.exists());
@@ -142,13 +143,14 @@ public class FileChangeDataStoreTests {
 
     @Test
     public void testNeedsRefreshingRunningProcess() throws IOException {
-        when(runner.loadChangeData(eq(new File(changeDir, "456" + File.separator + "data")), eq(serializer), eq(false))).thenReturn(changeData);
+        when(runner.loadChangeData(eq(new File(changeDir, "456" + File.separator + "data")), eq(serializer), eq(false)))
+                .thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(false);
 
         ChangeDataId changeDataId = new ChangeDataId(456L, "data");
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
 
-        SUT.retrieveOrCompute(changeDataId, serializer, baseGrid, completionProcess, "description", history, 2);
+        SUT.retrieveOrCompute(changeDataId, serializer, baseGrid, completionProcess, "description", history, 2, Mode.RecordBased);
 
         // A history entry with a corresponding running process needs refreshing
         Assert.assertTrue(SUT.needsRefreshing(456L));
@@ -159,12 +161,13 @@ public class FileChangeDataStoreTests {
      */
     @Test(enabled = false)
     public void testNeedsRefreshingPausedProcess() throws IOException {
-        when(runner.loadChangeData(eq(new File(changeDir, "789" + File.separator + "data")), eq(serializer), eq(false))).thenReturn(changeData);
+        when(runner.loadChangeData(eq(new File(changeDir, "789" + File.separator + "data")), eq(serializer), eq(false)))
+                .thenReturn(changeData);
         when(changeData.isComplete()).thenReturn(false);
         ChangeDataId changeDataId = new ChangeDataId(789L, "data");
         Function<Optional<ChangeData<String>>, ChangeData<String>> completionProcess = (oldChangeData -> changeData);
 
-        SUT.retrieveOrCompute(changeDataId, serializer, baseGrid, completionProcess, "description", history, 2);
+        SUT.retrieveOrCompute(changeDataId, serializer, baseGrid, completionProcess, "description", history, 2, Mode.RecordBased);
         // artificially pause the process
         when(future.isPaused()).thenReturn(true);
 

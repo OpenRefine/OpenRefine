@@ -13,6 +13,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.history.History;
 import org.openrefine.model.Runner;
 
@@ -63,7 +64,11 @@ public class LazyChangeDataStoreTests {
         ChangeDataId changeDataId = new ChangeDataId(456, "data");
         ChangeData<String> returnedChangeData = SUT.retrieveOrCompute(
                 changeDataId, serializer, null,
-                completionProcess, "description", mock(History.class), 2);
+                completionProcess,
+                "description",
+                mock(History.class),
+                2,
+                Mode.RecordBased);
 
         Assert.assertEquals(returnedChangeData, changeData);
         Assert.assertFalse(SUT.needsRefreshing(456));

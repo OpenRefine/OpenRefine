@@ -68,7 +68,7 @@ public class ChangeContextImpl implements ChangeContext {
                     grid,
                     partialChangeData -> completionProcess.apply(grid, partialChangeData),
                     _changeDescription,
-                    _history, applicationIndex);
+                    _history, applicationIndex, mode);
         } catch (OperationException e) {
             // unreachable since earliestStepContainingDependencies must return a grid that is already computed
             throw new RuntimeException(e);

@@ -17,12 +17,18 @@ public class TaskSignalling {
 
     private boolean paused = false;
     private int progress = 0;
-    private long elementsToProcess;
+    private long totalElements;
     private long processedElements = 0;
     private List<ProgressReporter> progressReporters = new ArrayList<>();
 
-    public TaskSignalling(long elementsToProcess) {
-        this.elementsToProcess = elementsToProcess;
+    /**
+     * Constructor.
+     * 
+     * @param totalElements
+     *          the number of elements expected to be processed by the underlying task (used to compute process percentages)
+     */
+    public TaskSignalling(long totalElements) {
+        this.totalElements = totalElements;
     }
 
     /**
@@ -53,7 +59,7 @@ public class TaskSignalling {
      */
     public synchronized void registerProgressReporter(ProgressReporter reporter) {
         progressReporters.add(reporter);
-        reporter.reportProgress(progress);
+        reporter.reportProgress(progress, processedElements, totalElements);
     }
 
     /**
@@ -80,27 +86,26 @@ public class TaskSignalling {
      * Method to be called by the computing thread after processing a bunch of elements, so that progress is updated.
      */
     public synchronized void addProcessedElements(long processedElements) {
-        if (elementsToProcess < 0 || progress >= 100) {
+        if (totalElements <= 0 || progress >= 100) {
             return;
         }
         this.processedElements += processedElements;
-        setProgress((int) ((100 * this.processedElements) / elementsToProcess));
+        progress = (int) ((100 * this.processedElements) / totalElements);
+        broadcastProgress();
     }
 
     /**
      * Mark this task as fully done.
      */
     public synchronized void setFullProgress() {
-        setProgress(100);
+        processedElements = totalElements;
+        progress = 100;
+        broadcastProgress();
     }
 
-    private void setProgress(int newProgress) {
-        int oldProgress = progress;
-        progress = newProgress;
-        if (progress != oldProgress) {
-            for (ProgressReporter reporter : progressReporters) {
-                reporter.reportProgress(progress);
-            }
+    private void broadcastProgress() {
+        for (ProgressReporter reporter : progressReporters) {
+            reporter.reportProgress(progress, processedElements, totalElements);
         }
     }
 

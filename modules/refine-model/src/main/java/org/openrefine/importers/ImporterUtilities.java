@@ -221,7 +221,7 @@ public class ImporterUtilities {
         return new ProgressReporter() {
 
             @Override
-            public void reportProgress(int percentage) {
+            public void reportProgress(int percentage, long processedRows, long totalRows) {
                 job.setProgress(50 + percentage / 2, "Saving project in the workspace");
             }
         };

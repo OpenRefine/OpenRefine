@@ -41,7 +41,7 @@ public class FailingFuture<T> implements ProgressingFuture<T> {
 
     @Override
     public void onProgress(ProgressReporter reporter) {
-        reporter.reportProgress(0);
+        reporter.reportProgress(0, 0L, 0L);
     }
 
     @Override

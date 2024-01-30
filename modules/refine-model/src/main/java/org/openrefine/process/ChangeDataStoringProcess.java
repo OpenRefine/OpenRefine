@@ -12,6 +12,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.commons.io.FileUtils;
 
+import org.openrefine.browsing.Engine;
 import org.openrefine.history.History;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataId;
@@ -53,6 +54,8 @@ public class ChangeDataStoringProcess<T> extends Process {
      *            the history of the project this computation pertains to
      * @param requiredStepIndex
      *            the step in the history which must be fully computed as a prerequisite for this process to run
+     * @param engineMode
+     *            whether this change data should be computed row- or record-wise
      */
     public ChangeDataStoringProcess(
             String description,
@@ -62,8 +65,9 @@ public class ChangeDataStoringProcess<T> extends Process {
             ChangeDataSerializer<T> serializer, Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
             File temporaryDirToDelete,
             History history,
-            int requiredStepIndex) {
-        super(description);
+            int requiredStepIndex,
+            Engine.Mode engineMode) {
+        super(description, engineMode);
         this.storedChangeData = storedChangeData;
         this.changeDataId = changeDataId;
         this.changeDataStore = changeDataStore;

@@ -48,7 +48,7 @@ public class CompletedFuture<T> implements ProgressingFuture<T> {
 
     @Override
     public void onProgress(ProgressReporter reporter) {
-        reporter.reportProgress(100);
+        reporter.reportProgress(100, 0L, 0L);
     }
 
     @Override

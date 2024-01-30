@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.openrefine.browsing.Engine;
 import org.openrefine.history.History;
 import org.openrefine.model.Grid;
 import org.openrefine.process.ProcessManager;
@@ -87,6 +88,12 @@ public interface ChangeDataStore {
      *            a function taking the existing state of the change data and returning the complete version
      * @param description
      *            a description of the completion process, to be reported to the user
+     * @param history
+     *            the history of the project
+     * @param requiredStepIndex
+     *            the index of the step in the history from which this change data should be computed
+     * @param engineMode
+     *            whether this change data should be computed row- or record-wise
      */
     public <T> ChangeData<T> retrieveOrCompute(
             ChangeDataId changeDataId,
@@ -94,7 +101,9 @@ public interface ChangeDataStore {
             Grid baseGrid,
             Function<Optional<ChangeData<T>>, ChangeData<T>> completionProcess,
             String description,
-            History history, int requiredStepIndex)
+            History history,
+            int requiredStepIndex,
+            Engine.Mode engineMode)
             throws IOException;
 
     /**

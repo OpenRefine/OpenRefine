@@ -13,6 +13,7 @@ import java.util.function.Function;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.history.History;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataId;
@@ -52,7 +53,7 @@ public class ChangeDataStoringProcessTests {
                 "description",
                 Optional.empty(),
                 changeDataId, changeDataStore, serializer, completionProcess,
-                null, history, 3);
+                null, history, 3, Mode.RowBased);
     }
 
     @Test

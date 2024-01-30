@@ -55,14 +55,18 @@ public class ProcessTests {
 
     @Test
     public void serializeLongRunningProcess() {
-        Process process = new ProcessStub("some description", new ChangeDataId(1234L, "recon"), () -> null);
+        ProcessStub process = new ProcessStub("some description", new ChangeDataId(1234L, "recon"), () -> null);
+        process.setProgress(20, 200L, 1000L);
         int hashCode = process.hashCode();
         TestUtils.isSerializedTo(process, "{"
                 + "\"id\":" + hashCode + ","
                 + "\"description\":\"some description\","
                 + "\"changeDataId\":{\"historyEntryId\":1234,\"subDirectory\":\"recon\"},"
                 + "\"state\":\"pending\","
-                + "\"progress\":0}", ParsingUtilities.defaultWriter);
+                + "\"progress\":20,"
+                + "\"processedElements\":200,"
+                + "\"totalElements\":1000,"
+                + "\"engineMode\": \"row-based\"}", ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -81,6 +85,9 @@ public class ProcessTests {
                 + "  \"errorMessage\" : \"something bad happened\","
                 + "  \"id\" : " + hashCode + ","
                 + "  \"progress\" : 0,"
+                + "  \"processedElements\" : 0,"
+                + "  \"totalElements\" : 0,"
+                + "  \"engineMode\" : \"row-based\","
                 + "  \"state\" : \"failed\""
                 + "}";
         TestUtils.isSerializedTo(process, expectedJson, ParsingUtilities.defaultWriter);
@@ -102,6 +109,9 @@ public class ProcessTests {
                 + "  \"errorMessage\" : \"java.io.IOException: error\","
                 + "  \"id\" : " + hashCode + ","
                 + "  \"progress\" : 0,"
+                + "  \"processedElements\" : 0,"
+                + "  \"totalElements\" : 0,"
+                + "  \"engineMode\" : \"row-based\","
                 + "  \"state\" : \"failed\""
                 + "}";
         TestUtils.isSerializedTo(process, expectedJson, ParsingUtilities.defaultWriter);

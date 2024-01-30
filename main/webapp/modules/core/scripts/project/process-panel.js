@@ -181,8 +181,19 @@ ProcessPanel.prototype._renderPanel = function(newData) {
         });
       }
 
+      var locale = $.i18n().locale;
+      var progressText = $.i18n('core-project/percent-complete', process.progress);
+      if (process.processedElements >= 0 && process.totalElements > 0) {
+        var processedElements = process.processedElements.toLocaleString(locale);
+        var totalElements = process.totalElements.toLocaleString(locale);
+        if (process.engineMode === "row-based") {
+          progressText = $.i18n('core-project/percent-complete-rows', process.progress, processedElements, totalElements);
+        } else {
+          progressText = $.i18n('core-project/percent-complete-records', process.progress, processedElements, totalElements);
+        }
+      }
       li.find('.process-progress-container span')
-          .text($.i18n('core-project/percent-complete', process.progress));
+          .text(progressText);
       li.find('.pause-button')
           .data('paused', process.state === 'paused')
           .text(process.state === 'paused' ? $.i18n('core-processes/resume') : $.i18n('core-processes/pause'));

@@ -3,6 +3,7 @@ package org.openrefine.process;
 
 import java.util.concurrent.Callable;
 
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.model.changes.ChangeDataId;
 
 public class ProcessStub extends Process {
@@ -12,7 +13,7 @@ public class ProcessStub extends Process {
     boolean satisfiedDependencies;
 
     protected ProcessStub(String description, ChangeDataId changeDataId, Callable<ProgressingFuture<Void>> future) {
-        super(description);
+        super(description, Mode.RowBased);
         this.future = future;
         this.changeDataId = changeDataId;
         this.satisfiedDependencies = false;
@@ -37,6 +38,10 @@ public class ProcessStub extends Process {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public void setProgress(int percentage, long processedElements, long elementsToProcess) {
+        _reporter.reportProgress(percentage, processedElements, elementsToProcess);
     }
 
     @Override

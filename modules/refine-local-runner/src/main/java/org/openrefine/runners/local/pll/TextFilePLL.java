@@ -253,7 +253,8 @@ public class TextFilePLL extends PLL<String> {
                     while (!nextLineAttempted && nextLine == null && !endMarkerFound) {
                         long currentPosition = textPartition.start + (countingIs == null ? 0 : countingIs.getCount());
                         try {
-                            if (!nextLineAttempted && ((currentPosition <= textPartition.getEnd() || textPartition.getEnd() < 0) || synchronous)) {
+                            if (!nextLineAttempted
+                                    && ((currentPosition <= textPartition.getEnd() || textPartition.getEnd() < 0) || synchronous)) {
                                 if (synchronous) {
                                     lineNumberReader.mark(4096);
                                     // TODO add logic to bump this readAheadLimit (restart from the beginning of the
@@ -392,8 +393,7 @@ public class TextFilePLL extends PLL<String> {
          * @param start
          *            starting byte where to read from in the file
          * @param end
-         *            first byte not to be read after the end of the partition,
-         *            or -1 if the entire file should be read 
+         *            first byte not to be read after the end of the partition, or -1 if the entire file should be read
          */
         protected TextFilePartition(File path, int index, long start, long end) {
             this.path = path;

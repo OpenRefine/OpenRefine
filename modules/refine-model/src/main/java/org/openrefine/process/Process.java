@@ -39,6 +39,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.model.changes.ChangeDataId;
 import org.openrefine.operations.exceptions.ChangeDataFetchingException;
 
@@ -63,15 +65,22 @@ public abstract class Process {
     @JsonIgnore
     protected int _progress; // out of 100
     @JsonIgnore
+    protected long _processedElements = 0;
+    @JsonIgnore
+    protected long _totalElements = 0;
+    @JsonIgnore
+    protected Engine.Mode _engineMode;
+    @JsonIgnore
     protected boolean _canceled;
     @JsonIgnore
     protected Exception _exception;
     @JsonIgnore
     protected ProgressReporter _reporter;
 
-    public Process(String description) {
+    public Process(String description, Mode engineMode) {
         _description = description;
         _reporter = new Reporter();
+        _engineMode = engineMode;
     }
 
     @JsonProperty("state")
@@ -153,6 +162,21 @@ public abstract class Process {
         return _progress;
     }
 
+    @JsonProperty("processedElements")
+    public long getProcessedElements() {
+        return _processedElements;
+    }
+
+    @JsonProperty("totalElements")
+    public long getTotalElements() {
+        return _totalElements;
+    }
+
+    @JsonProperty("engineMode")
+    public Mode getEngineMode() {
+        return _engineMode;
+    }
+
     /**
      * Cancels the process. Note that calling {@link ProcessManager#update()} after this cancellation is required for
      * any other process in the queue to start.
@@ -196,8 +220,10 @@ public abstract class Process {
     protected class Reporter implements ProgressReporter {
 
         @Override
-        public void reportProgress(int percentage) {
+        public void reportProgress(int percentage, long processedElements, long totalElements) {
             _progress = percentage;
+            _processedElements = processedElements;
+            _totalElements = totalElements;
         }
 
     }

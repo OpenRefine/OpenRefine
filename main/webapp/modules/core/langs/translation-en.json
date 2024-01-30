@@ -431,6 +431,8 @@
     "core-project/paste-json": "Select a file or paste an extracted JSON history of operations to perform:",
     "core-project/some-operations-applied-but-error": "$1 {{plural:$1|operation|operations}} ran successfully but an error was encountered in the next one: $2. The following operations were not executed.",
     "core-project/percent-complete": "$1% complete",
+    "core-project/percent-complete-rows": "$1% complete ($2 of $3 rows)",
+    "core-project/percent-complete-records": "$1% complete ($2 of $3 records)",
     "core-project/other-processes": "($1 other pending {{plural:$1|process|processes}})",
     "core-project/cancel-all": "{{plural:$1|Cancel|Cancel All}}",
     "core-project/canceling": "Canceling…",
