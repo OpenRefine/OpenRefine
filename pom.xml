@@ -96,7 +96,7 @@
     <odfdom-java.version>0.12.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
     <clojure.version>1.11.1</clojure.version>
-    <httpclient5.version>5.3</httpclient5.version>
+    <httpclient5.version>5.3.1</httpclient5.version>
     <httpcore.version>4.4.16</httpcore.version>
     <univocity-csv.version>2.9.1</univocity-csv.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
@@ -108,7 +108,7 @@
     <httpmime.version>4.5.14</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>5.9.0</mockito.version>
+    <mockito.version>5.10.0</mockito.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
@@ -123,7 +123,7 @@
     <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
-    <license-plugin.version>2.3.0</license-plugin.version>
+    <license-plugin.version>2.4.0</license-plugin.version>
     <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
   </properties>
 

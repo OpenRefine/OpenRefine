@@ -1,0 +1,15 @@
+{
+    "name": "தமிழ்",
+    "core-index/about": "பற்றி",
+    "core-index/new-version": "புதிய பதிப்பு",
+    "core-index/refine-version": "பதிப்பு $1",
+    "core-index/download-now": "இப்போதே $1 ஐ பதிவிறக்கவும்.",
+    "core-index/preferences": "விருப்பங்கள்",
+    "core-index/value": "உட்பொருள்",
+    "core-index/new-proj-name": "புதிய திட்டக்கோப்பின் பெயர்:",
+    "core-index/error-rename": "திட்டக்கோப்பை மறுபெயரிடுவதில் தோல்வி:",
+    "core-index/help": "உதவி",
+    "core-index/version": "பதிப்பு",
+    "core-index/edit": "திருத்து",
+    "core-index/delete": "நீக்கு"
+}

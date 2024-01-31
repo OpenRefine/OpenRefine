@@ -350,7 +350,7 @@ jobs:
 
     - name: Download build artifact for Windows Installer (with Java)
       id: download-build-artifact-win-with-java
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: installertemp-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
         path: ./packaging/target/openrefine-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}

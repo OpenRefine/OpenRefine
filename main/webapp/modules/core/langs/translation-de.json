@@ -764,7 +764,6 @@
     "core-views/by-number": "von Zahlen zu Buchstaben",
     "core-views/by-case": "von Klein- nach Großschreibung",
     "core-views/recon-stats": "$1% gefunden, $2% neue, $3% abzugleichen",
-    "core-recon/access-service": "Auf Service-API zugreifen",
     "core-project/percent-complete": "$1% komplett",
     "core-facets/value-range": "$1 — $2",
     "core-facets/choice-count": "$1 {{plural:$1|Auswahl|Auswahlen}}",

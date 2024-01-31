@@ -55,6 +55,7 @@ public class Column {
     private ReconStats _reconStats;
 
     transient protected Map<String, Object> _precomputes;
+    private ReconConfig _sourceReconConfig;
 
     @JsonCreator
     public Column(
@@ -93,6 +94,17 @@ public class Column {
     @JsonInclude(Include.NON_NULL)
     public ReconConfig getReconConfig() {
         return _reconConfig;
+    }
+
+    @JsonProperty("sourceReconConfig")
+    public void setSourceReconConfig(ReconConfig sourceConfig) {
+        this._sourceReconConfig = sourceConfig;
+    }
+
+    @JsonProperty("sourceReconConfig")
+    @JsonInclude(Include.NON_NULL)
+    public ReconConfig getSourceReconConfig() {
+        return _sourceReconConfig;
     }
 
     @JsonProperty("reconStats")

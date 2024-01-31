@@ -612,7 +612,6 @@
     "core-project/project-data-package": "Paquet de dades del projecte",
     "core-views/edit-cell": "Editeu aquesta cel·la",
     "core-views/starred-rows": "Files destacades",
-    "core-recon/access-service": "Accedir a l'API de serveis",
     "core-views/text-facet": "Faceta de text",
     "core-views/configure-col": "Configura aquesta columna",
     "core-views/reconcile-tooltip": "Fes coincidir les cel·les d'aquesta columna amb elements de bases de dades externes",
@@ -859,5 +858,7 @@
     "core-views/column-join-before-column-picker": "Seleccioneu i ordeneu les columnes a unir",
     "core-views/column-join-before-options": "Selecciona les opcions",
     "core-views/column-join-field-separator": "Separador entre el contingut de cada columna",
-    "core-views/column-join-field-separator-advice": "Introduïu un o més caràcters, o manteniu-lo en blanc per a unir les columnes sense separador."
+    "core-views/column-join-field-separator-advice": "Introduïu un o més caràcters, o manteniu-lo en blanc per a unir les columnes sense separador.",
+    "core-views/see-more": "Veure més",
+    "core-views/see-less": "Veure menys"
 }
