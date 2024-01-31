@@ -69,7 +69,7 @@ public class Recon implements HasFields {
         @JsonProperty("none")
         None, @JsonProperty("matched")
         Matched, @JsonProperty("new")
-        New, @JsonProperty("errors")
+        New, @JsonProperty("error")
         Error
     }
 

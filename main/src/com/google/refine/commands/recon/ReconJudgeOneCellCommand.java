@@ -199,10 +199,9 @@ public class ReconJudgeOneCellCommand extends Command {
                 description = "Discard recon judgment for " + cellDescription;
 
             } else if (judgment == Judgment.Error) {
-                newCell.recon.judgment = Recon.Judgment.Error;
-                newCell.recon.match = null;
 
-                description = "Errors in recon judgment for " + cellDescription;
+                throw new Exception("Invalid Argument Exception");
+
             } else if (judgment == Judgment.New) {
                 newCell.recon.judgment = Recon.Judgment.New;
                 newCell.recon.match = null;
@@ -256,7 +255,7 @@ public class ReconJudgeOneCellCommand extends Command {
                         stats.nonBlanks,
                         stats.newTopics + newChange,
                         stats.matchedTopics + matchChange,
-                        stats.errorsTopics + errorsChange);
+                        stats.errorTopics + errorsChange);
             }
 
             Change change = new ReconChange(
