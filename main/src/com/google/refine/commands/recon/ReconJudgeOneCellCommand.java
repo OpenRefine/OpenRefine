@@ -200,7 +200,7 @@ public class ReconJudgeOneCellCommand extends Command {
 
             } else if (judgment == Judgment.Error) {
 
-                throw new Exception("Invalid Argument Exception");
+                throw new IllegalArgumentException("Cannot manually set judgment to 'error'");
 
             } else if (judgment == Judgment.New) {
                 newCell.recon.judgment = Recon.Judgment.New;
