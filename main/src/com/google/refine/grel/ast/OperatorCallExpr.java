@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.text.Collator;
 import java.util.Properties;
 
 import com.google.refine.expr.Evaluable;
@@ -78,6 +79,7 @@ public class OperatorCallExpr implements Evaluable {
                         if (n2 == 0 && n1 == 0) {
                             return Double.NaN;
                         }
+                        // TODO: This will throw on divide by zero - return Double.Infinity / -Infinity instead?
                         return n1 / n2;
                     } else if ("%".equals(_op)) {
                         return n1 % n2;
@@ -124,11 +126,58 @@ public class OperatorCallExpr implements Evaluable {
                     } else if ("!=".equals(_op)) {
                         return n1 != n2;
                     }
+                } else if (args[0] instanceof String && args[1] instanceof String) {
+                    String s1 = (String) args[0];
+                    String s2 = (String) args[1];
+                    Collator collator = Collator.getInstance();
+                    collator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
+//                    collator.setStrength(Collator.SECONDARY);
+
+                    if (">".equals(_op)) {
+                        return collator.compare(s1, s2) > 0;
+                    } else if (">=".equals(_op)) {
+                        return collator.compare(s1, s2) >= 0;
+                    } else if ("<".equals(_op)) {
+                        return collator.compare(s1, s2) < 0;
+                    } else if ("<=".equals(_op)) {
+                        return collator.compare(s1, s2) <= 0;
+                    } else if ("==".equals(_op)) {
+                        return collator.compare(s1, s2) == 0;
+                    } else if ("!=".equals(_op)) {
+                        return collator.compare(s1, s2) != 0;
+                    }
                 }
 
-                if ("+".equals(_op)) {
-                    return args[0].toString() + args[1].toString();
+                if (args[0] instanceof String || args[1] instanceof String) {
+                    String s1 = args[0] instanceof String ? (String) args[0] : args[0].toString();
+                    String s2 = args[1] instanceof String ? (String) args[1] : args[1].toString();
+
+                    if ("+".equals(_op)) {
+                        return s1 + s2;
+                    }
                 }
+
+                if (args[0] instanceof Comparable && args[1] instanceof Comparable
+                        && (args[0].getClass().isAssignableFrom(args[1].getClass()) ||
+                                args[1].getClass().isAssignableFrom(args[0].getClass()))) {
+                    Comparable s1 = (Comparable) args[0];
+                    Comparable s2 = (Comparable) args[1];
+
+                    if (">".equals(_op)) {
+                        return s1.compareTo(s2) > 0;
+                    } else if (">=".equals(_op)) {
+                        return s1.compareTo(s2) >= 0;
+                    } else if ("<".equals(_op)) {
+                        return s1.compareTo(s2) < 0;
+                    } else if ("<=".equals(_op)) {
+                        return s1.compareTo(s2) <= 0;
+                    } else if ("==".equals(_op)) {
+                        return s1.compareTo(s2) == 0;
+                    } else if ("!=".equals(_op)) {
+                        return s1.compareTo(s2) != 0;
+                    }
+                }
+
             }
 
             if ("==".equals(_op)) {

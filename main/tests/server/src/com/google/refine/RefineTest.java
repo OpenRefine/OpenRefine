@@ -348,7 +348,12 @@ public class RefineTest {
             throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test[0]);
         Object result = eval.evaluate(bindings);
-        Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
+        if (test[1] != null) {
+            Assert.assertNotNull(result, "Expected " + test[1] + " for test " + test[0]);
+            Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
+        } else {
+            Assert.assertNull(result, "Wrong result for expression: " + test[0]);
+        }
     }
 
     /**
