@@ -796,7 +796,6 @@ public abstract class PLL<T> {
      *            the directory in which the partitions are written
      * @param partitionCount
      *            the number of partitions
-     * @throws IOException
      */
     protected void touchPartitions(File directory, int partitionCount) {
         try {

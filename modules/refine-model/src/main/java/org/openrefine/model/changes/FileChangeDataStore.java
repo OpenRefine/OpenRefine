@@ -34,7 +34,7 @@ import org.openrefine.process.Process;
  * <li>The incomplete directory, which is used as a temporary location when resuming the fetching of some change data
  * after an interruption.</li>
  * </ul>
- * When {@link #retrieveOrCompute(ChangeDataId, ChangeDataSerializer, Grid, Function, String, History, int)} finds an
+ * When {@link #retrieveOrCompute(ChangeDataId, ChangeDataSerializer, Grid, Function, String, History, int, org.openrefine.browsing.Engine.Mode)} finds an
  * incomplete change data is found in the base directory, it is moved to the incomplete directory. A new version of the
  * change data, completed using the completion process, is then saved again in the base directory.
  */
