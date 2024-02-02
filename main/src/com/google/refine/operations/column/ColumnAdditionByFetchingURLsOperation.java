@@ -37,9 +37,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -325,12 +323,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
         Serializable fetch(String urlString, Header[] headers) {
             try {
-                // Do a little dance to get all the pieces of the URL correctly encoded, if possible
-                // TODO: Should we try to undo any existing percent encoding, so we don't end up double encoded?
-                URL url = new URL(urlString);
-                URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(),
-                        url.getQuery(), url.getRef());
-                return _httpClient.getAsString(uri.toASCIIString(), headers);
+                return _httpClient.getAsString(HttpClient.getEscapedUrl(urlString), headers);
             } catch (URISyntaxException | IOException e) {
                 return _onError == OnError.StoreError ? new EvalError(e) : null;
             }
