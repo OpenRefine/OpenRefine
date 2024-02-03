@@ -68,6 +68,7 @@ public class ImporterUtilities {
 
                 try {
                     double d = Double.parseDouble(text2);
+                    // FIXME: Why do we skip Infinities and NaNs?
                     if (!Double.isInfinite(d) && !Double.isNaN(d)) {
                         return d;
                     }
