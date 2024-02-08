@@ -116,7 +116,8 @@ public class PreviewWikibaseSchemaCommand extends Command {
 
         // Evaluate project
         Engine engine = getEngine(request, project);
-        List<EntityEdit> editBatch = schema.evaluate(project.getCurrentGrid(), engine, warningStore);
+        long limit = engine.getConfig().getAggregationLimit() == null ? 0 : engine.getConfig().getAggregationLimit();
+        List<EntityEdit> editBatch = schema.evaluate(project.getCurrentGrid(), engine, warningStore, limit);
         // Inspect the edits and generate warnings
         EditInspector inspector = new EditInspector(warningStore, manifest, slowMode);
         inspector.inspect(editBatch, schema);

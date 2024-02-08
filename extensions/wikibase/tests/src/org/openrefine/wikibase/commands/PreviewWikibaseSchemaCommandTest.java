@@ -28,12 +28,16 @@ import static org.mockito.Mockito.when;
 import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
 
+import java.util.Collections;
+
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.Command;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikibase.utils.EntityCache;
@@ -68,6 +72,24 @@ public class PreviewWikibaseSchemaCommandTest extends CommandTest {
         assertEquals(edits.size(), 3);
         ArrayNode issues = (ArrayNode) response.get("warnings");
         assertEquals(issues.size(), 4);
+    }
+
+    @Test
+    public void testValidSchemaWithLimit() throws Exception {
+        String schemaJson = jsonFromFile("schema/inception.json");
+        String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");
+        String engineJson = ParsingUtilities.mapper.writeValueAsString(new EngineConfig(Collections.emptyList(), Mode.RowBased, 1L));
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
+        when(request.getParameter("engine")).thenReturn(engineJson);
+
+        command.doPost(request, response);
+
+        ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+        ArrayNode edits = (ArrayNode) response.get("edits_preview");
+        assertEquals(edits.size(), 1);
+        ArrayNode issues = (ArrayNode) response.get("warnings");
+        assertEquals(issues.size(), 1);
     }
 
     @Test

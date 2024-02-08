@@ -193,14 +193,16 @@ public class WikibaseSchema implements OverlayModel {
      *            the engine, which gives access to the current facets
      * @param warningStore
      *            a store in which issues will be emitted
+     * @param limit
+     *            the maximum number of rows to process (0 for no limit)
      * @return entity updates are stored in their generating order (not merged yet).
      */
-    public List<EntityEdit> evaluate(Grid grid, Engine engine, QAWarningStore warningStore) {
+    public List<EntityEdit> evaluate(Grid grid, Engine engine, QAWarningStore warningStore, long limit) {
         if (!validated) {
             throw new IllegalStateException("The schema has not been validated before being evaluated");
         }
         try (CloseableIterator<IndexedRow> rowsIterator = grid.iterateRows(engine.combinedRowFilters())) {
-            return evaluate(grid.getColumnModel(), rowsIterator, warningStore);
+            return evaluate(grid.getColumnModel(), limit > 0 ? rowsIterator.take((int) limit) : rowsIterator, warningStore);
         }
     }
 
@@ -246,7 +248,7 @@ public class WikibaseSchema implements OverlayModel {
      * Same as above, ignoring any warnings.
      */
     public List<EntityEdit> evaluate(Grid grid, Engine engine) {
-        return evaluate(grid, engine, null);
+        return evaluate(grid, engine, null, 0L);
     }
 
     static public WikibaseSchema reconstruct(String json) throws IOException {
