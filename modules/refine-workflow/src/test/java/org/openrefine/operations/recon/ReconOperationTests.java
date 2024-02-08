@@ -253,7 +253,7 @@ public class ReconOperationTests extends RefineTest {
                         { new Cell("value3", recon3) },
                         { null }
                 })
-                .withColumnModel(reconciledColumnModel);
+                        .withColumnModel(reconciledColumnModel);
 
         assertGridEquals(project.getCurrentGrid(), expectedGrid);
         Assert.assertEquals(operationResults.getChangeResult().getCreatedFacets().size(), 2);

@@ -546,7 +546,7 @@ public class HistoryTests {
         // none of the operations used in this test are complete
         when(dataStore.needsRefreshing(firstChangeId)).thenReturn(true);
         when(dataStore.needsRefreshing(newChangeId)).thenReturn(true);
-        
+
         History history = new History(initialState, dataStore, gridStore, Arrays.asList(firstEntry, newEntry), 2, 1234L);
 
         Assert.assertEquals(history.getPosition(), 2);

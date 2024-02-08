@@ -25,7 +25,8 @@ public class TaskSignalling {
      * Constructor.
      * 
      * @param totalElements
-     *          the number of elements expected to be processed by the underlying task (used to compute process percentages)
+     *            the number of elements expected to be processed by the underlying task (used to compute process
+     *            percentages)
      */
     public TaskSignalling(long totalElements) {
         this.totalElements = totalElements;

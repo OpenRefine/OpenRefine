@@ -35,6 +35,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
 
     /**
      * Constructs a change data.
+     * 
      * @param grid
      *            expected not to contain any null value (they should be filtered out first)
      * @param parentPartitionSizes
@@ -125,10 +126,10 @@ public class LocalChangeData<T> implements ChangeData<T> {
                         throw new UncheckedIOException(e);
                     }
                 }, "serialize");
-         if (serializeWithEndMarker) {
-             serialized = serialized.mapPartitions((index, iterator) -> iterator.concat(CloseableIterator.of(ChangeData.partitionEndMarker)),
-                        "add end marker", false);
-         }
+        if (serializeWithEndMarker) {
+            serialized = serialized.mapPartitions((index, iterator) -> iterator.concat(CloseableIterator.of(ChangeData.partitionEndMarker)),
+                    "add end marker", false);
+        }
 
         // we do not want to repartition while saving because the partitions should ideally correspond exactly
         // to those of the parent grid, for efficient joining.

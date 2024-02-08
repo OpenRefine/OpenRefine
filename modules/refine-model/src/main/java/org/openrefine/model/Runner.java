@@ -47,9 +47,8 @@ public interface Runner {
      * @param path
      *            the directory where the ChangeData is stored
      * @param frozen
-     *            assume that no other process is writing to the same disk location and therefore
-     *            that iterating from this object should never wait for further writes even if
-     *            the it is not complete
+     *            assume that no other process is writing to the same disk location and therefore that iterating from
+     *            this object should never wait for further writes even if the it is not complete
      * @throws IOException
      *             when loading the grid failed
      */

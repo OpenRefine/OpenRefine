@@ -70,7 +70,8 @@ public class RowFlagOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context) {
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount,
+            ChangeContext context) {
         return rowMapper(_flagged);
     }
 

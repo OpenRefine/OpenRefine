@@ -14,8 +14,8 @@ import org.openrefine.operations.RowMapOperation;
  * <p>
  * It can be used as:
  * <ul>
- * <li>a {@link RowMapper} if the function is cheap to compute (meaning that the results do not need persisting)
- *     and does not require access to the containing record of each row</li>
+ * <li>a {@link RowMapper} if the function is cheap to compute (meaning that the results do not need persisting) and
+ * does not require access to the containing record of each row</li>
  * <li>a {@link RecordMapper} if the function is cheap to compute and relies access to the containing record</li>
  * <li>a {@link RowChangeDataProducer} if the results should be persisted and the function is purely row-wise</li>
  * <li>a {@link RecordChangeDataProducer} otherwise

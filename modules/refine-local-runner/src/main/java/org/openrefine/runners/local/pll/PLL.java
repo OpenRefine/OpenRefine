@@ -546,7 +546,7 @@ public abstract class PLL<T> {
             return new InMemoryPLL<T>(this.context, Collections.emptyList(), numPartitions());
         } else {
             return new MapPartitionsPLL<T, T>(this, (i, iterator) -> iterator.take((int) limit),
-                String.format("Limit each partition to %d", limit));
+                    String.format("Limit each partition to %d", limit));
         }
     }
 
@@ -655,7 +655,9 @@ public abstract class PLL<T> {
 
     /**
      * Write the PLL to a directory, containing one file for each partition.
-     * @param completionMarker TODO
+     * 
+     * @param completionMarker
+     *            TODO
      */
     public void saveAsTextFile(String path, int maxConcurrency, boolean repartition, boolean flushRegularly, boolean completionMarker)
             throws IOException, InterruptedException {
@@ -700,10 +702,12 @@ public abstract class PLL<T> {
      *            whether the file should be written to disk often (at the cost of a lower compression ratio, and more
      *            disk writes)
      * @param completionMarker
-     *            whether to add an empty file as completion marker (with filename {@link Runner#COMPLETION_MARKER_FILE_NAME}).
+     *            whether to add an empty file as completion marker (with filename
+     *            {@link Runner#COMPLETION_MARKER_FILE_NAME}).
      * @return a future for the saving process, which supports progress reporting and pausing.
      */
-    public ProgressingFuture<Void> saveAsTextFileAsync(String path, int maxConcurrency, boolean repartition, boolean flushRegularly, boolean completionMarker) {
+    public ProgressingFuture<Void> saveAsTextFileAsync(String path, int maxConcurrency, boolean repartition, boolean flushRegularly,
+            boolean completionMarker) {
 
         File gridPath = new File(path);
         gridPath.mkdirs();

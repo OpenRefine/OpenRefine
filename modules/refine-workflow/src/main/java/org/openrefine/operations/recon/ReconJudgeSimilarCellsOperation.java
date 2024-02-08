@@ -135,7 +135,8 @@ public class ReconJudgeSimilarCellsOperation extends RowMapOperation {
     }
 
     @Override
-    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount, ChangeContext context)
+    public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount,
+            ChangeContext context)
             throws OperationException {
         int columnIndex = columnModel.getRequiredColumnIndex(_columnName);
         ReconConfig reconConfig = columnModel.getColumnByName(_columnName).getReconConfig();

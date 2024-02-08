@@ -230,7 +230,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         PLL<String> pll = new TextFilePLL(context, incompleteChangeData.getAbsolutePath(), utf8, true, "end");
         assertEquals(pll.getPartitions().size(), 1);
         assertEquals(((TextFilePLL.TextFilePartition) pll.getPartitions().get(0)).getEnd(), -1L);
-        
+
         Array<String> lines = pll.collect();
         assertTrue(lines.size() >= 20);
     }

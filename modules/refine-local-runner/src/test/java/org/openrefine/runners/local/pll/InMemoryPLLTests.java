@@ -110,7 +110,7 @@ public class InMemoryPLLTests extends PLLTestsBase {
         Assert.assertEquals(limited.collect(), Arrays.asList(
                 0, 1, 3, 4, 6, 7, 8, 9));
     }
-    
+
     @Test
     public void testLimitPartitionsZero() {
         PLL<Integer> limited = SUT.limitPartitions(0L);

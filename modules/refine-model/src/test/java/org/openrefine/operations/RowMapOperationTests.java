@@ -371,7 +371,7 @@ public class RowMapOperationTests {
                 .thenReturn(rowJoinedGridWithFacet);
         when(initialGrid.join(eq(recordMappedChangeData), (RecordChangeDataJoiner<List<Row>>) any(),
                 eq(mappedColumnModelEagerNeutralEngine)))
-                .thenReturn(recordJoinedGrid);
+                        .thenReturn(recordJoinedGrid);
 
         when(rowMappedGrid.withOverlayModels(any()))
                 .thenReturn(rowMappedGrid);
