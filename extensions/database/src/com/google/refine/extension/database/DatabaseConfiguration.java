@@ -67,6 +67,13 @@ public class DatabaseConfiguration {
     }
 
     public void setDatabaseHost(String databaseServer) {
+        // forbid setting settings inside the host parameter:
+        // https://dev.mysql.com/doc/connector-j/en/connector-j-reference-jdbc-url-format.html
+        if (databaseServer == null ||
+                databaseServer.contains("(") ||
+                databaseServer.contains("=")) {
+            throw new IllegalArgumentException("Invalid host supplied");
+        }
         this.databaseHost = databaseServer;
     }
 
