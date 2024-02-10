@@ -24,12 +24,12 @@ When browsing our documentation, feel free to use the edit button to suggest imp
 ##  Contributing code 
 
 You can contribute code in various ways:
-- Fix bugs or implement new features. Follow [our guide towards your first code contribution](https://openrefine.org/docs/technical-reference/contributing#your-first-code-pull-request).
+- Fix bugs or implement new features. Follow [our guide towards your first code contribution](https://openrefine.org/docs/technical-reference/code-contributions)
 - Develop an OpenRefine extension
 - Develop a reconciliation service
 
 All developers including new distributions and plugin developers are invited to leverage the following OpenRefine project management areas to avoid splitting the community in different communication channels.
-- the [official documentation](https://openrefine.org/docs/technical-reference/technical-reference-index) for shared documentation between both user docs and [technical reference](https://docs.openrefine.org/technical-reference/technical-reference-index)
+- the [official documentation](https://openrefine.org/docs/) for shared documentation between both user docs and [technical reference](https://docs.openrefine.org/technical-reference/contributing)
 - the [developer forum](https://forum.openrefine.org/c/dev/8) for technical questions, new feature development and anything code related. We invite you to share you idea there first. Someone may be able to point out to existing development saving you hours of research and development. 
 - [OpenRefine github issue tracker](https://github.com/OpenRefine/OpenRefine/issues) for requesting new features and bug reports.
 - [Gitter Chat](https://gitter.im/OpenRefine/OpenRefine)
