@@ -26,7 +26,7 @@
     <mac.dmg.path>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</mac.dmg.path>
     <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>
     <!-- Apple Notarization settings -->
-    <apple.notarization.timeout>10m</apple.notarization.timeout>
+    <apple.notarization.timeout>15m</apple.notarization.timeout>
 
     <windows.jre.path>${project.build.directory}/windows_jre</windows.jre.path>
     <windows.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/windows/x64/jre/hotspot/normal/eclipse?project=jdk</windows.jre.url>
