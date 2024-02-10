@@ -41,7 +41,6 @@ import java.io.Reader;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +56,7 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.NotImplementedException;
 import com.google.refine.util.ParsingUtilities;
 
 abstract public class ImportingParserBase implements ImportingParser {
