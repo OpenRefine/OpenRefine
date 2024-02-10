@@ -1,5 +1,8 @@
 package com.google.refine.extension.database;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
+
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -17,5 +20,14 @@ public class DatabaseConfigurationTest {
         String url = config.toURI().toString();
         // the database name is escaped, preventing the exploit
         assertEquals(url, "jdbc:mysql://my.host/test%3FallowLoadLocalInfile=true%23");
+    }
+
+    @Test
+    public void testSetMaliciousHost() {
+        DatabaseConfiguration config = new DatabaseConfiguration();
+        config.setDatabaseType("mysql");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> config.setDatabaseHost("127.0.0.1:3306,(allowLoadLocalInfile=true,allowUrlInLocalInfile=true),127.0.0.1"));
     }
 }
