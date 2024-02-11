@@ -473,7 +473,6 @@
     "core-project/json-invalid": "JSON, który wkleiłeś jest nieprawidłowy",
     "core-project/undo-history": "Nieskończona historia cofania",
     "core-recon/add-std-srv": "Dodaj usługę standardową",
-    "core-recon/access-service": "Uzyskaj dostęp do usługi API",
     "core-recon/against-type": "Uzgodnij z typem:",
     "core-recon/no-type": "Uzgodnij bez konkretnego typu",
     "core-recon/col-detail": "Użyj również odpowiednich informacji z innych kolumn:",

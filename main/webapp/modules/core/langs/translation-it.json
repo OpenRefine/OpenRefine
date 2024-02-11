@@ -753,7 +753,6 @@
     "core-views/edit-all-columns": "Modifica tutte le colonne",
     "core-facets/minimize-facet": "Passa dalla minimizzazione alla massimizzazione di questa faccetta",
     "core-facets/value-range": "$1 — $2",
-    "core-recon/access-service": "Accedi all'API di servizio",
     "core-views/recon-stats": "$1% abbinate, $2% nuovi elementi, $3% da riconciliare",
     "core-about/definition": "OpenRefine è un programma che permette di lavorare con dati disordinati. Usalo per migliorare la coerenza dei dati, collegarli a database come Wikidata, integrarli con dati da altre fonti, trasformare i dati in diversi formati per essere usati da altri programmi e contribuire alle fonti originali dei dati. OpenRefine non è un servizio web, ma un'applicazione desktop che gira sul tuo computer, che ti permette di elaborare dati sensibili privatamente.",
     "core-about/contributors": "Collaboratori (in ordine cronologico)",

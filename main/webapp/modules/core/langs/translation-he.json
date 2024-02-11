@@ -666,7 +666,6 @@
     "core-index-parser/invalid-wikitext": "לא ניתן לפענח טבלה. האם זאת טבלת ויקי תקנית?",
     "core-index-parser/wiki-base-url": "להשלים לוויקי עם כתובת הבסיס",
     "core-views/table-schema-validate": "תיקוף",
-    "core-recon/access-service": "ה־API של שירות הגישה",
     "core-dialogs/cluster-rows": "($1 שורות)",
     "core-dialogs/cluster-row-limit-exceeded": "חרגת ממגבלת $1 בחירות בסך הכול",
     "core-dialogs/clusters-filtered": "נבחר{{plural:$1| אשכול <b>אחד</b>|ו <b>$1</b> אשכולות}} מתוך <b>$2</b> סך הכול",

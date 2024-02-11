@@ -89,7 +89,6 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts = DOM.bind(this._panel);
   this._elmts.or_proc_accessDocumentation.html($.i18n('core-recon/service-documentation'));
   this._elmts.automatchCheck[0].checked=JSON.parse(Refine.getPreference("ui.reconciliation.automatch", true));
-  this._elmts.or_proc_access.html($.i18n('core-recon/access-service'));
   this._elmts.or_proc_cellType.html($.i18n('core-recon/cell-type'));
   this._elmts.or_proc_colDetail.html($.i18n('core-recon/col-detail'));
   this._elmts.or_proc_againstType.html($.i18n('core-recon/against-type'));
@@ -98,7 +97,6 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.or_proc_max_candidates.html($.i18n('core-recon/max-candidates'));
   this._elmts.typeInput.attr('aria-label',$.i18n('core-recon/type'))
 
-  this._elmts.rawServiceLink.attr("href", this._service.url);
   this._elmts.documentationLink.css("display", "none");
   if(this._service.documentation) {
     this._elmts.documentationLink.attr("href", this._service.documentation);
@@ -114,19 +112,19 @@ ReconStandardServicePanel.prototype._constructUI = function() {
     self._rewirePropertySuggests(null) // Clear any selected type
   });
   self._populateProperties();
+  self._wireEvents();
+  self._elmts.editMappedType.on('click', function() {
+        $input = self._elmts.typeInput;
+        $mappedValue = $(this).parent();
+        $input.removeData('data.suggest');
+        $label = $mappedValue.parent().find('.mapped-value > a:not(.edit-mapped-value)');
+        $input.val($label.text()).prop('disabled',false);
+        $mappedValue.toggle();
+        $input.trigger('focus');
+  });
   this._guessTypes(function () {
     self._populatePanel();
-    self._wireEvents();
-    self._elmts.editMappedType.on('click', function() {
-          $input = self._elmts.typeInput;
-          $mappedValue = $(this).parent();
-          $input.removeData('data.suggest');
-          $label = $mappedValue.parent().find('.mapped-value > a:not(.edit-mapped-value)');
-          $input.val($label.text()).prop('disabled',false);
-          $mappedValue.toggle();
-          $input.trigger('focus');
-        })
-  });
+   });
 };
 
 ReconStandardServicePanel.prototype.activate = function() {
