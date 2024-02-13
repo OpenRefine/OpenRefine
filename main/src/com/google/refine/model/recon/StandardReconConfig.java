@@ -464,12 +464,14 @@ public class StandardReconConfig extends ReconConfig {
         } catch (IOException e) {
             Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
             recon.error = e.getMessage();
+            recon.judgment = Judgment.Error;
             recons.add(recon);
         }
 
         if (o == null) { // utility method returns null instead of throwing
             Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
             recon.error = "The reconciliation service returned an invalid response";
+            recon.judgment = Judgment.Error;
             recons.add(recon);
 
         } else {
@@ -488,11 +490,13 @@ public class StandardReconConfig extends ReconConfig {
                     } else {
                         recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
                         recon.error = "The service returned a JSON response without \"result\" field for query " + key;
+                        recon.judgment = Judgment.Error;
 
                     }
                 } else {
                     recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
                     recon.error = "The service returned a JSON response without \"" + key + "\" field ";
+                    recon.judgment = Judgment.Error;
                 }
 
                 if (recon != null) {
@@ -506,6 +510,7 @@ public class StandardReconConfig extends ReconConfig {
         while (recons.size() < jobs.size()) {
             Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
             recon.error = "No. of recon objects was less than no. of jobs";
+            recon.judgment = Judgment.Error;
             recons.add(recon);
         }
 
