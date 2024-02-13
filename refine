@@ -96,7 +96,7 @@ check_running() {
     CHECK_STR="<title>OpenRefine</title>"
 
     if [ "$CURL" ] ; then
-        curl -s -S -f $URL > /dev/null 2>&1
+        curl --noproxy 127.0.0.1 -s -S -f $URL > /dev/null 2>&1
         CURL_RETURN=$?
         if [ $CURL_RETURN -eq "7" ] || [ $CURL_RETURN -eq "22" ]  ; then
             NOT_RUNNING="1"
@@ -110,7 +110,7 @@ check_running() {
 
     if [ -z "${NOT_RUNNING}" ] ; then
         if [ "$CURL" ] ; then
-            RUNNING=`curl -s $URL | grep "$CHECK_STR"`
+            RUNNING=`curl --noproxy 127.0.0.1 -s $URL | grep "$CHECK_STR"`
         elif [ "$WGET" ] ; then
             RUNNING=`wget -q -O - $URL | grep "$CHECK_STR"`
         fi    
