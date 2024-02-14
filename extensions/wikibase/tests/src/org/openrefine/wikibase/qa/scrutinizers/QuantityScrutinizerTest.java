@@ -280,7 +280,11 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
                 .addStatement(add(statement))
                 .build();
 
-        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, new ArrayList<>());
+        Snak qualifierSnak = Datamodel.makeNoValueSnak(itemParameterPID);
+        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, constraintQualifiers);
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
