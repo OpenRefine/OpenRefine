@@ -35,8 +35,8 @@ describe(__filename, function () {
 
     cy.assertGridEquals([
       ['NDB_No', 'Shrt_Desc', 'Water', 'Energ_Kcal'],
-      ['01001', 'BUTTER,WITH SALT', '15.87', 'null'],
-      ['01002', 'BUTTER,WHIPPED,WITH SALT', '15.87', 'null'],
+      ['01001', 'BUTTER,WITH SALT', '15.87', null],
+      ['01002', 'BUTTER,WHIPPED,WITH SALT', '15.87', null],
     ]);
     cy.columnActionClick('All', ['View', 'Show / Hide null values in cells']);
 
