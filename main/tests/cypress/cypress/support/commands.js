@@ -117,7 +117,7 @@ Cypress.Commands.add('getNumericFacetContainer', (facetName) => {
 Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
   cy.getCell(rowIndex, columnName)
     .trigger('mouseover')
-    .find('a.data-table-cell-edit')
+    .find('button.data-table-cell-edit')
     .click();
   cy.get('.menu-container.data-table-cell-editor textarea').type(value);
   cy.get('.menu-container button[bind="okButton"]').click();
