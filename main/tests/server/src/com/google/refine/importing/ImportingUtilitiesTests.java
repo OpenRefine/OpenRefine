@@ -533,27 +533,22 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ImportingJob job = ImportingManager.createJob();
         Properties parameters = ParsingUtilities.parseUrlParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
-        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+        Progress dummyProgress = new Progress() {
+
+            @Override
+            public void setProgress(String message, int percent) {
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+        };
         try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
-                    new ImportingUtilities.Progress() {
-
-                        @Override
-                        public void setProgress(String message, int percent) {
-                            if (message != null) {
-                                JSONUtilities.safePut(progress, "message", message);
-                            }
-                            JSONUtilities.safePut(progress, "percent", percent);
-                        }
-
-                        @Override
-                        public boolean isCanceled() {
-                            return job.canceled;
-                        }
-                    });
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
+            fail("No Exception was thrown");
         } catch (ClientProtocolException exception) {
             assertEquals(exception.getMessage(), message);
         }
     }
-
 }
