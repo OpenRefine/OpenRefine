@@ -172,10 +172,10 @@ public class ReconJudgeSimilarCellsOperation extends RowMapOperation {
                     String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
 
                     if (similarValue.equals(value)) {
-                        return row.withCell(columnIndex, new Cell(cell.value, sharedRecon));
+                        return new Row(Collections.singletonList(new Cell(cell.value, sharedRecon)));
                     }
                 }
-                return row;
+                return new Row(Collections.singletonList(cell));
             }
 
             @Override
@@ -222,10 +222,10 @@ public class ReconJudgeSimilarCellsOperation extends RowMapOperation {
 
                         Cell newCell = new Cell(cell.value, recon);
 
-                        return row.withCell(columnIndex, newCell);
+                        return new Row(Collections.singletonList(newCell));
                     }
                 }
-                return row;
+                return new Row(Collections.singletonList(cell));
 
             }
 

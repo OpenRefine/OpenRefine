@@ -64,6 +64,12 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
     @Test
     public void serializeReconClearSimilarCellsOperation() throws Exception {
         String json = "{\"op\":\"core/recon-clear-similar-cells\","
+                + "\"columnDependencies\" : [ \"my column\" ],"
+                + "\"columnInsertions\" : [ {"
+                + "  \"insertAt\" : \"my column\","
+                + "  \"name\" : \"my column\","
+                + "  \"replace\" : true"
+                + "} ],"
                 + "\"description\":\"Clear recon data for cells containing \\\"some value\\\" in column my column\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\","

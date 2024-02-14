@@ -28,6 +28,7 @@
 package org.openrefine.operations.recon;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -38,6 +39,7 @@ import com.google.common.collect.ImmutableList;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -95,6 +97,16 @@ public class ReconUseValuesAsIdentifiersOperation extends RowMapOperation {
     }
 
     @Override
+    public List<String> getColumnDependencies() {
+        return Collections.singletonList(columnName);
+    }
+
+    @Override
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(new ColumnInsertion(columnName, columnName, true, null, reconConfig, true));
+    }
+
+    @Override
     public RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels, long estimatedRowCount,
             ChangeContext context)
             throws MissingColumnException {
@@ -129,9 +141,9 @@ public class ReconUseValuesAsIdentifiersOperation extends RowMapOperation {
                             cell.value,
                             newRecon);
 
-                    return row.withCell(columnIndex, newCell);
+                    return new Row(Collections.singletonList(newCell));
                 }
-                return row;
+                return new Row(Collections.singletonList(cell));
             }
 
             @Override

@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -40,6 +42,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnInsertion;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -79,6 +82,17 @@ public class ReconClearSimilarCellsOperation extends RowMapOperation {
     public String getDescription() {
         return OperationDescription.recon_clear_similar_cells_brief(_similarValue, _columnName);
     }
+    
+    @Override
+    public List<String> getColumnDependencies() {
+        return Collections.singletonList(_columnName);
+    }
+
+    @Override
+    public List<ColumnInsertion> getColumnInsertions() {
+        return Collections.singletonList(ColumnInsertion.replacement(_columnName));
+    }
+
 
     @Override
     protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
@@ -100,10 +114,10 @@ public class ReconClearSimilarCellsOperation extends RowMapOperation {
 
                     if (_similarValue.equals(value)) {
                         Cell newCell = new Cell(cell.value, null, cell.isPending());
-                        return row.withCell(cellIndex, newCell);
+                        return new Row(Collections.singletonList(newCell));
                     }
                 }
-                return row;
+                return new Row(Collections.singletonList(cell));
             }
 
             @Override

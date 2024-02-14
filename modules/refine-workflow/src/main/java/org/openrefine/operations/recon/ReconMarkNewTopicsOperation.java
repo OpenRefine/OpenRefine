@@ -185,9 +185,9 @@ public class ReconMarkNewTopicsOperation extends RowMapOperation {
 
                     Cell newCell = new Cell(cell.value, recon);
 
-                    return row.withCell(columnIndex, newCell);
+                    return new Row(Collections.singletonList(newCell));
                 }
-                return row;
+                return new Row(Collections.singletonList(cell));
             }
 
             @Override

@@ -57,6 +57,12 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
             + "\"op\":\"core/recon-use-values-as-identifiers\","
             + "\"description\":\"Use values as reconciliation identifiers in column ids\","
             + "\"columnName\":\"ids\","
+            + "\"columnDependencies\" : [ \"ids\" ],"
+            + "  \"columnInsertions\" : [ {"
+            + "    \"insertAt\" : \"ids\","
+            + "    \"name\" : \"ids\","
+            + "    \"replace\" : true"
+            + "  } ],"
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"service\":\"http://localhost:8080/api\","
             + "\"identifierSpace\":\"http://test.org/entities/\","
@@ -86,7 +92,8 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
 
         ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
         ChangeResult changeResult = op.apply(initialState, context);
-        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_RECORDS);
+        // could ideally be PRESERVES_RECORDS, because null cells are preserved
+        Assert.assertEquals(changeResult.getGridPreservation(), GridPreservation.PRESERVES_ROWS);
         Grid applied = changeResult.getGrid();
 
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
