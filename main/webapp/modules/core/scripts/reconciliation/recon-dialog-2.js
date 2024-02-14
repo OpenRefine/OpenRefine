@@ -68,14 +68,13 @@ ReconDialog2.prototype._previousDialog = function(column, previousService) {
 
 
 ReconDialog2.prototype._onOK = function() {
-
+  var self = this;
   if (this._selectedServiceRecordIndex >= 0) {
     var record = this._serviceRecords[this._selectedServiceRecordIndex];
     if (record.handler) {
-      record.handler.start();
+      record.handler.start(function () { self._dismiss(); });
     }
   }
-  this._dismiss();
 };
 
 
