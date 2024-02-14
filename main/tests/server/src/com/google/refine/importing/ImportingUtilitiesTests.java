@@ -500,12 +500,14 @@ public class ImportingUtilitiesTests extends ImporterTest {
     }
 
     /**
-     * This test method is designed to validate the behavior of the system when a URL with a trailing space is used.
-     * It simulates a scenario where a URL with a trailing space is used to retrieve content from a POST request.
-     * The expected behavior is that the system should trim the URL and proceed with the request as normal.
+     * This test method is designed to validate the behavior of the system when a URL with a trailing space is used. It
+     * simulates a scenario where a URL with a trailing space is used to retrieve content from a POST request. The
+     * expected behavior is that the system should trim the URL and proceed with the request as normal.
      *
-     * @throws IOException if an I/O error occurs during the test
-     * @throws FileUploadException if a file upload error occurs during the test
+     * @throws IOException
+     *             if an I/O error occurs during the test
+     * @throws FileUploadException
+     *             if a file upload error occurs during the test
      */
     @Test
     public void testTrailingSpaceInUrl() throws IOException, FileUploadException {
@@ -549,8 +551,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
                             return job.canceled;
                         }
                     });
-        }
-        catch (ClientProtocolException exception) {
+        } catch (ClientProtocolException exception) {
             assertEquals(exception.getMessage(), message);
         }
     }
