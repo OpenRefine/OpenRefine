@@ -9,6 +9,6 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('a', ['View', 'Collapse this column']);
 
-    cy.get('[title="a"]').should('to.contain', '');
+    cy.get('[title="Expand column \'a\'"]').should('to.contain', '');
   });
 });

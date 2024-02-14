@@ -188,6 +188,10 @@ table.data-table td.column-header, table.data-table th.column-header {
   border: none;
 }
 
+.column-header-menu-expand {
+  transform: rotate(-0.25turn);
+}
+
 .column-header-menu:hover {
   background-position: -17px 0px;
 }
