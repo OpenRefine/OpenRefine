@@ -90,6 +90,8 @@ public class Parser {
 
         while (_token != null &&
                 _token.type == TokenType.Operator &&
+                // FIXME: This filters the <> operator which is returned from the Scanner. Fix one or the other
+                // so that they agree with each other on whether it's an operator or not.
                 ">=<==!=".indexOf(_token.text) >= 0) {
 
             String op = _token.text;
