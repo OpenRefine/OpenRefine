@@ -12,8 +12,8 @@ const fixture = [
     cy.columnActionClick('a', ['View', 'Collapse all columns to right']);
 
     // Verify collapse
-    cy.get('[title="b"]').should('to.contain', '');
-    cy.get('[title="c"]').should('to.contain', '');
+    cy.get('[title="Expand column \'b\'"]').should('to.contain', '');
+    cy.get('[title="Expand column \'c\'"]').should('to.contain', '');
 
     // Expand columns
     cy.columnActionClick('a', ['View', 'Expand all columns to the right']);
