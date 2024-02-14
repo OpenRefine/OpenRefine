@@ -19,7 +19,7 @@ import org.openrefine.wikibase.qa.QAWarning;
 
 /**
  * Scrutinizer checking for units and bounds in quantities.
- * 
+ *
  * @author Antonin Delpeuch
  *
  */
@@ -95,7 +95,7 @@ public class QuantityScrutinizer extends SnakScrutinizer {
             if (value.getUnitItemId() != null) {
                 currentUnit = value.getUnitItemId();
             }
-            if (allowedUnits != null &&
+            if (allowedUnits != null && (currentUnit != null || !allowedUnits.isEmpty()) &&
                     !allowedUnits.contains(currentUnit)) {
                 String issueType = currentUnit == null ? noUnitProvidedType : invalidUnitType;
                 QAWarning issue = new QAWarning(issueType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
