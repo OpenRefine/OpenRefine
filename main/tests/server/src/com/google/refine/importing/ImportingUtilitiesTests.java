@@ -64,8 +64,10 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileSystem;
 import org.apache.commons.io.FileUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.core5.http.ContentType;
@@ -497,4 +499,56 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     }
 
+    /**
+     * This test method is designed to validate the behavior of the system when a URL with a trailing space is used. It
+     * simulates a scenario where a URL with a trailing space is used to retrieve content from a POST request. The
+     * expected behavior is that the system should trim the URL and proceed with the request as normal.
+     *
+     * @throws IOException
+     *             if an I/O error occurs during the test
+     * @throws FileUploadException
+     *             if a file upload error occurs during the test
+     */
+    @Test
+    public void testTrailingSpaceInUrl() throws IOException, FileUploadException {
+        String url = "https://example.com/file.csv ";
+        String message = String.format("HTTP error %d : %s for URL %s", 404,
+                "Not Found", url.trim());
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        StringBody stringBody = new StringBody(url, ContentType.MULTIPART_FORM_DATA);
+        builder = builder.addPart("download", stringBody);
+        HttpEntity entity = builder.build();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        entity.writeTo(os);
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getContentType()).thenReturn(entity.getContentType());
+        when(req.getParameter("download")).thenReturn(url);
+        when(req.getMethod()).thenReturn("POST");
+        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+
+        ImportingJob job = ImportingManager.createJob();
+        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
+        Progress dummyProgress = new Progress() {
+
+            @Override
+            public void setProgress(String message, int percent) {
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+        };
+        try {
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
+            fail("No Exception was thrown");
+        } catch (ClientProtocolException exception) {
+            assertEquals(exception.getMessage(), message);
+        }
+    }
 }

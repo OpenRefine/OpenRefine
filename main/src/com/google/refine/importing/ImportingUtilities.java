@@ -274,7 +274,7 @@ public class ImportingUtilities {
                     clipboardCount++;
 
                 } else if (name.equals("download")) {
-                    String urlString = Streams.asString(stream);
+                    String urlString = Streams.asString(stream).trim();
                     URL url = new URL(urlString);
 
                     if (!allowedProtocols.contains(url.getProtocol().toLowerCase())) {
