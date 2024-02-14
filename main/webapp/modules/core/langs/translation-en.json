@@ -487,7 +487,7 @@
     "core-views/collapse-other": "Collapse all other columns",
     "core-views/collapse-left": "Collapse all columns to left",
     "core-views/collapse-right": "Collapse all columns to right",
-    "core-views/expand":"Expand this column",
+    "core-views/expand":"Expand column '$1'",
     "core-views/expand-left": "Expand all columns to the left",
     "core-views/expand-right": "Expand all columns to the right",
     "core-views/reconcile": "Reconcile",

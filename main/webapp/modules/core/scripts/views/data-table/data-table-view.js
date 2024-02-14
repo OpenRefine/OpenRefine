@@ -375,7 +375,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
       DOM.bind( 
         $(th)
-        .attr('title',$.i18n('core-views/expand'))//$.i18n('core-views/collapse-right') Expand this column
+        .attr('title',$.i18n('core-views/expand', column.name))
         .html("<button class='column-header-menu column-header-menu-expand' bind='expandColumn' ></button>")
       ).expandColumn.on(
         'click', function() {
