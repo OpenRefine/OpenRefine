@@ -270,4 +270,22 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         scrutinize(update);
         assertNoWarningRaised();
     }
+
+    @Test
+    public void testNoUnitRequired() {
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
+                .addStatement(add(statement))
+                .build();
+
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, new ArrayList<>());
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
+        assertNoWarningRaised();
+    }
 }
