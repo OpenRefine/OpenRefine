@@ -64,8 +64,10 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileSystem;
 import org.apache.commons.io.FileUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.core5.http.ContentType;
@@ -495,6 +497,59 @@ public class ImportingUtilitiesTests extends ImporterTest {
                     "Wrong value for isCompressed of: " + test);
         }
 
+    }
+
+    /**
+     * Test to validate that the URL with trailing space is trimmed and working as expected.
+     * @throws IOException
+     * @throws FileUploadException
+     */
+    @Test
+    public void testTrailingSpaceInUrl() throws IOException, FileUploadException {
+        String url = "https://example.com/file.csv ";
+        String message = String.format("HTTP error %d : %s for URL %s", 404,
+                "Not Found", url.trim());
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        StringBody stringBody = new StringBody(url, ContentType.MULTIPART_FORM_DATA);
+        builder = builder.addPart("download", stringBody);
+        HttpEntity entity = builder.build();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        entity.writeTo(os);
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getContentType()).thenReturn(entity.getContentType());
+        when(req.getParameter("download")).thenReturn(url);
+        when(req.getMethod()).thenReturn("POST");
+        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+
+        ImportingJob job = ImportingManager.createJob();
+        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+        try {
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                    new ImportingUtilities.Progress() {
+
+                        @Override
+                        public void setProgress(String message, int percent) {
+                            if (message != null) {
+                                JSONUtilities.safePut(progress, "message", message);
+                            }
+                            JSONUtilities.safePut(progress, "percent", percent);
+                        }
+
+                        @Override
+                        public boolean isCanceled() {
+                            return job.canceled;
+                        }
+                    });
+        }
+        catch (ClientProtocolException exception) {
+            assertEquals(exception.getMessage(), message);
+        }
     }
 
 }
