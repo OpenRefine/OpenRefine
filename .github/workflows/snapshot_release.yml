@@ -254,23 +254,6 @@ jobs:
         APPLE_USERNAME: ${{ secrets.APPLE_USERNAME }}
         APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
 
-    - name: Upload release asset for Windows (without Java)
-      id: upload-release-asset-win
-      if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.7.2
-      with:
-        upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
-        asset_path: ./packaging/target/openrefine-win-${{ steps.version_string_variable.outputs.output_value }}.zip
-        asset_name: openrefine-win-${{ steps.version_string_variable.outputs.output_value }}.zip
-        asset_content_type: application/zip
-
-    - name: Upload build artifact for Windows (without Java)
-      id: upload-build-artifact-win
-      uses: actions/upload-artifact@v4
-      with:
-        path: "./packaging/target/openrefine-win-${{ steps.version_string_variable.outputs.output_value }}.zip"
-        name: openrefine-win-archive-${{ steps.version_string_variable.outputs.output_value }}
-
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java
       if: github.event_name == 'release'

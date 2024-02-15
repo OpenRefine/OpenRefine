@@ -55,7 +55,6 @@
                 <configuration>
                   <descriptors>
                     <descriptor>linux.xml</descriptor>
-                    <descriptor>windows-without-jre.xml</descriptor>
                     <descriptor>windows-with-jre.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
@@ -423,45 +422,6 @@
         <artifactId>launch4j-maven-plugin</artifactId>
         <version>2.5.0</version>
         <executions>
-          <execution>
-            <id>l4j-clui-without-jre</id>
-            <phase>package</phase>
-            <goals><goal>launch4j</goal></goals>
-            <configuration>
-              <headerType>console</headerType>
-              <outfile>target/openrefine_without_jre.exe</outfile>
-              <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
-              <dontWrapJar>true</dontWrapJar>
-              <saveConfig>true</saveConfig>
-              <icon>openrefine.ico</icon>
-              <downloadUrl>https://openrefine.org/docs/manual/installing#java</downloadUrl>
-              <classPath>
-                <mainClass>com.google.refine.Refine</mainClass>
-                <jarLocation>server/target/lib/</jarLocation>
-                <postCp>server/target/lib/*.jar</postCp>
-              </classPath>
-              <jre>
-                <path>%JAVA_HOME%;%PATH%</path>
-                <minVersion>${java.minversion}</minVersion>
-                <initialHeapSize>512</initialHeapSize>
-                <maxHeapSize>2048</maxHeapSize>
-                <opts>
-                  <opt>-Djava.library.path=server/target/lib/native/windows</opt>
-                </opts>
-              </jre>
-              <versionInfo>
-                <fileVersion>${windows.fullversion}</fileVersion>
-                <txtFileVersion>${project.version}</txtFileVersion>
-                <fileDescription>openrefine</fileDescription>
-                <copyright>${windows.copyright.line}</copyright>
-                <productVersion>${windows.fullversion}</productVersion>
-                <txtProductVersion>${project.version}</txtProductVersion>
-                <productName>OpenRefine</productName>
-                <internalName>openrefine</internalName>
-                <originalFilename>openrefine.exe</originalFilename>
-              </versionInfo>
-            </configuration>
-          </execution>
           <execution>
             <id>l4j-clui-with-jre</id>
             <phase>package</phase>
