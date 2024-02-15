@@ -103,7 +103,7 @@ check_running() {
             NOT_RUNNING="1"
         fi
     elif [ "$WGET" ] ; then
-        wget --no-proxy -q -O - $URL_LOCAL > /dev/null 2>&1
+        no_proxy=127.0.0.1 wget -O - $URL_LOCAL > /dev/null 2>&1  
         if [ "$?" = "4" ] ; then
             NOT_RUNNING="1"
         fi
@@ -113,7 +113,7 @@ check_running() {
         if [ "$CURL" ] ; then
             RUNNING=`curl --noproxy 127.0.0.1 -s $URL | grep "$CHECK_STR"`
         elif [ "$WGET" ] ; then
-            RUNNING=`wget --no-proxy -q -O - $URL_LOCAL | grep "$CHECK_STR"`
+            RUNNING=`no_proxy=127.0.0.1 wget -O - $URL_LOCAL | grep "$CHECK_STR"` 
         fi    
         
         if [ -z "${RUNNING}" ] ; then
