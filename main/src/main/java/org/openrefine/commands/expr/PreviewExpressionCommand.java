@@ -233,6 +233,11 @@ public class PreviewExpressionCommand extends Command {
             respondJSON(response, 200, new PreviewResult(evaluated));
         } catch (ParsingException e) {
             respondJSON(response, 200, new PreviewResult(e.getMessage()));
+        } catch (Exception e) {
+            // this should only be for "ParsingException", not for general "Exception",
+            // but our GREL parser can throw random exceptions on incomplete input, so it's safer to keep it like that.
+            // https://github.com/OpenRefine/OpenRefine/issues/6364
+            respondJSON(response, 200, new PreviewResult("Internal error"));
         }
     }
 

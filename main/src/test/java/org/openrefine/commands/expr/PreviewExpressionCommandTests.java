@@ -159,4 +159,23 @@ public class PreviewExpressionCommandTests extends RefineTest {
         verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
+    
+    @Test
+    public void testIncompleteExpressionMishandledByGRELParser() throws Exception {
+        when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
+        when(request.getParameter("cellIndex")).thenReturn("1");
+        when(request.getParameter("limit")).thenReturn("2");
+        when(request.getParameter("expression")).thenReturn("grel:value.replace(/\\");
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+
+        String json = "{\n" +
+                "       \"code\" : \"ok\",\n" +
+                "       \"message\" : \"Internal error\",\n" +
+                "       \"type\" : \"parsingError\"\n" +
+                "     }";
+        command.doPost(request, response);
+
+        verify(response).setStatus(200);
+        TestUtils.assertEqualsAsJson(writer.toString(), json);
+    }
 }
