@@ -94,15 +94,16 @@ check_running() {
     check_downloaders
     URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
     CHECK_STR="<title>OpenRefine</title>"
+    URL_LOCAL="http://127.0.0.1"
 
     if [ "$CURL" ] ; then
-        curl -s -S -f $URL > /dev/null 2>&1
+        curl --noproxy 127.0.0.1 -s -S -f $URL > /dev/null 2>&1
         CURL_RETURN=$?
         if [ $CURL_RETURN -eq "7" ] || [ $CURL_RETURN -eq "22" ]  ; then
             NOT_RUNNING="1"
         fi
     elif [ "$WGET" ] ; then
-        wget -O - $URL > /dev/null 2>&1
+        no_proxy=127.0.0.1 wget -O - $URL_LOCAL > /dev/null 2>&1  
         if [ "$?" = "4" ] ; then
             NOT_RUNNING="1"
         fi
@@ -110,9 +111,9 @@ check_running() {
 
     if [ -z "${NOT_RUNNING}" ] ; then
         if [ "$CURL" ] ; then
-            RUNNING=`curl -s $URL | grep "$CHECK_STR"`
+            RUNNING=`curl --noproxy 127.0.0.1 -s $URL | grep "$CHECK_STR"`
         elif [ "$WGET" ] ; then
-            RUNNING=`wget -q -O - $URL | grep "$CHECK_STR"`
+            RUNNING=`no_proxy=127.0.0.1 wget -O - $URL_LOCAL | grep "$CHECK_STR"` 
         fi    
         
         if [ -z "${RUNNING}" ] ; then
