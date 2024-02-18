@@ -108,7 +108,7 @@ public class ColumnMoveOperation extends RowMapOperation {
         } else if (_afterColumn != null) {
             return "Move column \"" + _columnName + "\" to after column \"" + _afterColumn + "\"";
         } else {
-            return "Move column \"" + _columnName + "\" in first position";
+            return "Move column \"" + _columnName + "\" to first position";
         }
     }
 

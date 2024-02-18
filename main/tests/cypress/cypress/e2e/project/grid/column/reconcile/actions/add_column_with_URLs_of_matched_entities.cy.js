@@ -24,7 +24,7 @@ describe('Add column with URLs of matched entities', () => {
     cy.get('.dialog-container .dialog-body input').type('Entity URL');
     cy.get('.dialog-container .dialog-footer button').contains('OK').click();
     cy.assertNotificationContainingText(
-      'Create column Entity URL at index 1 based on column Item using expression if(cell.recon.match!=null,"https://www.wikidata.org/wiki/{{id}}".replace("{{id}}",escape(cell.recon.match.id,"url")),null)',
+      'Create column Entity URL based on column Item using expression if(cell.recon.match!=null,"https://www.wikidata.org/wiki/{{id}}".replace("{{id}}",escape(cell.recon.match.id,"url")),null)',
     );
 
     cy.getCell(0, 'Entity URL').should('to.contain','https://www.wikidata.org/wiki/Q3938' );

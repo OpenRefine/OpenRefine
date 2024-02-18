@@ -31,6 +31,13 @@ describe(__filename, function () {
     cy.get('.dialog-footer button').contains('OK').click();
     cy.get('#refine-tabs-facets').should('exist');
 
+    // wait for the facet to be refreshed
+    /*
+    cy.get('#refine-tabs-facets .facets-container li:first-child').should('not.contain',
+      'No numeric value present.'
+    );
+    */
+
     //sliding the right slider
     cy.get('.slider-widget-bracket').eq(1)
     .trigger('mousedown',{ force: true })

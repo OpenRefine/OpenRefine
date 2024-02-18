@@ -1,13 +1,25 @@
 const defaultInducedHistoryJson = [
   {
-    op: 'core/column-removal',
-    columnNames: ['NDB_No'],
-    description: 'Remove column NDB_No',
+    "op": "core/column-removal",
+    "columnNames": [
+      "NDB_No"
+    ],
+    "columnInsertions": [],
+    "columnDeletions": [
+      "NDB_No"
+    ],
+    "description": "Remove column NDB_No"
   },
   {
-    op: 'core/column-removal',
-    columnNames: ['Shrt_Desc'],
-    description: 'Remove column Shrt_Desc',
+    "op": "core/column-removal",
+    "columnNames": [
+      "Shrt_Desc"
+    ],
+    "columnInsertions": [],
+    "columnDeletions": [
+      "Shrt_Desc"
+    ],
+    "description": "Remove column Shrt_Desc"
   },
 ]
 
@@ -66,13 +78,7 @@ describe(__filename, function () {
     ).click();
     cy.assertTextareaHaveJsonValue(
       '.dialog-container textarea.history-operation-json',
-      [
-        {
-          op: 'core/column-removal',
-          columnNames: ['Shrt_Desc'],
-          description: 'Remove column Shrt_Desc',
-        },
-      ]
+      defaultInducedHistoryJson.slice(1)
     );
 
     // deselect "Remove Shrt_Desc"
@@ -90,13 +96,7 @@ describe(__filename, function () {
     ).click();
     cy.assertTextareaHaveJsonValue(
       '.dialog-container textarea.history-operation-json',
-      [
-        {
-          op: 'core/column-removal',
-          columnNames: ['Shrt_Desc'],
-          description: 'Remove column Shrt_Desc',
-        },
-      ]
+      defaultInducedHistoryJson.slice(1)
     );
 
     // reselect "Remove Water"
