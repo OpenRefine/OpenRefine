@@ -245,4 +245,14 @@ public class GrelTests extends RefineTest {
         }
     }
 
+    @Test
+    public void testNextDelimiterIsNotNext() {
+        String test = "value.replace(\"”\",\"\"\")";
+        try {
+            MetaParser.parse("grel:" + test);
+        } catch (ParsingException e) {
+            Assert.fail("Unexpected parse failure for nextDelimiter function: " + test);
+        }
+    }
+
 }
