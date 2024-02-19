@@ -30,6 +30,7 @@ package com.google.refine.operations.recon;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -127,11 +128,13 @@ public class ReconOperationTests extends RefineTest {
 
     @Test
     public void testFailingRecon() throws Exception {
-        Project project = createCSVProject("my recon test project",
-                "column\n"
-                        + "valueA\n"
-                        + "valueB\n"
-                        + "valueC");
+        Project project = createProject("my recon test project",
+                new String[] { "column" },
+                new Serializable[][] {
+                        { "valueA" },
+                        { "valueB" },
+                        { "valueC" }
+                });
         StandardReconConfig reconConfig = mock(StandardReconConfig.class);
         List<Recon> reconList = Arrays.asList((Recon) null, (Recon) null, (Recon) null);
         ReconJob reconJob = mock(ReconJob.class);

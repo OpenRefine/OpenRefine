@@ -4,6 +4,7 @@ package org.openrefine.wikibase.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -59,8 +60,12 @@ public class WikibaseIssuesFunctionTests extends RefineTest {
 
         schema = WikibaseSchema.reconstruct(schemaJson);
         manifest = ManifestParser.parse(manifestJson);
-        project = createCSVProject("my project",
-                "a,b\nc,d\ne,f");
+        project = createProject("my project",
+                new String[] { "a", "b" },
+                new Serializable[][] {
+                        { "c", "d" },
+                        { "e", "f" }
+                });
         project.overlayModels.put("wikibaseSchema", schema);
         ProjectManager.singleton.getPreferenceStore().put("wikibase.manifests", ParsingUtilities.mapper.readTree("[" + manifestJson + "]"));
         row = project.rows.get(0);

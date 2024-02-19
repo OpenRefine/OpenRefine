@@ -33,6 +33,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -204,8 +205,11 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void formulateQueryTest() throws IOException {
-        Project project = createCSVProject("title,director\n"
-                + "mulholland drive,david lynch");
+        Project project = createProject(
+                new String[] { "title", "director" },
+                new Serializable[][] {
+                        { "mulholland drive", "david lynch" }
+                });
 
         String config = " {\n" +
                 "        \"mode\": \"standard-service\",\n" +
@@ -238,8 +242,11 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void reconNonJsonTest() throws Exception {
-        Project project = createCSVProject("title,director\n"
-                + "mulholland drive,david lynch");
+        Project project = createProject(
+                new String[] { "title", "director" },
+                new Serializable[][] {
+                        { "mulholland drive", "david lynch" }
+                });
 
         String nonJsonResponse = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
@@ -305,8 +312,11 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void reconTest() throws Exception {
-        Project project = createCSVProject("title,director\n"
-                + "mulholland drive,david lynch");
+        Project project = createProject(
+                new String[] { "title", "director" },
+                new Serializable[][] {
+                        { "mulholland drive", "david lynch" }
+                });
 
         String reconResponse = "{\n" +
                 "q0: {\n" +

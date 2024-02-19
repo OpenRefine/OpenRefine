@@ -29,6 +29,7 @@ package com.google.refine.expr.functions;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -78,46 +79,39 @@ public class CrossTests extends RefineTest {
         bindings = new Properties();
         emptyList = new HasFieldsListImpl();
 
-        String projectName = "My Address Book";
-        String input = "friend,address\n"
-                + "john,120 Main St.\n"
-                + "mary,50 Broadway Ave.\n"
-                + "john,999 XXXXXX St.\n" // john's 2nd address
-                + "anne,17 Morning Crescent\n"
-                + "2017-05-12T05:45:00Z,dateTime\n"
-                + "1600,integer\n"
-                + "123456789123456789,long\n"
-                + "true,boolean\n"
-                + "3.14,double\n";
-        projectAddress = createCSVProject(projectName, input);
+        projectAddress = createProject("My Address Book",
+                new String[] { "friend", "address" },
+                new Serializable[][] {
+                        { "john", "120 Main St." },
+                        { "mary", "50 Broadway Ave." },
+                        { "john", "999 XXXXXX St." },
+                        { "anne", "17 Morning Crescent" },
+                        { dateTimeValue, "dateTime" },
+                        { 1600, "integer" },
+                        { 123456789123456789L, "long" },
+                        { true, "boolean" },
+                        { 3.14, "double" },
+                });
 
-        projectName = "Christmas Gifts";
-        input = "gift,recipient\n"
-                + "lamp,mary\n"
-                + "clock,john\n"
-                + "dateTime,2017-05-12T05:45:00Z\n"
-                + "integer,1600\n"
-                + "123456789123456789,long\n"
-                + "boolean,true\n";
-        projectGift = createCSVProject(projectName, input);
-        projectName = "Duplicate";
-        input = "Col1,Col2";
-        projectDuplicate1 = createCSVProject(projectName, input);
-        projectDuplicate2 = createCSVProject(projectName, input);
+        projectGift = createProject("Christmas Gifts",
+                new String[] { "gift", "recipient" },
+                new Serializable[][] {
+                        { "lamp", "mary" },
+                        { "clock", "john" },
+                        { "dateTime", dateTimeValue },
+                        { "integer", 1600 },
+                        { "123456789123456789", 123456789123456789L },
+                        { "boolean", true }
+                });
+
+        projectDuplicate1 = createProject("Duplicate",
+                new String[] { "Col1", "Col2" },
+                new Serializable[][] {});
+        projectDuplicate2 = createProject("Duplicate",
+                new String[] { "Col1", "Col2" },
+                new Serializable[][] {});
 
         bindings.put("project", projectGift);
-
-        // Add some non-string value cells to each project
-        projectAddress.rows.get(4).cells.set(0, new Cell(dateTimeValue, null));
-        projectAddress.rows.get(5).cells.set(0, new Cell(1600, null));
-        projectAddress.rows.get(6).cells.set(0, new Cell(123456789123456789L, null));
-        projectAddress.rows.get(7).cells.set(0, new Cell(true, null));
-        projectAddress.rows.get(8).cells.set(0, new Cell(3.14, null));
-        projectGift.rows.get(2).cells.set(1, new Cell(dateTimeValue, null));
-        projectGift.rows.get(3).cells.set(1, new Cell(1600, null));
-        projectGift.rows.get(4).cells.set(1, new Cell(123456789123456789L, null));
-        projectGift.rows.get(5).cells.set(1, new Cell(true, null));
-
         // add a column address based on column recipient
         bindings.put("columnName", "recipient");
     }

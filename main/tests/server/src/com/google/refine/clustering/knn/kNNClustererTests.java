@@ -30,6 +30,7 @@ package com.google.refine.clustering.knn;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -62,11 +63,14 @@ public class kNNClustererTests extends RefineTest {
 
     @Test
     public void serializekNNClusterer() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("column\n"
-                + "ab\n"
-                + "abc\n"
-                + "c\n"
-                + "ĉ\n");
+        Project project = createProject(
+                new String[] { "column" },
+                new Serializable[][] {
+                        { "ab" },
+                        { "abc" },
+                        { "c" },
+                        { "ĉ" }
+                });
 
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(project);
@@ -77,9 +81,12 @@ public class kNNClustererTests extends RefineTest {
 
     @Test
     public void testNoLonelyclusters() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("column\n"
-                + "foo\n"
-                + "bar\n");
+        Project project = createProject(
+                new String[] { "column" },
+                new Serializable[][] {
+                        { "foo" },
+                        { "bar" }
+                });
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));

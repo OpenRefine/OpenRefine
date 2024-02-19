@@ -29,6 +29,7 @@ package com.google.refine.operations.recon;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -82,9 +83,12 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @Test
     public void testNotPreviouslyReconciled() throws Exception {
-        Project project = createCSVProject("my column\n"
-                + "hello\n"
-                + "world");
+        Project project = createProject(
+                new String[] { "my column" },
+                new Serializable[][] {
+                        { "hello" },
+                        { "world" }
+                });
         ReconMarkNewTopicsOperation op = ParsingUtilities.mapper.readValue(jsonWithService, ReconMarkNewTopicsOperation.class);
         op.createProcess(project, new Properties()).performImmediate();
 
@@ -98,9 +102,12 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @Test
     public void testPreviouslyReconciled() throws Exception {
-        Project project = createCSVProject("my column\n"
-                + "hello\n"
-                + "world");
+        Project project = createProject(
+                new String[] { "my column" },
+                new Serializable[][] {
+                        { "hello" },
+                        { "world" }
+                });
         StandardReconConfig reconConfig = new StandardReconConfig(
                 "http://foo.com/api",
                 "http://foo.com/identifierSpace",
