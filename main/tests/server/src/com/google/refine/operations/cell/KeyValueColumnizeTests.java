@@ -38,9 +38,6 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -193,20 +190,18 @@ public class KeyValueColumnizeTests extends RefineTest {
 
     @Test
     public void testKeyValueColumnize() throws Exception {
-        String csv = "Key,Value\n"
-                + "merchant,Katie\n"
-                + "fruit,apple\n"
-                + "price,1.2\n"
-                + "fruit,pear\n"
-                + "price,1.5\n"
-                + "merchant,John\n"
-                + "fruit,banana\n"
-                + "price,3.1\n";
-        prepareOptions(",", 20, 0, 0, 1, false, false);
-        List<Exception> exceptions = new ArrayList<Exception>();
-        importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
-        project.update();
-        ProjectManager.singleton.registerProject(project, pm);
+        Project project = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "merchant", "Katie" },
+                        { "fruit", "apple" },
+                        { "price", "1.2" },
+                        { "fruit", "pear" },
+                        { "price", "1.5" },
+                        { "merchant", "John" },
+                        { "fruit", "banana" },
+                        { "price", "3.1" }
+                });
 
         AbstractOperation op = new KeyValueColumnizeOperation(
                 "Key",

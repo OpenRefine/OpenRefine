@@ -2,6 +2,7 @@
 package org.openrefine.wikibase.exporters;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Properties;
 
@@ -21,7 +22,11 @@ public class SchemaExporterTest extends WikidataRefineTest {
     public void testNoSchema()
             throws IOException {
         // TODO instead of returning an empty (and invalid) schema, we should just return an error
-        Project project = this.createCSVProject("a,b\nc,d");
+        Project project = this.createProject(
+                new String[] { "a", "b" },
+                new Serializable[][] {
+                        { "c", "d" }
+                });
         Engine engine = new Engine(project);
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();

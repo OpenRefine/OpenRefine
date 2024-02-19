@@ -27,6 +27,8 @@ package org.openrefine.wikibase.schema;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import java.io.Serializable;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -40,7 +42,12 @@ public class ExpressionContextTest extends WikidataRefineTest {
 
     @BeforeMethod
     public void setUp() {
-        project = createCSVProject("a,b\nc\nd,e");
+        project = createProject(
+                new String[] { "a", "b" },
+                new Serializable[][] {
+                        { "c", null },
+                        { "d", "e" }
+                });
     }
 
     @Test

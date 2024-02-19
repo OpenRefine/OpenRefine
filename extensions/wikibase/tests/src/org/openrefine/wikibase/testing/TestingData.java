@@ -26,6 +26,7 @@ package org.openrefine.wikibase.testing;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
@@ -56,11 +57,16 @@ import org.openrefine.wikibase.updates.StatementEdit;
 
 public class TestingData {
 
-    public static final String inceptionCsv = "subject,inception,reference\n"
-            + "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n" + "Q865528,1965,";
-    public static final String inceptionWithNewCsv = "subject,inception,reference\n"
-            + "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n" + "Q865528,1965,\n"
-            + "new uni,2016,http://new-uni.com/";
+    public static final String[] inceptionColumns = { "subject", "inception", "reference" };
+    public static final Serializable[][] inceptionProjectGrid = {
+            { "Q1377", "1919", "http://www.ljubljana-slovenia.com/university-ljubljana" },
+            { "Q865528", "1965", null }
+    };
+    public static final Serializable[][] inceptionProjectGridWithNewItem = {
+            { "Q1377", "1919", "http://www.ljubljana-slovenia.com/university-ljubljana" },
+            { "Q865528", "1965", null },
+            { "new uni", "2016", "http://new-uni.com/" }
+    };
     public static final String inceptionWithNewQS = "Q1377\tP571\t+1919-00-00T00:00:00Z/9"
             + "\tS854\t\"http://www.ljubljana-slovenia.com/university-ljubljana\""
             + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "Q865528\tP571\t+1965-00-00T00:00:00Z/9"
