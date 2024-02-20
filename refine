@@ -540,8 +540,8 @@ checkJavaMajorVersion() {
   if (( ${major} < 11 )); then
     error "OpenRefine requires Java version 11 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
   fi
-  if (( ${major} > 17 )); then
-    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 17."
+  if (( ${major} > 21 )); then
+    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 21."
   fi
 }
 
