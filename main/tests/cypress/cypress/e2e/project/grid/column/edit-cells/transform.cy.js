@@ -67,4 +67,6 @@ describe(__filename, function () {
     cy.assertCellEquals(1, 'b', 'replace expects three strings, or one string, one regex, and one string');
     cy.assertCellEquals(2, 'b', 'replace expects three strings, or one string, one regex, and one string');
   });
+
+  // TODO: Add test for repeated transforms
 });
