@@ -123,10 +123,13 @@ public class ExcelImporter extends TabularImportingParserBase {
                 }
             }
         } catch (IOException e) {
+            JSONUtilities.safePut(options, "error", e.toString());
             logger.error("Error generating parser UI initialization data for Excel file", e);
         } catch (IllegalArgumentException e) {
+            JSONUtilities.safePut(options, "error", e.toString());
             logger.error("Error generating parser UI initialization data for Excel file (only Excel 97 & later supported)", e);
         } catch (POIXMLException | InvalidFormatException e) {
+            JSONUtilities.safePut(options, "error", e.toString());
             logger.error("Error generating parser UI initialization data for Excel file - invalid XML", e);
         }
 
