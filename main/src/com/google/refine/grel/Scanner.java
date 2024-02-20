@@ -174,12 +174,13 @@ public class Scanner {
             while (_index < _limit) {
                 c = _text.charAt(_index);
                 if (c == delimiter) {
-                        _index++; // skip closing delimiter
-                        return new Token(
-                                start,
-                                _index,
-                                TokenType.String,
-                                sb.toString());
+                    _index++; // skip closing delimiter
+
+                    return new Token(
+                            start,
+                            _index,
+                            TokenType.String,
+                            sb.toString());
                 } else if (c == '\\') {
                     _index++; // skip escaping marker
                     if (_index < _limit) {
