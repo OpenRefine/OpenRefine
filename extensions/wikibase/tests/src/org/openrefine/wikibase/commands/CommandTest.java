@@ -54,7 +54,8 @@ public abstract class CommandTest extends WikidataRefineTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
-        project = createCSVProject(TestingData.inceptionWithNewCsv);
+        project = createProject(TestingData.inceptionColumns,
+                TestingData.inceptionProjectGridWithNewItem);
         TestingData.reconcileInceptionCells(project);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);

@@ -59,7 +59,8 @@ public class NewEntityLibraryTest extends WikidataRefineTest {
 
     @Test
     public void testUpdateReconciledCells() {
-        Project project = createCSVProject(TestingData.inceptionWithNewCsv);
+        Project project = createProject(TestingData.inceptionColumns,
+                TestingData.inceptionProjectGridWithNewItem);
         StandardReconConfig config = new StandardReconConfig("http://my.endpoint",
                 "http://my.schema", "http://my.schema", "Q5", "human", true, 10, Collections.emptyList());
         project.columnModel.columns.get(0).setReconConfig(config);

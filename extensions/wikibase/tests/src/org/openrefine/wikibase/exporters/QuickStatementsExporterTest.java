@@ -27,6 +27,7 @@ package org.openrefine.wikibase.exporters;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,7 +73,8 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
 
     @Test
     public void testSimpleProject() throws IOException {
-        Project project = this.createCSVProject(TestingData.inceptionWithNewCsv);
+        Project project = createProject(TestingData.inceptionColumns,
+                TestingData.inceptionProjectGridWithNewItem);
         TestingData.reconcileInceptionCells(project);
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
@@ -209,7 +211,11 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
 
     @Test
     public void testNoSchema() throws IOException {
-        Project project = this.createCSVProject("a,b\nc,d");
+        Project project = this.createProject(
+                new String[] { "a", "b" },
+                new Serializable[][] {
+                        { "c", "d" }
+                });
         Engine engine = new Engine(project);
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();

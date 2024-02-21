@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -62,9 +63,11 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @BeforeMethod
     public void createProject() {
-        project = createCSVProject(
-                "Key,Value\n"
-                        + "Record_1,one:two;three four;fiveSix SevèËight;niné91011twelve thirteen 14Àifteen\n");
+        project = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one:two;three four;fiveSix SevèËight;niné91011twelve thirteen 14Àifteen" }
+                });
     }
 
     @Test
