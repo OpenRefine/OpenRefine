@@ -213,11 +213,6 @@
       <version>${commons-fileupload.version}</version>
     </dependency>
     <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>${commons-collections.version}</version>
-    </dependency>
-    <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
 	<version>${commons-text.version}</version>
