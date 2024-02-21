@@ -86,12 +86,17 @@ public class RowReorderOperationTests extends RefineTest {
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "h");
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "F");
-        Assert.assertEquals(project.rows.get(4).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(5).cells.get(1).value, "d");
+        Project expectedProject = createProject(
+                new String[] { "key", "first" },
+                new Serializable[][] {
+                        { "1", "h" },
+                        { "2", "f" },
+                        { "8", "b" },
+                        { "9", "F" },
+                        { "10", "f" },
+                        { "", "d" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -104,12 +109,17 @@ public class RowReorderOperationTests extends RefineTest {
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
-        Assert.assertEquals(project.rows.get(5).cells.get(1).value, "h");
-        Assert.assertEquals(project.rows.get(4).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "F");
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "d"); // controlled by blankPosition, not reverse
+        Project expectedProject = createProject(
+                new String[] { "key", "first" },
+                new Serializable[][] {
+                        { "", "d" },
+                        { "10", "f" },
+                        { "9", "F" },
+                        { "8", "b" },
+                        { "2", "f" },
+                        { "1", "h" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
