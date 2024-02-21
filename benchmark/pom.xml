@@ -6,7 +6,7 @@
   <parent>
     <artifactId>openrefine</artifactId>
     <groupId>org.openrefine</groupId>
-    <version>3.8-SNAPSHOT</version>
+    <version>3.8-beta1</version>
   </parent>
 
   <artifactId>benchmark</artifactId>
