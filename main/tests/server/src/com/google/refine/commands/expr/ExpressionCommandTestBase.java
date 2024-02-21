@@ -27,54 +27,61 @@
 
 package com.google.refine.commands.expr;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.testng.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.commons.io.FileUtils;
-import org.testng.annotations.BeforeMethod;
 
-import com.google.refine.commands.Command;
+import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.commands.CommandTestBase;
 import com.google.refine.io.FileProjectManager;
+import com.google.refine.model.Project;
+import com.google.refine.model.ProjectStub;
+import com.google.refine.preference.PreferenceStore;
+import com.google.refine.preference.TopList;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-public class ExpressionCommandTestBase {
+public class ExpressionCommandTestBase extends CommandTestBase {
 
-    protected HttpServletRequest request = null;
-    protected HttpServletResponse response = null;
-    protected Command command = null;
-    protected StringWriter writer = null;
+    protected static long PROJECT_ID = 1234L;
 
-    @BeforeMethod
-    public void setUpRequestResponse() {
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
-        writer = new StringWriter();
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void initWorkspace(String globalExpressionsJson, String starredExpressionsJson, String localExpressionsJson) {
+        String starred = starredExpressionsJson == null
+                ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":" + Integer.MAX_VALUE + "," +
+                        "\"list\":[]}"
+                : starredExpressionsJson;
+        String globalExpressions = globalExpressionsJson == null
+                ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}"
+                : globalExpressionsJson;
+        String localExpressions = localExpressionsJson == null
+                ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}"
+                : localExpressionsJson;
+
+        initWorkspaceInternal(starred, globalExpressions, localExpressions);
     }
 
-    public void initWorkspace(String expressionsJson, String starredExpressionsJson) {
-        String starred = starredExpressionsJson == null ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647," +
-                "\"list\":[]}" : starredExpressionsJson;
-        String expressions = expressionsJson == null ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}"
-                : expressionsJson;
+    private void initWorkspaceInternal(String starred, String global, String local) {
         String jsonData = "{\"projectIDs\":[]\n" +
                 ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" + starred +
-                ",\"scripting.expressions\":" + expressions + "}}}";
+                ",\"scripting.expressions\":" + global + "}}}";
         initWorkspace(jsonData);
+
+        Project project = new ProjectStub(PROJECT_ID);
+        ProjectMetadata pm = new ProjectMetadata();
+        PreferenceStore prefs = pm.getPreferenceStore();
+        try {
+            prefs.put("scripting.expressions", ParsingUtilities.mapper.readValue(local, TopList.class));
+        } catch (JsonProcessingException e) {
+            fail("Can't parse expression history JSON");
+        }
+        ProjectManager.singleton.registerProject(project, pm);
     }
 
     public void initWorkspace(String jsonData) {
@@ -83,6 +90,7 @@ public class ExpressionCommandTestBase {
             File jsonPath = new File(workspaceDir, "workspace.json");
             FileUtils.writeStringToFile(jsonPath, jsonData);
             FileProjectManager.initialize(workspaceDir);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

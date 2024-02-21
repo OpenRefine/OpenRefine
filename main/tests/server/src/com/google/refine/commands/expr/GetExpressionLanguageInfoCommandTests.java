@@ -48,7 +48,7 @@ public class GetExpressionLanguageInfoCommandTests extends ExpressionCommandTest
     @Test
     public void testJsonResponse() throws ServletException, IOException {
 
-        initWorkspace(null, null);
+        initWorkspace(null, null, null);
 
         command.doGet(request, response);
         String jsonResponse = writer.toString();
