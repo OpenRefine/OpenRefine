@@ -32,9 +32,12 @@
 package com.google.util.logging;
 
 import java.nio.charset.Charset;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Node;
@@ -61,10 +64,12 @@ public class IndentingLayout extends AbstractStringLayout {
     }
 
     protected static final int CONTEXT_SIZE = 25;
-    protected static final long MAX_DELTA = 10000;
+    protected static final long MAX_DELTA_MILLIS = 10000;
 
-    protected Calendar calendar = Calendar.getInstance();
-    protected long previousTime = 0;
+    private static final String TIME_FORMAT = "hh:mm:ss.SSS";
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT)
+            .withZone(ZoneId.systemDefault());
+    protected Instant previousTime = null;
     protected int indentation = 0;
 
     @Override
@@ -84,58 +89,28 @@ public class IndentingLayout extends AbstractStringLayout {
         }
 
         // Reset buf
-        StringBuffer buf = new StringBuffer(256);
+        StringBuilder buf = new StringBuilder(256);
 
-        Date date = new Date();
-        long now = date.getTime();
-        calendar.setTime(date);
-
-        long delta = 0;
-        if (previousTime > 0) {
-            delta = now - previousTime;
+        // Event time is a log4j Instant, not Java instant, so convert it
+        org.apache.logging.log4j.core.time.Instant then = event.getInstant();
+        Instant now = Instant.ofEpochSecond(then.getEpochSecond(), then.getNanoOfSecond());
+        Duration delta = Duration.ZERO;
+        if (previousTime != null) {
+            delta = Duration.between(previousTime, now);
         }
         previousTime = now;
 
-//        if ((previousTime == 0) || (delta > MAX_DELTA)) {
+//        if ((previousTime == null) || (delta.toMillis() > MAX_DELTA_MILLIS)) {
 //            buf.append('\n');
-//            indentation = 0; // reset indentation after a while, as we might
-//            // have runaway/unmatched log entries
+//            indentation = 0; // reset indentation after a while, as we might have runaway/unmatched log entries
 //        }
 
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if (hour < 10) {
-            buf.append('0');
-        }
-        buf.append(hour);
-        buf.append(':');
-
-        int mins = calendar.get(Calendar.MINUTE);
-        if (mins < 10) {
-            buf.append('0');
-        }
-        buf.append(mins);
-        buf.append(':');
-
-        int secs = calendar.get(Calendar.SECOND);
-        if (secs < 10) {
-            buf.append('0');
-        }
-        buf.append(secs);
-        buf.append('.');
-
-        int millis = (int) (now % 1000);
-        if (millis < 100) {
-            buf.append('0');
-        }
-        if (millis < 10) {
-            buf.append('0');
-        }
-        buf.append(millis);
+        buf.append(TIME_FORMATTER.format(now));
 
         buf.append(" [");
         String context = event.getLoggerName();
         if (context == null) {
-            context = event.getLoggerName();
+            context = "<unknown logger>";
         }
         if (context.length() < CONTEXT_SIZE) {
             pad(buf, CONTEXT_SIZE - context.length(), ' ');
@@ -151,17 +126,21 @@ public class IndentingLayout extends AbstractStringLayout {
         buf.append(message);
 
         buf.append(" (");
-        buf.append(delta);
+        buf.append(delta.toMillis());
         buf.append("ms)\n");
 
         if ((leader == '>') && (secondLeader == ' ')) {
             indentation++;
         }
 
+        if (event.getThrown() != null) {
+            buf.append(ExceptionUtils.getStackTrace(event.getThrown()));
+        }
+
         return buf.toString();
     }
 
-    private void pad(StringBuffer buffer, int pads, char padchar) {
+    private void pad(StringBuilder buffer, int pads, char padchar) {
         for (int i = 0; i < pads; i++) {
             buffer.append(padchar);
         }
