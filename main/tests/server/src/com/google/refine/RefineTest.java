@@ -204,7 +204,7 @@ public class RefineTest {
             fail("The column names provided to create a test project contain duplicates");
         }
         for (Serializable[] rawRow : grid) {
-            assertEquals(columnNames.length, rawRow.length, "Unexpected row length in test project");
+            assertEquals(columnNames.length, rawRow.length, "Unexpected row length in test grid data");
             Row row = new Row(columnNames.length);
             for (int i = 0; i != columnNames.length; i++) {
                 Serializable rawCell = rawRow[i];
