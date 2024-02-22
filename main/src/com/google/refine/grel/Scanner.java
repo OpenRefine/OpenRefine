@@ -255,7 +255,7 @@ public class Scanner {
                 } else {
                     sb.append(c);
                 }
-                _index++;
+                if (_index < _limit) _index++; // index should be incremented only if it is less than limit
             }
 
             detail = "Regex not properly closed";

@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import static org.testng.Assert.fail;
+
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -93,7 +95,7 @@ public class GrelTests extends RefineTest {
                 // Test succeeded
                 continue;
             }
-            Assert.fail("Expression failed to generate parse syntax error: " + test);
+            fail("Expression failed to generate parse syntax error: " + test);
         }
     }
 
@@ -109,7 +111,7 @@ public class GrelTests extends RefineTest {
                 Object result = eval.evaluate(bindings);
                 Assert.assertTrue(result instanceof EvalError);
             } catch (ParsingException e) {
-                Assert.fail("Unexpected parse failure: " + test);
+                fail("Unexpected parse failure: " + test);
             }
         }
     }
@@ -241,7 +243,20 @@ public class GrelTests extends RefineTest {
             Object result = eval.evaluate(bindings);
             Assert.assertTrue(result instanceof EvalError);
         } catch (ParsingException e) {
-            Assert.fail("Unexpected parse failure for cross function: " + test);
+            fail("Unexpected parse failure for cross function: " + test);
+        }
+    }
+
+    // Test for /\ throwing Internal Error
+    @Test
+    public void testRegex() {
+        String test = "value.replace(/\\";
+        try {
+            MetaParser.parse("grel:" + test);
+            fail("No Exception was thrown");
+        } catch (ParsingException e) {
+            Assert.assertEquals(e.getMessage(),
+                    "Parsing error at offset 14: Missing number, string, identifier, regex, or parenthesized expression");
         }
     }
 }
