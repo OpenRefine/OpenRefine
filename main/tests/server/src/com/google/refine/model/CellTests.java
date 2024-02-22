@@ -30,6 +30,7 @@ package com.google.refine.model;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
 import java.time.LocalDateTime;
@@ -170,5 +171,17 @@ public class CellTests {
         Cell c = new Cell(fi, null);
         String json = "{\"v\":\"Infinity\"}";
         TestUtils.isSerializedTo(c, json);
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        Recon recon = mock(Recon.class);
+        Cell c1 = new Cell("foo", recon);
+        assertEquals(c1, new Cell("foo", recon));
+        assertNotEquals(c1, new Cell("foo", null));
+        assertNotEquals(c1, new Cell(89, recon));
+        assertNotEquals(c1, new Cell(34L, null));
+        assertNotEquals(c1, "foo");
+        assertEquals(c1.hashCode(), new Cell("foo", recon).hashCode());
     }
 }

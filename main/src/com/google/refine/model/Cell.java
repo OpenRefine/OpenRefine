@@ -40,6 +40,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -193,6 +194,29 @@ public class Cell implements HasFields {
 
     @Override
     public String toString() {
+        // TODO this is kept like this for now, but it should rather be a string which makes the difference
+        // between the cell and the value clear (i.e. not be the same string representation as the value)
+        // and include a representation of the recon field too.
+        // (toString() should not be exposed to the end user and is only meant to be used for logging/debugging
+        // purposes)
         return StringUtils.toString(value);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(recon, value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Cell other = (Cell) obj;
+        return Objects.equals(recon, other.recon) && Objects.equals(value, other.value);
+    }
+
 }
