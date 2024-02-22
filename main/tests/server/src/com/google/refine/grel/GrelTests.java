@@ -244,5 +244,4 @@ public class GrelTests extends RefineTest {
             Assert.fail("Unexpected parse failure for cross function: " + test);
         }
     }
-
 }
