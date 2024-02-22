@@ -48,6 +48,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.StreamSupport;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
@@ -59,8 +60,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.fileupload.FileUploadBase;
@@ -383,7 +382,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 project,
                 metadata,
                 job,
-                IteratorUtils.toList(fileRecords.iterator()),
+                JSONUtilities.getObjectList(fileRecords),
                 "tsv",
                 -1,
                 options,
@@ -416,10 +415,16 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Test
     public void importUnsupportedZipFile() throws IOException {
-        String filename = "unsupportedPPMD.zip";
+        for (String basename : new String[] { "unsupportedPPMD", "notazip" }) {
+            testInvalidZipFile(basename);
+        }
+    }
+
+    private void testInvalidZipFile(String basename) throws IOException {
+        String filename = basename + ".zip";
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
-        File tmp = File.createTempFile("openrefine-test-unsupportedPPMD", ".zip", job.getRawDataDir());
+        File tmp = File.createTempFile("openrefine-test-" + basename, ".zip", job.getRawDataDir());
         tmp.deleteOnExit();
         FileUtils.copyFile(new File(filepath), tmp);
 
@@ -446,13 +451,13 @@ public class ImportingUtilitiesTests extends ImporterTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        assertThrows(IOException.class,
+        assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
-        assertThrows(FileUploadBase.InvalidContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request,
-                new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
-        assertThrows(IOException.class,
+        assertThrows("Failed to throw for " + filename, FileUploadBase.InvalidContentTypeException.class,
+                () -> ImportingUtilities.retrieveContentFromPostRequest(request,
+                        new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
+        assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
-
     }
 
     @Test
@@ -478,7 +483,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
             reader = new InputStreamReader(is);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
-            Assert.assertEquals(IterableUtils.size(records), LINES * 2, "row count mismatch for " + filename);
+            Assert.assertEquals(StreamSupport.stream(records.spliterator(), false).count(), LINES * 2,
+                    "row count mismatch for " + filename);
         }
         reader.close();
     }

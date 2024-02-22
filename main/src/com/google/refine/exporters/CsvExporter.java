@@ -41,9 +41,13 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.univocity.parsers.common.AbstractWriter;
 import com.univocity.parsers.csv.CsvFormat;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
+import com.univocity.parsers.tsv.TsvFormat;
+import com.univocity.parsers.tsv.TsvWriter;
+import com.univocity.parsers.tsv.TsvWriterSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +58,7 @@ import com.google.refine.util.ParsingUtilities;
 public class CsvExporter implements WriterExporter {
 
     static CsvFormat DEFAULT_FORMAT = new CsvWriterSettings().getFormat();
+    static TsvFormat TSV_FORMAT = new TsvWriterSettings().getFormat();
     static char DEFAULT_SEPARATOR = DEFAULT_FORMAT.getDelimiter();
     static String DEFAULT_LINE_ENDING = DEFAULT_FORMAT.getLineSeparatorString();
 
@@ -104,18 +109,24 @@ public class CsvExporter implements WriterExporter {
                 ? Boolean.parseBoolean(params.getProperty("printColumnHeader"))
                 : true;
 
-        CsvWriterSettings settings = new CsvWriterSettings();
-        settings.setQuoteAllFields(quoteAll);
-        settings.getFormat().setLineSeparator(lineSeparator);
-        settings.getFormat().setDelimiter(separator);
+        AbstractWriter csvWriter;
+        if ("\t".equals(separator)) {
+            TsvWriterSettings tsvSettings = new TsvWriterSettings();
+            csvWriter = new TsvWriter(writer, tsvSettings);
+        } else {
+            CsvWriterSettings settings = new CsvWriterSettings();
+            settings.setQuoteAllFields(quoteAll); // CSV only
+            settings.getFormat().setLineSeparator(lineSeparator);
+            settings.getFormat().setDelimiter(separator);
 
-        // Required for our test exportCsvWithQuote which wants the value "line has \"quote\""
-        // to be exported as "\"line has \"\"quote\"\"", although the default of literal value
-        // without the extra quoting is arguably cleaner
-        settings.setEscapeUnquotedValues(true);
-        settings.setQuoteEscapingEnabled(true);
+            // Required for our test exportCsvWithQuote which wants the value "line has \"quote\""
+            // to be exported as "\"line has \"\"quote\"\"", although the default of literal value
+            // without the extra quoting is arguably cleaner
+            settings.setEscapeUnquotedValues(true);
+            settings.setQuoteEscapingEnabled(true);
 
-        final CsvWriter csvWriter = new CsvWriter(writer, settings);
+            csvWriter = new CsvWriter(writer, settings);
+        }
 
         TabularSerializer serializer = new TabularSerializer() {
 

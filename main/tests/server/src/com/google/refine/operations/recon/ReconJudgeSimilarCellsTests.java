@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -91,10 +92,12 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
 
     @Test
     public void testMarkNewTopics() throws Exception {
-        Project project = createCSVProject(
-                "A,B\n"
-                        + "foo,bar\n"
-                        + "alpha,beta\n");
+        Project project = createProject(
+                new String[] { "A", "B" },
+                new Serializable[][] {
+                        { "foo", "bar" },
+                        { "alpha", "beta" }
+                });
 
         Column column = project.columnModel.columns.get(0);
         ReconConfig config = new StandardReconConfig(

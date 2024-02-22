@@ -120,7 +120,7 @@ describe(__filename, function () {
     ).should('to.contain', 'Error: No matching method');
   });
 
-  it('Test switching from one langage to another', function () {
+  it('Test switching from one language to another', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.typeExpression('(.. value (toLowerCase) )');
@@ -166,7 +166,7 @@ describe(__filename, function () {
 
   it('Test the history behavior, ensure expressions are stored', function () {
     cy.loadAndVisitProject('food.mini');
-    // Because history is shared across projects, we need to use an expression that is unique
+    // Because global history is shared across projects, we need to use an expression that is unique
 
     // Use a first unique expression
     const uniqueExpression = generateUniqueExpression();
@@ -180,9 +180,15 @@ describe(__filename, function () {
     // Ensure the previously used expression is listed
     loadExpressionPanel();
     cy.get('#expression-preview-tabs li').contains('History').click();
-    cy.get('#expression-preview-tabs-history')
+    cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(2) td:last-child')
       .should('be.visible')
-      .should('to.contain', uniqueExpression);
+      .should('to.have.text', uniqueExpression);
+    // Make sure it's in the local project history, not the global history
+    cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(2) td:nth-child(3)')
+      .should('to.contain', "This");
+    // The next one down should be from a previous project, so should be in the global list
+    cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(3) td:nth-child(3)')
+      .should('to.contain', "Other");
   });
 
   it('Test the reuse of expressions from the history', function () {

@@ -143,4 +143,24 @@ describe(__filename, function () {
     cy.assertCellEquals(2, 'b', 'first_name');
 
   });
+  it('Ensure cells are replaced with \"', function () {
+    const fixture = [
+      ['a', 'b', 'c'],
+      ['d', 'e', ' f']
+    ];
+
+    cy.loadAndVisitProject(fixture);
+
+    cy.columnActionClick('b', ['Edit cells', 'Replace']);
+
+    cy.get('.dialog-container input[bind="text_to_findInput"]').type("e");
+    cy.get('.dialog-container input[bind="replacement_textInput"]').type("\"");
+    cy.get('label[bind="or_views_replace_dont_escape"]').click();
+    cy.confirmDialogPanel();
+
+    cy.assertNotificationContainingText('Text transform on 1 cells in column b');
+
+    cy.assertCellEquals(0, 'b', '\"');
+
+  });
 });

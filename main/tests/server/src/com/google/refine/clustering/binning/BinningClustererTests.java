@@ -30,6 +30,7 @@ package com.google.refine.clustering.binning;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -75,11 +76,14 @@ public class BinningClustererTests extends RefineTest {
 
     @Test
     public void testSerializeBinningClusterer() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("column\n"
-                + "a\n"
-                + "à\n"
-                + "c\n"
-                + "ĉ\n");
+        Project project = createProject(
+                new String[] { "column" },
+                new Serializable[][] {
+                        { "a" },
+                        { "à" },
+                        { "c" },
+                        { "ĉ" }
+                });
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
         BinningClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
@@ -88,10 +92,13 @@ public class BinningClustererTests extends RefineTest {
 
     @Test
     public void testNoLonelyClusters() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("column\n"
-                + "c\n"
-                + "ĉ\n"
-                + "d\n");
+        Project project = createProject(
+                new String[] { "column" },
+                new Serializable[][] {
+                        { "c" },
+                        { "ĉ" },
+                        { "d" }
+                });
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
         BinningClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));

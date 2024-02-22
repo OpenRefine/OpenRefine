@@ -1,6 +1,7 @@
 
 package com.google.refine.operations.cell;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.testng.Assert;
@@ -27,11 +28,13 @@ public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
 
     @BeforeMethod
     public void setUp() {
-        project = createCSVProject(
-                "num1,num2\n" +
-                        "2,3\n" +
-                        "6,\n" +
-                        "5,9");
+        project = createProject(
+                new String[] { "num1", "num2" },
+                new Serializable[][] {
+                        { "2", "3" },
+                        { "6", null },
+                        { "5", "9" }
+                });
     }
 
     @AfterMethod
