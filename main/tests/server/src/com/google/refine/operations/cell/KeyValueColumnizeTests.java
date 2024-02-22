@@ -38,7 +38,6 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,6 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -147,9 +145,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         AbstractOperation op = new KeyValueColumnizeOperation(
                 "Cat", "Val", null);
 
-        Process process = op.createProcess(project, new Properties());
-
-        process.performImmediate();
+        runOperation(op, project);
 
         // Expected output from the GUI.
         // ID,a,b,c,d
@@ -207,8 +203,8 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         int merchantCol = project.columnModel.getColumnByName("merchant").getCellIndex();
         int fruitCol = project.columnModel.getColumnByName("fruit").getCellIndex();

@@ -31,7 +31,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -75,7 +74,8 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
                         { "http://test.org/entities/Q31", "test" }
                 });
         ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
-        op.createProcess(project, new Properties()).performImmediate();
+
+        runOperation(op, project);
 
         assertEquals("Q343", project.rows.get(0).cells.get(0).recon.match.id);
         assertEquals("http://test.org/entities/", project.rows.get(0).cells.get(0).recon.identifierSpace);

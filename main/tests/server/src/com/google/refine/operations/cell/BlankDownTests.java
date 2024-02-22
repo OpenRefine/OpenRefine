@@ -30,7 +30,6 @@ package com.google.refine.operations.cell;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -46,7 +45,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -91,8 +89,8 @@ public class BlankDownTests extends RefineTest {
         AbstractOperation op = new BlankDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
         Assert.assertNull(project.rows.get(1).cells.get(2));
@@ -105,8 +103,8 @@ public class BlankDownTests extends RefineTest {
         AbstractOperation op = new BlankDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "second");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
         Assert.assertNull(project.rows.get(1).cells.get(2));
@@ -131,8 +129,8 @@ public class BlankDownTests extends RefineTest {
         AbstractOperation op = new BlankDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals("c", project.rows.get(0).cells.get(3).value);
         Assert.assertNull(project.rows.get(1).cells.get(3));

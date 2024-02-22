@@ -73,7 +73,6 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.LongRunningProcessStub;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -277,8 +276,8 @@ public class ExtendDataOperationTests extends RefineTest {
                     RECON_SCHEMA_SPACE,
                     extension,
                     1);
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-            process.run();
+
+            runOperation(op, project);
 
             // Inspect rows
             Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
@@ -328,8 +327,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     extension,
                     1);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-            process.run();
+            runOperation(op, project);
 
             // Test to be updated as countries change currencies!
             Assert.assertTrue(Math.round((double) project.rows.get(2).getCellValue(1)) == 2,
@@ -372,8 +370,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     extension,
                     1);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-            process.run();
+            runOperation(op, project);
 
             /*
              * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). But thanks to
@@ -419,8 +416,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     extension,
                     1);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-            process.run();
+            runOperation(op, project);
 
             /*
              * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). The second

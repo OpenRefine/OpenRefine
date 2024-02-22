@@ -28,7 +28,6 @@
 package com.google.refine.operations.row;
 
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -43,7 +42,6 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -83,8 +81,8 @@ public class RowReorderOperationTests extends RefineTest {
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
                 Mode.RowBased, sortingConfig);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "h");
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "f");
@@ -101,8 +99,8 @@ public class RowReorderOperationTests extends RefineTest {
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
                 Mode.RowBased, sortingConfig);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals(project.rows.get(5).cells.get(1).value, "h");
         Assert.assertEquals(project.rows.get(4).cells.get(1).value, "f");
@@ -119,8 +117,8 @@ public class RowReorderOperationTests extends RefineTest {
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
                 Mode.RowBased, sortingConfig);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "d");

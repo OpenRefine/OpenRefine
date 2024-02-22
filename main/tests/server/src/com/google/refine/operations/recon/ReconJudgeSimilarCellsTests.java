@@ -33,7 +33,6 @@ import static org.testng.Assert.assertNull;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
@@ -49,7 +48,6 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -115,8 +113,8 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 "foo",
                 Recon.Judgment.New,
                 null, true);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Cell cell = project.rows.get(0).cells.get(0);
         assertEquals(Recon.Judgment.New, cell.recon.judgment);

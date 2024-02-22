@@ -70,11 +70,14 @@ import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.process.LongRunningProcess;
+import com.google.refine.process.LongRunningProcessStub;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.TestUtils;
@@ -431,6 +434,29 @@ public class RefineTest {
         return coreModule;
     }
 
+    /**
+     * Runs an operation on a project. If it's a long-running operation, its process is run in the main thread until
+     * completion.
+     * 
+     * @returns the duration of the operation in milliseconds
+     */
+    protected long runOperation(AbstractOperation operation, Project project) throws Exception {
+        long start = System.currentTimeMillis();
+        Process process = operation.createProcess(project, new Properties());
+        if (process.isImmediate()) {
+            process.performImmediate();
+        } else {
+            LongRunningProcessStub longRunning = new LongRunningProcessStub((LongRunningProcess) process);
+            longRunning.run();
+        }
+        long end = System.currentTimeMillis();
+        return end - start;
+    }
+
+    /**
+     * @deprecated use {@link #runOperation(AbstractOperation, Project)}
+     */
+    @Deprecated
     protected void runAndWait(ProcessManager processManager, Process process, int timeout) {
         process.startPerforming(processManager);
         Assert.assertTrue(process.isRunning());

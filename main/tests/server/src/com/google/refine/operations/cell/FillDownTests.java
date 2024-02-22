@@ -30,7 +30,6 @@ package com.google.refine.operations.cell;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -46,7 +45,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -90,8 +88,8 @@ public class FillDownTests extends RefineTest {
         AbstractOperation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "key");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals("a", project.rows.get(0).cells.get(0).value);
         Assert.assertEquals("a", project.rows.get(1).cells.get(0).value);
@@ -106,8 +104,8 @@ public class FillDownTests extends RefineTest {
         AbstractOperation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
         Assert.assertEquals("c", project.rows.get(1).cells.get(2).value);
@@ -122,8 +120,8 @@ public class FillDownTests extends RefineTest {
         AbstractOperation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "second");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
         Assert.assertEquals("c", project.rows.get(1).cells.get(2).value);
@@ -148,8 +146,8 @@ public class FillDownTests extends RefineTest {
         AbstractOperation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Assert.assertEquals("c", project.rows.get(0).cells.get(3).value);
         Assert.assertEquals("c", project.rows.get(1).cells.get(3).value);

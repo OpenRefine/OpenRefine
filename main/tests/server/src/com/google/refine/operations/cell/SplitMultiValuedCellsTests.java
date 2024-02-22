@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.cell;
 
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -46,7 +45,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -105,8 +103,8 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 "Key",
                 ":",
                 false);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -125,8 +123,8 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 "Key",
                 "\\W",
                 true);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -149,8 +147,8 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 "Value",
                 "Key",
                 lengths);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -172,8 +170,8 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 "Key",
                 "(?<=\\p{Lower}|[\\p{Lower}][\\s])(?=\\p{Upper})",
                 true);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -195,8 +193,8 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 "Key",
                 "(?<=\\p{Upper}|[\\p{Upper}][\\s])(?=\\p{Lower})",
                 true);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -220,8 +218,8 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 "Key",
                 "(?<=\\p{Digit}|[\\p{Digit}][\\s])(?=\\p{L})",
                 true);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -241,8 +239,8 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 "Key",
                 "(?<=\\p{L}|[\\p{L}][\\s])(?=\\p{Digit})",
                 true);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
