@@ -220,3 +220,57 @@ ul#tagsUl li a {
   background: #28458A;
   color: white;
 }
+
+/* Search bar in open project */
+/* search */
+#divSearch{
+   float: left;
+   width: 2.5%;
+   margin-left: -0.5%;
+}
+
+#search-icon {
+  float: left;
+  width: 22px;
+}
+
+#divInput {
+  float: right;
+  width: 10%;
+  display: none;
+}
+
+/* input */
+#searchInProjects {
+     border-radius: 10px;
+     margin: 1px auto 7px 14px;
+}
+
+.header-search-box {
+  display: none;
+  width: 0px;
+  float: left;
+}
+
+/* icon search */
+.magnifying_glass {
+     width: 100%;
+     height: 20px;
+     border-radius: 100%;
+     padding: 4px;
+}
+
+.magnifying_glass:hover {
+  cursor: pointer;
+}
+
+.magnifying-glass-open {
+  background-color: #dee6ff;
+}
+
+#no-results-message {
+  color: #777;
+  display: none;
+  text-align: center;
+  font-size: x-large;
+}
