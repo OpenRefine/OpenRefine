@@ -76,7 +76,8 @@ public class ColumnTests {
                 + "\"reconStats\":{"
                 + "    \"nonBlanks\":299,"
                 + "    \"newTopics\":0,"
-                + "    \"matchedTopics\":222"
+                + "    \"matchedTopics\":222,"
+                + "    \"errorTopics\":0"
                 + "}}";
         TestUtils.isSerializedTo(Column.load(json), json);
     }

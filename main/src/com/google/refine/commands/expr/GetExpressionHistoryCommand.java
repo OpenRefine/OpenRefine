@@ -48,6 +48,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
 import com.google.refine.preference.TopList;
 
 public class GetExpressionHistoryCommand extends Command {
@@ -57,13 +58,14 @@ public class GetExpressionHistoryCommand extends Command {
         @JsonProperty("code")
         protected String code;
         @JsonProperty("global")
-        protected boolean global = false;
+        protected boolean global;
         @JsonProperty("starred")
         protected boolean starred;
 
-        protected ExpressionState(String code, boolean starred) {
+        protected ExpressionState(String code, boolean starred, boolean global) {
             this.code = code;
             this.starred = starred;
+            this.global = global;
         }
     }
 
@@ -78,7 +80,7 @@ public class GetExpressionHistoryCommand extends Command {
     }
 
     static protected List<String> toExpressionList(Object o) {
-        return o == null ? new ArrayList<String>() : ((TopList) o).getList();
+        return o == null ? new ArrayList<>() : ((TopList) o).getList();
     }
 
     @Override
@@ -86,14 +88,16 @@ public class GetExpressionHistoryCommand extends Command {
             throws ServletException, IOException {
 
         try {
-            List<String> expressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
-            TopList topList = (TopList) ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions");
-            if (topList == null) {
-                topList = new TopList(ProjectManager.EXPRESSION_HISTORY_MAX);
-            }
-            Set<String> starredExpressions = new HashSet<String>(topList.getList());
-            ExpressionsList expressionsList = new ExpressionsList(expressions.stream()
-                    .map(s -> new ExpressionState(s, starredExpressions.contains(s)))
+            Project project = getProject(request);
+
+            List<String> local = toExpressionList((TopList) project.getMetadata().getPreferenceStore().get("scripting.expressions"));
+            Set<String> localExpressions = new HashSet(local.size() > 20 ? local.subList(0, 20) : local);
+            Set<String> starredExpressions = new HashSet<>(
+                    toExpressionList((TopList) ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions")));
+
+            List<String> globalExpressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
+            ExpressionsList expressionsList = new ExpressionsList(globalExpressions.stream()
+                    .map(s -> new ExpressionState(s, starredExpressions.contains(s), !localExpressions.contains(s)))
                     .collect(Collectors.toList()));
 
             respondJSON(response, expressionsList);

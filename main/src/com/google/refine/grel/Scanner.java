@@ -255,7 +255,7 @@ public class Scanner {
                 } else {
                     sb.append(c);
                 }
-                _index++;
+                if (_index < _limit) _index++; // index should be incremented only if it is less than limit
             }
 
             detail = "Regex not properly closed";
@@ -286,6 +286,8 @@ public class Scanner {
         } else if (c == '<') {
             if (_index < _limit - 1 &&
                     (_text.charAt(_index + 1) == '=' ||
+                    // FIXME: Although this will scan <> as an operator, it will get filtered out in the
+                    // Parser without generating an error
                             _text.charAt(_index + 1) == '>')) {
 
                 _index += 2;

@@ -57,6 +57,12 @@ public class GetStarredExpressionsCommandTests extends ExpressionCommandTestBase
                         "        \"top\": 100,\n" +
                         "        \"list\": [\n" +
                         "          \"grel:cell.recon.match.id\"\n" +
+                        "]}",
+                "{\n" +
+                        "        \"class\": \"com.google.refine.preference.TopList\",\n" +
+                        "        \"top\": 100,\n" +
+                        "        \"list\": [\n" +
+                        "          \"grel:value\"\n" +
                         "]}");
 
         String json = "{\n" +

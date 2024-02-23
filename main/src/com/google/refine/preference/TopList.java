@@ -34,13 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.preference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.collections.list.UnmodifiableList;
 
 public class TopList implements Iterable<String>, PreferenceValue {
 
@@ -63,7 +63,7 @@ public class TopList implements Iterable<String>, PreferenceValue {
     @SuppressWarnings("unchecked")
     @JsonProperty("list")
     public List<String> getList() {
-        return UnmodifiableList.decorate(_list);
+        return Collections.unmodifiableList(_list);
     }
 
     public void add(String element) {

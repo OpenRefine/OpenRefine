@@ -12,14 +12,10 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
 
     cy.getCell(0, 'tests').contains('2021-01-31https://www.google.com');
-    cy.getCell(1, 'tests')
-      .children('div')
-      .children('a')
+    cy.getCell(1, 'tests').find('a')
       .should('have.attr', 'href');
-    cy.getCell(1, 'tests').children('div').children('div').children('span');
-    cy.getCell(2, 'tests')
-      .children('div')
-      .children('a')
+    cy.getCell(1, 'tests').find('span');
+    cy.getCell(2, 'tests').find('a')
       .should('have.attr', 'href');
   });
 });

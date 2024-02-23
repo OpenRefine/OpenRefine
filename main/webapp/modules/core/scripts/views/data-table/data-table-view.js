@@ -373,10 +373,16 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     var th = trHead.appendChild(document.createElement("th"));
     $(th).addClass("column-header").attr('title', column.name);
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-      $(th).html("&nbsp;").on('click',function(evt) {
-        delete self._collapsedColumnNames[column.name];
-        self.render();
-      });
+      DOM.bind( 
+        $(th)
+        .attr('title',$.i18n('core-views/expand', column.name))
+        .html("<button class='column-header-menu column-header-menu-expand' bind='expandColumn' ></button>")
+      ).expandColumn.on(
+        'click', function() {
+          delete self._collapsedColumnNames[column.name];
+          self.render();
+        }
+      )
     } else {
       var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th);
       self._columnHeaderUIs.push(columnHeaderUI);

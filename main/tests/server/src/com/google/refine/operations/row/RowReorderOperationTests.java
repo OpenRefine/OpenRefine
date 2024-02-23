@@ -27,6 +27,7 @@
 
 package com.google.refine.operations.row;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.testng.Assert;
@@ -58,14 +59,16 @@ public class RowReorderOperationTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() {
-        project = createCSVProject(
-                "key,first\n" +
-                        "8,b\n" +
-                        ",d\n" +
-                        "2,f\n" +
-                        "1,h\n" +
-                        "9,F\n" +
-                        "10,f\n");
+        project = createProject(
+                new String[] { "key", "first" },
+                new Serializable[][] {
+                        { "8", "b" },
+                        { null, "d" },
+                        { "2", "f" },
+                        { "1", "h" },
+                        { "9", "F" },
+                        { "10", "f" }
+                });
     }
 
     @AfterMethod

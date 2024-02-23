@@ -117,7 +117,7 @@ Cypress.Commands.add('getNumericFacetContainer', (facetName) => {
 Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
   cy.getCell(rowIndex, columnName)
     .trigger('mouseover')
-    .find('a.data-table-cell-edit')
+    .find('button.data-table-cell-edit')
     .click();
   cy.get('.menu-container.data-table-cell-editor textarea').type(value);
   cy.get('.menu-container button[bind="okButton"]').click();
@@ -237,14 +237,15 @@ Cypress.Commands.add('assertGridEquals', (values) => {
 
     const cells = Cypress.$('table.data-table tbody tr')
       .map(function (i, el) {
-        return [
-          Cypress.$('td', el)
-            .filter((index) => index > 2)
-            .map(function (index, element) {
-              return element.innerText;
-            })
-            .get(),
-        ];
+        const innerTexts = Cypress.$('td', el).filter(index => index > 2)
+          .map(function (index, element) {
+            return element.querySelector('div.data-table-cell-content div > span').innerText;
+          }).get();
+        return [ innerTexts
+          .map(function (innerText) {
+            // a nulled cell value is exposed in the DOM as the string "null"
+            return innerText === 'null' ? null : innerText
+          }) ];
       })
       .get();
     const fullTable = [headers, ...cells];

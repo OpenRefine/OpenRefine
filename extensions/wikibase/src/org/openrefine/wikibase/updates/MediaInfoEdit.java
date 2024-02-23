@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang.NotImplementedException;
 import org.jsoup.helper.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -209,7 +208,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
 
     @Override
     public EntityDocument toNewEntity() {
-        throw new NotImplementedException("Creating new entities of type mediainfo is not supported yet.");
+        throw new UnsupportedOperationException("Creating new entities of type mediainfo is not supported yet.");
     }
 
     /**

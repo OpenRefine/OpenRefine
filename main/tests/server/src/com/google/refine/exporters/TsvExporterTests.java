@@ -137,7 +137,7 @@ public class TsvExporterTests extends RefineTest {
 
         assertEqualsSystemLineEnding(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
                 "row0cell0\trow0cell1\trow0cell2\n" +
-                "row1cell0\t\"line\n\n\nbreak\"\trow1cell2\n" +
+                "row1cell0\tline\\n\\n\\nbreak\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
 
@@ -154,7 +154,7 @@ public class TsvExporterTests extends RefineTest {
 
         assertEqualsSystemLineEnding(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
                 "row0cell0\trow0cell1\trow0cell2\n" +
-                "row1cell0\t\"with\t tab\"\trow1cell2\n" +
+                "row1cell0\twith\\t tab\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
 
@@ -171,7 +171,7 @@ public class TsvExporterTests extends RefineTest {
 
         assertEqualsSystemLineEnding(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
                 "row0cell0\trow0cell1\trow0cell2\n" +
-                "row1cell0\t\"line has \"\"quote\"\"\"\trow1cell2\n" +
+                "row1cell0\tline has \"quote\"\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
 

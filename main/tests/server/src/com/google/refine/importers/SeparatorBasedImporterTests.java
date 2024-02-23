@@ -643,6 +643,29 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         Assert.assertEquals((String) project.rows.get(0).cells.get(3).value, "data4");
     }
 
+    @Test
+    public void readTsvWithEmbeddedEscapes() {
+        // Be careful of whitespace at field boundaries which will get trimmed by trimWhitespace = true
+        // Also take care to make sure backslashes are escaped correctly for Java
+        String input = "da\\rta1\tdat\\ta2\tdata3\tdat\\na4";
+        StringReader reader = new StringReader(input);
+
+        prepareOptions("\t", -1, 0, 0, 0, false, true);
+
+        try {
+            parseOneFile(SUT, reader);
+        } catch (Exception e) {
+            Assert.fail("Exception during file parse", e);
+        }
+
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+        Assert.assertEquals((String) project.rows.get(0).cells.get(0).value, "da\rta1");
+        Assert.assertEquals((String) project.rows.get(0).cells.get(1).value, "dat\ta2");
+        Assert.assertEquals((String) project.rows.get(0).cells.get(2).value, "data3");
+        Assert.assertEquals((String) project.rows.get(0).cells.get(3).value, "dat\na4");
+    }
+
     // ---------------------guess separators------------------------
 
     @Test

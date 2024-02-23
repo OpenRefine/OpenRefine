@@ -3,14 +3,14 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
 
     cy.getCell(1, 'Water').trigger('mouseover');
-    cy.getCell(1, 'Water').find('a.data-table-cell-edit').should('be.visible');
+    cy.getCell(1, 'Water').find('.data-table-cell-edit').should('be.visible');
   });
 
   it('Ensure the Edit button opens a popup', function () {
     cy.loadAndVisitProject('food.mini');
     cy.getCell(1, 'Shrt_Desc')
       .trigger('mouseover')
-      .find('a.data-table-cell-edit')
+      .find('.data-table-cell-edit')
       .click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').should(
@@ -23,7 +23,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     cy.getCell(1, 'Shrt_Desc')
       .trigger('mouseover')
-      .find('a.data-table-cell-edit')
+      .find('.data-table-cell-edit')
       .click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type(
@@ -39,13 +39,12 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     cy.getCell(1, 'Shrt_Desc')
       .trigger('mouseover')
-      .find('a.data-table-cell-edit')
+      .find('.data-table-cell-edit')
       .click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type(
       'OpenRefine Testing'
-    );
-    cy.get('body').type('{enter}');
+    ).type('{enter}');
     cy.get('.menu-container.data-table-cell-editor').should('not.exist');
     cy.assertCellEquals(1, 'Shrt_Desc', 'OpenRefine Testing');
   });
@@ -54,7 +53,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     cy.getCell(1, 'Shrt_Desc')
       .trigger('mouseover')
-      .find('a.data-table-cell-edit')
+      .find('.data-table-cell-edit')
       .click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type(
@@ -70,7 +69,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     cy.getCell(1, 'Shrt_Desc')
       .trigger('mouseover')
-      .find('a.data-table-cell-edit')
+      .find('.data-table-cell-edit')
       .click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type(
@@ -86,7 +85,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     cy.getCell(1, 'Water')
       .trigger('mouseover')
-      .find('a.data-table-cell-edit')
+      .find('.data-table-cell-edit')
       .click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type(42);
@@ -105,11 +104,10 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     cy.getCell(1, 'Water')
       .trigger('mouseover')
-      .find('a.data-table-cell-edit')
+      .find('.data-table-cell-edit')
       .click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
-    cy.get('.menu-container.data-table-cell-editor textarea').type(42);
-    cy.get('body').type('{ctrl}{enter}');
+    cy.get('.menu-container.data-table-cell-editor textarea').type(42).type('{ctrl}{enter}');
 
     // ensure all values has been changed in the grid
     cy.get('.menu-container.data-table-cell-editor').should('not.exist');

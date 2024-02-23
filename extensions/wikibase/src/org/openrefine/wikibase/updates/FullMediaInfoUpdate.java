@@ -2,7 +2,7 @@
 package org.openrefine.wikibase.updates;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.wikidata.wdtk.datamodel.implementation.MediaInfoUpdateImpl;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;

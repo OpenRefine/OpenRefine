@@ -90,6 +90,8 @@ public class Parser {
 
         while (_token != null &&
                 _token.type == TokenType.Operator &&
+                // FIXME: This filters the <> operator which is returned from the Scanner. Fix one or the other
+                // so that they agree with each other on whether it's an operator or not.
                 ">=<==!=".indexOf(_token.text) >= 0) {
 
             String op = _token.text;
@@ -201,6 +203,7 @@ public class Parser {
             if (_token == null || _token.type != TokenType.Delimiter || !_token.text.equals("(")) {
                 eval = "null".equals(text) ? new LiteralExpr(null) : new VariableExpr(text);
             } else if ("PI".equals(text)) {
+                // TODO: This duplicates ExpressionUtils which adds PI to the bindings
                 eval = new LiteralExpr(Math.PI);
                 next(false);
             } else {
