@@ -30,6 +30,7 @@
 package com.google.refine.extension.database;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class SQLType {
@@ -41,12 +42,22 @@ public final class SQLType {
         this.driverContainer = container;
     }
 
-    public static SQLType forName(String name) {
-        for (SQLType sqlType : jdbcDriverRegistry.values()) {
-            if (sqlType.getIdentifier().equalsIgnoreCase(name)) {
-                return sqlType;
+    public static SQLType forName(List<String> names) {
+        for(String name : names){
+            for (SQLType sqlType : jdbcDriverRegistry.values()) {
+                if (sqlType.getIdentifier().equalsIgnoreCase(name)) {
+                    return sqlType;
+                }
             }
         }
+        return null;
+    }
+    public static SQLType forName(String name) {
+            for (SQLType sqlType : jdbcDriverRegistry.values()) {
+                if (sqlType.getIdentifier().equalsIgnoreCase(name)) {
+                    return sqlType;
+                }
+            }
         return null;
     }
 

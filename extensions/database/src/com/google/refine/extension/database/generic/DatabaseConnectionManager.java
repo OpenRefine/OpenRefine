@@ -35,6 +35,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +46,11 @@ import com.google.refine.extension.database.SQLType;
 
 public class DatabaseConnectionManager {
 
-    private static final Logger logger = LoggerFactory.getLogger("mysql");
+    private static final Logger logger = LoggerFactory.getLogger("DatabaseConnectionManager");
     private static DatabaseConnectionManager instance;
     private final SQLType type;
     private Connection connection;
-    private static final Map<String, String> dbTypeToDriverMap = Map.of(
+    protected static final Map<String, String> dbTypeToDriverMap = Map.of(
             "sqlite", "org.sqlite.JDBC",
             "mysql", "com.mysql.cj.jdbc.Driver",
             "postgresql", "org.postgresql.Driver",
@@ -57,7 +58,9 @@ public class DatabaseConnectionManager {
             "oracle", "oracle.jdbc.driver.OracleDriver");
 
     private DatabaseConnectionManager() {
-        type = SQLType.forName(GenericDatabaseService.DB_NAME);
+//        System.out.println("------------------------------------"+dbTypeToDriverMap.values().stream().collect(Collectors.toList()));
+        type = SQLType.forName(dbTypeToDriverMap.keySet().stream().collect(Collectors.toList()));
+//        type = SQLType.forName();
     }
 
     /**
@@ -150,9 +153,8 @@ public class DatabaseConnectionManager {
             if (connection != null) {
                 connection.close();
             }
-
-            Class.forName(type.getClassPath());
             String dbURL = getDatabaseUrl(databaseConfiguration);
+            Class.forName(type.getClassPath());
             if (databaseConfiguration.getDatabaseType().equalsIgnoreCase("sqlite")) {
                 connection = DriverManager.getConnection(dbURL);
             }
@@ -166,7 +168,7 @@ public class DatabaseConnectionManager {
             logger.error("Jdbc Driver not found", e);
             throw new DatabaseServiceException(e.getMessage());
         } catch (SQLException e) {
-            logger.error("SQLException::Couldn't get a Connection!", e);
+            logger.error("SQLException::Couldn't get a Connection!", e.getMessage());
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         } catch (URISyntaxException e) {
             logger.error("URISyntaxException::Couldn't get a Connection!", e);

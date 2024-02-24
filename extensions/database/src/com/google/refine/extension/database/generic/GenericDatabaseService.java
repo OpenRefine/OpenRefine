@@ -29,6 +29,8 @@
 
 package com.google.refine.extension.database.generic;
 
+import static com.google.refine.extension.database.generic.DatabaseConnectionManager.dbTypeToDriverMap;
+
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -58,11 +60,10 @@ public class GenericDatabaseService extends DatabaseService {
 //    public static final String DB_DRIVER = "org.sqlite.JDBC";
     private static final Logger logger = LoggerFactory.getLogger("GenericDatabaseService");
     private static GenericDatabaseService instance;
-    public static final String DB_NAME = "GenericDatabaseService";
 
     public static GenericDatabaseService getInstance() {
         if (instance == null) {
-            SQLType.registerSQLDriver(DB_NAME, "com.mysql.jdbc.Driver");
+            dbTypeToDriverMap.forEach(SQLType::registerSQLDriver);
             instance = new GenericDatabaseService();
             if (logger.isDebugEnabled()) {
                 logger.debug("GenericDatabaseService Instance: {}", instance);
