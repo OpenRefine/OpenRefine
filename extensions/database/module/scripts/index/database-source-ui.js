@@ -318,7 +318,8 @@ Refine.DatabaseSourceUI.prototype._saveConnection = function(jdbcConnectionInfo)
       },
       "json",
       function( jqXhr, textStatus, errorThrown ){
-        alert( textStatus + ':' + errorThrown );
+          var response = JSON.parse(jqXhr.responseText);
+          alert(textStatus + ':' + response.message);
     });
 
 };

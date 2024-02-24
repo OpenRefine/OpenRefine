@@ -29,6 +29,7 @@
 
 package com.google.refine.extension.database;
 
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
@@ -37,13 +38,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.extension.database.mariadb.MariaDBDatabaseService;
+import com.google.refine.extension.database.generic.GenericDatabaseService;
 import com.google.refine.extension.database.model.DatabaseColumn;
 import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.extension.database.model.DatabaseRow;
-import com.google.refine.extension.database.mysql.MySQLDatabaseService;
-import com.google.refine.extension.database.pgsql.PgSQLDatabaseService;
-import com.google.refine.extension.database.sqlite.SQLiteDatabaseService;
 
 public abstract class DatabaseService {
 
@@ -52,33 +50,35 @@ public abstract class DatabaseService {
     public static class DBType {
 
         private static Map<String, DatabaseService> databaseServiceMap = new HashMap<String, DatabaseService>();
+        private static final List<String> databaseNames = List.of("mysql", "postgresql", "mariadb", "sqlite");
 
         static {
             try {
 
-                DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
-                DatabaseService.DBType.registerDatabase(PgSQLDatabaseService.DB_NAME, PgSQLDatabaseService.getInstance());
-                DatabaseService.DBType.registerDatabase(MariaDBDatabaseService.DB_NAME, MariaDBDatabaseService.getInstance());
-                DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
+//                DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
+//                DatabaseService.DBType.registerDatabase(PgSQLDatabaseService.DB_NAME, PgSQLDatabaseService.getInstance());
+//                DatabaseService.DBType.registerDatabase(MariaDBDatabaseService.DB_NAME, MariaDBDatabaseService.getInstance());
+//                DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
+                DatabaseService.DBType.registerDatabase(databaseNames, GenericDatabaseService.getInstance());
 
             } catch (Exception e) {
                 logger.error("Exception occurred while trying to prepare databases!", e);
             }
         }
 
-        public static void registerDatabase(String name, DatabaseService db) {
+        public static void registerDatabase(List<String> names, DatabaseService db) {
 
-            if (!databaseServiceMap.containsKey(name)) {
-                // throw new DatabaseServiceException(name + " cannot be registered. Database Type already exists");
-                databaseServiceMap.put(name, db);
-                logger.info(String.format("Registered %s Database", name));
-            } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(name + " Database Type already exists");
+            for(String name: names) {
+                if (!databaseServiceMap.containsKey(name)) {
+                    // throw new DatabaseServiceException(name + " cannot be registered. Database Type already exists");
+                    databaseServiceMap.put(name, db);
+                    logger.info("Registered {} Database", name);
+                } else {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(name + " Database Type already exists");
+                    }
                 }
-
             }
-
         }
 
         public static DatabaseService getJdbcServiceFromType(String name) {
@@ -87,7 +87,7 @@ public abstract class DatabaseService {
 
     }
 
-    protected String getDatabaseUrl(DatabaseConfiguration dbConfig) {
+    protected String getDatabaseUrl(DatabaseConfiguration dbConfig) throws URISyntaxException {
         int port = dbConfig.getDatabasePort();
         return "jdbc:" + dbConfig.getDatabaseType() + "://" + dbConfig.getDatabaseHost()
                 + ((port == 0) ? "" : (":" + port)) + "/" + dbConfig.getDatabaseName();

@@ -31,6 +31,7 @@ package com.google.refine.extension.database;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -223,6 +224,8 @@ public class DatabaseImportController implements ImportingController {
 
         } catch (IOException e) {
             throw new ServletException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         } finally {
             job.touch();
             job.updating = false;
@@ -256,7 +259,7 @@ public class DatabaseImportController implements ImportingController {
             final ImportingJob job,
             int limit,
             ObjectNode options,
-            List<Exception> exceptions) throws DatabaseServiceException {
+            List<Exception> exceptions) throws DatabaseServiceException, URISyntaxException {
 
         DatabaseService databaseService = DatabaseService.get(dbQueryInfo.getDbConfig().getDatabaseType());
         String querySource = getQuerySource(dbQueryInfo);
@@ -338,6 +341,9 @@ public class DatabaseImportController implements ImportingController {
                     } catch (DatabaseServiceException e) {
                         logger.error("DatabaseImportController::doCreateProject:::run{}", e);
                         // throw new RuntimeException("DatabaseServiceException::", e);
+                    } catch (URISyntaxException e) {
+                        logger.error("DatabaseImportController::doCreateProject:::run{}", e);
+                        // throw new RuntimeException("URISyntaxException::", e);
                     }
 
                     if (!job.canceled) {
@@ -381,7 +387,7 @@ public class DatabaseImportController implements ImportingController {
             final ImportingJob job,
             int limit,
             ObjectNode options,
-            List<Exception> exceptions) throws DatabaseServiceException {
+            List<Exception> exceptions) throws DatabaseServiceException, URISyntaxException {
 
         DatabaseService databaseService = DatabaseService.get(dbQueryInfo.getDbConfig().getDatabaseType());
         String querySource = getQuerySource(dbQueryInfo);
@@ -463,7 +469,7 @@ public class DatabaseImportController implements ImportingController {
         return new DatabaseQueryInfo(jdbcConfig, query);
     }
 
-    private static String getQuerySource(DatabaseQueryInfo dbQueryInfo) {
+    private static String getQuerySource(DatabaseQueryInfo dbQueryInfo) throws URISyntaxException {
         String dbType = dbQueryInfo.getDbConfig().getDatabaseType();
         return DatabaseService.get(dbType).getDatabaseUrl(dbQueryInfo.getDbConfig());
     }
