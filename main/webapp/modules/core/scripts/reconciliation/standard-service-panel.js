@@ -169,6 +169,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
       var radio = $('<input type="radio" name="type-choice">')
       .val(typeID)
       .attr("typeName", typeName)
+      .attr("id","type-choice"+ typeID)
       .appendTo(td0)
       .on('click',function() {
         self._rewirePropertySuggests(this.value);
@@ -178,10 +179,15 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
         radio.prop('checked', true);
       }
 
+      //add a label element for the type name and id
+      var label=$('<label></label>')
+        .attr("for","type-choice" + typeID) // associate the label with the radio button using the for attribute
+        .appendTo(td1);
+        
       if (typeName == typeID) {
-        $(td1).html(typeName);
+        label.html(typeName);
       } else {
-        $(td1).html(
+        label.html(
             typeName + 
             '<br/>' +
             '<span class="type-id">' + typeID + '</span>');
