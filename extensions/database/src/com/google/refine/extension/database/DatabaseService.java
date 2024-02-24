@@ -68,7 +68,7 @@ public abstract class DatabaseService {
 
         public static void registerDatabase(List<String> names, DatabaseService db) {
 
-            for(String name: names) {
+            for (String name : names) {
                 if (!databaseServiceMap.containsKey(name)) {
                     // throw new DatabaseServiceException(name + " cannot be registered. Database Type already exists");
                     databaseServiceMap.put(name, db);

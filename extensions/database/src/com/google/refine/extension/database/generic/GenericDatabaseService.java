@@ -129,7 +129,7 @@ public class GenericDatabaseService extends DatabaseService {
     public DatabaseInfo executeQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
         Connection connection = DatabaseConnectionManager.getInstance().getConnection(dbConfig);
         try (Statement statement = connection.createStatement();
-             ResultSet queryResult = statement.executeQuery(query)) {
+                ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<>(columnCount);
@@ -196,7 +196,7 @@ public class GenericDatabaseService extends DatabaseService {
             throws DatabaseServiceException {
         Connection connection = DatabaseConnectionManager.getInstance().getConnection(dbConfig);
         try (Statement statement = connection.createStatement();
-             ResultSet queryResult = statement.executeQuery(query)) {
+                ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<>(columnCount);
