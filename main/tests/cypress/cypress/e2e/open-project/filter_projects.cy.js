@@ -52,7 +52,15 @@ describe(__filename, function () {
     cy.get('#projects-list table').contains(project1).should('not.be.visible');
     cy.get('#projects-list table').contains(project2).should('be.visible');
 
-    cy.get('#searchInProjects').type('{backspace}{backspace}');
+    // Test no results message
+    cy.get('#searchInProjects').type('Z');
+    cy.wait(1500); // typing timeout is 1000 msec
+    cy.get('#projects-list table').contains(project1).should('not.be.visible');
+    cy.get('#projects-list table').contains(project2).should('not.be.visible');
+    cy.get('#no-results-message').should('be.visible');
+
+    // Test matching both project names
+    cy.get('#searchInProjects').type('{backspace}{backspace}{backspace}');
     cy.wait(1500); // typing timeout is 1000 msec
     cy.get('#projects-list table').contains(project1).should('be.visible');
     cy.get('#projects-list table').contains(project2).should('be.visible');
