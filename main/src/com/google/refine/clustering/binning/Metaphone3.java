@@ -3259,7 +3259,7 @@ public class Metaphone3 {
 				if(Internal_Hard_G())
 				{
 					// don't encode KG or KK if e.g. "mcgill"
-					if(!((m_current == 2) && StringAt(0, 2, "MC", "")) 
+					if(((m_current == 2) && StringAt(0, 2, "MC", "")) 
 						   || ((m_current == 3) && StringAt(0, 3, "MAC", "")))
 					{
 						if(SlavoGermanic())
