@@ -173,13 +173,12 @@ class RefineServer extends Server {
     private ThreadPoolExecutor threadPool;
 
     public void init(String iface, int port, String host) throws Exception {
-        logger.info("Using Java version: " + System.getProperty("java.runtime.version"));
-        logger.info("Starting Server bound to '" + iface + ":" + port + "'");
-
-        String memory = Configurations.get("refine.memory");
-        if (memory != null) {
-            logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory() + " bytes");
-        }
+        logger.info("Java runtime version {} from java.home: {}", Runtime.version().toString(), System.getProperty("java.home", ""));
+        logger.info("Java VM: {} {} {}", System.getProperty("java.vm.vendor", ""), System.getProperty("java.vm.name", ""),
+                System.getProperty("java.vm.version", ""), System.getProperty("java.vm.info", ""));
+        logger.info("Starting Server bound to '{}:{}'", iface, port);
+        logger.info("refine.memory size: {} JVM Max heap: {} MBytes", Configurations.get("refine.memory", "<default>"),
+                Runtime.getRuntime().maxMemory() / 1024 / 1024.0);
 
         HttpConfiguration httpConfig = new HttpConfiguration();
         httpConfig.setSendServerVersion(false);
