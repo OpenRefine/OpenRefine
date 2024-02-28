@@ -36,8 +36,8 @@ package com.google.refine.commands;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -46,8 +46,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonGenerator;
-import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -276,48 +274,54 @@ public abstract class Command {
 
         HistoryEntry historyEntry = project.processManager.queueProcess(process);
         if (historyEntry != null) {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            Writer w = response.getWriter();
-            ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
-
-            w.flush();
-            w.close();
+            respondJSON(response, new HistoryEntryResponse(historyEntry));
         } else {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            respond(response, "{ \"code\" : \"pending\" }");
+            respondCodePending(response);
         }
+    }
+
+    static protected void respondStatusOk(HttpServletResponse response) throws IOException {
+        respondStatusOk(response, null);
+    }
+
+    static protected void respondStatusOk(HttpServletResponse response, String message) throws IOException {
+        respondStatus(response, "ok", message);
+    }
+
+    // TODO: This seems like unnecessary redundancy, but can be reviewed along with the rest of the API responses
+    static protected void respondOkDone(HttpServletResponse response) throws IOException {
+        respondStatusOk(response, "done");
+    }
+
+    static protected void respondCodePending(HttpServletResponse response) throws IOException {
+        respondJSON(response, Map.of("code", "pending"));
     }
 
     static protected void respond(HttpServletResponse response, String content)
             throws IOException, ServletException {
-
-        response.setCharacterEncoding("UTF-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        Writer w = response.getWriter();
-        if (w != null) {
-            w.write(content);
-            w.flush();
-            w.close();
-        } else {
-            throw new ServletException("response returned a null writer");
-        }
+        HttpUtilities.respond(response, content);
     }
 
+    /**
+     * @deprecated for 3.8 renamed to {@link #respondStatus(HttpServletResponse, String, String)} to disambiguate the
+     *             from the standard respond which sets `code` instead of `status`
+     */
+    @Deprecated
     static protected void respond(HttpServletResponse response, String status, String message)
             throws IOException {
-        response.setCharacterEncoding("UTF-8");
-        Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-        writer.writeStartObject();
-        writer.writeStringField("status", status);
-        writer.writeStringField("message", message);
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
-        w.flush();
-        w.close();
+        respondStatus(response, status, message);
+    }
+
+    static protected void respondStatus(HttpServletResponse response, String status, String message)
+            throws IOException {
+        // NOTE: This method sets "status", not "code" in the reply
+        HttpUtilities.respond(response, status, message);
+    }
+
+    static protected void respondStatusError(HttpServletResponse response, String message)
+            throws IOException {
+        // NOTE: This method sets "status", not "code" in the reply
+        respondStatus(response, "error", message);
     }
 
     public static void respondJSON(HttpServletResponse response, Object o)
@@ -326,25 +330,41 @@ public abstract class Command {
         respondJSON(response, o, new Properties());
     }
 
+    // TODO: options parameter is ignored here, but the only usage is an empty Properties object
+    @Deprecated
     static protected void respondJSON(
             HttpServletResponse response, Object o, Properties options)
             throws IOException {
 
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
-        response.setHeader("Cache-Control", "no-cache");
-
-        Writer w = response.getWriter();
-        ParsingUtilities.defaultWriter.writeValue(w, o);
-
-        w.flush();
-        w.close();
+        // TODO: Inline the HttpUtilities code here when deprecation period expires
+        HttpUtilities.respondJSON(response, o, options);
     }
 
     static protected void respondCSRFError(HttpServletResponse response) throws IOException {
+        respondCodeError(response, "Missing or invalid csrf_token parameter");
+    }
+
+    static protected void respondCodeError(HttpServletResponse response, String message) throws IOException {
+        respondCodeError(response, message, HttpServletResponse.SC_BAD_REQUEST);
+    }
+
+    static protected void respondCodeError(HttpServletResponse response, String message, int statusCode) throws IOException {
+        respondCodeError(response, message, statusCode, null);
+    }
+
+    static protected void respondCodeError(HttpServletResponse response, String message, int statusCode, String stackTrace)
+            throws IOException {
+        // TODO: We always return OK for now as has been the historical practice, but would like to return meaningful
+        // HTTP status codes in the future.
+//        response.setStatus(statusCode);
         Map<String, String> responseJSON = new HashMap<>();
         responseJSON.put("code", "error");
-        responseJSON.put("message", "Missing or invalid csrf_token parameter");
+        if (message != null) {
+            responseJSON.put("message", message);
+        }
+        if (stackTrace != null) {
+            responseJSON.put("stack", stackTrace);
+        }
         respondJSON(response, responseJSON);
     }
 
@@ -358,26 +378,23 @@ public abstract class Command {
             throw new ServletException("Response object can't be null");
         }
 
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
+        try (StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw)) {
+            e.printStackTrace(pw);
+            pw.flush();
+            sw.flush();
+            // FIXME: status is currently ignored, but switch this when supported
+//            respondCodeError(response, e.toString(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR, sw.toString());
+            respondCodeError(response, e.toString(), HttpServletResponse.SC_OK, sw.toString());
+        }
+    }
 
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        pw.flush();
-        sw.flush();
-
-        Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-        writer.writeStartObject();
-        writer.writeStringField("code", "error");
-        writer.writeStringField("message", e.toString());
-        writer.writeStringField("stack", sw.toString());
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
-        w.flush();
-        w.close();
+    /**
+     * Used by @link DefaultImportingController} and GData importer to report non-fatal exceptions
+     */
+    static protected void respondStatusErrors(HttpServletResponse response, List<Exception> exceptions)
+            throws IOException, ServletException {
+        respondJSON(response, Map.of("status", "error", "errors", exceptions));
     }
 
     protected void respondWithErrorPage(
@@ -385,27 +402,8 @@ public abstract class Command {
             HttpServletResponse response,
             String message,
             Throwable e) {
-        VelocityContext context = new VelocityContext();
-
-        context.put("message", message);
-
-        if (e != null) {
-            StringWriter writer = new StringWriter();
-
-            e.printStackTrace(new PrintWriter(writer));
-
-            context.put("stack", writer.toString());
-        } else {
-            context.put("stack", "");
-        }
-
-        try {
-            servlet.getModule("core").sendTextFromTemplate(
-                    request, response, context, "error.vt", "UTF-8", "text/html", true);
-
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
+        // TODO: inline implementation from {@link HttpUtilities#respondWithErrorPage} when deprecation period expires
+        HttpUtilities.respondWithErrorPage(servlet, request, response, message, e);
     }
 
     static protected void redirect(HttpServletResponse response, String url) throws IOException {

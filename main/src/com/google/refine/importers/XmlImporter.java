@@ -86,9 +86,8 @@ public class XmlImporter extends TreeImportingParserBase {
             if (fileRecords.size() > 0) {
                 ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
-                InputStream is = new FileInputStream(file);
 
-                try {
+                try (InputStream is = new FileInputStream(file)) {
                     XMLStreamReader parser = createXMLStreamReader(is);
                     PreviewParsingState state = new PreviewParsingState();
 
@@ -106,9 +105,8 @@ public class XmlImporter extends TreeImportingParserBase {
                         }
                     }
                 } catch (XMLStreamException e) {
-                    logger.warn("Error generating parser UI initialization data for XML file", e);
-                } finally {
-                    is.close();
+                    JSONUtilities.safePut(options, "error", e.toString());
+                    logger.error("Error generating parser UI initialization data for XML file", e);
                 }
             }
         } catch (IOException e) {
@@ -118,7 +116,7 @@ public class XmlImporter extends TreeImportingParserBase {
         return options;
     }
 
-    final static private ObjectNode descendElement(XMLStreamReader parser, PreviewParsingState state) {
+    final static private ObjectNode descendElement(XMLStreamReader parser, PreviewParsingState state) throws XMLStreamException {
         ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         {
             String name = parser.getLocalName();
@@ -163,29 +161,25 @@ public class XmlImporter extends TreeImportingParserBase {
         }
 
         ArrayNode children = ParsingUtilities.mapper.createArrayNode();
-        try {
-            while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
-                int tokenType = parser.next();
-                state.tokenCount++;
-                if (tokenType == XMLStreamConstants.END_ELEMENT) {
-                    break;
-                } else if (tokenType == XMLStreamConstants.START_ELEMENT) {
-                    ObjectNode childElement = descendElement(parser, state);
-                    if (childElement != null) {
-                        children.add(childElement);
-                    }
-                } else if (tokenType == XMLStreamConstants.CHARACTERS ||
-                        tokenType == XMLStreamConstants.CDATA ||
-                        tokenType == XMLStreamConstants.SPACE) {
-                    ObjectNode childElement = ParsingUtilities.mapper.createObjectNode();
-                    JSONUtilities.safePut(childElement, "t", parser.getText());
+        while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
+            int tokenType = parser.next();
+            state.tokenCount++;
+            if (tokenType == XMLStreamConstants.END_ELEMENT) {
+                break;
+            } else if (tokenType == XMLStreamConstants.START_ELEMENT) {
+                ObjectNode childElement = descendElement(parser, state);
+                if (childElement != null) {
                     children.add(childElement);
-                } else {
-                    // ignore everything else
                 }
+            } else if (tokenType == XMLStreamConstants.CHARACTERS ||
+                    tokenType == XMLStreamConstants.CDATA ||
+                    tokenType == XMLStreamConstants.SPACE) {
+                ObjectNode childElement = ParsingUtilities.mapper.createObjectNode();
+                JSONUtilities.safePut(childElement, "t", parser.getText());
+                children.add(childElement);
+            } else {
+                // ignore everything else
             }
-        } catch (XMLStreamException e) {
-            logger.error("Error generating parser UI initialization data for XML file", e);
         }
 
         if (children.size() > 0) {
