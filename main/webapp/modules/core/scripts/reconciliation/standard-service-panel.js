@@ -161,44 +161,46 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
       var typeID = typeof type == "string" ? type : type.id;
       var typeName = typeof type == "string" ? type : (type.name || type.id);
 
-      var tr = typeTable.insertRow(typeTable.rows.length);
-      var td0 = tr.insertCell(0);
-      var td1 = tr.insertCell(1);
-
-      td0.width = "1%";
-
-      // Create a label element
+      // Create the label element first
       var label = $('<label></label>');
 
+      // Create a table within the label for the row
+      var table = $('<table></table>').appendTo(label);
+      var tr = table[0].insertRow(0); // Insert row within the label's table
+
+      var td0 = tr.insertCell(0);
+      td0.width = "1%"; // Adjust width as needed
+
+      var td1 = tr.insertCell(1);
+
+      // Create the radio button and append it to the first cell
       var radio = $('<input type="radio" name="type-choice">')
         .val(typeID)
         .attr("typeName", typeName)
-        .appendTo(label) // Append radio button to the label
+        .appendTo(td0)
         .on('click', function () {
           self._rewirePropertySuggests(this.value);
         });
 
-      // Append the type name to the label
-      label.append(typeName);
-
-      if (check) {
-        radio.prop('checked', true);
-      }
-
-      // Append the label to the second cell
-      $(td1).append(label);
+      // Append the type name to the second cell
+      $(td1).append(typeName);
 
       // Add the type ID if it's different from the type name
       if (typeName !== typeID) {
         $(td1).append('<br/><span class="type-id">' + typeID + '</span>');
       }
+
+      $(typeTable).append(label); // Append the entire label (containing the row) to the main table
+
+      if (check) {
+        radio.prop('checked', true);
+      }
     }
 
     for (var i = 0; i < this._types.length; i++) {
       createTypeChoice(this._types[i], i === 0);
-    }}
-  else
-  {
+    }
+  } else {
     $('<div>')
       .addClass("recon-dialog-standard-service-panel-message")
       .text($.i18n('core-recon/warning-type-sugg'))
