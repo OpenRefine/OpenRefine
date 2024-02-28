@@ -173,6 +173,7 @@ class RefineServer extends Server {
     private ThreadPoolExecutor threadPool;
 
     public void init(String iface, int port, String host) throws Exception {
+        logger.info("Using Java version: " + System.getProperty("java.runtime.version"));
         logger.info("Starting Server bound to '" + iface + ":" + port + "'");
 
         String memory = Configurations.get("refine.memory");
