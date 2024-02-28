@@ -27,6 +27,8 @@
 
 package com.google.refine.model;
 
+import java.io.Serializable;
+
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
@@ -36,9 +38,12 @@ public class RecordModelTests extends RefineTest {
 
     @Test
     public void serializeRecordModel() {
-        Project proj = createCSVProject("key,val\n"
-                + "34,first\n"
-                + ",second");
+        Project proj = createProject(
+                new String[] { "key", "val" },
+                new Serializable[][] {
+                        { "34", "first" },
+                        { null, "second" }
+                });
         TestUtils.isSerializedTo(proj.recordModel, "{\"hasRecords\":true}");
     }
 }

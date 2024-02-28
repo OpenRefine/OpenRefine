@@ -8,6 +8,7 @@ jobs:
   # Best used in combination with actions/stale to assign a Stale label
   
   unassign-good-first-issues-after-90-days-of-inactivity:
+    if: github.repository == 'OpenRefine/OpenRefine'
     name: Unassign issues labeled "good first issue" after 45 days of inactivity.
     runs-on: ubuntu-latest
     steps:

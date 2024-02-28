@@ -27,6 +27,8 @@
 
 package com.google.refine.model;
 
+import java.io.Serializable;
+
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
@@ -36,8 +38,11 @@ public class ColumnModelTests extends RefineTest {
 
     @Test
     public void serializeColumnModel() {
-        Project project = createCSVProject("a,b\n" +
-                "e,e");
+        Project project = createProject(
+                new String[] { "a", "b" },
+                new Serializable[][] {
+                        { "e", "e" }
+                });
         String json = "{\n" +
                 "       \"columnGroups\" : [ ],\n" +
                 "       \"columns\" : [ {\n" +

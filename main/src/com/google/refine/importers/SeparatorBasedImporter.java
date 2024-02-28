@@ -51,12 +51,15 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.CharMatcher;
+import com.univocity.parsers.common.AbstractParser;
 import com.univocity.parsers.common.TextParsingException;
 import com.univocity.parsers.common.record.Record;
 import com.univocity.parsers.csv.CsvFormat;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import com.univocity.parsers.csv.UnescapedQuoteHandling;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.google.refine.ProjectMetadata;
@@ -85,7 +88,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", !nonNullSeparator.equals("\\t"));
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(DEFAULT_QUOTE_CHAR));
-        JSONUtilities.safePut(options, "trimStrings", true);
+        JSONUtilities.safePut(options, "trimStrings", true); // FIXME: ignored?
 
         return options;
     }
@@ -107,6 +110,9 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         sep = StringEscapeUtils.unescapeJava(sep);
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
         boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
+
+        // TODO: Perhaps ask user to declare explicitly if they want TSV or weird CSV with \t separator hybrid?
+        boolean tsv = "\t".equals(sep) && !processQuotes && !strictQuotes;
 
         List<Object> retrievedColumnNames = null;
         if (options.has("columnNames")) {
@@ -136,21 +142,28 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             quote = CharMatcher.whitespace().trimFrom(quoteCharacter).charAt(0);
         }
 
-        CsvParserSettings settings = new CsvParserSettings();
-        CsvFormat format = settings.getFormat();
-        format.setDelimiter(sep);
-        format.setQuote(quote);
-        format.setLineSeparator("\n");
-        settings.setIgnoreLeadingWhitespaces(false);
-        settings.setIgnoreTrailingWhitespaces(false);
-        if (strictQuotes) {
-            settings.setUnescapedQuoteHandling(UnescapedQuoteHandling.RAISE_ERROR);
+        AbstractParser parser;
+        if (tsv) {
+            TsvParserSettings settings = new TsvParserSettings();
+            settings.setMaxCharsPerColumn(256 * 1024); // TODO: Perhaps use a lower default and make user configurable?
+            parser = new TsvParser(settings);
+        } else {
+            CsvParserSettings settings = new CsvParserSettings();
+            CsvFormat format = settings.getFormat();
+            format.setDelimiter(sep);
+            format.setQuote(quote);
+            format.setLineSeparator("\n");
+            settings.setIgnoreLeadingWhitespaces(false);
+            settings.setIgnoreTrailingWhitespaces(false);
+            if (strictQuotes) {
+                settings.setUnescapedQuoteHandling(UnescapedQuoteHandling.RAISE_ERROR);
+            }
+            settings.setKeepQuotes(!processQuotes);
+            settings.setMaxCharsPerColumn(256 * 1024); // TODO: Perhaps use a lower default and make user configurable?
+            parser = new CsvParser(settings);
         }
-        settings.setKeepQuotes(!processQuotes);
-        settings.setMaxCharsPerColumn(256 * 1024); // TODO: Perhaps use a lower default and make user configurable?
-
         try (final LineNumberReader lnReader = new LineNumberReader(reader);) {
-            CsvParser parser = new CsvParser(settings);
+
             parser.beginParsing(lnReader);
 
             TableDataReader dataReader = new TableDataReader() {

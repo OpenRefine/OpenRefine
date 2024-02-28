@@ -131,6 +131,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         if (_httpHeadersJson != null) {
             for (HttpHeader header : _httpHeadersJson) {
                 if (!isNullOrEmpty(header.name) && !isNullOrEmpty(header.value)) {
+                    // TODO: Should we be checking headers against a whitelist here?
                     headers.add(new BasicHeader(header.name, header.value));
                 }
             }

@@ -48,6 +48,7 @@ echo     extensions_test         Run the extensions tests.
 echo     run                     Run OpenRefine.
 echo     server_test             Run the server tests.
 echo     test                    Run all the tests.
+echo     lint                    Reformat the source code according to OpenRefine's conventions.
 goto :eof
 
 
@@ -170,7 +171,6 @@ set REFINE_LIB_DIR=server\target\lib
 :gotLibDir
 
 if not "%REFINE_VERBOSITY%" == "" goto gotVerbosity
-set REFINE_VERBOSITY=info
 :gotVerbosity
 set OPTS=%OPTS% -Drefine.verbosity=%REFINE_VERBOSITY%
 
@@ -190,6 +190,7 @@ if ""%ACTION%"" == ""build"" goto doMvn
 if ""%ACTION%"" == ""server_test"" goto doMvn
 if ""%ACTION%"" == ""extensions_test"" goto doMvn
 if ""%ACTION%"" == ""test"" goto doMvn
+if ""%ACTION%"" == ""lint"" goto doMvn
 if ""%ACTION%"" == ""clean"" goto doMvn
 if ""%ACTION%"" == ""run"" goto doRun
 if ""%ACTION%"" == """" goto doRun
@@ -236,8 +237,8 @@ if %JAVA_RELEASE% LSS 11 (
     echo OpenRefine requires Java version 11 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version.
     exit /B 1
 )
-if %JAVA_RELEASE% GTR 17 (
-    echo WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 17.
+if %JAVA_RELEASE% GTR 21 (
+    echo WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 21.
 )
 
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
@@ -270,6 +271,12 @@ set MVN_ACTION=compile test-compile dependency:build-classpath
 if ""%ACTION%"" == ""test"" set MVN_ACTION=test dependency:build-classpath
 if ""%ACTION%"" == ""server_test"" set MVN_ACTION=test -f main
 if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=test -f extensions
+if ""%ACTION%"" == ""lint"" (
+    set MVN_ACTION=formatter:format impsort:sort
+    rem Skip the call to process-resources as it's not needed for this action
+    goto :mvnCall
+)
 call "%MVN%" process-resources
+:mvnCall
 call "%MVN%" %MVN_ACTION%
 goto :eof

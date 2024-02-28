@@ -43,18 +43,45 @@ class ReconCellRenderer {
         .on('click',function(evt) {
           self.doRematch(rowIndex, cellIndex, cell, cellUI);
         });
-      }else if(r.j != "matched" && r.e!=null)
+      } else if (r.j != "matched" && r.e!=null)
         { var divContent = document.createElement('div');
           var cellcontent = document.createElement('span');
+
           cellcontent.textContent = cell.v;
           var lineBreak = document.createElement('br');
           cellcontent.appendChild(lineBreak);
           divContent.appendChild(cellcontent);
+          
           var errorSpan = document.createElement('span');
           errorSpan.className = 'data-table-error';
           errorSpan.textContent = r.e;
           divContent.appendChild(errorSpan);
           $('<span>').text(divContent).appendTo(divContentRecon);
+
+          var addSuggest = false;
+          if ((service) && (service.suggest) && (service.suggest.entity)) {
+            suggestOptions = service.suggest.entity;
+            if ('view' in service && 'url' in service.view && !('view_url' in suggestOptions)) {
+              suggestOptions.view_url = service.view.url;
+            }
+            // CORS / JSONP support
+            if (service.ui && service.ui.access) {
+              suggestOptions.access = service.ui.access;
+            }
+            addSuggest = true;
+          }
+
+          var extraChoices = $('<div>').addClass("data-table-error-extra").appendTo(divContent);
+
+          if (addSuggest) {
+            $('<a href="javascript:{}"></a>')
+            .on('click',function(evt) {
+              self.searchForMatch(suggestOptions, rowIndex, cellIndex, cell, cellUI);
+              return false;
+            })
+            .text($.i18n('core-views/search-match'))
+            .appendTo(extraChoices);
+          }
         }
 
       else {
@@ -63,8 +90,13 @@ class ReconCellRenderer {
           var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContentRecon);
           if ("c" in r && r.c.length > 0) {
             var candidates = r.c;
+            var visibleCandidates = 3;
             var renderCandidate = function(candidate, index) {
               var li = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
+              
+              if (index >= visibleCandidates) {
+                li.hide();
+              }
               var liSpan = $('<span></span>').appendTo(li);
 
               $('<a href="javascript:{}">&nbsp;</a>')
@@ -101,7 +133,29 @@ class ReconCellRenderer {
               }
               $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(liSpan);
             };
+            var visibilityChoices = $('<div>').addClass("data-table-recon-visibility").appendTo(divContentRecon);
+            if (candidates.length > visibleCandidates) {
+              var isExpanded = false; // Variable to track visibility state
+              var seeMoreLink = $('<a href="javascript:{}"></a>')
+              .on('click', function(evt) {
+                var link = $(this);
+                isExpanded = !isExpanded; // Toggle visibility state
+                if (isExpanded) {
+                  ul.find('.data-table-recon-candidate').show(); // Show all candidates
+                  seeMoreLink.text($.i18n('core-views/see-less')); // Change link text to "See Less"
 
+                } 
+                else {
+                  ul.find('.data-table-recon-candidate:not(:lt(' + visibleCandidates + '))').hide();
+                  ul.find('.data-table-recon-candidate:last').show();
+                  seeMoreLink.text($.i18n('core-views/see-more')); // Change link text to "See More"
+                }
+                return false;  
+              })
+              .text($.i18n('core-views/see-more'))
+              .appendTo(visibilityChoices);
+              seeMoreLink.after(" | ");
+          }
             for (var i = 0; i < candidates.length; i++) {
               renderCandidate(candidates[i], i);
             }
@@ -138,8 +192,7 @@ class ReconCellRenderer {
             }
             addSuggest = true;
           }
-
-          var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(divContentRecon);
+          var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(visibilityChoices);
           if (addSuggest) {
             $('<a href="javascript:{}"></a>')
             .on('click',function(evt) {
@@ -360,7 +413,7 @@ class ReconCellRenderer {
       command,
       params,
       bodyParams,
-      { columnStatsChanged: columnStatsChanged },
+      { cellsChanged: true, columnStatsChanged: columnStatsChanged },
       {
         onDone: function(o) {
           if (o.cell.r) {

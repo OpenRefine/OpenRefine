@@ -66,7 +66,6 @@ public class FileProjectManagerTests {
         protected FileProjectManagerStub(File dir) {
             super(dir);
             _projectsMetadata.put(5555L, mock(ProjectMetadata.class));
-
         }
     }
 
@@ -115,6 +114,7 @@ public class FileProjectManagerTests {
     public void deleteProjectAndSaveWorkspace() throws IOException {
         FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
         manager.saveWorkspace();
+        // TODO: Test tag updating on project deletion
         manager.deleteProject(5555);
         manager.saveWorkspace();
 

@@ -220,6 +220,9 @@ public class DataExtensionChange implements Change {
                         _identifierSpace,
                         _schemaSpace,
                         columnType));
+                if (project.columnModel.getColumnByName(_baseColumnName) != null) {
+                    column.setSourceReconConfig(project.columnModel.getColumnByName(_baseColumnName).getReconConfig());
+                }
                 ReconStats reconStats = ReconStats.create(project, cellIndex);
                 if (reconStats.matchedTopics > 0) {
                     column.setReconStats(reconStats);

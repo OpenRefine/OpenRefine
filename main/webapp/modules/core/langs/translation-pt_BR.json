@@ -763,7 +763,6 @@
     "core-views/best-cand-types": "$1: tipos de melhor candidato",
     "core-views/judgment": "$1: julgamento",
     "core-views/recon-stats": "$1% combinaram, $2% novos, $3% para ser reconciliados",
-    "core-recon/access-service": "Acessar API de serviço",
     "core-project/percent-complete": "$1% concluído",
     "core-dialogs/focusing-on-column": " (focando em $1)",
     "core-dialogs/cluster-rows": "($1 linhas)",

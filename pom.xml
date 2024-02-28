@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>openrefine</artifactId>
   <packaging>pom</packaging>
-  <version>3.8-SNAPSHOT</version>
+  <version>3.9-SNAPSHOT</version>
 
   <name>OpenRefine</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
@@ -72,58 +72,58 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- dependency versions -->
-    <jackson.version>2.13.4</jackson.version>
+    <jackson.version>2.16.1</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
-    <butterfly.version>1.2.4</butterfly.version>
-    <slf4j.version>2.0.9</slf4j.version>
-    <log4j.version>2.22.0</log4j.version>
+    <butterfly.version>1.2.5</butterfly.version>
+    <slf4j.version>2.0.12</slf4j.version>
+    <log4j.version>2.23.0</log4j.version>
     <jetty.version>10.0.16</jetty.version>
-    <okhttp.version>4.10.0</okhttp.version>
+    <okhttp.version>4.12.0</okhttp.version>
     <jena.version>4.10.0</jena.version>
-    <poi.version>5.2.4</poi.version>
+    <poi.version>5.2.5</poi.version>
     <commons-lang3.version>3.14.0</commons-lang3.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-text.version>1.11.0</commons-text.version>
-    <commons-validator.version>1.7</commons-validator.version>
+    <commons-validator.version>1.8.0</commons-validator.version>
     <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
-    <commons-codec.version>1.16.0</commons-codec.version>
-    <commons-compress.version>1.25.0</commons-compress.version>
-    <velocity.version>1.5</velocity.version>
+    <commons-codec.version>1.16.1</commons-codec.version>
+    <commons-compress.version>1.26.0</commons-compress.version>
+    <velocity.version>2.3</velocity.version>
     <marc4j.version>2.9.5</marc4j.version>
-    <jsoup.version>1.15.3</jsoup.version>
-    <odfdom-java.version>0.9.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
+    <jsoup.version>1.17.2</jsoup.version>
+    <odfdom-java.version>0.12.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
     <clojure.version>1.11.1</clojure.version>
-    <httpclient5.version>5.2.1</httpclient5.version>
+    <httpclient5.version>5.3.1</httpclient5.version>
     <httpcore.version>4.4.16</httpcore.version>
     <univocity-csv.version>2.9.1</univocity-csv.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
-    <commons-io.version>2.15.0</commons-io.version>
-    <guava.version>31.1-jre</guava.version>
+    <commons-io.version>2.15.1</commons-io.version>
+    <guava.version>33.0.0-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <juniversalchardet.version>2.4.0</juniversalchardet.version>
-    <testng.version>7.7.1</testng.version>
+    <testng.version>7.9.0</testng.version>
     <httpmime.version>4.5.14</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>5.7.0</mockito.version>
+    <mockito.version>5.10.0</mockito.version>
 
     <!-- plugin versions -->
-    <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
+    <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-    <exec-maven-plugin.version>3.1.1</exec-maven-plugin.version>
+    <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
-    <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-    <surefire.version>3.2.2</surefire.version>
+    <surefire.version>3.2.5</surefire.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
-    <license-plugin.version>2.0.0</license-plugin.version>
+    <license-plugin.version>2.4.0</license-plugin.version>
     <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
   </properties>
 
@@ -277,7 +277,7 @@
         <!-- Plugin for creating Javadocs; goal for preparing docs for upload to github: javadoc:aggregate -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.6.2</version>
+        <version>3.6.3</version>
         <configuration>
             <bottom>
                     <![CDATA[Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. Generated from source code published under the BSD Clause-3 license. For more information, see the <a href="https://openrefine.org">OpenRefine website</a>]]></bottom>

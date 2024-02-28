@@ -40,7 +40,6 @@ import java.io.Reader;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang.NotImplementedException;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterUtilities;
@@ -52,6 +51,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.NotImplementedException;
 
 /**
  * Abstract class for importer parsers which handle tree-shaped data (currently XML &amp; JSON).

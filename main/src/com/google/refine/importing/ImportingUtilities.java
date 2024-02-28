@@ -62,6 +62,7 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
@@ -150,8 +151,8 @@ public class ImportingUtilities {
         } catch (Exception e) {
             JSONUtilities.safePut(config, "state", "error");
             JSONUtilities.safePut(config, "error", "Error uploading data");
-            JSONUtilities.safePut(config, "errorDetails", e.getLocalizedMessage());
-            throw new IOException(e.getMessage());
+            JSONUtilities.safePut(config, "errorDetails", String.valueOf(e.getCause()));
+            throw new IOException(e);
         }
 
         ArrayNode fileSelectionIndexes = ParsingUtilities.mapper.createArrayNode();
@@ -274,7 +275,7 @@ public class ImportingUtilities {
                     clipboardCount++;
 
                 } else if (name.equals("download")) {
-                    String urlString = Streams.asString(stream);
+                    String urlString = Streams.asString(stream).trim();
                     URL url = new URL(urlString);
 
                     if (!allowedProtocols.contains(url.getProtocol().toLowerCase())) {
@@ -667,37 +668,45 @@ public class ImportingUtilities {
         }
     }
 
-    static public InputStream tryOpenAsArchive(File file, String mimeType) {
+    static public InputStream tryOpenAsArchive(File file, String mimeType) throws IOException {
         return tryOpenAsArchive(file, mimeType, null);
     }
 
-    static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) {
+    static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) throws IOException {
         String fileName = file.getName();
-        try {
-            if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || isFileGZipped(file)) {
-                TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
-                if (archiveInputStream.getNextTarEntry() != null) {
-                    // It's a tar archive
-                    return archiveInputStream;
-                }
-                // It's not a tar archive, so it must be gzip compressed (or something else)
-                return null;
-            } else if (fileName.endsWith(".tar.bz2")) {
-                return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
-            } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
-                return new TarArchiveInputStream(new FileInputStream(file));
-            } else if (fileName.endsWith(".zip")
-                    || "application/x-zip-compressed".equals(contentType)
-                    || "application/zip".equals(contentType)
-                    || "application/x-compressed".equals(contentType)
-                    || "multipart/x-zip".equals(contentType)) {
-                return new ZipInputStream(new FileInputStream(file));
-            } else if (fileName.endsWith(".kmz")) {
-                return new ZipInputStream(new FileInputStream(file));
+        if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || isFileGZipped(file)) {
+            TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
+            // TODO: Check whether the below is consuming the first entry (effectively throwing it away)
+            if (archiveInputStream.getNextTarEntry() != null) {
+                // It's a tar archive
+                return archiveInputStream;
             }
-        } catch (IOException ignored) {
+            // It's not a tar archive, so it must be gzip compressed (or something else)
+            return null;
+        } else if (fileName.endsWith(".tar.bz2")) {
+            return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
+        } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
+            return new TarArchiveInputStream(new FileInputStream(file));
+        } else if (fileName.endsWith(".zip")
+                || "application/x-zip-compressed".equals(contentType)
+                || "application/zip".equals(contentType)
+                || "application/x-compressed".equals(contentType)
+                || "multipart/x-zip".equals(contentType)) {
+            return new ZipInputStream(new FileInputStream(checkValidZip(file)));
+        } else if (fileName.endsWith(".kmz")) {
+            return new ZipInputStream(new FileInputStream(checkValidZip(file)));
         }
         return null;
+    }
+
+    private static File checkValidZip(File file) throws IOException {
+        try (ZipFile zf = new ZipFile(file)) {
+            if (!zf.entries().hasMoreElements()) {
+                // Needs to have at least one entry to be useful
+                throw new IOException("Empty Zip file");
+            }
+        }
+        return file;
     }
 
     private static boolean isFileGZipped(File file) {

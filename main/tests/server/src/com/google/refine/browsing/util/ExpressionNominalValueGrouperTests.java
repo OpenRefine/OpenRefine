@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.browsing.util;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
@@ -175,14 +176,15 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
 
     @Test
     public void expressionNominalValueGrouperRecords() throws Exception {
-        String completeProjectJson = "col1,col2,col3\n"
-                + "record1,1,a\n"
-                + ",,a\n"
-                + ",,a\n"
-                + "record2,,a\n"
-                + ",1,a\n";
-
-        project = createCSVProject(completeProjectJson);
+        project = createProject(
+                new String[] { "col1", "col2", "col3" },
+                new Serializable[][] {
+                        { "record1", "1", "a" },
+                        { null, null, "a" },
+                        { null, null, "a" },
+                        { "record2", null, "a" },
+                        { null, "1", "a" }
+                });
         bindings = new Properties();
         bindings.put("project", project);
 

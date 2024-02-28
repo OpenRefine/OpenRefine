@@ -69,7 +69,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
   elmts.dropdownMenu.on('click',function() {
     self._createMenuForColumnHeader(this);
   });
-
+  
   if ("reconStats" in this._column) {
     var stats = this._column.reconStats;
     if (stats.nonBlanks > 0) {
@@ -92,6 +92,18 @@ DataTableColumnHeaderUI.prototype._render = function() {
       .addClass("column-header-recon-stats-matched")
       .width(Math.round(stats.matchedTopics * 100 / stats.nonBlanks) + "%")
       .appendTo(whole);
+    }
+  }
+  if("sourceReconConfig" in this._column) {
+    if(this._column.sourceReconConfig.service){
+     var service = ReconciliationManager.getServiceFromUrl(this._column.sourceReconConfig.service);
+     var serviceName;
+     if(service) {
+       serviceName=service.name;
+     }
+     if(serviceName){
+      elmts.nameContainer.attr("title",$.i18n('core-views/data-extended-from',service.name));
+      }
     }
   }
 };

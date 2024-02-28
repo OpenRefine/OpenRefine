@@ -39,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -130,19 +129,7 @@ public class FileProjectManager extends ProjectManager {
 
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
-                if (_projectsTags == null) {
-                    _projectsTags = new HashMap<String, Integer>();
-                }
-
-                if (metadata != null && metadata.getTags() != null) {
-                    for (String tag : metadata.getTags()) {
-                        if (_projectsTags.containsKey(tag)) {
-                            _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                        } else {
-                            _projectsTags.put(tag, 1);
-                        }
-                    }
-                }
+                addProjectTags(metadata.getTags());
                 return true;
             } else {
                 return false;
@@ -341,6 +328,16 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public void deleteProject(long projectID) {
         synchronized (this) {
+
+            // Remove this project's tags from the overall map
+            ProjectMetadata metadata = getProjectMetadata(projectID);
+            if (metadata != null) {
+                String[] tags = metadata.getTags();
+                if (tags != null) { // should only ever happen during tests with mocked ProjectMetadata
+                    removeProjectTags(tags);
+                }
+            }
+
             removeProject(projectID);
 
             File dir = getProjectDir(projectID);
@@ -470,14 +467,8 @@ public class FileProjectManager extends ProjectManager {
 
             _projectsMetadata.put(id, metadata);
 
-            if (metadata != null && metadata.getTags() != null) {
-                for (String tag : metadata.getTags()) {
-                    if (_projectsTags.containsKey(tag)) {
-                        _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                    } else {
-                        _projectsTags.put(tag, 1);
-                    }
-                }
+            if (metadata != null) {
+                addProjectTags(metadata.getTags());
             }
         }
     }

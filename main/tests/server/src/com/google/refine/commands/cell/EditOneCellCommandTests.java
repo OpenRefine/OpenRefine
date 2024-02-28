@@ -8,6 +8,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 
 import javax.servlet.ServletException;
@@ -34,10 +35,12 @@ public class EditOneCellCommandTests extends RefineTest {
 
     @BeforeMethod
     public void setUpProject() {
-        project = createCSVProject(
-                "first_column,second_column\n"
-                        + "a,b\n"
-                        + "c,d\n");
+        project = createProject(
+                new String[] { "first_column", "second_column" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "c", "d" }
+                });
         command = new EditOneCellCommand();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);

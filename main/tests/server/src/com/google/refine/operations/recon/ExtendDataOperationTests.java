@@ -68,6 +68,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
+import com.google.refine.model.recon.DataExtensionReconConfig;
 import com.google.refine.model.recon.ReconciledDataExtensionJob;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
@@ -154,6 +155,9 @@ public class ExtendDataOperationTests extends RefineTest {
     public void SetUp() throws IOException, ModelException {
         OperationRegistry.registerOperation(getCoreModule(), "extend-reconciled-data", ExtendDataOperation.class);
         project = createProjectWithColumns("DataExtensionTests", "country");
+        project.columnModel.getColumnByName("country").setReconConfig(new DataExtensionReconConfig(RECON_SERVICE,
+                RECON_IDENTIFIER_SPACE,
+                RECON_SCHEMA_SPACE, null));
 
         options = mock(Properties.class);
         engine = new Engine(project);
@@ -284,6 +288,9 @@ public class ExtendDataOperationTests extends RefineTest {
 
             // Make sure we did not create any recon stats for that column (no reconciled value)
             Assert.assertTrue(project.columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
+            // adding an assertion for sourceReconConfig
+            Assert.assertTrue(project.columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getSourceReconConfig() != null);
+
         }
     }
 
