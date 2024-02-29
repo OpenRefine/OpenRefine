@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -91,8 +91,8 @@ public class GDataImportingController implements ImportingController {
             throws ServletException, IOException {
 
         response.setCharacterEncoding("UTF-8");
-        Properties parameters = ParsingUtilities.parseUrlParameters(request);
-        String subCommand = parameters.getProperty("subCommand");
+        Map<String, String> parameters = ParsingUtilities.parseParameters(request);
+        String subCommand = parameters.get("subCommand");
         if ("list-documents".equals(subCommand)) {
             doListDocuments(request, response, parameters);
         } else if ("initialize-parser-ui".equals(subCommand)) {
@@ -106,7 +106,7 @@ public class GDataImportingController implements ImportingController {
         }
     }
 
-    private void doListDocuments(HttpServletRequest request, HttpServletResponse response, Properties parameters)
+    private void doListDocuments(HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
 
         String token = TokenCookie.getToken(request);
@@ -171,11 +171,11 @@ public class GDataImportingController implements ImportingController {
     }
 
     private void doInitializeParserUI(
-            HttpServletRequest request, HttpServletResponse response, Properties parameters)
+            HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
         String token = TokenCookie.getToken(request);
-        String type = parameters.getProperty("docType");
-        String urlString = parameters.getProperty("docUrl");
+        String type = parameters.get("docType");
+        String urlString = parameters.get("docUrl");
         ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
 
@@ -227,12 +227,12 @@ public class GDataImportingController implements ImportingController {
     }
 
     private void doParsePreview(
-            HttpServletRequest request, HttpServletResponse response, Properties parameters)
+            HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
 
         String token = TokenCookie.getToken(request);
 
-        long jobID = Long.parseLong(parameters.getProperty("jobID"));
+        long jobID = Long.parseLong(parameters.get("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             HttpUtilities.respond(response, "error", "No such import job");
@@ -285,12 +285,12 @@ public class GDataImportingController implements ImportingController {
         job.updating = false;
     }
 
-    private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
+    private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
 
         final String token = TokenCookie.getToken(request);
 
-        long jobID = Long.parseLong(parameters.getProperty("jobID"));
+        long jobID = Long.parseLong(parameters.get("jobID"));
         final ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             HttpUtilities.respond(response, "error", "No such import job");

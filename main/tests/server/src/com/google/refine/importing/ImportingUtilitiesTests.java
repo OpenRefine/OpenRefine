@@ -47,6 +47,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
@@ -221,7 +222,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
 
         ImportingJob job = ImportingManager.createJob();
-        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        Map<String, String> parameters = ParsingUtilities.parseParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
         ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         try {
@@ -272,7 +273,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
 
         ImportingJob job = ImportingManager.createJob();
-        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        Map<String, String> parameters = ParsingUtilities.parseParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
         ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         try {
@@ -537,7 +538,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
 
         ImportingJob job = ImportingManager.createJob();
-        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        Map<String, String> parameters = ParsingUtilities.parseParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
         Progress dummyProgress = new Progress() {
 

@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -83,9 +83,9 @@ public class DatabaseImportController implements ImportingController {
             logger.debug("doPost Query String::{}", request.getQueryString());
         }
         response.setCharacterEncoding("UTF-8");
-        Properties parameters = ParsingUtilities.parseUrlParameters(request);
+        Map<String, String> parameters = ParsingUtilities.parseParameters(request);
 
-        String subCommand = parameters.getProperty("subCommand");
+        String subCommand = parameters.get("subCommand");
 
         if (logger.isDebugEnabled()) {
             logger.info("doPost::subCommand::{}", subCommand);
@@ -131,7 +131,8 @@ public class DatabaseImportController implements ImportingController {
      * @throws ServletException
      * @throws IOException
      */
-    private void doInitializeParserUI(HttpServletRequest request, HttpServletResponse response, Properties parameters)
+    private void doInitializeParserUI(HttpServletRequest request, HttpServletResponse response,
+            Map<String, String> parameters)
             throws ServletException, IOException {
         if (logger.isDebugEnabled()) {
             logger.debug("::doInitializeParserUI::");
@@ -164,13 +165,13 @@ public class DatabaseImportController implements ImportingController {
      * @throws DatabaseServiceException
      */
     private void doParsePreview(
-            HttpServletRequest request, HttpServletResponse response, Properties parameters)
+            HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException, DatabaseServiceException {
         if (logger.isDebugEnabled()) {
-            logger.debug("JobID::{}", parameters.getProperty("jobID"));
+            logger.debug("JobID::{}", parameters.get("jobID"));
         }
 
-        long jobID = Long.parseLong(parameters.getProperty("jobID"));
+        long jobID = Long.parseLong(parameters.get("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             HttpUtilities.respond(response, "error", "No such import job");
@@ -289,13 +290,14 @@ public class DatabaseImportController implements ImportingController {
      * @param response
      * @param parameters
      */
-    private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
+    private void doCreateProject(HttpServletRequest request, HttpServletResponse response,
+            Map<String, String> parameters)
             throws ServletException, IOException {
         if (logger.isDebugEnabled()) {
-            logger.debug("DatabaseImportController::doCreateProject:::{}", parameters.getProperty("jobID"));
+            logger.debug("DatabaseImportController::doCreateProject:::{}", parameters.get("jobID"));
         }
 
-        long jobID = Long.parseLong(parameters.getProperty("jobID"));
+        long jobID = Long.parseLong(parameters.get("jobID"));
         final ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             HttpUtilities.respond(response, "error", "No such import job");
