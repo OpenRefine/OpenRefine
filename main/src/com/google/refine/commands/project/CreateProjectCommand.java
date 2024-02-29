@@ -36,7 +36,7 @@ package com.google.refine.commands.project;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -71,13 +71,13 @@ public class CreateProjectCommand extends Command {
 
         ProjectManager.singleton.setBusy(true);
         try {
-            Properties parameters = ParsingUtilities.parseUrlParameters(request);
+            Map<String, String> parameters = ParsingUtilities.parseParameters(request);
             ImportingJob job = ImportingManager.createJob();
             ObjectNode config = job.getOrCreateDefaultConfig();
             ImportingUtilities.loadDataAndPrepareJob(
                     request, response, parameters, job, config);
 
-            String format = parameters.getProperty("format");
+            String format = parameters.get("format");
 
             // If a format is specified, it might still be wrong, so we need
             // to check if we have a parser for it. If not, null it out.
@@ -91,10 +91,10 @@ public class CreateProjectCommand extends Command {
             // If we don't have a format specified, try to guess it.
             if (format == null || format.isEmpty()) {
                 // Use legacy parameters to guess the format.
-                if ("false".equals(parameters.getProperty("split-into-columns"))) {
+                if ("false".equals(parameters.get("split-into-columns"))) {
                     format = "text/line-based";
-                } else if (",".equals(parameters.getProperty("separator")) ||
-                        "\\t".equals(parameters.getProperty("separator"))) {
+                } else if (",".equals(parameters.get("separator")) ||
+                        "\\t".equals(parameters.get("separator"))) {
                     format = "text/line-based/*sv";
                 } else {
                     ArrayNode rankedFormats = JSONUtilities.getArray(config, "rankedFormats");
@@ -110,7 +110,7 @@ public class CreateProjectCommand extends Command {
             }
 
             ObjectNode optionObj = null;
-            String optionsString = parameters.getProperty("options");
+            String optionsString = parameters.get("options");
             if (optionsString != null && !optionsString.isEmpty()) {
                 optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(optionsString);
             } else {
@@ -120,7 +120,7 @@ public class CreateProjectCommand extends Command {
             }
             adjustLegacyOptions(format, parameters, optionObj);
 
-            String projectName = parameters.getProperty("project-name");
+            String projectName = parameters.get("project-name");
             if (projectName != null && !projectName.isEmpty()) {
                 JSONUtilities.safePut(optionObj, "projectName", projectName);
             }
@@ -137,10 +137,10 @@ public class CreateProjectCommand extends Command {
         }
     }
 
-    static private void adjustLegacyOptions(String format, Properties parameters, ObjectNode optionObj) {
-        if (",".equals(parameters.getProperty("separator"))) {
+    static private void adjustLegacyOptions(String format, Map<String, String> parameters, ObjectNode optionObj) {
+        if (",".equals(parameters.get("separator"))) {
             JSONUtilities.safePut(optionObj, "separator", ",");
-        } else if ("\\t".equals(parameters.getProperty("separator"))) {
+        } else if ("\\t".equals(parameters.get("separator"))) {
             JSONUtilities.safePut(optionObj, "separator", "\t");
         }
 
@@ -154,9 +154,9 @@ public class CreateProjectCommand extends Command {
     }
 
     static private void adjustLegacyIntegerOption(
-            String format, Properties parameters, ObjectNode optionObj, String legacyName, String newName) {
+            String format, Map<String, String> parameters, ObjectNode optionObj, String legacyName, String newName) {
 
-        String s = parameters.getProperty(legacyName);
+        String s = parameters.get(legacyName);
         if (s != null && !s.isEmpty()) {
             try {
                 JSONUtilities.safePut(optionObj, newName, Integer.parseInt(s));
@@ -168,13 +168,13 @@ public class CreateProjectCommand extends Command {
 
     static private void adjustLegacyBooleanOption(
             String format,
-            Properties parameters,
+            Map<String, String> parameters,
             ObjectNode optionObj,
             String legacyName,
             String newName,
             boolean invert) {
 
-        String s = parameters.getProperty(legacyName);
+        String s = parameters.get(legacyName);
         if (s != null && !s.isEmpty()) {
             JSONUtilities.safePut(optionObj, newName, Boolean.parseBoolean(s));
         }
