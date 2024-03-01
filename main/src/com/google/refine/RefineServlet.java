@@ -123,7 +123,7 @@ public class RefineServlet extends Butterfly {
         FULL_VERSION = VERSION + " [" + REVISION + "]";
         FULLNAME += FULL_VERSION;
 
-        logger.info("Starting " + FULLNAME + "...");
+        logger.info("Starting {} ...", FULLNAME);
 
         s_singleton = this;
 
@@ -134,8 +134,7 @@ public class RefineServlet extends Butterfly {
         if (data == null) {
             throw new ServletException("can't find servlet init config 'refine.data', I have to give up initializing");
         }
-        logger.error("initializing FileProjectManager with dir");
-        logger.error(data);
+        logger.info("Initializing FileProjectManager with data dir: {}", data);
         s_dataDir = new File(data);
         FileProjectManager.initialize(s_dataDir);
         ImportingManager.initialize(this);
