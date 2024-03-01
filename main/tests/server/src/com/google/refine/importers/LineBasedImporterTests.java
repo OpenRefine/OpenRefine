@@ -66,6 +66,59 @@ public class LineBasedImporterTests extends ImporterTest {
         super.tearDown();
     }
 
+    @Test
+    public void testLineBasedImporter() throws Exception {
+        String contents = ""
+                + "foo\n"
+                + "bar\n"
+                + "baz";
+
+        try {
+            prepareOptions("\\r?\\n", 1, 0, false);
+            parseOneFile(SUT, new StringReader(contents));
+        } catch (Exception e) {
+            fail("Exception during file parse", e);
+        }
+
+        Project expected = createProject(new String[] { numberedColumn(1) },
+                new Serializable[][] {
+                        { "foo" },
+                        { "bar" },
+                        { "baz" }
+                });
+
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testLinesPerRow() throws Exception {
+        String contents = ""
+                + "a\n"
+                + "b\n"
+                + "c\n"
+                + "d\n"
+                + "e\n"
+                + "f\n";
+
+        try {
+            prepareOptions("\\r?\\n", 2, 0, false);
+            parseOneFile(SUT, new StringReader(contents));
+        } catch (Exception e) {
+            fail("Exception during file parse", e);
+        }
+
+        Project expected = createProject(new String[] {
+                numberedColumn(1),
+                numberedColumn(2) },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "c", "d" },
+                        { "e", "f" }
+                });
+
+        assertProjectEquals(project, expected);
+    }
+
     @Test()
     public void readSimpleData_1Header_1Row() {
         String input = "col1\ndata1";
