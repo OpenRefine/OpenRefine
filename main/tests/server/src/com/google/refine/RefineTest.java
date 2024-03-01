@@ -76,8 +76,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.process.LongRunningProcess;
-import com.google.refine.process.LongRunningProcessStub;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.TestUtils;
@@ -441,13 +439,24 @@ public class RefineTest {
      * @returns the duration of the operation in milliseconds
      */
     protected long runOperation(AbstractOperation operation, Project project) throws Exception {
+        return runOperation(operation, project, -1);
+    }
+
+    /**
+     * Runs an operation on a project. If it's a long-running operation, its process is run in the main thread until
+     * completion.
+     * 
+     * @long timeout the maximum time (in milliseconds) this operation should take (only honored for long running
+     *       operations). Ignored if negative.
+     * @returns the duration of the operation in milliseconds
+     */
+    protected long runOperation(AbstractOperation operation, Project project, long timeout) throws Exception {
         long start = System.currentTimeMillis();
         Process process = operation.createProcess(project, new Properties());
         if (process.isImmediate()) {
             process.performImmediate();
         } else {
-            LongRunningProcessStub longRunning = new LongRunningProcessStub((LongRunningProcess) process);
-            longRunning.run();
+            runAndWait(project.getProcessManager(), process, (int) timeout);
         }
         long end = System.currentTimeMillis();
         return end - start;
@@ -462,7 +471,7 @@ public class RefineTest {
         Assert.assertTrue(process.isRunning());
         int time = 0;
         try {
-            while (process.isRunning() && time < timeout) {
+            while (process.isRunning() && (time < timeout || timeout < 0)) {
                 Thread.sleep(200);
                 time += 200;
             }

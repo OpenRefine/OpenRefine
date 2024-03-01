@@ -158,7 +158,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     null);
 
-            runOperation(op, project);
+            runOperation(op, project, 1500);
 
             // Inspect rows
             String ref_val = (String) project.rows.get(0).getCellValue(1).toString();
@@ -202,7 +202,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     null);
 
-            runOperation(op, project);
+            runOperation(op, project, 3000);
 
             int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
             // Inspect rows
@@ -243,7 +243,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     headers);
 
-            runOperation(op, project);
+            runOperation(op, project, 3000);
 
             RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
             Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);
@@ -286,7 +286,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     false,
                     null);
 
-            long elapsed = runOperation(op, project);
+            long elapsed = runOperation(op, project, 4500);
 
             // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
             assertTrue(elapsed > 4000, "Retry-After retries didn't take long enough - elapsed = " + elapsed);
@@ -331,7 +331,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     false,
                     null);
 
-            long elapsed = runOperation(op, project);
+            long elapsed = runOperation(op, project, 2500);
 
             // Make sure that our exponential back off is working
             // 6 requests (4 retries 200, 400, 800, 200 msec) + final response
