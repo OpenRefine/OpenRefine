@@ -86,6 +86,7 @@ import com.google.refine.util.TestUtils;
  */
 public class RefineTest {
 
+    public static final double EPSILON = 0.0000001;
     protected static Properties bindings = null;
 
     protected Logger logger;
@@ -485,7 +486,7 @@ public class RefineTest {
                     assertEquals(
                             (double) actualCell.value,
                             (double) expectedCell.value,
-                            0.0000001,
+                            EPSILON,
                             String.format("mismatching cells in row %d, column '%s'", i, actual.columnModel.columns.get(j)));
                 } else {
                     assertEquals(
