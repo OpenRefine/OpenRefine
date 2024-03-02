@@ -27,29 +27,42 @@
 
 package com.google.refine.model;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+
 import org.testng.annotations.Test;
 
 import com.google.refine.util.TestUtils;
 
 public class ReconCandidateTests {
 
+    String jsonInt = "{\"id\":\"Q49213\","
+            + "\"name\":\"University of Texas at Austin\","
+            + "\"score\":100,"
+            + "\"types\":[\"Q875538\",\"Q15936437\",\"Q20971972\",\"Q23002039\"]}";
+    String jsonDouble = "{\"id\":\"Q49213\","
+            + "\"name\":\"University of Texas at Austin\","
+            + "\"score\":0.5,"
+            + "\"types\":[\"Q875538\",\"Q15936437\",\"Q20971972\",\"Q23002039\"]}";
+
     @Test
     public void serializeReconCandidateInt() throws Exception {
-        String json = "{\"id\":\"Q49213\","
-                + "\"name\":\"University of Texas at Austin\","
-                + "\"score\":100,"
-                + "\"types\":[\"Q875538\",\"Q15936437\",\"Q20971972\",\"Q23002039\"]}";
-        ReconCandidate rc = ReconCandidate.loadStreaming(json);
-        TestUtils.isSerializedTo(rc, json);
+        ReconCandidate rc = ReconCandidate.loadStreaming(jsonInt);
+        TestUtils.isSerializedTo(rc, jsonInt);
     }
 
     @Test
     public void serializeReconCandidateDouble() throws Exception {
-        String json = "{\"id\":\"Q49213\","
-                + "\"name\":\"University of Texas at Austin\","
-                + "\"score\":0.5,"
-                + "\"types\":[\"Q875538\",\"Q15936437\",\"Q20971972\",\"Q23002039\"]}";
-        ReconCandidate rc = ReconCandidate.loadStreaming(json);
-        TestUtils.isSerializedTo(rc, json);
+        ReconCandidate rc = ReconCandidate.loadStreaming(jsonDouble);
+        TestUtils.isSerializedTo(rc, jsonDouble);
+    }
+
+    @Test
+    public void testEqualsAndHashCode() throws Exception {
+        ReconCandidate rc1 = ReconCandidate.loadStreaming(jsonInt);
+        assertEquals(rc1, ReconCandidate.loadStreaming(jsonInt));
+        assertNotEquals(rc1, ReconCandidate.loadStreaming(jsonDouble));
+        assertNotEquals(rc1, "string");
+        assertEquals(rc1.hashCode(), ReconCandidate.loadStreaming(jsonInt).hashCode());
     }
 }
