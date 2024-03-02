@@ -152,57 +152,65 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
    */
   if (this._types.length > 0) {
     var typeTableContainer = $('<div>')
-    .addClass("grid-layout layout-tightest")
-    .appendTo(this._elmts.typeContainer);
+      .addClass("grid-layout layout-tightest")
+      .appendTo(this._elmts.typeContainer);
 
     var typeTable = $('<table></table>').appendTo(typeTableContainer)[0];
 
-    var createTypeChoice = function(type, check) {
+    var createTypeChoice = function(type, index, check) {
       var typeID = typeof type == "string" ? type : type.id;
       var typeName = typeof type == "string" ? type : (type.name || type.id);
 
       var tr = typeTable.insertRow(typeTable.rows.length);
       var td0 = tr.insertCell(0);
       var td1 = tr.insertCell(1);
+      
+      //radioID and index
+      var radioId = "type-choice" + index;
+      var label = $("<label>")
+        .attr("for", radioId)
+        .appendTo(td1);
 
-      td0.width = "1%";
-      var radio = $('<input type="radio" name="type-choice">')
-      .val(typeID)
-      .attr("typeName", typeName)
-      .appendTo(td0)
-      .on('click',function() {
-        self._rewirePropertySuggests(this.value);
-      });
+      var radio = $("<input type='radio' name='type-choice'>")
+        .attr("id", radioId) //pass radioID as an attribute
+        .val(typeID)
+        .attr("typeName", typeName)
+        .appendTo(td0)
+        .on('click', function() {
+          self._rewirePropertySuggests(this.value);
+        });
 
       if (check) {
         radio.prop('checked', true);
       }
 
-      if (typeName == typeID) {
-        $(td1).html(typeName);
+      if (typeName === typeID) {
+        label.append(typeName);
       } else {
-        $(td1).html(
-            typeName + 
-            '<br/>' +
-            '<span class="type-id">' + typeID + '</span>');
+        label.append(
+          typeName +
+          '<br/>' +
+          '<span class="type-id">' + typeID + '</span>');
       }
     };
+    
     for (var i = 0; i < this._types.length; i++) {
-      createTypeChoice(this._types[i], i === 0);
+      createTypeChoice(this._types[i], i, i === 0); //radio ids generated
     }
   } else {
     $('<div>')
-    .addClass("recon-dialog-standard-service-panel-message")
-    .text($.i18n('core-recon/warning-type-sugg'))
-    .appendTo(this._elmts.typeContainer);
+      .addClass("recon-dialog-standard-service-panel-message")
+      .text($.i18n('core-recon/warning-type-sugg'))
+      .appendTo(this._elmts.typeContainer);
 
     this._panel
-    .find('input[name="type-choice"][value=""]')
-    .prop('checked', true);
+      .find('input[name="type-choice"][value=""]')
+      .prop('checked', true);
 
     this._elmts.typeInput.trigger('focus');
   }
 }
+
   ReconStandardServicePanel.prototype._populateProperties = function () {
   /*
    *  Populate properties
