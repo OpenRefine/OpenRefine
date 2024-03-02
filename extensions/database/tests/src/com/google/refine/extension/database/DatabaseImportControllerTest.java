@@ -1,18 +1,24 @@
 
 package com.google.refine.extension.database;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.jetbrains.annotations.NotNull;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -141,9 +147,13 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
-        when(request.getQueryString()).thenReturn(
-                "http://127.0.0.1:3333/command/core/importing-controller?controller=database/database-import-controller&subCommand=initialize-parser-ui");
+        Map<String, String[]> queryParams = getQueryParams("initialize-parser-ui", -1);
+        when(request.getQueryString()).thenReturn(getQueryString(queryParams));
         when(response.getWriter()).thenReturn(pw);
+
+        when(request.getParameterMap()).thenReturn(queryParams);
+        when(request.getParameter(anyString()))
+                .thenAnswer(i -> queryParams.get(i.getArgument(0)) == null ? null : queryParams.get(i.getArgument(0))[0]);
 
         SUT.doPost(request, response);
 
@@ -162,20 +172,14 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         PrintWriter pw = new PrintWriter(sw);
 
         long jobId = job.id;
-
-        when(request.getQueryString()).thenReturn(
-                "http://127.0.0.1:3333/command/core/importing-controller?controller=database%2Fdatabase-import-controller&jobID="
-                        + jobId + "&subCommand=parse-preview");
+        Map queryParams = getQueryParams("parse-preview", jobId);
+        when(request.getQueryString()).thenReturn(getQueryString(queryParams));
         when(response.getWriter()).thenReturn(pw);
 
-        when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
-        when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
-        when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
-        when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
-        when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
-        when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
-        when(request.getParameter("query")).thenReturn(query);
-        when(request.getParameter("options")).thenReturn(JSON_OPTION);
+        Map<String, String[]> allParams = getAllParams(queryParams);
+        when(request.getParameterMap()).thenReturn(allParams);
+        when(request.getParameter(anyString()))
+                .thenAnswer(i -> allParams.get(i.getArgument(0)) == null ? null : allParams.get(i.getArgument(0))[0]);
 
         SUT.doPost(request, response);
 
@@ -194,20 +198,14 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         PrintWriter pw = new PrintWriter(sw);
 
         long jobId = job.id;
-
-        when(request.getQueryString()).thenReturn(
-                "http://127.0.0.1:3333/command/core/importing-controller?controller=database%2Fdatabase-import-controller&jobID="
-                        + jobId + "&subCommand=create-project");
+        Map<String, String[]> queryParams = getQueryParams("create-project", jobId);
+        when(request.getQueryString()).thenReturn(getQueryString(queryParams));
         when(response.getWriter()).thenReturn(pw);
 
-        when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
-        when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
-        when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
-        when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
-        when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
-        when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
-        when(request.getParameter("query")).thenReturn(query);
-        when(request.getParameter("options")).thenReturn(JSON_OPTION);
+        Map<String, String[]> allParams = getAllParams(queryParams);
+        when(request.getParameterMap()).thenReturn(allParams);
+        when(request.getParameter(anyString()))
+                .thenAnswer(i -> allParams.get(i.getArgument(0)) == null ? null : allParams.get(i.getArgument(0))[0]);
 
         SUT.doPost(request, response);
 
@@ -217,6 +215,39 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         String status = json.get("status").asText();
         // System.out.println("json::" + json);
         Assert.assertEquals(status, "ok");
+    }
+
+    @NotNull
+    private Map<String, String[]> getAllParams(Map<String, String[]> queryParams) {
+        Map<String, String[]> allParams = new HashMap<>(queryParams);
+        allParams.putAll(Map.of(
+                "databaseType", new String[] { testDbConfig.getDatabaseType() },
+                "databaseServer", new String[] { testDbConfig.getDatabaseHost() },
+                "databasePort", new String[] { String.valueOf(testDbConfig.getDatabasePort()) },
+                "databaseUser", new String[] { testDbConfig.getDatabaseUser() },
+                "databasePassword", new String[] { testDbConfig.getDatabasePassword() },
+                "initialDatabase", new String[] { testDbConfig.getDatabaseName() },
+                "query", new String[] { query },
+                "options", new String[] { JSON_OPTION }));
+        return Collections.unmodifiableMap(allParams);
+    }
+
+    @NotNull
+    private Map<String, String[]> getQueryParams(String subCommand, long jobId) {
+        Map<String, String[]> queryParams = new HashMap<>();
+        queryParams.put("controller", new String[] { "database/database-import-controller" });
+        queryParams.put("subCommand", new String[] { subCommand });
+        if (jobId >= 0) {
+            queryParams.put("jobID", new String[] { String.valueOf(jobId) });
+        }
+        return Collections.unmodifiableMap(queryParams);
+    }
+
+    private String getQueryString(Map<String, String[]> params) {
+        return params.entrySet()
+                .stream()
+                .map(stringEntry -> stringEntry.getValue() + "=" + stringEntry.getValue())
+                .collect(Collectors.joining("&"));
     }
 
     @BeforeTest
