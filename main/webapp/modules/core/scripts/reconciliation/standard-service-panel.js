@@ -157,48 +157,45 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
 
     var typeTable = $('<table></table>').appendTo(typeTableContainer)[0];
 
-    var createTypeChoice = function (type, check) {
+    var createTypeChoice = function(type, index, check) {
       var typeID = typeof type == "string" ? type : type.id;
       var typeName = typeof type == "string" ? type : (type.name || type.id);
 
-      // Create the label element first
-      var label = $('<label></label>');
-
-      // Create a table within the label for the row
-      var table = $('<table></table>').appendTo(label);
-      var tr = table[0].insertRow(0); // Insert row within the label's table
-
+      var tr = typeTable.insertRow(typeTable.rows.length);
       var td0 = tr.insertCell(0);
-      td0.width = "1%"; // Adjust width as needed
-
       var td1 = tr.insertCell(1);
+      
+      //radioID and index
+      var radioId = "type-choice" + index;
+      var label = $("<label>")
+        .attr("for", radioId)
+        .appendTo(td1);
 
-      // Create the radio button and append it to the first cell
-      var radio = $('<input type="radio" name="type-choice">')
+      var radio = $("<input type='radio' name='type-choice'>")
+        .attr("id", radioId) //pass radioID as an attribute
         .val(typeID)
         .attr("typeName", typeName)
         .appendTo(td0)
-        .on('click', function () {
+        .on('click', function() {
           self._rewirePropertySuggests(this.value);
         });
-
-      // Append the type name to the second cell
-      $(td1).append(typeName);
-
-      // Add the type ID if it's different from the type name
-      if (typeName !== typeID) {
-        $(td1).append('<br/><span class="type-id">' + typeID + '</span>');
-      }
-
-      $(typeTable).append(label); // Append the entire label (containing the row) to the main table
 
       if (check) {
         radio.prop('checked', true);
       }
-    }
 
+      if (typeName === typeID) {
+        label.append(typeName);
+      } else {
+        label.append(
+          typeName +
+          '<br/>' +
+          '<span class="type-id">' + typeID + '</span>');
+      }
+    };
+    
     for (var i = 0; i < this._types.length; i++) {
-      createTypeChoice(this._types[i], i === 0);
+      createTypeChoice(this._types[i], i, i === 0); //radio ids generated
     }
   } else {
     $('<div>')
