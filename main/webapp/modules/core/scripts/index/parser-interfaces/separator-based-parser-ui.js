@@ -78,7 +78,7 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
 
   var parseIntDefault = function(s, def) {
     try {
-      var n = parseInt(s.split(".")[0].match(/\d+/g).join(""),10);
+      var n = parseInt(s);
       if (!isNaN(n)) {
         return n;
       }
