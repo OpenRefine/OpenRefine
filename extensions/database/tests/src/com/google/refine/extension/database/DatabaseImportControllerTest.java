@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
-import com.google.refine.extension.database.mysql.MySQLDatabaseService;
+import com.google.refine.extension.database.sqlite.SQLiteDatabaseService;
 import com.google.refine.extension.database.stub.RefineDbServletStub;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
@@ -34,7 +34,6 @@ import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
-@Test(groups = { "requiresMySQL" })
 public class DatabaseImportControllerTest extends DBExtensionTests {
 
     @Mock
@@ -220,27 +219,23 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     }
 
     @BeforeTest
-    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable" })
+    @Parameters({ "sqliteDbName", "sqliteTestTable" })
     public void beforeTest(
-            @Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName, @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost,
-            @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
-            @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable) {
+            @Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName, @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable) {
 
         MockitoAnnotations.initMocks(this);
 
+        // Much of the below is ignored, but required by validation
+        // in {@link DatabaseImportController#getQueryInfo}
         testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseHost(mySqlDbHost);
-        testDbConfig.setDatabaseName(mySqlDbName);
-        testDbConfig.setDatabasePassword(mySqlDbPassword);
-        testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
-        testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
-        testDbConfig.setDatabaseUser(mySqlDbUser);
-        testDbConfig.setUseSSL(false);
-        query = "SELECT count(*) FROM " + mySqlTestTable;
+        testDbConfig.setDatabaseHost(""); // This is ignored, but not allowed to be null
+        testDbConfig.setDatabaseName(sqliteDbName);
+        testDbConfig.setDatabasePassword(""); // This is ignored, but not allowed to be null
+        testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
+        testDbConfig.setDatabaseUser(""); // This is ignored, but not allowed to be null
+        query = "SELECT count(*) FROM " + sqliteTestTable;
 
-        // testTable = mySqlTestTable;
-
-        DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
+        DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
 
     }
 
