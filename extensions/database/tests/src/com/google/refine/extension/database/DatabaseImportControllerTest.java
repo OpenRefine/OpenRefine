@@ -219,22 +219,20 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     }
 
     @BeforeTest
-    @Parameters({ "sqliteDbName", "sqliteDbHost", "sqliteDbPort", "sqliteDbUser", "sqliteDbPassword", "sqliteTestTable" })
+    @Parameters({ "sqliteDbName", "sqliteTestTable" })
     public void beforeTest(
-            @Optional(DEFAULT_MYSQL_DB_NAME) String sqliteDbName, @Optional(DEFAULT_MYSQL_HOST) String sqliteDbHost,
-            @Optional(DEFAULT_MYSQL_PORT) String sqliteDbPort, @Optional(DEFAULT_MYSQL_USER) String sqliteDbUser,
-            @Optional(DEFAULT_MYSQL_PASSWORD) String sqliteDbPassword, @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable) {
+            @Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName, @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable) {
 
         MockitoAnnotations.initMocks(this);
 
+        // Much of the below is ignored, but required by validation
+        // in {@link DatabaseImportController#getQueryInfo}
         testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseHost(sqliteDbHost);
+        testDbConfig.setDatabaseHost(""); // This is ignored, but not allowed to be null
         testDbConfig.setDatabaseName(sqliteDbName);
-        testDbConfig.setDatabasePassword(sqliteDbPassword);
-        testDbConfig.setDatabasePort(0); // unused for SQLite
+        testDbConfig.setDatabasePassword(""); // This is ignored, but not allowed to be null
         testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
-        testDbConfig.setDatabaseUser(sqliteDbUser);
-        testDbConfig.setUseSSL(false);
+        testDbConfig.setDatabaseUser(""); // This is ignored, but not allowed to be null
         query = "SELECT count(*) FROM " + sqliteTestTable;
 
         DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
