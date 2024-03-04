@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.importing;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -95,8 +95,8 @@ public class ImportingControllerCommand extends Command {
          * will get read and we won't have a chance to parse the body ourselves. This is why we have to parse the URL
          * for parameters ourselves. Don't call request.getParameter() before calling internalImport().
          */
-        Properties options = ParsingUtilities.parseUrlParameters(request);
-        String name = options.getProperty("controller");
+        Map<String, String> options = ParsingUtilities.parseParameters(request);
+        String name = options.get("controller");
         if (name != null) {
             return ImportingManager.controllers.get(name);
         }

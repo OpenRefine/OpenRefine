@@ -46,8 +46,10 @@ import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,6 +105,22 @@ public class ParsingUtilities {
     public static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private static final ZoneId defaultZone = ZoneId.systemDefault();
 
+    /**
+     * Parses parameters from the given HttpServletRequest and returns them as a Map.
+     *
+     * @param request
+     *            HttpServletRequest containing parameters.
+     * @return Map containing parameter names and their first values.
+     */
+    public static Map<String, String> parseParameters(HttpServletRequest request) {
+        return request.getParameterMap().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue()[0]));
+    }
+
+    /**
+     * @deprecated Use {@link #parseParameters(HttpServletRequest request)} instead.
+     */
+    @Deprecated
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();
 
@@ -116,6 +134,10 @@ public class ParsingUtilities {
         return options;
     }
 
+    /**
+     * @deprecated Use {@link #parseParameters(HttpServletRequest request)} instead.
+     */
+    @Deprecated
     static public Properties parseParameters(Properties p, String str) {
         if (str != null) {
             String[] pairs = str.split("&");
@@ -129,6 +151,10 @@ public class ParsingUtilities {
         return p;
     }
 
+    /**
+     * @deprecated Use {@link #parseParameters(HttpServletRequest request)} instead.
+     */
+    @Deprecated
     static public Properties parseParameters(String str) {
         return (str == null) ? null : parseParameters(new Properties(), str);
     }
