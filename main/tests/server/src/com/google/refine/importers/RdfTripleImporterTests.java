@@ -69,9 +69,9 @@ public class RdfTripleImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canParseSingleLineTriple() throws UnsupportedEncodingException {
+    public void canParseSingleLineTriple() {
         String sampleRdf = "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.album> <http://rdf.mybase.com/ns/en.blood_on_the_tracks>.";
-        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
+        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes(StandardCharsets.UTF_8));
 
         parseOneFile(SUT, input);
 
