@@ -10,6 +10,7 @@
     "core-index/version": "Version",
     "core-index/new-version": "New Version",
     "core-index/refine-version": "Version $1",
+    "core-index/refine-extensions": "Extensions: $1",
     "core-index/download-now": "Download $1 now.",
     "core-index/change-value": "Change value of preference key",
     "core-index/delete-key": "Delete preference key",
