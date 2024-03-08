@@ -60,8 +60,9 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 import com.google.refine.util.StringUtils;
 
-public class Cell implements HasFields {
+public class Cell implements HasFields, Serializable {
 
+    private static final long serialVersionUID = 7456683757764146620L;
     @JsonIgnore
     final public Serializable value;
     @JsonIgnore

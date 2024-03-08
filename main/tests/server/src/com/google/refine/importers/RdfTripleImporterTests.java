@@ -35,8 +35,9 @@ package com.google.refine.importers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringReader;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.slf4j.LoggerFactory;
@@ -68,24 +69,19 @@ public class RdfTripleImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "base-url", "http://rdf.mybase.com");
     }
 
-    @Test(enabled = false)
+    @Test
     public void canParseSingleLineTriple() {
         String sampleRdf = "<http://rdf.mybase.com/ns/en.bob_dylan> <http://rdf.mybase.com/ns/music.artist.album> <http://rdf.mybase.com/ns/en.blood_on_the_tracks>.";
-        StringReader reader = new StringReader(sampleRdf);
+        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes(StandardCharsets.UTF_8));
 
-        try {
-            parseOneFile(SUT, reader);
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        parseOneFile(SUT, input);
 
-        assertColumnNamesMatch(project, new String[] { "subject", "http://rdf.mybase.com/ns/music.artist.album" });
-
-        Assert.assertEquals(project.columnModel.columns.size(), 2);
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.mybase.com/ns/en.bob_dylan");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.mybase.com/ns/en.blood_on_the_tracks");
+        Project expectedProject = createProject(
+                new String[] { "subject", "http://rdf.mybase.com/ns/music.artist.album" },
+                new Serializable[][] {
+                        { "http://rdf.mybase.com/ns/en.bob_dylan", "http://rdf.mybase.com/ns/en.blood_on_the_tracks" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -98,31 +94,17 @@ public class RdfTripleImporterTests extends ImporterTest {
         InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
         parseOneFile(SUT, input);
 
-        String[] columns = {
-                "subject",
-                "http://rdf.mybase.com/ns/music.artist.album",
-        };
-        assertColumnNamesMatch(project, columns);
+        Project expectedProject = createProject(
+                new String[] { "subject", "http://rdf.mybase.com/ns/music.artist.album" },
+                new Serializable[][] {
+                        { "http://rdf.mybase.com/ns/en.bob_dylan", "http://rdf.mybase.com/ns/en.bringing_it_all_back_home" },
+                        { null, "http://rdf.mybase.com/ns/en.under_the_red_sky" },
+                        { null, "http://rdf.mybase.com/ns/en.blood_on_the_tracks" },
+                });
+        assertProjectEquals(project, expectedProject);
 
-        // rows
-        Assert.assertEquals(project.rows.size(), 3);
-
-        // row0
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.mybase.com/ns/en.bob_dylan");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.mybase.com/ns/en.bringing_it_all_back_home");
-
-        // row1
-        Assert.assertEquals(project.rows.get(1).cells.size(), 2);
-        Assert.assertNull(project.rows.get(1).cells.get(0));
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.mybase.com/ns/en.under_the_red_sky");
         Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].rowIndex, 0);
         Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].cellIndex, 0);
-
-        // row2
-        Assert.assertEquals(project.rows.get(2).cells.size(), 2);
-        Assert.assertNull(project.rows.get(2).cells.get(0));
-        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "http://rdf.mybase.com/ns/en.blood_on_the_tracks");
         Assert.assertEquals(project.recordModel.getRowDependency(2).cellDependencies[1].rowIndex, 0);
         Assert.assertEquals(project.recordModel.getRowDependency(2).cellDependencies[1].cellIndex, 0);
     }
@@ -137,26 +119,14 @@ public class RdfTripleImporterTests extends ImporterTest {
         InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
         parseOneFile(SUT, input);
 
-        String[] columns = {
-                "subject",
-                "http://rdf.mybase.com/ns/music.artist.album",
-                "http://rdf.mybase.com/ns/music.artist.genre"
-        };
-        assertColumnNamesMatch(project, columns);
-
-        // rows
-        Assert.assertEquals(project.rows.size(), 2);
-
-        // row0
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.mybase.com/ns/en.bob_dylan");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.mybase.com/ns/en.bringing_it_all_back_home");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://rdf.mybase.com/ns/en.folk_rock");
-
-        // row1
-        Assert.assertEquals(project.rows.get(1).cells.size(), 2);
-        Assert.assertNull(project.rows.get(1).cells.get(0));
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.mybase.com/ns/en.blood_on_the_tracks");
+        Project expectedProject = createProject(
+                new String[] { "subject", "http://rdf.mybase.com/ns/music.artist.album", "http://rdf.mybase.com/ns/music.artist.genre" },
+                new Serializable[][] {
+                        { "http://rdf.mybase.com/ns/en.bob_dylan", "http://rdf.mybase.com/ns/en.bringing_it_all_back_home",
+                                "http://rdf.mybase.com/ns/en.folk_rock" },
+                        { null, "http://rdf.mybase.com/ns/en.blood_on_the_tracks", null },
+                });
+        assertProjectEquals(project, expectedProject);
         Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].rowIndex, 0);
         Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].cellIndex, 0);
     }
@@ -169,16 +139,12 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         parseOneFile(SUT, input);
 
-        String[] columns = {
-                "subject",
-                "http://rdf.mybase.com/ns/common.topic.alias",
-        };
-        assertColumnNamesMatch(project, columns);
-
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.mybase.com/ns/en.bob_dylan");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Robert Zimmerman@en");
+        Project expectedProject = createProject(
+                new String[] { "subject", "http://rdf.mybase.com/ns/common.topic.alias" },
+                new Serializable[][] {
+                        { "http://rdf.mybase.com/ns/en.bob_dylan", "Robert Zimmerman@en" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -236,20 +202,13 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         parseOneFile(SUT, input);
 
-        String[] columns = {
-                "subject",
-                "http://www.example.org/meeting_organization#attending",
-                "http://www.example.org/personal_details#hasEmail",
-                "http://www.example.org/personal_details#GivenName",
-        };
-        assertColumnNamesMatch(project, columns);
-
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://meetings.example.com/cal#m1");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
-        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "Fred");
+        Project expectedProject = createProject(
+                new String[] { "subject", "http://www.example.org/meeting_organization#attending",
+                        "http://www.example.org/personal_details#hasEmail", "http://www.example.org/personal_details#GivenName" },
+                new Serializable[][] {
+                        { "http://www.example.org/people#fred", "http://meetings.example.com/cal#m1", "mailto:fred@example.com", "Fred" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -266,20 +225,13 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
         parseOneFile(SUT, input);
 
-        String[] columns = {
-                "subject",
-                "http://www.example.org/meeting_organization#attending",
-                "http://www.example.org/personal_details#hasEmail",
-                "http://www.example.org/personal_details#GivenName",
-        };
-        assertColumnNamesMatch(project, columns);
-
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://meetings.example.com/cal#m1");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
-        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "Fred");
+        Project expectedProject = createProject(
+                new String[] { "subject", "http://www.example.org/meeting_organization#attending",
+                        "http://www.example.org/personal_details#hasEmail", "http://www.example.org/personal_details#GivenName" },
+                new Serializable[][] {
+                        { "http://www.example.org/people#fred", "http://meetings.example.com/cal#m1", "mailto:fred@example.com", "Fred" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -294,24 +246,13 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.NT);
         parseOneFile(SUT, input);
 
-        String[] columns = {
-                "subject",
-                "http://www.example.org/personal_details#GivenName",
-                "http://www.example.org/personal_details#hasEmail",
-                "http://www.example.org/meeting_organization#attending"
-        };
-        assertColumnNamesMatch(project, columns);
-
-        String[][] gridValues = {
-                { "http://www.example.org/people#fred", "Fred", "mailto:fred@example.com", "http://meetings.example.com/cal#m1" }
-        };
-
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
-        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "http://meetings.example.com/cal#m1");
+        Project expectedProject = createProject(
+                new String[] { "subject", "http://www.example.org/personal_details#GivenName",
+                        "http://www.example.org/personal_details#hasEmail", "http://www.example.org/meeting_organization#attending" },
+                new Serializable[][] {
+                        { "http://www.example.org/people#fred", "Fred", "mailto:fred@example.com", "http://meetings.example.com/cal#m1" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -389,19 +330,12 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.JSONLD);
         parseOneFile(SUT, input);
 
-        String[] columns = {
-                "subject",
-                "http://www.example.org/personal_details#hasEmail",
-                "http://www.example.org/personal_details#GivenName",
-                "http://www.example.org/meeting_organization#attending"
-        };
-        assertColumnNamesMatch(project, columns);
-
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "mailto:fred@example.com");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "Fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "http://meetings.example.com/cal#m1");
+        Project expectedProject = createProject(
+                new String[] { "subject", "http://www.example.org/personal_details#hasEmail",
+                        "http://www.example.org/personal_details#GivenName", "http://www.example.org/meeting_organization#attending" },
+                new Serializable[][] {
+                        { "http://www.example.org/people#fred", "mailto:fred@example.com", "Fred", "http://meetings.example.com/cal#m1" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 }
