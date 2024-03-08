@@ -34,7 +34,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -139,5 +141,34 @@ public class ReconCandidate implements HasFields {
                 name,
                 typesA,
                 score);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(types);
+        result = prime * result + Objects.hash(id, name, score);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ReconCandidate other = (ReconCandidate) obj;
+        return Objects.equals(id, other.id) && Objects.equals(name, other.name)
+                && Double.doubleToLongBits(score) == Double.doubleToLongBits(other.score)
+                && Arrays.equals(types, other.types);
+    }
+
+    @Override
+    public String toString() {
+        return "ReconCandidate [id=" + id + ", name=" + name + ", types=" + Arrays.toString(types) + ", score=" + score
+                + "]";
     }
 }

@@ -36,7 +36,6 @@ package com.google.refine.operations.cell;
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
@@ -99,11 +98,12 @@ public class JoinMultiValuedCellsTests extends RefineTest {
 
         runOperation(op, project);
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,two,three,four");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one,two,three,four" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -115,11 +115,12 @@ public class JoinMultiValuedCellsTests extends RefineTest {
 
         runOperation(op, project);
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,     ,two,     ,three,     ,four");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one,     ,two,     ,three,     ,four" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
 }

@@ -36,7 +36,6 @@ package com.google.refine.operations.cell;
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -106,14 +105,13 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
         runOperation(op, project);
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol),
-                "two;three four;fiveSix SevèËight;niné91011twelve thirteen 14Àifteen");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one" },
+                        { null, "two;three four;fiveSix SevèËight;niné91011twelve thirteen 14Àifteen" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -126,17 +124,20 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
         runOperation(op, project);
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "two");
-        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "three");
-        Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "four");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one" },
+                        { null, "two" },
+                        { null, "three" },
+                        { null, "four" },
+                        { null, "fiveSix" },
+                        { null, "SevèËight" },
+                        { null, "niné91011twelve" },
+                        { null, "thirteen" },
+                        { null, "14Àifteen" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -150,17 +151,15 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
         runOperation(op, project);
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "two;");
-        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "three ");
-        Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "four");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one:" },
+                        { null, "two;" },
+                        { null, "three " },
+                        { null, "four" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -173,17 +172,15 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
         runOperation(op, project);
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;five");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "Six ");
-        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "Sevè");
-        Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "Ëight;niné91011twelve thirteen 14Àifteen");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one:two;three four;five" },
+                        { null, "Six " },
+                        { null, "Sevè" },
+                        { null, "Ëight;niné91011twelve thirteen 14Àifteen" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -196,19 +193,16 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
         runOperation(op, project);
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveS");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "ix S");
-        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "evèË");
-        Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "ight;niné91011twelve thirteen 14À");
-        Assert.assertEquals(project.rows.get(4).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(4).getCellValue(valueCol), "ifteen");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one:two;three four;fiveS" },
+                        { null, "ix S" },
+                        { null, "evèË" },
+                        { null, "ight;niné91011twelve thirteen 14À" },
+                        { null, "ifteen" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -221,15 +215,14 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
         runOperation(op, project);
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevèËight;niné91011");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "twelve thirteen 14");
-        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "Àifteen");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one:two;three four;fiveSix SevèËight;niné91011" },
+                        { null, "twelve thirteen 14" },
+                        { null, "Àifteen" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -242,14 +235,13 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
         runOperation(op, project);
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevèËight;niné");
-        Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "91011twelve thirteen ");
-        Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "14Àifteen");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one:two;three four;fiveSix SevèËight;niné" },
+                        { null, "91011twelve thirteen " },
+                        { null, "14Àifteen" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 }

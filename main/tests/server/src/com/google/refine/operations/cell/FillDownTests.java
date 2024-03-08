@@ -31,7 +31,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -91,10 +90,15 @@ public class FillDownTests extends RefineTest {
 
         runOperation(op, project);
 
-        Assert.assertEquals("a", project.rows.get(0).cells.get(0).value);
-        Assert.assertEquals("a", project.rows.get(1).cells.get(0).value);
-        Assert.assertEquals("e", project.rows.get(2).cells.get(0).value);
-        Assert.assertEquals("e", project.rows.get(3).cells.get(0).value);
+        Project expectedProject = createProject(
+                new String[] { "key", "first", "second" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "a", "d", null },
+                        { "e", "f", null },
+                        { "e", null, "h" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     // For issue #742
@@ -107,10 +111,15 @@ public class FillDownTests extends RefineTest {
 
         runOperation(op, project);
 
-        Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
-        Assert.assertEquals("c", project.rows.get(1).cells.get(2).value);
-        Assert.assertNull(project.rows.get(2).cells.get(2));
-        Assert.assertEquals("h", project.rows.get(3).cells.get(2).value);
+        Project expectedProject = createProject(
+                new String[] { "key", "first", "second" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { null, "d", "c" },
+                        { "e", "f", null },
+                        { null, null, "h" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     // For issue #742
@@ -123,10 +132,15 @@ public class FillDownTests extends RefineTest {
 
         runOperation(op, project);
 
-        Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
-        Assert.assertEquals("c", project.rows.get(1).cells.get(2).value);
-        Assert.assertEquals("c", project.rows.get(2).cells.get(2).value);
-        Assert.assertEquals("h", project.rows.get(3).cells.get(2).value);
+        Project expectedProject = createProject(
+                new String[] { "key", "first", "second" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { null, "d", "c" },
+                        { "e", "f", "c" },
+                        { null, null, "h" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -149,9 +163,14 @@ public class FillDownTests extends RefineTest {
 
         runOperation(op, project);
 
-        Assert.assertEquals("c", project.rows.get(0).cells.get(3).value);
-        Assert.assertEquals("c", project.rows.get(1).cells.get(3).value);
-        Assert.assertNull(project.rows.get(2).cells.get(3));
-        Assert.assertEquals("h", project.rows.get(3).cells.get(3).value);
+        Project expectedProject = createProject(
+                new String[] { "key", "first", "second" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { null, "d", "c" },
+                        { "e", "f", null },
+                        { null, null, "h" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 }

@@ -76,7 +76,7 @@
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.5</butterfly.version>
     <slf4j.version>2.0.12</slf4j.version>
-    <log4j.version>2.22.1</log4j.version>
+    <log4j.version>2.23.0</log4j.version>
     <jetty.version>10.0.16</jetty.version>
     <okhttp.version>4.12.0</okhttp.version>
     <jena.version>4.10.0</jena.version>
@@ -94,7 +94,7 @@
     <marc4j.version>2.9.5</marc4j.version>
     <jsoup.version>1.17.2</jsoup.version>
     <odfdom-java.version>0.12.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
-    <vicino.version>1.2</vicino.version>
+    <vicino.version>1.2.1</vicino.version>
     <clojure.version>1.11.1</clojure.version>
     <httpclient5.version>5.3.1</httpclient5.version>
     <httpcore.version>4.4.16</httpcore.version>
@@ -108,13 +108,13 @@
     <httpmime.version>4.5.14</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>5.10.0</mockito.version>
+    <mockito.version>5.11.0</mockito.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-    <exec-maven-plugin.version>3.1.1</exec-maven-plugin.version>
+    <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>

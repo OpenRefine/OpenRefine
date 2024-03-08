@@ -47,6 +47,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
@@ -70,6 +71,7 @@ import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
+import com.google.refine.messages.OpenRefineMessage;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
@@ -85,6 +87,7 @@ import com.google.refine.util.TestUtils;
  */
 public class RefineTest {
 
+    public static final double EPSILON = 0.0000001;
     protected static Properties bindings = null;
 
     protected Logger logger;
@@ -484,4 +487,58 @@ public class RefineTest {
     public static void assertEqualsSystemLineEnding(String actual, String expected) {
         Assert.assertEquals(actual, expected.replaceAll("\n", System.lineSeparator()));
     }
+
+    /**
+     * Checks that the grid contents are equal in both projects. Differences in "cell indices" are not taken into
+     * account as this is an internal detail: the goal is to assert equality of the user-facing parts of project data.
+     * 
+     * @param actual
+     *            the actual project state
+     * @param expected
+     *            the expected project state
+     */
+    public static void assertProjectEquals(Project actual, Project expected) {
+        assertEquals(actual.columnModel.getColumnNames(), expected.columnModel.getColumnNames(), "mismatching column names");
+        int columnCount = actual.columnModel.columns.size();
+        // TODO also check that ReconConfig and ReconStats are identical?
+        assertEquals(actual.rows.size(), expected.rows.size(), "mismatching number of rows");
+
+        List<Integer> actualCellIndices = actual.columnModel.columns.stream()
+                .map(Column::getCellIndex)
+                .collect(Collectors.toList());
+        List<Integer> expectedCellIndices = expected.columnModel.columns.stream()
+                .map(Column::getCellIndex)
+                .collect(Collectors.toList());
+        for (int i = 0; i != actual.rows.size(); i++) {
+            Row actualRow = actual.rows.get(i);
+            Row expectedRow = expected.rows.get(i);
+            for (int j = 0; j != columnCount; j++) {
+                Cell actualCell = actualRow.getCell(actualCellIndices.get(j));
+                Cell expectedCell = expectedRow.getCell(expectedCellIndices.get(j));
+
+                // special case for floating-point numbers to accept rounding errors
+                if (expectedCell != null && expectedCell.value instanceof Double && actualCell != null && actualCell.value != null) {
+                    assertEquals(
+                            (double) actualCell.value,
+                            (double) expectedCell.value,
+                            EPSILON,
+                            String.format("mismatching cells in row %d, column '%s'", i, actual.columnModel.columns.get(j)));
+                } else {
+                    assertEquals(
+                            actualCell == null ? null : actualCell.value,
+                            expectedCell == null ? null : expectedCell.value,
+                            String.format("mismatching cells in row %d, column '%s'", i, actual.columnModel.columns.get(j)));
+                }
+            }
+        }
+    }
+
+    /**
+     * Utility method to return a default column name, for the purpose of generating expected grid contents in a concise
+     * way in tests.
+     */
+    public static String numberedColumn(int index) {
+        return OpenRefineMessage.importer_utilities_column() + " " + index;
+    }
+
 }

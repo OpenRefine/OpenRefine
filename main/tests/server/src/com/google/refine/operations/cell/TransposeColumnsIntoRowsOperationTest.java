@@ -3,7 +3,6 @@ package com.google.refine.operations.cell;
 
 import java.io.Serializable;
 
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -46,10 +45,15 @@ public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
 
         runOperation(op, project);
 
-        Assert.assertEquals("num1:2", project.rows.get(0).cells.get(0).value);
-        Assert.assertEquals("num2:3", project.rows.get(1).cells.get(0).value);
-        Assert.assertEquals("num1:6", project.rows.get(2).cells.get(0).value);
-        Assert.assertEquals("num1:5", project.rows.get(3).cells.get(0).value);
-        Assert.assertEquals("num2:9", project.rows.get(4).cells.get(0).value);
+        Project expectedProject = createProject(
+                new String[] { "a" },
+                new Serializable[][] {
+                        { "num1:2" },
+                        { "num2:3" },
+                        { "num1:6" },
+                        { "num1:5" },
+                        { "num2:9" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 }

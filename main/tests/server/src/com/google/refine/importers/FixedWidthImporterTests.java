@@ -27,6 +27,7 @@
 
 package com.google.refine.importers;
 
+import java.io.Serializable;
 import java.io.StringReader;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -37,6 +38,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -97,15 +99,14 @@ public class FixedWidthImporterTests extends ImporterTest {
             Assert.fail(e.getMessage());
         }
 
-        Assert.assertEquals(project.rows.size(), 3); // Column names count as a row?
-        Assert.assertEquals(project.rows.get(1).cells.size(), 3);
-        Assert.assertEquals((String) project.rows.get(1).getCellValue(0), "NDB_No");
-        Assert.assertEquals((String) project.rows.get(1).getCellValue(1), "Shrt_Desc");
-        Assert.assertEquals((String) project.rows.get(1).getCellValue(2), "Water");
-        Assert.assertEquals(project.rows.get(2).cells.size(), 3);
-        Assert.assertEquals((String) project.rows.get(2).getCellValue(0), "TooSho");
-        Assert.assertEquals((String) project.rows.get(2).getCellValue(1), "rt");
-        Assert.assertNull(project.rows.get(2).getCellValue(2));
+        Project expectedProject = createProject(
+                new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3) },
+                new Serializable[][] {
+                        { "Col 1", "Col 2", "Col 3" }, // TODO those should be column names instead
+                        { "NDB_No", "Shrt_Desc", "Water" },
+                        { "TooSho", "rt", null },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
 }

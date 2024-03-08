@@ -71,25 +71,24 @@ public class ColumnReorderOperationTests extends RefineTest {
     @Test
     public void testEraseCellsOnRemovedColumns() throws Exception {
 
-        int aCol = project.columnModel.getColumnByName("a").getCellIndex();
         int bCol = project.columnModel.getColumnByName("b").getCellIndex();
         int cCol = project.columnModel.getColumnByName("c").getCellIndex();
-
-        Assert.assertEquals(project.rows.get(0).getCellValue(aCol), "1|2");
-        Assert.assertEquals(project.rows.get(0).getCellValue(bCol), "d");
-        Assert.assertEquals(project.rows.get(0).getCellValue(cCol), "e");
-        Assert.assertEquals(project.rows.get(1).getCellValue(aCol), "3");
-        Assert.assertEquals(project.rows.get(1).getCellValue(bCol), "f");
-        Assert.assertEquals(project.rows.get(1).getCellValue(cCol), "g");
 
         AbstractOperation op = new ColumnReorderOperation(Arrays.asList("a"));
 
         runOperation(op, project);
 
-        Assert.assertEquals(project.rows.get(0).getCellValue(aCol), "1|2");
+        Project expectedProject = createProject(
+                new String[] { "a" },
+                new Serializable[][] {
+                        { "1|2" },
+                        { "3" },
+                });
+        assertProjectEquals(project, expectedProject);
+
+        // deleted cell indices are nulled out
         Assert.assertEquals(project.rows.get(0).getCellValue(bCol), null);
         Assert.assertEquals(project.rows.get(0).getCellValue(cCol), null);
-        Assert.assertEquals(project.rows.get(1).getCellValue(aCol), "3");
         Assert.assertEquals(project.rows.get(1).getCellValue(bCol), null);
         Assert.assertEquals(project.rows.get(1).getCellValue(cCol), null);
 

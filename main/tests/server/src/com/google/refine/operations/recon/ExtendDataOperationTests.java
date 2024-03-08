@@ -36,6 +36,7 @@ package com.google.refine.operations.recon;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -143,6 +144,7 @@ public class ExtendDataOperationTests extends RefineTest {
 
     // dependencies
     Project project;
+    Cell reconCell1, reconCell2, reconCell3, reconCell4;
     Properties options;
     EngineConfig engine_config;
     Engine engine;
@@ -165,16 +167,20 @@ public class ExtendDataOperationTests extends RefineTest {
         engine.setMode(Engine.Mode.RowBased);
 
         Row row = new Row(2);
-        row.setCell(0, reconciledCell("Iran", "Q794"));
+        reconCell1 = reconciledCell("Iran", "Q794");
+        row.setCell(0, reconCell1);
         project.rows.add(row);
         row = new Row(2);
-        row.setCell(0, reconciledCell("Japan", "Q17"));
+        reconCell2 = reconciledCell("Japan", "Q17");
+        row.setCell(0, reconCell2);
         project.rows.add(row);
         row = new Row(2);
-        row.setCell(0, reconciledCell("Tajikistan", "Q863"));
+        reconCell3 = reconciledCell("Tajikistan", "Q863");
+        row.setCell(0, reconCell3);
         project.rows.add(row);
         row = new Row(2);
-        row.setCell(0, reconciledCell("United States of America", "Q30"));
+        reconCell4 = reconciledCell("United States of America", "Q30");
+        row.setCell(0, reconCell4);
         project.rows.add(row);
 
         dispatcher = new Dispatcher() {
@@ -279,11 +285,15 @@ public class ExtendDataOperationTests extends RefineTest {
 
             runOperation(op, project);
 
-            // Inspect rows
-            Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
-            Assert.assertTrue("JP".equals(project.rows.get(1).getCellValue(1)), "Bad country code for Japan.");
-            Assert.assertNull(project.rows.get(2).getCell(1), "Expected a null country code.");
-            Assert.assertTrue("US".equals(project.rows.get(3).getCellValue(1)), "Bad country code for United States.");
+            Project expectedProject = createProject(
+                    new String[] { "country", "ISO 3166-1 alpha-2 code" },
+                    new Serializable[][] {
+                            { reconCell1, "IR" },
+                            { reconCell2, "JP" },
+                            { reconCell3, null },
+                            { reconCell4, "US" },
+                    });
+            assertProjectEquals(project, expectedProject);
 
             // Make sure we did not create any recon stats for that column (no reconciled value)
             Assert.assertTrue(project.columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
@@ -329,11 +339,15 @@ public class ExtendDataOperationTests extends RefineTest {
 
             runOperation(op, project);
 
-            // Test to be updated as countries change currencies!
-            Assert.assertTrue(Math.round((double) project.rows.get(2).getCellValue(1)) == 2,
-                    "Incorrect number of currencies returned for Tajikistan.");
-            Assert.assertTrue(Math.round((double) project.rows.get(3).getCellValue(1)) == 1,
-                    "Incorrect number of currencies returned for United States.");
+            Project expectedProject = createProject(
+                    new String[] { "country", "currency" },
+                    new Serializable[][] {
+                            { reconCell1, 1.0 },
+                            { reconCell2, 1.0 },
+                            { reconCell3, 2.0 },
+                            { reconCell4, 1.0 },
+                    });
+            assertProjectEquals(project, expectedProject);
 
             // Make sure we did not create any recon stats for that column (no reconciled value)
             Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats() == null);
