@@ -134,7 +134,7 @@ SchemaAlignment._rerenderTabs = function() {
   }
   
   schemaElmts.saveButton
-      .text($.i18n('wikibase-schema/save-button'))
+      .text($.i18n('wikibase-schema/save-new-schema'))
       .attr('title', $.i18n('wikibase-schema/save-schema-alt'))
       .prop('disabled', true)
       .addClass('disabled')
@@ -159,7 +159,7 @@ SchemaAlignment._rerenderTabs = function() {
 
   // Init template loading UI
   schemaElmts.templateLabel.text($.i18n('wikibase-schema/start-from-an-existing-schema'));
-  schemaElmts.saveNewTemplateButton.text($.i18n('wikibase-schema/save-new-schema'));
+  schemaElmts.saveNewTemplateButton.text($.i18n('wikibase-schema/save-button'));
 
   WikibaseTemplateManager.loadTemplates(function() {
     SchemaAlignment.updateAvailableTemplates();
