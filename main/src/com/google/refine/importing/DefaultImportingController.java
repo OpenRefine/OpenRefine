@@ -39,7 +39,6 @@ import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -80,8 +79,8 @@ public class DefaultImportingController extends Command implements ImportingCont
          * will get read and we won't have a chance to parse the body ourselves. This is why we have to parse the URL
          * for parameters ourselves.
          */
-        Properties parameters = ParsingUtilities.parseUrlParameters(request);
-        String subCommand = parameters.getProperty("subCommand");
+        Map<String, String> parameters = ParsingUtilities.parseParameters(request);
+        String subCommand = parameters.get("subCommand");
         if ("load-raw-data".equals(subCommand)) {
             doLoadRawData(request, response, parameters);
         } else if ("update-file-selection".equals(subCommand)) {
@@ -97,10 +96,10 @@ public class DefaultImportingController extends Command implements ImportingCont
         }
     }
 
-    private void doLoadRawData(HttpServletRequest request, HttpServletResponse response, Properties parameters)
+    private void doLoadRawData(HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
 
-        long jobID = Long.parseLong(parameters.getProperty("jobID"));
+        long jobID = Long.parseLong(parameters.get("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             respondStatusError(response, "No such import job");
@@ -120,10 +119,10 @@ public class DefaultImportingController extends Command implements ImportingCont
         job.updating = false;
     }
 
-    private void doUpdateFileSelection(HttpServletRequest request, HttpServletResponse response, Properties parameters)
+    private void doUpdateFileSelection(HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
 
-        long jobID = Long.parseLong(parameters.getProperty("jobID"));
+        long jobID = Long.parseLong(parameters.get("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             respondStatusError(response, "No such import job");
@@ -147,10 +146,10 @@ public class DefaultImportingController extends Command implements ImportingCont
         job.updating = false;
     }
 
-    private void doUpdateFormatAndOptions(HttpServletRequest request, HttpServletResponse response, Properties parameters)
+    private void doUpdateFormatAndOptions(HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
 
-        long jobID = Long.parseLong(parameters.getProperty("jobID"));
+        long jobID = Long.parseLong(parameters.get("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             respondStatusError(response, "No such import job");
@@ -187,10 +186,10 @@ public class DefaultImportingController extends Command implements ImportingCont
         job.updating = false;
     }
 
-    private void doInitializeParserUI(HttpServletRequest request, HttpServletResponse response, Properties parameters)
+    private void doInitializeParserUI(HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
 
-        long jobID = Long.parseLong(parameters.getProperty("jobID"));
+        long jobID = Long.parseLong(parameters.get("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             respondStatusError(response, "No such import job");
@@ -216,10 +215,10 @@ public class DefaultImportingController extends Command implements ImportingCont
         }
     }
 
-    private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
+    private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
 
-        long jobID = Long.parseLong(parameters.getProperty("jobID"));
+        long jobID = Long.parseLong(parameters.get("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
             respondStatusError(response, "No such import job");

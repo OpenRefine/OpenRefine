@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -94,10 +93,15 @@ public class BlankDownTests extends RefineTest {
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
-        Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
-        Assert.assertNull(project.rows.get(1).cells.get(2));
-        Assert.assertEquals("c", project.rows.get(2).cells.get(2).value);
-        Assert.assertNull(project.rows.get(3).cells.get(2));
+        Project expectedProject = createProject(
+                new String[] { "key", "first", "second" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { null, "d", null },
+                        { "e", "f", "c" },
+                        { null, null, null },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -108,10 +112,15 @@ public class BlankDownTests extends RefineTest {
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
-        Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
-        Assert.assertNull(project.rows.get(1).cells.get(2));
-        Assert.assertNull(project.rows.get(2).cells.get(2));
-        Assert.assertNull(project.rows.get(3).cells.get(2));
+        Project expectedProject = createProject(
+                new String[] { "key", "first", "second" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { null, "d", null },
+                        { "e", "f", null },
+                        { null, null, null },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -134,9 +143,14 @@ public class BlankDownTests extends RefineTest {
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
-        Assert.assertEquals("c", project.rows.get(0).cells.get(3).value);
-        Assert.assertNull(project.rows.get(1).cells.get(3));
-        Assert.assertEquals("c", project.rows.get(2).cells.get(3).value);
-        Assert.assertNull(project.rows.get(3).cells.get(3));
+        Project expectedProject = createProject(
+                new String[] { "key", "first", "second" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { null, "d", null },
+                        { "e", "f", "c" },
+                        { null, null, null },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 }
