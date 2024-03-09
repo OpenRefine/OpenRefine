@@ -37,6 +37,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -322,14 +323,10 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         }
 
         Serializable fetch(String urlString, Header[] headers) {
-            try { // HttpClients.createDefault()) {
-                try {
-                    return _httpClient.getAsString(urlString, headers);
-                } catch (IOException e) {
-                    return _onError == OnError.StoreError ? new EvalError(e) : null;
-                }
-            } catch (Exception e) {
-                return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
+            try {
+                return _httpClient.getAsString(HttpClient.getEscapedUrl(urlString), headers);
+            } catch (URISyntaxException | IOException e) {
+                return _onError == OnError.StoreError ? new EvalError(e) : null;
             }
         }
 
