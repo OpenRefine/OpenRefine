@@ -40,3 +40,51 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   max-width: 50em;
   height: 30em;
 }
+
+
+.file-area {
+        width: 100%;
+        position: relative;
+        font-size: 18px;
+}
+
+.file-area input[type=file] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-area .file-dummy {
+    width: 100%;
+    padding: 50px 30px;
+    border: 2px dashed #ccc;
+    background-color: #fff;
+    text-align: center;
+    transition: background 0.3s ease-in-out;
+}
+
+.file-area .file-dummy .success {
+       display: none;
+}
+
+.file-area:hover .file-dummy {
+    border: 2px dashed #1abc9c;
+}
+
+.file-area input[type=file]:valid + .file-dummy {
+    border-color: #1abc9c;
+}
+
+.file-area input[type=file]:valid + .file-dummy .success {
+    display: inline-block;
+}
+
+.file-area input[type=file]:valid + .file-dummy .default {
+    display: none;
+}

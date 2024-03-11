@@ -105,6 +105,7 @@
     "core-index-import/warning-clipboard": "You must paste some data to import.",
     "core-index-import/uploading-pasted-data": "Uploading pasted data…",
     "core-index-import/locate-files": "Locate one or more files on your computer to upload:",
+    "core-index-import/drag-locate-files": "or drag and drop one or more files anywhere below:",
     "core-index-import/enter-url": "Enter one or more web addresses (URLs) pointing to data to download:",
     "core-index-import/remove-row": "Remove this row",
     "core-index-import/clipboard-label": "Paste data from clipboard here:",
