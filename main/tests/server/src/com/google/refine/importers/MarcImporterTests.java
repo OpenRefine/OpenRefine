@@ -50,12 +50,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
-public class MarcImporterTests extends XmlImporterTests {
+public class MarcImporterTests extends ImporterTest {
 
     @Override
     @BeforeTest
@@ -141,6 +142,11 @@ public class MarcImporterTests extends XmlImporterTests {
                         { null, null, null, "700", null, "1", "a", "Snyder, Susan." },
                 });
         assertProjectEquals(project, expectedProject);
+    }
+
+    @Override
+    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
+        parseOneInputStream(parser, inputStream, options);
     }
 
 }
