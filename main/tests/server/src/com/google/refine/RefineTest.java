@@ -436,8 +436,7 @@ public class RefineTest {
     }
 
     /**
-     * Runs an operation on a project. If it's a long-running operation, its process is run in the main thread until
-     * completion.
+     * Runs an operation on a project, waiting until it completes and returning how long it took.
      * 
      * @returns the duration of the operation in milliseconds
      */
