@@ -31,7 +31,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Properties;
 
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -90,7 +89,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                         { "world" }
                 });
         ReconMarkNewTopicsOperation op = ParsingUtilities.mapper.readValue(jsonWithService, ReconMarkNewTopicsOperation.class);
-        op.createProcess(project, new Properties()).performImmediate();
+
+        runOperation(op, project);
 
         assertEquals(project.rows.get(0).cells.get(0).recon.judgment, Recon.Judgment.New);
         assertEquals(project.rows.get(1).cells.get(0).recon.judgment, Recon.Judgment.New);
@@ -120,7 +120,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
         project.columnModel.columns.get(0).setReconConfig(reconConfig);
 
         ReconMarkNewTopicsOperation op = ParsingUtilities.mapper.readValue(jsonWithoutService, ReconMarkNewTopicsOperation.class);
-        op.createProcess(project, new Properties()).performImmediate();
+
+        runOperation(op, project);
 
         assertEquals(project.rows.get(0).cells.get(0).recon.judgment, Recon.Judgment.New);
         assertEquals(project.rows.get(1).cells.get(0).recon.judgment, Recon.Judgment.New);

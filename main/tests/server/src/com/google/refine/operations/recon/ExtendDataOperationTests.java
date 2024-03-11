@@ -74,7 +74,6 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.LongRunningProcessStub;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -283,8 +282,8 @@ public class ExtendDataOperationTests extends RefineTest {
                     RECON_SCHEMA_SPACE,
                     extension,
                     1);
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-            process.run();
+
+            runOperation(op, project);
 
             Project expectedProject = createProject(
                     new String[] { "country", "ISO 3166-1 alpha-2 code" },
@@ -338,8 +337,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     extension,
                     1);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-            process.run();
+            runOperation(op, project);
 
             Project expectedProject = createProject(
                     new String[] { "country", "currency" },
@@ -386,8 +384,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     extension,
                     1);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-            process.run();
+            runOperation(op, project);
 
             /*
              * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). But thanks to
@@ -433,8 +430,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     extension,
                     1);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-            process.run();
+            runOperation(op, project);
 
             /*
              * Tajikistan has one "preferred" currency and one "normal" one (in terms of statement ranks). The second

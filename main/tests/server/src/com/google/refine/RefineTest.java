@@ -72,6 +72,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.messages.OpenRefineMessage;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
@@ -434,12 +435,45 @@ public class RefineTest {
         return coreModule;
     }
 
+    /**
+     * Runs an operation on a project, waiting until it completes and returning how long it took.
+     * 
+     * @returns the duration of the operation in milliseconds
+     */
+    protected long runOperation(AbstractOperation operation, Project project) throws Exception {
+        return runOperation(operation, project, -1);
+    }
+
+    /**
+     * Runs an operation on a project. If it's a long-running operation, its process is run in the main thread until
+     * completion.
+     * 
+     * @long timeout the maximum time (in milliseconds) this operation should take (only honored for long running
+     *       operations). Ignored if negative.
+     * @returns the duration of the operation in milliseconds
+     */
+    protected long runOperation(AbstractOperation operation, Project project, long timeout) throws Exception {
+        long start = System.currentTimeMillis();
+        Process process = operation.createProcess(project, new Properties());
+        if (process.isImmediate()) {
+            process.performImmediate();
+        } else {
+            runAndWait(project.getProcessManager(), process, (int) timeout);
+        }
+        long end = System.currentTimeMillis();
+        return end - start;
+    }
+
+    /**
+     * @deprecated use {@link #runOperation(AbstractOperation, Project)}
+     */
+    @Deprecated
     protected void runAndWait(ProcessManager processManager, Process process, int timeout) {
         process.startPerforming(processManager);
         Assert.assertTrue(process.isRunning());
         int time = 0;
         try {
-            while (process.isRunning() && time < timeout) {
+            while (process.isRunning() && (time < timeout || timeout < 0)) {
                 Thread.sleep(200);
                 time += 200;
             }

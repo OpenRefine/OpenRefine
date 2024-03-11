@@ -29,7 +29,6 @@ package com.google.refine.operations.column;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Properties;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -40,7 +39,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.util.TestUtils;
 
 public class ColumnReorderOperationTests extends RefineTest {
@@ -77,8 +75,8 @@ public class ColumnReorderOperationTests extends RefineTest {
         int cCol = project.columnModel.getColumnByName("c").getCellIndex();
 
         AbstractOperation op = new ColumnReorderOperation(Arrays.asList("a"));
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Project expectedProject = createProject(
                 new String[] { "a" },

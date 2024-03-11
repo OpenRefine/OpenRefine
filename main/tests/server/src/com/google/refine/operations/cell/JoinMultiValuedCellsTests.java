@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.cell;
 
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
@@ -46,7 +45,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -97,8 +95,8 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 "Value",
                 "Key",
                 ",");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Project expectedProject = createProject(
                 new String[] { "Key", "Value" },
@@ -114,8 +112,8 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 "Value",
                 "Key",
                 ",     ,");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Project expectedProject = createProject(
                 new String[] { "Key", "Value" },

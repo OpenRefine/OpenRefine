@@ -145,8 +145,7 @@ public class ReconOperationTests extends RefineTest {
 
         ReconOperation op = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
 
-        Process process = op.createProcess(project, new Properties());
-        runAndWait(project.getProcessManager(), process, 1000);
+        runOperation(op, project, 1000);
 
         Column column = project.columnModel.columns.get(0);
         Assert.assertNotNull(column.getReconStats());

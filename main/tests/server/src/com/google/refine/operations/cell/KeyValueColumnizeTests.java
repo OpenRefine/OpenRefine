@@ -36,7 +36,6 @@ package com.google.refine.operations.cell;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -56,7 +55,6 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -136,9 +134,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         AbstractOperation op = new KeyValueColumnizeOperation(
                 "Cat", "Val", null);
 
-        Process process = op.createProcess(project, new Properties());
-
-        process.performImmediate();
+        runOperation(op, project);
 
         Project expectedProject = createProject(
                 new String[] { "ID", "a", "b", "c", "d" },
@@ -174,8 +170,8 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Project expectedProject = createProject(
                 new String[] { "merchant", "fruit", "price" },

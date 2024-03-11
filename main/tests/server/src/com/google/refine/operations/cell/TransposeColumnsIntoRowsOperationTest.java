@@ -2,7 +2,6 @@
 package com.google.refine.operations.cell;
 
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -14,7 +13,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 
 public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
 
@@ -44,8 +42,8 @@ public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
     @Test
     public void testCreateHistoryEntry_transposeIntoOneColumn_removeRowForNullOrEmptyCell() throws Exception {
         AbstractOperation op = new TransposeColumnsIntoRowsOperation("num1", -1, true, false, "a", true, ":");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+
+        runOperation(op, project);
 
         Project expectedProject = createProject(
                 new String[] { "a" },
