@@ -113,6 +113,17 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
+    public void canParseSampleWithComments() {
+        RunTest(getSampleWithComments());
+        assertProjectCreated(project, 4, 6);
+
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+    }
+
+    @Test
     public void canThrowError() {
         String errJSON = getSampleWithError();
         ObjectNode options = SUT.createParserUIInitializationData(
@@ -561,6 +572,23 @@ public class JsonImporterTests extends ImporterTest {
             }
         }
         sb.append("]");
+        return sb.toString();
+    }
+
+    static String getSampleWithComments() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 1; i < 7; i++) {
+            sb.append(getTypicalElement(i));
+            if (i < 6) {
+                sb.append(",");
+            }
+        }
+        sb.append("// zyadtaha testing c++ commments \n");
+        sb.append("/* zyadtaha testing c commments */ \n");
+        sb.append("# zyadtaha testing python commments \n");
+        sb.append("]");
+        System.out.println(sb.toString());
         return sb.toString();
     }
 

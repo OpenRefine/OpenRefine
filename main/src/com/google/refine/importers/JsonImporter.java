@@ -44,6 +44,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
@@ -90,7 +91,8 @@ public class JsonImporter extends TreeImportingParserBase {
             try {
                 ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
-                JsonFactory factory = new JsonFactory();
+                JsonFactory factory = JsonFactory.builder().enable(JsonReadFeature.ALLOW_JAVA_COMMENTS)
+                        .enable(JsonReadFeature.ALLOW_YAML_COMMENTS).build();
                 JsonParser parser = factory.createParser(file);
                 parser.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
 
@@ -206,8 +208,12 @@ public class JsonImporter extends TreeImportingParserBase {
             ImportingJob job, String fileSource, InputStream is,
             ImportColumnGroup rootColumnGroup, int limit, ObjectNode options, List<Exception> exceptions) {
 
+        JSONTreeReader jsonTreeReader = new JSONTreeReader(is);
+        jsonTreeReader.parser.enable(JsonParser.Feature.ALLOW_COMMENTS);
+        jsonTreeReader.parser.enable(JsonParser.Feature.ALLOW_YAML_COMMENTS);
+
         parseOneFile(project, metadata, job, fileSource,
-                new JSONTreeReader(is), rootColumnGroup, limit, options, exceptions);
+                jsonTreeReader, rootColumnGroup, limit, options, exceptions);
     }
 
     static public class JSONTreeReader implements TreeReader {
