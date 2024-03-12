@@ -91,7 +91,8 @@ public class JsonImporter extends TreeImportingParserBase {
             try {
                 ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
-                JsonFactory factory = JsonFactory.builder().enable(JsonReadFeature.ALLOW_JAVA_COMMENTS).enable(JsonReadFeature.ALLOW_YAML_COMMENTS).build();
+                JsonFactory factory = JsonFactory.builder().enable(JsonReadFeature.ALLOW_JAVA_COMMENTS)
+                        .enable(JsonReadFeature.ALLOW_YAML_COMMENTS).build();
                 JsonParser parser = factory.createParser(file);
                 parser.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
 
