@@ -10,6 +10,7 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowAdditionChange;
+import com.google.refine.operations.OperationDescription;
 
 public class RowAdditionOperation extends AbstractOperation {
 
@@ -21,21 +22,22 @@ public class RowAdditionOperation extends AbstractOperation {
         _rows = rows;
     }
 
-    // TODO: internationalization and localization
     @Override
     protected String getBriefDescription(Project project) {
-        int count = _rows.size();
-        return "Prepend " + count + " row" + ((count > 1) ? "s" : "");
+        return OperationDescription.row_addition_brief();
     }
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         int insertionIndex = 0;  // Prepend rows
 
+        int count = _rows.size();
+        String description = "Add " + count + " row" + ((count > 1) ? "s" : "");
+
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                getBriefDescription(project),
+                description,
                 this,
                 new RowAdditionChange(_rows, insertionIndex));
     }
