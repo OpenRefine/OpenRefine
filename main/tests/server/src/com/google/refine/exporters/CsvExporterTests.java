@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Properties;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -69,7 +69,7 @@ public class CsvExporterTests extends RefineTest {
     StringWriter writer;
     Project project;
     Engine engine;
-    Properties options;
+    Map<String, String> options;
 
     // System Under Test
     CsvExporter SUT;
@@ -80,7 +80,7 @@ public class CsvExporterTests extends RefineTest {
         writer = new StringWriter();
         project = new Project();
         engine = new Engine(project);
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod
@@ -106,20 +106,20 @@ public class CsvExporterTests extends RefineTest {
     @Test
     public void exportSimpleCsvNoHeader() throws IOException {
         CreateGrid(2, 2);
-        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        when(options.get("printColumnHeader")).thenReturn("false");
 
         SUT.export(project, options, engine, writer);
 
         assertEqualsSystemLineEnding(writer.toString(), "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
 
-        verify(options, times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).get("printColumnHeader");
     }
 
     @Test
     public void exportSimpleCsvCustomLineSeparator() throws IOException {
         CreateGrid(2, 2);
-        when(options.getProperty("options")).thenReturn("{\"lineSeparator\":\"X\"}");
+        when(options.get("options")).thenReturn("{\"lineSeparator\":\"X\"}");
 
         SUT.export(project, options, engine, writer);
 
@@ -131,7 +131,7 @@ public class CsvExporterTests extends RefineTest {
     @Test
     public void exportSimpleCsvQuoteAll() throws IOException {
         CreateGrid(2, 2);
-        when(options.getProperty("options")).thenReturn("{\"quoteAll\":\"true\"}");
+        when(options.get("options")).thenReturn("{\"quoteAll\":\"true\"}");
 
         SUT.export(project, options, engine, writer);
 
@@ -198,15 +198,15 @@ public class CsvExporterTests extends RefineTest {
      * @Ignore
      * @Test public void exportDateColumnsPreVersion28(){ CreateGrid(1,2); Calendar calendar = Calendar.getInstance();
      *       Date date = new Date();
-     * 
+     *
      *       when(options.getProperty("printColumnHeader")).thenReturn("false"); project.rows.get(0).cells.set(0, new
      *       Cell(calendar, null)); project.rows.get(0).cells.set(1, new Cell(date, null));
-     * 
+     *
      *       try { SUT.export(project, options, engine, writer); } catch (IOException e) { Assert.fail(); }
-     * 
+     *
      *       String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
      *       ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
-     * 
+     *
      *       assertEqualsSystemLineEnding(writer.toString(), expectedOutput); }
      */
     // helper methods
