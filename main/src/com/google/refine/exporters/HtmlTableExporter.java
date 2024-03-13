@@ -36,7 +36,7 @@ package com.google.refine.exporters;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.text.StringEscapeUtils;
@@ -53,7 +53,7 @@ public class HtmlTableExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final Project project, Properties params, Engine engine, final Writer writer)
+    public void export(final Project project, Map<String, String> params, Engine engine, final Writer writer)
             throws IOException {
 
         TabularSerializer serializer = new TabularSerializer() {

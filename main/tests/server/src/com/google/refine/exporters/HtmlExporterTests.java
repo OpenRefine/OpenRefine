@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Properties;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -75,7 +75,7 @@ public class HtmlExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
-    Properties options;
+    Map<String, String> options;
 
     // System Under Test
     WriterExporter SUT;
@@ -90,7 +90,7 @@ public class HtmlExporterTests extends RefineTest {
         projectMetadata.setName(TEST_PROJECT_NAME);
         ProjectManager.singleton.registerProject(project, projectMetadata);
         engine = new Engine(project);
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod
@@ -134,7 +134,7 @@ public class HtmlExporterTests extends RefineTest {
     @Test(enabled = false)
     public void exportSimpleHtmlTableNoHeader() {
         CreateGrid(2, 2);
-        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        when(options.get("printColumnHeader")).thenReturn("false");
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
@@ -152,7 +152,7 @@ public class HtmlExporterTests extends RefineTest {
                 "</table>\n" +
                 "</body>\n" +
                 "</html>\n");
-        verify(options, times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).get("printColumnHeader");
     }
 
     @Test
