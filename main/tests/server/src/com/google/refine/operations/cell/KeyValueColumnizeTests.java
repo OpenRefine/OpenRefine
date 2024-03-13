@@ -183,4 +183,92 @@ public class KeyValueColumnizeTests extends RefineTest {
         assertProjectEquals(project, expectedProject);
     }
 
+    @Test
+    public void testKeyValueColumnizeNotes() throws Exception {
+        Project project = createProject(
+                new String[] { "Key", "Value", "Notes" },
+                new Serializable[][] {
+                        { "merchant", "Katie", "ref" },
+                        { "fruit", "apple", "catalogue" },
+                        { "price", "1.2", "pricelist" },
+                        { "merchant", "John", "knowledge" },
+                        { "fruit", "banana", "survey" },
+                        { "price", "3.1", "legislation" }
+                });
+
+        KeyValueColumnizeOperation operation = new KeyValueColumnizeOperation(
+                "Key",
+                "Value",
+                "Notes");
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "merchant", "fruit", "price", "Notes : merchant", "Notes : fruit", "Notes : price" },
+                new Serializable[][] {
+                        { "Katie", "apple", "1.2", "ref", "catalogue", "pricelist" },
+                        { "John", "banana", "3.1", "knowledge", "survey", "legislation" },
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testKeyValueColumnizeIdenticalValues() throws Exception {
+        Project project = createProject(
+                new String[] { "Key", "Value", "wd" },
+                new Serializable[][] {
+                        { "merchant", "Katie", "34" },
+                        { "fruit", "apple", "34" },
+                        { "price", "1.2", "34" },
+                        { "merchant", "John", "56" },
+                        { "fruit", "banana", "56" },
+                        { "price", "3.1", "56" }
+                });
+
+        KeyValueColumnizeOperation operation = new KeyValueColumnizeOperation(
+                "Key",
+                "Value",
+                null);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "wd", "merchant", "fruit", "price" },
+                new Serializable[][] {
+                        { "34", "Katie", "apple", "1.2" },
+                        { "56", "John", "banana", "3.1" }
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testCopyRowsWithNoKeys() throws Exception {
+        // when a key cell is empty, if there are other columns around, we simply copy those
+        Project project = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "merchant", "Katie" },
+                        { "fruit", "apple" },
+                        { "price", "1.2", },
+                        { null, "John", },
+                        { "fruit", "banana" },
+                        { "price", "3.1", }
+                });
+
+        KeyValueColumnizeOperation operation = new KeyValueColumnizeOperation(
+                "Key",
+                "Value",
+                null);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "merchant", "fruit", "price" },
+                new Serializable[][] {
+                        { "Katie", "apple", "1.2" },
+                        { null, "banana", "3.1" },
+                });
+        assertProjectEquals(project, expected);
+    }
+
 }

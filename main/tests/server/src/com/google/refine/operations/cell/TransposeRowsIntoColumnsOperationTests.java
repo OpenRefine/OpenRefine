@@ -37,18 +37,16 @@ import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-public class JoinMultiValuedCellsTests extends RefineTest {
+public class TransposeRowsIntoColumnsOperationTests extends RefineTest {
 
     Project project;
 
@@ -56,71 +54,71 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-    }
-
-    @BeforeSuite
-    public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-join", MultiValuedCellJoinOperation.class);
+        OperationRegistry.registerOperation(getCoreModule(), "transpose-rows-into-columns", TransposeRowsIntoColumnsOperation.class);
     }
 
     @BeforeMethod
-    public void createProject() {
+    public void setUpGrid() {
         project = createProject(
-                new String[] { "Key", "Value" },
+                new String[] { "a", "b", "c" },
                 new Serializable[][] {
-                        { "Record_1", "one" },
-                        { null, "two" },
-                        { null, "three" },
-                        { null, "four" }
+                        { "1", "2", "3" },
+                        { "4", "5", "6" },
+                        { "7", "8", "9" },
+                        { "10", "11", "12" }
                 });
     }
 
     @Test
-    public void serializeMultiValuedCellJoinOperation() throws Exception {
-        String json = "{\"op\":\"core/multivalued-cell-join\","
-                + "\"description\":\"Join multi-valued cells in column value column\","
-                + "\"columnName\":\"value column\","
-                + "\"keyColumnName\":\"key column\","
-                + "\"separator\":\",\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json);
-    }
-
-    /*
-     * Test to demonstrate the intended behaviour of the function
-     */
-
-    @Test
-    public void testJoinMultiValuedCells() throws Exception {
-        AbstractOperation op = new MultiValuedCellJoinOperation(
-                "Value",
-                "Key",
-                ",");
-
-        runOperation(op, project);
-
-        Project expectedProject = createProject(
-                new String[] { "Key", "Value" },
-                new Serializable[][] {
-                        { "Record_1", "one,two,three,four" },
-                });
-        assertProjectEquals(project, expectedProject);
+    public void testTransposeRowsIntoColumnsOperation() throws Exception {
+        String json = "{\"op\":\"core/transpose-rows-into-columns\","
+                + "\"description\":\"Transpose every 3 cells in column start column into separate columns\","
+                + "\"columnName\":\"start column\","
+                + "\"rowCount\":3}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json);
     }
 
     @Test
-    public void testJoinMultiValuedCellsMultipleSpaces() throws Exception {
-        AbstractOperation op = new MultiValuedCellJoinOperation(
-                "Value",
-                "Key",
-                ",     ,");
+    public void testTransposeRowsIntoColumns() throws Exception {
+        TransposeRowsIntoColumnsOperation operation = new TransposeRowsIntoColumnsOperation("b", 2);
 
-        runOperation(op, project);
+        runOperation(operation, project);
 
-        Project expectedProject = createProject(
-                new String[] { "Key", "Value" },
+        Project expected = createProject(
+                new String[] { "a", "b 1", "b 2", "c" },
                 new Serializable[][] {
-                        { "Record_1", "one,     ,two,     ,three,     ,four" },
+                        { "1", "2", "5", "3" },
+                        { "4", null, null, "6" },
+                        { "7", "8", "11", "9" },
+                        { "10", null, null, "12" }
                 });
-        assertProjectEquals(project, expectedProject);
+
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testTransposeRecordsIntoRows() throws Exception {
+        Project withRecords = createProject(
+                new String[] { "a", "b", "c" },
+                new Serializable[][] {
+                        { "1", "2", "3" },
+                        { null, "5", null },
+                        { "7", "8", "9" },
+                        { null, "11", null }
+                });
+
+        TransposeRowsIntoColumnsOperation operation = new TransposeRowsIntoColumnsOperation("b", 2);
+
+        runOperation(operation, withRecords);
+
+        Project expected = createProject(
+                new String[] { "a", "b 1", "b 2", "c" },
+                new Serializable[][] {
+                        { "1", "2", "5", "3" },
+                        { "7", "8", "11", "9" }
+                });
+
+        assertProjectEquals(withRecords, expected);
     }
 
 }

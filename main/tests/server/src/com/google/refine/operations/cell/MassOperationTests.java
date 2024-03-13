@@ -27,14 +27,24 @@
 
 package com.google.refine.operations.cell;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.DecoratedValue;
+import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
+import com.google.refine.expr.EvalError;
+import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.MassEditOperation.Edit;
 import com.google.refine.util.ParsingUtilities;
@@ -147,4 +157,68 @@ public class MassOperationTests extends RefineTest {
 
     // Not yet testing for mass edit from OR Error
 
+    private Project project;
+    private static EngineConfig engineConfig;
+    private ListFacetConfig facet;
+    private List<Edit> edits;
+    private List<Edit> editsWithFromBlank;
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        project = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "v1", "a" },
+                        { "v3", "a" },
+                        { "", "a" },
+                        { "", "b" },
+                        { new EvalError("error"), "a" },
+                        { "v1", "b" }
+                });
+        facet = new ListFacetConfig();
+        facet.columnName = "bar";
+        facet.name = "bar";
+        facet.expression = "grel:value";
+        facet.selection = Collections.singletonList(new DecoratedValue("a", "a"));
+        engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        edits = Collections.singletonList(new Edit(Collections.singletonList("v1"), false, false, "v2"));
+        editsWithFromBlank = Arrays.asList(edits.get(0), new Edit(Collections.emptyList(), true, false, "hey"));
+    }
+
+    @Test
+    public void testSimpleReplace() throws Exception {
+        MassEditOperation operation = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "v2", "a" },
+                        { "v3", "a" },
+                        { "hey", "a" },
+                        { "", "b" },
+                        { new EvalError("error"), "a" },
+                        { "v1", "b" },
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRecordsMode() throws Exception {
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        MassEditOperation operation = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "v2", "a" },
+                        { "v3", "a" },
+                        { "hey", "a" },
+                        { "hey", "b" },
+                        { new EvalError("error"), "a" },
+                        { "v1", "b" }
+                });
+        assertProjectEquals(project, expected);
+    }
 }
