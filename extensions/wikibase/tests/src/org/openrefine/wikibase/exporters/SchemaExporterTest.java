@@ -4,8 +4,8 @@ package org.openrefine.wikibase.exporters;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 

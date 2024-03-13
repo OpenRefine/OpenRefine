@@ -27,8 +27,8 @@ package org.openrefine.wikibase.exporters;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
