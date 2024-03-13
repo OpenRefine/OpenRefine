@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -79,7 +79,7 @@ public class SqlExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Grid grid;
     Engine engine;
-    Properties options;
+    Map<String,String> options;
     SqlCreateBuilder sqlCreateBuilder;
     SqlInsertBuilder sqlInsertBuilder;
     long projectId = 1234L;
@@ -93,7 +93,7 @@ public class SqlExporterTests extends RefineTest {
         writer = new StringWriter();
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod
@@ -119,7 +119,7 @@ public class SqlExporterTests extends RefineTest {
 
         String tableName = "sql_table_test";
         String optionsString = createOptionsFromProject(tableName, SqlData.SQL_TYPE_NUMERIC, null).toString();
-        when(options.getProperty("options")).thenReturn(optionsString);
+        when(options.get("options")).thenReturn(optionsString);
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -148,7 +148,7 @@ public class SqlExporterTests extends RefineTest {
 
         String tableName = "sql_table_test";
         String optionsString = createOptionsFromProject(tableName, null, null).toString();
-        when(options.getProperty("options")).thenReturn(optionsString);
+        when(options.get("options")).thenReturn(optionsString);
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -176,7 +176,7 @@ public class SqlExporterTests extends RefineTest {
         String tableName = "sql_table_test";
         ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
         optionsJson.put("includeStructure", false);
-        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        when(options.get("options")).thenReturn(optionsJson.toString());
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -207,7 +207,7 @@ public class SqlExporterTests extends RefineTest {
         String tableName = "sql_table_test";
         ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
         optionsJson.put("includeContent", false);
-        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        when(options.get("options")).thenReturn(optionsJson.toString());
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -240,7 +240,7 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("includeStructure", true);
         optionsJson.put("includeDropStatement", true);
 
-        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        when(options.get("options")).thenReturn(optionsJson.toString());
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -301,7 +301,7 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("convertNulltoEmptyString", true);
         optionsJson.put("trimColumnNames", true);
 
-        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        when(options.get("options")).thenReturn(optionsJson.toString());
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
@@ -341,7 +341,7 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("includeDropStatement", true);
         optionsJson.put("convertNulltoEmptyString", true);
 
-        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        when(options.get("options")).thenReturn(optionsJson.toString());
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -373,7 +373,7 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("includeDropStatement", true);
         optionsJson.put("convertNulltoEmptyString", true);
 
-        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        when(options.get("options")).thenReturn(optionsJson.toString());
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
@@ -403,7 +403,7 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("includeDropStatement", true);
         optionsJson.put("convertNulltoEmptyString", true);
 
-        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        when(options.get("options")).thenReturn(optionsJson.toString());
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {

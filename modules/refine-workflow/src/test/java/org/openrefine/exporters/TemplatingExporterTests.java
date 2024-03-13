@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Properties;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -75,7 +75,7 @@ public class TemplatingExporterTests extends RefineTest {
     Grid grid;
     ProjectMetadata projectMetadata;
     Engine engine;
-    Properties options;
+    Map<String,String> options;
     long projectId = 1234L;
 
     // System Under Test
@@ -87,7 +87,7 @@ public class TemplatingExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
         writer = new StringWriter();
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod
@@ -104,10 +104,10 @@ public class TemplatingExporterTests extends RefineTest {
         grid = createGrid(new String[] { "foo" }, new Serializable[][] {});
         engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
-        when(options.getProperty("template")).thenReturn("a template that should never get used");
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        when(options.get("template")).thenReturn("a template that should never get used");
+        when(options.get("prefix")).thenReturn(prefix);
+        when(options.get("suffix")).thenReturn(suffix);
+        when(options.get("separator")).thenReturn(rowSeparator);
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -129,10 +129,10 @@ public class TemplatingExporterTests extends RefineTest {
 
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
 
-        when(options.getProperty("template")).thenReturn(template);
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        when(options.get("template")).thenReturn(template);
+        when(options.get("prefix")).thenReturn(prefix);
+        when(options.get("suffix")).thenReturn(suffix);
+        when(options.get("separator")).thenReturn(rowSeparator);
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -157,13 +157,13 @@ public class TemplatingExporterTests extends RefineTest {
                 });
         engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
-        when(options.getProperty("template"))
+        when(options.get("template"))
                 .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-        when(options.getProperty("template"))
+        when(options.get("template"))
                 .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        when(options.get("prefix")).thenReturn(prefix);
+        when(options.get("suffix")).thenReturn(suffix);
+        when(options.get("separator")).thenReturn(rowSeparator);
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -191,12 +191,12 @@ public class TemplatingExporterTests extends RefineTest {
                 });
         engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
-        when(options.getProperty("limit")).thenReturn("2"); // optional integer
-        when(options.getProperty("template"))
+        when(options.get("limit")).thenReturn("2"); // optional integer
+        when(options.get("template"))
                 .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        when(options.get("prefix")).thenReturn(prefix);
+        when(options.get("suffix")).thenReturn(suffix);
+        when(options.get("separator")).thenReturn(rowSeparator);
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -226,10 +226,10 @@ public class TemplatingExporterTests extends RefineTest {
                 });
         Engine engine = new Engine(grid, EngineConfig.ALL_RECORDS, 1234L);
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
-        when(options.getProperty("template")).thenReturn(template);
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        when(options.get("template")).thenReturn(template);
+        when(options.get("prefix")).thenReturn(prefix);
+        when(options.get("suffix")).thenReturn(suffix);
+        when(options.get("separator")).thenReturn(rowSeparator);
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -257,10 +257,10 @@ public class TemplatingExporterTests extends RefineTest {
                 });
         engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
         String template = rowPrefix + "{{\"\\}\\}\"}}" + cellSeparator + "{{\"\\}\\}\"}}";
-        when(options.getProperty("template")).thenReturn(template);
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        when(options.get("template")).thenReturn(template);
+        when(options.get("prefix")).thenReturn(prefix);
+        when(options.get("suffix")).thenReturn(suffix);
+        when(options.get("separator")).thenReturn(rowSeparator);
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {

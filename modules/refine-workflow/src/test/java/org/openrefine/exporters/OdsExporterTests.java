@@ -33,11 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.exporters;
 
-import static org.mockito.Mockito.mock;
-
 import java.io.*;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
@@ -69,7 +68,7 @@ public class OdsExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Grid grid;
     Engine engine;
-    Properties options;
+    Map<String,String> options;
     long projectId = 1234L;
 
     // System Under Test
@@ -82,7 +81,7 @@ public class OdsExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
         engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
-        options = mock(Properties.class);
+        options = new HashMap<String,String>();
     }
 
     @AfterMethod

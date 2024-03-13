@@ -33,14 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.exporters;
 
-import static org.mockito.Mockito.mock;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.LoggerFactory;
@@ -71,7 +70,7 @@ public class XlsExporterTests extends RefineTest {
     Grid grid;
     ProjectMetadata projectMetadata;
     Engine engine;
-    Properties options;
+    Map<String,String> options;
     long projectId = 1234L;
 
     // System Under Test
@@ -83,7 +82,7 @@ public class XlsExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
         stream = new ByteArrayOutputStream();
-        options = mock(Properties.class);
+        options = new HashMap<String,String>();
     }
 
     @AfterMethod

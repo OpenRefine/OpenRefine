@@ -35,7 +35,7 @@ package org.openrefine.exporters;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Properties;
+import java.util.Map;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
@@ -43,7 +43,7 @@ import org.openrefine.model.Grid;
 
 public interface WriterExporter extends Exporter {
 
-    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Properties options, Engine engine, Writer writer)
+    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String,String> options, Engine engine, Writer writer)
             throws IOException;
 
 }

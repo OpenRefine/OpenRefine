@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Properties;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -71,7 +71,7 @@ public class HtmlExporterTests extends RefineTest {
     Engine engine;
     Grid grid;
     ProjectMetadata projectMetadata;
-    Properties options;
+    Map<String,String> options;
     long projectId = 1234L;
 
     // System Under Test
@@ -83,7 +83,7 @@ public class HtmlExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
         writer = new StringWriter();
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod
@@ -136,7 +136,7 @@ public class HtmlExporterTests extends RefineTest {
                 });
         engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
-        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        when(options.get("printColumnHeader")).thenReturn("false");
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
@@ -154,7 +154,7 @@ public class HtmlExporterTests extends RefineTest {
                 "</table>\n" +
                 "</body>\n" +
                 "</html>\n");
-        verify(options, times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).get("printColumnHeader");
     }
 
     @Test

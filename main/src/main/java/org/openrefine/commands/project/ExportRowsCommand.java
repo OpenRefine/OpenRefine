@@ -38,7 +38,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Enumeration;
-import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -68,9 +69,8 @@ public class ExportRowsCommand extends Command {
      * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
      */
 
-    @SuppressWarnings("unchecked")
-    static public Properties getRequestParameters(HttpServletRequest request) {
-        Properties options = new Properties();
+    static public Map<String,String> getRequestParameters(HttpServletRequest request) {
+        Map<String,String> options = new HashMap<String,String>();
 
         Enumeration<String> en = request.getParameterNames();
         while (en.hasMoreElements()) {
@@ -89,21 +89,21 @@ public class ExportRowsCommand extends Command {
             long projectId = project.getId();
             ProjectMetadata projectMetadata = ProjectManager.singleton.getProjectMetadata(project.getId());
             Engine engine = getEngine(request, project);
-            Properties params = getRequestParameters(request);
+            Map<String,String> params = getRequestParameters(request);
 
-            String format = params.getProperty("format");
+            String format = params.get("format");
             Exporter exporter = ExporterRegistry.getExporter(format);
             if (exporter == null) {
                 exporter = new CsvExporter('\t');
             }
 
-            String contentType = params.getProperty("contentType");
+            String contentType = params.get("contentType");
             if (contentType == null) {
                 contentType = exporter.getContentType();
             }
             response.setHeader("Content-Type", contentType);
 
-            String preview = params.getProperty("preview");
+            String preview = params.get("preview");
             if (!"true".equals(preview)) {
                 String path = request.getPathInfo();
                 String filename = path.substring(path.lastIndexOf('/') + 1);
@@ -113,7 +113,7 @@ public class ExportRowsCommand extends Command {
             }
 
             if (exporter instanceof WriterExporter) {
-                String encoding = params.getProperty("encoding");
+                String encoding = params.get("encoding");
 
                 response.setCharacterEncoding(encoding != null ? encoding : "UTF-8");
                 Writer writer = encoding == null ? response.getWriter() : new OutputStreamWriter(response.getOutputStream(), encoding);

@@ -36,7 +36,7 @@ package org.openrefine.exporters;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -81,10 +81,10 @@ public class CsvExporter implements WriterExporter {
     }
 
     @Override
-    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Properties params, Engine engine, final Writer writer)
+    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String,String> params, Engine engine, final Writer writer)
             throws IOException {
 
-        String optionsString = (params == null) ? null : params.getProperty("options");
+        String optionsString = (params == null) ? null : params.get("options");
         Configuration options = new Configuration();
         if (optionsString != null) {
             try {
@@ -102,8 +102,8 @@ public class CsvExporter implements WriterExporter {
         final String lineSeparator = options.lineSeparator;
         final boolean quoteAll = options.quoteAll;
 
-        final boolean printColumnHeader = (params != null && params.getProperty("printColumnHeader") != null)
-                ? Boolean.parseBoolean(params.getProperty("printColumnHeader"))
+        final boolean printColumnHeader = (params != null && params.get("printColumnHeader") != null)
+                ? Boolean.parseBoolean(params.get("printColumnHeader"))
                 : true;
 
         CsvWriterSettings settings = new CsvWriterSettings();

@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class SqlExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final Grid grid, ProjectMetadata projectMetadata, long projectId, Properties params, Engine engine,
+    public void export(final Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String,String> params, Engine engine,
             final Writer writer)
             throws IOException {
         if (logger.isDebugEnabled()) {

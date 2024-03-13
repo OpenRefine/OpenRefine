@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -78,11 +77,11 @@ abstract public class CustomizableTabularExporterUtilities {
     static public void exportRows(
             final Grid grid,
             final Engine engine,
-            Properties params,
+            Map<String,String> params,
             final TabularSerializer serializer,
             SortingConfig sortingConfig) {
 
-        String optionsString = (params != null) ? params.getProperty("options") : null;
+        String optionsString = (params != null) ? params.get("options") : null;
         JsonNode optionsTemp = null;
         if (optionsString != null) {
             try {
@@ -177,7 +176,7 @@ abstract public class CustomizableTabularExporterUtilities {
     static public int[] countColumnsRows(
             final Grid grid,
             final Engine engine,
-            Properties params) {
+            Map<String,String> params) {
         RowCountingTabularSerializer serializer = new RowCountingTabularSerializer();
         exportRows(grid, engine, params, serializer, SortingConfig.NO_SORTING);
         return new int[] { serializer.columns, serializer.rows };

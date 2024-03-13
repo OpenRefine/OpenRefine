@@ -42,7 +42,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Collections;
-import java.util.Properties;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -70,7 +70,7 @@ public class CsvExporterTests extends RefineTest {
     Engine engine;
     Grid grid;
     ProjectMetadata projectMetadata;
-    Properties options;
+    Map<String,String> options;
     long projectId = 1234L;
 
     // System Under Test
@@ -82,7 +82,7 @@ public class CsvExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         writer = new StringWriter();
 
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod
@@ -112,7 +112,7 @@ public class CsvExporterTests extends RefineTest {
     @Test
     public void exportSimpleCsvNoHeader() {
         CreateGrid(2, 2);
-        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        when(options.get("printColumnHeader")).thenReturn("false");
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {
@@ -122,13 +122,13 @@ public class CsvExporterTests extends RefineTest {
         assertEqualsSystemLineEnding(writer.toString(), "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
 
-        verify(options, times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).get("printColumnHeader");
     }
 
     @Test
     public void exportSimpleCsvCustomLineSeparator() {
         CreateGrid(2, 2);
-        when(options.getProperty("options")).thenReturn("{\"lineSeparator\":\"X\"}");
+        when(options.get("options")).thenReturn("{\"lineSeparator\":\"X\"}");
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
@@ -144,7 +144,7 @@ public class CsvExporterTests extends RefineTest {
     @Test
     public void exportSimpleCsvQuoteAll() {
         CreateGrid(2, 2);
-        when(options.getProperty("options")).thenReturn("{\"quoteAll\":\"true\"}");
+        when(options.get("options")).thenReturn("{\"quoteAll\":\"true\"}");
 
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);

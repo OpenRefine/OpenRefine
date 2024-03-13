@@ -31,7 +31,8 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -89,7 +90,7 @@ public class QuickStatementsExporterTest extends RefineTest {
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         StringWriter writer = new StringWriter();
-        Properties properties = new Properties();
+        Map<String,String> properties = new HashMap<String,String>();
         exporter.export(grid, new ProjectMetadata(), 1234L, properties, engine, writer);
         assertEquals(writer.toString(), TestingData.inceptionWithNewQS);
     }
@@ -232,7 +233,7 @@ public class QuickStatementsExporterTest extends RefineTest {
                 new Serializable[][] { { "c", "d" } });
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
         StringWriter writer = new StringWriter();
-        Properties properties = new Properties();
+        Map<String,String> properties = new HashMap<String,String>();
         exporter.export(grid, new ProjectMetadata(), 1234L, properties, engine, writer);
         assertEquals(QuickStatementsExporter.noSchemaErrorMessage, writer.toString());
     }

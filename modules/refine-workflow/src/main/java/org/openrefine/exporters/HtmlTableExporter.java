@@ -36,7 +36,7 @@ package org.openrefine.exporters;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.text.StringEscapeUtils;
@@ -54,7 +54,7 @@ public class HtmlTableExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final Grid grid, ProjectMetadata projectMetadata, long projectId, Properties params, Engine engine,
+    public void export(final Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String,String> params, Engine engine,
             final Writer writer)
             throws IOException {
 
