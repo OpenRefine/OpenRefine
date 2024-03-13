@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
@@ -58,7 +58,7 @@ public class OdsExporter implements StreamExporter {
     }
 
     @Override
-    public void export(final Project project, Properties params, Engine engine,
+    public void export(final Project project, Map<String, String> params, Engine engine,
             OutputStream outputStream) throws IOException {
 
         final OdfSpreadsheetDocument odfDoc;
