@@ -40,6 +40,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,7 @@ public class TsvExporterTests extends RefineTest {
     StringWriter writer;
     Project project;
     Engine engine;
-    Properties options;
+    Map<String, String> options;
 
     // System Under Test
     CsvExporter SUT;
@@ -80,7 +81,7 @@ public class TsvExporterTests extends RefineTest {
         writer = new StringWriter();
         project = new Project();
         engine = new Engine(project);
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod
@@ -90,6 +91,13 @@ public class TsvExporterTests extends RefineTest {
         project = null;
         engine = null;
         options = null;
+    }
+
+    // TODO: Do we actually want this to be supported? If so, we need to test legacy API
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void exportLegacyApiThrows() throws IOException {
+        CreateGrid(2, 2);
+        SUT.export(project, new Properties(), engine, writer);
     }
 
     @Test
@@ -107,14 +115,14 @@ public class TsvExporterTests extends RefineTest {
     @Test
     public void exportSimpleTsvNoHeader() throws IOException {
         CreateGrid(2, 2);
-        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        when(options.get("printColumnHeader")).thenReturn("false");
 
         SUT.export(project, options, engine, writer);
 
         assertEqualsSystemLineEnding(writer.toString(), "row0cell0\trow0cell1\n" +
                 "row1cell0\trow1cell1\n");
 
-        verify(options, times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).get("printColumnHeader");
     }
 
     @Test
