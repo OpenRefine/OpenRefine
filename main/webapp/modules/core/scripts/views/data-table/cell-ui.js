@@ -171,8 +171,8 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
       value = value.toString("yyyy-MM-ddTHH:mm:ssZ");
     }
 
-    MenuSystem.dismissAll();
     self._focusBeforeEdit.focus();
+    MenuSystem.dismissAll();
 
     if (applyOthers) {
       Refine.postCoreProcess(
@@ -206,9 +206,12 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
               o.cell.r = o.pool.recons[o.cell.r];
             }
 
+            self._focusBeforeEdit.focus();
+            MenuSystem.dismissAll();
             self._cell = o.cell;
             self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
             self._render();
+            
           }
         }
       );
