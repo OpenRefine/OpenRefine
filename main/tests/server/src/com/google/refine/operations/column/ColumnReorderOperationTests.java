@@ -93,4 +93,19 @@ public class ColumnReorderOperationTests extends RefineTest {
         Assert.assertEquals(project.rows.get(1).getCellValue(cCol), null);
 
     }
+
+    @Test
+    public void testReorder() throws Exception {
+        ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"));
+
+        runOperation(SUT, project);
+
+        Project expected = createProject(
+                new String[] { "c", "b" },
+                new Serializable[][] {
+                        { "e", "d" },
+                        { "g", "f" },
+                });
+        assertProjectEquals(project, expected);
+    }
 }
