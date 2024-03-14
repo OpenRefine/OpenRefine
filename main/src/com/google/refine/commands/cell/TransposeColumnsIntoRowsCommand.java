@@ -33,61 +33,38 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.cell;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.google.refine.commands.Command;
+import com.google.refine.commands.OperationCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.cell.TransposeColumnsIntoRowsOperation;
-import com.google.refine.process.Process;
 
-public class TransposeColumnsIntoRowsCommand extends Command {
+public class TransposeColumnsIntoRowsCommand extends OperationCommand {
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        if (!hasValidCSRFToken(request)) {
-            respondCSRFError(response);
-            return;
-        }
+    protected AbstractOperation createOperation(Project project, HttpServletRequest request) throws Exception {
+        String startColumnName = request.getParameter("startColumnName");
+        int columnCount = getIntegerParameter(request, "columnCount", 0);
+        boolean ignoreBlankCells = getBooleanParameter(request, "ignoreBlankCells");
+        boolean fillDown = getBooleanParameter(request, "fillDown");
 
-        try {
-            Project project = getProject(request);
-            AbstractOperation op;
+        String combinedColumnName = request.getParameter("combinedColumnName");
+        if (combinedColumnName != null) {
+            boolean prependColumnName = getBooleanParameter(request, "prependColumnName");
+            String separator = request.getParameter("separator");
+            return new TransposeColumnsIntoRowsOperation(
+                    startColumnName, columnCount,
+                    ignoreBlankCells, fillDown,
+                    combinedColumnName, prependColumnName, separator);
+        } else {
+            String keyColumnName = request.getParameter("keyColumnName");
+            String valueColumnName = request.getParameter("valueColumnName");
 
-            String startColumnName = request.getParameter("startColumnName");
-            int columnCount = Integer.parseInt(request.getParameter("columnCount"));
-            boolean ignoreBlankCells = Boolean.parseBoolean(request.getParameter("ignoreBlankCells"));
-            boolean fillDown = Boolean.parseBoolean(request.getParameter("fillDown"));
-
-            String combinedColumnName = request.getParameter("combinedColumnName");
-            if (combinedColumnName != null) {
-                boolean prependColumnName = Boolean.parseBoolean(request.getParameter("prependColumnName"));
-                String separator = request.getParameter("separator");
-                op = new TransposeColumnsIntoRowsOperation(
-                        startColumnName, columnCount,
-                        ignoreBlankCells, fillDown,
-                        combinedColumnName, prependColumnName, separator);
-            } else {
-                String keyColumnName = request.getParameter("keyColumnName");
-                String valueColumnName = request.getParameter("valueColumnName");
-
-                op = new TransposeColumnsIntoRowsOperation(
-                        startColumnName, columnCount,
-                        ignoreBlankCells, fillDown,
-                        keyColumnName, valueColumnName);
-            }
-
-            Process process = op.createProcess(project, new Properties());
-
-            performProcessAndRespond(request, response, project, process);
-        } catch (Exception e) {
-            respondException(response, e);
+            return new TransposeColumnsIntoRowsOperation(
+                    startColumnName, columnCount,
+                    ignoreBlankCells, fillDown,
+                    keyColumnName, valueColumnName);
         }
     }
 }
