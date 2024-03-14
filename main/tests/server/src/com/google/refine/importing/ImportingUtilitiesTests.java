@@ -517,44 +517,50 @@ public class ImportingUtilitiesTests extends ImporterTest {
      */
     @Test
     public void testTrailingSpaceInUrl() throws IOException, FileUploadException {
-        String url = "https://example.com/file.csv ";
-        String message = String.format("HTTP error %d : %s for URL %s", 404,
-                "Not Found", url.trim());
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        StringBody stringBody = new StringBody(url, ContentType.MULTIPART_FORM_DATA);
-        builder = builder.addPart("download", stringBody);
-        HttpEntity entity = builder.build();
+        try (MockWebServer server = new MockWebServer()) {
+            String url = server.url("input.csv ").toString();
+            server.enqueue(new MockResponse()
+                    .setHttp2ErrorCode(404)
+                    .setStatus("HTTP/1.1 404 Not Found"));
 
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        entity.writeTo(os);
-        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+            String message = String.format("HTTP error %d : %s for URL %s", 404,
+                    "Not Found", url.trim());
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            StringBody stringBody = new StringBody(url, ContentType.MULTIPART_FORM_DATA);
+            builder = builder.addPart("download", stringBody);
+            HttpEntity entity = builder.build();
 
-        HttpServletRequest req = mock(HttpServletRequest.class);
-        when(req.getContentType()).thenReturn(entity.getContentType());
-        when(req.getParameter("download")).thenReturn(url);
-        when(req.getMethod()).thenReturn("POST");
-        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
-        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            entity.writeTo(os);
+            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
 
-        ImportingJob job = ImportingManager.createJob();
-        Properties parameters = ParsingUtilities.parseUrlParameters(req);
-        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
-        Progress dummyProgress = new Progress() {
+            HttpServletRequest req = mock(HttpServletRequest.class);
+            when(req.getContentType()).thenReturn(entity.getContentType());
+            when(req.getParameter("download")).thenReturn(url);
+            when(req.getMethod()).thenReturn("POST");
+            when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+            when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
 
-            @Override
-            public void setProgress(String message, int percent) {
+            ImportingJob job = ImportingManager.createJob();
+            Properties parameters = ParsingUtilities.parseUrlParameters(req);
+            ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
+            Progress dummyProgress = new Progress() {
+
+                @Override
+                public void setProgress(String message, int percent) {
+                }
+
+                @Override
+                public boolean isCanceled() {
+                    return false;
+                }
+            };
+            try {
+                ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
+                fail("No Exception was thrown");
+            } catch (ClientProtocolException exception) {
+                assertEquals(exception.getMessage(), message);
             }
-
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
-        };
-        try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
-            fail("No Exception was thrown");
-        } catch (ClientProtocolException exception) {
-            assertEquals(exception.getMessage(), message);
         }
     }
 }
