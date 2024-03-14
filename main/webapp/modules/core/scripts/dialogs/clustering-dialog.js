@@ -214,11 +214,11 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
         var trHead = table.insertRow(table.rows.length);
         trHead.className = "header";
-        $(trHead.insertCell(0)).text($.i18n('core-dialogs/cluster-size'));
-        $(trHead.insertCell(1)).text($.i18n('core-dialogs/row-count'));
-        $(trHead.insertCell(2)).text($.i18n('core-dialogs/cluster-values'));
-        $(trHead.insertCell(3)).text($.i18n('core-dialogs/merge'));
-        $(trHead.insertCell(4)).text($.i18n('core-dialogs/new-cell-val'));
+        $(trHead.insertCell(0)).text($.i18n('core-dialogs/merge'));
+        $(trHead.insertCell(1)).text($.i18n('core-dialogs/cluster-values'));
+        $(trHead.insertCell(2)).text($.i18n('core-dialogs/new-cell-val'));
+        $(trHead.insertCell(3)).text($.i18n('core-dialogs/cluster-size'));
+        $(trHead.insertCell(4)).text($.i18n('core-dialogs/row-count'));
 
         var entryTemplate = document.createElement('a');
         entryTemplate.href = "javascript:{}";
@@ -233,13 +233,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             var tr = table.insertRow();
             tr.className = index % 2 === 0 ? "odd" : "even"; // TODO: Unused?
 
-            var cell = tr.insertCell()
-            cell.textContent = cluster.choices.length.toString();
-
-            cell = tr.insertCell();
-            cell.textContent = cluster.rowCount.toString();
-
-            var facet = {
+            let facet = {
                 "c": {
                     "type":"list",
                     "name": self._columnName,
@@ -254,6 +248,9 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             };
 
             var ul = document.createElement('ul');
+            cluster.size = 0;
+            cluster.rowCount = 0;
+            ul.style.listStyleType = 'none';
             var choices = cluster.choices;
             var onClick = function() {
               var parent = $(this).closest("tr");
@@ -265,52 +262,101 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
               checkbox.prop('checked', true).trigger('change');
               return false;
             };
-            for (var c = 0; c < choices.length; c++) {
-                var choice = choices[c];
+            for (let c = 0; c < choices.length; c++) {
+                let choice = choices[c];
                 var li = document.createElement('li');
+                let checkBox = $('<input type="checkbox" style = "accent-color: gray;" disabled = "true" />')
+                .on('change',function() {
+                    if(this.checked){
+                        cluster.rowCount += choice.c;
+                        cluster.size++;
+                        const existingIndex = facet.s.findIndex(item => item.v.v === choice.v);
+                        if (existingIndex === -1) {
+                            facet.s.push({
+                                "v": {
+                                    "v": choice.v,
+                                    "l": choice.v
+                                }
+                            });
+                        }
+                    } else {
+                        cluster.rowCount -= choice.c;
+                        cluster.size--;
+                        const indexToRemove = facet.s.findIndex(item => item.v.v === choice.v);
+                        if (indexToRemove !== -1) {
+                            facet.s.splice(indexToRemove, 1);
+                        }
+                    }
+                    tr.cells[3].textContent = cluster.size.toString();
+                    tr.cells[4].textContent = cluster.rowCount.toString();
+
+                }).appendTo(li);
+
+                var checkBoxID = 'Checkbox' + index.toString() + "_Choice" + c.toString();
+                checkBox.attr("id", checkBoxID);
+                checkBox.attr("class", "Checkbox_Choice Checkbox_Choice" + index.toString());
+
                 var entry = entryTemplate.cloneNode();
                 entry.textContent = choice.v.toString().replaceAll(' ', '\xa0');
                 entry.setAttribute('data-value', choice.v.toString());
                 entry.addEventListener('click', onClick);
+
                 li.append(entry);
-                if (choice.c > 1) {
+
+                if (choice.c > 1) { 
                   $('<span></span>').text($.i18n("core-dialogs/cluster-rows", choice.c)).addClass("clustering-dialog-entry-count").appendTo(li);
                 }
-                facet.s[c] = {
-                    "v": {
-                        "v":choice.v,
-                        "l":choice.v
-                    }
-                };
                 ul.append(li);
             }
 
-            var params = [
-                "project=" + encodeURIComponent(theProject.id),
-                "ui=" + encodeURIComponent(JSON.stringify({
-                    "facets" : [ facet ]
-                }))
-            ];
-            var url = "project?" + params.join("&");
 
             var div = document.createElement('div');
             div.class = "clustering-dialog-value-focus";
 
             var browseLink = $(browseLinkTemplate).clone()
-                .attr("href",url)
+                .on("click",function (event) {
+                    var params = [
+                        "project=" + encodeURIComponent(theProject.id),
+                        "ui=" + encodeURIComponent(JSON.stringify({
+                            "facets" : [ facet ]
+                        }))
+                    ];
+                    if(facet.s.length == 0) {
+                        alert("You should choose at least one value to browse this cluster");
+                        event.preventDefault();
+                    } else {
+                        var url = "project?" + params.join("&");
+                        $(this).attr("href",url);
+                    }
+                })
                 .appendTo(div);
 
-            $(tr.insertCell(2))
+            var editCheck = $('<input type="checkbox" style = "accent-color: gray;" />')
+                .on('change',function() {
+                    cluster.edit = this.checked;
+                    const checkboxChoicesList = document.getElementsByClassName("Checkbox_Choice" + index.toString());
+                    for(let i = 0; i < checkboxChoicesList.length; i++){
+                        const checkbox = $(checkboxChoicesList[i]);
+                        if(this.checked) {
+                            checkbox.prop('disabled', false);
+                            checkbox.prop('checked', true).trigger('change');
+                        } else {
+                            checkbox.prop('checked', false).trigger('change');
+                            checkbox.prop('disabled', true);
+                            cluster.rowCount = 0;
+                            cluster.size = 0;
+                            tr.cells[3].textContent = cluster.size.toString();
+                            tr.cells[4].textContent = cluster.rowCount.toString();
+                        }
+                    }
+                }).appendTo(tr.insertCell(0));
+
+            $(tr.insertCell(1))
                 .on('mouseenter',function() { browseLink.css("visibility", "visible"); })
                 .on('mouseleave',function() { browseLink.css("visibility", "hidden"); })
                 .append(ul)
                 .append(div);
-
-            var editCheck = $('<input type="checkbox" />')
-                .on('change',function() {
-                    cluster.edit = this.checked;
-                }).appendTo(tr.insertCell(3));
-
+            
             if (cluster.edit) {
                 editCheck.prop('checked', true);
             }
@@ -319,7 +365,13 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 .val(cluster.value)
                 .on("keyup change input",function() {
                     cluster.value = this.value;
-                }).appendTo(tr.insertCell(4));
+                }).appendTo(tr.insertCell(2));
+
+            var cell = tr.insertCell(3)
+            cell.textContent = "0";
+
+            cell = tr.insertCell(4);
+            cell.textContent = "0";
 
             return choices.length;
         };
@@ -374,7 +426,7 @@ ClusteringDialog.prototype._cluster = function() {
         function(data) {
             self._updateData(data);
             $(".clustering-dialog-facet").css("display","block");
-            $('#cluster-and-edit-dialog :input').prop('disabled', false);
+            $('#cluster-and-edit-dialog :input').not('.Checkbox_Choice').prop('disabled', false);
         },
         "json"
     );
@@ -512,13 +564,44 @@ ClusteringDialog.prototype._getBaseClusters = function() {
 
 ClusteringDialog.prototype._getRestrictedClusters = function(except) {
     var clusters = this._getBaseClusters();
+    let newClusters = [];
+    for (var i = 0; i < clusters.length; i++) {
+        let newCluster = {
+            edit: false,
+            choices: [],
+            value: null,
+        };
+
+        let cluster = clusters[i];
+        if (cluster.edit) {
+            for (var j = 0; j < cluster.choices.length; j++) {
+                let checkBoxID = 'Checkbox' + i.toString() + "_Choice" + j.toString();
+                let checkBox = document.getElementById(checkBoxID);
+                if(checkBox.checked){
+                    newCluster.choices.push(cluster.choices[j]);
+                    if(newCluster.choices.length == 1){
+                        newCluster.value = cluster.choices[j].v;
+                        newCluster.edit = true;
+                    }
+                }
+            }
+        }
+        if(Array.isArray(newCluster.choices) && newCluster.choices.length){
+            newClusters.push(newCluster)
+        }
+    }
+
+    if(newClusters.length == 0){
+        newClusters = clusters;
+    }
+
     for (var i = 0; i < this._facets.length; i++) {
         var facet = this._facets[i].facet;
         if (except !== facet) {
-            clusters = facet.restrict(clusters);
+            newClusters = facet.restrict(newClusters);
         }
     }
-    return clusters;
+    return newClusters;
 };
 
 ClusteringDialog.prototype._updateAll = function() {
