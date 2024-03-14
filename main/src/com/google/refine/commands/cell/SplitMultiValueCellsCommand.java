@@ -33,63 +33,43 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.cell;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import com.google.refine.commands.Command;
+import com.google.refine.commands.OperationCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
-import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
-public class SplitMultiValueCellsCommand extends Command {
+public class SplitMultiValueCellsCommand extends OperationCommand {
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        if (!hasValidCSRFToken(request)) {
-            respondCSRFError(response);
-            return;
-        }
+    protected AbstractOperation createOperation(Project project, HttpServletRequest request) throws Exception {
+        String columnName = request.getParameter("columnName");
+        String keyColumnName = request.getParameter("keyColumnName");
+        String separator = request.getParameter("separator");
+        String mode = request.getParameter("mode");
+        Boolean regex = getBooleanParameter(request, "regex");
 
-        try {
-            Project project = getProject(request);
+        AbstractOperation op;
 
-            String columnName = request.getParameter("columnName");
-            String keyColumnName = request.getParameter("keyColumnName");
-            String separator = request.getParameter("separator");
-            String mode = request.getParameter("mode");
-            Boolean regex = Boolean.parseBoolean(request.getParameter("regex"));
+        if ("lengths".equals(mode)) {
+            String s = request.getParameter("fieldLengths");
 
-            AbstractOperation op;
+            int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {
+            });
 
-            if ("lengths".equals(mode)) {
-                String s = request.getParameter("fieldLengths");
+            return new MultiValuedCellSplitOperation(columnName,
+                    keyColumnName,
+                    fieldLengths);
 
-                int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {
-                });
-
-                op = new MultiValuedCellSplitOperation(columnName,
-                        keyColumnName,
-                        fieldLengths);
-
-            } else {
-                op = new MultiValuedCellSplitOperation(columnName,
-                        keyColumnName,
-                        separator,
-                        regex);
-            }
-            Process process = op.createProcess(project, new Properties());
-            performProcessAndRespond(request, response, project, process);
-        } catch (Exception e) {
-            respondException(response, e);
+        } else {
+            return new MultiValuedCellSplitOperation(columnName,
+                    keyColumnName,
+                    separator,
+                    regex);
         }
     }
 }

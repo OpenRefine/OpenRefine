@@ -217,6 +217,18 @@ public abstract class Command {
         return def;
     }
 
+    static protected boolean getBooleanParameter(HttpServletRequest request, String name) {
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
+        try {
+            return Boolean.parseBoolean(request.getParameter(name));
+        } catch (Exception e) {
+            // ignore
+        }
+        return false;
+    }
+
     /**
      * Utility method for retrieving the CSRF token stored in the "csrf_token" parameter of the request, and checking
      * that it is valid.
