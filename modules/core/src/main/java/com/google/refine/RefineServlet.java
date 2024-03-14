@@ -218,6 +218,7 @@ public class RefineServlet extends Butterfly {
         }
     }
 
+    // TODO: Hoist to Butterfly? Or convert to initParameter or other data on HttpServlet?
     public ButterflyModule getModule(String name) {
         return _modulesByName.get(name);
     }
