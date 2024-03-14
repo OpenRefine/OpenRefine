@@ -1,3 +1,4 @@
+
 package com.google.refine.model.changes;
 
 import static org.testng.Assert.assertEquals;
@@ -23,7 +24,7 @@ public class RowAdditionChangeTests extends RefineTest {
 
     Project project;
     int originalCount;
-    int insertionIndex = 0;  // Prepend rows
+    int insertionIndex = 0; // Prepend rows
     RowAdditionChange change;
     List<Row> newRows;
 
@@ -35,11 +36,11 @@ public class RowAdditionChangeTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
-        String [] columnNames = {"Category", "Value"};
+        String[] columnNames = { "Category", "Value" };
         Serializable[][] grid = {
-                {"Electronics", 599.9},
-                {"Clothing", 45.50},
-                {"Home & Garden", 129.95}
+                { "Electronics", 599.9 },
+                { "Clothing", 45.50 },
+                { "Home & Garden", 129.95 }
         };
         project = createProject(columnNames, grid);
         originalCount = project.rows.size();

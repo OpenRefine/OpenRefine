@@ -1,3 +1,4 @@
+
 package com.google.refine.model.changes;
 
 import java.io.IOException;
@@ -18,9 +19,9 @@ public class RowAdditionChange implements Change {
     private final List<Row> _additionalRows;
 
     private final int _insertionIndex;
-    private static String _countField = "count";            // Field name for sizes of `_additionalRows` in `change.txt`
-    private static String _insertionIndexField = "index";   // Field name for index to insert new rows in `change.txt`
-    private static String eoc = "/ec/";                     // end of change marker, not end of file, in `change.txt`
+    private static String _countField = "count"; // Field name for sizes of `_additionalRows` in `change.txt`
+    private static String _insertionIndexField = "index"; // Field name for index to insert new rows in `change.txt`
+    private static String eoc = "/ec/"; // end of change marker, not end of file, in `change.txt`
 
     public RowAdditionChange(List<Row> additionalRows, int insertionIndex) {
         _additionalRows = additionalRows;
@@ -61,7 +62,7 @@ public class RowAdditionChange implements Change {
         writer.write(_countField + "=");
         writer.write(Integer.toString(_additionalRows.size()));
         writer.write('\n');
-        for (Row row: _additionalRows) {
+        for (Row row : _additionalRows) {
             row.save(writer, options);
             writer.write('\n');
         }
@@ -89,7 +90,7 @@ public class RowAdditionChange implements Change {
                 }
             }
         }
-        
+
         return new RowAdditionChange(rows, index);
     }
 }

@@ -1,3 +1,4 @@
+
 package com.google.refine.operations.row;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class RowAdditionOperation extends AbstractOperation {
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        int insertionIndex = 0;  // Prepend rows
+        int insertionIndex = 0; // Prepend rows
 
         int count = _rows.size();
         String description = "Add " + count + " row" + ((count > 1) ? "s" : "");
