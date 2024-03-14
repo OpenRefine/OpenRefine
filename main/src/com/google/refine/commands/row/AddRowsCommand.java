@@ -1,3 +1,4 @@
+
 package com.google.refine.commands.row;
 
 import java.util.Arrays;
@@ -21,8 +22,8 @@ public class AddRowsCommand extends EngineDependentCommand {
 
     @Override
     protected AbstractOperation createOperation(Project project,
-                                                HttpServletRequest request,
-                                                EngineConfig engineConfig) throws ServletException {
+            HttpServletRequest request,
+            EngineConfig engineConfig) throws ServletException {
 
         String rowDataParam = "rows";
         if (!request.getParameterMap().containsKey(rowDataParam) || request.getParameter(rowDataParam) == null) {
@@ -31,7 +32,7 @@ public class AddRowsCommand extends EngineDependentCommand {
 
         // TODO: How would I use an existing pool?
         Pool pool = new Pool();
-        String [] rowData = request.getParameterValues(rowDataParam);
+        String[] rowData = request.getParameterValues(rowDataParam);
         List<Row> rows = Arrays.stream(rowData)
                 .map(rowStr -> {
                     try {
