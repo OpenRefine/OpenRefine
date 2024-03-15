@@ -70,7 +70,7 @@ public class XlsExporterTests extends RefineTest {
     Grid grid;
     ProjectMetadata projectMetadata;
     Engine engine;
-    Map<String,String> options;
+    Map<String, String> options;
     long projectId = 1234L;
 
     // System Under Test
@@ -82,7 +82,7 @@ public class XlsExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
         stream = new ByteArrayOutputStream();
-        options = new HashMap<String,String>();
+        options = new HashMap<String, String>();
     }
 
     @AfterMethod

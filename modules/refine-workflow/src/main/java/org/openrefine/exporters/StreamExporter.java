@@ -43,7 +43,7 @@ import org.openrefine.model.Grid;
 
 public interface StreamExporter extends Exporter {
 
-    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String,String> options, Engine engine,
+    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String, String> options, Engine engine,
             OutputStream outputStream)
             throws IOException;
 

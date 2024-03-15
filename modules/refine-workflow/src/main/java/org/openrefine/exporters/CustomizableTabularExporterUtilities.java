@@ -77,7 +77,7 @@ abstract public class CustomizableTabularExporterUtilities {
     static public void exportRows(
             final Grid grid,
             final Engine engine,
-            Map<String,String> params,
+            Map<String, String> params,
             final TabularSerializer serializer,
             SortingConfig sortingConfig) {
 
@@ -176,7 +176,7 @@ abstract public class CustomizableTabularExporterUtilities {
     static public int[] countColumnsRows(
             final Grid grid,
             final Engine engine,
-            Map<String,String> params) {
+            Map<String, String> params) {
         RowCountingTabularSerializer serializer = new RowCountingTabularSerializer();
         exportRows(grid, engine, params, serializer, SortingConfig.NO_SORTING);
         return new int[] { serializer.columns, serializer.rows };

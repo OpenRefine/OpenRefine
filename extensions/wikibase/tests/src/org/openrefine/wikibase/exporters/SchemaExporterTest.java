@@ -30,7 +30,7 @@ public class SchemaExporterTest extends RefineTest {
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
 
         StringWriter writer = new StringWriter();
-        Map<String,String> properties = new HashMap<String,String>();
+        Map<String, String> properties = new HashMap<String, String>();
         exporter.export(grid, new ProjectMetadata(), 1234L, properties, engine, writer);
         TestUtils.assertEqualsAsJson(writer.toString(),
                 "{\"entityEdits\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}");

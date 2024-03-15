@@ -68,7 +68,7 @@ public class OdsExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Grid grid;
     Engine engine;
-    Map<String,String> options;
+    Map<String, String> options;
     long projectId = 1234L;
 
     // System Under Test
@@ -81,7 +81,7 @@ public class OdsExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
         engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
-        options = new HashMap<String,String>();
+        options = new HashMap<String, String>();
     }
 
     @AfterMethod

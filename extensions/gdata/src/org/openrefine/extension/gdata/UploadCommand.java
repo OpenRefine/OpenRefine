@@ -88,7 +88,7 @@ public class UploadCommand extends Command {
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-            Map<String,String> params = ExportRowsCommand.getRequestParameters(request);
+            Map<String, String> params = ExportRowsCommand.getRequestParameters(request);
             String name = params.get("name");
 
             response.setCharacterEncoding("UTF-8");
@@ -132,7 +132,7 @@ public class UploadCommand extends Command {
     }
 
     private String upload(
-            Project project, Engine engine, Map<String,String> params,
+            Project project, Engine engine, Map<String, String> params,
             String token, String name, List<Exception> exceptions) {
         String format = params.get("format");
         if ("gdata/google-spreadsheet".equals(format)) {
@@ -188,7 +188,7 @@ public class UploadCommand extends Command {
     }
 
     static private String uploadSpreadsheet(
-            final Project project, final Engine engine, final Map<String,String> params,
+            final Project project, final Engine engine, final Map<String, String> params,
             String token, String name, List<Exception> exceptions) {
 
         Drive driveService = GoogleAPIExtension.getDriveService(token);

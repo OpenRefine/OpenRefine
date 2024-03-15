@@ -79,7 +79,7 @@ public class SqlExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Grid grid;
     Engine engine;
-    Map<String,String> options;
+    Map<String, String> options;
     SqlCreateBuilder sqlCreateBuilder;
     SqlInsertBuilder sqlInsertBuilder;
     long projectId = 1234L;

@@ -81,7 +81,8 @@ public class CsvExporter implements WriterExporter {
     }
 
     @Override
-    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String,String> params, Engine engine, final Writer writer)
+    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String, String> params, Engine engine,
+            final Writer writer)
             throws IOException {
 
         String optionsString = (params == null) ? null : params.get("options");

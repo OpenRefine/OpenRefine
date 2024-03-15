@@ -82,7 +82,7 @@ public class ReconClearSimilarCellsOperation extends RowMapOperation {
     public String getDescription() {
         return OperationDescription.recon_clear_similar_cells_brief(_similarValue, _columnName);
     }
-    
+
     @Override
     public List<String> getColumnDependencies() {
         return Collections.singletonList(_columnName);
@@ -92,7 +92,6 @@ public class ReconClearSimilarCellsOperation extends RowMapOperation {
     public List<ColumnInsertion> getColumnInsertions() {
         return Collections.singletonList(ColumnInsertion.replacement(_columnName));
     }
-
 
     @Override
     protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,

@@ -69,8 +69,8 @@ public class ExportRowsCommand extends Command {
      * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
      */
 
-    static public Map<String,String> getRequestParameters(HttpServletRequest request) {
-        Map<String,String> options = new HashMap<String,String>();
+    static public Map<String, String> getRequestParameters(HttpServletRequest request) {
+        Map<String, String> options = new HashMap<String, String>();
 
         Enumeration<String> en = request.getParameterNames();
         while (en.hasMoreElements()) {
@@ -89,7 +89,7 @@ public class ExportRowsCommand extends Command {
             long projectId = project.getId();
             ProjectMetadata projectMetadata = ProjectManager.singleton.getProjectMetadata(project.getId());
             Engine engine = getEngine(request, project);
-            Map<String,String> params = getRequestParameters(request);
+            Map<String, String> params = getRequestParameters(request);
 
             String format = params.get("format");
             Exporter exporter = ExporterRegistry.getExporter(format);

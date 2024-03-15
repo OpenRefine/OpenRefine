@@ -159,7 +159,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
         verify(response).setStatus(200);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
-    
+
     @Test
     public void testIncompleteExpressionMishandledByGRELParser() throws Exception {
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));

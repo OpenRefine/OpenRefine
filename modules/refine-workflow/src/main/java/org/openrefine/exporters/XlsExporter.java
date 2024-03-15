@@ -73,7 +73,7 @@ public class XlsExporter implements StreamExporter {
 
     @Override
     public void export(final Grid grid, ProjectMetadata projectMetadata, long projectId,
-            Map<String,String> params, Engine engine, OutputStream outputStream) throws IOException {
+            Map<String, String> params, Engine engine, OutputStream outputStream) throws IOException {
 
         final Workbook wb = xml ? new SXSSFWorkbook() : new HSSFWorkbook();
 

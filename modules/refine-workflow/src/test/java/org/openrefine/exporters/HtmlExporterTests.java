@@ -71,7 +71,7 @@ public class HtmlExporterTests extends RefineTest {
     Engine engine;
     Grid grid;
     ProjectMetadata projectMetadata;
-    Map<String,String> options;
+    Map<String, String> options;
     long projectId = 1234L;
 
     // System Under Test

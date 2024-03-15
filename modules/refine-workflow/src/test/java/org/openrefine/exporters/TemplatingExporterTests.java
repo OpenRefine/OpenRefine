@@ -36,8 +36,8 @@ package org.openrefine.exporters;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -73,7 +73,7 @@ public class TemplatingExporterTests extends RefineTest {
     Grid grid;
     ProjectMetadata projectMetadata;
     Engine engine;
-    Map<String,String> options;
+    Map<String, String> options;
     long projectId = 1234L;
 
     // System Under Test
@@ -85,7 +85,7 @@ public class TemplatingExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
         writer = new StringWriter();
-        options = new HashMap<String,String>();
+        options = new HashMap<String, String>();
     }
 
     @AfterMethod
@@ -221,7 +221,7 @@ public class TemplatingExporterTests extends RefineTest {
                         { null, "row1cell1" }
                 });
         Engine engine = new Engine(grid, EngineConfig.ALL_RECORDS, 1234L);
-        
+
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
         options.put("template", template);
         options.put("prefix", prefix);
@@ -253,13 +253,13 @@ public class TemplatingExporterTests extends RefineTest {
                         { null, "row1cell1" }
                 });
         engine = new Engine(grid, EngineConfig.ALL_ROWS, 1234L);
-        
+
         String template = rowPrefix + "{{\"\\}\\}\"}}" + cellSeparator + "{{\"\\}\\}\"}}";
         options.put("template", template);
         options.put("prefix", prefix);
         options.put("suffix", suffix);
         options.put("separator", rowSeparator);
-        
+
         try {
             SUT.export(grid, projectMetadata, projectId, options, engine, writer);
         } catch (IOException e) {

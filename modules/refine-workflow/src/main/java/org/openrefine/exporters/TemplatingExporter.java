@@ -78,7 +78,8 @@ public class TemplatingExporter implements WriterExporter {
     }
 
     @Override
-    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String,String> options, Engine engine, Writer writer)
+    public void export(Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String, String> options, Engine engine,
+            Writer writer)
             throws IOException {
         String limitString = options.get("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;

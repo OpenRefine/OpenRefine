@@ -68,7 +68,7 @@ public class SqlExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String,String> params, Engine engine,
+    public void export(final Grid grid, ProjectMetadata projectMetadata, long projectId, Map<String, String> params, Engine engine,
             final Writer writer)
             throws IOException {
         if (logger.isDebugEnabled()) {
