@@ -1,17 +1,15 @@
 <form bind="form"><div class="grid-layout layout-normal"><table>
   <tr><td id="or-import-locate-files"></td></tr>
-  <tr><td><input type="file" multiple bind="fileInput1" name="upload" /></td></tr>
-  <tr><td id="or-drag-locate-files"></td></tr>
-  <tr><td>
-      <div class="file-area">
-        <input type="file" multiple bind="fileInput2" name="upload" required/>
+  <tr>
+    <td>
 
-        <div class="file-dummy">
-          <span class="default">Click to select a file, or drag it here</span>
-          <span class="success">Great, your file is selected</span>
-        </div>
+      <div class="file-input-container">
+        <input type="file" multiple id="fileInput" name="upload" class="file-input" />
+        <span class="file-input-text">Drag files here</span>
       </div>
 
-    </td></tr>
+    </td>
+  </tr>
   <tr><td><button bind="nextButton" class="button button-primary" type="button"></button></td></tr>
 </table></div></form>
+
