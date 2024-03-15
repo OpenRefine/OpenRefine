@@ -88,7 +88,7 @@ public class OdsExporter implements StreamExporter {
                     table = odfDoc.getTableByName(tableName);
                 }
                 // delete any other table which has another name
-                odfDoc.getTableList().stream()
+                odfDoc.getTableList(true).stream()
                         .filter(table -> !table.getTableName().equals(tableName))
                         .forEach(OdfTable::remove);
                 rowBeforeHeader = table.getRowCount();
