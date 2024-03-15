@@ -18,6 +18,7 @@ describe(__filename, function () {
             cy.get('.dialog-body').contains(
                 'Find groups of different cell values'
             );
+            
             cy.get('.dialog-footer').contains('Export clusters');
         });
 
