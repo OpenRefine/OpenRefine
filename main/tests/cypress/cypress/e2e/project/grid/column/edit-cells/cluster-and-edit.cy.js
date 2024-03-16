@@ -196,15 +196,15 @@ describe(__filename, function () {
         cy.get('#autoId').check();
 
         cy.get('.dialog-container').within(() => {
-            cy.get('.clustering-dialog-entry-table tr td:nth-child(3)').should(
+            cy.get('.clustering-dialog-entry-table tr td:nth-child(2)').should(
                 'to.contain',
                 'b ar'
             );
-            cy.get('.clustering-dialog-entry-table tr td:nth-child(3)').should(
+            cy.get('.clustering-dialog-entry-table tr td:nth-child(2)').should(
                 'to.contain',
                 'b  ar'
             );
-            cy.get('.clustering-dialog-entry-table tr td:nth-child(3)').should(
+            cy.get('.clustering-dialog-entry-table tr td:nth-child(2)').should(
                 'to.contain',
                 'b   ar'
             );

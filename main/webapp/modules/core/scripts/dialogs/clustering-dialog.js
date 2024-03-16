@@ -566,13 +566,13 @@ ClusteringDialog.prototype._getRestrictedClusters = function(except) {
     var clusters = this._getBaseClusters();
     let newClusters = [];
     for (var i = 0; i < clusters.length; i++) {
+        let cluster = clusters[i];
         let newCluster = {
             edit: false,
             choices: [],
-            value: null,
+            value: cluster.value
         };
-
-        let cluster = clusters[i];
+        
         if (cluster.edit) {
             for (var j = 0; j < cluster.choices.length; j++) {
                 let checkBoxID = 'Checkbox' + i.toString() + "_Choice" + j.toString();
@@ -580,7 +580,6 @@ ClusteringDialog.prototype._getRestrictedClusters = function(except) {
                 if(checkBox.checked){
                     newCluster.choices.push(cluster.choices[j]);
                     if(newCluster.choices.length == 1){
-                        newCluster.value = cluster.choices[j].v;
                         newCluster.edit = true;
                     }
                 }
