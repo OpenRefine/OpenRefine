@@ -93,7 +93,7 @@ public class ReconClearSimilarCellsOperation extends RowMapOperation {
         return Collections.singletonList(ColumnInsertion.replacement(_columnName));
     }
 
-
+    
     @Override
     protected RowInRecordMapper getPositiveRowMapper(ColumnModel columnModel, Map<String, OverlayModel> overlayModels,
             long estimatedRowCount, ChangeContext context) throws OperationException {

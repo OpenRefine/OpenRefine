@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
@@ -60,7 +60,7 @@ public class OdsExporter implements StreamExporter {
 
     @Override
     public void export(final Grid grid, ProjectMetadata projectMetadata, long projectId,
-            Properties params, Engine engine, OutputStream outputStream) throws IOException {
+            Map<String, String> params, Engine engine, OutputStream outputStream) throws IOException {
 
         final OdfSpreadsheetDocument odfDoc;
         try {
@@ -88,7 +88,7 @@ public class OdsExporter implements StreamExporter {
                     table = odfDoc.getTableByName(tableName);
                 }
                 // delete any other table which has another name
-                odfDoc.getTableList().stream()
+                odfDoc.getTableList(true).stream()
                         .filter(table -> !table.getTableName().equals(tableName))
                         .forEach(OdfTable::remove);
                 rowBeforeHeader = table.getRowCount();

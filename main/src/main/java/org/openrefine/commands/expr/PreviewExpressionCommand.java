@@ -159,7 +159,7 @@ public class PreviewExpressionCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+    
         Project project = getProject(request);
 
         int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
