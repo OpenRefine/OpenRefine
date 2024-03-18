@@ -222,6 +222,15 @@ public class RefineServlet extends Butterfly {
         return _modulesByName.get(name);
     }
 
+    /**
+     * Get a list of the names of currently loaded modules.
+     *
+     * @return an array of module names in alphabetical order
+     */
+    public String[] getModuleNames() {
+        return _modulesByName.keySet().stream().sorted().toArray(String[]::new);
+    }
+
     protected String getCommandKey(HttpServletRequest request) {
         // A command path has this format: /command/module-name/command-name/...
 
