@@ -35,13 +35,13 @@ package org.openrefine.exporters;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Properties;
+import java.util.Map;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.Project;
 
 public interface UrlExporter extends Exporter {
 
-    public void export(Project project, Properties options, Engine engine, URL url) throws IOException;
+    public void export(Project project, Map<String, String> options, Engine engine, URL url) throws IOException;
 
 }
