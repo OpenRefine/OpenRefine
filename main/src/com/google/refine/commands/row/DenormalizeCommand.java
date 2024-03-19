@@ -33,38 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.row;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.google.refine.commands.Command;
+import com.google.refine.commands.OperationCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.row.DenormalizeOperation;
-import com.google.refine.process.Process;
 
-public class DenormalizeCommand extends Command {
+public class DenormalizeCommand extends OperationCommand {
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        if (!hasValidCSRFToken(request)) {
-            respondCSRFError(response);
-            return;
-        }
-
-        try {
-            Project project = getProject(request);
-
-            AbstractOperation op = new DenormalizeOperation();
-            Process process = op.createProcess(project, new Properties());
-
-            performProcessAndRespond(request, response, project, process);
-        } catch (Exception e) {
-            respondException(response, e);
-        }
+    protected AbstractOperation createOperation(Project project, HttpServletRequest request) throws Exception {
+        return new DenormalizeOperation();
     }
 }
