@@ -27,8 +27,14 @@
 
 package com.google.refine.operations.recon;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -38,15 +44,19 @@ import java.util.Properties;
 import org.apache.commons.text.StringEscapeUtils;
 import org.mockito.Mockito;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.messages.OpenRefineMessage;
+import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
+import com.google.refine.model.Recon.Judgment;
+import com.google.refine.model.Row;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
@@ -106,11 +116,71 @@ public class ReconOperationTests extends RefineTest {
             "       \"progress\" : 0,\n" +
             "       \"status\" : \"pending\"\n" +
             "     }";
+    private String identifierSpace = "http://www.wikidata.org/entity/";
+    private String schemaSpace = "http://www.wikidata.org/prop/direct/";
+
+    private Project project = null;
+    private StandardReconConfig reconConfig = null;
+    private Row row0 = null;
+    private Row row1 = null;
+    private Row row3 = null;
+    private Row row4 = null;
+    private Recon recon1 = null;
+    private Recon recon2 = null;
+    private Recon recon3 = null;
+    private ReconJob job1 = null;
+    private ReconJob job2 = null;
+    private ReconJob job3 = null;
 
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "recon", ReconOperation.class);
         ReconConfig.registerReconConfig(getCoreModule(), "standard-service", StandardReconConfig.class);
+    }
+
+    @BeforeMethod
+    public void setUpDependencies() {
+        project = createProject("test project",
+                new String[] { "column" },
+                new Serializable[][] {
+                        { "value1" },
+                        { "value2" },
+                        { "value1" },
+                        { "value3" },
+                        { null }
+                });
+
+        job1 = mock(ReconJob.class, withSettings().serializable());
+        when(job1.getStringKey()).thenReturn("1");
+        job2 = mock(ReconJob.class, withSettings().serializable());
+        when(job2.getStringKey()).thenReturn("2");
+        job3 = mock(ReconJob.class, withSettings().serializable());
+        when(job3.getStringKey()).thenReturn("3");
+
+        recon1 = new Recon(1234L, identifierSpace, schemaSpace);
+        recon1.judgment = Judgment.Matched;
+        recon2 = new Recon(5678L, identifierSpace, schemaSpace);
+        recon2.judgment = Judgment.None;
+        recon3 = new Recon(9012L, identifierSpace, schemaSpace);
+        recon3.judgment = Judgment.Matched;
+
+        reconConfig = mock(StandardReconConfig.class, withSettings().serializable());
+        doReturn(2).when(reconConfig).getBatchSize(anyInt());
+        // mock identifierSpace, service and schemaSpace
+        when(reconConfig.batchRecon(eq(Arrays.asList(job1, job2)), anyLong())).thenReturn(Arrays.asList(recon1, recon2));
+        when(reconConfig.batchRecon(eq(Arrays.asList(job3)), anyLong())).thenReturn(Arrays.asList(recon3));
+
+        row0 = project.rows.get(0);
+        row1 = project.rows.get(1);
+        row3 = project.rows.get(3);
+        row4 = project.rows.get(4);
+
+        when(reconConfig.createJob(eq(project), eq(0), any(), eq("column"), eq(row0.getCell(0)))).thenReturn(job1);
+        when(reconConfig.createJob(eq(project), eq(1), any(), eq("column"), eq(row1.getCell(0)))).thenReturn(job2);
+        when(reconConfig.createJob(eq(project), eq(2), any(), eq("column"), eq(row0.getCell(0)))).thenReturn(job1);
+        when(reconConfig.createJob(eq(project), eq(3), any(), eq("column"), eq(row3.getCell(0)))).thenReturn(job3);
+        when(reconConfig.createJob(eq(project), eq(4), any(), eq("column"), eq(row4.getCell(0)))).thenReturn(job3);
+
     }
 
     @Test
@@ -124,6 +194,24 @@ public class ReconOperationTests extends RefineTest {
         Project project = mock(Project.class);
         Process process = op.createProcess(project, new Properties());
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));
+    }
+
+    @Test
+    public void testWorkingRecon() throws Exception {
+        ReconOperation operation = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "column" },
+                new Serializable[][] {
+                        { new Cell("value1", recon1) },
+                        { new Cell("value2", recon2) },
+                        { new Cell("value1", recon1) },
+                        { new Cell("value3", recon3) },
+                        { null }
+                });
+        assertProjectEquals(project, expected);
     }
 
     @Test
