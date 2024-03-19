@@ -186,6 +186,8 @@ table.data-table td.column-header, table.data-table th.column-header {
   background-repeat: no-repeat;
   cursor: pointer;
   border: none;
+  padding: 0;
+  background-color: transparent;
 }
 
 .column-header-menu-expand {
