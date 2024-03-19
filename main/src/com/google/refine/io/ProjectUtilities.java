@@ -120,7 +120,7 @@ public class ProjectUtilities {
                 if (file.exists()) {
                     return loadFromFile(file, id);
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 logger.warn("Failed to load from data file {} / {}", dir, filename, e);
             }
         }
@@ -130,7 +130,7 @@ public class ProjectUtilities {
 
     static protected Project loadFromFile(
             File file,
-            long id) throws Exception {
+            long id) throws IOException {
         ZipFile zipFile = new ZipFile(file);
         try {
             Pool pool = new Pool();
