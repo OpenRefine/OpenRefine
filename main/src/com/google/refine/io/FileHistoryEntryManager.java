@@ -52,6 +52,8 @@ import com.google.refine.util.Pool;
 
 public class FileHistoryEntryManager implements HistoryEntryManager {
 
+    public static final String HISTORY_DIR = "history";
+
     @Override
     public void delete(HistoryEntry historyEntry) {
         File file = getChangeFile(historyEntry);
@@ -141,7 +143,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
     protected File getHistoryDir(HistoryEntry historyEntry) {
         File dir = new File(((FileProjectManager) ProjectManager.singleton)
                 .getProjectDir(historyEntry.projectID),
-                "history");
+                HISTORY_DIR);
         dir.mkdirs();
 
         return dir;

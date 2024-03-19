@@ -127,7 +127,7 @@ public class CrossTests extends RefineTest {
     public void crossFunctionMultipleProjects() throws Exception {
         String duplicateProjectName = "Duplicate";
         assertEquals(((EvalError) invoke("cross", "Anne", duplicateProjectName, "friend")).message,
-                "2 projects found with name: " + duplicateProjectName);
+                "Multiple (2) projects found with name: " + duplicateProjectName);
     }
 
     @Test
