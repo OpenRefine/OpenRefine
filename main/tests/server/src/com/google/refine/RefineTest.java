@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -77,6 +78,8 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
+import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
@@ -277,6 +280,31 @@ public class RefineTest {
             ProjectManager.singleton.deleteProject(project.id);
         }
         servlet = null;
+    }
+
+    protected Recon testRecon(String name, String id, Recon.Judgment judgment) {
+        return testRecon(name, id, judgment, 1234L);
+    }
+
+    protected Recon testRecon(String name, String id, Recon.Judgment judgment, long internalId) {
+        List<ReconCandidate> candidates = Arrays.asList(
+                new ReconCandidate(id, name + " 1", null, 98.0),
+                new ReconCandidate(id + "2", name + " 2", null, 76.0));
+        ReconCandidate match = Recon.Judgment.Matched.equals(judgment) ? candidates.get(0) : null;
+        return new Recon(
+                internalId,
+                3478L,
+                judgment,
+                match,
+                null,
+                new Object[3],
+                candidates,
+                "http://my.service.com/api",
+                "http://my.service.com/space",
+                "http://my.service.com/schema",
+                "batch",
+                1,
+                -1);
     }
 
     /**
@@ -526,7 +554,12 @@ public class RefineTest {
                     assertEquals(
                             actualCell == null ? null : actualCell.value,
                             expectedCell == null ? null : expectedCell.value,
-                            String.format("mismatching cells in row %d, column '%s'", i, actual.columnModel.columns.get(j)));
+                            String.format("mismatching cell values in row %d, column '%s'", i, actual.columnModel.columns.get(j)));
+                    assertEquals(
+                            actualCell == null ? null : actualCell.recon,
+                            expectedCell == null ? null : expectedCell.recon,
+                            String.format("mismatching recon in row %d, column '%s'", i, actual.columnModel.columns.get(j)));
+
                 }
             }
         }
