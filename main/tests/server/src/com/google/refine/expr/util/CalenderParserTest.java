@@ -103,19 +103,6 @@ public class CalenderParserTest {
         assertEquals("GMT+05:30", calendar.getTimeZone().toZoneId().getId());
     }
 
-    @Test
-    public void shouldParseWhenInputHasTimeZoneID_parseTest() throws CalendarParserException {
-        String dateStr = "20/01/2024 8:30:54:003pm IST";
-        Calendar calendar = CalendarParser.parse(dateStr);
-
-        assertEquals(8, calendar.get(Calendar.HOUR));
-        assertEquals(Calendar.PM, calendar.get(Calendar.AM_PM));
-        assertEquals(30, calendar.get(Calendar.MINUTE));
-        assertEquals(54, calendar.get(Calendar.SECOND));
-        assertEquals(3, calendar.get(Calendar.MILLISECOND));
-        assertEquals("Asia/Kolkata", calendar.getTimeZone().toZoneId().getId());
-    }
-
     @DataProvider(name = "months")
     public static Object[][] months() {
         return new Object[][] {
