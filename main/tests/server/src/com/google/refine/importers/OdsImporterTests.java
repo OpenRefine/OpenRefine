@@ -88,6 +88,39 @@ public class OdsImporterTests extends ImporterTest {
     }
 
     @Test
+    public void readMultiSheetOds() throws Exception {
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 3, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 3, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 1);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
+        InputStream stream = this.getClass().getClassLoader().getResourceAsStream("sample.ods");
+
+        parseOneFile(SUT, stream);
+
+        Project expectedProject = createProject(
+                new String[] { "a", "b" },
+                new Serializable[][] {
+                        { "c", "d" },
+                        { "e", "f" },
+                        { null, null },
+                        { 3.0, 4.0 },
+                        { 5.0, 6.0 },
+                        { null, null },
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
+    @Test
     public void readOds() throws FileNotFoundException, IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();

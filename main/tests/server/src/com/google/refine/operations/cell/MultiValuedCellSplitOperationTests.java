@@ -47,9 +47,10 @@ import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-public class SplitMultiValuedCellsTests extends RefineTest {
+public class MultiValuedCellSplitOperationTests extends RefineTest {
 
     Project project;
+    Project biggerProject;
 
     @Override
     @BeforeTest
@@ -64,6 +65,17 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 new String[] { "Key", "Value" },
                 new Serializable[][] {
                         { "Record_1", "one:two;three four;fiveSix SevèËight;niné91011twelve thirteen 14Àifteen" }
+                });
+        biggerProject = createProject(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a||b", "c" },
+                        { null, "c|d", "e" },
+                        { null, 12, "f" },
+                        { "record2", "", "g" },
+                        { null, "h|i", "" },
+                        { null, null, "j" },
+                        { null, null, null }
                 });
     }
 
@@ -244,4 +256,54 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 });
         assertProjectEquals(project, expectedProject);
     }
+
+    @Test
+    public void testSplit() throws Exception {
+        AbstractOperation SUT = new MultiValuedCellSplitOperation("foo", "key", "|", false);
+
+        runOperation(SUT, biggerProject);
+
+        Project expected = createProject(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a", "c" },
+                        { null, "", null },
+                        { null, "b", null },
+                        { null, "c", "e" },
+                        { null, "d", null },
+                        { null, 12, "f" },
+                        { "record2", "", "g" },
+                        { null, "h", "" },
+                        { null, "i", "j" },
+                        { null, null, null }
+                });
+
+        assertProjectEquals(biggerProject, expected);
+    }
+
+    @Test
+    public void testSplitRespectsKeyColumn() throws Exception {
+        AbstractOperation SUT = new MultiValuedCellSplitOperation("foo", "bar", "|", false);
+
+        runOperation(SUT, biggerProject);
+
+        Project expected = createProject(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a", "c" },
+                        { null, "", null },
+                        { null, "b", null },
+                        { null, "c", "e" },
+                        { null, "d", null },
+                        { null, 12, "f" },
+                        { "record2", "", "g" },
+                        { null, "h", "" },
+                        { null, "i", null },
+                        { null, null, "j" },
+                        { null, null, null }
+                });
+
+        assertProjectEquals(biggerProject, expected);
+    }
+
 }

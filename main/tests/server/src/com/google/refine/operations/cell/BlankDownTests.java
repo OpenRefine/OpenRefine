@@ -29,6 +29,7 @@ package com.google.refine.operations.cell;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.testng.annotations.AfterMethod;
@@ -38,7 +39,10 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.DecoratedValue;
+import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.facets.ListFacet;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -50,6 +54,9 @@ import com.google.refine.util.TestUtils;
 public class BlankDownTests extends RefineTest {
 
     Project project = null;
+    Project projectToBlankDown = null;
+    Project projectForRecordKey = null;
+    ListFacet.ListFacetConfig facet;
 
     @BeforeSuite
     public void registerOperation() {
@@ -66,11 +73,36 @@ public class BlankDownTests extends RefineTest {
                         { "e", "f", "c" },
                         { null, null, "c" }
                 });
+
+        projectToBlankDown = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        projectForRecordKey = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "a", "b" },
+                        { "e", "b" },
+                        { "e", "g" },
+                        { "e", "g" }
+                });
+
+        facet = new ListFacet.ListFacetConfig();
+        facet.name = "hello";
+        facet.expression = "grel:value";
+        facet.columnName = "hello";
     }
 
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.id);
+        ProjectManager.singleton.deleteProject(projectToBlankDown.id);
+        ProjectManager.singleton.deleteProject(projectForRecordKey.id);
     }
 
     @Test
@@ -84,41 +116,39 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
-    public void testBlankDownRecords() throws Exception {
-        AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
-                "second");
+    public void testBlankDownRecordsNoFacets() throws Exception {
+        BlankDownOperation operation = new BlankDownOperation(EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
 
-        runOperation(op, project);
+        runOperation(operation, projectToBlankDown);
 
-        Project expectedProject = createProject(
-                new String[] { "key", "first", "second" },
+        Project expectedProject = createProject(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
-                        { null, "d", null },
-                        { "e", "f", "c" },
-                        { null, null, null },
+                        { "", null, "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, null, "i" }
                 });
-        assertProjectEquals(project, expectedProject);
+
+        assertProjectEquals(projectToBlankDown, expectedProject);
     }
 
     @Test
-    public void testBlankDownRows() throws Exception {
-        AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
-                "second");
+    public void testBlankDownRowsNoFacets() throws Exception {
+        BlankDownOperation operation = new BlankDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "bar");
 
-        runOperation(op, project);
+        runOperation(operation, projectToBlankDown);
 
-        Project expectedProject = createProject(
-                new String[] { "key", "first", "second" },
+        Project expectedProject = createProject(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
-                        { null, "d", null },
-                        { "e", "f", null },
-                        { null, null, null },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, null, "i" }
                 });
-        assertProjectEquals(project, expectedProject);
+
+        assertProjectEquals(projectToBlankDown, expectedProject);
     }
 
     @Test
@@ -151,4 +181,67 @@ public class BlankDownTests extends RefineTest {
                 });
         assertProjectEquals(project, expectedProject);
     }
+
+    @Test
+    public void testBlankDownRowsFacets() throws Exception {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("c", "c"),
+                new DecoratedValue("f", "f"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        BlankDownOperation operation = new BlankDownOperation(engineConfig, "bar");
+
+        runOperation(operation, projectToBlankDown);
+
+        Project expected = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertProjectEquals(projectToBlankDown, expected);
+    }
+
+    @Test
+    public void testBlankDownRecordsFacets() throws Exception {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("c", "c"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        BlankDownOperation operation = new BlankDownOperation(engineConfig, "bar");
+
+        runOperation(operation, projectToBlankDown);
+
+        Project expected = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertProjectEquals(projectToBlankDown, expected);
+    }
+
+    @Test
+    public void testBlankDownRecordKey() throws Exception {
+        BlankDownOperation operation = new BlankDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "foo");
+
+        runOperation(operation, projectForRecordKey);
+
+        Project expected = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { null, "b" },
+                        { "e", "b" },
+                        { null, "g" },
+                        { null, "g" }
+                });
+
+        assertProjectEquals(projectForRecordKey, expected);
+    }
+
 }

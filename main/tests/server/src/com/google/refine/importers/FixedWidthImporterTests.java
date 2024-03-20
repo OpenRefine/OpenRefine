@@ -109,4 +109,57 @@ public class FixedWidthImporterTests extends ImporterTest {
         assertProjectEquals(project, expectedProject);
     }
 
+    @Test
+    public void readNoColumnNames() throws Exception {
+        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(columnWidths, 6);
+        JSONUtilities.append(columnWidths, 9);
+        JSONUtilities.append(columnWidths, 5);
+        whenGetArrayOption("columnWidths", options, columnWidths);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
+        StringReader reader = new StringReader("NDB_NoShrt_DescWater\nTooShort\n");
+
+        parseOneFile(SUT, reader);
+
+        Project expectedProject = createProject(
+                new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3) },
+                new Serializable[][] {
+                        { "NDB_No", "Shrt_Desc", "Water" },
+                        { "TooSho", "rt", null },
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
+    @Test
+    public void readColumnHeader() throws Exception {
+        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(columnWidths, 6);
+        JSONUtilities.append(columnWidths, 9);
+        JSONUtilities.append(columnWidths, 5);
+        whenGetArrayOption("columnWidths", options, columnWidths);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 1);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
+        StringReader reader = new StringReader("NDB_NoShrt_DescWater\n012345green....00342\n");
+
+        parseOneFile(SUT, reader);
+
+        Project expectedProject = createProject(
+                new String[] { "NDB_No", "Shrt_Desc", "Water" },
+                new Serializable[][] {
+                        { "012345", "green....", "00342" },
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
 }
