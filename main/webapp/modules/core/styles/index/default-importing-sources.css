@@ -42,7 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .file-input {
-    width: 200px;
+    min-width: 200px;
     height: 100px;
     border: 2px solid #ccc;
     border-radius: 5px;
@@ -58,7 +58,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-110%, -30%);
+    transform: translate(-65%, 0%);
     pointer-events: none;
     text-align: center;
     color: #555;
