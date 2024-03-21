@@ -222,7 +222,7 @@ public class ColumnModel {
         writer.write("/e/\n");
     }
 
-    synchronized public void load(LineNumberReader reader) throws Exception {
+    synchronized public void load(LineNumberReader reader) throws IOException {
         String line;
         while ((line = reader.readLine()) != null && !"/e/".equals(line)) {
             int equal = line.indexOf('=');

@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -387,7 +388,7 @@ public class Recon implements HasFields {
         return null;
     }
 
-    static public Recon loadStreaming(String s) throws Exception {
+    static public Recon loadStreaming(String s) throws IOException {
         return ParsingUtilities.mapper.readValue(s, Recon.class);
     }
 

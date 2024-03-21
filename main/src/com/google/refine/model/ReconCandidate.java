@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -87,12 +88,12 @@ public class ReconCandidate implements HasFields {
         return false;
     }
 
-    static public ReconCandidate loadStreaming(String s) throws Exception {
+    static public ReconCandidate loadStreaming(String s) throws IOException {
         return ParsingUtilities.mapper.readValue(s, ReconCandidate.class);
     }
 
     @Deprecated
-    static public ReconCandidate loadStreaming(JsonParser jp) throws Exception {
+    static public ReconCandidate loadStreaming(JsonParser jp) throws IOException {
         JsonToken t = jp.getCurrentToken();
         if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
             return null;
