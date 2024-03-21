@@ -376,25 +376,29 @@ public abstract class ProjectManager {
      *             If no unique project is found with the given name
      */
     public long getProjectID(String name) throws GetProjectIDException {
-        Integer c = 0;
-        Long id = 0L;
+        if (name == null) {
+            throw new GetProjectIDException("Can't lookup a project with a null name");
+        }
+        Integer count = 0;
+        Long id = -1L;
+        // TODO: Linear search assumes small number of projects
         for (Entry<Long, ProjectMetadata> entry : _projectsMetadata.entrySet()) {
-            if (entry.getValue().getName().equals(name)) {
+            ProjectMetadata metadata = entry.getValue();
+            if (metadata != null && name.equals(metadata.getName())) {
                 id = entry.getKey();
-                c += 1;
+                count += 1;
             }
         }
-        if (c == 1) {
+        if (count == 1) {
             return id;
-        } else if (c == 0) {
+        } else if (count == 0) {
             throw new GetProjectIDException("Unable to find project with name: " + name);
-        } else {
-            throw new GetProjectIDException(c + " projects found with name: " + name);
         }
+        throw new GetProjectIDException("Multiple (" + count + ") projects found with name: " + name);
     }
 
     /**
-     * A valid user meta data definition should have name and display property
+     * A valid user metadata definition should have name and display property
      * 
      * @param placeHolderJsonObj
      * @return
@@ -454,7 +458,7 @@ public abstract class ProjectManager {
     }
 
     /**
-     * honor the meta data preference
+     * honor the metadata preference
      * 
      * @param jsonObjArray
      */
@@ -533,7 +537,7 @@ public abstract class ProjectManager {
      *
      * @deprecated Deprecated for v3.8. Use {@link #getAllProjectsTags()}
      */
-    @Deprecated
+    @Deprecated(since = "3.8")
     @JsonIgnore
     public Map<String, Integer> getAllProjectTags() {
         return _projectsTags;
