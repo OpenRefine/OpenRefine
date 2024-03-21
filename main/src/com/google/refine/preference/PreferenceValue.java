@@ -29,6 +29,9 @@ package com.google.refine.preference;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+
+import com.google.refine.ClassResolver;
 
 /**
  * Interface to be extended by all objects stored in the preferences. This ensures that their full class name is
@@ -38,6 +41,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  */
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "class")
+@JsonTypeIdResolver(ClassResolver.class)
 public interface PreferenceValue {
 
     @JsonProperty("class")
