@@ -192,6 +192,10 @@ a img {
   padding-right: 12px;
 }
 
+.okButton {
+  font-weight: bold;
+}
+
 .form-table th, .form-table td {
   vertical-align: top;
   font-size: 1.3em;
