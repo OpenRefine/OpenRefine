@@ -70,12 +70,19 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
 };
 
 Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
+    this._buildProjectSearchPanel();
     Refine.OpenProjectUI.refreshTagsListPanel();
     this._fetchProjects();
     var tag = new URLSearchParams(window.location.search).get('tag');
     if (!tag) tag = '';
     Refine.OpenProjectUI._filterTags(tag);
 };
+
+Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
+  const self = this;
+  self._searchAnimation();
+  self._searchInput();
+}
 
 Refine.OpenProjectUI.refreshTagsListPanel = function() {
     var allTags = Refine.TagsManager._getAllProjectTags();
@@ -117,6 +124,68 @@ Refine.OpenProjectUI._filterTags = function(tag) {
       $(this).hide();
     }
   });
+};
+
+Refine.OpenProjectUI.prototype._searchAnimation = function() {
+  const search = $('#searchIcon');
+  const form = $('.header-search-box');
+  const icon = $('.magnifying_glass');
+  search.click(function () {
+    if (form.is(':hidden')) {
+      $("#tagsUl").hide();
+      $("#divInput").show();
+      icon.addClass("magnifying-glass-open");
+      form.show();
+      form.focus();
+    }
+    const widthFormOpen = Math.floor($('#right-panel-body').width() * 4 / 5);
+
+    form.animate({
+      // In Chrome, Edge and I.E., form.width() != widthFormOpen
+      'width': Math.round(form.width()) == widthFormOpen ? '0' : widthFormOpen + "px"
+    }, 'fast', function () {
+      if (Math.abs(Math.round(form.width())) === 0) {
+        form.hide()
+        form.val('')
+        icon.removeClass("magnifying-glass-open")
+        $("#tableBody").filterListSearch("")
+        $("#divInput").hide()
+        $("#tagsUl").show()
+      }
+    });
+  });
+};
+
+Refine.OpenProjectUI.prototype._searchInput = function() {
+  const search = $('#searchInProjects');
+  //setup before functions
+  let typingTimer;                //timer identifier
+  const doneTypingInterval = 1000;  //time in ms
+  // search when done typing interval is over when not typing anymore
+
+  // TODO: Does this handle pasting using the mouse?
+  //on keyup, start the countdown
+  search.on('keyup', function (e) {
+    clearTimeout(typingTimer);
+    if (e.keyCode == '13') {
+      e.preventDefault();
+      doneTyping();
+    } else {
+      typingTimer = setTimeout(doneTyping, doneTypingInterval);
+    }
+  });
+
+  //on keydown, clear the countdown
+  search.on('keydown', function () {
+    clearTimeout(typingTimer);
+  });
+
+  //user is "finished typing," do something
+  function doneTyping () {
+    const text = search.val();
+    // get the text, get back the projects that contains the text in the metadata
+    $("#tableBody").filterListSearch(text);
+  }
 };
 
 // FIXME: This is overwriting an earlier function definition
@@ -205,7 +274,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
           
           return htmlDisplay;
       })() +     
-      '</tr></thead><tbody id="tableBody"></tbody></table>'
+      '</tr></thead><tbody id="tableBody"></tbody></table>  <div id="no-results-message">'
+      +$.i18n('core-index-open/no-results-message')+'</div>'
     ).appendTo(projectsUl)[0];
 
     var renderProject = function(project) {
@@ -254,6 +324,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       
       var nameLink = $('<a></a>')
       .addClass("project-name")
+      .addClass("searchable")
       .text(project.name)
       .attr("href", "project?project=" + project.id)
       .appendTo($(tr.insertCell(tr.cells.length)));
@@ -264,6 +335,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         $("<span/>")
         .addClass("project-tag")
         .attr("data-tag-name", tag)
+        .addClass("searchable")
         .text(tag)
         .appendTo(tagsCell);
         $(tr).addClass(tag);
@@ -272,6 +344,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     
     var appendMetaField = function(data) {
         $('<div></div>')
+        .addClass("searchable")
         .html(data)
         .appendTo($(tr.insertCell(tr.cells.length)));
     };
@@ -285,7 +358,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     for(var i in data)
     {
          if (data[i].display === true) {
-             appendMetaField(data[i].value); 
+             appendMetaField(data[i].value);
          }
     }
         
@@ -317,7 +390,7 @@ Refine.OpenProjectUI.prototype._addTagFilter = function() {
 };
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
-    
+
     var refreshMetaField = function(data, index) {
         if (index === 3) {
             $('a', $('td', tr).eq(index))
