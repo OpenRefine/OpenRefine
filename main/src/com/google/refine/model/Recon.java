@@ -214,6 +214,7 @@ public class Recon implements HasFields {
             candidates = new ArrayList<ReconCandidate>(3);
         }
         candidates.add(candidate);
+        error = null;
     }
 
     @JsonIgnore
@@ -412,11 +413,11 @@ public class Recon implements HasFields {
         this.judgment = judgment != null ? judgment : Judgment.None;
         this.match = match;
         this.error = error;
-        if (error != null && match != null) {
-            throw new IllegalArgumentException("there is a match hence no error");
-        }
         this.features = features != null ? features : new Object[Feature_max];
         this.candidates = candidates != null ? candidates : new ArrayList<>();
+        if (error != null && !this.candidates.isEmpty()) {
+            throw new IllegalArgumentException("Recon deserialization: there are candidates hence no error");
+        }
         this.service = service != null ? service : "unknown";
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
