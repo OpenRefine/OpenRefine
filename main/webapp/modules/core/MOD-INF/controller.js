@@ -319,6 +319,21 @@ function registerImporting() {
   );
 }
 
+function registerDistances() {
+   var DF = Packages.com.google.refine.clustering.knn.DistanceFactory;
+   var VicinoDistance = Packages.com.google.refine.clustering.knn.VicinoDistance;
+   DF.put("levenshtein", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.LevenshteinDistance()));
+   DF.put("ppm", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.PPMDistance()));
+}
+
+function registerKeyers() {
+   var KF = Packages.com.google.refine.clustering.binning.KeyerFactory;
+   KF.put("fingerprint", new Packages.com.google.refine.clustering.binning.FingerprintKeyer());
+   KF.put("ngram-fingerprint", new Packages.com.google.refine.clustering.binning.NGramFingerprintKeyer());
+   KF.put("metaphone3", new Packages.com.google.refine.clustering.binning.Metaphone3Keyer());
+   KF.put("cologne-phonetic", new Packages.com.google.refine.clustering.binning.ColognePhoneticKeyer());
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
@@ -328,6 +343,8 @@ function init() {
   registerCommands();
   registerOperations();
   registerImporting();
+  registerDistances();
+  registerKeyers();
 
   var commonModules = [
       "3rdparty/jquery.js",

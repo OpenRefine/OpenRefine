@@ -34,6 +34,7 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
@@ -61,6 +62,12 @@ public class BinningClustererTests extends RefineTest {
             + "  [{\"v\":\"a\",\"c\":1},{\"v\":\"à\",\"c\":1}],"
             + "  [{\"v\":\"c\",\"c\":1},{\"v\":\"ĉ\",\"c\":1}]"
             + "]";
+
+    @BeforeTest
+    public void registerKeyers() {
+        KeyerFactory.put("fingerprint", new FingerprintKeyer());
+        KeyerFactory.put("ngram-fingerprint", new NGramFingerprintKeyer());
+    }
 
     @Test
     public void testSerializeBinningClustererConfig() throws JsonParseException, JsonMappingException, IOException {
