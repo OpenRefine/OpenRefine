@@ -55,7 +55,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <div id="project-links">
       <div id="logo-container">
-        <img alt="OpenRefine" src="images/logo-gem.svg" height="65" />
+        <img alt="OpenRefine" src="images/logo-gem.svg" width="65" height="65" />
         <div id="openrefine-version"></div>
       </div>
       <ul>
