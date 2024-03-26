@@ -50,15 +50,6 @@ public class DistanceFactory {
     static {
         put("levenshtein", new VicinoDistance(new LevenshteinDistance()));
         put("ppm", new VicinoDistance(new PPMDistance()));
-
-        // Distances not activated as they are not very useful:
-        // See https://github.com/OpenRefine/OpenRefine/pull/1906
-        /*
-         * put("jaccard", new VicinoDistance(new JaccardDistance())); put("jaro", new VicinoDistance(new
-         * JaroDistance())); put("jaro-winkler", new VicinoDistance(new JaroWinklerDistance()));
-         * put("jaro-winkler-tfidf", new VicinoDistance(new JaroWinklerTFIDFDistance())); put("gzip", new
-         * VicinoDistance(new GZipDistance())); put("bzip2", new VicinoDistance(new BZip2Distance()));
-         */
     }
 
     /**
