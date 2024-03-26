@@ -24,8 +24,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -44,18 +44,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <img alt="OpenRefine logo" src="images/logo-gem-126.png" width="30" />
+    <img alt="OpenRefine logo" src="images/logo-gem.svg" width="30" />
     <h1>OpenRefine</h1>
     <span id="slogan"></span>
   </div>
-  
+
   <div id="left-panel" class="main-layout-panel"><div id="left-panel-body">
     <ul id="action-area-tabs">
     </ul>
-    
+
     <div id="project-links">
       <div id="logo-container">
-        <img alt="OpenRefine" src="images/logo-gem-126.png" height="65" />
+        <img alt="OpenRefine" src="images/logo-gem.svg" height="65" />
         <div id="openrefine-version"></div>
       </div>
       <ul>
@@ -68,7 +68,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <div id="right-panel" class="main-layout-panel"><div id="right-panel-body">
   </div></div> <!-- right-panel -->
-  
+
   <div id="no-project-message" class="message" style="display: none;">
     <span id="or-index-noProj"></span><br/>
     <span id="or-index-try"></span>
