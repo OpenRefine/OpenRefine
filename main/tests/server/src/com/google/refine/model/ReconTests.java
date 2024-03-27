@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -117,6 +118,45 @@ public class ReconTests {
         Recon r = Recon.loadStreaming(json);
         Assert.assertEquals(r.error, "fictional error message");
         TestUtils.isSerializedTo(r, json);
+    }
+
+    @Test
+    public void testsErrorWithMatchSerialization() throws Exception {
+        String json = "{\"id\":1533651559492945033,"
+                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+                + "\"j\":\"matched\","
+                + "\"e\":\"fictional error message\","
+                + "\"m\":{"
+                + "   \"id\":\"Q2892284\","
+                + "   \"name\":\"Baylor College of Medicine\","
+                + "   \"score\":98.57142857142858,"
+                + "   \"types\":[\"Q16917\",\"Q23002054\",\"Q494230\"]"
+                + "}"
+                + "}";
+        Recon r = Recon.loadStreaming(json);
+        Assert.assertEquals(r.error, "fictional error message");
+        Assert.assertEquals(r.match.id, "Q2892284");
+        TestUtils.isSerializedTo(r, json);
+    }
+
+    @Test
+    public void testsErrorWithCandidatesDeserialization() throws Exception {
+        String json = "{\"id\":1533651559492945033,"
+                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+                + "\"j\":\"none\","
+                + "\"e\":\"fictional error message\","
+                + "\"c\":[{"
+                + "   \"id\":\"Q2892284\","
+                + "   \"name\":\"Baylor College of Medicine\","
+                + "   \"score\":98.57142857142858,"
+                + "   \"types\":[\"Q16917\",\"Q23002054\",\"Q494230\"]"
+                + "}]"
+                + "}";
+        Assert.assertThrows(ValueInstantiationException.class, () -> Recon.loadStreaming(json));
     }
 
     /**
