@@ -27,9 +27,9 @@
 
 package com.google.refine.importers;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.io.Serializable;
 import java.io.StringReader;
 
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.google.refine.model.Project;
 
 public class LineBasedImporterTests extends ImporterTest {
 
@@ -64,6 +66,59 @@ public class LineBasedImporterTests extends ImporterTest {
         super.tearDown();
     }
 
+    @Test
+    public void testLineBasedImporter() throws Exception {
+        String contents = ""
+                + "foo\n"
+                + "bar\n"
+                + "baz";
+
+        try {
+            prepareOptions("\\r?\\n", 1, 0, false);
+            parseOneFile(SUT, new StringReader(contents));
+        } catch (Exception e) {
+            fail("Exception during file parse", e);
+        }
+
+        Project expected = createProject(new String[] { numberedColumn(1) },
+                new Serializable[][] {
+                        { "foo" },
+                        { "bar" },
+                        { "baz" }
+                });
+
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testLinesPerRow() throws Exception {
+        String contents = ""
+                + "a\n"
+                + "b\n"
+                + "c\n"
+                + "d\n"
+                + "e\n"
+                + "f\n";
+
+        try {
+            prepareOptions("\\r?\\n", 2, 0, false);
+            parseOneFile(SUT, new StringReader(contents));
+        } catch (Exception e) {
+            fail("Exception during file parse", e);
+        }
+
+        Project expected = createProject(new String[] {
+                numberedColumn(1),
+                numberedColumn(2) },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "c", "d" },
+                        { "e", "f" }
+                });
+
+        assertProjectEquals(project, expected);
+    }
+
     @Test()
     public void readSimpleData_1Header_1Row() {
         String input = "col1\ndata1";
@@ -75,11 +130,12 @@ public class LineBasedImporterTests extends ImporterTest {
             fail("Exception during file parse", e);
         }
 
-        assertEquals(project.columnModel.columns.size(), 1);
-        assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        assertEquals(project.rows.size(), 1);
-        assertEquals(project.rows.get(0).cells.size(), 1);
-        assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Project expectedProject = createProject(
+                new String[] { "col1" },
+                new Serializable[][] {
+                        { "data1" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test()
@@ -93,11 +149,14 @@ public class LineBasedImporterTests extends ImporterTest {
             fail("Exception during file parse", e);
         }
 
-        assertEquals(project.rows.size(), 3);
-        assertEquals(project.rows.get(0).cells.size(), 1);
-        assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        assertEquals(project.rows.get(1).cells.get(0).value, "data2");
-        assertEquals(project.rows.get(2).cells.get(0).value, "data3\rdata4");
+        Project expectedProject = createProject(
+                new String[] { numberedColumn(1) },
+                new Serializable[][] {
+                        { "data1" },
+                        { "data2" },
+                        { "data3\rdata4" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test(dataProvider = "LineBasedImporter-Separators")
@@ -111,12 +170,15 @@ public class LineBasedImporterTests extends ImporterTest {
             fail("Exception during file parse", e);
         }
 
-        assertEquals(project.rows.size(), 4);
-        assertEquals(project.rows.get(0).cells.size(), 1);
-        assertEquals(project.rows.get(0).cells.get(0).value, "dataa");
-        assertEquals(project.rows.get(1).cells.get(0).value, "datab");
-        assertEquals(project.rows.get(2).cells.get(0).value, "datac");
-        assertEquals(project.rows.get(3).cells.get(0).value, "datad");
+        Project expectedProject = createProject(
+                new String[] { numberedColumn(1) },
+                new Serializable[][] {
+                        { "dataa" },
+                        { "datab" },
+                        { "datac" },
+                        { "datad" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @DataProvider(name = "LineBasedImporter-Separators")

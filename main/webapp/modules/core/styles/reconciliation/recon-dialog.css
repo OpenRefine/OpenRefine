@@ -104,7 +104,6 @@ a.recon-dialog-service-selector-remove {
 }
 .dialog-footer {
   display: flex;
-  justify-content: space-between;
 }
 
 .button-left {

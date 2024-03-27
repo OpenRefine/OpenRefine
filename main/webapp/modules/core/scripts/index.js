@@ -90,6 +90,7 @@ $(function() {
           OpenRefineVersion = data;
 
           $("#openrefine-version").text($.i18n('core-index/refine-version', OpenRefineVersion.full_version));
+          $("#openrefine-extensions").text($.i18n('core-index/refine-extensions', OpenRefineVersion.module_names.join(", ")));
           $("#java-runtime-version").text(OpenRefineVersion.java_runtime_name + " " + OpenRefineVersion.java_runtime_version);
           if (OpenRefineVersion.display_new_version_notice === "true") {
             $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",

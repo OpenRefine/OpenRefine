@@ -33,22 +33,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import java.io.Serializable;
+
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-public class TransposeTests extends RefineTest {
+public class TransposeRowsIntoColumnsOperationTests extends RefineTest {
+
+    Project project;
 
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
         OperationRegistry.registerOperation(getCoreModule(), "transpose-rows-into-columns", TransposeRowsIntoColumnsOperation.class);
+    }
+
+    @BeforeMethod
+    public void setUpGrid() {
+        project = createProject(
+                new String[] { "a", "b", "c" },
+                new Serializable[][] {
+                        { "1", "2", "3" },
+                        { "4", "5", "6" },
+                        { "7", "8", "9" },
+                        { "10", "11", "12" }
+                });
     }
 
     @Test
@@ -58,6 +76,49 @@ public class TransposeTests extends RefineTest {
                 + "\"columnName\":\"start column\","
                 + "\"rowCount\":3}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json);
+    }
+
+    @Test
+    public void testTransposeRowsIntoColumns() throws Exception {
+        TransposeRowsIntoColumnsOperation operation = new TransposeRowsIntoColumnsOperation("b", 2);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "a", "b 1", "b 2", "c" },
+                new Serializable[][] {
+                        { "1", "2", "5", "3" },
+                        { "4", null, null, "6" },
+                        { "7", "8", "11", "9" },
+                        { "10", null, null, "12" }
+                });
+
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testTransposeRecordsIntoRows() throws Exception {
+        Project withRecords = createProject(
+                new String[] { "a", "b", "c" },
+                new Serializable[][] {
+                        { "1", "2", "3" },
+                        { null, "5", null },
+                        { "7", "8", "9" },
+                        { null, "11", null }
+                });
+
+        TransposeRowsIntoColumnsOperation operation = new TransposeRowsIntoColumnsOperation("b", 2);
+
+        runOperation(operation, withRecords);
+
+        Project expected = createProject(
+                new String[] { "a", "b 1", "b 2", "c" },
+                new Serializable[][] {
+                        { "1", "2", "5", "3" },
+                        { "7", "8", "11", "9" }
+                });
+
+        assertProjectEquals(withRecords, expected);
     }
 
 }

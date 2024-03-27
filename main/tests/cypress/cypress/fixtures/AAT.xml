@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?><Vocabulary xsi:noNamespaceSchemaLocation="http://vocabsservices.getty.edu/Schemas/AAT/AATGetSubject.xsd" Title="Art &#38; Architecture Thesaurus" Date="2021-10-11">
+<Subject Subject_ID="300000000">
+    <Parent_Relationships>
+      <Preferred_Parent>
+        <Parent_Subject_ID>300000000</Parent_Subject_ID>
+        <Relationship_Type>Parent/Child</Relationship_Type>
+        <Historic_Flag>Current</Historic_Flag>
+        <Parent_String>
+        </Parent_String>
+        <Hier_Rel_Type>Instance-BTI</Hier_Rel_Type>
+      </Preferred_Parent>
+    </Parent_Relationships>
+    <Descriptive_Notes>
+      <Descriptive_Note>
+        <Note_Text>This is the top or "root" of the AAT hierarchy; under the root are the "facets." Sub-facets (called "hierarchies") and guide terms further organize the thesaurus. The scope of AAT includes generic terms, dates, relationships, and other information related to or required to catalog art, architecture, and other visual cultural heritage, including related disciplines dealing with visual works, such as archaeology and conservation, where the works are of the type collected by art museums and repositories for visual cultural heritage, or that are architecture. Used for work types, roles, materials, styles, cultures, techniques, subject, etc., so long as the terms fit into the established facets of AAT.</Note_Text>
+        <Note_Language>English</Note_Language>
+        <Note_Contributors>
+          <Note_Contributor>
+            <Contributor_id>10000000/VP</Contributor_id>
+          </Note_Contributor>
+        </Note_Contributors>
+        <Note_Sources>
+          <Note_Source>
+            <Source>
+              <Source_ID>2000099620/Legacy AAT data</Source_ID>
+            </Source>
+          </Note_Source>
+        </Note_Sources>
+      </Descriptive_Note>
+      <Descriptive_Note>
+        <Note_Text>Dit is de top of 'wortel' van de AAT-hiërarchie; onder de wortel bevinden zich de 'facetten'.</Note_Text>
+        <Note_Language>Dutch</Note_Language>
+        <Note_Contributors>
+          <Note_Contributor>
+            <Contributor_id>10000205/RKD, AAT-Ned</Contributor_id>
+          </Note_Contributor>
+        </Note_Contributors>
+      </Descriptive_Note>
+    </Descriptive_Notes>
+    <Record_Type>Hierarchy Name</Record_Type>
+    <Merged_Status>Merged</Merged_Status>
+    <Hierarchy>
+    </Hierarchy>
+    <Sort_Order>1</Sort_Order>
+    <Terms>
+      <Preferred_Term>
+        <Term_Text>Top of the AAT hierarchies</Term_Text>
+        <Display_Name>N/A</Display_Name>
+        <Historic_Flag>Current</Historic_Flag>
+        <Vernacular>Undetermined</Vernacular>
+        <Term_ID>1000304458</Term_ID>
+        <Term_Languages>
+          <Term_Language>
+            <Language>70051/English</Language>
+            <Preferred>Preferred</Preferred>
+            <Qualifier>
+            </Qualifier>
+            <Term_Type>Descriptor</Term_Type>
+            <Part_of_Speech>N/A</Part_of_Speech>
+            <Lang_Stat>Undetermined</Lang_Stat>
+          </Term_Language>
+        </Term_Languages>
+        <Term_Contributors>
+          <Term_Contributor>
+            <Contributor_id>10000000/VP</Contributor_id>
+            <Preferred>Preferred</Preferred>
+          </Term_Contributor>
+        </Term_Contributors>
+      </Preferred_Term>
+      <Non-Preferred_Term>
+        <Term_Text>AAT Root</Term_Text>
+        <Display_Name>N/A</Display_Name>
+        <Historic_Flag>Current</Historic_Flag>
+        <Vernacular>Undetermined</Vernacular>
+        <Term_ID>1000000000</Term_ID>
+        <Term_Languages>
+          <Term_Language>
+            <Language>70051/English</Language>
+            <Preferred>Non Preferred</Preferred>
+            <Qualifier>
+            </Qualifier>
+            <Term_Type>Used For Term</Term_Type>
+            <Part_of_Speech>N/A</Part_of_Speech>
+            <Lang_Stat>Undetermined</Lang_Stat>
+          </Term_Language>
+        </Term_Languages>
+        <Term_Contributors>
+          <Term_Contributor>
+            <Contributor_id>10000000/VP</Contributor_id>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Contributor>
+        </Term_Contributors>
+      </Non-Preferred_Term>
+      <Non-Preferred_Term>
+        <Term_Text>Top van de AAT-hiërarchieën</Term_Text>
+        <Display_Name>N/A</Display_Name>
+        <Historic_Flag>Current</Historic_Flag>
+        <Vernacular>Undetermined</Vernacular>
+        <Term_ID>1000609721</Term_ID>
+        <Term_Languages>
+          <Term_Language>
+            <Language>70261/Dutch</Language>
+            <Preferred>Preferred</Preferred>
+            <Qualifier>
+            </Qualifier>
+            <Term_Type>Descriptor</Term_Type>
+            <Part_of_Speech>Undetermined</Part_of_Speech>
+            <Lang_Stat>Undetermined</Lang_Stat>
+          </Term_Language>
+        </Term_Languages>
+        <Term_Contributors>
+          <Term_Contributor>
+            <Contributor_id>10000205/RKD, AAT-Ned</Contributor_id>
+            <Preferred>Preferred</Preferred>
+          </Term_Contributor>
+        </Term_Contributors>
+      </Non-Preferred_Term>
+      <Non-Preferred_Term>
+        <Term_Text>藝術與建築詞典根目錄</Term_Text>
+        <Display_Name>N/A</Display_Name>
+        <Historic_Flag>Current</Historic_Flag>
+        <Vernacular>Undetermined</Vernacular>
+        <Term_ID>1000751822</Term_ID>
+        <Term_Languages>
+          <Term_Language>
+            <Language>72551/Chinese (traditional)</Language>
+            <Preferred>Preferred</Preferred>
+            <Qualifier>
+            </Qualifier>
+            <Term_Type>Descriptor</Term_Type>
+            <Part_of_Speech>Undetermined</Part_of_Speech>
+            <Lang_Stat>Undetermined</Lang_Stat>
+          </Term_Language>
+        </Term_Languages>
+        <Term_Contributors>
+          <Term_Contributor>
+            <Contributor_id>10000250/AS-Academia Sinica</Contributor_id>
+            <Preferred>Preferred</Preferred>
+          </Term_Contributor>
+        </Term_Contributors>
+        <Term_Sources>
+          <Term_Source>
+            <Source>
+              <Source_ID>2000079740/AS-Academia Sinica data (2014-)</Source_ID>
+            </Source>
+            <Page>
+            </Page>
+            <Preferred>Preferred</Preferred>
+          </Term_Source>
+        </Term_Sources>
+      </Non-Preferred_Term>
+      <Non-Preferred_Term>
+        <Term_Text>i shu yü chien chu tz'u tien ken mu lu</Term_Text>
+        <Display_Name>N/A</Display_Name>
+        <Historic_Flag>Current</Historic_Flag>
+        <Vernacular>Undetermined</Vernacular>
+        <Term_ID>1000751827</Term_ID>
+        <Term_Languages>
+          <Term_Language>
+            <Language>72582/Chinese (transliterated Wade-Giles)</Language>
+            <Preferred>Preferred</Preferred>
+            <Qualifier>
+            </Qualifier>
+            <Term_Type>Used For Term</Term_Type>
+            <Part_of_Speech>Undetermined</Part_of_Speech>
+            <Lang_Stat>Undetermined</Lang_Stat>
+          </Term_Language>
+        </Term_Languages>
+        <Term_Contributors>
+          <Term_Contributor>
+            <Contributor_id>10000250/AS-Academia Sinica</Contributor_id>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Contributor>
+        </Term_Contributors>
+        <Term_Sources>
+          <Term_Source>
+            <Source>
+              <Source_ID>2000079740/AS-Academia Sinica data (2014-)</Source_ID>
+            </Source>
+            <Page>
+            </Page>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Source>
+        </Term_Sources>
+      </Non-Preferred_Term>
+      <Non-Preferred_Term>
+        <Term_Text>yi shu yu jian zhu ci dian gen mu lu</Term_Text>
+        <Display_Name>N/A</Display_Name>
+        <Historic_Flag>Current</Historic_Flag>
+        <Vernacular>Undetermined</Vernacular>
+        <Term_ID>1000751825</Term_ID>
+        <Term_Languages>
+          <Term_Language>
+            <Language>72586/Chinese (transliterated Pinyin without tones)</Language>
+            <Preferred>Preferred</Preferred>
+            <Qualifier>
+            </Qualifier>
+            <Term_Type>Used For Term</Term_Type>
+            <Part_of_Speech>Undetermined</Part_of_Speech>
+            <Lang_Stat>Undetermined</Lang_Stat>
+          </Term_Language>
+        </Term_Languages>
+        <Term_Contributors>
+          <Term_Contributor>
+            <Contributor_id>10000250/AS-Academia Sinica</Contributor_id>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Contributor>
+        </Term_Contributors>
+        <Term_Sources>
+          <Term_Source>
+            <Source>
+              <Source_ID>2000079740/AS-Academia Sinica data (2014-)</Source_ID>
+            </Source>
+            <Page>
+            </Page>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Source>
+        </Term_Sources>
+      </Non-Preferred_Term>
+      <Non-Preferred_Term>
+        <Term_Text>yì shù yǔ jiàn zhú cí diǎn gēn mù lù</Term_Text>
+        <Display_Name>N/A</Display_Name>
+        <Historic_Flag>Current</Historic_Flag>
+        <Vernacular>Undetermined</Vernacular>
+        <Term_ID>1000751826</Term_ID>
+        <Term_Languages>
+          <Term_Language>
+            <Language>72584/Chinese (transliterated Hanyu Pinyin)</Language>
+            <Preferred>Preferred</Preferred>
+            <Qualifier>
+            </Qualifier>
+            <Term_Type>Used For Term</Term_Type>
+            <Part_of_Speech>Undetermined</Part_of_Speech>
+            <Lang_Stat>Undetermined</Lang_Stat>
+          </Term_Language>
+        </Term_Languages>
+        <Term_Contributors>
+          <Term_Contributor>
+            <Contributor_id>10000250/AS-Academia Sinica</Contributor_id>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Contributor>
+        </Term_Contributors>
+        <Term_Sources>
+          <Term_Source>
+            <Source>
+              <Source_ID>2000079740/AS-Academia Sinica data (2014-)</Source_ID>
+            </Source>
+            <Page>
+            </Page>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Source>
+        </Term_Sources>
+      </Non-Preferred_Term>
+      <Non-Preferred_Term>
+        <Term_Text>藝術和建築索引典之最高層級</Term_Text>
+        <Display_Name>N/A</Display_Name>
+        <Historic_Flag>Current</Historic_Flag>
+        <Vernacular>Undetermined</Vernacular>
+        <Term_ID>1000751823</Term_ID>
+        <Term_Languages>
+          <Term_Language>
+            <Language>72551/Chinese (traditional)</Language>
+            <Preferred>Non Preferred</Preferred>
+            <Qualifier>
+            </Qualifier>
+            <Term_Type>Used For Term</Term_Type>
+            <Part_of_Speech>Undetermined</Part_of_Speech>
+            <Lang_Stat>Undetermined</Lang_Stat>
+          </Term_Language>
+        </Term_Languages>
+        <Term_Contributors>
+          <Term_Contributor>
+            <Contributor_id>10000250/AS-Academia Sinica</Contributor_id>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Contributor>
+        </Term_Contributors>
+        <Term_Sources>
+          <Term_Source>
+            <Source>
+              <Source_ID>2000079740/AS-Academia Sinica data (2014-)</Source_ID>
+            </Source>
+            <Page>
+            </Page>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Source>
+        </Term_Sources>
+      </Non-Preferred_Term>
+      <Non-Preferred_Term>
+        <Term_Text>藝術與建築索引典最上層</Term_Text>
+        <Display_Name>N/A</Display_Name>
+        <Historic_Flag>Current</Historic_Flag>
+        <Vernacular>Undetermined</Vernacular>
+        <Term_ID>1000751824</Term_ID>
+        <Term_Languages>
+          <Term_Language>
+            <Language>72551/Chinese (traditional)</Language>
+            <Preferred>Non Preferred</Preferred>
+            <Qualifier>
+            </Qualifier>
+            <Term_Type>Used For Term</Term_Type>
+            <Part_of_Speech>Undetermined</Part_of_Speech>
+            <Lang_Stat>Undetermined</Lang_Stat>
+          </Term_Language>
+        </Term_Languages>
+        <Term_Contributors>
+          <Term_Contributor>
+            <Contributor_id>10000250/AS-Academia Sinica</Contributor_id>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Contributor>
+        </Term_Contributors>
+        <Term_Sources>
+          <Term_Source>
+            <Source>
+              <Source_ID>2000079740/AS-Academia Sinica data (2014-)</Source_ID>
+            </Source>
+            <Page>
+            </Page>
+            <Preferred>Non Preferred</Preferred>
+          </Term_Source>
+        </Term_Sources>
+      </Non-Preferred_Term>
+    </Terms>
+    <Subject_Contributors>
+      <Subject_Contributor>
+        <Contributor_id>10000000/VP</Contributor_id>
+      </Subject_Contributor>
+      <Subject_Contributor>
+        <Contributor_id>10000250/AS-Academia Sinica</Contributor_id>
+      </Subject_Contributor>
+    </Subject_Contributors>
+  </Subject>
+</Vocabulary>

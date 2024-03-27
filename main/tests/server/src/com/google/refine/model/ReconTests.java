@@ -27,6 +27,9 @@
 
 package com.google.refine.model;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -61,6 +64,18 @@ public class ReconTests {
             + "\"judgmentBatchSize\":1,"
             + "\"matchRank\":0}";
 
+    String jsonNoMatch = "{\"id\":1533651559492945033,"
+            + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+            + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+            + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+            + "\"j\":\"none\","
+            + "\"c\":["
+            + "   {\"id\":\"Q2892284\",\"name\":\"Baylor College of Medicine\",\"score\":98.57142857142858,\"types\":[\"Q16917\",\"Q23002054\",\"Q494230\"]},"
+            + "   {\"id\":\"Q16165943\",\"name\":\"Baylor College of Medicine Academy at Ryan\",\"score\":82.14285714285715,\"types\":[\"Q149566\"]},"
+            + "   {\"id\":\"Q30284245\",\"name\":\"Baylor College of Medicine Children\\u2019s Foundation\",\"score\":48.57142857142858,\"types\":[\"Q163740\"]}"
+            + "]"
+            + "}";
+
     @Test
     public void serializeReconSaveMode() throws Exception {
         Recon r = Recon.loadStreaming(fullJson);
@@ -86,21 +101,10 @@ public class ReconTests {
 
     @Test
     public void serializeReconSaveModeNoMatch() throws Exception {
-        String json = "{\"id\":1533651559492945033,"
-                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
-                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
-                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
-                + "\"j\":\"none\","
-                + "\"c\":["
-                + "   {\"id\":\"Q2892284\",\"name\":\"Baylor College of Medicine\",\"score\":98.57142857142858,\"types\":[\"Q16917\",\"Q23002054\",\"Q494230\"]},"
-                + "   {\"id\":\"Q16165943\",\"name\":\"Baylor College of Medicine Academy at Ryan\",\"score\":82.14285714285715,\"types\":[\"Q149566\"]},"
-                + "   {\"id\":\"Q30284245\",\"name\":\"Baylor College of Medicine Children\\u2019s Foundation\",\"score\":48.57142857142858,\"types\":[\"Q163740\"]}"
-                + "]"
-                + "}";
         Recon r = Recon.loadStreaming(fullJson);
         r.match = null;
         r.judgment = Judgment.None;
-        TestUtils.isSerializedTo(r, json);
+        TestUtils.isSerializedTo(r, jsonNoMatch);
     }
 
     @Test
@@ -136,4 +140,12 @@ public class ReconTests {
         Assert.assertEquals(ids.size(), numberOfSamples);
     }
 
+    @Test
+    public void testEqualsAndHashCode() throws Exception {
+        Recon recon1 = Recon.loadStreaming(fullJson);
+        assertEquals(recon1, Recon.loadStreaming(fullJson));
+        assertNotEquals(recon1, Recon.loadStreaming(jsonNoMatch));
+        assertNotEquals(recon1, "string");
+        assertEquals(recon1.hashCode(), Recon.loadStreaming(fullJson).hashCode());
+    }
 }

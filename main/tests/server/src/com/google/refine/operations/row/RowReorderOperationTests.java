@@ -28,9 +28,7 @@
 package com.google.refine.operations.row;
 
 import java.io.Serializable;
-import java.util.Properties;
 
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -43,7 +41,6 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -83,15 +80,20 @@ public class RowReorderOperationTests extends RefineTest {
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
                 Mode.RowBased, sortingConfig);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
 
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "h");
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "F");
-        Assert.assertEquals(project.rows.get(4).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(5).cells.get(1).value, "d");
+        runOperation(op, project);
+
+        Project expectedProject = createProject(
+                new String[] { "key", "first" },
+                new Serializable[][] {
+                        { "1", "h" },
+                        { "2", "f" },
+                        { "8", "b" },
+                        { "9", "F" },
+                        { "10", "f" },
+                        { "", "d" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -101,15 +103,20 @@ public class RowReorderOperationTests extends RefineTest {
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
                 Mode.RowBased, sortingConfig);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
 
-        Assert.assertEquals(project.rows.get(5).cells.get(1).value, "h");
-        Assert.assertEquals(project.rows.get(4).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "F");
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "d"); // controlled by blankPosition, not reverse
+        runOperation(op, project);
+
+        Project expectedProject = createProject(
+                new String[] { "key", "first" },
+                new Serializable[][] {
+                        { "", "d" },
+                        { "10", "f" },
+                        { "9", "F" },
+                        { "8", "b" },
+                        { "2", "f" },
+                        { "1", "h" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -119,15 +126,20 @@ public class RowReorderOperationTests extends RefineTest {
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
                 Mode.RowBased, sortingConfig);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
 
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "d");
-        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(4).cells.get(1).value, "F");
-        Assert.assertEquals(project.rows.get(5).cells.get(1).value, "h");
+        runOperation(op, project);
+
+        Project expected = createProject(
+                new String[] { "key", "first" },
+                new Serializable[][] {
+                        { "8", "b" },
+                        { "", "d" },
+                        { "2", "f" },
+                        { "10", "f" },
+                        { "9", "F" },
+                        { "1", "h" },
+                });
+        assertProjectEquals(project, expected);
     }
 
     @Test

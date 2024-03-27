@@ -41,6 +41,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -114,11 +115,11 @@ public class Pool {
         }
     }
 
-    public void load(InputStream is) throws Exception {
-        load(new InputStreamReader(is, "UTF-8"));
+    public void load(InputStream is) throws IOException {
+        load(new InputStreamReader(is, StandardCharsets.UTF_8));
     }
 
-    public void load(Reader reader) throws Exception {
+    public void load(Reader reader) throws IOException {
         LineNumberReader reader2 = new LineNumberReader(reader);
 
         /* String version = */ reader2.readLine();

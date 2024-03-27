@@ -67,7 +67,6 @@ import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
 import com.google.refine.process.Process;
-import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -112,18 +111,11 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     // dependencies
     private Project project;
-    private Properties options;
     private EngineConfig engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         project = createProjectWithColumns("UrlFetchingTests", "fruits");
-    }
-
-    private void runAndWait(EngineDependentOperation op, int timeout) throws Exception {
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        runAndWait(pm, process, timeout);
     }
 
     @Test
@@ -162,14 +154,11 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     OnError.StoreError,
                     "rand",
                     1,
-                    500,
+                    5,
                     true,
                     null);
 
-            // We have 100 rows and 500 ms per row but only two distinct
-            // values so we should not wait much more than ~1000 ms to get the
-            // results.
-            runAndWait(op, 1500);
+            runOperation(op, project, 1500);
 
             // Inspect rows
             String ref_val = (String) project.rows.get(0).getCellValue(1).toString();
@@ -213,7 +202,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     null);
 
-            runAndWait(op, 3000);
+            runOperation(op, project, 3000);
 
             int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
             // Inspect rows
@@ -254,7 +243,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     headers);
 
-            runAndWait(op, 3000);
+            runOperation(op, project, 3000);
 
             RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
             Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);
@@ -297,12 +286,9 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     false,
                     null);
 
-            // 6 requests (4 retries @1 sec) + final response
-            long start = System.currentTimeMillis();
-            runAndWait(op, 4500);
+            long elapsed = runOperation(op, project, 4500);
 
             // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
-            long elapsed = System.currentTimeMillis() - start;
             assertTrue(elapsed > 4000, "Retry-After retries didn't take long enough - elapsed = " + elapsed);
 
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value
@@ -345,12 +331,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     false,
                     null);
 
-            // 6 requests (4 retries 200, 400, 800, 200 msec) + final response
-            long start = System.currentTimeMillis();
-            runAndWait(op, 2500);
+            long elapsed = runOperation(op, project, 2500);
 
             // Make sure that our exponential back off is working
-            long elapsed = System.currentTimeMillis() - start;
+            // 6 requests (4 retries 200, 400, 800, 200 msec) + final response
             assertTrue(elapsed > 1600, "Exponential retries didn't take enough time - elapsed = " + elapsed);
 
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value, 3rd row is hard error

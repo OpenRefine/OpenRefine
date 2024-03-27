@@ -34,10 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.cell;
 
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
@@ -47,13 +45,13 @@ import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-public class JoinMultiValuedCellsTests extends RefineTest {
+public class MultiValuedCellJoinOperationTests extends RefineTest {
 
     Project project;
+    Project projectWithRecords;
 
     @Override
     @BeforeTest
@@ -75,6 +73,15 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                         { null, "two" },
                         { null, "three" },
                         { null, "four" }
+                });
+        projectWithRecords = createProject(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a", "b" },
+                        { null, "c", "d" },
+                        { "record2", "", "f" },
+                        { null, "g", "" },
+                        { null, null, null }
                 });
     }
 
@@ -98,14 +105,15 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 "Value",
                 "Key",
                 ",");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
+        runOperation(op, project);
 
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,two,three,four");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one,two,three,four" },
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test
@@ -114,14 +122,49 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 "Value",
                 "Key",
                 ",     ,");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
 
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
+        runOperation(op, project);
 
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,     ,two,     ,three,     ,four");
+        Project expectedProject = createProject(
+                new String[] { "Key", "Value" },
+                new Serializable[][] {
+                        { "Record_1", "one,     ,two,     ,three,     ,four" },
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
+    @Test
+    public void testJoin() throws Exception {
+        AbstractOperation operation = new MultiValuedCellJoinOperation("foo", "key", ",");
+
+        runOperation(operation, projectWithRecords);
+
+        Project expected = createProject(new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a,c", "b" },
+                        { null, null, "d" },
+                        { "record2", "g", "f" },
+                });
+
+        assertProjectEquals(projectWithRecords, expected);
+    }
+
+    @Test
+    public void testCustomKey() throws Exception {
+        AbstractOperation operation = new MultiValuedCellJoinOperation("bar", "foo", ",");
+
+        runOperation(operation, projectWithRecords);
+
+        Project expected = createProject(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a", "b" },
+                        { null, "c", "d,f" },
+                        { "record2", "", null },
+                        { null, "g", "" },
+                });
+
+        assertProjectEquals(projectWithRecords, expected);
     }
 
 }

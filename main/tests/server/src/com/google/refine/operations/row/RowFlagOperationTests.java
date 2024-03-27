@@ -27,19 +27,51 @@
 
 package com.google.refine.operations.row;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.DecoratedValue;
+import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
+import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class RowFlagOperationTests extends RefineTest {
 
+    Project project;
+    ListFacetConfig facet;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "row-flag", RowFlagOperation.class);
+    }
+
+    @BeforeMethod
+    public void createProject() {
+        project = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "", "i" }
+                });
+
+        facet = new ListFacetConfig();
+        facet.name = "hello";
+        facet.expression = "grel:value";
+        facet.columnName = "hello";
     }
 
     @Test
@@ -50,5 +82,19 @@ public class RowFlagOperationTests extends RefineTest {
                 + "\"flagged\":true,"
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowFlagOperation.class), json);
+    }
+
+    @Test
+    public void testFlagRows() throws Exception {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("d", "d"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        RowFlagOperation operation = new RowFlagOperation(engineConfig, true);
+
+        runOperation(operation, project);
+
+        List<Boolean> flagged = project.rows.stream().map(row -> row.flagged).collect(Collectors.toList());
+        Assert.assertEquals(flagged, Arrays.asList(false, true, false, true, false));
     }
 }

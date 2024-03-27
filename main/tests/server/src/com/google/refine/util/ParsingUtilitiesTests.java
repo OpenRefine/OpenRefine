@@ -40,9 +40,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.zip.GZIPOutputStream;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -139,5 +144,22 @@ public class ParsingUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
+    }
+
+    @Test
+    public void testParseParameters() {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
+        Mockito.when(request.getParameterMap()).thenReturn(
+                Map.of("param1", new String[] { "value1" },
+                        "param2", new String[] { "value2", "value3" }));
+
+        Map<String, String> result = ParsingUtilities.parseParameters(request);
+
+        Map<String, String> expectedResult = new HashMap<>();
+        expectedResult.put("param1", "value1");
+        expectedResult.put("param2", "value2");
+
+        Assert.assertEquals(expectedResult, result);
     }
 }

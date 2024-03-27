@@ -117,8 +117,8 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
                                 }
                             },
                             function(job) {
-                                alert(job.config.error + '\n' + job.config.errorDetails);
-                                self._startOver();
+                              DialogSystem.alert(job.config.error + '\n' + job.config.errorDetails);
+                              self._startOver();
                             }
                         );
                     },
@@ -197,17 +197,28 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
         null,
         function(data) {
             dismissBusy();
-
+            if (data.message) {
+              DialogSystem.alert(data.message);
+            }
             if (data.options) {
-            self._parserOptions[format] = data.options;
-            onDone();
+              self._parserOptions[format] = data.options;
+              onDone();
             }
         },
         "json"
         )
-        .fail(function() {
+        .fail(function(xhr, status, text) {
             dismissBusy();
-            alert($.i18n('core-views/check-format'));
+            // jQuery won't parse JSON response with a non-200 status code, so we have to do it ourselves
+            let response = $.parseJSON(xhr.responseText);
+            if (response && response.message) {
+              // TODO: I18N
+              DialogSystem.alert(response.message);
+              // TODO: Include exceptions (hidden by default?)
+            } else {
+              // Fallback if we had a network error, 500, or received non-JSON
+              DialogSystem.alert($.i18n('core-views/check-format'));
+            }
         });
     });
   } else {
@@ -232,12 +243,12 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
       function(o) {
         if (o.status == 'error') {
           if (o.message) {
-            alert(o.message);
+            DialogSystem.alert(o.message);
           } else {
             var messages = [];
             $.each(o.errors, function() { messages.push(this.message); });
-            alert(messages.join('\n\n'));
-            }
+            DialogSystem.alert(messages.join('\n\n'));
+          }
             if(finallyCallBack){
               finallyCallBack();
             }
@@ -245,7 +256,9 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
           callback(o);
         },
         "json"
-    ).fail(() => { alert($.i18n('core-index-parser/update-format-failed')); });
+    ).fail(() => {
+      DialogSystem.alert($.i18n('core-index-parser/update-format-failed'));
+    });
   });
 };
 
@@ -270,12 +283,14 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
           "limit" : numRows || 100 // More than we parse for preview anyway
         }),
         null,
-		function(data) {
-			  result.rowModel = data;
-			  callback(result);
-		  },
+        function(data) {
+            result.rowModel = data;
+            callback(result);
+        },
         "jsonp"
-	   ).fail(() => { alert($.i18n('core-index/rows-loading-failed')); });
+         ).fail(() => {
+           DialogSystem.alert($.i18n('core-index/rows-loading-failed'));
+         });
     },
     "json"
   );
@@ -285,7 +300,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
   if ((this._formatParserUI) && this._formatParserUI.confirmReadyToCreateProject()) {
     var projectName = jQueryTrim(this._parsingPanelElmts.projectNameInput[0].value);
     if (projectName.length === 0) {
-      window.alert($.i18n('core-index-import/warning-name'));
+      DialogSystem.alert($.i18n('core-index-import/warning-name'));
       this._parsingPanelElmts.projectNameInput.focus();
       return;
     }
@@ -310,8 +325,8 @@ Refine.DefaultImportingController.prototype._createProject = function() {
         },
         function(o) {
             if (o.status == 'error') {
-            alert(o.message);
-            return;
+              DialogSystem.alert(o.message);
+              return;
             }
             
             var start = new Date();
@@ -329,8 +344,8 @@ Refine.DefaultImportingController.prototype._createProject = function() {
                     document.location = "project?project=" + job.config.projectID;
                     },
                     function(job) {
-                    alert($.i18n('core-index-import/errors')+'\n' + Refine.CreateProjectUI.composeErrorMessage(job));
-                    self._onImportJobReady();
+                      DialogSystem.alert($.i18n('core-index-import/errors')+'\n' + Refine.CreateProjectUI.composeErrorMessage(job));
+                      self._onImportJobReady();
                     }
                 );
             },

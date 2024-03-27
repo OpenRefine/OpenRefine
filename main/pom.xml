@@ -153,6 +153,8 @@
         <configuration>
           <excludes>
             <exclude>org/marc4j/converter/impl/*CodeTableGenerated*</exclude>
+            <!-- Metaphone3 should be an external library and has many instructions, dominating our actual code in coverage reports -->
+            <exclude>com/google/refine/clustering/binning/Metaphone3.class</exclude>
           </excludes>
         </configuration>
       </plugin>
