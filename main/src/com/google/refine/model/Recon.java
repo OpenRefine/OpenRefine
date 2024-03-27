@@ -416,7 +416,7 @@ public class Recon implements HasFields {
         this.features = features != null ? features : new Object[Feature_max];
         this.candidates = candidates != null ? candidates : new ArrayList<>();
         if (error != null && !this.candidates.isEmpty()) {
-            throw new IllegalArgumentException("Recon deserialization: there are candidates hence no error");
+            throw new IllegalArgumentException("Recon deserialization: inconsistent state - error & candidates not allowed together");
         }
         this.service = service != null ? service : "unknown";
         this.identifierSpace = identifierSpace;
