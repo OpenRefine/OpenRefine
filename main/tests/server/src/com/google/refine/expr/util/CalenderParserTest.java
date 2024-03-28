@@ -2,6 +2,7 @@
 package com.google.refine.expr.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
@@ -90,6 +91,22 @@ public class CalenderParserTest {
         assertEquals(2012, calendar.get(Calendar.YEAR));
     }
 
+    @DataProvider(name = "peculiarDates")
+    private static Object[][] peculiarDates() {
+        return new Object[][] {
+                { "oct 4 12", CalendarParser.DD_MM_YY },
+                { "4 oct 12", CalendarParser.MM_DD_YY },
+                { "4 oct 12", CalendarParser.MM_YY_DD },
+        };
+    }
+
+    @Test(dataProvider = "peculiarDates")
+    public void shouldParseDateWhenInputDateMismatchWithOrder_parseDate(String dateStr, int order) throws CalendarParserException {
+        Calendar calendar = CalendarParser.parse(dateStr, order);
+
+        assertNotNull(calendar);
+    }
+
     @Test
     public void shouldParseDateWhenInputHasTime_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 8:30:54:003am +05:30";
@@ -145,61 +162,6 @@ public class CalenderParserTest {
     @Test
     public void whenInputNull_calendarToStringTest() {
         assertNull(CalendarParser.toString(null));
-    }
-
-    @DataProvider(name = "calenderToPrettyString")
-    public static Object[][] calenderToPrettyString() {
-        List<Calendar> calendars = getCalenderList();
-        return new Object[][] {
-                { calendars.get(0), "April 20, 2024  1:52:22.500 -08:00" },
-                { calendars.get(1), "November 7, 2022 11:06:08.050 +05:30" }
-        };
-    }
-
-    @Test(dataProvider = "calenderToPrettyString")
-    public void prettyStringTest(Calendar input, String expected) {
-        String str = CalendarParser.prettyString(input);
-
-        assertEquals(expected, str);
-        String[] dateTime = str.split("( )+");
-        assertEquals(5, dateTime.length);
-
-        String[] time = dateTime[3].split(":");
-        assertEquals(3, time.length);
-    }
-
-    @Test
-    public void whenInputNull_calendarToPrettyStringTest() {
-        assertNull(CalendarParser.prettyString(null));
-    }
-
-    @DataProvider(name = "calenderToSQLString")
-    private static Object[][] calenderToSQLString() {
-        List<Calendar> calendars = getCalenderList();
-        return new Object[][] {
-                { calendars.get(0), "2024-04-20  1:52:22.500 -08:00" },
-                { calendars.get(1), "2022-11-07 11:06:08.050 +05:30" }
-        };
-    }
-
-    @Test(dataProvider = "calenderToSQLString")
-    public void toSQLStringTest(Calendar input, String expected) {
-        // When
-        String str = CalendarParser.toSQLString(input);
-
-        // Then
-        assertEquals(expected, str);
-
-        String[] dateTime = str.split("( )+");
-        assertEquals(3, dateTime.length);
-
-        String[] time = dateTime[1].split(":");
-        assertEquals(3, time.length);
-    }
-
-    @Test
-    public void whenInputNull_calendarToSQLStringTest() {
-        assertNull(CalendarParser.toSQLString(null));
     }
 
     @DataProvider(name = "orderString")

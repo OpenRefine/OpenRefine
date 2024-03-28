@@ -1853,55 +1853,6 @@ public class CalendarParser {
     }
 
     /**
-     * Return a printable representation of the date.
-     * 
-     * @param cal
-     *            calendar to convert to a string
-     * 
-     * @return a printable string.
-     */
-    public static final String prettyString(Calendar cal) {
-        if (cal == null) {
-            return null;
-        }
-
-        final int calYear = cal.get(Calendar.YEAR);
-        final int calMonth = cal.get(Calendar.MONTH);
-        final int calDay = cal.get(Calendar.DATE);
-
-        boolean needSpace = false;
-        StringBuffer buf = new StringBuffer();
-
-        if (calMonth >= 0 && calMonth < MONTHS.length) {
-            if (needSpace) {
-                buf.append(' ');
-            }
-            buf.append(MONTHS[calMonth][1]);
-            needSpace = true;
-        }
-        if (calDay > 0) {
-            if (needSpace) {
-                buf.append(' ');
-            }
-            buf.append(calDay);
-            if (calYear > UNSET) {
-                buf.append(',');
-            }
-            needSpace = true;
-        }
-        if (calYear > UNSET) {
-            if (needSpace) {
-                buf.append(' ');
-            }
-            buf.append(calYear);
-        }
-
-        appendTimeString(buf, cal, needSpace);
-
-        return buf.toString();
-    }
-
-    /**
      * Return a basic representation of the string.
      * 
      * @param cal
@@ -1943,42 +1894,6 @@ public class CalendarParser {
         }
 
         appendTimeString(buf, cal, needSpace);
-
-        return buf.toString();
-    }
-
-    /**
-     * Return a string representation of the date suitable for use in an SQL statement.
-     * 
-     * @param cal
-     *            calendar to convert to a string
-     * 
-     * @return the SQL-friendly string.
-     */
-    public static final String toSQLString(Calendar cal) {
-        if (cal == null) {
-            return null;
-        }
-
-        final int calYear = cal.get(Calendar.YEAR);
-        final int calMonth = cal.get(Calendar.MONTH);
-        final int calDay = cal.get(Calendar.DATE);
-
-        StringBuffer buf = new StringBuffer();
-
-        buf.append(calYear);
-        buf.append('-');
-        if ((calMonth + 1) < 10) {
-            buf.append('0');
-        }
-        buf.append(calMonth + 1);
-        buf.append('-');
-        if (calDay < 10) {
-            buf.append('0');
-        }
-        buf.append(calDay);
-
-        appendTimeString(buf, cal, true);
 
         return buf.toString();
     }
