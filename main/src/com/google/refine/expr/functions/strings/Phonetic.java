@@ -35,11 +35,12 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import com.google.refine.clustering.binning.ColognePhoneticKeyer;
-import com.google.refine.clustering.binning.DoubleMetaphoneKeyer;
-import com.google.refine.clustering.binning.Metaphone3Keyer;
-import com.google.refine.clustering.binning.MetaphoneKeyer;
-import com.google.refine.clustering.binning.SoundexKeyer;
+import org.apache.commons.codec.language.DoubleMetaphone;
+import org.apache.commons.codec.language.Metaphone;
+import org.apache.commons.codec.language.Soundex;
+
+import com.google.refine.clustering.binning.Keyer;
+import com.google.refine.clustering.binning.KeyerFactory;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.EvalErrorMessage;
@@ -48,12 +49,33 @@ import com.google.refine.grel.FunctionDescription;
 
 public class Phonetic implements Function {
 
-    // TODO: We could probably lazily initialize these when needed for efficiency
-    static private Metaphone3Keyer metaphone3 = new Metaphone3Keyer();
-    static private DoubleMetaphoneKeyer metaphone2 = new DoubleMetaphoneKeyer();
-    static private MetaphoneKeyer metaphone = new MetaphoneKeyer();
-    static private SoundexKeyer soundex = new SoundexKeyer();
-    static private ColognePhoneticKeyer cologne = new ColognePhoneticKeyer();
+    // TODO deprecate and drop those legacy encodings?
+    static private Metaphone metaphone = null;
+    static private DoubleMetaphone doubleMetaphone = null;
+    static private Soundex soundex = null;
+
+    private Metaphone getMetaphone() {
+        if (metaphone == null) {
+            metaphone = new Metaphone();
+            metaphone.setMaxCodeLen(2000);
+        }
+        return metaphone;
+    }
+
+    private DoubleMetaphone getDoubleMetaphone() {
+        if (doubleMetaphone == null) {
+            doubleMetaphone = new DoubleMetaphone();
+            doubleMetaphone.setMaxCodeLen(2000);
+        }
+        return doubleMetaphone;
+    }
+
+    private Soundex getSoundex() {
+        if (soundex == null) {
+            soundex = new Soundex();
+        }
+        return soundex;
+    }
 
     @Override
     public Object call(Properties bindings, Object[] args) {
@@ -71,32 +93,27 @@ public class Phonetic implements Function {
                 if (o2 instanceof String) {
                     encoding = ((String) o2).toLowerCase();
                 } else {
-                    // + " expects a string for the second argument");
                     return new EvalError(EvalErrorMessage.expects_second_param_string(ControlFunctionRegistry.getFunctionName(this)));
                 }
             } else {
-                // + " expects a string for the second argument, the phonetic encoding to use.");
                 return new EvalError(EvalErrorMessage.expects_second_param_string_phonetic(ControlFunctionRegistry.getFunctionName(this)));
             }
         }
         if (args.length < 3) {
             if ("doublemetaphone".equalsIgnoreCase(encoding)) {
-                return metaphone2.key(str);
-            } else if ("metaphone3".equalsIgnoreCase(encoding)) {
-                return metaphone3.key(str);
+                return getDoubleMetaphone().doubleMetaphone(str);
             } else if ("metaphone".equalsIgnoreCase(encoding)) {
-                return metaphone.key(str);
+                return getMetaphone().metaphone(str);
             } else if ("soundex".equalsIgnoreCase(encoding)) {
-                return soundex.key(str);
-            } else if ("cologne".equalsIgnoreCase(encoding)) {
-                return cologne.key(str);
+                return getSoundex().soundex(str);
             } else {
-                // + " doesn't know how to handle the '"
-                // + encoding + "' encoding.");
+                Keyer keyer = KeyerFactory.get(encoding.toLowerCase());
+                if (keyer != null) {
+                    return keyer.key(str);
+                }
                 return new EvalError(EvalErrorMessage.unable_to_handle_encoding(ControlFunctionRegistry.getFunctionName(this), encoding));
             }
         } else {
-            // + " expects one or two string arguments");
             return new EvalError(EvalErrorMessage.expects_one_or_two_strings(ControlFunctionRegistry.getFunctionName(this)));
         }
     }
