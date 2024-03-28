@@ -164,11 +164,16 @@ jobs:
       run: cd main/webapp && npm install
       
     - name: Build and test with Maven
-      run: mvn -B jacoco:prepare-agent test
+      run: mvn -B jacoco:prepare-agent test jacoco:report
 
-    - name: Submit test coverage to Coveralls
-      run: |
-        mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=${GITHUB_REF#refs/heads/} -DfailOnServiceError=false
+    - name: Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ env.COVERALLS_TOKEN }}
+        format: jacoco
+        flag-name: Java ${{ matrix.java }}
+        pull-request: ${{ github.event.number }}
+        fail-on-error: false
 
     - name: Install webapp dependencies
       run: cd main/webapp && npm install

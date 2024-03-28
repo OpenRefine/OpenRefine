@@ -110,11 +110,16 @@ jobs:
           PGPASSWORD: postgres
 
       - name: Build and test with Maven
-        run: mvn -B jacoco:prepare-agent test
+        run: mvn -B jacoco:prepare-agent test jacoco:report
 
-      - name: Submit test coverage to Coveralls
-        run: |
-          mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DfailOnServiceError=false
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          files: main/target/site/jacoco/jacoco.xml extensions/*/target/site/jacoco/jacoco.xml
+          github-token: ${{ env.COVERALLS_TOKEN }}
+          format: jacoco
+          flag-name: Java ${{ matrix.java }}
+          fail-on-error: false
 
   windows_server_tests:
     runs-on: windows-latest
