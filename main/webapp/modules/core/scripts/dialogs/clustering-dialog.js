@@ -248,8 +248,6 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             };
 
             var ul = document.createElement('ul');
-            cluster.size = 0;
-            cluster.rowCount = 0;
             ul.style.listStyleType = 'none';
             var choices = cluster.choices;
             var onClick = function() {
@@ -266,31 +264,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 let choice = choices[c];
                 var li = document.createElement('li');
                 let checkBox = $('<input type="checkbox" style = "accent-color: gray;" disabled = "true" />')
-                .on('change',function() {
-                    if(this.checked){
-                        cluster.rowCount += choice.c;
-                        cluster.size++;
-                        const existingIndex = facet.s.findIndex(item => item.v.v === choice.v);
-                        if (existingIndex === -1) {
-                            facet.s.push({
-                                "v": {
-                                    "v": choice.v,
-                                    "l": choice.v
-                                }
-                            });
-                        }
-                    } else {
-                        cluster.rowCount -= choice.c;
-                        cluster.size--;
-                        const indexToRemove = facet.s.findIndex(item => item.v.v === choice.v);
-                        if (indexToRemove !== -1) {
-                            facet.s.splice(indexToRemove, 1);
-                        }
-                    }
-                    tr.cells[3].textContent = cluster.size.toString();
-                    tr.cells[4].textContent = cluster.rowCount.toString();
-
-                }).appendTo(li);
+                .appendTo(li);
 
                 var checkBoxID = 'Checkbox' + index.toString() + "_Choice" + c.toString();
                 checkBox.attr("id", checkBoxID);
@@ -306,6 +280,12 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 if (choice.c > 1) { 
                   $('<span></span>').text($.i18n("core-dialogs/cluster-rows", choice.c)).addClass("clustering-dialog-entry-count").appendTo(li);
                 }
+                facet.s.push({
+                    "v": {
+                        "v": choice.v,
+                        "l": choice.v
+                    }
+                });
                 ul.append(li);
             }
 
@@ -313,22 +293,16 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             var div = document.createElement('div');
             div.class = "clustering-dialog-value-focus";
 
+            var params = [
+                "project=" + encodeURIComponent(theProject.id),
+                "ui=" + encodeURIComponent(JSON.stringify({
+                    "facets" : [ facet ]
+                }))
+            ];
+            var url = "project?" + params.join("&");
+
             var browseLink = $(browseLinkTemplate).clone()
-                .on("click",function (event) {
-                    var params = [
-                        "project=" + encodeURIComponent(theProject.id),
-                        "ui=" + encodeURIComponent(JSON.stringify({
-                            "facets" : [ facet ]
-                        }))
-                    ];
-                    if(facet.s.length == 0) {
-                        alert("You should choose at least one value to browse this cluster");
-                        event.preventDefault();
-                    } else {
-                        var url = "project?" + params.join("&");
-                        $(this).attr("href",url);
-                    }
-                })
+                .attr("href",url)
                 .appendTo(div);
 
             var editCheck = $('<input type="checkbox" style = "accent-color: gray;" />')
@@ -343,10 +317,6 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                         } else {
                             checkbox.prop('checked', false).trigger('change');
                             checkbox.prop('disabled', true);
-                            cluster.rowCount = 0;
-                            cluster.size = 0;
-                            tr.cells[3].textContent = cluster.size.toString();
-                            tr.cells[4].textContent = cluster.rowCount.toString();
                         }
                     }
                 }).appendTo(tr.insertCell(0));
@@ -367,11 +337,11 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                     cluster.value = this.value;
                 }).appendTo(tr.insertCell(2));
 
-            var cell = tr.insertCell(3)
-            cell.textContent = "0";
+            var cell = tr.insertCell(3);
+            cell.textContent = cluster.choices.length.toString();
 
             cell = tr.insertCell(4);
-            cell.textContent = "0";
+            cell.textContent = cluster.rowCount.toString();
 
             return choices.length;
         };
