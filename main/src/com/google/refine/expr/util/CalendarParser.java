@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.util;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -759,30 +757,7 @@ public class CalendarParser {
      * @return <code>null</code> if time zone list cannot be loaded.
      */
     private static final String[] loadTimeZoneNames() {
-        Class<?> zoneInfo;
-        try {
-            zoneInfo = Class.forName("sun.util.calendar.ZoneInfo");
-        } catch (ClassNotFoundException cnfe) {
-            return null;
-        }
-
-        Method method;
-        try {
-            method = zoneInfo.getDeclaredMethod("getAvailableIDs", new Class[0]);
-        } catch (NoSuchMethodException nsme) {
-            return null;
-        }
-
-        Object result;
-        try {
-            result = method.invoke((Object) null);
-        } catch (IllegalAccessException iae) {
-            return null;
-        } catch (InvocationTargetException ite) {
-            return null;
-        }
-
-        String[] tmpList = (String[]) result;
+        String[] tmpList = TimeZone.getAvailableIDs();
 
         int numSaved = 0;
         String[] finalList = null;
@@ -865,6 +840,7 @@ public class CalendarParser {
         return parse(dateStr, YY_MM_DD);
     }
 
+    // TODO: Only used by test code - move to tests?
     public static final OffsetDateTime parseAsOffsetDateTime(String dateStr) throws CalendarParserException {
         return ParsingUtilities.calendarToOffsetDateTime(parse(dateStr));
     }
@@ -1052,6 +1028,7 @@ public class CalendarParser {
                 // maybe it's a time zone name
                 for (String zoneName : zoneNames) {
                     if (token.equalsIgnoreCase(zoneName)) {
+                        // FIXME: Just try it as a timezone name without any prechecking
                         TimeZone tz = TimeZone.getTimeZone(token);
                         if (tz.getRawOffset() != 0 || lToken.equals("gmt")) {
                             state.setTimeZone(tz);
@@ -1633,6 +1610,7 @@ public class CalendarParser {
             state.setYear(tmpYear + (CENTURY_OFFSET - 100));
         }
 
+        // FIXME: This was local time before OpenRefine 3.0 when it changed to UTC for no apparent reason
         GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("Z"));
 
         state.setCalendar(cal, ignoreChanges);
@@ -1644,7 +1622,6 @@ public class CalendarParser {
                     + state.getMillisecond() + " => " + toString(cal));
         }
 
-//        return cal.toInstant().atOffset(ZoneOffset.of("Z"));
         return cal;
     }
 
