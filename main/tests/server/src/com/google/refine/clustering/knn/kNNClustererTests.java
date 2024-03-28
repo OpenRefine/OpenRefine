@@ -34,6 +34,8 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import edu.mit.simile.vicino.distances.PPMDistance;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
@@ -54,6 +56,11 @@ public class kNNClustererTests extends RefineTest {
     public static String clustererJson = "["
             + "   [{\"v\":\"ab\",\"c\":1},{\"v\":\"abc\",\"c\":1}]"
             + "]";
+
+    @BeforeTest
+    public void registerDistance() {
+        DistanceFactory.put("ppm", new VicinoDistance(new PPMDistance()));
+    }
 
     @Test
     public void serializekNNClustererConfig() throws JsonParseException, JsonMappingException, IOException {

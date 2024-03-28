@@ -41,9 +41,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import edu.mit.simile.vicino.distances.LevenshteinDistance;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.clustering.binning.KeyerFactory;
+import com.google.refine.clustering.binning.Metaphone3Keyer;
+import com.google.refine.clustering.knn.DistanceFactory;
+import com.google.refine.clustering.knn.VicinoDistance;
 import com.google.refine.commands.Command;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
@@ -66,6 +71,9 @@ public class GetClusteringFunctionsAndDistancesCommandTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        DistanceFactory.put("levenshtein", new VicinoDistance(new LevenshteinDistance()));
+        KeyerFactory.put("metaphone3", new Metaphone3Keyer());
     }
 
     @Test
