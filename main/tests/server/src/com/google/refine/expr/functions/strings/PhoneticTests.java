@@ -30,12 +30,22 @@ package com.google.refine.expr.functions.strings;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.clustering.binning.ColognePhoneticKeyer;
+import com.google.refine.clustering.binning.KeyerFactory;
+import com.google.refine.clustering.binning.Metaphone3Keyer;
 import com.google.refine.expr.EvalError;
 
 public class PhoneticTests extends RefineTest {
+
+    @BeforeTest
+    public void registerKeyers() {
+        KeyerFactory.put("metaphone3", new Metaphone3Keyer());
+        KeyerFactory.put("cologne-phonetic", new ColognePhoneticKeyer());
+    }
 
     @Test
     public void testtoPhoneticInvalidParams() {
