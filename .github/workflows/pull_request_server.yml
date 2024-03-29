@@ -112,14 +112,70 @@ jobs:
       - name: Build and test with Maven
         run: mvn -B jacoco:prepare-agent test jacoco:report
 
-      - name: Coveralls
+      - name: Coveralls main
         uses: coverallsapp/github-action@v2
         with:
-          files: main/target/site/jacoco/jacoco.xml extensions/*/target/site/jacoco/jacoco.xml
+          base-path: main/src
+          files: main/target/site/jacoco/jacoco.xml
+          format: jacoco
+          flag-name: Java-${{ matrix.java }}-main
+          fail-on-error: false
+          parallel: true
+
+      - name: Coveralls database
+        uses: coverallsapp/github-action@v2
+        with:
+          base-path: extensions/database/src
+          files: extensions/database/target/site/jacoco/jacoco.xml
           github-token: ${{ env.COVERALLS_TOKEN }}
           format: jacoco
-          flag-name: Java ${{ matrix.java }}
+          flag-name: Java-${{ matrix.java }}-database
           fail-on-error: false
+          parallel: true
+
+      - name: Coveralls phonetic
+        uses: coverallsapp/github-action@v2
+        with:
+          base-path: extensions/phonetic/src
+          files: extensions/phonetic/target/site/jacoco/jacoco.xml
+          github-token: ${{ env.COVERALLS_TOKEN }}
+          format: jacoco
+          flag-name: Java-${{ matrix.java }}-phonetic
+          fail-on-error: false
+          parallel: true
+
+      - name: Coveralls gdata
+        uses: coverallsapp/github-action@v2
+        with:
+          base-path: extensions/gdata/src
+          files: extensions/gdata/target/site/jacoco/jacoco.xml
+          github-token: ${{ env.COVERALLS_TOKEN }}
+          format: jacoco
+          flag-name: Java-${{ matrix.java }}-gdata
+          fail-on-error: false
+          parallel: true
+
+      - name: Coveralls wikibase
+        uses: coverallsapp/github-action@v2
+        with:
+          base-path: extensions/wikibase/src
+          files: extensions/wikibase/target/site/jacoco/jacoco.xml
+          github-token: ${{ env.COVERALLS_TOKEN }}
+          format: jacoco
+          flag-name: Java-${{ matrix.java }}-wikibase
+          fail-on-error: false
+          parallel: true
+
+      - name: Coveralls jython
+        uses: coverallsapp/github-action@v2
+        with:
+          base-path: extensions/jython/src
+          files: extensions/jython/target/site/jacoco/jacoco.xml
+          github-token: ${{ env.COVERALLS_TOKEN }}
+          format: jacoco
+          flag-name: Java-${{ matrix.java }}-jython
+          fail-on-error: false
+          parallel: true
 
   windows_server_tests:
     runs-on: windows-latest
@@ -141,3 +197,14 @@ jobs:
 
       - name: Build and test with Maven
         run: mvn -B jacoco:prepare-agent test
+
+  finish:
+    needs: linux_server_tests
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close parallel build
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel-finished: true
+
