@@ -27,6 +27,8 @@
 
 package com.google.refine.expr.functions.strings;
 
+import static org.testng.Assert.assertEquals;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -47,5 +49,14 @@ public class PhoneticTests extends RefineTest {
         Assert.assertTrue(invoke("phonetic", "one", "metaphone3", "three") instanceof EvalError); // if more than 2
                                                                                                   // arguments are
                                                                                                   // provided
+    }
+
+    @Test
+    public void testValidParameters() {
+        assertEquals(invoke("phonetic", "hello", "metaphone3"), "HL");
+        assertEquals(invoke("phonetic", "hello", "cologne-phonetic"), "05");
+        assertEquals(invoke("phonetic", "hello", "soundex"), "H400");
+        assertEquals(invoke("phonetic", "hello", "metaphone"), "HL");
+        assertEquals(invoke("phonetic", "hello", "doublemetaphone"), "HL");
     }
 }
