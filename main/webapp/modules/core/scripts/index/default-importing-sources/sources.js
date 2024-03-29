@@ -55,6 +55,7 @@ ThisComputerImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   this._elmts = DOM.bind(bodyDiv);
   
   $('#or-import-locate-files').text($.i18n('core-index-import/locate-files'));
+  $('#drag-files').text($.i18n('core-index-import/drag-files'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
   
   this._elmts.nextButton.on('click',function(evt) {
