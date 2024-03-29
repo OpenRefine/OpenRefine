@@ -33,9 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import edu.mit.simile.vicino.distances.LevenshteinDistance;
-import edu.mit.simile.vicino.distances.PPMDistance;
-
 /**
  * Registry of distances for kNN clustering.
  * 
@@ -46,11 +43,6 @@ public class DistanceFactory {
     static final protected Map<String, SimilarityDistance> _distances = new HashMap<>();
     // We cannot derive this from the hashmap as the order matters
     private static List<String> _distanceNames = new LinkedList<>();
-
-    static {
-        put("levenshtein", new VicinoDistance(new LevenshteinDistance()));
-        put("ppm", new VicinoDistance(new PPMDistance()));
-    }
 
     /**
      * Returns the distance registered under this name, or null if it does not exist.

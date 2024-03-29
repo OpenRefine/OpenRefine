@@ -45,13 +45,6 @@ public class KeyerFactory {
     // We cannot derive this from the hashmap as the order matters
     static final private List<String> _keyerNames = new LinkedList<>();
 
-    static {
-        put("fingerprint", new FingerprintKeyer());
-        put("ngram-fingerprint", new NGramFingerprintKeyer());
-        put("metaphone3", new Metaphone3Keyer());
-        put("cologne-phonetic", new ColognePhoneticKeyer());
-    }
-
     /**
      * Returns the keyer registered under a given name, or null if it does not exist.
      */
