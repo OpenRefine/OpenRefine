@@ -167,7 +167,7 @@
     "core-dialogs/merge": "¿Unir?",
     "core-dialogs/custom-separator": "Otro delimitador",
     "core-dialogs/cluster-descr": "Busca grupos de valores de celda diferentes que puedan ser otras representaciones de la misma cosa. Por ejemplo, \"Nueva York\" y \"nueva york\" probablemente se refieran al mismo concepto y sólo se diferencien por las mayúsculas, y \"Gödel\" y \"Godel\" probablemente se refieran a la misma persona.",
-    "clustering-keyers/cologne-phonetic": "cologne-phonetic",
+    "clustering-keyers/cologne-phonetic": "Fonética de Colonia",
     "core-dialogs/starred": "Con estrella",
     "core-dialogs/find-more": "Conozca más…",
     "core-dialogs/ngram-size": "Tamaño ngrama",
@@ -254,7 +254,7 @@
     "core-dialogs/idling": "Poniendo en inactividad…",
     "core-dialogs/local-time": "Usar zona horaria local",
     "clustering-keyers/metaphone3": "Metaphone3",
-    "core-dialogs/key-collision": "colisión de claves",
+    "core-dialogs/key-collision": "Colisión de claves",
     "core-dialogs/choices-in-cluster": "# Valores en agrupación",
     "core-dialogs/big-dot": "Punto grande",
     "core-dialogs/rotated-counter-clock": "Girado 45° en sentido antihorario",
@@ -862,5 +862,7 @@
     "core-views/warn-of-pending-sort": "Hay una ordenación pendiente. Los datos visibles en pantalla pueden no reflejar los datos sobre los que actuará esta operación.",
     "core-views/recon-mark-new-warning": "Esta columna aún no ha sido conciliada. Esta acción marcará las celdas para crear nuevas entidades sin comprobar si esas entidades ya existen en el servicio.",
     "core-views/new-column-name": "Nuevo nombre de la columna",
-    "core-views/cell-edit-date-help": "Entrada en formato de fecha ISO 8601 como 1987-03-04T03:43:30Z"
+    "core-views/cell-edit-date-help": "Entrada en formato de fecha ISO 8601 como 1987-03-04T03:43:30Z",
+    "core-index-import/drag-files": "Arrastre los archivos aquí",
+    "core-index/refine-extensions": "Extensiones: $1"
 }
