@@ -56,7 +56,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.google.refine.expr.functions.ToDate;
+import com.google.refine.expr.util.CalendarParser;
+import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconType;
 import com.google.refine.util.HttpClient;
@@ -250,11 +251,13 @@ public class ReconciledDataExtensionJob {
                     int v = val.get("int").asInt();
                     storeCell(rows, rowindex, colindex, v);
                 } else if (val.has("date")) {
-                    ToDate td = new ToDate();
-                    String[] args = new String[1];
-                    args[0] = val.get("date").asText();
-                    Object v = td.call(null, args);
-                    storeCell(rows, rowindex, colindex, v);
+                    Object date;
+                    try {
+                        date = CalendarParser.parseAsOffsetDateTime(val.get("date").asText());
+                    } catch (CalendarParserException e) {
+                        date = val.get("date").asText();
+                    }
+                    storeCell(rows, rowindex, colindex, date);
                 } else if (val.has("bool")) {
                     boolean v = val.get("bool").asBoolean();
                     storeCell(rows, rowindex, colindex, v);

@@ -332,6 +332,12 @@ function registerExporters() {
    ER.registerExporter("sql", new Packages.com.google.refine.exporters.sql.SqlExporter());
 }
 
+function registerLanguages() {
+  var MP = Packages.com.google.refine.expr.MetaParser;
+  MP.registerLanguageParser("grel", "General Refine Expression Language (GREL)", Packages.com.google.refine.grel.Parser.grelParser, "value");
+  MP.registerLanguageParser("clojure", "Clojure", new Packages.com.google.refine.expr.ClojureParser(), "value");
+}
+
 function registerDistances() {
    var DF = Packages.com.google.refine.clustering.knn.DistanceFactory;
    var VicinoDistance = Packages.com.google.refine.clustering.knn.VicinoDistance;
@@ -359,6 +365,7 @@ function init() {
   registerOperations();
   registerImporting();
   registerExporters();
+  registerLanguages();
   registerDistances();
   registerKeyers();
 
