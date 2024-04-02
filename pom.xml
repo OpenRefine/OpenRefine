@@ -57,6 +57,8 @@
   </developers>
 
   <modules>
+        <module>modules/core</module>
+        <module>modules/grel</module>
         <module>main</module>
         <module>server</module>
         <module>extensions</module>
@@ -176,9 +178,6 @@
         <version>${surefire.version}</version>
         <configuration>
           <argLine>@{surefireArgs} -Dfile.encoding=cp1252</argLine>
-          <suiteXmlFiles>
-            <suiteXmlFile>main/tests/server/conf/tests.xml</suiteXmlFile>
-          </suiteXmlFiles>
         </configuration>
       </plugin>
       <plugin>
