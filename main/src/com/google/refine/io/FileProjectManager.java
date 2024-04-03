@@ -53,7 +53,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,7 +189,7 @@ public class FileProjectManager extends ProjectManager {
             } else {
                 FileOutputStream fout = new FileOutputStream(destEntry);
                 try {
-                    IOUtils.copy(tin, fout);
+                    tin.transferTo(fout);
                 } finally {
                     fout.close();
                 }
