@@ -319,6 +319,19 @@ function registerImporting() {
   );
 }
 
+function registerExporters() {
+   var ER = Packages.com.google.refine.exporters.ExporterRegistry;
+   ER.registerExporter("csv", new Packages.com.google.refine.exporters.CsvExporter());
+   ER.registerExporter("tsv", new Packages.com.google.refine.exporters.CsvExporter('\t'.charAt(0)));
+   ER.registerExporter("*sv", new Packages.com.google.refine.exporters.CsvExporter());
+   ER.registerExporter("xls", new Packages.com.google.refine.exporters.XlsExporter(false));
+   ER.registerExporter("xlsx", new Packages.com.google.refine.exporters.XlsExporter(true));
+   ER.registerExporter("ods", new Packages.com.google.refine.exporters.OdsExporter());
+   ER.registerExporter("html", new Packages.com.google.refine.exporters.HtmlTableExporter());
+   ER.registerExporter("template", new Packages.com.google.refine.exporters.TemplatingExporter());
+   ER.registerExporter("sql", new Packages.com.google.refine.exporters.sql.SqlExporter());
+}
+
 function registerDistances() {
    var DF = Packages.com.google.refine.clustering.knn.DistanceFactory;
    var VicinoDistance = Packages.com.google.refine.clustering.knn.VicinoDistance;
@@ -343,6 +356,7 @@ function init() {
   registerCommands();
   registerOperations();
   registerImporting();
+  registerExporters();
   registerDistances();
   registerKeyers();
 
