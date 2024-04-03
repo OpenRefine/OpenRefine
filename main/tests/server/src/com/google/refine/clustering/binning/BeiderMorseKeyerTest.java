@@ -1,11 +1,9 @@
 
-package org.openrefine.phonetic.keyers;
+package com.google.refine.clustering.binning;
 
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
-
-import com.google.refine.clustering.binning.Keyer;
 
 public class BeiderMorseKeyerTest {
 

@@ -218,6 +218,8 @@
     "clustering-keyers/ngram-fingerprint": "n-Gram fingerprint",
     "clustering-keyers/metaphone3": "Metaphone3",
     "clustering-keyers/cologne-phonetic": "Cologne phonetic",
+    "clustering-keyers/beider-morse": "Beider-Morse",
+    "clustering-keyers/daitch-mokotoff": "Daitch-Mokotoff",
     "core-dialogs/distance-fun": "Distance function",
     "clustering-distances/levenshtein": "Levenshtein",
     "clustering-distances/ppm": "PPM",

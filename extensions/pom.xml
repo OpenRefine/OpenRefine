@@ -23,7 +23,6 @@
         <module>database</module>
         <module>gdata</module>
         <module>pc-axis</module>
-        <module>phonetic</module>
         <!-- Add new extensions here -->
   </modules>
 

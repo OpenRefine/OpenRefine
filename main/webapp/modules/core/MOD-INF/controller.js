@@ -332,6 +332,8 @@ function registerKeyers() {
    KF.put("ngram-fingerprint", new Packages.com.google.refine.clustering.binning.NGramFingerprintKeyer());
    KF.put("metaphone3", new Packages.com.google.refine.clustering.binning.Metaphone3Keyer());
    KF.put("cologne-phonetic", new Packages.com.google.refine.clustering.binning.ColognePhoneticKeyer());
+   KF.put("daitch-mokotoff", new Packages.com.google.refine.clustering.binning.DaitchMokotoffKeyer());
+   KF.put("beider-morse", new Packages.com.google.refine.clustering.binning.BeiderMorseKeyer());
 }
 
 /*
