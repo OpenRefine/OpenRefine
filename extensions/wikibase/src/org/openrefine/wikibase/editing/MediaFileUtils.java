@@ -2,8 +2,12 @@
 package org.openrefine.wikibase.editing;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -100,6 +104,62 @@ public class MediaFileUtils {
         files.put("file", new ImmutablePair<String, File>(fileName, path));
 
         return uploadFile(parameters, files);
+    }
+
+    /**
+     * Upload a local file to the MediaWiki instance in chunks.
+     * 
+     * @param path
+     *            ChunkedFile of the local file
+     * @param fileName
+     *            its filename once stored on the wiki
+     * @param wikitext
+     *            the accompanying wikitext for the file
+     * @param summary
+     *            the edit summary associated with the upload
+     * @param tags
+     *            tags to apply to the edit
+     * @return
+     * @throws IOException
+     * @throws MediaWikiApiErrorException
+     */
+    protected MediaUploadResponse uploadLocalFileChunked(ChunkedFile path, String fileName, String wikitext, String summary,
+            List<String> tags)
+            throws IOException, MediaWikiApiErrorException {
+        MediaUploadResponse response = null;
+        int i = 1;
+        for (File chunk = path.readChunk(); chunk != null; chunk = path.readChunk()) {
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("action", "upload");
+            parameters.put("token", getCsrfToken());
+            parameters.put("stash", "1");
+            parameters.put("filename", fileName);
+            parameters.put("filesize", String.valueOf(path.getLength()));
+            if (response == null) {
+                // In the first request we don't have offset or file key.
+                parameters.put("offset", "0");
+            } else {
+                parameters.put("offset", String.valueOf(response.offset));
+                parameters.put("filekey", response.filekey);
+            }
+            Map<String, ImmutablePair<String, java.io.File>> files = new HashMap<>();
+            String chunkName = "chunk-" + i + ".png";
+            files.put("chunk", new ImmutablePair<String, File>(chunkName, chunk));
+            response = uploadFile(parameters, files);
+            chunk.delete();
+            i++;
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("action", "upload");
+        parameters.put("token", getCsrfToken());
+        parameters.put("filename", fileName);
+        parameters.put("filekey", response.filekey);
+        parameters.put("tags", String.join("|", tags));
+        parameters.put("comment", summary);
+        parameters.put("text", wikitext);
+
+        return uploadFile(parameters, null);
     }
 
     /**
@@ -261,6 +321,10 @@ public class MediaFileUtils {
         public String filename;
         @JsonProperty("pageid")
         public long pageid;
+        @JsonProperty("offset")
+        public long offset;
+        @JsonProperty("filekey")
+        public String filekey;
         @JsonProperty("warnings")
         public Map<String, JsonNode> warnings;
 
@@ -304,6 +368,57 @@ public class MediaFileUtils {
                 }
             }
             return mid;
+        }
+    }
+
+    /**
+     * A file read one chunk at a time.
+     */
+
+    public static class ChunkedFile {
+
+        protected FileInputStream stream;
+        protected final int chunkSize = 5000;
+        protected File path;
+        protected long bytesRead;
+
+        public ChunkedFile(File path) throws FileNotFoundException {
+            this.path = path;
+            stream = new FileInputStream(path);
+            bytesRead = 0;
+        }
+
+        /**
+         * Read the next chunk of the file.
+         *
+         * @return {File} Contains a chunk of the original file. The length in bytes is chunkSize or however much
+         *         remains of the file if the last chunk is read.
+         * @throws IOException
+         */
+        public File readChunk() throws IOException {
+            if (bytesRead >= path.length()) {
+                return null;
+            }
+
+            // Read at most the remaining bytes.
+            int bytesToRead = (int) Math.min(path.length() - bytesRead, chunkSize);
+            byte[] bytes = new byte[bytesToRead];
+            int chunkBytesRead = stream.read(bytes);
+            Path chunk = Files.createTempFile(null, null);
+            Files.write(chunk, bytes);
+            bytesRead += chunkBytesRead;
+
+            return chunk.toFile();
+        }
+
+        /**
+         * Get length of the file.
+         * 
+         * @see File#length() length
+         * @return {long}
+         */
+        public long getLength() {
+            return path.length();
         }
     }
 }
