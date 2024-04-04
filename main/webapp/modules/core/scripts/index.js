@@ -82,7 +82,7 @@ $(function() {
     return false;
   };
 
-  var showVersion = function() {
+  var maybeShowNotifications = function() {
     $.getJSON(
         "command/core/get-version",
         null,
@@ -93,11 +93,83 @@ $(function() {
           $("#openrefine-extensions").text($.i18n('core-index/refine-extensions', OpenRefineVersion.module_names.join(", ")));
           $("#java-runtime-version").text(OpenRefineVersion.java_runtime_name + " " + OpenRefineVersion.java_runtime_version);
           if (OpenRefineVersion.display_new_version_notice === "true") {
-            $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
+            showNotifications();
+          }
+        }
+    );
+  };
+
+  var storeNotificationStatus = function(notificationStatus) {
+     Refine.wrapCSRF(function(csrfToken) {
+        $.post("command/core/set-preference",
+          {
+            name: 'notification.status',
+            value: JSON.stringify(notificationStatus),
+            csrf_token: csrfToken
+          });
+     });
+  };
+
+  var showNotifications = function() {
+    $.get("command/core/get-preference",
+      { "name": "notification.status" },
+      function(data) {
+        let notificationStatus = data.value;
+        if (notificationStatus === null) {
+          // this is the first time we are starting OpenRefine on this workspace.
+          // Let's not prompt the user yet, wait for next time instead.
+          storeNotificationStatus("promptUser");
+        } else if (notificationStatus == "promptUser") {
+          var container = $('<div id="notification-container">')
+          var hideNotification = function() {
+            container.remove();
+          };
+          var notification = $('<div id="notification">')
+            .text($.i18n('core-index/notification-opt-in'))
+            .appendTo(container);
+          $('<a>')
+            .addClass("notification-action")
+            .attr('href', '#')
+            .text($.i18n('core-buttons/yes'))
+            .appendTo(notification)
+            .on('click', function() {
+              storeNotificationStatus("enabled");
+              hideNotification();
+            });
+          $('<a>')
+            .addClass("notification-action")
+            .attr('href', '#')
+            .text($.i18n('core-buttons/no'))
+            .appendTo(notification)
+            .on('click', function() {
+              storeNotificationStatus("disabled");
+              hideNotification();
+            });
+          container
+            .appendTo(document.body);
+        } else if (notificationStatus == "enabled") {
+            $.getJSON("https://openrefine.org/versions.json",
                 function (data) {
-                  var latestVersion = data.tag_name;
-                  var latestVersionName = data.name;
-                  var latestVersionUrl = data.html_url;
+                  if (data.events) {
+                    var latestEvent = data.events[0];
+                    var container = $('<div id="notification-container">')
+                        .appendTo(document.body);
+                    var notification = $('<div id="notification">')
+                        .appendTo(container);
+                    var link = $('<a/>')
+                        .attr("href", latestEvent.link)
+                        .attr("target", "_blank")
+                        .text(latestEvent.text)
+                        .appendTo(notification);
+                    return; 
+                  }
+
+                  var stableReleases = data.releases.filter(release => release.stable);
+                  if (!stableReleases) {
+                    return;
+                  }
+                  var latestStableRelease = stableReleases[0];
+                  var latestVersion = latestStableRelease.version;
                   var thisVersion = OpenRefineVersion.version;
 
                   if (latestVersion.startsWith("v")) {
@@ -112,14 +184,14 @@ $(function() {
                         .appendTo(container);
                     $('<a>')
                         .addClass('notification-action')
-                        .attr("href", latestVersionUrl)
+                        .attr("href", "https://openrefine.org/download")
                         .attr("target", "_blank")
-                        .text($.i18n('core-index/download-now', latestVersionName))
+                        .text($.i18n('core-index/new-version-available', latestVersion))
                         .appendTo(notification);
                   }
                 });
-          }
         }
+      }
     );
   };
 
@@ -181,7 +253,7 @@ $(function() {
   $("#or-index-try").text($.i18n('core-index/try-these'));
   $("#or-index-sample").text($.i18n('core-index/sample-data'));
 
-  showVersion();
+  maybeShowNotifications();
 
   $(window).on("resize", resize);
   resize();
