@@ -42,7 +42,6 @@
         <directory>tests/data</directory>
       </testResource>
     </testResources>
-    <outputDirectory>webapp/WEB-INF/classes</outputDirectory>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -96,6 +95,17 @@
 	<version>${maven-jar-plugin.version}</version>
         <executions>
           <execution>
+            <id>default-jar</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>webapp/WEB-INF/lib</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-jar</id>
             <goals>
               <goal>test-jar</goal>
             </goals>
