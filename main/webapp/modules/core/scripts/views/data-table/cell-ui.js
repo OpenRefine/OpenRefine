@@ -85,7 +85,11 @@ DataTableCellUI.prototype._render = function() {
 
   var renderedCell = undefined;
   for (let record of CellRendererRegistry.renderers) {
-    renderedCell = record.renderer.render(this._rowIndex, this._cellIndex, cell, this);
+    try {
+      renderedCell = record.renderer.render(this._rowIndex, this._cellIndex, cell, this);
+    } catch (e) {
+      continue;
+    }
     if (renderedCell) {
       break;
     }
