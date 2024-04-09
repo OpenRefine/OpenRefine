@@ -4,10 +4,11 @@ package org.openrefine.wikibase.editing;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
@@ -143,10 +145,11 @@ public class MediaFileUtils {
                 parameters.put("filekey", response.filekey);
             }
             Map<String, ImmutablePair<String, java.io.File>> files = new HashMap<>();
-            String chunkName = "chunk-" + i + ".png";
+            String chunkName = "chunk-" + i + path.getExtension();
             files.put("chunk", new ImmutablePair<String, File>(chunkName, chunk));
             response = uploadFile(parameters, files);
             chunk.delete();
+            response.checkForErrors();
             i++;
         }
 
@@ -337,6 +340,10 @@ public class MediaFileUtils {
          * @throws MediaWikiApiErrorException
          */
         public void checkForErrors() throws MediaWikiApiErrorException {
+            if ("Continue".equals(result)) {
+                return;
+            }
+
             if (!"Success".equals(result)) {
                 throw new MediaWikiApiErrorException(result,
                         "The file upload action returned the '" + result + "' error code. Warnings are: " + Objects.toString(warnings));
@@ -381,11 +388,13 @@ public class MediaFileUtils {
         protected final int chunkSize = 5000;
         protected File path;
         protected long bytesRead;
+        protected int chunksRead;
 
         public ChunkedFile(File path) throws FileNotFoundException {
             this.path = path;
             stream = new FileInputStream(path);
             bytesRead = 0;
+            chunksRead = 0;
         }
 
         /**
@@ -400,15 +409,14 @@ public class MediaFileUtils {
                 return null;
             }
 
-            // Read at most the remaining bytes.
-            int bytesToRead = (int) Math.min(path.length() - bytesRead, chunkSize);
-            byte[] bytes = new byte[bytesToRead];
-            int chunkBytesRead = stream.read(bytes);
-            Path chunk = Files.createTempFile(null, null);
-            Files.write(chunk, bytes);
-            bytesRead += chunkBytesRead;
+            String fileName = "chunk-" + chunksRead + "-";
+            BoundedInputStream inStream = new BoundedInputStream(stream, chunkSize);
+            File chunk = Files.createTempFile(fileName, getExtension()).toFile();
+            OutputStream outStream = new FileOutputStream(chunk);
+            bytesRead += inStream.transferTo(outStream);
+            chunksRead++;
 
-            return chunk.toFile();
+            return chunk;
         }
 
         /**
@@ -419,6 +427,20 @@ public class MediaFileUtils {
          */
         public long getLength() {
             return path.length();
+        }
+
+        /**
+         * Get the extension from the filename.
+         * 
+         * @return {String} The file extensions, including the dot. If the file has no extensions, the empty string.
+         */
+        public String getExtension() {
+            int lastDotIndex = path.getName().lastIndexOf(".");
+            if (lastDotIndex == -1) {
+                return "";
+            }
+
+            return path.getName().substring(lastDotIndex);
         }
     }
 }

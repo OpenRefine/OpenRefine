@@ -346,6 +346,7 @@ public class MediaFileUtilsTest {
 
         ChunkedFile chunkedFile = mock(ChunkedFile.class);
         when(chunkedFile.getLength()).thenReturn(10001L);
+        when(chunkedFile.getExtension()).thenReturn(".png");
         Path firstChunk = Files.createTempFile("chunk-1-", ".png");
         Path secondChunk = Files.createTempFile("chunk-2-", ".png");
         Path thirdChunk = Files.createTempFile("chunk-3-", ".png");
