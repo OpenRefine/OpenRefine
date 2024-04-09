@@ -375,11 +375,6 @@
     <!-- dependencies are stored in the relevant submodules:
           see main/pom.xml, server/pom.xml and each extension.
     -->
-      <dependency>
-          <groupId>org.jvnet.localizer</groupId>
-          <artifactId>localizer</artifactId>
-          <version>${org-jvnet-localizer.version}</version>
-      </dependency>
   </dependencies>
 
   <!-- enabled to access our snapshots of Wikidata-Toolkit -->

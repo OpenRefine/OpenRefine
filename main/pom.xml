@@ -164,6 +164,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.jvnet.localizer</groupId>
+      <artifactId>localizer</artifactId>
+      <version>${org-jvnet-localizer.version}</version>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>${servlet-api.version}</version>
@@ -208,6 +213,7 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons-lang3.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -223,11 +229,6 @@
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
       <version>${commons-validator.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity-engine-core</artifactId>
-      <version>${velocity.version}</version>
     </dependency>
     <dependency>
       <groupId>org.marc4j</groupId>
@@ -359,6 +360,7 @@
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlets</artifactId>
       <version>${jetty.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Language detector api -->

@@ -67,6 +67,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>${servlet-api.version}</version>
@@ -162,7 +168,6 @@
       <version>${log4j.version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
 </project>
