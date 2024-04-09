@@ -60,7 +60,7 @@ public class IOUtils {
     }
 
     /**
-     * @deprecated use {@link InputStream#transferTo(OutputStream) in combination with {@link FileOutputStream}}
+     * @deprecated use {@link InputStream#transferTo(OutputStream)} in combination with {@link FileOutputStream}
      */
     @Deprecated(since = "3.9")
     public static long copy(InputStream input, File file) throws IOException {
