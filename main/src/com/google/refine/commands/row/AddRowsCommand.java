@@ -32,7 +32,7 @@ public class AddRowsCommand extends Command {
         try {
             Project project = getProject(request);
 
-            String rowDataParam = "rows";
+            String rowDataParam = "rows[]";
             if (!request.getParameterMap().containsKey(rowDataParam) || request.getParameter(rowDataParam) == null) {
                 throw new ServletException(String.format("Parameter \"%s\" is required", rowDataParam));
             }

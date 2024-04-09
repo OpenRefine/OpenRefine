@@ -1,0 +1,54 @@
+<div class="dialog-frame"
+     style="max-width:90%"
+     data-cy="addRowsDialog">
+    <form bind="dialogForm">
+        <div class="dialog-header"
+             bind="dialogHeader"></div>
+        <div class="dialog-body"
+             bind="dialogBody"
+             data-cy="dialogBody"
+             style="margin:var(--padding-looser)">
+            <div style="display:grid; grid-template-columns:repeat(2, 1fr); grid-template-rows: 1fr auto;">
+                <div style="grid-area: 1 / 1 / 1 / 2">
+                    <p bind="dialogDescription"></p>
+                </div>
+                <div style="grid-area: 1 / 2 / 1 / 3">
+                    <div style="text-align:right">
+                        <label bind="moreRowLabel"
+                               style="font-weight:800"
+                               for="add-rows-count"></label>
+                        <input type="number"
+                               bind="moreRowCount"
+                               id="add-rows-count"
+                               min="1"
+                               step="1"
+                               value="1"
+                               style="width:15%">
+                        <button type="button"
+                                bind="moreRowButton"
+                                data-cy="moreRowButton"></button>
+                    </div>
+                </div>
+                <div style="grid-area: 2 / 1 / 2 / 3; overflow:scroll; max-height:400px; margin-top:20px;">
+                    <table style="margin:0 auto;">
+                        <thead style="background:#ddd">
+                            <tr bind="tableHead"></tr>
+                        </thead>
+                        <tbody bind="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="dialog-footer" bind="dialogFooter">
+            <input type="submit"
+                   class="button"
+                   bind="okButton"
+                   data-cy="submitButton">
+            <button type="button"
+                    class="button"
+                    bind="cancelButton"
+                    data-cy="cancelButton"></button>
+        </div>
+    </form>
+</div>

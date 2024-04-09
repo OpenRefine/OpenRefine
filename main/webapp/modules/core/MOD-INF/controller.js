@@ -537,6 +537,7 @@ function init() {
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
+      "scripts/dialogs/add-rows-dialog.js",
     ])
   );
 
