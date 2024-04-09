@@ -661,6 +661,11 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                    doTextTransformPrompt();
             }
         },
+    {
+      label: $.i18n("core-views/add-rows"),
+      id: "core/add-rows", // TODO: do I need to add this somewhere?
+      click: function() { AddRowsDialog.init(); }
+    },
     {},
     {
       id: "core/common-transforms",
