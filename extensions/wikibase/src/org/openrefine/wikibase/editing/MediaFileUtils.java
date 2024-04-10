@@ -411,7 +411,10 @@ public class MediaFileUtils {
             }
 
             String fileName = "chunk-" + chunksRead + "-";
-            BoundedInputStream inStream = new BoundedInputStream(stream, chunkSize);
+            BoundedInputStream inStream = BoundedInputStream.builder()
+                    .setInputStream(stream)
+                    .setMaxCount(chunkSize)
+                    .get();
             File chunk = Files.createTempFile(fileName, getExtension()).toFile();
             OutputStream outStream = new FileOutputStream(chunk);
             bytesRead += inStream.transferTo(outStream);
