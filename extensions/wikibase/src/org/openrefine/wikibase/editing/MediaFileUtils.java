@@ -348,7 +348,7 @@ public class MediaFileUtils {
                 throw new MediaWikiApiErrorException(result,
                         "The file upload action returned the '" + result + "' error code. Warnings are: " + Objects.toString(warnings));
             }
-            if (filename == null) {
+            if (filename == null && filekey == null) {
                 throw new MediaWikiApiErrorException(result, "The MediaWiki API did not return any filename for the uploaded file");
             }
         }
