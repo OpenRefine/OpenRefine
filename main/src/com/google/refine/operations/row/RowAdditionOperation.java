@@ -42,11 +42,14 @@ import com.google.refine.operations.OperationDescription;
 public class RowAdditionOperation extends AbstractOperation {
 
     final private List<Row> _rows;
+    final private int _insertionIndex;
 
     @JsonCreator
     public RowAdditionOperation(
-            @JsonProperty("rows") List<Row> rows) {
+            @JsonProperty("rows") List<Row> rows,
+            @JsonProperty("insertionIndex") int insertionIndex) {
         _rows = rows;
+        _insertionIndex = insertionIndex;
     }
 
     @Override
@@ -56,7 +59,6 @@ public class RowAdditionOperation extends AbstractOperation {
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        int insertionIndex = 0; // Prepend rows
 
         int count = _rows.size();
         String description = "Add " + count + " row" + ((count > 1) ? "s" : "");
@@ -66,7 +68,7 @@ public class RowAdditionOperation extends AbstractOperation {
                 project,
                 description,
                 this,
-                new RowAdditionChange(_rows, insertionIndex));
+                new RowAdditionChange(_rows, _insertionIndex));
     }
 
 }

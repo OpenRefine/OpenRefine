@@ -253,11 +253,15 @@ const AddRowsDialog = (function (path) {
 
     // Serialize form data
     const data = rows.map(row => JSON.stringify(row.serialize()));
+    const index = 0;
 
     Refine.postCoreProcess(
       "add-rows",
       null,
-      {"rows[]": data},
+      {
+        "rows[]": data,
+        "index": index,
+      },
       null,
       {
         "onDone": (o) => Refine.fetchRows(
