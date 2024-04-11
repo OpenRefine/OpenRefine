@@ -64,6 +64,11 @@ public class AddRowsCommand extends Command {
             }
             String[] rowData = request.getParameterValues(rowDataParam);
 
+            String index = request.getParameter("index");
+            if (!request.getParameterMap().containsKey(index) || request.getParameter(index) == null) {
+                throw new ServletException(String.format("Parameter \"%s\" is required", index));
+            }
+
             Pool pool = new Pool();
 
             List<Row> rows = Arrays.stream(rowData)
@@ -76,7 +81,7 @@ public class AddRowsCommand extends Command {
                     })
                     .collect(Collectors.toList());
 
-            AbstractOperation op = new RowAdditionOperation(rows);
+            AbstractOperation op = new RowAdditionOperation(rows, Integer.parseInt(index));
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);
