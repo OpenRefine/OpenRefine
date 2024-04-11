@@ -1,6 +1,7 @@
 
 package org.openrefine.wikibase.editing;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -383,7 +384,7 @@ public class MediaFileUtils {
      * A file read one chunk at a time.
      */
 
-    public static class ChunkedFile {
+    public static class ChunkedFile implements Closeable {
 
         protected FileInputStream stream;
         protected final int chunkSize = 5000;
@@ -445,6 +446,11 @@ public class MediaFileUtils {
             }
 
             return path.getName().substring(lastDotIndex);
+        }
+
+        @Override
+        public void close() throws IOException {
+            stream.close();
         }
     }
 }
