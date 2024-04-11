@@ -44,7 +44,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -106,6 +105,17 @@ public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
 
     final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
+
+    public static InputStreamReader getInputStreamReader(InputStream inputStream, String encoding) throws IOException {
+        if (encoding == null) {
+            return new InputStreamReader(inputStream);
+        }
+        // This isn't a real encoding, so needs to be special cased
+        if (EncodingGuesser.UTF_8_BOM.equals(encoding)) {
+            return new InputStreamReader(new UnicodeBOMInputStream(inputStream, true), UTF_8);
+        }
+        return new InputStreamReader(inputStream, encoding);
+    }
 
     static public interface Progress {
 
@@ -568,26 +578,11 @@ public class ImportingUtilities {
         if (encoding == null) {
             encoding = commonEncoding;
         }
-        if (encoding != null) {
-
-            // Special case for UTF-8 with BOM
-            if (EncodingGuesser.UTF_8_BOM.equals(encoding)) {
-                try {
-                    return new InputStreamReader(new UnicodeBOMInputStream(inputStream, true), UTF_8);
-                } catch (IOException e) {
-                    throw new RuntimeException("Exception from UnicodeBOMInputStream", e);
-                }
-            } else {
-                try {
-                    return new InputStreamReader(inputStream, encoding);
-                } catch (UnsupportedEncodingException e) {
-                    // This should never happen since they picked from a list of supported encodings
-                    throw new RuntimeException("Unsupported encoding: " + encoding, e);
-                }
-            }
-
+        try {
+            return getInputStreamReader(inputStream, encoding);
+        } catch (IOException e) {
+            throw new RuntimeException("Exception getting InputStreamReader", e);
         }
-        return new InputStreamReader(inputStream);
     }
 
     static public File getFile(ImportingJob job, ObjectNode fileRecord) {
