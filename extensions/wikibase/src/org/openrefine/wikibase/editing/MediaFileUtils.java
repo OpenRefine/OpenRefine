@@ -96,6 +96,12 @@ public class MediaFileUtils {
      */
     public MediaUploadResponse uploadLocalFile(File path, String fileName, String wikitext, String summary, List<String> tags)
             throws IOException, MediaWikiApiErrorException {
+        if (path.length() > 100000000) {
+            try (ChunkedFile chunkedFile = new ChunkedFile(path)) {
+                return uploadLocalFileChunked(chunkedFile, fileName, wikitext, summary, tags);
+            }
+        }
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("action", "upload");
         parameters.put("tags", String.join("|", tags));
