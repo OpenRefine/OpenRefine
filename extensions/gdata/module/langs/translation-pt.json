@@ -48,5 +48,7 @@
     "gdata-parsing/limit-next": "Carregar ao menos",
     "gdata-import/re-sign-in-another": "Faça login com conta diferente",
     "gdata-import/please-signin": "Faça login e autorize o acesso aos seus dados do Google",
-    "gdata-parsing/disable-auto-preview": "Desativar pré-visualização automática"
+    "gdata-parsing/disable-auto-preview": "Desativar pré-visualização automática",
+    "gdata-import/please-name-project": "Por favor, nomeie o projeto.",
+    "gdata-import/errors": "Erros:\n $1"
 }

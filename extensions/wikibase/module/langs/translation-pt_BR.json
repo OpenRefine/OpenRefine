@@ -10,5 +10,10 @@
     "wikibase-extension/manage-wikibase-account": "Gerir conta de Wikidata…",
     "wikibase-extension/import-wikibase-schema": "Importar esquema…",
     "wikibase-extension/edit-wikibase-schema": "Editar esquema de Wikidata",
-    "wikibase-extension/menu-label": "Wikidata"
+    "wikibase-extension/menu-label": "Wikidata",
+    "wikibase-management/current-selected-wikibase": "Wikibase selecionada atualmente: <a href=\"$1\" target=\"_blank\">$2</a>",
+    "wikibase-management/close": "Fechar",
+    "wikibase-extension/select-wikibase-instance": "Gerenciar instâncias do Wikibase…",
+    "wikibase-management/explain-select-wikibase": "Clique em um item abaixo para selecioná-lo como o Wikibase alvo para trabalhar. Isso irá limpar qualquer esquema existente. Após a mudança para o Wikibase alvo, você deve reconciliar seus dados com ele antes de editar o esquema.",
+    "wikibase-management/add-wikibase": "Adicionar Wikibase"
 }

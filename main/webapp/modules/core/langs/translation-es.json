@@ -864,5 +864,7 @@
     "core-views/new-column-name": "Nuevo nombre de la columna",
     "core-views/cell-edit-date-help": "Entrada en formato de fecha ISO 8601 como 1987-03-04T03:43:30Z",
     "core-index-import/drag-files": "Arrastre los archivos aquí",
-    "core-index/refine-extensions": "Extensiones: $1"
+    "core-index/refine-extensions": "Extensiones: $1",
+    "clustering-keyers/beider-morse": "Coincidencia fonética de Beider-Morse",
+    "clustering-keyers/daitch-mokotoff": "Algoritmo Soundex Daitch-Mokotoff"
 }
