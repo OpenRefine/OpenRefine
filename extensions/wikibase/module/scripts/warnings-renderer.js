@@ -136,36 +136,3 @@ WarningsRenderer._renderWarning = function (warning, onLocateRows) {
       .appendTo(countTd);
   return tr;
 };
-
-/*  var bodyTd = $('<td></td>')
-      .addClass('wb-warning-body')
-      .appendTo(tr);
-  var h1 = $('<h1></h1>')
-      .html(title)
-      .appendTo(bodyTd);
-  var p = $('<p></p>')
-      .html(body)
-      .addClass('wb-warning-body-subtext')
-      .appendTo(bodyTd);
-  if (warning.facetable) {
-    var facetingButton = $('<button></button>')
-        .addClass('button')
-        .text($.i18n('wikibase-issues/locate-offending-rows'))
-        .appendTo(bodyTd);
-    facetingButton.on('click', function(evt) {
-        if (onLocateRows) {
-          onLocateRows();
-        }
-
-        // the faceting relies on having an up to date schema
-        var onSaved = function() {
-          WarningsRenderer._createFacetForWarning(warning);
-        };
-        if (SchemaAlignment._hasUnsavedChanges) {
-           SchemaAlignment._save(onSaved);
-        } else {
-           onSaved();
-        }
-        evt.preventDefault();
-    });
-  }*/
