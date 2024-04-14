@@ -598,6 +598,11 @@ tr.wb-warning:nth-of-type(odd) {
   line-height: 1.4;
 }
 
+.wb-warning-body-h1 {
+ display: inline-block;
+ margin-right: 8px;
+}
+
 .wb-warning-body-subtext {
   opacity: 0.75;
 }
