@@ -595,6 +595,11 @@ tr.wb-warning:nth-of-type(odd) {
 .wb-warning-body {
   padding: 5px;
   vertical-align: top;
+  line-height: 1.4;
+}
+
+.wb-warning-body-subtext {
+  opacity: 0.75;
 }
 
 .wb-warning-count {

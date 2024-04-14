@@ -96,6 +96,7 @@ WarningsRenderer._renderWarning = function (warning, onLocateRows) {
       .appendTo(bodyTd);
   var p = $('<p></p>')
       .html(body)
+      .addClass('wb-warning-body-subtext')
       .appendTo(bodyTd);
   if (warning.facetable) {
     var facetingButton = $('<button></button>')
