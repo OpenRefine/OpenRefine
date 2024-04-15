@@ -28,31 +28,48 @@
 package com.google.refine.model.changes;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
+import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.Pool;
 
 public class RowAdditionChangeTests extends RefineTest {
 
     Project project;
     int originalCount;
-    int insertionIndex = 0; // Prepend rows
+    int insertionIndex;
     RowAdditionChange change;
     List<Row> newRows;
+    Serializable[][] grid = {
+            { "Electronics", 599.9 },
+            { "Clothing", 45.50 },
+            { "Home & Garden", 129.95 }
+    };
 
     @Override
     @BeforeTest
@@ -62,28 +79,27 @@ public class RowAdditionChangeTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
+        insertionIndex = 0; // Prepend rows
         String[] columnNames = { "Category", "Value" };
-        Serializable[][] grid = {
-                { "Electronics", 599.9 },
-                { "Clothing", 45.50 },
-                { "Home & Garden", 129.95 }
-        };
         project = createProject(columnNames, grid);
         originalCount = project.rows.size();
 
         newRows = new ArrayList<>();
-        newRows.add(new Row(2));
-        newRows.get(0).setCell(0, new Cell("Books", null));
-        newRows.get(0).setCell(1, new Cell(19.99, null));
-        newRows.add(new Row(2));
-        newRows.get(1).setCell(0, new Cell("Sports & Outdoors", null));
-        newRows.get(1).setCell(1, new Cell(89.99, null));
+        newRows.add(new Row(0)); // Blank row
+        newRows.add(new Row(0)); // Blank row
 
         change = new RowAdditionChange(newRows, insertionIndex);
     }
 
+    @AfterMethod
+    public void tearDown() {
+        ProjectManager.singleton.deleteProject(project.id);
+    }
+
     @Test
+    // After apply, row count equals sum of original rows and new rows
     public void testApplyProjectRowCount() {
+        assert project.rows.size() == originalCount;
         change.apply(project);
         int actual = project.rows.size();
         int expected = originalCount + newRows.size();
@@ -91,7 +107,9 @@ public class RowAdditionChangeTests extends RefineTest {
     }
 
     @Test
+    // After revert, row count equals original row count
     public void testRevertProjectRowCount() {
+        assert project.rows.size() == originalCount;
         change.apply(project);
         change.revert(project);
         int actual = project.rows.size();
@@ -100,13 +118,93 @@ public class RowAdditionChangeTests extends RefineTest {
     }
 
     @Test
-    public void testNewRowsIdentity() {
+    // After apply, project's new rows are identical those passed to constructor
+    public void testBlankRowsIdentity() {
         change.apply(project);
         for (int i = insertionIndex; i < newRows.size(); i++) {
             Row actual = project.rows.get(i);
             Row expected = newRows.get(i);
             assertSame(actual, expected);
         }
+    }
 
+    @Test
+    // After apply, project's new rows are blank
+    public void testBlankRowsCellLength() {
+        change.apply(project);
+        for (int i = insertionIndex; i < newRows.size(); i++) {
+            Row row = project.rows.get(i);
+            assertBlankRow(row);
+        }
+    }
+
+    @Test
+    // After apply, loaded change produces blank rows
+    public void testLoadChangeBlankRows() throws Exception {
+        Change change = loadChange("changes/blank_row_addition.txt");
+        int changeCount = 2; // Value in file
+        int changeIndex = 0; // Value in file
+        change.apply(project);
+        for (int i = changeIndex; i < insertionIndex + changeCount; i++) {
+            Row row = project.rows.get(i);
+            assertBlankRow(row);
+        }
+    }
+
+    @Test
+    // After save, serialization behaves as expected
+    public void testSerialization() throws IOException {
+        Writer writer = new StringWriter();
+        change.save(writer, new Properties());
+        String expected = "index=0\n" +
+                "count=2\n" +
+                "{\"starred\":false,\"flagged\":false,\"cells\":[]}\n" +
+                "{\"starred\":false,\"flagged\":false,\"cells\":[]}\n" +
+                "/ec/\n";
+        assertEquals(writer.toString(), expected);
+    }
+
+    @Test
+    // After apply, existing rows are shifted up by the size of additional rows
+    public void testExistingRowValues() {
+        change.apply(project);
+        for (int i = 0; i < grid.length; i++) {
+            Row row = project.rows.get(i + newRows.size());
+            for (int j = 0; j < row.cells.size(); j++) {
+                Cell cell = row.getCell(j);
+                assertEquals(grid[i][j], cell.value);
+            }
+        }
+    }
+
+    /**
+     * Loads a saved changed from disk
+     * 
+     * @param path:
+     *            path to the saved change
+     * @return Change: the saved changed
+     * @throws Exception
+     */
+    private Change loadChange(String path) throws Exception {
+        Pool pool = new Pool();
+        InputStream in = this.getClass().getClassLoader()
+                .getResourceAsStream(path);
+        assert in != null;
+        LineNumberReader lineReader = new LineNumberReader(new InputStreamReader(in));
+        // skip the header
+        lineReader.readLine();
+        lineReader.readLine();
+        return RowAdditionChange.load(lineReader, pool);
+    }
+
+    /**
+     * Assert that a row is blank. Where blank is defined by the following assertions: - `row.cells` is not null -
+     * `row.cells` is empty
+     * 
+     * @param row
+     */
+    private void assertBlankRow(Row row) {
+        assertNotNull(row.cells);
+        assertTrue(row.cells.isEmpty());
     }
 }

@@ -28,10 +28,9 @@
 package com.google.refine.commands.row;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +46,9 @@ import com.google.refine.util.Pool;
 
 public class AddRowsCommand extends Command {
 
+    static String ROWS_PARAMETER = "rows[]";
+    static String INDEX_PARAMETER = "index";
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -57,37 +59,38 @@ public class AddRowsCommand extends Command {
 
         try {
             Project project = getProject(request);
+            List<Row> rows = getRowData(request);
+            int insertionIndex = getInsertionIndex(request, project);
 
-            String rowDataParam = "rows[]";
-            if (!request.getParameterMap().containsKey(rowDataParam) || request.getParameter(rowDataParam) == null) {
-                throw new ServletException(String.format("Parameter \"%s\" is required", rowDataParam));
-            }
-            String[] rowData = request.getParameterValues(rowDataParam);
-
-            String index = request.getParameter("index");
-            if (!request.getParameterMap().containsKey(index) || request.getParameter(index) == null) {
-                throw new ServletException(String.format("Parameter \"%s\" is required", index));
-            }
-
-            Pool pool = new Pool();
-
-            List<Row> rows = Arrays.stream(rowData)
-                    .map(rowStr -> {
-                        try {
-                            return Row.load(rowStr, pool);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    })
-                    .collect(Collectors.toList());
-
-            AbstractOperation op = new RowAdditionOperation(rows, Integer.parseInt(index));
+            AbstractOperation op = new RowAdditionOperation(rows, insertionIndex);
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);
         }
+    }
+
+    public int getInsertionIndex(HttpServletRequest request, Project project) {
+        String data = request.getParameter(INDEX_PARAMETER);
+        int index = Integer.parseInt(data);
+        if (index < 0 || index >= project.rows.size()) {
+            throw new IllegalArgumentException("Parameter " + INDEX_PARAMETER + " out of bounds");
+        }
+        return index;
+    }
+
+    public List<Row> getRowData(HttpServletRequest request) throws Exception {
+        String[] data = request.getParameterValues(ROWS_PARAMETER);
+        if (data.length == 0) {
+            throw new IllegalArgumentException("Parameter " + ROWS_PARAMETER + " is empty");
+        }
+        List<Row> rows = new ArrayList<>(data.length);
+        Pool pool = new Pool();
+        for (String rowStr : data) {
+            rows.add(Row.load(rowStr, pool));
+        }
+        return rows;
     }
 
 }
