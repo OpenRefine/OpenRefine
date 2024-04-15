@@ -577,19 +577,19 @@ tr.wb-warning:nth-of-type(odd) {
 }
 
 .wb-warning-severity-INFO {
-  background-image: url('../images/Information.png');
+  background-image: url('../images/Information.svg');
 }
 
 .wb-warning-severity-WARNING {
-  background-image: url('../images/Warning.png');
+  background-image: url('../images/Warning.svg');
 }
 
 .wb-warning-severity-IMPORTANT {
-  background-image: url('../images/Important.png');
+  background-image: url('../images/Important.svg');
 }
 
 .wb-warning-severity-CRITICAL {
-  background-image: url('../images/Critical.png');
+  background-image: url('../images/Critical.svg');
 }
 
 .wb-warning-body {
