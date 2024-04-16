@@ -69,7 +69,7 @@ public class RowAdditionChange implements Change {
     public void revert(Project project) {
         synchronized (project) {
             int startIndex = _insertionIndex;
-            int endIndex = _additionalRows.size();
+            int endIndex = _insertionIndex + _additionalRows.size();
             project.rows.subList(startIndex, endIndex).clear();
 
             project.columnModel.clearPrecomputes();

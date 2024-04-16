@@ -97,8 +97,8 @@ public class RowAdditionChangeTests extends RefineTest {
     }
 
     @Test
-    // After apply, row count equals sum of original rows and new rows
-    public void testApplyProjectRowCount() {
+    // After prepend apply, row count equals sum of original rows and new rows
+    public void testPrependApplyRowCount() {
         assert project.rows.size() == originalCount;
         change.apply(project);
         int actual = project.rows.size();
@@ -107,19 +107,8 @@ public class RowAdditionChangeTests extends RefineTest {
     }
 
     @Test
-    // After revert, row count equals original row count
-    public void testRevertProjectRowCount() {
-        assert project.rows.size() == originalCount;
-        change.apply(project);
-        change.revert(project);
-        int actual = project.rows.size();
-        int expected = originalCount;
-        assertEquals(actual, expected);
-    }
-
-    @Test
-    // After apply, project's new prepended rows are identical those passed to constructor
-    public void testPrependBlankRowsIdentity() {
+    // After prepend apply, project's new prepended rows are identical those passed to constructor
+    public void testPrependApplyRowIdentity() {
         change.apply(project);
         for (int i = insertionIndex; i < newRows.size(); i++) {
             Row actual = project.rows.get(i);
@@ -129,8 +118,94 @@ public class RowAdditionChangeTests extends RefineTest {
     }
 
     @Test
-    // After apply, project's new append rows are identical those passed to constructor
-    public void testAppendBlankRowsIdentity() {
+    // After prepend apply, project's new rows are blank
+    public void testPrependApplyCellLength() {
+        change.apply(project);
+        for (int i = insertionIndex; i < newRows.size(); i++) {
+            Row row = project.rows.get(i);
+            assertBlankRow(row);
+        }
+    }
+
+    @Test
+    // After prepend apply, existing rows are shifted up by the size of additional rows
+    public void testPrependApplyExistingCellValues() {
+        change.apply(project);
+        for (int i = 0; i < grid.length; i++) {
+            Row row = project.rows.get(i + newRows.size());
+            for (int j = 0; j < row.cells.size(); j++) {
+                Cell cell = row.getCell(j);
+                assertEquals(grid[i][j], cell.value);
+            }
+        }
+    }
+
+    @Test
+    // After prepend revert, row count equals original row count
+    public void testPrependRevertRowCount() {
+        assert project.rows.size() == originalCount;
+        change.apply(project);
+        change.revert(project);
+        int actual = project.rows.size();
+        int expected = originalCount;
+        assertEquals(actual, expected);
+    }
+
+    @Test
+    // After prepend revert, cell values equals original values
+    public void testPrependRevertCellValue() {
+        change.apply(project);
+        change.revert(project);
+        for (int i = 0 ; i < project.rows.size(); i++) {
+            Row row = project.rows.get(i);
+            for (int j = 0; j < row.cells.size(); j++) {
+                Cell cell = row.cells.get(j);
+                assertEquals(cell.value, grid[i][j]);
+            }
+        }
+    }
+
+    @Test
+    // After prepend apply, loaded change produces blank rows
+    public void testPrependLoadChangeBlankRows() throws Exception {
+        Change change = loadChange("changes/blank_row_addition.txt");
+        int changeCount = 2; // Value in file
+        int changeIndex = 0; // Value in file
+        change.apply(project);
+        for (int i = changeIndex; i < insertionIndex + changeCount; i++) {
+            Row row = project.rows.get(i);
+            assertBlankRow(row);
+        }
+    }
+
+    @Test
+    // After prepend save, serialization behaves as expected
+    public void testPrependSaveSerialization() throws IOException {
+        Writer writer = new StringWriter();
+        change.save(writer, new Properties());
+        String expected = "index=0\n" +
+                "count=2\n" +
+                "{\"starred\":false,\"flagged\":false,\"cells\":[]}\n" +
+                "{\"starred\":false,\"flagged\":false,\"cells\":[]}\n" +
+                "/ec/\n";
+        assertEquals(writer.toString(), expected);
+    }
+
+    @Test
+    // After append apply, row count equals sum of original rows and new rows
+    public void testAppendApplyRowCount() {
+        assert project.rows.size() == originalCount;
+        insertionIndex = project.rows.size();
+        change = new RowAdditionChange(newRows, insertionIndex);
+        change.apply(project);
+        int actual = project.rows.size();
+        int expected = originalCount + newRows.size();
+        assertEquals(actual, expected);
+    }
+
+    @Test
+    // After append apply, project's new append rows are identical those passed to constructor
+    public void testAppendApplyRowIdentity() {
         insertionIndex = project.rows.size();
         change = new RowAdditionChange(newRows, insertionIndex);
         change.apply(project);
@@ -143,50 +218,18 @@ public class RowAdditionChangeTests extends RefineTest {
     }
 
     @Test
-    // After apply, project's new rows are blank
-    public void testBlankRowsCellLength() {
+    // After append revert, row count equals original row count
+    public void testAppendRevertCellValue() {
+        insertionIndex = project.rows.size();
+        change = new RowAdditionChange(newRows, insertionIndex);
         change.apply(project);
-        for (int i = insertionIndex; i < newRows.size(); i++) {
+        change.revert(project);
+
+        for (int i = 0 ; i < project.rows.size(); i++) {
             Row row = project.rows.get(i);
-            assertBlankRow(row);
-        }
-    }
-
-    @Test
-    // After apply, loaded change produces blank rows
-    public void testLoadChangeBlankRows() throws Exception {
-        Change change = loadChange("changes/blank_row_addition.txt");
-        int changeCount = 2; // Value in file
-        int changeIndex = 0; // Value in file
-        change.apply(project);
-        for (int i = changeIndex; i < insertionIndex + changeCount; i++) {
-            Row row = project.rows.get(i);
-            assertBlankRow(row);
-        }
-    }
-
-    @Test
-    // After save, serialization behaves as expected
-    public void testSerialization() throws IOException {
-        Writer writer = new StringWriter();
-        change.save(writer, new Properties());
-        String expected = "index=0\n" +
-                "count=2\n" +
-                "{\"starred\":false,\"flagged\":false,\"cells\":[]}\n" +
-                "{\"starred\":false,\"flagged\":false,\"cells\":[]}\n" +
-                "/ec/\n";
-        assertEquals(writer.toString(), expected);
-    }
-
-    @Test
-    // After apply, existing rows are shifted up by the size of additional rows
-    public void testExistingRowValues() {
-        change.apply(project);
-        for (int i = 0; i < grid.length; i++) {
-            Row row = project.rows.get(i + newRows.size());
             for (int j = 0; j < row.cells.size(); j++) {
-                Cell cell = row.getCell(j);
-                assertEquals(grid[i][j], cell.value);
+                Cell cell = row.cells.get(j);
+                assertEquals(cell.value, grid[i][j]);
             }
         }
     }
