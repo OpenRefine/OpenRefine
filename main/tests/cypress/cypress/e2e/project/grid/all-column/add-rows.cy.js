@@ -1,177 +1,252 @@
 describe(__filename,  () => {
 
-  function openDialog() {
-    cy.columnActionClick("All", [ "Add rows" ]);
-    cy.waitForDialogPanel();
-  }
-
   beforeEach(() => {
     cy.loadAndVisitProject('food.small');
 
-    openDialog();
-
-    cy.get("[data-cy=addRowsDialog]")
-      .as("dialog");
-    cy.get("@dialog")
-      .find("[data-cy=dialogBody]")
-      .as("dialogBody");
-    cy.get("@dialog")
-      .find("[data-cy=moreRowButton]")
-      .as("moreRowButton");
-    cy.get("@dialog")
-      .find("[data-cy=cancelButton]")
-      .as("cancelButton");
-    cy.get("@dialogBody")
-      .find("tbody tr:first")
-      .as("firstRow");
-    cy.get("@dialogBody")
-      .find("tbody tr")
+    cy.get("div#notification > div[bind=undoDiv] > span[bind=undoDescription]")
+      .as("notificationDescription");
+    cy.get("#summary-bar > span")
+      .as("summaryText");
+    cy.get("a#or-proj-undoRedo > span.count")
+      .as("historyCount");
+    cy.get("div#view-panel > div.data-table-container > table > tbody > tr")
       .as("tableRows");
-    cy.get("@firstRow")
-      .find("button[type=button]")
-      .as("firstRemoveRowButton");
-    cy.get("[data-cy=submitButton]")
-      .as("submitButton");
-  });
-
-  it("Dialog appears on menu item click", () => {
-    cy.get("@dialog")
-      .should('exist');
-  });
-
-  it("Delete row button is disabled on load", () => {
-    cy.get("@firstRemoveRowButton")
-      .should('be.disabled');
-  });
-
-  it('Dialog closes on button click', () => {
-    cy.get("@cancelButton")
-      .click();
-    cy.get("@dialog")
-      .should("not.exist");
-  });
-
-  it("Only displays one row on open", () => {
-    cy.get("@tableRows")
-      .should("have.length", 1);
-  });
-
-  it('Add row button creates new row', () => {
-    cy.get("@tableRows")
-      .should('have.length', 1);
-    cy.get("@moreRowButton")
-      .click();
-    cy.get("@tableRows")
-      .should('have.length', 2);
-  });
-
-  it("Delete row button is enabled when row count > 1", () => {
-    cy.get("@moreRowButton")
-      .click();
-    cy.get("@firstRemoveRowButton")
-      .should('not.be.disabled');
-  });
-
-  it('Delete row button removes one row', () => {
-    cy.get("@moreRowButton")
-      .click();
-    cy.get("@tableRows")
-      .should('have.length', 2);
-    cy.get("@firstRemoveRowButton")
-      .click();
-    cy.get("@tableRows")
-      .should('have.length', 1);
-  });
-
-  it("Delete row button is disabled when row count equals 1", () => {
-    cy.get("@moreRowButton")
-      .click();
-    cy.get("@firstRemoveRowButton")
-      .click();
-    cy.get("@firstRemoveRowButton")
-      .should("be.disabled");
-  });
-
-  it('Dialog body scrolls horizontally when project has many columns', () => {
-    cy.get("@dialogBody")
-      .find("th")
-      .last()
-      .should("not.be.visible")
-      .then($th => cy.wrap($th).scrollIntoView())
-      .should("be.visible");
-  });
-
-  it("Prepends a blank row when form is empty", () => {
-    cy.get("@submitButton").click();
-    cy.get("tbody.data-table td > div.data-table-cell-content span")
-      .should("be.empty");
-  });
-
-  it("Adds text when inputs have value", () => {
-    const inputValue = "01000"
-    cy.get("@firstRow")
-      .find("input[type=text]:first")
-      .type(inputValue);
-
-    cy.get("@submitButton").click();
-
-    cy.get("tbody.data-table td > div.data-table-cell-content span")
-      .eq(0)
-      .should("have.text", inputValue);
-  });
-
-  it("Cells data is serialized correctly when column is removed", () => {
-    cy.loadAndVisitProject('food.mini');
-
-    const data = {
-      "NDB_No": "01003",
-      "Shrt_Desc": "BUTTER",
-      "Water": "15.87",
-      "Energ_Kcal": "717"
-    };
-
-    // // Close open dialog
-    // cy.get("@cancelButton")
-    //   .click();
-
-    cy.columnActionClick("Water", [
-      "Edit column",
-      "Remove this column"
-    ]);
-
-    // Re-open dialog
-    openDialog();
-
-    cy.get("@firstRow")
-      .find("input[type=text]")
-      .as("inputs");
-
-    cy.get("@inputs").eq(0)
-      .type(data["NDB_No"]);
-
-    cy.get("@inputs").eq(1)
-      .type(data["Shrt_Desc"]);
-
-    cy.get("@inputs").eq(2)
-      .type(data["Energ_Kcal"]);
-
-    cy.get("@submitButton").click();
-
-    cy.get("tbody.data-table td > div.data-table-cell-content span")
-      .as("tableData");
-
-    cy.get("@tableData")
-      .eq(0)
-      .should("have.text", data["NDB_No"]);
-
-    cy.get("@tableData")
-      .eq(1)
-      .should("have.text", data["Shrt_Desc"]);
-
-    cy.get("@tableData")
-      .eq(2)
-      .should("have.text", data["Energ_Kcal"]);
 
   });
 
-});
+  describe("All menu", () => {
+
+    it("contains a item called \"Add blank rows\"", () => {
+      cy.columnActionClick("All", []);
+      cy.get("div.menu-container a.menu-item")
+        .eq(3)
+        .invoke("text")
+        .should("equal", "Add blank rows");
+    });
+
+    describe("\"Add blank rows\" submenu", () => {
+      it("contains a sub-item called \"Prepend one row\"", () => {
+        cy.columnActionClick("All", ["Add blank rows"]);
+        cy.get("div.menu-container")
+          .eq(1)
+          .find("a.menu-item")
+          .eq(0)
+          .invoke("text")
+          .should("equal", "Prepend one row");
+      });
+
+      it("contains a sub-item called \"Append one rows\"", () => {
+        cy.columnActionClick("All", ["Add blank rows"]);
+        cy.get("div.menu-container")
+          .eq(1)
+          .find("a.menu-item")
+          .eq(1)
+          .invoke("text")
+          .should("equal", "Append one row");
+      });
+
+      it("contains a sub-item called \"Add multiple rows\"", () => {
+        cy.columnActionClick("All", ["Add blank rows"]);
+        cy.get("div.menu-container")
+          .eq(1)
+          .find("a.menu-item")
+          .eq(2)
+          .invoke("text")
+          .should("equal", "Add multiple rows");
+      });
+
+    });
+  });
+
+  describe("Peripheral interface", () => {
+
+    beforeEach(() => {
+      // Verify default assumptions
+      cy.get("@notificationDescription")
+        .invoke("text")
+        .should("equal", "");
+
+      cy.get("@historyCount")
+        .invoke("text")
+        .should("equal", "0 / 0");
+
+      cy.get("@summaryText")
+        .invoke("text")
+        .should("equal", "199 rows");
+
+      cy.get("a.history-entry")
+        .should("have.length", 0);
+
+      // Trigger add rows action
+      cy.columnActionClick("All", ["Add blank rows", "Add multiple rows"]);
+      cy.waitForDialogPanel();
+      cy.get("form[data-cy=add-rows-form]").submit();
+      cy.wait(1000);  // wait for response
+    });
+
+    it("displays a notification message", () => {
+      cy.get("@notificationDescription")
+        .invoke("text")
+        .should("equal", "Add 1 row");
+    });
+
+    it("increments history count by 1", () => {
+      cy.get("@historyCount")
+        .invoke("text")
+        .should("equal", "1 / 1");
+    });
+
+    it("increments row count summary by 1", () => {
+      cy.get("@summaryText")
+        .invoke("text")
+        .should("equal", "200 rows");
+    });
+
+    it("increments total history entries by 1", () => {
+      cy.get("a.history-entry")
+        .should("have.length", 2);
+    });
+  });
+
+  describe("Modal dialog", () => {
+
+    beforeEach(() => {
+      cy.columnActionClick("All", [ "Add blank rows", "Add multiple rows" ]);
+      cy.waitForDialogPanel();
+
+      cy.get("div[data-cy=add-rows-dialog]")
+        .as("dialog");
+      cy.get("@dialog")
+        .find("button[data-cy=cancel-button]")
+        .as("cancelButton");
+      cy.get("@dialog")
+        .find("input[data-cy=submit-button]")
+        .as("submitInput");
+      cy.get("@dialog")
+        .find("input[data-cy=row-count]")
+        .as("countInput");
+      cy.get("@dialog")
+        .find("form[data-cy=add-rows-form]")
+        .as("form");
+      cy.get("@dialog")
+        .find("select[data-cy=insert-position]")
+        .as("positionSelect");
+    });
+
+    it("appears on menu item click", () => {
+      cy.get("@dialog") // implicitly tests existence in DOM
+        .should('be.visible');
+    });
+
+    it('closes on cancel button click', () => {
+      cy.get("@cancelButton")
+        .click();
+      cy.get("@dialog")
+        .should('not.exist');
+    });
+
+    it('closes on form submission', () => {
+      cy.get("@form")
+        .submit();
+      cy.get("@dialog")
+        .should('not.exist');
+    });
+
+    describe("Row count input", () => {
+      it("is not valid if value is a negative integer", () => {
+        cy.get("@countInput")
+          .clear()
+          .type("-1")
+          .then($input => $input[0].checkValidity()).should("be.false");
+      });
+
+      it("is not valid if value is zero", () => {
+        cy.get("@countInput")
+          .clear()
+          .type("0")
+          .then($input => $input[0].checkValidity()).should("be.false");
+      });
+
+      it("is not valid if value is a fraction", () => {
+        cy.get("@countInput")
+          .clear()
+          .type("1.5")
+          .then($input => $input[0].checkValidity()).should("be.false");
+      });
+
+      it("is valid if `0 < value ≤ 50`", () => {
+        for (let i = 1; i <= 10; i++) {
+          cy.get("@countInput")
+            .clear()
+            .type(i)
+            .then($input => $input[0].checkValidity()).should("be.true");
+        }
+      });
+    }); // end describe row count input
+  });  // end describe modal dialog window
+
+  describe("Data table", () => {
+
+    describe("Prepended blank row", () => {
+      beforeEach(() => {
+        cy.columnActionClick("All", [ "Add blank rows", "Prepend one row" ]);
+        cy.wait(1000);  // Wait 1 second for data to be retrieved
+      });
+
+      it("is the first row in the project", () => {
+        cy.get("@tableRows")
+          .first()
+          .find("td > div.data-table-cell-content > div > span")
+          .each($span => {
+            expect($span.text()).to.equal("null");
+            expect($span.attr("class")).to.equal("data-table-null");
+            expect($span.css("display")).to.equal("none");
+          });
+      });
+
+      it("does not increase the number of visible rows", () => {
+        cy.get("@tableRows")
+          .should("have.length", 10);
+      });
+
+    });
+
+    describe("Appended blank row", () => {
+      beforeEach(() => {
+        cy.columnActionClick("All", [ "Add blank rows", "Append one row" ]);
+        cy.wait(1000);  // Wait 1 second for data to be retrieved
+      });
+
+      it("is the last row in the project", () => {
+        cy.get("div#view-panel div.viewpanel-pagesize a.viewPanel-pagingControls-page.action")
+          .last()
+          .click();
+        cy.get("@tableRows")
+          .last()
+          .find("td > div.data-table-cell-content > div > span")
+          .each($span => {
+            expect($span.text()).to.equal("null");
+            expect($span.attr("class")).to.equal("data-table-null");
+            expect($span.css("display")).to.equal("none");
+          });
+      });
+
+      it("does not modify the first row", () => {
+        cy.get("@tableRows")
+          .first()
+          .find("td > div.data-table-cell-content > div > span")
+          .first()
+          .then($span => {
+            expect($span.text()).to.equal("01001");
+            expect($span.attr("class")).to.not.equal("data-table-null");
+            expect($span.css("display")).to.not.equal("none");
+          })
+      });
+
+      it("does not increase the number of visible rows", () => {
+        cy.get("@tableRows")
+          .should("have.length", 10);
+      });
+    });
+  });
+});  // end Cypress tests

@@ -1,261 +1,86 @@
 const AddRowsDialog = (function (path) {
-  const $dialog = $(DOM.loadHTML("core", path));
-  const $elmts = DOM.bind($dialog);
-  let rows = [];
   let level;
+  const $dialog = $(DOM.loadHTML("core", path));
 
-  /** Class representing a row of form inputs */
   class Row {
-    #tr;
+    #isFlagged;
+    #isStarred;
     #cells;
-    removeBtn;
-    columns;
 
-    /** Create a row to input new data */
-    constructor($container, columns, removeCallback) {
-      this.$container = $container;
-      this.removeCallback = removeCallback;
-      this.columns = columns;
-      this.#tr = document.createElement("TR");
-      this.removeBtn = document.createElement("BUTTON");
-      this.#cells = [];
-    }
-
-    /**
-     * Add row to the DOM
-     * @returns {Row}
-     */
-    init() {
-      this.removeBtn.innerText = "x";
-      this.removeBtn.setAttribute("type", "button");
-      this.removeBtn.addEventListener('click', () => this.remove());
-
-      const td = document.createElement("TD");
-      td.style.background = "#fff";
-      td.style.textAlign = "right";
-      td.appendChild(this.removeBtn);
-      this.#tr.appendChild(td);
-
-      this.#cells = this.columns.map((column) => new Cell("text", column, this.#tr));
-      this.#cells.forEach(cell => cell.init());
-
-      this.$container.append(this.#tr);
+    constructor(isFlagged= false, isStarred= false, cells = []) {
+      this.#isFlagged = isFlagged;
+      this.#isStarred = isStarred;
+      this.#cells = cells;
 
       return this;
     }
 
-    /**
-     * Remove row from the dialog
-     * @returns {Row}
-     */
-    remove() {
-      const index = this.$container.find("tr").index(this.#tr);
-      this.removeCallback(index);
-      this.#tr.remove();
-      return this;
-    }
-
-    /**
-     * Transform row data into a transmittable form
-     * @returns {{cells: *, starred: boolean, flagged: boolean}}
-     */
     serialize() {
-      const maxIndex = theProject["columnModel"]["columns"].slice(-1)[0]["cellIndex"];
-      const cellData = Array(maxIndex + 1);
-      this.#cells.forEach(cell => cellData[cell.cellIndex] = cell.serialize());
-
-      return {
-        starred: false,
-        flagged: false,
-        cells: cellData
-      }
+      return JSON.stringify({
+        flagged: this.#isFlagged,
+        starred: this.#isStarred,
+        cells: this.#cells
+      });
     }
+  }
 
-    /**
-     * Prevent user from removing this row
-     * @returns {Row}
-     */
-    disableRemoveBtn() {
-      this.removeBtn.disabled = true;
-      return this;
-    }
-
-    /**
-     * Allow user to remove this row
-     * @returns {Row}
-     */
-    enableRemoveBtn() {
-      this.removeBtn.disabled = false;
-      return this;
-    }
-  }  // end Row class
-
-  /** Class representing an input cell */
-  class Cell {
-
-    #cellType;
-    #cellIndex;
-    #container;
-    #name;
-
-
-    /**
-     * Create a new cell to input data
-     * @param {string} cellType
-     * @param {Object} column
-     * @param {} container
-     */
-    constructor(cellType, column, container) {
-      this.td = document.createElement("TD");
-      this.input = document.createElement("INPUT");
-      this.#name = column.name;
-      this.#cellIndex = column.cellIndex;
-      this.#cellType = cellType;
-      this.#container = container;
-      this.init();
-    }
-
-    /**
-     * Add cell to the DOM
-     * @returns {Cell}
-     */
-    init() {
-      this.td.style.textAlign = "center";
-      this.input.setAttribute("type", this.#cellType);
-      this.input.setAttribute("name", this.#name);
-      this.input.setAttribute("placeholder", "null");
-      this.td.appendChild(this.input);
-      this.#container.appendChild(this.td);
-      return this;
-    }
-
-    /**
-     * Transform cell data into a transmittable form
-     * @returns {{v: string }}
-     */
-    serialize() {
-      return {"v": this.input.value}
-    }
-
-    /**
-     * Getter method for cellIndex
-     * @returns {string} cellIndex
-     */
-    get cellIndex() {
-      return this.#cellIndex;
-    }
-
-  }  // end Cell class
-
-  // Expose public IIFE methods
   return {
-    init: init,
+    prependBlankRow: () => _submit([ new Row().serialize() ], 0),
+    appendBlankRow: () => _submit([ new Row().serialize() ], theProject.rowModel.total),
+    initDialog: initDialog,
   };
 
+
   /**
-   * initialize dialog
+   * Initialize and open dialog
    */
-  function init() {
-    const columns = theProject["columnModel"]["columns"];
+  function initDialog() {
+    const $elements = DOM.bind($dialog);
 
-    $elmts["dialogHeader"].html($.i18n("core-views/add-rows/header"));
+    $elements["dialogHeader"].html($.i18n("core-views/add-rows"));
+    $elements["addRowsCountLabel"].html($.i18n("core-views/add-rows/count-label"));
+    $elements["addRowsPositionLabel"].html($.i18n("core-views/add-rows/insertion-label"));
 
-    $elmts["dialogDescription"].html($.i18n("core-views/add-rows/description"));
+    $elements["optionBeginning"].val(0);
+    $elements["optionEnd"].val(theProject.rowModel.total);
 
-    $elmts["moreRowLabel"].html($.i18n("core-views/add-rows/label"));
+    $elements["cancelButton"].html($.i18n('core-buttons/cancel'));
+    $elements["cancelButton"].on('click', _dismissDialog);
 
-    $elmts["moreRowButton"].html($.i18n("core-buttons/apply"));
-    $elmts["moreRowButton"].on('click', () => {
-      const value = Number.parseInt($elmts["moreRowCount"].val());
-      _createRows(value);
+    $elements["okButton"].html($.i18n('core-buttons/ok'));
+
+    $elements["dialogForm"].on('submit', function(event) {
+      event.preventDefault();
+      const $form = $(this);
+      let index = $form.find("select#add-rows-position").val();
+
+      const rowCount = parseInt($form.find("input#add-rows-count").val());
+      const data = Array(rowCount).fill(new Row().serialize());
+
+      _submit(data, index, _dismissDialog);
     });
-
-    $elmts["cancelButton"].html($.i18n('core-buttons/cancel'));
-    $elmts["cancelButton"].on('click', _dismissDialog);
-
-    $elmts["okButton"].html($.i18n('core-buttons/ok'));
-
-    $elmts["dialogForm"].on('submit', _commit);
-
-    $elmts["tableHead"].html([
-        "<th style='background:#fff'>",
-        ...columns
-          .map((column) => `<th style="padding-left:5px;">${column.name}</th>`)
-      ].join("")
-    );
-
-    _createRows(1);
 
     level = DialogSystem.showDialog($dialog);
 
-  } // end init
-
-
-  /**
-   * Remove a recently deleted row from the internal row cache
-   * @param index
-   * @private
-   */
-  function _removeInputRow(index) {
-    rows.splice(index, 1);
-    if (rows.length === 1) {
-      rows[0].disableRemoveBtn();
-    }
-  }
+  } // end initDialog
 
   /**
-   * Hide window dialog and reset data
-   * @returns {AddRowsDialog}
+   * Remove dialog
    * @private
    */
   function _dismissDialog() {
-    DialogSystem.dismissUntil(level - 1);
-    rows = [];
-    $elmts["tableBody"].html(null);
-    $elmts["tableHead"].html(null);
+      DialogSystem.dismissUntil(level - 1);
   }
 
   /**
-   * Create new row to input data
-   * @param {number} count the number of rows to create
+   * Send POST request to the add rows command
+   * @param {array} data: Serialized row data
+   * @param {number} index: the project index into which new rows are inserted
+   * @param {function} onDone: a callback function that fires after the data table view has updated
    * @private
    */
-  function _createRows(count) {
-    const prevCount = rows.length;
-
-    let row;
-    for (let i = 0; i < count; i++) {
-      row = new Row(
-        $elmts["tableBody"],
-        theProject["columnModel"]["columns"],
-        (index) => _removeInputRow(index)
-      );
-
-      row.init();
-
-      rows.push(row);
-    }
-
-    if (prevCount === 0) {
-      rows[0].disableRemoveBtn();
-    } else if (prevCount === 1) {
-      rows[0].enableRemoveBtn();
-    }
-  }
-
-  /**
-   * Submit form data to the add rows command
-   * @param {event} e: click event
-   * @private
-   */
-  function _commit(e) {
-    e.preventDefault();
-
-    // Serialize form data
-    const data = rows.map(row => JSON.stringify(row.serialize()));
-    const index = 0;
-
-    Refine.postCoreProcess(
+  function _submit(data, index, onDone = null) {
+    return Refine.postCoreProcess(
       "add-rows",
       null,
       {
@@ -267,7 +92,7 @@ const AddRowsDialog = (function (path) {
         "onDone": (o) => Refine.fetchRows(
           theProject["rowModel"]["start"],
           null,
-          () => ui.dataTableView.update(_dismissDialog),
+          () => ui.dataTableView.update(onDone),
           null),
         "onError": (o) => window.alert(`Error: ${o.message}`),
       });
