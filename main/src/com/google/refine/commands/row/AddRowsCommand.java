@@ -74,8 +74,8 @@ public class AddRowsCommand extends Command {
     public int getInsertionIndex(HttpServletRequest request, Project project) {
         String data = request.getParameter(INDEX_PARAMETER);
         int index = Integer.parseInt(data);
-        if (index < 0 || index >= project.rows.size()) {
-            throw new IllegalArgumentException("Parameter " + INDEX_PARAMETER + " out of bounds");
+        if (index < 0 || index > project.rows.size()) {
+            throw new IndexOutOfBoundsException("Parameter " + INDEX_PARAMETER + " out of bounds");
         }
         return index;
     }

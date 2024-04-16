@@ -155,9 +155,9 @@ public class AddRowsCommandTests extends CommandTestBase {
         command.getInsertionIndex(request, project);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    // If index parameter is negative, `getInsertionIndex` throws IllegalArgumentException
-    public void testNegativeIndexParameter() {
+    @Test(expectedExceptions = IndexOutOfBoundsException.class)
+    // If index parameter is negative, `doPost` call triggers IndexOutOfBoundsException
+    public void testNegativeIndexParameter() throws ServletException, IOException {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameterValues(AddRowsCommand.ROWS_PARAMETER)).thenReturn(additionalRows);
         when(request.getParameter(AddRowsCommand.INDEX_PARAMETER)).thenReturn("-1");
@@ -165,12 +165,12 @@ public class AddRowsCommandTests extends CommandTestBase {
         command.getInsertionIndex(request, project);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expectedExceptions = IndexOutOfBoundsException.class)
     // If index parameter larger than project's maximum index, `getInsertionIndex` throws IllegalArgumentException
     public void testTooLargeIndexParameter() {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameterValues(AddRowsCommand.ROWS_PARAMETER)).thenReturn(additionalRows);
-        when(request.getParameter(AddRowsCommand.INDEX_PARAMETER)).thenReturn(String.valueOf(project.rows.size()));
+        when(request.getParameter(AddRowsCommand.INDEX_PARAMETER)).thenReturn(String.valueOf(project.rows.size() + 1));
 
         command.getInsertionIndex(request, project);
     }

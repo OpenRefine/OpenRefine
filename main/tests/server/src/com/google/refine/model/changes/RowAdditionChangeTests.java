@@ -118,11 +118,25 @@ public class RowAdditionChangeTests extends RefineTest {
     }
 
     @Test
-    // After apply, project's new rows are identical those passed to constructor
-    public void testBlankRowsIdentity() {
+    // After apply, project's new prepended rows are identical those passed to constructor
+    public void testPrependBlankRowsIdentity() {
         change.apply(project);
         for (int i = insertionIndex; i < newRows.size(); i++) {
             Row actual = project.rows.get(i);
+            Row expected = newRows.get(i);
+            assertSame(actual, expected);
+        }
+    }
+
+    @Test
+    // After apply, project's new append rows are identical those passed to constructor
+    public void testAppendBlankRowsIdentity() {
+        insertionIndex = project.rows.size();
+        change = new RowAdditionChange(newRows, insertionIndex);
+        change.apply(project);
+
+        for (int i = insertionIndex; i < newRows.size(); i++) {
+            Row actual = project.rows.get(insertionIndex + i);
             Row expected = newRows.get(i);
             assertSame(actual, expected);
         }
