@@ -661,11 +661,6 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                    doTextTransformPrompt();
             }
         },
-    {
-      label: $.i18n("core-views/add-rows"),
-      id: "core/add-rows", // TODO: do I need to add this somewhere?
-      click: function() { AddRowsDialog.init(); }
-    },
     {},
     {
       id: "core/common-transforms",
@@ -860,6 +855,29 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
               }
             );
           }
+        }
+      ]
+    },
+    {},
+    {
+      label: $.i18n('core-views/add-rows'),
+      id: 'core/add-rows',
+      width: "200px",
+      submenu: [
+        {
+          label: $.i18n("core-views/add-rows/prepend-blank"),
+          id: 'core/prepend-blank-row',
+          click: AddRowsDialog.prependBlankRow
+        },
+        {
+          label: $.i18n("core-views/add-rows/append-blank"),
+          id: "core/append-blank-row",
+          click: AddRowsDialog.appendBlankRow
+        },
+        {
+          label: $.i18n("core-views/add-rows/open-dialog"),
+          id: "core/insert-blank-rows",
+          click: AddRowsDialog.initDialog
         }
       ]
     },
