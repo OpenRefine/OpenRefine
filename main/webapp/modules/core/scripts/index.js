@@ -145,6 +145,16 @@ $(function() {
               storeNotificationStatus("disabled");
               hideNotification();
             });
+          var privacySpan = $('<span>')
+            .addClass("notification-action")
+            .text('(')
+            .appendTo(notification);
+          $('<a>')
+            .attr('href', 'https://openrefine.org/privacy')
+            .attr('target', '_blank')
+            .text($.i18n('core-index/notification-privacy-info'))
+            .appendTo(privacySpan);
+          privacySpan.append(')');
           container
             .appendTo(document.body);
         } else if (notificationStatus == "enabled") {

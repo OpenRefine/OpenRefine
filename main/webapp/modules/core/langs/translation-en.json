@@ -13,6 +13,7 @@
     "core-index/refine-extensions": "Extensions: $1",
     "core-index/new-version-available": "Download OpenRefine $1 now.",
     "core-index/notification-opt-in": "Do you want to be notified of new OpenRefine releases and events?",
+    "core-index/notification-privacy-info": "privacy info",
     "core-index/change-value": "Change value of preference key",
     "core-index/delete-key": "Delete preference key",
     "core-index/preferences": "Preferences",
