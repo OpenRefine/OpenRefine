@@ -102,18 +102,7 @@ a.recon-dialog-service-selector-remove {
   background-repeat: no-repeat;
   background-position: 0px 0px;
 }
-.dialog-footer {
-  display: flex;
-}
 
-.button-left {
-  display: flex;
-}
-
-.button-right {
-  display: flex;
-  gap: 10px; 
-}
 .recon-service-entry{
   display:inline-block;
 
