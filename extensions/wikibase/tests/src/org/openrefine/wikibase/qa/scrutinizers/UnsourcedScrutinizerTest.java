@@ -74,8 +74,8 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
         ItemIdValue id = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P172", mainSnak, id);
-        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).addContributingRowId(123L)
-                .addContributingRowId(123L).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).addContributingRowId(123)
+                .addContributingRowId(123).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -93,7 +93,7 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(referenceSnak);
         List<Statement> itemStatementList = constraintParameterStatementList(entityIdValue, constraintQualifiers);
         Statement statement = itemStatementList.get(0);
-        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).addContributingRowId(123L).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).addContributingRowId(123).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);

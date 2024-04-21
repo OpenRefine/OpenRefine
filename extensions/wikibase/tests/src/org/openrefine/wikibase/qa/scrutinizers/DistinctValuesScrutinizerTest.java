@@ -70,7 +70,7 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();
@@ -94,7 +94,7 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(delete(statement1))
                 .addStatement(delete(statement2))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();
@@ -119,7 +119,7 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();

@@ -36,7 +36,7 @@ public interface EntityEdit {
     /**
      * The set of row ids which contributed to generate this entity edit.
      */
-    Set<Long> getContributingRowIds();
+    Set<Integer> getContributingRowIds();
 
     /**
      * In case the subject id is not new, returns the corresponding update given the current state of the entity. Throws

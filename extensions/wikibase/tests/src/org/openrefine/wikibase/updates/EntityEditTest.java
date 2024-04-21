@@ -45,17 +45,17 @@ public class EntityEditTest {
 
     @Test
     public void testGroupBySubject() {
-        TermedStatementEntityEdit updateA = new ItemEditBuilder(newSubject).addStatement(statementUpdate1).addContributingRowId(123L)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(newSubject).addStatement(statementUpdate1).addContributingRowId(123)
                 .build();
-        TermedStatementEntityEdit updateB = new ItemEditBuilder(sameNewSubject).addStatement(statementUpdate2).addContributingRowId(123L)
+        TermedStatementEntityEdit updateB = new ItemEditBuilder(sameNewSubject).addStatement(statementUpdate2).addContributingRowId(123)
                 .build();
-        TermedStatementEntityEdit updateC = new ItemEditBuilder(existingSubject).addLabel(label, true).addContributingRowId(123L).build();
-        TermedStatementEntityEdit updateD = new ItemEditBuilder(matchedSubject).addContributingRowId(123L).build();
+        TermedStatementEntityEdit updateC = new ItemEditBuilder(existingSubject).addLabel(label, true).addContributingRowId(123).build();
+        TermedStatementEntityEdit updateD = new ItemEditBuilder(matchedSubject).addContributingRowId(123).build();
         Map<EntityIdValue, EntityEdit> grouped = EntityEdit
                 .groupBySubject(Arrays.asList(updateA, updateB, updateC, updateD));
         TermedStatementEntityEdit mergedUpdate = new ItemEditBuilder(newSubject).addStatement(statementUpdate1)
                 .addStatement(statementUpdate2)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         Map<EntityIdValue, TermedStatementEntityEdit> expected = new HashMap<>();
         expected.put(newSubject, mergedUpdate);

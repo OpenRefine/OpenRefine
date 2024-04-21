@@ -95,9 +95,9 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         batch.add(new ItemEditBuilder(TestingData.existingId)
                 .addAlias(Datamodel.makeMonolingualTextValue("my new alias", "en"))
                 .addStatement(TestingData.generateStatementAddition(TestingData.existingId, TestingData.newIdA))
-                .addContributingRowId(123L).build());
+                .addContributingRowId(123).build());
         MonolingualTextValue label = Datamodel.makeMonolingualTextValue("better label", "en");
-        batch.add(new ItemEditBuilder(TestingData.newIdA).addAlias(label).addContributingRowId(123L).build());
+        batch.add(new ItemEditBuilder(TestingData.newIdA).addAlias(label).addContributingRowId(123).build());
 
         // Plan expected edits
         ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
@@ -132,7 +132,8 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         List<EntityEdit> batch = new ArrayList<>();
         batch.add(new ItemEditBuilder(TestingData.existingId)
                 .addAlias(Datamodel.makeMonolingualTextValue("my new alias", "en"))
-                .addContributingRowId(123L).build());
+                .addContributingRowId(123)
+                .build());
         ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
                 .withLabel(Datamodel.makeMonolingualTextValue("pomme", "fr"))
                 .withDescription(Datamodel.makeMonolingualTextValue("fruit délicieux", "fr")).build();
@@ -159,7 +160,8 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         List<EntityEdit> batch = new ArrayList<>();
         batch.add(new ItemEditBuilder(TestingData.existingId)
                 .addAlias(Datamodel.makeMonolingualTextValue("my new alias", "en"))
-                .addContributingRowId(123L).build());
+                .addContributingRowId(123)
+                .build());
         ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
                 .withLabel(Datamodel.makeMonolingualTextValue("pomme", "fr"))
                 .withDescription(Datamodel.makeMonolingualTextValue("fruit délicieux", "fr")).build();
@@ -188,7 +190,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         MonolingualTextValue description = Datamodel.makeMonolingualTextValue("village in Nepal", "en");
         EntityEdit edit = new ItemEditBuilder(qid)
                 .addDescription(description, true)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         List<EntityEdit> batch = Collections.singletonList(edit);
         when(fetcher.getEntityDocuments(Collections.singletonList(id))).thenReturn(Collections.emptyMap());
@@ -213,7 +215,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         List<ItemIdValue> qids = ids.stream().map(e -> Datamodel.makeWikidataItemIdValue(e))
                 .collect(Collectors.toList());
         List<EntityEdit> batch = qids.stream()
-                .map(qid -> new ItemEditBuilder(qid).addDescription(description, true).addContributingRowId(123L).build())
+                .map(qid -> new ItemEditBuilder(qid).addDescription(description, true).addContributingRowId(123).build())
                 .collect(Collectors.toList());
 
         int batchSize = 50;
@@ -266,7 +268,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         List<MediaInfoIdValue> mids = ids.stream().map(e -> Datamodel.makeWikimediaCommonsMediaInfoIdValue(e))
                 .collect(Collectors.toList());
         List<EntityEdit> batch = mids.stream()
-                .map(mid -> new MediaInfoEditBuilder(mid).addLabel(label, false).addContributingRowId(123L).build())
+                .map(mid -> new MediaInfoEditBuilder(mid).addLabel(label, false).addContributingRowId(123).build())
                 .collect(Collectors.toList());
 
         int batchSize = 50;
@@ -305,7 +307,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
     public void testEditWikitext() throws MediaWikiApiErrorException, IOException, InterruptedException {
         MediaInfoIdValue mid = Datamodel.makeWikimediaCommonsMediaInfoIdValue("M12345");
         MediaInfoEdit edit = new MediaInfoEditBuilder(mid).addWikitext("my new wikitext").setOverrideWikitext(true)
-                .addContributingRowId(123L).build();
+                .addContributingRowId(123).build();
         List<EntityEdit> batch = Collections.singletonList(edit);
         List<MediaInfoDocument> existingDocuments = Collections.singletonList(Datamodel.makeMediaInfoDocument(mid));
 

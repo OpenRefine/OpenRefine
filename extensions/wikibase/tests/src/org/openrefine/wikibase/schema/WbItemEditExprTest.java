@@ -86,7 +86,7 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
         ItemEdit result = new ItemEditBuilder(subject)
                 .addAlias(alias)
                 .addStatement(fullStatement)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         evaluatesTo(result, expr);
     }
@@ -110,7 +110,7 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
         setRow(recon("Q3434"), "2010-07-23", "3.898,invalid4.389", "my alias", recon("Q23"));
         ItemEdit result = new ItemEditBuilder(subject)
                 .addAlias(alias)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         evaluatesTo(result, expr);
     }
@@ -118,7 +118,7 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
     @Test
     public void testAliasSkipped() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "", recon("Q23"));
-        ItemEdit result = new ItemEditBuilder(subject).addStatement(fullStatement).addContributingRowId(123L).build();
+        ItemEdit result = new ItemEditBuilder(subject).addStatement(fullStatement).addContributingRowId(123).build();
         evaluatesTo(result, expr);
     }
 

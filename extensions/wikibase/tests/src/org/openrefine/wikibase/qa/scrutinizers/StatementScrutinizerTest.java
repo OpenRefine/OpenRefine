@@ -34,7 +34,7 @@ public abstract class StatementScrutinizerTest extends ScrutinizerTest {
 
     public void scrutinize(Statement statement) {
         TermedStatementEntityEdit update = new ItemEditBuilder((ItemIdValue) statement.getClaim().getSubject())
-                .addStatement(add(statement)).addContributingRowId(123L).build();
+                .addStatement(add(statement)).addContributingRowId(123).build();
         scrutinize(update);
     }
 

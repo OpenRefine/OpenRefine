@@ -72,7 +72,7 @@ public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
         Statement statement = new StatementImpl("P25", mainSnak, idA);
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inversePropertyID);
@@ -95,7 +95,7 @@ public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
         Statement statement = new StatementImpl("P3373", mainSnak, idA);
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(symmetricPropertyID, symmetricEntityIdValue);
@@ -118,7 +118,7 @@ public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
         Statement statement = new StatementImpl("P25", mainSnak, idA);
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inverseEntityIdValue);

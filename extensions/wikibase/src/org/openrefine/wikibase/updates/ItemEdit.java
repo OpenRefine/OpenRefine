@@ -60,7 +60,7 @@ public class ItemEdit extends TermedStatementEntityEdit {
             Set<MonolingualTextValue> descriptions,
             Set<MonolingualTextValue> descriptionsIfNew,
             Set<MonolingualTextValue> aliases,
-            Set<Long> contributingRowIds) {
+            Set<Integer> contributingRowIds) {
         super(id, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases, contributingRowIds);
         Validate.isTrue(id instanceof ItemIdValue, "the entity id must be an ItemIdValue");
     }
@@ -88,7 +88,7 @@ public class ItemEdit extends TermedStatementEntityEdit {
     protected ItemEdit(EntityIdValue id, List<StatementEdit> statements, Map<String, MonolingualTextValue> labels,
             Map<String, MonolingualTextValue> labelsIfNew, Map<String, MonolingualTextValue> descriptions,
             Map<String, MonolingualTextValue> descriptionsIfNew, Map<String, List<MonolingualTextValue>> aliases,
-            Set<Long> contributingRowIds) {
+            Set<Integer> contributingRowIds) {
         super(id, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases, contributingRowIds);
     }
 
@@ -128,7 +128,7 @@ public class ItemEdit extends TermedStatementEntityEdit {
                 aliases.add(alias);
             }
         }
-        Set<Long> contributingIds = new HashSet<>(contributingRowIds);
+        Set<Integer> contributingIds = new HashSet<>(contributingRowIds);
         contributingIds.addAll(other.getContributingRowIds());
         return new ItemEdit(id, newStatements, newLabels, newLabelsIfNew, newDescriptions, newDescriptionsIfNew, newAliases,
                 contributingIds);

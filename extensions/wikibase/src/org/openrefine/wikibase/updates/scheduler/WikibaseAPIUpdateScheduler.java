@@ -64,7 +64,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
     /**
      * The set of all new entities referred to in the whole batch, mapping to a row id where they are referred to
      */
-    private Map<EntityIdValue, Long> allPointers;
+    private Map<EntityIdValue, Integer> allPointers;
 
     private PointerExtractor extractor = new PointerExtractor();
 
@@ -83,13 +83,13 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
         result.addAll(pointerFreeUpdates.getUpdates());
 
         // Part 1': add the remaining new entities that have not been touched
-        Map<EntityIdValue, Long> unseenPointers = new HashMap<>(allPointers);
+        Map<EntityIdValue, Integer> unseenPointers = new HashMap<>(allPointers);
         for (EntityIdValue id : pointerFreeUpdates.getSubjects()) {
             unseenPointers.remove(id);
         }
         // Only items can be created explicitly: other entity types need at least some non-blank field.
         // Therefore, we check that all entities are items.
-        Optional<Map.Entry<EntityIdValue, Long>> uncreatableEntity = unseenPointers
+        Optional<Map.Entry<EntityIdValue, Integer>> uncreatableEntity = unseenPointers
                 .entrySet()
                 .stream()
                 .filter(t -> !(t.getKey() instanceof ItemIdValue))
@@ -119,7 +119,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
     protected void splitUpdate(EntityEdit edit) {
         // TODO (antonin, 2022-05-08): there is a lot of duplication in the two cases below (Item / MediaInfo),
         // could we refactor that?
-        long rowId = edit.getContributingRowIds().stream().findAny().get();
+        int rowId = edit.getContributingRowIds().stream().findAny().get();
         if (edit instanceof ItemEdit) {
             ItemEdit update = (ItemEdit) edit;
             ItemEditBuilder pointerFreeBuilder = new ItemEditBuilder(update.getEntityId())

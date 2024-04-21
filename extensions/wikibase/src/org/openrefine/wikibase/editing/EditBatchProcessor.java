@@ -229,18 +229,18 @@ public class EditBatchProcessor {
 
     public static class EditResult {
 
-        private final Set<Long> correspondingRowIds;
+        private final Set<Integer> correspondingRowIds;
         private final String errorCode;
         private final String errorMessage;
 
-        public EditResult(Set<Long> correspondingRowIds,
+        public EditResult(Set<Integer> correspondingRowIds,
                 String errorCode, String errorMessage) {
             this.correspondingRowIds = correspondingRowIds;
             this.errorCode = errorCode;
             this.errorMessage = errorMessage;
         }
 
-        public Set<Long> getCorrespondingRowIds() {
+        public Set<Integer> getCorrespondingRowIds() {
             return correspondingRowIds;
         }
 

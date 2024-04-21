@@ -48,7 +48,7 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
                 .addStatement(add(TestingData.generateStatement(idA, idB)))
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, new ArrayList<>());
@@ -69,11 +69,11 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         ItemEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(TestingData.generateStatement(idA, idB)))
                 .addStatement(add(statement))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         ItemEdit updateB = new ItemEditBuilder(idB)
                 .addStatement(add(TestingData.generateStatement(idB, idB)))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, new ArrayList<>());
@@ -94,11 +94,11 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         ItemEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(TestingData.generateStatement(idA, idB)))
                 .addStatement(add(statement))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         ItemEdit updateB = new ItemEditBuilder(idB)
                 .addStatement(add(TestingData.generateStatement(idB, idB)))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, new ArrayList<>());

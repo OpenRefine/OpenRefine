@@ -45,7 +45,7 @@ public class ItemEditBuilder {
     private Set<MonolingualTextValue> descriptions;
     private Set<MonolingualTextValue> descriptionsIfNew;
     private Set<MonolingualTextValue> aliases;
-    private Set<Long> contributingRowIds;
+    private Set<Integer> contributingRowIds;
     private boolean built;
 
     /**
@@ -190,7 +190,7 @@ public class ItemEditBuilder {
     /**
      * Adds a row id which contributed to this update.
      */
-    public ItemEditBuilder addContributingRowId(long rowId) {
+    public ItemEditBuilder addContributingRowId(int rowId) {
         this.contributingRowIds.add(rowId);
         return this;
     }
@@ -198,7 +198,7 @@ public class ItemEditBuilder {
     /**
      * Adds a collection of row ids which contributed to this update.
      */
-    public ItemEditBuilder addContributingRowIds(Collection<Long> rowIds) {
+    public ItemEditBuilder addContributingRowIds(Collection<Integer> rowIds) {
         this.contributingRowIds.addAll(rowIds);
         return this;
     }

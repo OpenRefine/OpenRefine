@@ -27,7 +27,7 @@ public class MediaInfoEditBuilder {
     private String fileName;
     private String wikitext;
     private boolean overrideWikitext;
-    private Set<Long> contributingRowIds;
+    private Set<Integer> contributingRowIds;
     private boolean built;
 
     /**
@@ -142,7 +142,7 @@ public class MediaInfoEditBuilder {
         return this;
     }
 
-    public MediaInfoEditBuilder addContributingRowId(long rowId) {
+    public MediaInfoEditBuilder addContributingRowId(int rowId) {
         this.contributingRowIds.add(rowId);
         return this;
     }

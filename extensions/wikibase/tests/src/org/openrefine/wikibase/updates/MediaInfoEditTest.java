@@ -77,7 +77,7 @@ public class MediaInfoEditTest {
         MediaInfoEdit update = new MediaInfoEditBuilder(existingSubject)
                 .addStatement(statementUpdate1)
                 .addStatement(statementUpdate2)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertFalse(update.isNull());
         assertEquals(Arrays.asList(statementUpdate1, statementUpdate2), update.getStatementEdits());
@@ -95,12 +95,12 @@ public class MediaInfoEditTest {
 
     @Test
     public void testMerge() {
-        MediaInfoEdit updateA = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1).addContributingRowId(123L).build();
-        MediaInfoEdit updateB = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate2).addContributingRowId(456L).build();
+        MediaInfoEdit updateA = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1).addContributingRowId(123).build();
+        MediaInfoEdit updateB = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate2).addContributingRowId(456).build();
         assertNotEquals(updateA, updateB);
         MediaInfoEdit merged = updateA.merge(updateB);
         assertEquals(statementGroups, merged.getStatementGroupEdits().stream().collect(Collectors.toSet()));
-        assertEquals(Arrays.asList(123L, 456L).stream().collect(Collectors.toSet()), merged.getContributingRowIds());
+        assertEquals(Arrays.asList(123, 456).stream().collect(Collectors.toSet()), merged.getContributingRowIds());
     }
 
     @Test
@@ -109,7 +109,7 @@ public class MediaInfoEditTest {
                 .addStatement(statementUpdate2)
                 .addFileName("Foo.png")
                 .addFilePath("C:\\Foo.png")
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertTrue(edit.requiresFetchingExistingState());
 
@@ -124,7 +124,7 @@ public class MediaInfoEditTest {
         MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject)
                 .addWikitext("my new wikitext")
                 .setOverrideWikitext(true)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertFalse(edit.requiresFetchingExistingState());
 
@@ -144,7 +144,7 @@ public class MediaInfoEditTest {
                 .addFileName("Foo.png")
                 .addFilePath(url)
                 .addWikitext("{{wikitext}}")
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertFalse(edit.requiresFetchingExistingState()); // new entities do not require fetching existing state
 
@@ -167,7 +167,7 @@ public class MediaInfoEditTest {
     public void testToString() {
         MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1)
                 .addStatement(statementUpdate2)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertTrue(edit.toString().contains("M5678"));
     }

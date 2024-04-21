@@ -27,7 +27,7 @@ import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
 public abstract class LabeledStatementEntityEdit implements StatementEntityEdit {
 
     protected final EntityIdValue id;
-    protected final Set<Long> contributingRowIds;
+    protected final Set<Integer> contributingRowIds;
     protected final List<StatementEdit> statements;
     protected final Map<String, MonolingualTextValue> labels;
     protected final Map<String, MonolingualTextValue> labelsIfNew;
@@ -47,7 +47,7 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
     public LabeledStatementEntityEdit(
             EntityIdValue id, List<StatementEdit> statements,
             Set<MonolingualTextValue> labels, Set<MonolingualTextValue> labelsIfNew,
-            Set<Long> contributingRowIds) {
+            Set<Integer> contributingRowIds) {
         super();
         Validate.notNull(id);
         this.id = id;
@@ -81,7 +81,7 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
             List<StatementEdit> statements,
             Map<String, MonolingualTextValue> labels,
             Map<String, MonolingualTextValue> labelsIfNew,
-            Set<Long> contributingRowIds) {
+            Set<Integer> contributingRowIds) {
         super();
         this.id = id;
         this.statements = statements;
@@ -100,7 +100,7 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
     }
 
     @Override
-    public Set<Long> getContributingRowIds() {
+    public Set<Integer> getContributingRowIds() {
         return contributingRowIds;
     }
 

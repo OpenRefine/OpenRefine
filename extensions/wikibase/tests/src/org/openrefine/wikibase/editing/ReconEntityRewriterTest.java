@@ -96,7 +96,7 @@ public class ReconEntityRewriterTest {
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         EntityEdit rewritten = rewriter.rewrite(update);
         LabeledStatementEntityEdit expected = new ItemEditBuilder(subject)
@@ -105,7 +105,7 @@ public class ReconEntityRewriterTest {
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertEquals(rewritten, expected);
     }
@@ -118,13 +118,13 @@ public class ReconEntityRewriterTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdB)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         EntityEdit rewritten = rewriter.rewrite(update);
         LabeledStatementEntityEdit expected = new ItemEditBuilder(newlyCreated)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertEquals(rewritten, expected);
     }
@@ -140,7 +140,7 @@ public class ReconEntityRewriterTest {
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         EntityEdit rewritten = rewriter.rewrite(update);
         LabeledStatementEntityEdit expected = new ItemEditBuilder(subject)
@@ -149,7 +149,7 @@ public class ReconEntityRewriterTest {
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertEquals(rewritten, expected);
     }
@@ -165,7 +165,7 @@ public class ReconEntityRewriterTest {
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         EntityEdit rewritten = rewriter.rewrite(update);
         LabeledStatementEntityEdit expected = new ItemEditBuilder(subject)
@@ -174,7 +174,7 @@ public class ReconEntityRewriterTest {
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertEquals(rewritten, expected);
     }

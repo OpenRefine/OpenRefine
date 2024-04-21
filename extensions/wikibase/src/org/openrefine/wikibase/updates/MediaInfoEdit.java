@@ -73,7 +73,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             String fileName,
             String wikitext,
             boolean overrideWikitext,
-            Set<Long> contributingRowIds) {
+            Set<Integer> contributingRowIds) {
         super(id, statements, labels, labelsIfNew, contributingRowIds);
         this.filePath = filePath;
         this.fileName = fileName;
@@ -112,7 +112,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             String fileName,
             String wikitext,
             boolean overrideWikitext,
-            Set<Long> contributingRowIds) {
+            Set<Integer> contributingRowIds) {
         super(id, statements, labels, labelsIfNew, contributingRowIds);
         this.filePath = filePath;
         this.fileName = fileName;
@@ -199,7 +199,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             newWikitext = wikitext;
         }
         boolean newOverrideWikitext = other.isOverridingWikitext() || overrideWikitext;
-        Set<Long> contributingIds = new HashSet<>(contributingRowIds);
+        Set<Integer> contributingIds = new HashSet<>(contributingRowIds);
         contributingIds.addAll(other.getContributingRowIds());
         return new MediaInfoEdit(id, newStatements, newLabels, newLabelsIfNew, newFilePath, newFileName, newWikitext, newOverrideWikitext,
                 contributingIds);

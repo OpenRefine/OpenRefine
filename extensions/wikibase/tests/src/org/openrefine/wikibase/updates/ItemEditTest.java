@@ -97,25 +97,25 @@ public class ItemEditTest {
 
     @Test
     public void testIsNull() {
-        ItemEdit update = new ItemEditBuilder(existingSubject).addContributingRowId(123L).build();
+        ItemEdit update = new ItemEditBuilder(existingSubject).addContributingRowId(123).build();
         assertTrue(update.isNull());
-        ItemEdit update2 = new ItemEditBuilder(newSubject).addContributingRowId(123L).build();
+        ItemEdit update2 = new ItemEditBuilder(newSubject).addContributingRowId(123).build();
         assertFalse(update2.isNull());
     }
 
     @Test
     public void testIsEmpty() {
-        ItemEdit update = new ItemEditBuilder(existingSubject).addContributingRowId(123L).build();
+        ItemEdit update = new ItemEditBuilder(existingSubject).addContributingRowId(123).build();
         assertTrue(update.isEmpty());
-        ItemEdit update2 = new ItemEditBuilder(newSubject).addContributingRowId(123L).build();
+        ItemEdit update2 = new ItemEditBuilder(newSubject).addContributingRowId(123).build();
         assertTrue(update2.isEmpty());
     }
 
     @Test
     public void testIsNew() {
-        ItemEdit newUpdate = new ItemEditBuilder(newSubject).addContributingRowId(123L).build();
+        ItemEdit newUpdate = new ItemEditBuilder(newSubject).addContributingRowId(123).build();
         assertTrue(newUpdate.isNew());
-        ItemEdit update = new ItemEditBuilder(existingSubject).addContributingRowId(123L).build();
+        ItemEdit update = new ItemEditBuilder(existingSubject).addContributingRowId(123).build();
         assertFalse(update.isNew());
     }
 
@@ -123,7 +123,7 @@ public class ItemEditTest {
     public void testAddStatements() {
         ItemEdit update = new ItemEditBuilder(existingSubject).addStatement(statementUpdate1)
                 .addStatement(statementUpdate2)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertFalse(update.isNull());
         assertEquals(Arrays.asList(statementUpdate1, statementUpdate2), update.getStatementEdits());
@@ -134,15 +134,15 @@ public class ItemEditTest {
     public void testSerializeStatements() throws IOException {
         ItemEdit update = new ItemEditBuilder(existingSubject).addStatement(statementUpdate1)
                 .addStatement(statementUpdate2)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/entity_update.json"));
     }
 
     @Test
     public void testMerge() {
-        ItemEdit updateA = new ItemEditBuilder(existingSubject).addStatement(statementUpdate1).addContributingRowId(123L).build();
-        ItemEdit updateB = new ItemEditBuilder(existingSubject).addStatement(statementUpdate2).addContributingRowId(123L).build();
+        ItemEdit updateA = new ItemEditBuilder(existingSubject).addStatement(statementUpdate1).addContributingRowId(123).build();
+        ItemEdit updateB = new ItemEditBuilder(existingSubject).addStatement(statementUpdate2).addContributingRowId(123).build();
         assertNotEquals(updateA, updateB);
         ItemEdit merged = updateA.merge(updateB);
         assertEquals(statementGroups, merged.getStatementGroupEdits().stream().collect(Collectors.toSet()));
@@ -154,7 +154,7 @@ public class ItemEditTest {
         MonolingualTextValue aliasFr = Datamodel.makeMonolingualTextValue("coucou", "fr");
         ItemEdit updateA = new ItemEditBuilder(newSubject).addLabel(label, true).addAlias(aliasEn)
                 .addAlias(aliasFr)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertFalse(updateA.isNull());
         ItemDocument normalized = updateA.toNewEntity();
@@ -169,8 +169,8 @@ public class ItemEditTest {
     public void testMergeLabels() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemEdit edit1 = new ItemEditBuilder(existingSubject).addLabel(label1, true).addContributingRowId(123L).build();
-        ItemEdit edit2 = new ItemEditBuilder(existingSubject).addLabel(label2, true).addContributingRowId(123L).build();
+        ItemEdit edit1 = new ItemEditBuilder(existingSubject).addLabel(label1, true).addContributingRowId(123).build();
+        ItemEdit edit2 = new ItemEditBuilder(existingSubject).addLabel(label2, true).addContributingRowId(123).build();
         ItemEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(label2), merged.getLabels());
     }
@@ -179,8 +179,8 @@ public class ItemEditTest {
     public void testMergeLabelsIfNew() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemEdit edit1 = new ItemEditBuilder(existingSubject).addLabel(label1, false).addContributingRowId(123L).build();
-        ItemEdit edit2 = new ItemEditBuilder(existingSubject).addLabel(label2, false).addContributingRowId(123L).build();
+        ItemEdit edit1 = new ItemEditBuilder(existingSubject).addLabel(label1, false).addContributingRowId(123).build();
+        ItemEdit edit2 = new ItemEditBuilder(existingSubject).addLabel(label2, false).addContributingRowId(123).build();
         ItemEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(label1), merged.getLabelsIfNew());
         assertEquals(Collections.emptySet(), merged.getLabels());
@@ -190,8 +190,8 @@ public class ItemEditTest {
     public void testMergeLabelsIfNewOverriding() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemEdit edit1 = new ItemEditBuilder(existingSubject).addLabel(label1, true).addContributingRowId(123L).build();
-        ItemEdit edit2 = new ItemEditBuilder(existingSubject).addLabel(label2, false).addContributingRowId(123L).build();
+        ItemEdit edit1 = new ItemEditBuilder(existingSubject).addLabel(label1, true).addContributingRowId(123).build();
+        ItemEdit edit2 = new ItemEditBuilder(existingSubject).addLabel(label2, false).addContributingRowId(123).build();
         ItemEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(label1), merged.getLabels());
         assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
@@ -201,8 +201,8 @@ public class ItemEditTest {
     public void testMergeLabelsIfNewOverriding2() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemEdit edit1 = new ItemEditBuilder(existingSubject).addLabel(label1, false).addContributingRowId(123L).build();
-        ItemEdit edit2 = new ItemEditBuilder(existingSubject).addLabel(label2, true).addContributingRowId(123L).build();
+        ItemEdit edit1 = new ItemEditBuilder(existingSubject).addLabel(label1, false).addContributingRowId(123).build();
+        ItemEdit edit2 = new ItemEditBuilder(existingSubject).addLabel(label2, true).addContributingRowId(123).build();
         ItemEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(label2), merged.getLabels());
         assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
@@ -213,10 +213,10 @@ public class ItemEditTest {
         MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
         ItemEdit edit1 = new ItemEditBuilder(existingSubject).addDescription(description1, false)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         ItemEdit edit2 = new ItemEditBuilder(existingSubject).addDescription(description2, false)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         ItemEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(description1), merged.getDescriptionsIfNew());
@@ -229,10 +229,10 @@ public class ItemEditTest {
         MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
         ItemEdit edit1 = new ItemEditBuilder(existingSubject).addDescription(description1, true)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         ItemEdit edit2 = new ItemEditBuilder(existingSubject).addDescription(description2, false)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         ItemEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(description1), merged.getDescriptions());
@@ -244,10 +244,10 @@ public class ItemEditTest {
         MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
         ItemEdit update1 = new ItemEditBuilder(existingSubject).addDescription(description1, false)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         ItemEdit update2 = new ItemEditBuilder(existingSubject).addDescription(description2, true)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         ItemEdit merged = update1.merge(update2);
         assertEquals(Collections.singleton(description2), merged.getDescriptions());
@@ -261,7 +261,7 @@ public class ItemEditTest {
         LabeledStatementEntityEdit update = new ItemEditBuilder(existingSubject)
                 .addLabel(label1, false)
                 .addLabel(label2, true)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         assertEquals(Collections.singleton(label2), update.getLabels());
         assertEquals(Collections.emptySet(), update.getLabelsIfNew());
@@ -272,7 +272,7 @@ public class ItemEditTest {
         TermedStatementEntityEdit edit = new ItemEditBuilder(existingSubject)
                 .addAlias(Datamodel.makeMonolingualTextValue("alias", "en"))
                 .addStatement(statementUpdate1)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         ItemDocument itemDocument = ItemDocumentBuilder.forItemId(otherExistingSubject)
                 .withStatement(statement2WithOtherSubject)
@@ -297,7 +297,7 @@ public class ItemEditTest {
         TermedStatementEntityEdit edit = new ItemEditBuilder(newSubject)
                 .addLabel(Datamodel.makeMonolingualTextValue("fr", "bonjour"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("de", "Redewendung"), true)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         ItemDocument itemDocument = (ItemDocument) edit.toNewEntity();

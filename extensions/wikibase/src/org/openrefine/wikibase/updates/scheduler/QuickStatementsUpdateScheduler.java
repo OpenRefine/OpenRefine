@@ -174,7 +174,7 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
 
         // Reconstruct
         List<EntityEdit> fullSchedule = new ArrayList<>();
-        Map<EntityIdValue, Set<Long>> mentionedNewEntities = pointerUpdates.entrySet()
+        Map<EntityIdValue, Set<Integer>> mentionedNewEntities = pointerUpdates.entrySet()
                 .stream()
                 .collect(Collectors.toMap(update -> update.getKey(),
                         update -> update.getValue().getUpdates().get(0).getContributingRowIds()));// new
@@ -191,7 +191,7 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
         // Create any entity that was referred to but untouched
         // (this is just for the sake of correctness, it would be bad to do that
         // as the entities would remain blank in this batch).
-        for (Entry<EntityIdValue, Set<Long>> entry : mentionedNewEntities.entrySet()) {
+        for (Entry<EntityIdValue, Set<Integer>> entry : mentionedNewEntities.entrySet()) {
             EntityIdValue missingId = entry.getKey();
             fullSchedule.add(new ItemEditBuilder(missingId).addContributingRowIds(entry.getValue()).build());
             fullSchedule.addAll(pointerUpdates.get(missingId).getUpdates());

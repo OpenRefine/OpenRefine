@@ -79,7 +79,7 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
             Set<MonolingualTextValue> descriptions,
             Set<MonolingualTextValue> descriptionsIfNew,
             Set<MonolingualTextValue> aliases,
-            Set<Long> contributingRowIds) {
+            Set<Integer> contributingRowIds) {
         super(id, statements, new HashMap<>(), new HashMap<>(), contributingRowIds);
         Validate.notNull(id);
         if (statements == null) {
@@ -120,7 +120,7 @@ public abstract class TermedStatementEntityEdit extends LabeledStatementEntityEd
             Map<String, MonolingualTextValue> descriptions,
             Map<String, MonolingualTextValue> descriptionsIfNew,
             Map<String, List<MonolingualTextValue>> aliases,
-            Set<Long> contributingRowIds) {
+            Set<Integer> contributingRowIds) {
         super(id, statements, labels, labelsIfNew, contributingRowIds);
         this.descriptions = descriptions;
         this.descriptionsIfNew = descriptionsIfNew;

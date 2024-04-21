@@ -44,13 +44,13 @@ public class NoEditsMadeScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testNonNull() {
-        scrutinize(new ItemEditBuilder(TestingData.newIdA).addContributingRowId(123L).build());
+        scrutinize(new ItemEditBuilder(TestingData.newIdA).addContributingRowId(123).build());
         assertNoWarningRaised();
     }
 
     @Test
     public void testNull() {
-        scrutinize(new ItemEditBuilder(TestingData.existingId).addContributingRowId(123L).build());
+        scrutinize(new ItemEditBuilder(TestingData.existingId).addContributingRowId(123).build());
         assertWarningsRaised(NoEditsMadeScrutinizer.type);
     }
 }

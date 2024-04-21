@@ -69,7 +69,7 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
@@ -88,7 +88,7 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         Statement statement1 = new StatementImpl("P21", snak1, idA);
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());

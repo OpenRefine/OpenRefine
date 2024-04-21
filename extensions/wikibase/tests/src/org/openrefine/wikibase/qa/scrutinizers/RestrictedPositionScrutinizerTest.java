@@ -71,7 +71,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         Statement statement = new StatementImpl("P22", mainSnak, idA);
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyScopeParameter, asQualifier);
@@ -92,7 +92,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         Statement statement = new StatementImpl("P22", mainSnak, idA);
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyScopeParameter, asMainSnak);
@@ -113,7 +113,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         Statement statement = new StatementImpl("P22", mainSnak, idA);
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -135,7 +135,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
                 Collections.singletonList(Datamodel.makeReference(snakGroups)), StatementRank.NORMAL, "");
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyScopeParameter, asMainSnak);

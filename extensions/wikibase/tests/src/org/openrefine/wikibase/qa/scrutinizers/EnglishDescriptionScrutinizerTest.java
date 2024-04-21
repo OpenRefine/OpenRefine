@@ -20,7 +20,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
         String description = "good description";
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertNoWarningRaised();
@@ -31,7 +31,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
         String description = "description with punctuationSign.";
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), false)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertWarningsRaised(EnglishDescriptionScrutinizer.descEndsByPunctuationSign);
@@ -42,7 +42,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
         String description = "Begin with uppercase";
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertWarningsRaised(EnglishDescriptionScrutinizer.descBeginWithUppercase);
@@ -53,7 +53,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
         String description = "an article test";
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), false)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertWarningsRaised(EnglishDescriptionScrutinizer.descBeginWithArticle);
@@ -65,7 +65,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .addLabel(Datamodel.makeMonolingualTextValue(description, "en"), true)
-                .addContributingRowId(123L)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertWarningsRaised(EnglishDescriptionScrutinizer.descEndsByPunctuationSign,
