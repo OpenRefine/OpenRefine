@@ -58,9 +58,10 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
         maxlag: elmts.maxlag.val(),
         editGroupsUrlSchema: WikibaseManager.getSelectedWikibaseEditGroupsURLSchema(),
         tag: WikibaseManager.getSelectedWikibaseTagTemplate(),
-        maxEditsPerMinute: WikibaseManager.getSelectedWikibaseMaxEditsPerMinute()
+        maxEditsPerMinute: WikibaseManager.getSelectedWikibaseMaxEditsPerMinute(),
+        resultsColumnName: $.i18n('perform-wikibase-edits/wikibase-editing-results')
       },
-      { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
+      { includeEngine: true, modelsChanged: true, cellsChanged: true, columnStatsChanged: true },
       { onDone: function() { dismiss(); } }
     );
   };

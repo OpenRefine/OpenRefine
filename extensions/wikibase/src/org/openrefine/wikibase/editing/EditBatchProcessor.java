@@ -217,6 +217,7 @@ public class EditBatchProcessor {
                 currentTag = null;
                 return performEdit();
             } else {
+                batchCursor++;
                 return new EditResult(update.getContributingRowIds(), e.getErrorCode(), e.getErrorMessage());
             }
         } catch (IOException e) {

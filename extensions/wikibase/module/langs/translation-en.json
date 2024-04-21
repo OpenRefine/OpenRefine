@@ -150,6 +150,7 @@
     "perform-wikibase-edits/perform-edits": "Upload edits",
     "perform-wikibase-edits/cancel": "Cancel",
     "perform-wikibase-edits/analyzing-edits": "Analyzing your edits…",
+    "perform-wikibase-edits/wikibase-editing-results": "Wikibase editing results",
     "import-wikibase-schema/dialog-header": "Import Wikibase schema",
     "import-wikibase-schema/file-label": "From JSON file: ",
     "import-wikibase-schema/schema-label": "Or from JSON text:",
