@@ -56,7 +56,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testTrigger() {
-        ItemEdit update = new ItemEditBuilder(TestingData.newIdA).build();
+        ItemEdit update = new ItemEditBuilder(TestingData.newIdA).addContributingRowId(123L).build();
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.noDescType, NewEntityScrutinizer.noLabelType,
                 NewEntityScrutinizer.noTypeType, NewEntityScrutinizer.newItemType);
@@ -64,7 +64,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testEmptyItem() {
-        ItemEdit update = new ItemEditBuilder(TestingData.existingId).build();
+        ItemEdit update = new ItemEditBuilder(TestingData.existingId).addContributingRowId(123L).build();
         scrutinize(update);
         assertNoWarningRaised();
     }
@@ -76,6 +76,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true)
                 .addStatement(add(p31Statement))
+                .addContributingRowId(123L)
                 .build();
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.newItemType);
@@ -88,6 +89,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true)
                 .addStatement(add(p31Statement))
                 .addStatement(delete(TestingData.generateStatement(TestingData.newIdA, TestingData.matchedId)))
+                .addContributingRowId(123L)
                 .build();
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.newItemType, NewEntityScrutinizer.deletedStatementsType);
@@ -99,11 +101,13 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("description commune", "fr"), true)
                 .addStatement(add(p31Statement))
+                .addContributingRowId(123L)
                 .build();
         ItemEdit updateB = new ItemEditBuilder(TestingData.newIdB)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("description commune", "fr"), false)
                 .addStatement(add(p31StatementB))
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(updateA, updateB);
@@ -114,6 +118,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testNewMedia() {
         MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addContributingRowId(123L)
                 .build();
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.newMediaType,
@@ -128,6 +133,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .addFilePath("/this/path/does/not/exist.jpg")
                 .addFileName("my_file.jpg")
                 .addWikitext("description")
+                .addContributingRowId(123L)
                 .build();
         scrutinizer.setEnableSlowChecks(true);
         scrutinize(update);
@@ -140,6 +146,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .addFilePath("https://foo.com/bar.jpg?type=blue")
                 .addFileName("my_file.jpg")
                 .addWikitext("description")
+                .addContributingRowId(123L)
                 .build();
         scrutinizer.setEnableSlowChecks(true);
         scrutinize(update);
@@ -152,6 +159,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .addFilePath("/this/path/does/not/exist.jpg")
                 .addFileName("my_file.jpg")
                 .addWikitext("description")
+                .addContributingRowId(123L)
                 .build();
         scrutinizer.setEnableSlowChecks(false);
         scrutinize(update);

@@ -40,10 +40,12 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testSameFileNameTwice() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit1 = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("Some_filename.png")
+                .addContributingRowId(123L)
                 .build();
 
         MediaInfoEdit edit2 = new MediaInfoEditBuilder(TestingData.newMidB)
                 .addFileName("some filename.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit1, edit2);
@@ -62,6 +64,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
                         "very_very_very_very_very_very_very_very_very_very_" +
                         "very_very_very_very_very_very_very_very_very_very_" +
                         "long_filename.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -72,6 +75,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testValidCharactersInFilenameOdiaScript() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("ଫାଇଲ.wav")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -82,6 +86,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testValidCharactersInFilenameNonAscii() {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("সমাচার দর্পণ - ৮ অক্টোবর ১৮৩৬.pdf")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -92,6 +97,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testInvalidCharactersInFilenameTab() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("Tabs (\t) are not allowed.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -102,6 +108,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testInvalidCharactersInFilenameNewLine() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("New lines (\n) are not allowed.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -112,6 +119,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testInvalidCharactersInFilenameCarriageReturn() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("Carriage returns (\r) are not allowed.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -122,6 +130,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testInvalidCharactersInFilenameFormFeed() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("Form feeds (\f) are not allowed.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -132,6 +141,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testInvalidCharactersInFilenameBackspace() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("Backspaces (\b) are not allowed.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -142,6 +152,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testInvalidCharactersInFilenameVerticalBar() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("vertical bars (|) are not allowed.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -152,6 +163,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testInvalidCharactersInFilenameHTMLEscaped() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("HTML escaped entities such as &nbsp; are not allowed.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -162,6 +174,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
     public void testNoExtension() throws IOException, MediaWikiApiErrorException {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("Look, no extension")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -173,6 +186,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("Some_image.png")
                 .addFilePath("tmp/Some_sound.ogg")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -188,6 +202,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
 
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("Does exist.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);
@@ -202,6 +217,7 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
 
         MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFileName("Does exist.png")
+                .addContributingRowId(123L)
                 .build();
 
         scrutinize(edit);

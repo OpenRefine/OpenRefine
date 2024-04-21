@@ -76,6 +76,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Statement statement = makeStatement(mainSnak, qualifierSnak);
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123L)
                 .build();
 
         Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
@@ -99,6 +100,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Statement statement = makeStatement(mainSnak);
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123L)
                 .build();
 
         Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
@@ -123,6 +125,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Statement statement = makeStatement(mainSnak, qualifierSnak);
         TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123L)
                 .build();
 
         Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);

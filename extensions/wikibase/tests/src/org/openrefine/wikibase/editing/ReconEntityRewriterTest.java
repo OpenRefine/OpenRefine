@@ -95,14 +95,18 @@ public class ReconEntityRewriterTest {
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
+                .addContributingRowId(123L)
+                .build();
         EntityEdit rewritten = rewriter.rewrite(update);
         LabeledStatementEntityEdit expected = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, newlyCreated))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
+                .addContributingRowId(123L)
+                .build();
         assertEquals(rewritten, expected);
     }
 
@@ -113,11 +117,15 @@ public class ReconEntityRewriterTest {
         library.setId(4567L, "Q1234");
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdB)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
+                .addContributingRowId(123L)
+                .build();
         EntityEdit rewritten = rewriter.rewrite(update);
         LabeledStatementEntityEdit expected = new ItemEditBuilder(newlyCreated)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
+                .addContributingRowId(123L)
+                .build();
         assertEquals(rewritten, expected);
     }
 
@@ -131,14 +139,18 @@ public class ReconEntityRewriterTest {
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
+                .addContributingRowId(123L)
+                .build();
         EntityEdit rewritten = rewriter.rewrite(update);
         LabeledStatementEntityEdit expected = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, newlyCreated))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
+                .addContributingRowId(123L)
+                .build();
         assertEquals(rewritten, expected);
     }
 
@@ -152,14 +164,18 @@ public class ReconEntityRewriterTest {
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingPropertyId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
+                .addContributingRowId(123L)
+                .build();
         EntityEdit rewritten = rewriter.rewrite(update);
         LabeledStatementEntityEdit expected = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, newlyCreatedProperty))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingPropertyId))
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
+                .addContributingRowId(123L)
+                .build();
         assertEquals(rewritten, expected);
     }
 }

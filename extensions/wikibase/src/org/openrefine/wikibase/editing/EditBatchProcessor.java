@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -139,10 +140,10 @@ public class EditBatchProcessor {
      * 
      * @throws InterruptedException
      */
-    public void performEdit()
+    public EditResult performEdit()
             throws InterruptedException {
         if (remainingEdits() == 0) {
-            return;
+            throw new IllegalStateException("No edit to perform");
         }
         if (batchCursor == currentBatch.size()) {
             prepareNewBatch();
@@ -154,10 +155,10 @@ public class EditBatchProcessor {
         try {
             update = rewriter.rewrite(update);
         } catch (NewEntityNotCreatedYetException e) {
-            logger.warn("Failed to rewrite update on entity " + update.getEntityId() + ". Missing entity: " + e.getMissingEntity()
-                    + ". Skipping update.");
             batchCursor++;
-            return;
+            return new EditResult(update.getContributingRowIds(),
+                    "rewrite-failed",
+                    "Failed to rewrite update on entity " + update.getEntityId() + ". Missing entity: " + e.getMissingEntity());
         }
 
         // Pick a tag to apply to the edits
@@ -214,18 +215,42 @@ public class EditBatchProcessor {
             if ("badtags".equals(e.getErrorCode()) && currentTag != null) {
                 // if we tried editing with a tag that does not exist, clear the tag and try again
                 currentTag = null;
-                performEdit();
-                return;
+                return performEdit();
             } else {
-                // TODO find a way to report these errors to the user in a nice way
-                logger.warn("MediaWiki error while editing [" + e.getErrorCode()
-                        + "]: " + e.getErrorMessage());
+                return new EditResult(update.getContributingRowIds(), e.getErrorCode(), e.getErrorMessage());
             }
         } catch (IOException e) {
             logger.warn("IO error while editing: " + e.getMessage());
         }
 
         batchCursor++;
+        return new EditResult(update.getContributingRowIds(), null, null);
+    }
+
+    public static class EditResult {
+
+        private final Set<Long> correspondingRowIds;
+        private final String errorCode;
+        private final String errorMessage;
+
+        public EditResult(Set<Long> correspondingRowIds,
+                String errorCode, String errorMessage) {
+            this.correspondingRowIds = correspondingRowIds;
+            this.errorCode = errorCode;
+            this.errorMessage = errorMessage;
+        }
+
+        public Set<Long> getCorrespondingRowIds() {
+            return correspondingRowIds;
+        }
+
+        public String getErrorCode() {
+            return errorCode;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
     }
 
     /**
