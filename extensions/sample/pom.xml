@@ -23,7 +23,6 @@
         <directory>src</directory>
       </resource>
     </resources>
-    <outputDirectory>module/MOD-INF/classes</outputDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
