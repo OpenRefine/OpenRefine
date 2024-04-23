@@ -120,7 +120,7 @@ describe(__filename,  () => {
         .find("button[data-cy=cancel-button]")
         .as("cancelButton");
       cy.get("@dialog")
-        .find("input[data-cy=submit-button]")
+        .find("button[data-cy=submit-button]")
         .as("submitInput");
       cy.get("@dialog")
         .find("input[data-cy=row-count]")
