@@ -76,8 +76,8 @@ public class AddRowsCommandTests extends CommandTestBase {
     }
 
     @Test
-    // If successful request, respond with "Code" equals "ok"
-    public void testSuccessResponseCode() throws ServletException, IOException {
+    // If successful request, responses contains
+    public void testSuccessResponseSchema() throws ServletException, IOException {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(AddRowsCommand.INDEX_PARAMETER)).thenReturn("0");
         when(request.getParameterValues(AddRowsCommand.ROWS_PARAMETER)).thenReturn(additionalRows);
@@ -85,19 +85,8 @@ public class AddRowsCommandTests extends CommandTestBase {
         command.doPost(request, response);
 
         JsonNode node = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertNotNull(node.get("code"));
         assertEquals(node.get("code").toString(), "\"ok\"");
-    }
-
-    @Test
-    // If successful request, responses contains complete HistoryEntry object
-    public void testSuccessResponseHistoryEntrySchema() throws ServletException, IOException {
-        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(request.getParameter(AddRowsCommand.INDEX_PARAMETER)).thenReturn("0");
-        when(request.getParameterValues(AddRowsCommand.ROWS_PARAMETER)).thenReturn(additionalRows);
-
-        command.doPost(request, response);
-
-        JsonNode node = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertNotNull(node.get("historyEntry"));
         assertNotNull(node.get("historyEntry").get("id"));
         assertNotNull(node.get("historyEntry").get("description"));
