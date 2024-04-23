@@ -60,51 +60,88 @@ describe(__filename,  () => {
 
   describe("Peripheral interface", () => {
 
-    beforeEach(() => {
-      // Verify default assumptions
-      cy.get("@notificationDescription")
-        .invoke("text")
-        .should("equal", "");
-
-      cy.get("@historyCount")
-        .invoke("text")
-        .should("equal", "0 / 0");
-
-      cy.get("@summaryText")
-        .invoke("text")
-        .should("equal", "199 rows");
-
-      cy.get("a.history-entry")
-        .should("have.length", 0);
-
+    function addRows() {
       // Trigger add rows action
       cy.columnActionClick("All", ["Add blank rows", "Add multiple rows"]);
       cy.waitForDialogPanel();
       cy.get("form[data-cy=add-rows-form]").submit();
       cy.wait(1000);  // wait for response
-    });
+    }
 
     it("displays a notification message", () => {
+      // Verify default state
+      cy.get("@notificationDescription")
+        .invoke("text")
+        .should("equal", "");
+
+      addRows();
+
       cy.get("@notificationDescription")
         .invoke("text")
         .should("equal", "Add 1 row");
     });
 
     it("increments history count by 1", () => {
+      // Verify default state
+      cy.get("@historyCount")
+        .invoke("text")
+        .should("equal", "0 / 0");
+
+      addRows();
+
       cy.get("@historyCount")
         .invoke("text")
         .should("equal", "1 / 1");
     });
 
     it("increments row count summary by 1", () => {
+      // Verify default state
+      cy.get("@summaryText")
+        .invoke("text")
+        .should("equal", "199 rows");
+
+      addRows();
+
       cy.get("@summaryText")
         .invoke("text")
         .should("equal", "200 rows");
     });
 
     it("increments total history entries by 1", () => {
+      // Verify default state
+      cy.get("a.history-entry")
+        .should("have.length", 0);
+
+      addRows();
+
       cy.get("a.history-entry")
         .should("have.length", 2);
+    });
+
+    it("updates the UI when faceting by blank rows", () => {
+
+      cy.columnActionClick("All", ["Facet", "Facet by blank (null or empty string)"]);
+
+      cy.get("li#facet-0 div.facet-body-inner div.facet-choice")
+        .as("facetChoices");
+
+      // Verify default state
+      cy.get("@facetChoices").then($divs => {
+        cy.wrap($divs).should('have.length', 1);
+        assert.equal($divs.first().find("a.facet-choice-label").text(), "false");
+        assert.equal($divs.first().find("span.facet-choice-count").text(), "199");
+      });
+
+      addRows();
+
+      cy.get("@facetChoices")
+        .then($divs => {
+          cy.wrap($divs).should('have.length', 2);
+          assert.equal($divs.first().find("a.facet-choice-label").text(), "false");
+          assert.equal($divs.first().find("span.facet-choice-count").text(), "199");
+          assert.equal($divs.eq(1).find("a.facet-choice-label").text(), "true");
+          assert.equal($divs.eq(1).find("span.facet-choice-count").text(), "1");
+        });
     });
   });
 

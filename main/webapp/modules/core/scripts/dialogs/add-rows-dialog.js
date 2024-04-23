@@ -57,7 +57,7 @@ const AddRowsDialog = (function (path) {
       const rowCount = parseInt($form.find("input#add-rows-count").val());
       const data = Array(rowCount).fill(new Row().serialize());
 
-      _submit(data, index, _dismissDialog);
+      _submit(data, index);
     });
 
     level = DialogSystem.showDialog($dialog);
@@ -76,10 +76,9 @@ const AddRowsDialog = (function (path) {
    * Send POST request to the add rows command
    * @param {array} data: Serialized row data
    * @param {number} index: the project index into which new rows are inserted
-   * @param {function} onDone: a callback function that fires after the data table view has updated
    * @private
    */
-  function _submit(data, index, onDone = null) {
+  function _submit(data, index) {
     return Refine.postCoreProcess(
       "add-rows",
       null,
@@ -87,13 +86,9 @@ const AddRowsDialog = (function (path) {
         "rows[]": data,
         "index": index,
       },
-      null,
+      { modelsChanged: true },
       {
-        "onDone": (o) => Refine.fetchRows(
-          theProject["rowModel"]["start"],
-          null,
-          () => ui.dataTableView.update(onDone),
-          null),
+        "onDone": _dismissDialog,
         "onError": (o) => window.alert(`Error: ${o.message}`),
       });
   }
