@@ -52,6 +52,12 @@ public class RowAdditionOperation extends AbstractOperation {
         _insertionIndex = insertionIndex;
     }
 
+    @JsonProperty("rows")
+    public List<Row> getRows() { return _rows; }
+
+    @JsonProperty("index")
+    public int getInsertionIndex() { return _insertionIndex; }
+
     @Override
     protected String getBriefDescription(Project project) {
         return OperationDescription.row_addition_brief();
