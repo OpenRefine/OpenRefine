@@ -47,7 +47,7 @@ jobs:
   linux_server_tests:
     strategy:
       matrix:
-        java: [ 11, 21 ]
+        java: [ 21 ]
 
     runs-on: ubuntu-latest
 
@@ -203,8 +203,8 @@ jobs:
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
+      # Only really needed if we're testing in separate jobs (e.g. multiple Java versions)
       - name: Close parallel build
         uses: coverallsapp/github-action@v2
         with:
           parallel-finished: true
-
