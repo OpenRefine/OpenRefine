@@ -27,6 +27,7 @@ package org.openrefine.wikibase.operations;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,7 +41,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -66,6 +70,7 @@ import com.google.refine.model.changes.MassChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 import org.openrefine.wikibase.commands.ConnectionManager;
@@ -237,6 +242,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         protected String _editGroupsUrlSchema;
         protected String _summary;
         protected final long _historyEntryID;
+        protected final List<JsonNode> onDone = new ArrayList<>();
 
         protected PerformEditsProcess(Project project, Engine engine, String description, String editGroupsUrlSchema, String summary) {
             super(description);
@@ -258,6 +264,28 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             _schema.validate(validation);
             if (!validation.getValidationErrors().isEmpty()) {
                 throw new IllegalStateException("Schema is incomplete");
+            }
+
+            // add error reporting facet
+            if (resultsColumnName != null) {
+                JsonNode createFacetAction;
+                try {
+                    createFacetAction = ParsingUtilities.mapper.readTree("{\n" +
+                            "  \"action\" : \"createFacet\",\n" +
+                            "  \"facetConfig\" : {\n" +
+                            "  \"expression\" : \"grel:if(isError(value), 'failed edit', if(isBlank(value), 'no edit', 'successful edit'))\"\n"
+                            +
+                            "    },\n" +
+                            "    \"facetType\" : \"list\"\n" +
+                            " }");
+                    ObjectNode facetConfig = (ObjectNode) createFacetAction.get("facetConfig");
+                    facetConfig.put("columnName", resultsColumnName);
+                    facetConfig.put("name", resultsColumnName);
+                } catch (JsonProcessingException e) {
+                    throw new IllegalStateException(e);
+                }
+                onDone.add(createFacetAction);
+
             }
         }
 
@@ -356,6 +384,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         @Override
         protected Runnable getRunnable() {
             return this;
+        }
+
+        @JsonProperty("onDone")
+        public List<JsonNode> onDoneActions() {
+            return onDone;
         }
     }
 }
