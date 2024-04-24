@@ -21,13 +21,16 @@ import org.openrefine.wikibase.editing.EditBatchProcessor.EditResult;
 public class EditResultsFormatterTest {
 
     String apiEndpoint = "https://my.wikibase.instance/w/api.php";
-    EditResult success1 = new EditResult(Collections.singleton(1), null, null, OptionalLong.of(4567L));
-    EditResult success1Dup = new EditResult(Collections.singleton(1), null, null, OptionalLong.of(3748L));
-    EditResult success2 = new EditResult(Collections.singleton(2), null, null, OptionalLong.of(8790L));
-    EditResult error1 = new EditResult(Collections.singleton(1), "blocked", "You have been blocked from editing.", OptionalLong.empty());
-    EditResult error1Dup = new EditResult(Collections.singleton(1), "illegal-value", "The value supplied is invalid", OptionalLong.empty());
-    EditResult error2 = new EditResult(Collections.singleton(2), "duplicate-item", "You are attempting to create a duplicate of [[Q1234]]",
+    EditResult success1 = new EditResult(Collections.singleton(1), null, null, 1234L, OptionalLong.of(4567L));
+    EditResult success1Dup = new EditResult(Collections.singleton(1), null, null, 111L, OptionalLong.of(3748L));
+    EditResult success2 = new EditResult(Collections.singleton(2), null, null, 555L, OptionalLong.of(8790L));
+    EditResult error1 = new EditResult(Collections.singleton(1), "blocked", "You have been blocked from editing.", 1234L,
             OptionalLong.empty());
+    EditResult error1Dup = new EditResult(Collections.singleton(1), "illegal-value", "The value supplied is invalid", 111L,
+            OptionalLong.empty());
+    EditResult error2 = new EditResult(Collections.singleton(2), "duplicate-item", "You are attempting to create a duplicate of [[Q1234]]",
+            123L, OptionalLong.empty());
+    EditResult successNoEdit = new EditResult(Collections.singleton(1), null, null, 1234L, OptionalLong.of(1234L));
 
     Comparator<CellAtRow> comparator = new Comparator<>() {
 
@@ -50,6 +53,15 @@ public class EditResultsFormatterTest {
                         new CellAtRow(1, new Cell("https://my.wikibase.instance/w/index.php?diff=prev&oldid=4567", null)),
                         new CellAtRow(2,
                                 new Cell(new EvalError("[duplicate-item] You are attempting to create a duplicate of [[Q1234]]"), null))));
+    }
+
+    @Test
+    public void testSuccessesNoEdit() {
+        EditResultsFormatter formatter = new EditResultsFormatter(apiEndpoint);
+        formatter.add(successNoEdit);
+
+        List<CellAtRow> results = formatter.toCells().stream().sorted(comparator).collect(Collectors.toList());
+        assertEquals(results, Collections.emptyList());
     }
 
     @Test

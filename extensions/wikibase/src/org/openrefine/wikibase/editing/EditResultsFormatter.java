@@ -47,7 +47,7 @@ public class EditResultsFormatter {
                 } else {
                     rowIdToError.put(firstRowId, existingError + "; " + error);
                 }
-            } else if (result.getLastRevisionId().isPresent()) {
+            } else if (result.getLastRevisionId().isPresent() && result.getBaseRevisionId() != result.getLastRevisionId().getAsLong()) {
                 String revisionLink = baseUrl + "w/index.php?diff=prev&oldid=" + result.getLastRevisionId().getAsLong();
                 String existingLinks = rowIdToEditLink.get(firstRowId);
                 if (existingLinks == null) {
