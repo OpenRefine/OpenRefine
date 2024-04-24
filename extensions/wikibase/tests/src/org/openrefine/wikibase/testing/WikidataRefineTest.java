@@ -1,17 +1,14 @@
 
 package org.openrefine.wikibase.testing;
 
-import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 import java.io.File;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.BeforeMethod;
 
 import com.google.refine.ProjectManager;
@@ -19,8 +16,6 @@ import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.RefineServletStub;
-import com.google.refine.RefineTest;
-import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Cell;
@@ -35,41 +30,6 @@ public class WikidataRefineTest {
     protected RefineServlet servlet;
     private List<Project> projects = new ArrayList<Project>();
     private List<ImportingJob> importingJobs = new ArrayList<ImportingJob>();
-
-    /**
-     * @deprecated use {@link #createProject(String[], Serializable[][])}
-     */
-    @Deprecated
-    public Project createCSVProject(String input) {
-        return createCSVProject("test project", input);
-    }
-
-    /**
-     * @deprecated use {@link #createProject(String, String[], Serializable[][])}
-     */
-    @Deprecated
-    protected Project createCSVProject(String projectName, String input) {
-        Project project = new Project();
-
-        ProjectMetadata metadata = new ProjectMetadata();
-        metadata.setName(projectName);
-
-        ObjectNode options = mock(ObjectNode.class);
-        RefineTest.prepareImportOptions(options, ",", -1, 0, 0, 1, false, false);
-
-        ImportingJob job = ImportingManager.createJob();
-
-        SeparatorBasedImporter importer = new SeparatorBasedImporter();
-
-        List<Exception> exceptions = new ArrayList<Exception>();
-        importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
-        project.update();
-        ProjectManager.singleton.registerProject(project, metadata);
-
-        projects.add(project);
-        importingJobs.add(job);
-        return project;
-    }
 
     /**
      * Utility method to create a project with pre-defined contents.
