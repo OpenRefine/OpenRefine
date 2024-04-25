@@ -26,7 +26,7 @@ const AddRowsDialog = (function (path) {
 
   return {
     prependBlankRow: () => _submit([ new Row().serialize() ], 0),
-    appendBlankRow: () => _submit([ new Row().serialize() ], theProject.rowModel.total),
+    appendBlankRow: () => _submit([ new Row().serialize() ], theProject.metadata.rowCount),
     initDialog: initDialog,
   };
 
@@ -42,7 +42,7 @@ const AddRowsDialog = (function (path) {
     $elements["addRowsPositionLabel"].html($.i18n("core-views/add-rows/insertion-label"));
 
     $elements["optionBeginning"].val(0);
-    $elements["optionEnd"].val(theProject.rowModel.total);
+    $elements["optionEnd"].val(theProject.metadata.rowCount);
 
     $elements["cancelButton"].html($.i18n('core-buttons/cancel'));
     $elements["cancelButton"].on('click', _dismissDialog);
