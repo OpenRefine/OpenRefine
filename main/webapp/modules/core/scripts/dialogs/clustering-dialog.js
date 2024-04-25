@@ -203,7 +203,6 @@ ClusteringDialog.prototype._createDialog = function() {
 
 ClusteringDialog.prototype._renderTable = function(clusters) {
     var self = this;
-
     var container = this._elmts.tableContainer;
 
     if (clusters.length > 0) {
@@ -263,9 +262,16 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             for (let c = 0; c < choices.length; c++) {
                 let choice = choices[c];
                 var li = document.createElement('li');
-                let checkBox = $('<input type="checkbox" style = "accent-color: gray;" disabled = "true" />')
+                let checkBox = $('<input type="checkbox" style = "accent-color: gray;" />')
                 .appendTo(li);
 
+                checkBox.on('change', function() {
+                    cluster.checkBoxs[c] = this.checked;
+                });
+                checkBox.attr("checked" , cluster.checkBoxs[c]);
+                if(!cluster.edit){
+                    checkBox.attr("disabled","true");
+                }
                 var checkBoxID = 'Checkbox' + index.toString() + "_Choice" + c.toString();
                 checkBox.attr("id", checkBoxID);
                 checkBox.attr("class", "Checkbox_Choice Checkbox_Choice" + index.toString());
@@ -409,7 +415,8 @@ ClusteringDialog.prototype._updateData = function(data) {
             edit: false,
             choices: this,
             value: this[0].v,
-            size: this.length
+            size: this.length,
+            checkBoxs : []
         };
 
         var sum = 0;
@@ -470,7 +477,11 @@ ClusteringDialog.prototype._apply = function(onDone) {
         if (cluster.edit) {
             var values = [];
             for (var j = 0; j < cluster.choices.length; j++) {
-                values.push(cluster.choices[j].v);
+                let checkBoxID = 'Checkbox' + i.toString() + "_Choice" + j.toString();
+                let checkBox = document.getElementById(checkBoxID);
+                if(checkBox.checked){
+                    values.push(cluster.choices[j].v);
+                }
             }
 
             edits.push({
@@ -534,43 +545,13 @@ ClusteringDialog.prototype._getBaseClusters = function() {
 
 ClusteringDialog.prototype._getRestrictedClusters = function(except) {
     var clusters = this._getBaseClusters();
-    let newClusters = [];
-    for (var i = 0; i < clusters.length; i++) {
-        let cluster = clusters[i];
-        let newCluster = {
-            edit: false,
-            choices: [],
-            value: cluster.value
-        };
-        
-        if (cluster.edit) {
-            for (var j = 0; j < cluster.choices.length; j++) {
-                let checkBoxID = 'Checkbox' + i.toString() + "_Choice" + j.toString();
-                let checkBox = document.getElementById(checkBoxID);
-                if(checkBox.checked){
-                    newCluster.choices.push(cluster.choices[j]);
-                    if(newCluster.choices.length == 1){
-                        newCluster.edit = true;
-                    }
-                }
-            }
-        }
-        if(Array.isArray(newCluster.choices) && newCluster.choices.length){
-            newClusters.push(newCluster)
-        }
-    }
-
-    if(newClusters.length == 0){
-        newClusters = clusters;
-    }
-
     for (var i = 0; i < this._facets.length; i++) {
         var facet = this._facets[i].facet;
         if (except !== facet) {
-            newClusters = facet.restrict(newClusters);
+            clusters = facet.restrict(clusters);
         }
     }
-    return newClusters;
+    return clusters;
 };
 
 ClusteringDialog.prototype._updateAll = function() {
