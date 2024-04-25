@@ -829,5 +829,12 @@
     "core-index-parser/row-separator-newline": "nowy wiersz (\\n lub \\r\\n)",
     "core-index/navigate-home": "Przejdź do ekranu głównego",
     "core-index-parser/force-text": "Importuj wszystkie komórki jako tekst",
-    "core-views/new-column-name": "Nowa nazwa kolumny"
+    "core-views/new-column-name": "Nowa nazwa kolumny",
+    "core-index/refine-extensions": "Rozszerzenia: $1",
+    "core-index-import/warning-import-url": "Musisz określić prawidłowy url.",
+    "core-index-import/delete-import-file": "Wyczyść plik",
+    "clustering-keyers/daitch-mokotoff": "Daitch-Mokotoff",
+    "clustering-keyers/beider-morse": "Beider-Morse",
+    "core-index-import/or": "Albo z URL",
+    "core-index-import/drag-files": "Przeciągnij pliki tutaj"
 }
