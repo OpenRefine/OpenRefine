@@ -207,6 +207,12 @@ build_prepare() {
     if [ ! -d $REFINE_BUILD_DIR ] ; then 
         mkdir $REFINE_BUILD_DIR || error "Error while making directory $REFINE_BUILD_DIR"
     fi
+    NPM_VERSION=`npm -v`
+    if [ $? -ne 0 ] ; then
+        error "NPM not found. We need it in the PATH to download frontend dependencies. See https://openrefine.org/docs/technical-reference/build-test-run#nodejs"
+    else
+        echo "Using NPM version $NPM_VERSION"
+    fi
     ( cd main/webapp && npm install )
 }
 
