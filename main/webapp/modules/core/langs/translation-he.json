@@ -658,7 +658,6 @@
     "core-index/name": "שם המיזם",
     "core-index/change-metadata-value": "החלפת ערך מפתח נתוני העל",
     "core-index/prefs-loading-failed": "טעינת ההעדפות נכשלה.",
-    "core-index/download-now": "להוריד את $1 כעת.",
     "core-project/sql-export": "מייצא SQL…",
     "core-project/project-data-package": "חבילת נתוני המיזם",
     "core-index-parser/quote-delimits-cells": "כדי לתחום תאים שמכילים מפרידי עמודות",

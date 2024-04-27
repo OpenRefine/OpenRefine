@@ -51,7 +51,6 @@
     "core-index/tags": "Etichete",
     "core-index/change-metadata-value": "Modifică valoarea cheii de metadate",
     "core-index/prefs-loading-failed": "Incărcarea preferințelor a eșuat.",
-    "core-index/download-now": "Descarcă $1 acum.",
     "core-index/importOptionMetadata": "Metadate privind opțiunele de import (JSON)",
     "core-index/license": "Licență",
     "core-index/rows-loading-failed": "Nu am putut încărca rândurile.",

@@ -61,7 +61,6 @@
     "core-about/contributors": "অবদানকারী (কালানুক্রমিক ক্রমে)",
     "core-about/thanks": "বিশেষ ধন্যবাদ",
     "core-index/refine-version": "সংস্করণ $1",
-    "core-index/download-now": "এখনি $1 ডাউনলোড করুন।",
     "core-index/delete-key": "পছন্দ চাবিটি মুছুন",
     "core-index/key": "চাবি",
     "core-index/no-proj": "কোনো বিদ্যমান প্রকল্প নেই। একটি নতুন প্রকল্প তৈরি করতে বামদিকে 'প্রকল্প তৈরি করুন' নির্বাচন করুন।",

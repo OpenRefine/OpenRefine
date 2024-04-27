@@ -769,7 +769,6 @@
     "core-dialogs/cluster-row-limit-exceeded": "選択肢の上限 $1 を超えました",
     "core-index-import/warning-import-file": "プロジェクトファイルを指定してください.",
     "core-index-import/single-project": "OpenRefineは、同じフォーマットの場合だけ、複数ファイルをインポートできます.",
-    "core-index/download-now": "$1 をダウンロード",
     "core-facets/value-range": "$1 — $2",
     "core-import-formats/text/wiki": "Wikitext",
     "core-import-formats/service": "サービス",

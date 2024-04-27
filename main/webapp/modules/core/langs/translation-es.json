@@ -784,7 +784,6 @@
     "core-dialogs/cluster-row-limit-exceeded": "Se superó el tiempo límite de un total de $1 elecciones",
     "core-index-import/warning-import-file": "Debe especificar un archivo de proyecto.",
     "core-index-import/single-project": "OpenRefine solo puede importar varios archivos en un único proyecto si todos los archivos seleccionados están en el mismo formato.",
-    "core-index/download-now": "Descargue $1 ahora.",
     "core-views/by-number-rev-example": "[11AbcDef, 22]",
     "core-views/by-number-example": "[11, AbcDef22]",
     "core-views/by-case-rev-example": "[11A, bcD, ef22]",

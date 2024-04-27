@@ -737,7 +737,6 @@
     "core-views/column-join-copy-to-new-column": "Schreib Ergebnis in neue Spalte mit Namen",
     "core-views/column-join-delete-joined-columns": "Verbundene Spalten löschen.",
     "core-views/column-join-dont-escape": "Verwende im Ersatz für Separatoren und Null-Werte \\n für neue Zeilen, \\t für Tabulatoren, \\\\n für \\n, \\\\t für \\t.",
-    "core-index/download-now": "$1 jetzt downloaden.",
     "core-views/best-cand-types": "$1: Typen des besten Kandidaten",
     "core-views/judgment": "$1: Beurteilung",
     "core-import-formats/service": "Dienste",
