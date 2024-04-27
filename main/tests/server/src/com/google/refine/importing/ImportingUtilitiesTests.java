@@ -73,11 +73,9 @@ import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectMetadata;
-import com.google.refine.importers.ImporterTest;
 import com.google.refine.importers.ImportingParserBase;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingUtilities.Progress;
@@ -85,13 +83,7 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-public class ImportingUtilitiesTests extends ImporterTest {
-
-    @Override
-    @BeforeMethod
-    public void setUp() {
-        super.setUp();
-    }
+public class ImportingUtilitiesTests extends RefineTest {
 
     @Test
     public void createProjectMetadataTest()

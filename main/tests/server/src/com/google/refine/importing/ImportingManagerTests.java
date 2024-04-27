@@ -29,18 +29,11 @@ package com.google.refine.importing;
 
 import static org.testng.Assert.assertEquals;
 
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.importers.ImporterTest;
+import com.google.refine.RefineTest;
 
-public class ImportingManagerTests extends ImporterTest {
-
-    @Override
-    @BeforeMethod
-    public void setUp() {
-        super.setUp();
-    }
+public class ImportingManagerTests extends RefineTest {
 
     @Test
     public void testStructuredNameSuffixFallback() {
