@@ -14,7 +14,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.io.FileHistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.column.ColumnAdditionOperation;
 import com.google.refine.util.TestUtils;
 
 public class FileHistoryEntryManagerTests extends RefineTest {
@@ -25,7 +24,7 @@ public class FileHistoryEntryManagerTests extends RefineTest {
     @BeforeMethod
     public void setUp() {
         project = mock(Project.class);
-        OperationRegistry.registerOperation(getCoreModule(), "column-addition", ColumnAdditionOperation.class);
+        OperationRegistry.registerOperation(getCoreModule(), "mock-operation", HistoryEntryTests.MockOperation.class);
     }
 
     @Test
