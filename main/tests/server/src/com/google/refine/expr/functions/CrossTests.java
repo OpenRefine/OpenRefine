@@ -35,17 +35,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Properties;
 
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsListImpl;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.expr.WrappedRow;
+import com.google.refine.grel.GrelTestBase;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -53,17 +51,11 @@ import com.google.refine.model.Row;
 /**
  * Test cases for cross function.
  */
-public class CrossTests extends RefineTest {
+public class CrossTests extends GrelTestBase {
 
     private static final String ERROR_MSG = "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)";
     private static final OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00",
             DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-
-    @Override
-    @BeforeTest
-    public void init() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
 
     private HasFieldsListImpl emptyList;
 

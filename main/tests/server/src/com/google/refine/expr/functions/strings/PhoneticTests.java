@@ -33,13 +33,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.clustering.binning.ColognePhoneticKeyer;
 import com.google.refine.clustering.binning.KeyerFactory;
 import com.google.refine.clustering.binning.Metaphone3Keyer;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class PhoneticTests extends RefineTest {
+public class PhoneticTests extends GrelTestBase {
 
     @BeforeTest
     public void registerKeyers() {

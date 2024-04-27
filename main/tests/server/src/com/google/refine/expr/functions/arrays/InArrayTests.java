@@ -36,10 +36,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class InArrayTests extends RefineTest {
+public class InArrayTests extends GrelTestBase {
 
     static Properties bindings;
     static final List<String> listArray = Arrays.asList("v1", "v2", "v3");

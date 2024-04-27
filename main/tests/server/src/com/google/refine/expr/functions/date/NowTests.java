@@ -35,9 +35,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
+import com.google.refine.grel.GrelTestBase;
 
-public class NowTests extends RefineTest {
+public class NowTests extends GrelTestBase {
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSSSSSSSSX");
 

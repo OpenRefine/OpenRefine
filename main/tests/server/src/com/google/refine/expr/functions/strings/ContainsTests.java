@@ -29,23 +29,15 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.regex.Pattern;
 
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
+import com.google.refine.grel.GrelTestBase;
 
 /**
  * Test cases for find function.
  */
-public class ContainsTests extends RefineTest {
-
-    @Override
-    @BeforeTest
-    public void init() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
+public class ContainsTests extends GrelTestBase {
 
     @Test
     public void testContainsFunction() {

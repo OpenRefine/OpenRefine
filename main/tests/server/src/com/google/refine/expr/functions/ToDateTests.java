@@ -35,12 +35,12 @@ import java.util.TimeZone;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
+import com.google.refine.grel.GrelTestBase;
 
-public class ToDateTests extends RefineTest {
+public class ToDateTests extends GrelTestBase {
 
     @Test
     public void testToDate() throws CalendarParserException {

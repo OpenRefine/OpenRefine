@@ -33,14 +33,12 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
+import com.google.refine.grel.GrelTestBase;
 
-public class FingerprintTests extends RefineTest {
+public class FingerprintTests extends GrelTestBase {
 
     static Properties bindings;
 
@@ -57,12 +55,6 @@ public class FingerprintTests extends RefineTest {
 //        {"œ ӕ","ae oe"},
             { "", "" },
     };
-
-    @Override
-    @BeforeTest
-    public void init() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
 
     @Test
     public void testInvalidParams() {

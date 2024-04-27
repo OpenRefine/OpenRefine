@@ -7,11 +7,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 import com.google.refine.util.ParsingUtilities;
 
-public class ParseUriTest extends RefineTest {
+public class ParseUriTest extends GrelTestBase {
 
     private String sampleUri;
 

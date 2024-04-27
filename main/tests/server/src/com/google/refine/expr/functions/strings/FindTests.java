@@ -36,12 +36,12 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineServlet;
-import com.google.refine.RefineTest;
+import com.google.refine.grel.GrelTestBase;
 
 /**
  * Test cases for find function.
  */
-public class FindTests extends RefineTest {
+public class FindTests extends GrelTestBase {
 
     static Properties bindings;
 
