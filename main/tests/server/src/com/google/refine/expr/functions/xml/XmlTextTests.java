@@ -25,19 +25,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-package com.google.refine.expr;
+package com.google.refine.expr.functions.xml;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
-import com.google.refine.util.TestUtils;
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class EvalErrorTests extends RefineTest {
+public class XmlTextTests extends GrelTestBase {
 
     @Test
-    public void serializeEvalError() {
-        EvalError e = new EvalError("This is a critical error");
-        TestUtils.isSerializedTo(e, "{\"type\":\"error\",\"message\":\"This is a critical error\"}");
-    }
+    public void testXmlText() {
+        Assert.assertTrue(invoke("xmlText") instanceof EvalError);
+        Assert.assertTrue(invoke("xmlText", "test") instanceof EvalError);
 
+        EvalError evalError = (EvalError) invoke("xmlText", "test");
+        Assert.assertEquals(evalError.toString(),
+                "xmlText() cannot work with this \'string\' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+    }
 }
