@@ -865,5 +865,10 @@
     "core-index-import/drag-files": "Arrastre los archivos aquí",
     "core-index/refine-extensions": "Extensiones: $1",
     "clustering-keyers/beider-morse": "Coincidencia fonética de Beider-Morse",
-    "clustering-keyers/daitch-mokotoff": "Algoritmo Soundex Daitch-Mokotoff"
+    "clustering-keyers/daitch-mokotoff": "Algoritmo Soundex Daitch-Mokotoff",
+    "core-index/new-version-available": "Descargar OpenRefine $1 ahora.",
+    "core-index/notification-opt-in": "¿Quiere recibir notificaciones sobre nuevos lanzamientos y eventos de OpenRefine?",
+    "core-index/notification-privacy-info": "información de privacidad",
+    "core-buttons/yes": "Sí",
+    "core-buttons/no": "No"
 }
