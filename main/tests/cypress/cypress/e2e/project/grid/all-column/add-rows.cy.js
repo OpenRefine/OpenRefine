@@ -1,142 +1,4 @@
-const jsonValue = `[
-  {
-     "id":"0001",
-     "type":"donut",
-     "name":"Cake",
-     "ppu":0.55,
-     "batters":{
-        "batter":[
-           {
-              "id":"1001",
-              "type":"Regular"
-           },
-           {
-              "id":"1002",
-              "type":"Chocolate"
-           },
-           {
-              "id":"1003",
-              "type":"Blueberry"
-           },
-           {
-              "id":"1004",
-              "type":"Devil's Food"
-           }
-        ]
-     },
-     "topping":[
-        {
-           "id":"5001",
-           "type":"None"
-        },
-        {
-           "id":"5002",
-           "type":"Glazed"
-        },
-        {
-           "id":"5005",
-           "type":"Sugar"
-        },
-        {
-           "id":"5007",
-           "type":"Powdered Sugar"
-        },
-        {
-           "id":"5006",
-           "type":"Chocolate with Sprinkles"
-        },
-        {
-           "id":"5003",
-           "type":"Chocolate"
-        },
-        {
-           "id":"5004",
-           "type":"Maple"
-        }
-     ]
-  },
-  {
-     "id":"0002",
-     "type":"donut",
-     "name":"Raised",
-     "ppu":0.55,
-     "batters":{
-        "batter":[
-           {
-              "id":"1001",
-              "type":"Regular"
-           }
-        ]
-     },
-     "topping":[
-        {
-           "id":"5001",
-           "type":"None"
-        },
-        {
-           "id":"5002",
-           "type":"Glazed"
-        },
-        {
-           "id":"5005",
-           "type":"Sugar"
-        },
-        {
-           "id":"5003",
-           "type":"Chocolate"
-        },
-        {
-           "id":"5004",
-           "type":"Maple"
-        }
-     ]
-  },
-  {
-     "id":"0003",
-     "type":"donut",
-     "name":"Old Fashioned",
-     "ppu":0.55,
-     "batters":{
-        "batter":[
-           {
-              "id":"1001",
-              "type":"Regular"
-           },
-           {
-              "id":"1002",
-              "type":"Chocolate"
-           }
-        ]
-     },
-     "topping":[
-        {
-           "id":"5001",
-           "type":"None"
-        },
-        {
-           "id":"5002",
-           "type":"Glazed"
-        },
-        {
-           "id":"5003",
-           "type":"Chocolate"
-        },
-        {
-           "id":"5004",
-           "type":"Maple"
-        }
-     ]
-  }
-]`;
-
 describe(__filename,  () => {
-
-  beforeEach(() => {
-
-
-
-
-  });
 
   describe("All menu", () => {
 
@@ -153,6 +15,7 @@ describe(__filename,  () => {
     });
 
     describe("\"Add blank rows\" submenu", () => {
+
       it("contains a sub-item called \"Prepend one row\"", () => {
         cy.columnActionClick("All", ["Add blank rows"]);
         cy.get("div.menu-container")
@@ -183,8 +46,9 @@ describe(__filename,  () => {
           .should("equal", "Add multiple rows");
       });
 
-    });
-  });
+    }); // end describe add blank rows subment
+
+  });  // end describe all menu
 
   describe("Peripheral interface", () => {
 
@@ -284,7 +148,8 @@ describe(__filename,  () => {
           assert.equal($divs.eq(1).find("span.facet-choice-count").text(), "1");
         });
     });
-  });
+
+  });  // end describe peripheral interface
 
   describe("Modal dialog", () => {
 
@@ -362,11 +227,13 @@ describe(__filename,  () => {
         }
       });
     }); // end describe row count input
+
   });  // end describe modal dialog window
 
   describe("Data table", () => {
 
     describe("Prepended blank row", () => {
+
       beforeEach(() => {
         cy.loadAndVisitProject('food.small');
 
@@ -419,12 +286,7 @@ describe(__filename,  () => {
           cy.get("div#view-panel > div.data-table-container > table > tbody > tr")
             .as("tableRows");
 
-          appendRow();
-          // TODO
-          // cy.get("@tableRows")
-          //   .last()
-          //   .find("td > div.data-table-cell-content > div > span")
-          //   .as("lastRow");
+          appendRow();;
         });
 
         it("is the last row in the project", () => {
@@ -456,19 +318,18 @@ describe(__filename,  () => {
       }); // end describe data table in row mode
 
       describe("in records mode", () => {
-        const pricerunner = [
-          ["Cluster Label", "Product Title"],
-          ["Apple iPhone 8 Plus 64GB", "apple iphone 8 plus 64gb silver"],
-          ["Apple iPhone 8 Plus 64GB", "apple iphone 8 plus 64 gb spacegrau"],
-          ["Apple iPhone 7 128GB",     "iphone 7 128gb silver"],
-          ["Apple iPhone 7 128GB",     "iphone 7 128gb silver mn932b/a wc01"]
-        ];
+        let pricerunner;
 
         beforeEach(() => {
-          cy.loadProject(pricerunner, "pricerunner.mini", "fooTag").then(projectId => {
-            cy.visit(`${Cypress.env("OPENREFINE_URL")}/project?project=${projectId}`);
-            cy.waitForProjectTable();
-          });
+          pricerunner = [
+            ["Cluster Label", "Product Title"],
+            ["Apple iPhone 8 Plus 64GB", "apple iphone 8 plus 64gb silver"],
+            ["Apple iPhone 8 Plus 64GB", "apple iphone 8 plus 64 gb spacegrau"],
+            ["Apple iPhone 7 128GB",     "iphone 7 128gb silver"],
+            ["Apple iPhone 7 128GB",     "iphone 7 128gb silver mn932b/a wc01"]
+          ];
+
+          cy.loadAndVisitProject(pricerunner);
 
           cy.get("div#view-panel > div.data-table-container > table > tbody > tr")
             .as("tableRows");
@@ -481,18 +342,14 @@ describe(__filename,  () => {
 
         });
 
-        it("appends a new row in records mode", () => {
+        it("appends a blank row in records mode", () => {
           appendRow();
-          // cy.assertGridEquals(pricerunner.push([null, null]));
           cy.get("@tableRows")
             .last()
             .then(assertRowIsBlank);
-            // .find("td > div.data-table-cell-content > div > span")
-            // .each(expectRowToBeBlank);
         });
 
-      }); // end describe data table in records
-
-    });
-  });
+      }); // end describe in records
+    }); // end describe appended blank row
+  }); // end describe data table
 });  // end Cypress tests
