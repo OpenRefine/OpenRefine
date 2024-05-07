@@ -33,11 +33,6 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
     var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
     formCopy.trigger('submit');
 
-    if (elmts.editSummary.val().length === 0) {
-      elmts.editSummary.trigger('focus');
-      return;
-    }
-
     if (elmts.maxlag.val().length === 0) {
       elmts.maxlag.val(WikibaseManager.getSelectedWikibaseMaxlag());
     }
