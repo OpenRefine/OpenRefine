@@ -138,6 +138,7 @@ abstract public class ImportingParserBase implements ImportingParser {
                 if (useInputStream) {
                     parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
                 } else {
+                    // Although this is called "common" encoding, it may represent the user's override of the encoding
                     String commonEncoding = JSONUtilities.getString(options, "encoding", null);
                     if (commonEncoding != null && commonEncoding.isEmpty()) {
                         commonEncoding = null;

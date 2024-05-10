@@ -564,8 +564,12 @@ public class ImportingUtilities {
     }
 
     static public Reader getReaderFromStream(InputStream inputStream, ObjectNode fileRecord, String commonEncoding) {
+        // FIXME: commonEncoding may represent user's override of guessed encoding, so should be used in preference
+        // to the guessed encoding(s). But, what to do if we have multiple files with different encodings?
+        // (very unlikely, but still possible)
         String encoding = getEncoding(fileRecord);
-        if (encoding == null) {
+        if (commonEncoding != null && !commonEncoding.equals(encoding)) {
+            logger.info("Overriding guessed encoding {} with user's choice: {}", encoding, commonEncoding);
             encoding = commonEncoding;
         }
         try {
