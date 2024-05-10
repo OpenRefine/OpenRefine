@@ -1205,7 +1205,7 @@ public class ImportingUtilities {
         if (encoding == null) {
             return new InputStreamReader(is);
         } else if (EncodingGuesser.UTF_8_BOM.equals(encoding)) { // Handle our fake UTF-8 with BOM encoding
-            return new InputStreamReader(new UnicodeBOMInputStream(is), UTF_8);
+            return new InputStreamReader(new UnicodeBOMInputStream(is, true), UTF_8);
         }
         return new InputStreamReader(is, encoding);
     }

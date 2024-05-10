@@ -726,6 +726,12 @@ function process(path, request, response) {
               aliases: aliases
             });
           }
+
+          encodings.push({
+            code: "UTF-8-BOM", // TODO: use x- prefix?
+            name: "UTF-8 with BOM",
+            aliases: []
+          });
           
           context.encodingJson = butterfly.toJSONString(encodings);
           context.defaultEncoding = butterfly.toJSONString(Packages.java.nio.charset.Charset.defaultCharset().name());
