@@ -31,14 +31,15 @@ import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.column.ColumnAdditionOperation;
 import com.google.refine.util.TestUtils;
 
 public class HistoryEntryTests extends RefineTest {
@@ -47,14 +48,9 @@ public class HistoryEntryTests extends RefineTest {
             + "\"id\":1533633623158,"
             + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
             + "\"time\":\"2018-08-07T09:06:37Z\","
-            + "\"operation\":{\"op\":\"core/column-addition\","
-            + "   \"description\":\"Create column uri at index 2 based on column country using expression grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
-            + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
-            + "   \"newColumnName\":\"uri\","
-            + "   \"columnInsertIndex\":2,"
-            + "   \"baseColumnName\":\"country\","
-            + "   \"expression\":\"grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
-            + "   \"onError\":\"set-to-blank\"}"
+            + "\"operation\":{\"op\":\"core/mock-operation\","
+            + "   \"description\":\"some description\","
+            + "   \"foo\":\"bar\"}"
             + "}";
 
     public static final String unknownOperationJson = "{"
@@ -69,9 +65,20 @@ public class HistoryEntryTests extends RefineTest {
 
     Project project;
 
+    public static class MockOperation extends AbstractOperation {
+
+        @JsonProperty("foo")
+        public String someParameter = "bar";
+
+        @Override
+        public String getJsonDescription() {
+            return "some description";
+        }
+    }
+
     @BeforeTest
     public void register() {
-        OperationRegistry.registerOperation(getCoreModule(), "column-addition", ColumnAdditionOperation.class);
+        OperationRegistry.registerOperation(getCoreModule(), "mock-operation", MockOperation.class);
     }
 
     @BeforeMethod
