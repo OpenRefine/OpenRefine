@@ -568,26 +568,14 @@ public class ImportingUtilities {
         if (encoding == null) {
             encoding = commonEncoding;
         }
-        if (encoding != null) {
-
-            // Special case for UTF-8 with BOM
-            if (EncodingGuesser.UTF_8_BOM.equals(encoding)) {
-                try {
-                    return new InputStreamReader(new UnicodeBOMInputStream(inputStream, true), UTF_8);
-                } catch (IOException e) {
-                    throw new RuntimeException("Exception from UnicodeBOMInputStream", e);
-                }
-            } else {
-                try {
-                    return new InputStreamReader(inputStream, encoding);
-                } catch (UnsupportedEncodingException e) {
-                    // This should never happen since they picked from a list of supported encodings
-                    throw new RuntimeException("Unsupported encoding: " + encoding, e);
-                }
-            }
-
+        try {
+            return getInputStreamReader(inputStream, encoding);
+        } catch (UnsupportedEncodingException e) {
+            // This should never happen since they picked from a list of supported encodings
+            throw new RuntimeException("Unsupported encoding: " + encoding, e);
+        } catch (IOException e) {
+            throw new RuntimeException("Exception from UnicodeBOMInputStream", e);
         }
-        return new InputStreamReader(inputStream);
     }
 
     static public File getFile(ImportingJob job, ObjectNode fileRecord) {
@@ -1207,5 +1195,14 @@ public class ImportingUtilities {
         }
         pm.setEncoding(encoding);
         return pm;
+    }
+
+    public static InputStreamReader getInputStreamReader(InputStream is, String encoding) throws IOException {
+        if (encoding == null) {
+            return new InputStreamReader(is);
+        } else if (EncodingGuesser.UTF_8_BOM.equals(encoding)) { // Handle our fake UTF-8 with BOM encoding
+            return new InputStreamReader(new UnicodeBOMInputStream(is), UTF_8);
+        }
+        return new InputStreamReader(is, encoding);
     }
 }
