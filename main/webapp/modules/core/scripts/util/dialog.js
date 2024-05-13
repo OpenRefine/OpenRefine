@@ -76,7 +76,7 @@ DialogSystem.showDialog = function(elmt, onCancel) {
 
   DialogSystem.setupEscapeKeyHandling();
 
-  elmt.attr("aria-role", "dialog");
+  elmt.attr("role", "dialog");
   var dialogHeader = elmt.find(".dialog-header");
   if (dialogHeader.length && dialogHeader[0].id) {
     elmt.attr("aria-labeledby", dialogHeader[0].id);
