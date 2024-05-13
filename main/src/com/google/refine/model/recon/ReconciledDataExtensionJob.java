@@ -40,6 +40,8 @@ package com.google.refine.model.recon;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,8 +58,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.google.refine.expr.util.CalendarParser;
-import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconType;
 import com.google.refine.util.HttpClient;
@@ -253,8 +253,8 @@ public class ReconciledDataExtensionJob {
                 } else if (val.has("date")) {
                     Object date;
                     try {
-                        date = CalendarParser.parseAsOffsetDateTime(val.get("date").asText());
-                    } catch (CalendarParserException e) {
+                        date = OffsetDateTime.parse(val.get("date").asText());
+                    } catch (DateTimeParseException e) {
                         date = val.get("date").asText();
                     }
                     storeCell(rows, rowindex, colindex, date);
