@@ -127,6 +127,7 @@
           <connectTimeout>10000</connectTimeout>
           <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
           <licensesConfigFile>${basedir}/manual_licenses.xml</licensesConfigFile>
+          <excludedArtifacts>oro</excludedArtifacts>  
         </configuration>
         <executions>
           <execution>
