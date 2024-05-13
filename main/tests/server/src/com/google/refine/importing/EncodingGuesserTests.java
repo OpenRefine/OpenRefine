@@ -52,6 +52,8 @@ public class EncodingGuesserTests {
 
         checkEncoding("example-latin1.tsv", "windows-1252"); // close enough - these overlap a lot
         checkEncoding("example-utf8.tsv", "utf-8");
+        checkEncoding("example-utf16le-bom.tsv", "utf-16le");
+        checkEncoding("example-utf16be-bom.tsv", "utf-16be");
         checkEncoding("csv-with-bom.csv", "utf-8-bom");
     }
 

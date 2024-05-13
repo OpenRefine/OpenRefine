@@ -27,11 +27,12 @@
 
 package com.google.refine.importers;
 
+import static com.google.refine.importing.ImportingUtilities.getInputStreamReader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
@@ -184,7 +185,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
     static public int[] guessColumnWidths(File file, String encoding) {
         try {
             InputStream is = new FileInputStream(file);
-            Reader reader = (encoding != null) ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+            Reader reader = getInputStreamReader(is, encoding);
             LineNumberReader lineNumberReader = new LineNumberReader(reader);
 
             try {
