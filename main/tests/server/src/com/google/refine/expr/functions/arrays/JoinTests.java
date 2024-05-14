@@ -58,4 +58,15 @@ public class JoinTests extends RefineTest {
         parseEval(bindings, new String[] { "[1,2,''].join('|')", "1|2|" } );
         parseEval(bindings, new String[] { "['','',''].join('|')", "||" } );
 
+        // Tests for JSON array
+        // Both of the following tests throw NPEs. First is desired behavior, second is current array behavior
+//        parseEval(bindings, new String[] { "'[null,null,null]'.parseJson().join('|')", "||" } );
+//        parseEval(bindings, new String[] { "'[null,null,null]'.parseJson().join('|')", "" } );
+        parseEval(bindings, new String[] { "'[\"\",2,3]'.parseJson().join('|')", "|2|3" } );
+        parseEval(bindings, new String[] { "'[1,2,\"\"]'.parseJson().join('|')", "1|2|" } );
+        parseEval(bindings, new String[] { "'[\"\",\"\",\"\"]'.parseJson().join('|')", "||" } );
+
+        // TODO: Add tests for List<Object> returned from ExpressionUtils.toObjectList()
+    }
+
 }
