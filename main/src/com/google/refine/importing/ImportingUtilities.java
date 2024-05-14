@@ -609,8 +609,7 @@ public class ImportingUtilities {
         return JSONUtilities.getString(
                 fileRecord,
                 "fileName",
-                "unknown"
-        );
+                "unknown");
     }
 
     static public String getArchiveFileName(ObjectNode fileRecord) {
