@@ -51,6 +51,11 @@ public class JoinTests extends RefineTest {
         parseEval(bindings, test3);
         String[] test4 = { "['z', '','c','a'].join('-')", "z--c-a" };
         parseEval(bindings, test4);
-    }
+
+        // Issue 3290 - Make sure leading empty strings don't get skipped
+        parseEval(bindings, new String[] { "['',2,3].join('|')", "|2|3" } );
+        parseEval(bindings, new String[] { "[1,'',3].join('|')", "1||3" } );
+        parseEval(bindings, new String[] { "[1,2,''].join('|')", "1|2|" } );
+        parseEval(bindings, new String[] { "['','',''].join('|')", "||" } );
 
 }
