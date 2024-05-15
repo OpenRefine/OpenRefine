@@ -1,9 +1,22 @@
-describe('Show more or less reconciliation candidates', () => {
+describe('In-cell reconciliation buttons', () => {
     afterEach(() => {
         cy.addProjectForDeletion();
     });
+
+    it('Show "Search for match" even if there are no candidates', () => {
+          cy.visitOpenRefine();
+        cy.navigateTo('Import project');
+        cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
+
+        //we're using here the "no automatch" project, so rows are reconciled and we have more than 3 matched candidates
+        cy.get('#project-tar-file-input').attachFile('reconciled-project-no-match.zip')
+        cy.get('#import-project-button').click();
+
+        cy.getCell(0, 'entity').find('.data-table-recon-visibility').should('not.contain', 'See more');
+        cy.getCell(0, 'entity').find('.data-table-recon-visibility').should('to.contain', 'Search for match');
+    });
     
-    it('Testing see more / see less', () => {
+    it('Display see more / see less when there are candidates', () => {
         cy.visitOpenRefine();
         cy.navigateTo('Import project');
         cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
@@ -37,10 +50,6 @@ describe('Show more or less reconciliation candidates', () => {
 
         //confirming the no. of candidates after we click on see less
         cy.getCell(0, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
-
-         
-        
-        
     });
 });
 
