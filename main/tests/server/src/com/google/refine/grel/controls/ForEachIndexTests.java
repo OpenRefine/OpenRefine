@@ -102,6 +102,16 @@ public class ForEachIndexTests extends RefineTest {
         bindings.put("v", "");
         parseEval(bindings, new String[] { "forEachIndex([5,4,3,2.0], k, v, v*2).join(',')", "10,8,6,4.0" });
         parseEval(bindings, new String[] { "forEachIndex([5,4,3,2.0], k, v, k).join(',')", "0,1,2,3" });
+        parseEval(bindings, new String[] { "forEachIndex(['a','b','c'], k, v, v).join(',')", "a,b,c" });
+        parseEval(bindings, new String[] { "forEachIndex(['','b','c'], k, v, v).join(',')", ",b,c" });
+        parseEval(bindings, new String[] { "forEachIndex(['','',''], k, v, v).join(',')", ",," });
+        // TODO: join() isn't a reliable way to test this because of broken null handling
+//        parseEval(bindings, new String[] { "forEachIndex([null,'b','c'], k, v, v).join(',')", ",b,c" });
+//        parseEval(bindings, new String[] { "forEachIndex(['a',null,'c'], k, v, v).join(',')", "a,,c" });
+        parseEval(bindings, new String[] { "toString(forEachIndex(['a',null,'c'], k, v, v))", "[a, null, c]" });
+        parseEval(bindings, new String[] { "toString(forEachIndex([null,'b','c'], k, v, v))", "[null, b, c]" });
+        parseEval(bindings, new String[] { "forEachIndex(['a','','c'], k, v, v).join(',')", "a,,c" });
+        parseEval(bindings, new String[] { "forEachIndex(['a','b',''], k, v, v).join(',')", "a,b," });
     }
 
     @Test
@@ -111,6 +121,8 @@ public class ForEachIndexTests extends RefineTest {
         bindings.put("v", "");
         parseEval(bindings, new String[] { "forEachIndex('[3,2,1.0]'.parseJson(), k, v, v*2).join(',')", "6,4,2.0" });
         parseEval(bindings, new String[] { "forEachIndex('[3,2,1.0]'.parseJson(), k, v, k).join(',')", "0,1,2" });
+        parseEval(bindings, new String[] { "toString(forEachIndex('[null, null, null]'.parseJson(), k, v, v))", "[null, null, null]" });
+        parseEval(bindings, new String[] { "forEachIndex('[\"\", \"\", \"\"]'.parseJson(), k, v, v).join(',')", ",," });
     }
 
 }
