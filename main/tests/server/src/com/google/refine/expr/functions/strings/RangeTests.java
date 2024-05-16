@@ -32,13 +32,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
 /**
  * Tests for the range function.
  */
-public class RangeTests extends RefineTest {
+public class RangeTests extends GrelTestBase {
 
     private static final Integer[] EMPTY_ARRAY = new Integer[0];
 

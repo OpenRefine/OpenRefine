@@ -25,19 +25,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-package com.google.refine.expr;
+package com.google.refine.expr.functions.html;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
-import com.google.refine.util.TestUtils;
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class EvalErrorTests extends RefineTest {
+public class InnerHtmlTests extends GrelTestBase {
 
     @Test
-    public void serializeEvalError() {
-        EvalError e = new EvalError("This is a critical error");
-        TestUtils.isSerializedTo(e, "{\"type\":\"error\",\"message\":\"This is a critical error\"}");
+    public void testInnerHtml() {
+        Assert.assertTrue(invoke("innerHtml") instanceof EvalError);
+        Assert.assertTrue(invoke("innerHtml", "test") instanceof EvalError);
+
+        EvalError evalError = (EvalError) invoke("innerHtml", "test");
+        Assert.assertEquals(evalError.toString(),
+                "innerHtml() cannot work with this \'string\'. The first parameter is not an HTML Element. Please first use parseHtml(string) and select(query) prior to using this function");
     }
 
 }

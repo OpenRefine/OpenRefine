@@ -29,10 +29,10 @@ package com.google.refine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.grel.GrelTestBase;
 
-public class JoinTests extends RefineTest {
+public class JoinTests extends GrelTestBase {
 
     @Test
     public void joinArray() throws ParsingException {
