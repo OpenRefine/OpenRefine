@@ -411,7 +411,7 @@ class ReconCellRenderer {
       command,
       params,
       bodyParams,
-      { columnStatsChanged: columnStatsChanged },
+      { columnStatsChanged: columnStatsChanged, rowIdsPreserved: true, recordIdsPreserved: true },
       {
         onDone: function(o) {
           if (o.cell.r) {
