@@ -88,7 +88,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", !nonNullSeparator.equals("\\t"));
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(DEFAULT_QUOTE_CHAR));
-        JSONUtilities.safePut(options, "trimStrings", true); // FIXME: ignored?
+        JSONUtilities.safePut(options, "trimStrings", true);
 
         return options;
     }
@@ -146,6 +146,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         if (tsv) {
             TsvParserSettings settings = new TsvParserSettings();
             settings.setMaxCharsPerColumn(256 * 1024); // TODO: Perhaps use a lower default and make user configurable?
+            settings.setIgnoreLeadingWhitespaces(false);
+            settings.setIgnoreTrailingWhitespaces(false);
             parser = new TsvParser(settings);
         } else {
             CsvParserSettings settings = new CsvParserSettings();
