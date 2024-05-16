@@ -371,7 +371,7 @@ public class GetRowsCommand extends Command {
             return false;
         }
 
-        public boolean internalVisit(Project project, int rowIndex, Row row, int paginationIndex) {
+        protected boolean internalVisit(Project project, int rowIndex, Row row, int paginationIndex) {
             results.add(new WrappedRow(row, rowIndex, null, paginationIndex));
             return false;
         }
