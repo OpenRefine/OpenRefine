@@ -37,8 +37,6 @@ import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -55,17 +53,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.browsing.EngineConfig;
-import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.model.recon.StandardReconConfig.ReconResult;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.recon.ReconOperation;
-import com.google.refine.process.Process;
-import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -73,7 +65,6 @@ public class StandardReconConfigTests extends RefineTest {
 
     @BeforeMethod
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon", ReconOperation.class);
         ReconConfig.registerReconConfig(getCoreModule(), "standard-service", StandardReconConfig.class);
     }
 
@@ -238,191 +229,6 @@ public class StandardReconConfigTests extends RefineTest {
                 + "     {\"pid\":\"P123\",\"v\":\"david lynch\"}"
                 + "],"
                 + "\"type_strict\":\"should\"}");
-    }
-
-    @Test
-    public void reconNonJsonTest() throws Exception {
-        Project project = createProject(
-                new String[] { "title", "director" },
-                new Serializable[][] {
-                        { "mulholland drive", "david lynch" }
-                });
-
-        String nonJsonResponse = "<!DOCTYPE html>\n" +
-                "<html lang=\"en\">\n" +
-                "  <head>\n" +
-                "    <meta charset=\"utf-8\">\n" +
-                "    <title>Error</title>\n" +
-                "  </head>\n" +
-                "  <body>\n" +
-                "    You have reached an error page.\n" +
-                "  </body>\n" +
-                "</html>";
-
-        try (MockWebServer server = new MockWebServer()) {
-            server.start();
-            HttpUrl url = server.url("/openrefine-wikidata/en/api");
-            server.enqueue(new MockResponse().setBody(nonJsonResponse));
-            server.enqueue(new MockResponse());
-
-            String configJson = " {\n" +
-                    "        \"mode\": \"standard-service\",\n" +
-                    "        \"service\": \"" + url + "\",\n" +
-                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                    "        \"type\": {\n" +
-                    "                \"id\": \"Q11424\",\n" +
-                    "                \"name\": \"film\"\n" +
-                    "        },\n" +
-                    "        \"autoMatch\": true,\n" +
-                    "        \"batchSize\": 10,\n" +
-                    "        \"columnDetails\": [\n" +
-                    "           {\n" +
-                    "             \"column\": \"director\",\n" +
-                    "             \"propertyName\": \"Director\",\n" +
-                    "             \"propertyID\": \"P57\"\n" +
-                    "           }\n" +
-                    "        ]}";
-            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
-            ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
-            Process process = op.createProcess(project, new Properties());
-            ProcessManager pm = project.getProcessManager();
-            process.startPerforming(pm);
-            Assert.assertTrue(process.isRunning());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
-            Assert.assertFalse(process.isRunning());
-
-            RecordedRequest request1 = server.takeRequest(5, TimeUnit.SECONDS);
-
-            assertNotNull(request1);
-
-            // We won't have gotten a result, but we want to make sure things didn't die.
-            Row row = project.rows.get(0);
-            Cell cell = row.cells.get(1);
-            assertNotNull(cell.value);
-            assertNotNull(cell.recon.error);
-            assertEquals(cell.recon.judgment, Recon.Judgment.Error);
-            // the recon object has error attribute
-        }
-    }
-
-    @Test
-    public void reconTest() throws Exception {
-        Project project = createProject(
-                new String[] { "title", "director" },
-                new Serializable[][] {
-                        { "mulholland drive", "david lynch" }
-                });
-
-        String reconResponse = "{\n" +
-                "q0: {\n" +
-                "  result: [\n" +
-                "    {\n" +
-                "    P57: {\n" +
-                "score: 100,\n" +
-                "weighted: 40\n" +
-                "},\n" +
-                "all_labels: {\n" +
-                "score: 59,\n" +
-                "weighted: 59\n" +
-                "},\n" +
-                "score: 70.71428571428572,\n" +
-                "id: \"Q3989262\",\n" +
-                "name: \"The Short Films of David Lynch\",\n" +
-                "type: [\n" +
-                "{\n" +
-                "id: \"Q24862\",\n" +
-                "name: \"short film\"\n" +
-                "},\n" +
-                "{\n" +
-                "id: \"Q202866\",\n" +
-                "name: \"animated film\"\n" +
-                "}\n" +
-                "],\n" +
-                "match: false\n" +
-                "},\n" +
-                "{\n" +
-                "P57: {\n" +
-                "score: 100,\n" +
-                "weighted: 40\n" +
-                "},\n" +
-                "all_labels: {\n" +
-                "score: 44,\n" +
-                "weighted: 44\n" +
-                "},\n" +
-                "score: 60.00000000000001,\n" +
-                "id: \"Q83365219\",\n" +
-                "name: \"What Did Jack Do?\",\n" +
-                "type: [\n" +
-                "{\n" +
-                "id: \"Q24862\",\n" +
-                "name: \"short film\"\n" +
-                "}\n" +
-                "],\n" +
-                "match: false\n" +
-                "    }\n" +
-                "    ]\n" +
-                "  }\n" +
-                "}\n";
-        try (MockWebServer server = new MockWebServer()) {
-            server.start();
-            HttpUrl url = server.url("/openrefine-wikidata/en/api");
-            server.enqueue(new MockResponse().setResponseCode(503)); // service initially overloaded
-            server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
-            server.enqueue(new MockResponse());
-
-            String configJson = " {\n" +
-                    "        \"mode\": \"standard-service\",\n" +
-                    "        \"service\": \"" + url + "\",\n" +
-                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                    "        \"type\": {\n" +
-                    "                \"id\": \"Q11424\",\n" +
-                    "                \"name\": \"film\"\n" +
-                    "        },\n" +
-                    "        \"autoMatch\": true,\n" +
-                    "        \"batchSize\": 10,\n" +
-                    "        \"columnDetails\": [\n" +
-                    "           {\n" +
-                    "             \"column\": \"director\",\n" +
-                    "             \"propertyName\": \"Director\",\n" +
-                    "             \"propertyID\": \"P57\"\n" +
-                    "           }\n" +
-                    "        ]}";
-            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
-            ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
-            Process process = op.createProcess(project, new Properties());
-            ProcessManager pm = project.getProcessManager();
-            process.startPerforming(pm);
-            Assert.assertTrue(process.isRunning());
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
-            Assert.assertFalse(process.isRunning());
-
-            server.takeRequest(5, TimeUnit.SECONDS); // ignore the first request which was a 503 error
-            RecordedRequest request1 = server.takeRequest(5, TimeUnit.SECONDS);
-
-            assertNotNull(request1);
-            String query = request1.getBody().readUtf8Line();
-            assertNotNull(query);
-            String expected = "queries=" + URLEncoder.encode(
-                    "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
-                    "UTF-8");
-            TestUtils.assertEqualAsQueries(query, expected);
-
-            Row row = project.rows.get(0);
-            Cell cell = row.cells.get(1);
-            assertNotNull(cell.recon);
-            assertEquals(cell.recon.service, url.toString());
-            assertEquals(cell.recon.getBestCandidate().types[0], "Q24862");
-        }
     }
 
     @Test

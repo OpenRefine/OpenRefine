@@ -27,15 +27,35 @@
 
 package com.google.refine.operations.column;
 
+import java.io.Serializable;
+
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
+import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ColumnRemovalOperationTests extends RefineTest {
+
+    protected Project project;
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        project = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "d" },
+                        { "v3", "a", "f" },
+                        { "", "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
+    }
 
     @BeforeSuite
     public void setUp() {
@@ -48,5 +68,24 @@ public class ColumnRemovalOperationTests extends RefineTest {
                 + "\"description\":\"Remove column my column\","
                 + "\"columnName\":\"my column\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json);
+    }
+
+    @Test
+    public void testRemoval() throws Exception {
+        ColumnRemovalOperation SUT = new ColumnRemovalOperation("foo");
+
+        runOperation(SUT, project);
+
+        Project expected = createProject(
+                new String[] { "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "d" },
+                        { "a", "f" },
+                        { "a", "g" },
+                        { "b", "h" },
+                        { "a", "i" },
+                        { "b", "j" },
+                });
+        assertProjectEquals(project, expected);
     }
 }

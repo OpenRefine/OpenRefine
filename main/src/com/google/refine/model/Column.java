@@ -153,7 +153,7 @@ public class Column {
         }
     }
 
-    static public Column load(String s) throws Exception {
+    static public Column load(String s) throws IOException {
         return ParsingUtilities.mapper.readValue(s, Column.class);
     }
 

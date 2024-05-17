@@ -72,10 +72,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- dependency versions -->
-    <jackson.version>2.16.2</jackson.version>
+    <jackson.version>2.17.1</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.5</butterfly.version>
-    <slf4j.version>2.0.12</slf4j.version>
+    <slf4j.version>2.0.13</slf4j.version>
     <log4j.version>2.23.1</log4j.version>
     <jetty.version>10.0.16</jetty.version>
     <okhttp.version>4.12.0</okhttp.version>
@@ -84,45 +84,44 @@
     <commons-lang3.version>3.14.0</commons-lang3.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-text.version>1.11.0</commons-text.version>
+    <commons-text.version>1.12.0</commons-text.version>
     <commons-validator.version>1.8.0</commons-validator.version>
     <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
-    <commons-codec.version>1.16.1</commons-codec.version>
+    <commons-codec.version>1.17.0</commons-codec.version>
     <commons-compress.version>1.26.1</commons-compress.version>
     <velocity.version>2.3</velocity.version>
     <marc4j.version>2.9.5</marc4j.version>
     <jsoup.version>1.17.2</jsoup.version>
     <odfdom-java.version>0.12.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2.1</vicino.version>
-    <clojure.version>1.11.2</clojure.version>
+    <clojure.version>1.11.3</clojure.version>
     <httpclient5.version>5.3.1</httpclient5.version>
     <httpcore.version>4.4.16</httpcore.version>
     <univocity-csv.version>2.9.1</univocity-csv.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
-    <commons-io.version>2.15.1</commons-io.version>
-    <guava.version>33.0.0-jre</guava.version>
+    <commons-io.version>2.16.1</commons-io.version>
+    <guava.version>33.2.0-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <juniversalchardet.version>2.4.0</juniversalchardet.version>
-    <testng.version>7.9.0</testng.version>
+    <testng.version>7.10.2</testng.version>
     <httpmime.version>4.5.14</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>5.11.0</mockito.version>
+    <mockito.version>5.12.0</mockito.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
-    <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
-    <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
-    <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <surefire.version>3.2.5</surefire.version>
-    <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+    <maven-jar-plugin.version>3.4.1</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
-    <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+    <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
     <license-plugin.version>2.4.0</license-plugin.version>
     <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
   </properties>
@@ -182,88 +181,65 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-	<version>${jacoco-maven-plugin.version}</version>
+        <version>${jacoco-maven-plugin.version}</version>
         <configuration>
           <excludes>
             <exclude>org/openrefine/messages/**/*</exclude>
           </excludes>
         </configuration>
         <executions>
-            <execution>
-                <id>prepare-agent</id>
-                <goals>
-                    <goal>prepare-agent</goal>
-                </goals>
-                <phase>process-test-resources</phase>
-                <configuration>
-                    <destFile>${project.build.directory}/report/${project.name}.exec</destFile>
-                    <propertyName>surefireArgs</propertyName>
-                </configuration>
-            </execution>
-            <execution>
-                <phase>test</phase>
-                <goals>
-                    <goal>report</goal>
-                </goals>
-                <configuration>
-                    <dataFile>${project.build.directory}/report/${project.name}.exec</dataFile>
-                    <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
-                </configuration>
-            </execution>
-            <execution>
-                <id>merge</id>
-                <goals>
-                     <goal>merge</goal>
-                </goals>
-                <phase>test</phase>
-               <configuration>
-                     <destFile>${project.build.directory}/report/jacoco-merged.exec</destFile>
-                     <fileSets>
-                        <fileSet>
-                            <directory>main/target/report</directory>
-                            <includes>
-                                <include>*.exec</include>
-                            </includes>
-                        </fileSet>
-                        <fileSet>
-                            <directory>extensions/target/report</directory>
-                            <includes>
-                                <include>*.exec</include>
-                            </includes>
-                        </fileSet>
-                     </fileSets>
-                </configuration>
-             </execution>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <phase>process-test-resources</phase>
+            <configuration>
+              <destFile>${project.build.directory}/report/${project.name}.exec</destFile>
+              <propertyName>surefireArgs</propertyName>
+            </configuration>
+          </execution>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <dataFile>${project.build.directory}/report/${project.name}.exec</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>merge</id>
+            <goals>
+              <goal>merge</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <destFile>${project.build.directory}/report/jacoco-merged.exec</destFile>
+              <fileSets>
+                <fileSet>
+                  <directory>main/target/report</directory>
+                  <includes>
+                    <include>*.exec</include>
+                  </includes>
+                </fileSet>
+                <fileSet>
+                  <directory>extensions/target/report</directory>
+                  <includes>
+                    <include>*.exec</include>
+                  </includes>
+                </fileSet>
+              </fileSets>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.eluder.coveralls</groupId>
-        <artifactId>coveralls-maven-plugin</artifactId>
-	<version>${coveralls-maven-plugin.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <sourceDirectories>
-             <sourceDirectory>main/src</sourceDirectory>
-             <sourceDirectory>main/target/generated-sources</sourceDirectory>
-             <sourceDirectory>extensions/jython/src</sourceDirectory>
-             <sourceDirectory>extensions/wikidata/src</sourceDirectory>
-             <sourceDirectory>extensions/database/src</sourceDirectory>
-             <sourceDirectory>extensions/phonetic/src</sourceDirectory>
-             <sourceDirectory>extensions/gdata/src</sourceDirectory>
-          </sourceDirectories>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- Pluging to generate release source -->
+        <!-- Plugin to generate release source -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>3.3.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -333,7 +309,7 @@
         <!-- Signature -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.4</version>
         <executions>
             <execution>
                 <id>sign-artifacts</id>

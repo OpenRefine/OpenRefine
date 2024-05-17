@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20'
       - id: set-matrix
         run: npm install --save glob@8.1.0 && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
         env:
@@ -60,7 +60,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20'
 
       - name: Restore Tests dependency cache
         uses: actions/cache@v4
@@ -164,11 +164,16 @@ jobs:
       run: cd main/webapp && npm install
       
     - name: Build and test with Maven
-      run: mvn -B jacoco:prepare-agent test
+      run: mvn -B jacoco:prepare-agent test jacoco:report
 
-    - name: Submit test coverage to Coveralls
-      run: |
-        mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=${GITHUB_REF#refs/heads/} -DfailOnServiceError=false
+    - name: Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ env.COVERALLS_TOKEN }}
+        format: jacoco
+        flag-name: Java ${{ matrix.java }}
+        pull-request: ${{ github.event.number }}
+        fail-on-error: false
 
     - name: Install webapp dependencies
       run: cd main/webapp && npm install
@@ -258,7 +263,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.7.3
+      uses: shogo82148/actions-upload-release-asset@v1.7.5
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip
@@ -286,7 +291,7 @@ jobs:
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.7.3
+      uses: shogo82148/actions-upload-release-asset@v1.7.5
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}.tar.gz
@@ -303,7 +308,7 @@ jobs:
     - name: Upload Release Asset Mac
       id: upload-release-asset-mac
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.7.3
+      uses: shogo82148/actions-upload-release-asset@v1.7.5
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}.dmg
@@ -359,7 +364,7 @@ jobs:
 
     - name: Cleanup unused installer build artifact (delete)
       id: delete-build-artifact-win-with-java
-      uses: geekyeggo/delete-artifact@v4
+      uses: geekyeggo/delete-artifact@v5
       with:
         name: installertemp-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
         useGlob: false
@@ -391,7 +396,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java-installer
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.7.3
+      uses: shogo82148/actions-upload-release-asset@v1.7.5
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}.exe

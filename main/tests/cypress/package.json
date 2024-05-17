@@ -6,7 +6,7 @@
     "author": "OpenRefine",
     "private": true,
     "engines": {
-        "node": ">=16.0.0",
+        "node": ">=20.0.0",
         "npm":  ">=8.11.0",
         "yarn": ">=1.22.15"
     },
@@ -16,14 +16,14 @@
         "lint": "prettier --check . && eslint ."
     },
     "dependencies": {
-        "cypress": "13.6.6",
+        "cypress": "13.9.0",
         "cypress-file-upload": "^5.0.8"
     },
     "devDependencies": {
-        "eslint": "^8.57.0",
+        "eslint": "^9.2.0",
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-cypress": "^2.15.1",
+        "eslint-plugin-cypress": "^3.2.0",
         "prettier": "3.2.5"
     }
 }

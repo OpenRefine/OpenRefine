@@ -27,7 +27,6 @@
     </resources>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>tests/src</testSourceDirectory>
-    <outputDirectory>module/MOD-INF/classes</outputDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -84,12 +83,12 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev20240123-2.0.0</version>
+      <version>v3-rev20240327-2.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-sheets</artifactId>
-      <version>v4-rev20230815-2.0.0</version>
+      <version>v4-rev20240423-2.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -97,7 +96,12 @@
       <version>${jackson.version}</version>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <!-- test dependencies -->
 
     <dependency>

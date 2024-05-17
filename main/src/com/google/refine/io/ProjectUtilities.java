@@ -50,18 +50,20 @@ import com.google.refine.util.Pool;
 public class ProjectUtilities {
 
     final static Logger logger = LoggerFactory.getLogger("project_utilities");
+    public static final String DATA_ZIP = "data.zip";
+    public static final String DATA_TEMP_ZIP = "data.temp.zip";
+    public static final String DATA_OLD_ZIP = "data.old.zip";
 
     synchronized public static void save(Project project) throws IOException {
         synchronized (project) {
             long id = project.id;
             File dir = ((FileProjectManager) ProjectManager.singleton).getProjectDir(id);
 
-            File tempFile = new File(dir, "data.temp.zip");
+            File tempFile = new File(dir, DATA_TEMP_ZIP);
             try {
                 saveToFile(project, tempFile);
             } catch (IOException e) {
-                e.printStackTrace();
-                logger.warn("Failed to save project {}", id);
+                logger.warn("Failed to save project {}", id, e);
                 try {
                     tempFile.delete();
                 } catch (Exception e2) {
@@ -70,8 +72,8 @@ public class ProjectUtilities {
                 throw e;
             }
 
-            File file = new File(dir, "data.zip");
-            File oldFile = new File(dir, "data.old.zip");
+            File file = new File(dir, DATA_ZIP);
+            File oldFile = new File(dir, DATA_OLD_ZIP);
 
             if (file.exists()) {
                 file.renameTo(oldFile);
@@ -112,39 +114,23 @@ public class ProjectUtilities {
     }
 
     static public Project load(File dir, long id) {
-        try {
-            File file = new File(dir, "data.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
+        for (String filename : new String[] { DATA_ZIP, DATA_TEMP_ZIP, DATA_OLD_ZIP }) {
+            try {
+                File file = new File(dir, filename);
+                if (file.exists()) {
+                    return loadFromFile(file, id);
+                }
+            } catch (IOException e) {
+                logger.warn("Failed to load from data file {} / {}", dir, filename, e);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
-        try {
-            File file = new File(dir, "data.temp.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            File file = new File(dir, "data.old.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        logger.error("All data files and backup data files failed to load");
         return null;
     }
 
     static protected Project loadFromFile(
             File file,
-            long id) throws Exception {
+            long id) throws IOException {
         ZipFile zipFile = new ZipFile(file);
         try {
             Pool pool = new Pool();

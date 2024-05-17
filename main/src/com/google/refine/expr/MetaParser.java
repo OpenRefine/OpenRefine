@@ -33,18 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
-import clojure.lang.IFn;
-import clojure.lang.RT;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.google.refine.grel.Parser;
 
 abstract public class MetaParser {
 
@@ -65,65 +59,6 @@ abstract public class MetaParser {
     }
 
     static final protected Map<String, LanguageInfo> s_languages = new HashMap<String, LanguageInfo>();
-
-    // TODO: We should switch from using the internal compiler class
-//    final static private Var CLOJURE_READ_STRING = RT.var("clojure.core", "read-string");
-//    final static private Var CLOJURE_EVAL = RT.var("clojure.core", "eval");
-
-    static {
-        registerLanguageParser("grel", "General Refine Expression Language (GREL)", new LanguageSpecificParser() {
-
-            @Override
-            public Evaluable parse(String s) throws ParsingException {
-                return parseGREL(s);
-            }
-        }, "value");
-
-        registerLanguageParser("clojure", "Clojure", new LanguageSpecificParser() {
-
-            @Override
-            public Evaluable parse(String s) throws ParsingException {
-                try {
-//                    RT.load("clojure/core"); // Make sure RT is initialized
-                    Object foo = RT.CURRENT_NS; // Make sure RT is initialized
-                    IFn fn = (IFn) clojure.lang.Compiler.load(new StringReader(
-                            "(fn [value cell cells row rowIndex] " + s + ")"));
-
-                    // TODO: We should to switch from using Compiler.load
-                    // because it's technically an internal interface
-//                    Object code = CLOJURE_READ_STRING.invoke(
-//                            "(fn [value cell cells row rowIndex] " + s + ")"
-//                            );
-
-                    return new Evaluable() {
-
-                        private IFn _fn;
-
-                        public Evaluable init(IFn fn) {
-                            _fn = fn;
-                            return this;
-                        }
-
-                        @Override
-                        public Object evaluate(Properties bindings) {
-                            try {
-                                return _fn.invoke(
-                                        bindings.get("value"),
-                                        bindings.get("cell"),
-                                        bindings.get("cells"),
-                                        bindings.get("row"),
-                                        bindings.get("rowIndex"));
-                            } catch (Exception e) {
-                                return new EvalError(e.getMessage());
-                            }
-                        }
-                    }.init(fn);
-                } catch (Exception e) {
-                    throw new ParsingException(e.getMessage());
-                }
-            }
-        }, "value");
-    }
 
     /**
      * languagePrefix will be stored in the meta model as an identifier. so be careful when change it as it will break
@@ -174,8 +109,10 @@ abstract public class MetaParser {
     }
 
     static protected Evaluable parseGREL(String s) throws ParsingException {
-        Parser parser = new Parser(s);
-
-        return parser.getExpression();
+        LanguageInfo info = s_languages.get("grel");
+        if (info == null) {
+            throw new ParsingException("Default language GREL is not available");
+        }
+        return info.parser.parse(s);
     }
 }

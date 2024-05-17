@@ -1616,7 +1616,7 @@
        * filter, spell, lang, exact, scoring, key, prefixed, stemmed, format
        *
        * are the new parameters used by the new freebase search on googleapis.
-       * Please refer the the API documentation as these parameters
+       * Please refer to the API documentation as these parameters
        * will be transparently passed through to the search service.
        *
        * @see http://wiki.freebase.com/wiki/ApiSearch

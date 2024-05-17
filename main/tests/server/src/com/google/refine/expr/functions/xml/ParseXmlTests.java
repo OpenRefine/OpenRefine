@@ -36,10 +36,10 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class ParseXmlTests extends RefineTest {
+public class ParseXmlTests extends GrelTestBase {
 
     static Properties bindings;
     static String x = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +

@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.io;
 
+import static com.google.refine.io.FileHistoryEntryManager.HISTORY_DIR;
+import static com.google.refine.io.ProjectUtilities.DATA_ZIP;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -46,7 +49,6 @@ import java.time.Instant;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +61,7 @@ public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
 
     public static void save(ProjectMetadata projectMeta, File projectDir) throws IOException {
-        File tempFile = new File(projectDir, "metadata.temp.json");
+        File tempFile = new File(projectDir, ProjectMetadata.TEMP_FILE_NAME);
         saveToFile(projectMeta, tempFile);
         if (tempFile.length() == 0) {
             throw new IOException("Failed to save project metadata - keeping backups");
@@ -67,8 +69,8 @@ public class ProjectMetadataUtilities {
 
         // TODO Do we want to make sure we can successfully deserialize the file too?
 
-        File file = new File(projectDir, "metadata.json");
-        File oldFile = new File(projectDir, "metadata.old.json");
+        File file = new File(projectDir, ProjectMetadata.DEFAULT_FILE_NAME);
+        File oldFile = new File(projectDir, ProjectMetadata.OLD_FILE_NAME);
 
         if (file.exists()) {
             if (file.length() > 0) {
@@ -91,34 +93,25 @@ public class ProjectMetadataUtilities {
     }
 
     static public ProjectMetadata load(File projectDir) {
-        ProjectMetadata pm = null;
-
-        pm = loadMetaDataIfExist(projectDir, ProjectMetadata.DEFAULT_FILE_NAME);
-
-        if (pm == null) {
-            pm = loadMetaDataIfExist(projectDir, ProjectMetadata.TEMP_FILE_NAME);
+        if (!projectDir.exists()) {
+            logger.error("Project directory doesn't exist - {}", projectDir);
+            return null;
         }
-
-        if (pm == null) {
-            pm = loadMetaDataIfExist(projectDir, ProjectMetadata.OLD_FILE_NAME);
+        if (!projectDir.isDirectory()) {
+            logger.error("File isn't a project directory {}", projectDir);
+            return null;
         }
-
-        return pm;
-    }
-
-    private static ProjectMetadata loadMetaDataIfExist(File projectDir, String fileName) {
-        ProjectMetadata pm = null;
-        File file = new File(projectDir, fileName);
-        if (file.exists()) {
+        for (String filename : new String[] { ProjectMetadata.DEFAULT_FILE_NAME, ProjectMetadata.TEMP_FILE_NAME,
+                ProjectMetadata.OLD_FILE_NAME }) {
+            File file = new File(projectDir, filename);
             try {
-                pm = loadFromFile(file);
-            } catch (Exception e) {
-                logger.warn("load metadata failed: " + file.getAbsolutePath());
-                logger.error(ExceptionUtils.getStackTrace(e));
+                return loadFromFile(file);
+            } catch (IOException e) {
+                logger.warn("load metadata failed: {}", file.getAbsolutePath(), e);
             }
         }
-
-        return pm;
+        logger.error("Failed to load any metadata for project {}", projectDir.getAbsolutePath());
+        return null;
     }
 
     /**
@@ -139,13 +132,13 @@ public class ProjectMetadataUtilities {
                     + " cols X " + p.rows.size() + " rows - "
                     + StringUtils.join(columnNames, '|');
             p.dispose();
-            long ctime = System.currentTimeMillis();
-            long mtime = 0;
+            long ctime;
+            long mtime;
 
-            File dataFile = new File(projectDir, "data.zip");
+            File dataFile = new File(projectDir, DATA_ZIP);
             ctime = mtime = dataFile.lastModified();
 
-            File historyDir = new File(projectDir, "history");
+            File historyDir = new File(projectDir, HISTORY_DIR);
             File[] files = historyDir.listFiles();
             if (files != null) {
                 for (File f : files) {
@@ -157,12 +150,12 @@ public class ProjectMetadataUtilities {
             pm = new ProjectMetadata(Instant.ofEpochMilli(ctime),
                     Instant.ofEpochMilli(mtime),
                     tempName);
-            logger.error("Partially recovered missing metadata project in directory " + projectDir + " - " + tempName);
+            logger.error("Partially recovered missing metadata project in directory {} / {} ", projectDir, tempName);
         }
         return pm;
     }
 
-    static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
+    static protected ProjectMetadata loadFromFile(File metadataFile) throws IOException {
         Reader reader = new InputStreamReader(new FileInputStream(metadataFile), StandardCharsets.UTF_8);
         ProjectMetadata metadata = ParsingUtilities.mapper.readValue(reader, ProjectMetadata.class);
         metadata.setLastSave(); // No need to write it until it has been modified

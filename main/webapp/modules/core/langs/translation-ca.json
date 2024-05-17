@@ -19,7 +19,6 @@
     "core-index/about": "Quant a",
     "core-index/version": "Versió",
     "core-index/refine-version": "Versió $1",
-    "core-index/download-now": "Descarregar $1 ara.",
     "core-index/change-value": "Canviar valor de clau de preferència",
     "core-index/delete-key": "Esborrar clau de preferència",
     "core-index/key": "Clau",

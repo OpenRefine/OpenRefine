@@ -29,7 +29,6 @@ package com.google.refine.operations.row;
 
 import java.io.Serializable;
 
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -130,12 +129,17 @@ public class RowReorderOperationTests extends RefineTest {
 
         runOperation(op, project);
 
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "d");
-        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "f");
-        Assert.assertEquals(project.rows.get(4).cells.get(1).value, "F");
-        Assert.assertEquals(project.rows.get(5).cells.get(1).value, "h");
+        Project expected = createProject(
+                new String[] { "key", "first" },
+                new Serializable[][] {
+                        { "8", "b" },
+                        { "", "d" },
+                        { "2", "f" },
+                        { "10", "f" },
+                        { "9", "F" },
+                        { "1", "h" },
+                });
+        assertProjectEquals(project, expected);
     }
 
     @Test

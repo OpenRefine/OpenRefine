@@ -204,7 +204,7 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
     // It's conflicting though, breaking up the CSV files
     // It is a hack to parse out CSV files in the openrefine while creating a project with tags
     const options = {
-      encoding: 'US-ASCII',
+      encoding: 'UTF-8',
       separator: ',',
       ignoreLines: -1,
       headerLines: 1,

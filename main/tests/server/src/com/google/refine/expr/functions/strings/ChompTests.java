@@ -31,9 +31,9 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
+import com.google.refine.grel.GrelTestBase;
 
-public class ChompTests extends RefineTest {
+public class ChompTests extends GrelTestBase {
 
     @Test
     public void testChomp() {

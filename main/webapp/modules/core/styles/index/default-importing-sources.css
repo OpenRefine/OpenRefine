@@ -40,3 +40,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   max-width: 50em;
   height: 30em;
 }
+
+.file-input {
+    min-width: 200px;
+    height: 100px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.file-input-container {
+    position: relative;
+}
+
+.file-input-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-65%, 0%);
+    pointer-events: none;
+    text-align: center;
+    color: #555;
+}

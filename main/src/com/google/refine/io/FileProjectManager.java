@@ -39,6 +39,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -51,7 +53,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,9 @@ import com.google.refine.util.ParsingUtilities;
 public class FileProjectManager extends ProjectManager {
 
     final static protected String PROJECT_DIR_SUFFIX = ".project";
+    public static final String WORKSPACE_JSON = "workspace.json";
+    public static final String WORKSPACE_OLD_JSON = "workspace.old.json";
+    public static final String WORKSPACE_TEMP_JSON = "workspace.temp.json";
 
     protected File _workspaceDir;
 
@@ -101,16 +105,31 @@ public class FileProjectManager extends ProjectManager {
     }
 
     static public File getProjectDir(File workspaceDir, long projectID) {
+        return getProjectDir(workspaceDir, projectID, true);
+    }
+
+    static public File getProjectDir(File workspaceDir, long projectID, boolean createIfMissing) {
         File dir = new File(workspaceDir, projectID + PROJECT_DIR_SUFFIX);
         if (!dir.exists()) {
-            dir.mkdir();
+            if (createIfMissing) {
+                logger.warn("(Re)creating missing project directory - {}", dir.getAbsolutePath());
+                dir.mkdir();
+            } else {
+                logger.error("Missing project directory {}", dir.getAbsolutePath());
+                return null;
+            }
         }
         return dir;
     }
 
     @JsonIgnore
     public File getProjectDir(long projectID) {
-        return getProjectDir(_workspaceDir, projectID);
+        return getProjectDir(projectID, true);
+    }
+
+    @JsonIgnore
+    public File getProjectDir(long projectID, boolean createIfMissing) {
+        return getProjectDir(_workspaceDir, projectID, createIfMissing);
     }
 
     /**
@@ -170,7 +189,7 @@ public class FileProjectManager extends ProjectManager {
             } else {
                 FileOutputStream fout = new FileOutputStream(destEntry);
                 try {
-                    IOUtils.copy(tin, fout);
+                    tin.transferTo(fout);
                 } finally {
                     fout.close();
                 }
@@ -205,6 +224,7 @@ public class FileProjectManager extends ProjectManager {
 
                     tos.putArchiveEntry(entry);
 
+                    // TODO: replace with Files.copy(file.toPath(), tos);
                     copyFile(file, tos);
 
                     tos.closeArchiveEntry();
@@ -213,6 +233,10 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
+    /**
+     * @deprecated use {@link Files#copy(Path, OutputStream)}
+     */
+    @Deprecated(since = "3.9")
     protected void copyFile(File file, OutputStream os) throws IOException {
         final int buffersize = 4096;
 
@@ -260,23 +284,23 @@ public class FileProjectManager extends ProjectManager {
             }
             File tempFile = saveWorkspaceToTempFile();
             if (tempFile == null) return;
-            File file = new File(_workspaceDir, "workspace.json");
-            File oldFile = new File(_workspaceDir, "workspace.old.json");
+            File file = new File(_workspaceDir, WORKSPACE_JSON);
+            File oldFile = new File(_workspaceDir, WORKSPACE_OLD_JSON);
 
             if (oldFile.exists()) {
                 if (!oldFile.delete()) {
-                    logger.warn("Failed to delete previous backup workspace.old.json");
+                    logger.warn("Failed to delete previous backup {}", oldFile.getAbsolutePath());
                 }
             }
 
             if (file.exists()) {
                 if (!file.renameTo(oldFile)) {
-                    logger.error("Failed to rename workspace.json to workspace.old.json");
+                    logger.error("Failed to rename {} to {}", file.getAbsolutePath(), oldFile.getAbsolutePath());
                 }
             }
 
             if (!tempFile.renameTo(file)) {
-                logger.error("Failed to rename new temp workspace file to workspace.json");
+                logger.error("Failed to rename new temp workspace file to {}", file.getAbsolutePath());
             }
             projectRemoved = false;
             logger.info("Saved workspace");
@@ -284,12 +308,11 @@ public class FileProjectManager extends ProjectManager {
     }
 
     private File saveWorkspaceToTempFile() {
-        File tempFile = new File(_workspaceDir, "workspace.temp.json");
+        File tempFile = new File(_workspaceDir, WORKSPACE_TEMP_JSON);
         try {
             saveToFile(tempFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.warn("Failed to save workspace");
+        } catch (IOException e) {
+            logger.warn("Failed to save workspace", e);
             return null;
         }
         // set the workspace to owner-only readable, because it can contain credentials
@@ -302,7 +325,10 @@ public class FileProjectManager extends ProjectManager {
         List<Long> modified = _projectsMetadata.entrySet().stream()
                 .filter(e -> {
                     ProjectMetadata metadata = e.getValue();
-                    if (metadata == null) return false;
+                    if (metadata == null) {
+                        logger.error("Missing metadata for project ID {}", e.getKey());
+                        return false;
+                    }
                     return metadata.isDirty();
                 }).map(Entry::getKey).collect(Collectors.toList());
         return modified;
@@ -313,6 +339,8 @@ public class FileProjectManager extends ProjectManager {
             ProjectMetadata metadata = _projectsMetadata.get(id);
             if (metadata != null) {
                 ProjectMetadataUtilities.save(metadata, getProjectDir(id));
+            } else {
+                logger.error("Missing metadata on save for project ID {}", id);
             }
         }
     }
@@ -364,14 +392,10 @@ public class FileProjectManager extends ProjectManager {
     }
 
     protected void load() {
-        if (loadFromFile(new File(_workspaceDir, "workspace.json"))) {
-            return;
-        }
-        if (loadFromFile(new File(_workspaceDir, "workspace.temp.json"))) {
-            return;
-        }
-        if (loadFromFile(new File(_workspaceDir, "workspace.old.json"))) {
-            return;
+        for (String filename : new String[] { WORKSPACE_JSON, WORKSPACE_TEMP_JSON, WORKSPACE_OLD_JSON }) {
+            if (loadFromFile(new File(_workspaceDir, filename))) {
+                return;
+            }
         }
         logger.error("Failed to load workspace from any attempted alternatives.");
     }
@@ -381,21 +405,19 @@ public class FileProjectManager extends ProjectManager {
 
         _projectsMetadata.clear();
 
-        boolean found = false;
-
         if (file.exists() || file.canRead()) {
             try {
                 ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
 
+                // TODO: This seems odd. Why is this here?
                 LocaleUtils.setLocale((String) this.getPreferenceStore().get("userLang"));
 
-                found = true;
+                return true;
             } catch (IOException e) {
-                logger.warn(e.toString());
+                logger.warn("Failed to load workspace", e);
             }
         }
-
-        return found;
+        return false;
     }
 
     protected void recover() {
@@ -403,8 +425,7 @@ public class FileProjectManager extends ProjectManager {
         File[] files = _workspaceDir.listFiles();
         if (files == null) return;
         for (File file : files) {
-            if (file == null) continue;
-            if (file.isDirectory() && !file.isHidden()) {
+            if (file != null && file.isDirectory() && !file.isHidden()) {
                 String dirName = file.getName();
                 if (file.getName().endsWith(PROJECT_DIR_SUFFIX)) {
                     String idString = dirName.substring(0, dirName.length() - PROJECT_DIR_SUFFIX.length());
@@ -417,12 +438,10 @@ public class FileProjectManager extends ProjectManager {
 
                     if (id > 0 && !_projectsMetadata.containsKey(id)) {
                         if (loadProjectMetadata(id)) {
-                            logger.info("Recovered project named "
-                                    + getProjectMetadata(id).getName()
-                                    + " in directory " + dirName);
+                            logger.info("Recovered project named {} in directory {}", getProjectMetadata(id).getName(), dirName);
                             recovered = true;
                         } else {
-                            logger.warn("Failed to recover project in directory " + dirName);
+                            logger.warn("Failed to recover project in directory {}", dirName);
 
                             file.renameTo(new File(file.getParentFile(), dirName + ".corrupted"));
                         }
@@ -460,7 +479,11 @@ public class FileProjectManager extends ProjectManager {
     protected void loadProjects(List<Long> projectIDs) {
         for (Long id : projectIDs) {
 
-            File projectDir = getProjectDir(id);
+            File projectDir = getProjectDir(id, false);
+            if (projectDir == null) {
+                logger.error("Missing project directory for project {}", id);
+                continue;
+            }
             ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
 
             mergeEmptyUserMetadata(metadata);

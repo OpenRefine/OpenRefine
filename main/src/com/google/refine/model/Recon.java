@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -213,6 +214,7 @@ public class Recon implements HasFields {
             candidates = new ArrayList<ReconCandidate>(3);
         }
         candidates.add(candidate);
+        error = null;
     }
 
     @JsonIgnore
@@ -388,7 +390,7 @@ public class Recon implements HasFields {
         return null;
     }
 
-    static public Recon loadStreaming(String s) throws Exception {
+    static public Recon loadStreaming(String s) throws IOException {
         return ParsingUtilities.mapper.readValue(s, Recon.class);
     }
 
@@ -411,11 +413,11 @@ public class Recon implements HasFields {
         this.judgment = judgment != null ? judgment : Judgment.None;
         this.match = match;
         this.error = error;
-        if (error != null && match != null) {
-            throw new IllegalArgumentException("there is a match hence no error");
-        }
         this.features = features != null ? features : new Object[Feature_max];
         this.candidates = candidates != null ? candidates : new ArrayList<>();
+        if (error != null && !this.candidates.isEmpty()) {
+            throw new IllegalArgumentException("Recon deserialization: inconsistent state - error & candidates not allowed together");
+        }
         this.service = service != null ? service : "unknown";
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;

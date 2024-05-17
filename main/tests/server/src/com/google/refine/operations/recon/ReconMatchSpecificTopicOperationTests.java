@@ -27,19 +27,44 @@
 
 package com.google.refine.operations.recon;
 
+import java.io.Serializable;
+import java.util.Collections;
+
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
+import com.google.refine.model.Recon.Judgment;
 import com.google.refine.operations.OperationRegistry;
+import com.google.refine.operations.recon.ReconMatchSpecificTopicOperation.ReconItem;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ReconMatchSpecificTopicOperationTests extends RefineTest {
 
+    Project project;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "recon-match-specific-topic-to-cells", ReconMatchSpecificTopicOperation.class);
+    }
+
+    @BeforeMethod
+    public void setupInitialState() throws Exception {
+        project = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched, 1234L)) },
+                        { "c", "h" },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None, 5678L)) }
+                });
     }
 
     @Test
@@ -63,5 +88,45 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                 "    \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\"\n" +
                 "  }";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json);
+    }
+
+    @Test
+    public void testMatchSpecificTopicOperation() throws Exception {
+        ReconItem reconItem = new ReconItem("hello", "world", new String[] { "human" });
+        AbstractOperation operation = new ReconMatchSpecificTopicOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased),
+                "bar", reconItem,
+                "http://identifier.space", "http://schema.space");
+
+        runOperation(operation, project);
+
+        long historyEntryId = project.history.getLastPastEntries(1).get(0).id;
+
+        long commonReconId = project.rows.get(1).getCell(1).recon.id;
+
+        Recon reconE = testRecon("e", "h", Recon.Judgment.Matched, project.rows.get(0).getCell(1).recon.id);
+        reconE.features = new Object[] { null, null, null, null };
+        reconE.judgmentHistoryEntry = historyEntryId;
+        reconE.match = reconItem.getCandidate();
+        reconE.matchRank = -1;
+        reconE.judgmentAction = "mass";
+        Recon reconH = new Recon(commonReconId, historyEntryId, Recon.Judgment.Matched, reconItem.getCandidate(), null,
+                new Object[4], null, null, "http://identifier.space", "http://schema.space", "mass", 1, -1);
+        reconH.candidates = null;
+        Recon reconB = testRecon("b", "j", Recon.Judgment.None, project.rows.get(2).getCell(1).recon.id);
+        reconB.features = new Object[] { null, null, null, null };
+        reconB.judgmentHistoryEntry = historyEntryId;
+        reconB.match = reconItem.getCandidate();
+        reconB.matchRank = -1;
+        reconB.judgmentAction = "mass";
+        reconB.judgment = Recon.Judgment.Matched;
+        Project expected = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", reconE) },
+                        { "c", new Cell("h", reconH) },
+                        { "c", new Cell("d", reconB) }
+                });
+        assertProjectEquals(project, expected);
     }
 }

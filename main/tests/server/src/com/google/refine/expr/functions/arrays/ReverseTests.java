@@ -29,10 +29,10 @@ package com.google.refine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.grel.GrelTestBase;
 
-public class ReverseTests extends RefineTest {
+public class ReverseTests extends GrelTestBase {
 
     @Test
     public void reverseJsonArray() throws ParsingException {

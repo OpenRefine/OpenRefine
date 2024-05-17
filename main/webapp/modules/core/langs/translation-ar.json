@@ -84,7 +84,6 @@
     "core-index-create/done": "تم.",
     "core-index/homepage": "الصفحة الرئيسية",
     "core-index/prefs-loading-failed": "فشل في تحميل التفضيلات.",
-    "core-index/download-now": "تحميل $1 الآن.",
     "core-index-open/open-proj": "فتح مشروع",
     "core-index-import/warning-record-path": "يرجى تحديد مسار السجل أولا.",
     "core-index-import/comma-separated": "أرقام مفصولة بفواصل",

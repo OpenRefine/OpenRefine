@@ -37,14 +37,11 @@ import static org.testng.Assert.fail;
 
 import java.util.Properties;
 
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -52,16 +49,10 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Project;
 
-public class GrelTests extends RefineTest {
+public class GrelTests extends GrelTestBase {
 
     Project project;
     Properties bindings;
-
-    @Override
-    @BeforeTest
-    public void init() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
 
     @BeforeMethod
     public void SetUp() {

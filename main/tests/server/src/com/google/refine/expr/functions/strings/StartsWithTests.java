@@ -32,9 +32,9 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
+import com.google.refine.grel.GrelTestBase;
 
-public class StartsWithTests extends RefineTest {
+public class StartsWithTests extends GrelTestBase {
 
     @Test
     public void testStartsWith() {

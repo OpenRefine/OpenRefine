@@ -32,10 +32,10 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class TrimTests extends RefineTest {
+public class TrimTests extends GrelTestBase {
 
     private static String NBSP = "\u00A0";
     private static String ENQUAD = "\u2000";

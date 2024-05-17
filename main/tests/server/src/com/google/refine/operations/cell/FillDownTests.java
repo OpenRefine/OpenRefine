@@ -29,6 +29,7 @@ package com.google.refine.operations.cell;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.testng.annotations.AfterMethod;
@@ -38,7 +39,10 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.DecoratedValue;
+import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.facets.ListFacet;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -50,6 +54,8 @@ import com.google.refine.util.TestUtils;
 public class FillDownTests extends RefineTest {
 
     Project project = null;
+    Project toFillDown = null;
+    ListFacet.ListFacetConfig facet;
 
     @BeforeSuite
     public void registerOperation() {
@@ -66,11 +72,25 @@ public class FillDownTests extends RefineTest {
                         { "e", "f", null },
                         { null, null, "h" }
                 });
+        toFillDown = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "", "i" }
+                });
+
+        facet = new ListFacet.ListFacetConfig();
+        facet.name = "hello";
+        facet.expression = "grel:value";
+        facet.columnName = "hello";
     }
 
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.id);
+        ProjectManager.singleton.deleteProject(toFillDown.id);
     }
 
     @Test
@@ -104,43 +124,41 @@ public class FillDownTests extends RefineTest {
     // For issue #742
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
-    public void testFillDownRecords() throws Exception {
-        AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
-                "second");
+    public void testFillDownRecordsNoFacets() throws Exception {
+        FillDownOperation operation = new FillDownOperation(EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
 
-        runOperation(op, project);
+        runOperation(operation, toFillDown);
 
-        Project expectedProject = createProject(
-                new String[] { "key", "first", "second" },
+        Project expected = createProject(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
-                        { null, "d", "c" },
-                        { "e", "f", null },
-                        { null, null, "h" },
+                        { "", "b", "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
                 });
-        assertProjectEquals(project, expectedProject);
+
+        assertProjectEquals(toFillDown, expected);
     }
 
     // For issue #742
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
-    public void testFillDownRows() throws Exception {
-        AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
-                "second");
+    public void testFillDownRowsNoFacets() throws Exception {
+        FillDownOperation operation = new FillDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "bar");
 
-        runOperation(op, project);
+        runOperation(operation, toFillDown);
 
-        Project expectedProject = createProject(
-                new String[] { "key", "first", "second" },
+        Project expected = createProject(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "a", "b", "c" },
-                        { null, "d", "c" },
-                        { "e", "f", "c" },
-                        { null, null, "h" },
+                        { "", "b", "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
                 });
-        assertProjectEquals(project, expectedProject);
+
+        assertProjectEquals(toFillDown, expected);
     }
 
     @Test
@@ -172,5 +190,66 @@ public class FillDownTests extends RefineTest {
                         { null, null, "h" },
                 });
         assertProjectEquals(project, expectedProject);
+    }
+
+    @Test
+    public void testFillDownRowsFacets() throws Exception {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        FillDownOperation operation = new FillDownOperation(engineConfig, "bar");
+
+        runOperation(operation, toFillDown);
+
+        Project expected = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertProjectEquals(toFillDown, expected);
+    }
+
+    @Test
+    public void testFillDownRecordsFacets() throws Exception {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("c", "c"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        FillDownOperation operation = new FillDownOperation(engineConfig, "bar");
+
+        runOperation(operation, toFillDown);
+
+        Project expected = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "", "i" }
+                });
+
+        assertProjectEquals(toFillDown, expected);
+    }
+
+    @Test
+    public void testFillDownRowsKeyColumn() throws Exception {
+        FillDownOperation operation = new FillDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "foo");
+
+        runOperation(operation, toFillDown);
+
+        Project expected = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "a", null, "d" },
+                        { "e", null, "f" },
+                        { "e", "g", "h" },
+                        { "e", "", "i" }
+                });
+
+        assertProjectEquals(toFillDown, expected);
     }
 }

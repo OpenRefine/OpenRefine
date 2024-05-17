@@ -416,7 +416,6 @@
     "core-index-import/warning-import-file": "Du må angi en prosjektfil.",
     "core-index-import/single-project": "OpenRefine kan kun importere flere filer inn i ett prosjekt hvis alle valgte filer har samme filformat.",
     "core-dialogs/cluster-rows": "($1 rader)",
-    "core-index/download-now": "Last ned $1 nå.",
     "core-index/refine-version": "Versjon $1",
     "core-about/thanks": "Spesiell takk til",
     "core-about/contributors": "Bidragsytere (i kronologisk rekkefølge)",

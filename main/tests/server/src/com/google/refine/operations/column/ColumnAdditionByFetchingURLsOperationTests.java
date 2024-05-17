@@ -101,9 +101,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             "    \"status\" : \"pending\"\n" +
             " }";
 
-    @Override
     @BeforeTest
-    public void init() {
+    public void initOperation() {
         logger = LoggerFactory.getLogger(this.getClass());
         OperationRegistry.registerOperation(getCoreModule(), "column-addition-by-fetching-urls",
                 ColumnAdditionByFetchingURLsOperation.class);

@@ -114,8 +114,6 @@ function registerCommands() {
   RS.registerCommand(module, "split-column", new Packages.com.google.refine.commands.column.SplitColumnCommand());
   RS.registerCommand(module, "reorder-columns", new Packages.com.google.refine.commands.column.ReorderColumnsCommand());
 
-  RS.registerCommand(module, "denormalize", new Packages.com.google.refine.commands.row.DenormalizeCommand());
-
   RS.registerCommand(module, "reconcile", new Packages.com.google.refine.commands.recon.ReconcileCommand());
   RS.registerCommand(module, "recon-match-best-candidates", new Packages.com.google.refine.commands.recon.ReconMatchBestCandidatesCommand());
   RS.registerCommand(module, "recon-mark-new-topics", new Packages.com.google.refine.commands.recon.ReconMarkNewTopicsCommand());
@@ -321,6 +319,42 @@ function registerImporting() {
   );
 }
 
+function registerExporters() {
+   var ER = Packages.com.google.refine.exporters.ExporterRegistry;
+   ER.registerExporter("csv", new Packages.com.google.refine.exporters.CsvExporter());
+   ER.registerExporter("tsv", new Packages.com.google.refine.exporters.CsvExporter('\t'.charAt(0)));
+   ER.registerExporter("*sv", new Packages.com.google.refine.exporters.CsvExporter());
+   ER.registerExporter("xls", new Packages.com.google.refine.exporters.XlsExporter(false));
+   ER.registerExporter("xlsx", new Packages.com.google.refine.exporters.XlsExporter(true));
+   ER.registerExporter("ods", new Packages.com.google.refine.exporters.OdsExporter());
+   ER.registerExporter("html", new Packages.com.google.refine.exporters.HtmlTableExporter());
+   ER.registerExporter("template", new Packages.com.google.refine.exporters.TemplatingExporter());
+   ER.registerExporter("sql", new Packages.com.google.refine.exporters.sql.SqlExporter());
+}
+
+function registerLanguages() {
+  var MP = Packages.com.google.refine.expr.MetaParser;
+  MP.registerLanguageParser("grel", "General Refine Expression Language (GREL)", Packages.com.google.refine.grel.Parser.grelParser, "value");
+  MP.registerLanguageParser("clojure", "Clojure", new Packages.com.google.refine.expr.ClojureParser(), "value");
+}
+
+function registerDistances() {
+   var DF = Packages.com.google.refine.clustering.knn.DistanceFactory;
+   var VicinoDistance = Packages.com.google.refine.clustering.knn.VicinoDistance;
+   DF.put("levenshtein", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.LevenshteinDistance()));
+   DF.put("ppm", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.PPMDistance()));
+}
+
+function registerKeyers() {
+   var KF = Packages.com.google.refine.clustering.binning.KeyerFactory;
+   KF.put("fingerprint", new Packages.com.google.refine.clustering.binning.FingerprintKeyer());
+   KF.put("ngram-fingerprint", new Packages.com.google.refine.clustering.binning.NGramFingerprintKeyer());
+   KF.put("metaphone3", new Packages.com.google.refine.clustering.binning.Metaphone3Keyer());
+   KF.put("cologne-phonetic", new Packages.com.google.refine.clustering.binning.ColognePhoneticKeyer());
+   KF.put("daitch-mokotoff", new Packages.com.google.refine.clustering.binning.DaitchMokotoffKeyer());
+   KF.put("beider-morse", new Packages.com.google.refine.clustering.binning.BeiderMorseKeyer());
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
@@ -330,6 +364,10 @@ function init() {
   registerCommands();
   registerOperations();
   registerImporting();
+  registerExporters();
+  registerLanguages();
+  registerDistances();
+  registerKeyers();
 
   var commonModules = [
       "3rdparty/jquery.js",

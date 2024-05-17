@@ -40,6 +40,7 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -188,14 +189,14 @@ public class Project {
         }
     }
 
-    static public Project loadFromInputStream(InputStream is, long id, Pool pool) throws Exception {
-        return loadFromReader(new LineNumberReader(new InputStreamReader(is, "UTF-8")), id, pool);
+    static public Project loadFromInputStream(InputStream is, long id, Pool pool) throws IOException {
+        return loadFromReader(new LineNumberReader(new InputStreamReader(is, StandardCharsets.UTF_8)), id, pool);
     }
 
     static private Project loadFromReader(
             LineNumberReader reader,
             long id,
-            Pool pool) throws Exception {
+            Pool pool) throws IOException {
         long start = System.currentTimeMillis();
 
         // version of Refine which wrote the file

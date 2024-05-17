@@ -624,7 +624,6 @@
     "core-views/choose-reconciliation-service": "Escolher um serviço de reconciliação",
     "core-dialogs/sel-and-ord": "Selecione e ordene as colunas para exportar",
     "core-views/rows": "linhas",
-    "core-index/download-now": "Descarregue $1 agora.",
     "core-index/pref-key": "Valor da chave de preferência:",
     "core-views/copy-recon2": "Copiar dados de reconciliação para outras colunas",
     "core-buttons/add-url": "Adicionar outra URL",

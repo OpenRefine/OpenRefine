@@ -1,25 +1,20 @@
 
 package com.google.refine.expr.functions.strings;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Map;
 
 import com.optimaize.langdetect.i18n.LdLocale;
-import org.junit.Assert;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class DetectLanguageTest extends RefineTest {
+public class DetectLanguageTest extends GrelTestBase {
 
-    String functionName;
-
-    @Override
-    @BeforeTest
-    public void init() {
-        functionName = "detectLanguage";
-    }
+    String functionName = "detectLanguage";
 
     @Test
     public void testDetectLanguage() {
@@ -30,15 +25,15 @@ public class DetectLanguageTest extends RefineTest {
                 "Ich bin sehr sicher dass dies funktioniert", LdLocale.fromString("de"));
 
         samples.forEach((s, ldLocale) -> {
-            Assert.assertEquals(invoke(functionName, s), ldLocale.getLanguage());
-            Assert.assertTrue(invoke(functionName, s) instanceof String);
+            assertEquals(invoke(functionName, s), ldLocale.getLanguage());
+            assertTrue(invoke(functionName, s) instanceof String);
         });
     }
 
     @Test
     public void testDetectLanguageInvalidParams() {
-        Assert.assertTrue(invoke(functionName) instanceof EvalError);
-        Assert.assertTrue(invoke(functionName,
+        assertTrue(invoke(functionName) instanceof EvalError);
+        assertTrue(invoke(functionName,
                 "Estoy muy seguro de que esto funciona",
                 "Ich bin sehr sicher dass dies funktioniert") instanceof EvalError);
     }

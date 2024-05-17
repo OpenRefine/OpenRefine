@@ -32,6 +32,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,14 +41,15 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.jena.atlas.json.JSON;
-import org.apache.jena.atlas.json.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.io.FileUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.util.GetProjectIDException;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class FileProjectManagerTests {
@@ -119,8 +121,8 @@ public class FileProjectManagerTests {
         manager.saveWorkspace();
 
         InputStream inputStream = new FileInputStream(workspaceFile);
-        JsonObject json = JSON.parse(inputStream);
-        assertTrue(json.get("projectIDs").getAsArray().isEmpty(), "deleted project still in workspace.json");
+        JsonNode json = ParsingUtilities.mapper.readTree(inputStream);
+        assertTrue(json.get("projectIDs").isEmpty(), "deleted project still in workspace.json");
     }
 
     /**
@@ -154,6 +156,15 @@ public class FileProjectManagerTests {
         long timeAfterB = metaBFile.lastModified();
         assertEquals(timeBeforeB, timeAfterB, "Unmodified project written when it didn't need to be");
         assertNotEquals(timeBeforeA, timeAfterA, "Modified project not written");
+        // Test handling of corrupted workspace with missing metadata file
+        try {
+            FileUtils.deleteDirectory(metaAFile.getParentFile());
+        } catch (IOException e) {
+            fail("Failed to delete metadata directory for " + metaAFile);
+        }
+        // Reload our intentionally corrupted workspace.
+        manager = new FileProjectManager(workspaceDir);
+        assertEquals(manager.getProjectID("B"), idB);
     }
 
     @Test

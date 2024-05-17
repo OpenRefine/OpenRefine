@@ -32,10 +32,10 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class ReplaceTests extends RefineTest {
+public class ReplaceTests extends GrelTestBase {
 
     @Test
     public void testReplace() {
