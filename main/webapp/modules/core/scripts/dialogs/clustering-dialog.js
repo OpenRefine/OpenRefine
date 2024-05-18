@@ -266,9 +266,9 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 .appendTo(li);
 
                 checkBox.on('change', function() {
-                    cluster.checkBoxs[c] = this.checked;
+                    cluster.checkBoxes[c] = this.checked;
                 });
-                checkBox.attr("checked" , cluster.checkBoxs[c]);
+                checkBox.attr("checked" , cluster.checkBoxes[c]);
                 if(!cluster.edit){
                     checkBox.attr("disabled","true");
                 }
@@ -311,20 +311,22 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 .attr("href",url)
                 .appendTo(div);
 
-            var editCheck = $('<input type="checkbox" style = "accent-color: gray;" />')
-                .on('change',function() {
-                    cluster.edit = this.checked;
-                    const checkboxChoicesList = document.getElementsByClassName("Checkbox_Choice" + index.toString());
-                    for(let i = 0; i < checkboxChoicesList.length; i++){
-                        const checkbox = $(checkboxChoicesList[i]);
-                        if(this.checked) {
+            var editCheck = $('<input type="checkbox" style="accent-color: gray;" />')
+                .on('change', function() {
+                    var isChecked = $(this).prop('checked');
+                    cluster.edit = isChecked;
+                    const checkboxChoicesList = $(".Checkbox_Choice" + index.toString());
+                    
+                    checkboxChoicesList.each(function() {
+                        const checkbox = $(this);
+                        if (isChecked) {
                             checkbox.prop('disabled', false);
                             checkbox.prop('checked', true).trigger('change');
                         } else {
                             checkbox.prop('checked', false).trigger('change');
                             checkbox.prop('disabled', true);
                         }
-                    }
+                    });
                 }).appendTo(tr.insertCell(0));
 
             $(tr.insertCell(1))
@@ -416,7 +418,7 @@ ClusteringDialog.prototype._updateData = function(data) {
             choices: this,
             value: this[0].v,
             size: this.length,
-            checkBoxs : []
+            checkBoxes : []
         };
 
         var sum = 0;
