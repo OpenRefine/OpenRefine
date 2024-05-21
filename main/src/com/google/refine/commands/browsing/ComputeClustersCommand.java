@@ -75,9 +75,9 @@ public class ComputeClustersCommand extends Command {
             JSONObject jsonObject = new JSONObject(clusterer_conf);
             JSONObject params = jsonObject.getJSONObject("params");
 
-            if(params.has("expression")){
+            if (params.has("expression")) {
                 String expression = params.getString("expression");
-                if(jsonObject.getString("function") == "UserDefinedKeyer") {
+                if (jsonObject.getString("function") == "UserDefinedKeyer") {
                     KeyerFactory.put("userdefinedkeyer", new UserDefinedKeyer(expression));
                 } else {
                     DistanceFactory.put("userdefineddistance", new UserDefinedDistance(expression));
