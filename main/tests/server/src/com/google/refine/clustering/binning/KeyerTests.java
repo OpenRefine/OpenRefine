@@ -142,7 +142,16 @@ public class KeyerTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
+    }
+
+    @BeforeMethod
+    public void registerGRELParser() {
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
     }
 
     @BeforeMethod
