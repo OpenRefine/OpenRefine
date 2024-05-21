@@ -62,10 +62,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
-import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.grel.Parser;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
@@ -117,7 +115,6 @@ public class RefineTest {
         }
         // This just keeps track of any failed test, for cleanupWorkspace
         testFailed = false;
-        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
 
     @BeforeMethod
