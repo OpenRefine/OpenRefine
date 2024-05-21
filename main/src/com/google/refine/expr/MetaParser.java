@@ -73,6 +73,16 @@ abstract public class MetaParser {
         s_languages.put(languagePrefix, new LanguageInfo(name, parser, defaultExpression));
     }
 
+    /**
+     * Unregisters a language.
+     * 
+     * @param languagePrefix
+     *            the prefix with which the language was registered
+     */
+    static public void unregisterLanguageParser(String languagePrefix) {
+        s_languages.remove(languagePrefix.toLowerCase());
+    }
+
     static public LanguageInfo getLanguageInfo(String languagePrefix) {
         return s_languages.get(languagePrefix.toLowerCase());
     }
