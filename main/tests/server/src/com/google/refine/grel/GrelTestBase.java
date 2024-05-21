@@ -24,6 +24,16 @@ public class GrelTestBase extends RefineTest {
 
     protected static Properties bindings = null;
 
+    @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
+    }
+
     @BeforeTest
     public void initLogger() {
         logger = LoggerFactory.getLogger(this.getClass());

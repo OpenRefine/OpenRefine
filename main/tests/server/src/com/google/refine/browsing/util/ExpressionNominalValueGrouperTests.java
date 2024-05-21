@@ -46,6 +46,7 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -70,6 +71,16 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
     private static final String columnName = "Col1";
     private static final int numberOfRows = 5;
     private static final String projectName = "ExpressionNominalValueGrouper";
+
+    @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
+    }
 
     @Override
     @BeforeTest
