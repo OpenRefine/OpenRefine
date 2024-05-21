@@ -43,6 +43,8 @@ import com.google.refine.browsing.DecoratedValue;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.facets.ListFacet;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -57,6 +59,16 @@ public class BlankDownTests extends RefineTest {
     Project projectToBlankDown = null;
     Project projectForRecordKey = null;
     ListFacet.ListFacetConfig facet;
+
+    @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
+    }
 
     @BeforeSuite
     public void registerOperation() {
