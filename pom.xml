@@ -50,6 +50,9 @@
       <id>dfhuynh</id>
       <name>David F. Huynh</name>
       <url>https://github.com/dfhuynh</url>
+      <roles>
+        <role>Developer Emeritus</role>
+      </roles>  
     </developer>
   </developers>
 
