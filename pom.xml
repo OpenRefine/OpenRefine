@@ -111,7 +111,7 @@
     <mockito.version>5.11.0</mockito.version>
 
     <!-- plugin versions -->
-    <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
+    <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.3.0</exec-maven-plugin.version>
