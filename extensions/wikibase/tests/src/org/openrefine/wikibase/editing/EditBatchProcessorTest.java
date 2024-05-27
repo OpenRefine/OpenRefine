@@ -26,6 +26,7 @@ package org.openrefine.wikibase.editing;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -54,6 +55,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.EditingResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -124,6 +126,60 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         NewEntityLibrary expectedLibrary = new NewEntityLibrary();
         expectedLibrary.setId(1234L, "Q1234");
         assertEquals(expectedLibrary, library);
+    }
+
+    @Test
+    public void testFallbackToSecondTag() throws Exception {
+        List<EntityEdit> batch = new ArrayList<>();
+        batch.add(new ItemEditBuilder(TestingData.existingId)
+                .addAlias(Datamodel.makeMonolingualTextValue("my new alias", "en"))
+                .build());
+        ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
+                .withLabel(Datamodel.makeMonolingualTextValue("pomme", "fr"))
+                .withDescription(Datamodel.makeMonolingualTextValue("fruit délicieux", "fr")).build();
+        when(fetcher.getEntityDocuments(Collections.singletonList(TestingData.existingId.getId())))
+                .thenReturn(Collections.singletonMap(TestingData.existingId.getId(), existingItem));
+
+        when(editor.editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag"))))
+                .thenThrow(new MediaWikiApiErrorException("badtags", "The tag 'first-tag' cannot be manually applied"));
+        when(editor.editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("second-tag"))))
+                .thenReturn(new EditingResult(12345L));
+
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag,
+                Arrays.asList("first-tag", "second-tag"), 50, 60);
+        assertEquals(1, processor.remainingEdits());
+        processor.performEdit();
+        assertEquals(0, processor.remainingEdits());
+
+        verify(editor, times(1)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag")));
+        verify(editor, times(1)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("second-tag")));
+    }
+
+    @Test
+    public void testFallbackToNoTag() throws Exception {
+        List<EntityEdit> batch = new ArrayList<>();
+        batch.add(new ItemEditBuilder(TestingData.existingId)
+                .addAlias(Datamodel.makeMonolingualTextValue("my new alias", "en"))
+                .build());
+        ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
+                .withLabel(Datamodel.makeMonolingualTextValue("pomme", "fr"))
+                .withDescription(Datamodel.makeMonolingualTextValue("fruit délicieux", "fr")).build();
+        when(fetcher.getEntityDocuments(Collections.singletonList(TestingData.existingId.getId())))
+                .thenReturn(Collections.singletonMap(TestingData.existingId.getId(), existingItem));
+
+        when(editor.editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag"))))
+                .thenThrow(new MediaWikiApiErrorException("badtags", "The tag 'first-tag' cannot be manually applied"));
+        when(editor.editEntityDocument(any(), anyBoolean(), any(), eq(Collections.emptyList())))
+                .thenReturn(new EditingResult(12345L));
+
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag,
+                Arrays.asList("first-tag"), 50, 60);
+        assertEquals(1, processor.remainingEdits());
+        processor.performEdit();
+        assertEquals(0, processor.remainingEdits());
+
+        verify(editor, times(1)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag")));
+        verify(editor, times(1)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.emptyList()));
     }
 
     @Test
