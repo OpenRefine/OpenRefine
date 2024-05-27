@@ -62,8 +62,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
@@ -355,25 +353,6 @@ public class RefineTest {
     static public void verifyGetArrayOption(String name, ObjectNode options) {
         verify(options, times(1)).has(name);
         verify(options, times(1)).get(name);
-    }
-
-    /**
-     * Lookup a control function by name and invoke it with a variable number of args
-     */
-    protected static Object invoke(String name, Object... args) {
-        // registry uses static initializer, so no need to set it up
-        Function function = ControlFunctionRegistry.getFunction(name);
-        if (bindings == null) {
-            bindings = new Properties();
-        }
-        if (function == null) {
-            throw new IllegalArgumentException("Unknown function " + name);
-        }
-        if (args == null) {
-            return function.call(bindings, new Object[0]);
-        } else {
-            return function.call(bindings, args);
-        }
     }
 
     @AfterMethod

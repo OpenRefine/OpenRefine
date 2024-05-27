@@ -51,7 +51,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.MetaParser;
@@ -60,7 +59,7 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-public class FunctionTests extends RefineTest {
+public class FunctionTests extends GrelTestBase {
 
     Project project;
     Engine engine;

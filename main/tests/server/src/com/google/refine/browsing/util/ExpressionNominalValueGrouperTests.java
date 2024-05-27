@@ -45,8 +45,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.Evaluable;
-import com.google.refine.expr.MetaParser;
-import com.google.refine.grel.Parser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -66,21 +64,18 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
     private static String stringStringValue = "a";
 
     private static ExpressionNominalValueGrouper grouper;
-    private static Evaluable eval;
+    private static Evaluable eval = new Evaluable() {
+
+        @Override
+        public Object evaluate(Properties bindings) {
+            return bindings.get("value");
+        }
+
+    };
     private static final int cellIndex = 0;
     private static final String columnName = "Col1";
     private static final int numberOfRows = 5;
     private static final String projectName = "ExpressionNominalValueGrouper";
-
-    @BeforeMethod
-    public void registerGRELParser() {
-        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-    }
-
-    @AfterMethod
-    public void unregisterGRELParser() {
-        MetaParser.unregisterLanguageParser("grel");
-    }
 
     @Override
     @BeforeTest
@@ -110,7 +105,6 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
             project.rows.add(row);
         }
         // create grouper
-        eval = MetaParser.parse("value");
         grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
         try {
             grouper.start(project);
@@ -138,7 +132,6 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
             project.rows.add(row);
         }
         // create grouper
-        eval = MetaParser.parse("value");
         grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
         try {
             grouper.start(project);
@@ -166,7 +159,6 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
             project.rows.add(row);
         }
         // create grouper
-        eval = MetaParser.parse("value");
         grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
         try {
             grouper.start(project);
@@ -199,7 +191,6 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
         bindings = new Properties();
         bindings.put("project", project);
 
-        eval = MetaParser.parse("value");
         grouper = new ExpressionNominalValueGrouper(eval, "col2", 1);
         try {
             grouper.start(project);
