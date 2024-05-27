@@ -175,7 +175,7 @@ public abstract class ImporterTest extends RefineTest {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
 
-        Reader reader = new InputStreamReader(inputStream);
+        Reader reader = new InputStreamReader(inputStream); // FIXME: Why no encoding here
         parser.parseOneFile(
                 project,
                 metadata,

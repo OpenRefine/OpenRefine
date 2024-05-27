@@ -39,10 +39,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+@Deprecated(since = "3.9")
 public class IOUtils {
 
     private static final int DEFAULT_BUFFER_SIZE = 4 * 1024;
 
+    /**
+     * @deprecated use {@link InputStream#transferTo(OutputStream)}
+     */
+    @Deprecated(since = "3.9")
     public static long copy(InputStream input, OutputStream output) throws IOException {
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         long count = 0;
@@ -54,6 +59,10 @@ public class IOUtils {
         return count;
     }
 
+    /**
+     * @deprecated use {@link InputStream#transferTo(OutputStream)} in combination with {@link FileOutputStream}
+     */
+    @Deprecated(since = "3.9")
     public static long copy(InputStream input, File file) throws IOException {
         FileOutputStream output = new FileOutputStream(file);
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];

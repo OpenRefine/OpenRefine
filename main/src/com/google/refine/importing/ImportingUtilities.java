@@ -564,30 +564,22 @@ public class ImportingUtilities {
     }
 
     static public Reader getReaderFromStream(InputStream inputStream, ObjectNode fileRecord, String commonEncoding) {
+        // FIXME: commonEncoding may represent user's override of guessed encoding, so should be used in preference
+        // to the guessed encoding(s). But, what to do if we have multiple files with different encodings?
+        // (very unlikely, but still possible)
         String encoding = getEncoding(fileRecord);
-        if (encoding == null) {
+        if (commonEncoding != null && !commonEncoding.equals(encoding)) {
+            logger.info("Overriding guessed encoding {} with user's choice: {}", encoding, commonEncoding);
             encoding = commonEncoding;
         }
-        if (encoding != null) {
-
-            // Special case for UTF-8 with BOM
-            if (EncodingGuesser.UTF_8_BOM.equals(encoding)) {
-                try {
-                    return new InputStreamReader(new UnicodeBOMInputStream(inputStream, true), UTF_8);
-                } catch (IOException e) {
-                    throw new RuntimeException("Exception from UnicodeBOMInputStream", e);
-                }
-            } else {
-                try {
-                    return new InputStreamReader(inputStream, encoding);
-                } catch (UnsupportedEncodingException e) {
-                    // This should never happen since they picked from a list of supported encodings
-                    throw new RuntimeException("Unsupported encoding: " + encoding, e);
-                }
-            }
-
+        try {
+            return getInputStreamReader(inputStream, encoding);
+        } catch (UnsupportedEncodingException e) {
+            // This should never happen since they picked from a list of supported encodings
+            throw new RuntimeException("Unsupported encoding: " + encoding, e);
+        } catch (IOException e) {
+            throw new RuntimeException("Exception from UnicodeBOMInputStream", e);
         }
-        return new InputStreamReader(inputStream);
     }
 
     static public File getFile(ImportingJob job, ObjectNode fileRecord) {
@@ -714,14 +706,7 @@ public class ImportingUtilities {
     static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) throws IOException {
         String fileName = file.getName();
         if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || isFileGZipped(file)) {
-            TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
-            // TODO: Check whether the below is consuming the first entry (effectively throwing it away)
-            if (archiveInputStream.getNextTarEntry() != null) {
-                // It's a tar archive
-                return archiveInputStream;
-            }
-            // It's not a tar archive, so it must be gzip compressed (or something else)
-            return null;
+            return new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
         } else if (fileName.endsWith(".tar.bz2")) {
             return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
         } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
@@ -784,7 +769,7 @@ public class ImportingUtilities {
             TarArchiveInputStream tis = (TarArchiveInputStream) archiveIS;
             try {
                 TarArchiveEntry te;
-                while (!progress.isCanceled() && (te = tis.getNextTarEntry()) != null) {
+                while (!progress.isCanceled() && (te = tis.getNextEntry()) != null) {
                     if (!te.isDirectory()) {
                         String fileName2 = te.getName();
                         File file2 = allocateFile(rawDataDir, fileName2);
@@ -1207,5 +1192,14 @@ public class ImportingUtilities {
         }
         pm.setEncoding(encoding);
         return pm;
+    }
+
+    public static InputStreamReader getInputStreamReader(InputStream is, String encoding) throws IOException {
+        if (encoding == null) {
+            return new InputStreamReader(is);
+        } else if (EncodingGuesser.UTF_8_BOM.equals(encoding)) { // Handle our fake UTF-8 with BOM encoding
+            return new InputStreamReader(new UnicodeBOMInputStream(is, true), UTF_8);
+        }
+        return new InputStreamReader(is, encoding);
     }
 }

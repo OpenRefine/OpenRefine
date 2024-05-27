@@ -27,13 +27,25 @@
 
 package com.google.refine.expr.functions.strings;
 
+import static org.testng.Assert.assertEquals;
+
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
+import com.google.refine.clustering.binning.ColognePhoneticKeyer;
+import com.google.refine.clustering.binning.KeyerFactory;
+import com.google.refine.clustering.binning.Metaphone3Keyer;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class PhoneticTests extends RefineTest {
+public class PhoneticTests extends GrelTestBase {
+
+    @BeforeTest
+    public void registerKeyers() {
+        KeyerFactory.put("metaphone3", new Metaphone3Keyer());
+        KeyerFactory.put("cologne-phonetic", new ColognePhoneticKeyer());
+    }
 
     @Test
     public void testtoPhoneticInvalidParams() {
@@ -47,5 +59,14 @@ public class PhoneticTests extends RefineTest {
         Assert.assertTrue(invoke("phonetic", "one", "metaphone3", "three") instanceof EvalError); // if more than 2
                                                                                                   // arguments are
                                                                                                   // provided
+    }
+
+    @Test
+    public void testValidParameters() {
+        assertEquals(invoke("phonetic", "hello", "metaphone3"), "HL");
+        assertEquals(invoke("phonetic", "hello", "cologne-phonetic"), "05");
+        assertEquals(invoke("phonetic", "hello", "soundex"), "H400");
+        assertEquals(invoke("phonetic", "hello", "metaphone"), "HL");
+        assertEquals(invoke("phonetic", "hello", "doublemetaphone"), "HL");
     }
 }

@@ -187,7 +187,6 @@
     "core-index/preferences": "Nastavení",
     "core-index/delete-key": "Smazat preferenční klíč",
     "core-index/change-value": "Změnit hodnotu preferenčního klíče",
-    "core-index/download-now": "Stáhněte si $1.",
     "core-dialogs/no-cluster-found": "S vybranou metodou se nenašly žádné shluky",
     "core-dialogs/browse-this-cluster": "Procházet tímto shlukem",
     "core-dialogs/browse-only-these": "Procházet pouze těmito hodnotami",

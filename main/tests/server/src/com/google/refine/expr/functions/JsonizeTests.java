@@ -32,11 +32,11 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParserException;
+import com.google.refine.grel.GrelTestBase;
 
-public class JsonizeTests extends RefineTest {
+public class JsonizeTests extends GrelTestBase {
 
     @Test
     public void testToString() throws CalendarParserException {

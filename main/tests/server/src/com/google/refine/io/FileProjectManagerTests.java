@@ -41,15 +41,15 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.FileUtils;
-import org.apache.jena.atlas.json.JSON;
-import org.apache.jena.atlas.json.JsonObject;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.util.GetProjectIDException;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class FileProjectManagerTests {
@@ -121,8 +121,8 @@ public class FileProjectManagerTests {
         manager.saveWorkspace();
 
         InputStream inputStream = new FileInputStream(workspaceFile);
-        JsonObject json = JSON.parse(inputStream);
-        assertTrue(json.get("projectIDs").getAsArray().isEmpty(), "deleted project still in workspace.json");
+        JsonNode json = ParsingUtilities.mapper.readTree(inputStream);
+        assertTrue(json.get("projectIDs").isEmpty(), "deleted project still in workspace.json");
     }
 
     /**

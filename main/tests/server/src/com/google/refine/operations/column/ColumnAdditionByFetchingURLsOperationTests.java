@@ -49,6 +49,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -57,6 +58,8 @@ import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
@@ -101,9 +104,18 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             "    \"status\" : \"pending\"\n" +
             " }";
 
-    @Override
+    @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
+    }
+
     @BeforeTest
-    public void init() {
+    public void initOperation() {
         logger = LoggerFactory.getLogger(this.getClass());
         OperationRegistry.registerOperation(getCoreModule(), "column-addition-by-fetching-urls",
                 ColumnAdditionByFetchingURLsOperation.class);

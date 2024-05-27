@@ -39,9 +39,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
+import com.google.refine.grel.GrelTestBase;
 
-public class DatePartTests extends RefineTest {
+public class DatePartTests extends GrelTestBase {
 
     static Properties bindings;
 

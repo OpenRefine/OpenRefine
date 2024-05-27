@@ -59,13 +59,16 @@ public class Join implements Function {
 
                 if (v.getClass().isArray() || v instanceof List<?> || v instanceof ArrayNode) {
                     StringBuffer sb = new StringBuffer();
+                    boolean isFirst = true;
                     if (v.getClass().isArray()) {
                         for (Object o : (Object[]) v) {
+                            // TODO: Treat null as empty string like we do everywhere else?
                             if (o != null) {
-                                if (sb.length() > 0) {
+                                if (!isFirst) {
                                     sb.append(separator);
                                 }
-                                sb.append(o.toString());
+                                sb.append(o);
+                                isFirst = false;
                             }
                         }
                     } else if (v instanceof ArrayNode) {
@@ -73,18 +76,21 @@ public class Join implements Function {
                         int l = a.size();
 
                         for (int i = 0; i < l; i++) {
-                            if (sb.length() > 0) {
+                            if (!isFirst) {
                                 sb.append(separator);
                             }
+                            // FIXME: This throws NPE for arrays containing nulls
                             sb.append(JsonValueConverter.convert(a.get(i)).toString());
+                            isFirst = false;
                         }
                     } else {
                         for (Object o : ExpressionUtils.toObjectList(v)) {
                             if (o != null) {
-                                if (sb.length() > 0) {
+                                if (!isFirst) {
                                     sb.append(separator);
                                 }
-                                sb.append(o.toString());
+                                sb.append(o);
+                                isFirst = false;
                             }
                         }
                     }

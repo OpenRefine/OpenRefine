@@ -29,10 +29,10 @@ package com.google.refine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.grel.GrelTestBase;
 
-public class JoinTests extends RefineTest {
+public class JoinTests extends GrelTestBase {
 
     @Test
     public void joinArray() throws ParsingException {
@@ -51,6 +51,22 @@ public class JoinTests extends RefineTest {
         parseEval(bindings, test3);
         String[] test4 = { "['z', '','c','a'].join('-')", "z--c-a" };
         parseEval(bindings, test4);
+
+        // Issue 3290 - Make sure leading empty strings don't get skipped
+        parseEval(bindings, new String[] { "['',2,3].join('|')", "|2|3" });
+        parseEval(bindings, new String[] { "[1,'',3].join('|')", "1||3" });
+        parseEval(bindings, new String[] { "[1,2,''].join('|')", "1|2|" });
+        parseEval(bindings, new String[] { "['','',''].join('|')", "||" });
+
+        // Tests for JSON array
+        // Both of the following tests throw NPEs. First is desired behavior, second is current array behavior
+//        parseEval(bindings, new String[] { "'[null,null,null]'.parseJson().join('|')", "||" } );
+//        parseEval(bindings, new String[] { "'[null,null,null]'.parseJson().join('|')", "" } );
+        parseEval(bindings, new String[] { "'[\"\",2,3]'.parseJson().join('|')", "|2|3" });
+        parseEval(bindings, new String[] { "'[1,2,\"\"]'.parseJson().join('|')", "1|2|" });
+        parseEval(bindings, new String[] { "'[\"\",\"\",\"\"]'.parseJson().join('|')", "||" });
+
+        // TODO: Add tests for List<Object> returned from ExpressionUtils.toObjectList()
     }
 
 }

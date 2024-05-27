@@ -764,7 +764,6 @@
     "core-index-import/file-count": "$1 {{plural:$1|file|file}}",
     "core-index-import/files-selected": "$1 di $2 file {{plural:$2|selezionato|selezionati}}",
     "core-index-import/match-count": "$1 {{plural:$1|corrispondenza|corrispondenze}}",
-    "core-index/download-now": "Scarica $1 adesso.",
     "core-dialogs/add-all": "Aggiungi tutto",
     "core-dialogs/remove-all": "Rimuovi tutto",
     "core-dialogs/missing-bad-template": "Modello assente o errato",

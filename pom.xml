@@ -117,7 +117,6 @@
     <exec-maven-plugin.version>3.3.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-    <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <surefire.version>3.2.5</surefire.version>
     <maven-jar-plugin.version>3.4.1</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
@@ -182,85 +181,62 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-	<version>${jacoco-maven-plugin.version}</version>
+        <version>${jacoco-maven-plugin.version}</version>
         <configuration>
           <excludes>
             <exclude>org/openrefine/messages/**/*</exclude>
           </excludes>
         </configuration>
         <executions>
-            <execution>
-                <id>prepare-agent</id>
-                <goals>
-                    <goal>prepare-agent</goal>
-                </goals>
-                <phase>process-test-resources</phase>
-                <configuration>
-                    <destFile>${project.build.directory}/report/${project.name}.exec</destFile>
-                    <propertyName>surefireArgs</propertyName>
-                </configuration>
-            </execution>
-            <execution>
-                <phase>test</phase>
-                <goals>
-                    <goal>report</goal>
-                </goals>
-                <configuration>
-                    <dataFile>${project.build.directory}/report/${project.name}.exec</dataFile>
-                    <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
-                </configuration>
-            </execution>
-            <execution>
-                <id>merge</id>
-                <goals>
-                     <goal>merge</goal>
-                </goals>
-                <phase>test</phase>
-               <configuration>
-                     <destFile>${project.build.directory}/report/jacoco-merged.exec</destFile>
-                     <fileSets>
-                        <fileSet>
-                            <directory>main/target/report</directory>
-                            <includes>
-                                <include>*.exec</include>
-                            </includes>
-                        </fileSet>
-                        <fileSet>
-                            <directory>extensions/target/report</directory>
-                            <includes>
-                                <include>*.exec</include>
-                            </includes>
-                        </fileSet>
-                     </fileSets>
-                </configuration>
-             </execution>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <phase>process-test-resources</phase>
+            <configuration>
+              <destFile>${project.build.directory}/report/${project.name}.exec</destFile>
+              <propertyName>surefireArgs</propertyName>
+            </configuration>
+          </execution>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <dataFile>${project.build.directory}/report/${project.name}.exec</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>merge</id>
+            <goals>
+              <goal>merge</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <destFile>${project.build.directory}/report/jacoco-merged.exec</destFile>
+              <fileSets>
+                <fileSet>
+                  <directory>main/target/report</directory>
+                  <includes>
+                    <include>*.exec</include>
+                  </includes>
+                </fileSet>
+                <fileSet>
+                  <directory>extensions/target/report</directory>
+                  <includes>
+                    <include>*.exec</include>
+                  </includes>
+                </fileSet>
+              </fileSets>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.eluder.coveralls</groupId>
-        <artifactId>coveralls-maven-plugin</artifactId>
-	<version>${coveralls-maven-plugin.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <sourceDirectories>
-             <sourceDirectory>main/src</sourceDirectory>
-             <sourceDirectory>main/target/generated-sources</sourceDirectory>
-             <sourceDirectory>extensions/jython/src</sourceDirectory>
-             <sourceDirectory>extensions/wikidata/src</sourceDirectory>
-             <sourceDirectory>extensions/database/src</sourceDirectory>
-             <sourceDirectory>extensions/phonetic/src</sourceDirectory>
-             <sourceDirectory>extensions/gdata/src</sourceDirectory>
-          </sourceDirectories>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- Pluging to generate release source -->
+        <!-- Plugin to generate release source -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>3.3.1</version>

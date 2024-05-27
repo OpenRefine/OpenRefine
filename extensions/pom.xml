@@ -23,7 +23,6 @@
         <module>database</module>
         <module>gdata</module>
         <module>pc-axis</module>
-        <module>phonetic</module>
         <!-- Add new extensions here -->
   </modules>
 
@@ -43,6 +42,24 @@
               <sources>
                 <source>src</source>
               </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <skipIfEmpty>true</skipIfEmpty>
+              <outputDirectory>module/MOD-INF/lib</outputDirectory>
             </configuration>
           </execution>
         </executions>

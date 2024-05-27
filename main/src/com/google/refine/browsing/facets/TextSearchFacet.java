@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,7 +45,6 @@ import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.filters.AnyRowRecordFilter;
 import com.google.refine.browsing.filters.ExpressionStringComparisonRowFilter;
 import com.google.refine.expr.Evaluable;
-import com.google.refine.grel.ast.VariableExpr;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.util.PatternSyntaxExceptionParser;
@@ -156,7 +156,14 @@ public class TextSearchFacet implements Facet {
             return null;
         }
 
-        Evaluable eval = new VariableExpr("value");
+        Evaluable eval = new Evaluable() {
+
+            @Override
+            public Object evaluate(Properties bindings) {
+                return bindings.get("value");
+            }
+
+        };
 
         if ("regex".equals(_config._mode)) {
             return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {

@@ -28,7 +28,6 @@
     "core-index-import/comma-separated": "virgülle ayrılmış sayılar",
     "core-index/change-metadata-value": "Metaveri anahtarının değerini değiştirin",
     "core-index-import/parse-as": "Verileri şu şekilde ayrıştır",
-    "core-index/download-now": "Şimdi $1 indirildi.",
     "core-index-import/column-names": "Sütun adları",
     "core-index/license": "Lisans",
     "core-index-create/sec-remaining": "$1 saniye kaldı",

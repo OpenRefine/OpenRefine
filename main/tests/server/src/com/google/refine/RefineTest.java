@@ -43,7 +43,6 @@ import static org.testng.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,12 +62,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
-import com.google.refine.expr.Evaluable;
-import com.google.refine.expr.MetaParser;
-import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
@@ -142,44 +137,6 @@ public class RefineTest {
                 project.columnModel.addColumn(index, column, true);
             }
         }
-        return project;
-    }
-
-    /**
-     * @deprecated use {@link #createProject(String[], Serializable[][])} instead, so that the project's contents are
-     *             more readable in the test
-     */
-    @Deprecated
-    protected Project createCSVProject(String input) {
-        return createCSVProject("test project", input);
-    }
-
-    /**
-     * @deprecated use {@link #createProject(String, String[], Serializable[][])} instead, so that the project's
-     *             contents are more readable in the test
-     */
-    @Deprecated
-    protected Project createCSVProject(String projectName, String input) {
-
-        Project project = new Project();
-
-        ProjectMetadata metadata = new ProjectMetadata();
-        metadata.setName(projectName);
-
-        ObjectNode options = mock(ObjectNode.class);
-        prepareImportOptions(options, ",", -1, 0, 0, 1, false, false);
-
-        ImportingJob job = ImportingManager.createJob();
-
-        SeparatorBasedImporter importer = new SeparatorBasedImporter();
-
-        List<Exception> exceptions = new ArrayList<Exception>();
-        importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
-        ProjectManager.singleton.registerProject(project, metadata);
-        project.update();
-
-        projects.add(project);
-        importingJobs.add(job);
         return project;
     }
 
@@ -417,39 +374,6 @@ public class RefineTest {
         } else {
             return function.call(bindings, args);
         }
-    }
-
-    /**
-     * Parse and evaluate a GREL expression and compare the result to the expect value
-     *
-     * @param bindings
-     * @param test
-     * @throws ParsingException
-     */
-    protected void parseEval(Properties bindings, String[] test)
-            throws ParsingException {
-        Evaluable eval = MetaParser.parse("grel:" + test[0]);
-        Object result = eval.evaluate(bindings);
-        if (test[1] != null) {
-            Assert.assertNotNull(result, "Expected " + test[1] + " for test " + test[0]);
-            Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
-        } else {
-            Assert.assertNull(result, "Wrong result for expression: " + test[0]);
-        }
-    }
-
-    /**
-     * Parse and evaluate a GREL expression and compare the result an expected type using instanceof
-     *
-     * @param bindings
-     * @param test
-     * @throws ParsingException
-     */
-    protected void parseEvalType(Properties bindings, String test, @SuppressWarnings("rawtypes") Class clazz)
-            throws ParsingException {
-        Evaluable eval = MetaParser.parse("grel:" + test);
-        Object result = eval.evaluate(bindings);
-        Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
     }
 
     @AfterMethod

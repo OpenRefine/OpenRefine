@@ -37,10 +37,10 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class DiffTests extends RefineTest {
+public class DiffTests extends GrelTestBase {
 
     static Properties bindings;
 
@@ -53,9 +53,8 @@ public class DiffTests extends RefineTest {
     private OffsetDateTime odt7;
     private OffsetDateTime odt8;
 
-    @Override
     @BeforeTest
-    public void init() {
+    public void initDates() {
         logger = LoggerFactory.getLogger(this.getClass());
         odt1 = OffsetDateTime.parse("2011-09-01T10:15:30.123456+01:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         odt2 = OffsetDateTime.parse("2011-12-02T10:16:30.123467+01:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
