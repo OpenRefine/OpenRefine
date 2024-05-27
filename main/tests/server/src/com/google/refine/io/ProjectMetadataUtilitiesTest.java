@@ -60,4 +60,33 @@ public class ProjectMetadataUtilitiesTest {
             file.delete();
         }
     }
+    /**
+     * Check if the save method can correctly save the metadata to the target directory.
+     **/
+    @Test
+    public void testSave() throws Exception {
+        File projectDir = new File(System.getProperty("java.io.tmpdir"), "projectDir");
+        projectDir.mkdir();
+
+        try {
+            ProjectMetadataUtilities.save(actualMetadata, projectDir);
+            File metadataFile = new File(projectDir, "metadata.json");
+
+            expectedMetadata = ProjectMetadataUtilities.loadFromFile(metadataFile);
+            Assert.assertEquals(expectedMetadata.getName(), actualMetadata.getName());
+        } finally {
+            deleteDirectory(projectDir);
+        }
+    }
+
+    private void deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directoryToBeDeleted.delete();
+    }
+
 }
