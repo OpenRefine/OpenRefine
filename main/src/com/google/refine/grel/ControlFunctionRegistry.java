@@ -126,6 +126,7 @@ import com.google.refine.expr.functions.strings.Reinterpret;
 import com.google.refine.expr.functions.strings.Replace;
 import com.google.refine.expr.functions.strings.ReplaceChars;
 import com.google.refine.expr.functions.strings.ReplaceEach;
+import com.google.refine.expr.functions.strings.EditDistance;
 import com.google.refine.expr.functions.strings.SHA1;
 import com.google.refine.expr.functions.strings.SmartSplit;
 import com.google.refine.expr.functions.strings.Split;
@@ -267,7 +268,7 @@ public class ControlFunctionRegistry {
         registerFunction("find", new Find());
 
         registerFunction("parseUri", new ParseUri());
-
+        registerFunction("editDistance", new EditDistance());
         // XML and HTML functions from JSoup
         registerFunction("parseXml", new ParseXml());
         registerFunction("parseHtml", new ParseHtml());
