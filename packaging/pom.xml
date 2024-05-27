@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.8-SNAPSHOT</version>
+    <version>3.9-SNAPSHOT</version>
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
@@ -55,7 +55,6 @@
                 <configuration>
                   <descriptors>
                     <descriptor>linux.xml</descriptor>
-                    <descriptor>windows-without-jre.xml</descriptor>
                     <descriptor>windows-with-jre.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
@@ -123,6 +122,12 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <version>${license-plugin.version}</version>
+        <configuration>
+          <socketTimeout>10000</socketTimeout>
+          <connectTimeout>10000</connectTimeout>
+          <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
+          <licensesConfigFile>${basedir}/manual_licenses.xml</licensesConfigFile>
+        </configuration>
         <executions>
           <execution>
             <phase>generate-test-resources</phase>
@@ -424,45 +429,6 @@
         <version>2.5.0</version>
         <executions>
           <execution>
-            <id>l4j-clui-without-jre</id>
-            <phase>package</phase>
-            <goals><goal>launch4j</goal></goals>
-            <configuration>
-              <headerType>console</headerType>
-              <outfile>target/openrefine_without_jre.exe</outfile>
-              <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
-              <dontWrapJar>true</dontWrapJar>
-              <saveConfig>true</saveConfig>
-              <icon>openrefine.ico</icon>
-              <downloadUrl>https://openrefine.org/docs/manual/installing#java</downloadUrl>
-              <classPath>
-                <mainClass>com.google.refine.Refine</mainClass>
-                <jarLocation>server/target/lib/</jarLocation>
-                <postCp>server/target/lib/*.jar</postCp>
-              </classPath>
-              <jre>
-                <path>%JAVA_HOME%;%PATH%</path>
-                <minVersion>${java.minversion}</minVersion>
-                <initialHeapSize>512</initialHeapSize>
-                <maxHeapSize>2048</maxHeapSize>
-                <opts>
-                  <opt>-Djava.library.path=server/target/lib/native/windows</opt>
-                </opts>
-              </jre>
-              <versionInfo>
-                <fileVersion>${windows.fullversion}</fileVersion>
-                <txtFileVersion>${project.version}</txtFileVersion>
-                <fileDescription>openrefine</fileDescription>
-                <copyright>${windows.copyright.line}</copyright>
-                <productVersion>${windows.fullversion}</productVersion>
-                <txtProductVersion>${project.version}</txtProductVersion>
-                <productName>OpenRefine</productName>
-                <internalName>openrefine</internalName>
-                <originalFilename>openrefine.exe</originalFilename>
-              </versionInfo>
-            </configuration>
-          </execution>
-          <execution>
             <id>l4j-clui-with-jre</id>
             <phase>package</phase>
             <goals><goal>launch4j</goal></goals>
@@ -548,7 +514,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.6.0</version>
+          <version>3.7.1</version>
           <executions>
             <execution>
               <id>package-distributions</id>
@@ -574,7 +540,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.9.1</version>
+              <version>4.9.2</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>
@@ -652,4 +618,3 @@
     </dependency>
   </dependencies>
 </project>
-

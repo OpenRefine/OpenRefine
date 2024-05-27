@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 
@@ -55,15 +56,24 @@ public class LogExpressionCommand extends Command {
         }
 
         try {
+            Project project = getProject(request);
             String expression = request.getParameter("expression");
 
-            PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
-            TopList topList = (TopList) prefStore.get("scripting.expressions");
-            if (topList == null) {
-                topList = new TopList(ProjectManager.EXPRESSION_HISTORY_MAX);
-                prefStore.put("scripting.expressions", topList);
+            PreferenceStore localPrefStore = project.getMetadata().getPreferenceStore();
+            TopList localExpressions = ((TopList) localPrefStore.get("scripting.expressions"));
+            if (localExpressions == null) {
+                localExpressions = new TopList(20);
+                localPrefStore.put("scripting.expressions", localExpressions);
             }
-            topList.add(expression);
+            localExpressions.add(expression);
+
+            PreferenceStore globalPrefStore = ProjectManager.singleton.getPreferenceStore();
+            TopList globalExpressions = (TopList) globalPrefStore.get("scripting.expressions");
+            if (globalExpressions == null) {
+                globalExpressions = new TopList(ProjectManager.EXPRESSION_HISTORY_MAX);
+                globalPrefStore.put("scripting.expressions", globalExpressions);
+            }
+            globalExpressions.add(expression);
 
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");

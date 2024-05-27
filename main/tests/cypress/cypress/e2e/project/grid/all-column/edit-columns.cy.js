@@ -48,7 +48,7 @@ describe(__filename, function () {
     cy.assertGridEquals([
       ['NDB_No', 'Shrt_Desc', 'Water', 'Energ_Kcal'],
       ['01001', 'BUTTER,WITH SALT', '15.87', '717'],
-      ['01002', 'BUTTER,WHIPPED,WITH SALT', '', ''],
+      ['01002', 'BUTTER,WHIPPED,WITH SALT', null, null],
     ]);
   });
 

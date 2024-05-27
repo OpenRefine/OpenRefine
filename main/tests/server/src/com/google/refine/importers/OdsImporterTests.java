@@ -36,14 +36,15 @@ package com.google.refine.importers;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -54,7 +55,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Row;
+import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
 public class OdsImporterTests extends ImporterTest {
@@ -87,6 +88,39 @@ public class OdsImporterTests extends ImporterTest {
     }
 
     @Test
+    public void readMultiSheetOds() throws Exception {
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 3, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 3, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 1);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
+        InputStream stream = this.getClass().getClassLoader().getResourceAsStream("sample.ods");
+
+        parseOneFile(SUT, stream);
+
+        Project expectedProject = createProject(
+                new String[] { "a", "b" },
+                new Serializable[][] {
+                        { "c", "d" },
+                        { "e", "f" },
+                        { null, null },
+                        { 3.0, 4.0 },
+                        { 5.0, 6.0 },
+                        { null, null },
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
+    @Test
     public void readOds() throws FileNotFoundException, IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
@@ -108,17 +142,23 @@ public class OdsImporterTests extends ImporterTest {
             Assert.fail(e.getMessage());
         }
 
-        assertEquals(project.rows.size(), ROWS);
-        Row row = project.rows.get(0);
-        assertEquals(row.cells.size(), COLUMNS);
-        assertEquals((String) row.getCellValue(1), "2 Days In New York");
-        assertEquals(((OffsetDateTime) row.getCellValue(3)).toString().substring(0, 10), "2012-03-28");
-        assertEquals(((Number) row.getCellValue(5)).doubleValue(), 4.5, EPSILON);
+        // TODO dates should not be interpreted in a particular time zone like this
+        DateTimeFormatter format = DateTimeFormatter.ISO_LOCAL_DATE;
+        OffsetDateTime expectedDate = LocalDate.from(format.parse("2012-03-28"))
+                .atStartOfDay()
+                .atZone(ZoneId.systemDefault())
+                .toOffsetDateTime();
 
-        assertFalse((Boolean) row.getCellValue(7));
-        assertTrue((Boolean) project.rows.get(1).getCellValue(7));
-
-        assertNull((String) project.rows.get(2).getCellValue(2));
+        Project expectedProject = createProject(
+                new String[] { "Category", "Title", "Director", "Release Date", "Gross", "Rating", "Rank", "Good?" },
+                new Serializable[][] {
+                        { "Narrative Features", "2 Days In New York", "Julie Delpy", expectedDate, 1.0E7, 4.5, 1.0, false },
+                        { "Narrative Features", "Booster", null, null, null, null, null, true },
+                        { "Narrative Features", "Dark Horse", null, null, null, null, null, null },
+                        { "Narrative Features", "Fairhaven", null, null, null, null, null, null },
+                        { null, null, null, null, null, null, null, null }, // TODO: should likely not be there?
+                });
+        assertProjectEquals(project, expectedProject);
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");

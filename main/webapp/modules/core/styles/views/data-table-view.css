@@ -186,6 +186,12 @@ table.data-table td.column-header, table.data-table th.column-header {
   background-repeat: no-repeat;
   cursor: pointer;
   border: none;
+  padding: 0;
+  background-color: transparent;
+}
+
+.column-header-menu-expand {
+  transform: rotate(-0.25turn);
 }
 
 .column-header-menu:hover {
@@ -224,20 +230,24 @@ div.data-table-cell-content-numeric {
   text-align: right;
 }
 
-a.data-table-cell-edit {
+.data-table-cell-edit {
   position: absolute;
   right: 0;
-  text-decoration: none;
-  visibility: hidden;
+  top: 0;
+  opacity: 0;
   color: var(--background-primary);
   background-color: #8ae;
   padding: 2px 3px;
   border-radius: 3px;
   font-weight: bold;
   line-height: normal;
+  font-size: 100%;
+  border: none;
+  cursor: pointer;
 }
 
-a.data-table-cell-edit:hover {
+.data-table-cell-edit:hover
+.data-table-cell-edit:focus {
   background-color: var(--link-secondary);
 }
 

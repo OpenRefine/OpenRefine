@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import static org.testng.Assert.fail;
+
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -93,7 +95,7 @@ public class GrelTests extends RefineTest {
                 // Test succeeded
                 continue;
             }
-            Assert.fail("Expression failed to generate parse syntax error: " + test);
+            fail("Expression failed to generate parse syntax error: " + test);
         }
     }
 
@@ -109,10 +111,14 @@ public class GrelTests extends RefineTest {
                 Object result = eval.evaluate(bindings);
                 Assert.assertTrue(result instanceof EvalError);
             } catch (ParsingException e) {
-                Assert.fail("Unexpected parse failure: " + test);
+                fail("Unexpected parse failure: " + test);
             }
         }
     }
+
+    static private String COMPARISON_OPERATORS[] = { "==", "!=", ">", "<", ">=", "<=", };
+    static private String INVALID_OPERATORS[] = { "=<", "=<", "**", "^", "!", };
+    static private String NUMERIC_OPERATORS[] = { "+", "-", "*", "/", "%", };
 
     @Test
     public void testMath() throws ParsingException {
@@ -131,8 +137,12 @@ public class GrelTests extends RefineTest {
                 { "3%2", "1" },
                 { "3/2", "1" },
                 { "3.0/2", "1.5" },
+                // integer comparisons
                 { "1==1", "true" },
                 { "1==2", "false" },
+                { "1!=2", "true" },
+                { "1!=1", "false" },
+//                { "1<>2", "true" },  // Scanner considers this an operator, but not the parser
                 { "1>2", "false" },
                 { "1<2", "true" },
                 { "1>1", "false" },
@@ -140,7 +150,22 @@ public class GrelTests extends RefineTest {
                 { "1<=2", "true" },
                 { "2<=2", "true" },
                 { "3<=2", "false" },
+                // mixed integer / float comparisons
+                { "1.0==1", "true" },
+                { "1.0==2", "false" },
+                { "1.0>2", "false" },
+                { "1.0<2", "true" },
+                { "1.0>1", "false" },
+                { "1.0>=1", "true" },
+                { "1.0<=2", "true" },
+                { "2.0<=2", "true" },
+                { "3.0<=2", "false" },
                 { "0/0", "NaN" },
+                // TODO: The cases below currently throw an exception
+//                { "1/0", "Infinity" },
+//                { "-1/0", "-Infinity" },
+                { "1.0/0.0", "Infinity" },
+                { "-1.0/0.0", "-Infinity" },
                 { "fact(4)", "24" },
                 { "fact(20)", "2432902008176640000" }, // limit for Java longs
                 { "fact(21)", "java.lang.ArithmeticException: Integer overflow computing factorial" },
@@ -165,18 +190,30 @@ public class GrelTests extends RefineTest {
     @Test
     public void testString() throws ParsingException {
         String tests[][] = {
-                { "1", "1" },
-                { "1 + 1", "2" },
-                { "1 + 1 + 1", "3" },
-                { "1-1-1", "-1" },
-                { "1-2-3", "-4" },
-                { "1-(2-3)", "2" },
-                { "2*3", "6" },
-                { "3%2", "1" },
-                { "3/2", "1" },
-                { "3.0/2", "1.5" },
-                { "1", "1" },
-                { "0/0", "NaN" },
+                { "'a' + 'b'", "ab" },
+                // TODO: automated fuzzing of all operators for incompatible operand types
+                { "'1/1/1900'.toDate() + 1", null },
+                { "'1/1/1900'.toDate() + '1/1/1800'.toDate()", null },
+                { "'1/1/1900'.toDate() > '1/1/1800'.toDate()", "true" },
+                { "'1/1/1900'.toDate() >= '1/1/1800'.toDate()", "true" },
+                { "'1/1/1900'.toDate() < '1/1/1800'.toDate()", "false" },
+                { "'1/1/1900'.toDate() <= '1/1/1800'.toDate()", "false" },
+                { "'1/1/1900'.toDate() != '1/1/1800'.toDate()", "true" },
+                { "'1/1/1900'.toDate() == '1/1/1800'.toDate()", "false" },
+                { "'1/1/1900'.toDate() == '1/1/1900'.toDate()", "true" },
+                { "'1/1/1900'.toDate() >= '1/1/1900'.toDate()", "true" },
+                { "'1/1/1900'.toDate() <= '1/1/1900'.toDate()", "true" },
+                { "'1/1/1900'.toDate() + ' foo'", "1900-01-01T00:00Z foo" },
+                { "1 + ' foo'", "1 foo" },
+                { "1.0 + ' foo'", "1.0 foo" },
+                { "2 * 3.0 + ' foo'", "6.0 foo" },
+                { "'a' > 'b'", "false" },
+                { "'a' < 'b'", "true" },
+                { "'a' == 'a'", "true" },
+                { "'a' == 'b'", "false" },
+                { "'a' != 'b'", "true" },
+                { "'E\u0301' == 'É'", "true" }, // combining accent equivalent to single character form
+//                { "", "" },
         };
         for (String[] test : tests) {
             parseEval(bindings, test);
@@ -206,8 +243,20 @@ public class GrelTests extends RefineTest {
             Object result = eval.evaluate(bindings);
             Assert.assertTrue(result instanceof EvalError);
         } catch (ParsingException e) {
-            Assert.fail("Unexpected parse failure for cross function: " + test);
+            fail("Unexpected parse failure for cross function: " + test);
         }
     }
 
+    // Test for /\ throwing Internal Error
+    @Test
+    public void testRegex() {
+        String test = "value.replace(/\\";
+        try {
+            MetaParser.parse("grel:" + test);
+            fail("No Exception was thrown");
+        } catch (ParsingException e) {
+            Assert.assertEquals(e.getMessage(),
+                    "Parsing error at offset 14: Missing number, string, identifier, regex, or parenthesized expression");
+        }
+    }
 }

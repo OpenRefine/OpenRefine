@@ -31,6 +31,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -40,7 +41,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
-import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -90,18 +90,15 @@ public class ScatterplotFacetTests extends RefineTest {
 
     @Test
     public void serializeScatterplotFacet() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("my column,e\n"
-                + "89.2,89.2\n" +
-                "-45.9,-45.9\n" +
-                "blah,blah\n" +
-                "0.4,0.4\n");
+        Project project = createProject(
+                new String[] { "my column", "e" },
+                new Serializable[][] {
+                        { 89.2, 89.2 },
+                        { -45.9, -45.9 },
+                        { "blah", "blah" },
+                        { 0.4, 0.4 }
+                });
         Engine engine = new Engine(project);
-        project.rows.get(0).cells.set(0, new Cell(89.2, null));
-        project.rows.get(0).cells.set(1, new Cell(89.2, null));
-        project.rows.get(1).cells.set(0, new Cell(-45.9, null));
-        project.rows.get(1).cells.set(1, new Cell(-45.9, null));
-        project.rows.get(3).cells.set(0, new Cell(0.4, null));
-        project.rows.get(3).cells.set(1, new Cell(0.4, null));
 
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
 

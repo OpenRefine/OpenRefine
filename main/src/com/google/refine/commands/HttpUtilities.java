@@ -28,16 +28,15 @@
 package com.google.refine.commands;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,10 +44,16 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.RefineServlet;
 import com.google.refine.util.ParsingUtilities;
 
+/**
+ * @deprecated deprecated for v3.8. All methods have been deprecated and this class will be removed. Most users should
+ *             be extending {@link Command} to get access to this functionality.
+ */
+@Deprecated
 abstract public class HttpUtilities {
 
     final static protected Logger logger = LoggerFactory.getLogger("command");
 
+    @Deprecated
     static public void respond(HttpServletResponse response, String content)
             throws IOException, ServletException {
 
@@ -64,29 +69,45 @@ abstract public class HttpUtilities {
         }
     }
 
+    @Deprecated
     static public void respond(HttpServletResponse response, String status, String message)
             throws IOException {
-
-        Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-        writer.writeStartObject();
-        writer.writeStringField("status", status);
-        writer.writeStringField("message", message);
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
-        w.flush();
-        w.close();
+        // FIXME: This is the only place that uses status instead of code
+        if (message == null) {
+            respondJSON(response, Map.of("status", status));
+        } else {
+            respondJSON(response, Map.of(
+                    "status", status,
+                    "message", message));
+        }
     }
 
+    /**
+     * @deprecated deprecated for v3.8. No internal uses. Move to {@link Command} when deprecation period expires.
+     */
+    @Deprecated
     static public void respondJSON(HttpServletResponse response, Object o)
             throws IOException {
 
-        respondJSON(response, o, new Properties());
+        respondJsonInternal(response, o);
     }
 
+    /**
+     * TODO: options parameter is ignored here, but it's always empty in the only place it's used. DRY up
+     *
+     * @deprecated deprecated for v3.8. No internal uses. Move to {@link Command} when deprecation period expires.
+     */
+    @Deprecated
     static public void respondJSON(
             HttpServletResponse response, Object o, Properties options)
+            throws IOException {
+
+        respondJsonInternal(response, o);
+    }
+
+    // TODO: This can be inlined with 2-parameter method when 3-param is removed
+    static private void respondJsonInternal(
+            HttpServletResponse response, Object o)
             throws IOException {
 
         response.setCharacterEncoding("UTF-8");
@@ -98,6 +119,10 @@ abstract public class HttpUtilities {
         w.close();
     }
 
+    /**
+     * @deprecated deprecated for v3.8. No internal uses.
+     */
+    @Deprecated
     static public void respondException(HttpServletResponse response, Exception e)
             throws IOException, ServletException {
 
@@ -106,33 +131,29 @@ abstract public class HttpUtilities {
         if (response == null) {
             throw new ServletException("Response object can't be null");
         }
-
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        pw.flush();
-        sw.flush();
-
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
-
-        Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-        writer.writeStartObject();
-        writer.writeStringField("code", "error");
-        writer.writeStringField("message", e.getMessage());
-        writer.writeStringField("stack", sw.toString());
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
-        w.flush();
-        w.close();
+        // TODO: We would like to return an HTTP error here, but front end needs scrubbing first to
+        // to make sure everywhere can handle it. There are known issues with things like the IllegalArgumentException
+        // used for bad regexps
+//        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        respondJSON(response, Map.of(
+                "code", "error", // respondStatus() above uses status instead of code
+                "message", e.getMessage(),
+                "stack", ExceptionUtils.getStackTrace(e)));
     }
 
+    /**
+     * @deprecated deprecated for v3.8. No internal uses.
+     */
+    @Deprecated
     static public void redirect(HttpServletResponse response, String url) throws IOException {
         response.sendRedirect(url);
     }
 
+    /**
+     * @deprecated deprecated for v3.8. No internal uses. There is an implementation in the {@link Command} class for
+     *             commands which need it.
+     */
+    @Deprecated
     static public int getIntegerParameter(HttpServletRequest request, String name, int def) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
@@ -145,16 +166,26 @@ abstract public class HttpUtilities {
         return def;
     }
 
+    /**
+     * @deprecated deprecated for v3.8. No internal uses other than call from {@link Command} where this implementation
+     *             can be moved when deprecation period expires.
+     */
+    @Deprecated
     static public void respondWithErrorPage(
             RefineServlet servlet,
             HttpServletRequest request,
             HttpServletResponse response,
             String message,
             Throwable e) {
+        // TODO: Move implementation to {@link Command} when deprecation period expires
         respondWithErrorPage(servlet, request, response, message,
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
 
+    /**
+     * @deprecated deprecated for v3.8. Only internal use is invocation directly above
+     */
+    @Deprecated
     static public void respondWithErrorPage(
             RefineServlet servlet,
             HttpServletRequest request,
@@ -162,19 +193,11 @@ abstract public class HttpUtilities {
             String message,
             int status,
             Throwable e) {
+        // TODO: Move implementation to {@link Command} when deprecation period expires
         VelocityContext context = new VelocityContext();
 
         context.put("message", message);
-
-        if (e != null) {
-            StringWriter writer = new StringWriter();
-
-            e.printStackTrace(new PrintWriter(writer));
-
-            context.put("stack", writer.toString());
-        } else {
-            context.put("stack", "");
-        }
+        context.put("stack", e == null ? "" : ExceptionUtils.getStackTrace(e));
 
         try {
             response.setStatus(status);
@@ -183,7 +206,7 @@ abstract public class HttpUtilities {
                     request, response, context, "error.vt", "UTF-8", "text/html", true);
 
         } catch (Exception e1) {
-            e1.printStackTrace();
+            logger.error("Error processing Velocity template", e1);
         }
     }
 }

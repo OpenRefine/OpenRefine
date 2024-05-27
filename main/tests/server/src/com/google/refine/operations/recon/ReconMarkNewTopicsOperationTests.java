@@ -29,8 +29,8 @@ package com.google.refine.operations.recon;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.Serializable;
 import java.util.Collections;
-import java.util.Properties;
 
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -82,11 +82,15 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @Test
     public void testNotPreviouslyReconciled() throws Exception {
-        Project project = createCSVProject("my column\n"
-                + "hello\n"
-                + "world");
+        Project project = createProject(
+                new String[] { "my column" },
+                new Serializable[][] {
+                        { "hello" },
+                        { "world" }
+                });
         ReconMarkNewTopicsOperation op = ParsingUtilities.mapper.readValue(jsonWithService, ReconMarkNewTopicsOperation.class);
-        op.createProcess(project, new Properties()).performImmediate();
+
+        runOperation(op, project);
 
         assertEquals(project.rows.get(0).cells.get(0).recon.judgment, Recon.Judgment.New);
         assertEquals(project.rows.get(1).cells.get(0).recon.judgment, Recon.Judgment.New);
@@ -98,9 +102,12 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
     @Test
     public void testPreviouslyReconciled() throws Exception {
-        Project project = createCSVProject("my column\n"
-                + "hello\n"
-                + "world");
+        Project project = createProject(
+                new String[] { "my column" },
+                new Serializable[][] {
+                        { "hello" },
+                        { "world" }
+                });
         StandardReconConfig reconConfig = new StandardReconConfig(
                 "http://foo.com/api",
                 "http://foo.com/identifierSpace",
@@ -113,7 +120,8 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
         project.columnModel.columns.get(0).setReconConfig(reconConfig);
 
         ReconMarkNewTopicsOperation op = ParsingUtilities.mapper.readValue(jsonWithoutService, ReconMarkNewTopicsOperation.class);
-        op.createProcess(project, new Properties()).performImmediate();
+
+        runOperation(op, project);
 
         assertEquals(project.rows.get(0).cells.get(0).recon.judgment, Recon.Judgment.New);
         assertEquals(project.rows.get(1).cells.get(0).recon.judgment, Recon.Judgment.New);

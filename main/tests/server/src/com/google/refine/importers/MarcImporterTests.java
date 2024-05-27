@@ -32,13 +32,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import static org.testng.Assert.assertEquals;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,12 +50,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingUtilities;
-import com.google.refine.model.Row;
+import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
-public class MarcImporterTests extends XmlImporterTests {
+public class MarcImporterTests extends ImporterTest {
 
     @Override
     @BeforeTest
@@ -104,18 +104,49 @@ public class MarcImporterTests extends XmlImporterTests {
         File xmlFile = ImportingUtilities.getFile(job, fileRecords.get(0));
         InputStream inputStream = new FileInputStream(xmlFile);
         parseOneFile(SUT, inputStream, options);
-        assertEquals(project.rows.size(), 30);
-        assertEquals(project.rows.get(1).cells.size(), 6);
 
-        Row r0 = project.rows.get(0);
-        assertEquals(r0.getCellValue(1), "001");
-        assertEquals(r0.getCellValue(3), "010");
-        assertEquals(project.rows.get(1).getCellValue(1), "003");
-        assertEquals(project.rows.get(1).getCellValue(2), "DLC");
-        Row r2 = project.rows.get(2);
-        assertEquals(r2.getCellValue(1), "005");
-        assertEquals(r2.getCellValue(5), "£4.99");
-        assertEquals(project.rows.get(29).getCellValue(3), "700");
+        Project expectedProject = createProject(
+                new String[] { "marc:record - marc:leader", "marc:record - marc:controlfield - tag", "marc:record - marc:controlfield",
+                        "marc:record - marc:datafield - tag", "marc:record - marc:datafield - ind2", "marc:record - marc:datafield - ind1",
+                        "marc:record - marc:datafield - marc:subfield - code", "marc:record - marc:datafield - marc:subfield" },
+                new Serializable[][] {
+                        { "00762cam a22002658a 4500", "001", "93032341", "010", null, null, "a", "93032341" },
+                        { null, "003", "DLC", "020", null, null, "a", "0192814591 :" },
+                        { null, "005", "20000302171755.0", null, null, null, "c", "£4.99" },
+                        { null, "008", "930830s1994    enk           000 0 eng", "040", null, null, "a", "DLC" },
+                        { null, null, null, null, null, null, "c", "DLC" },
+                        { null, null, null, null, null, null, "d", "DLC" },
+                        { null, null, null, "050", "0", "0", "a", "PR2801.A2" },
+                        { null, null, null, null, null, null, "b", "S66 1994" },
+                        { null, null, null, "082", "0", "0", "a", "822.3/3" },
+                        { null, null, null, null, null, null, "2", "20" },
+                        { null, null, null, "100", null, "1", "a", "Shakespeare, William," },
+                        { null, null, null, null, null, null, "d", "1564-1616." },
+                        { null, null, null, "245", "0", "1", "a", "All's well that ends well /" },
+                        { null, null, null, null, null, null, "c", "edited by Susan Snyder." },
+                        { null, null, null, "260", null, null, "a", "Oxford ;" },
+                        { null, null, null, null, null, null, "a", "New York :" },
+                        { null, null, null, null, null, null, "b", "Oxford University Press," },
+                        { null, null, null, null, null, null, "c", "1994." },
+                        { null, null, null, "263", null, null, "a", "9402" },
+                        { null, null, null, "300", null, null, "a", "p. cm." },
+                        { null, null, null, "440", "4", null, "a", "The World's classics" },
+                        { null, null, null, "651", "0", null, "a", "Florence (Italy)" },
+                        { null, null, null, null, null, null, "x", "Drama." },
+                        { null, null, null, "650", "0", null, "a", "Runaway husbands" },
+                        { null, null, null, null, null, null, "x", "Drama." },
+                        { null, null, null, "650", "0", null, "a", "Married women" },
+                        { null, null, null, null, null, null, "x", "Drama." },
+                        { null, null, null, "655", "7", null, "a", "Comedies." },
+                        { null, null, null, null, null, null, "2", "gsafd" },
+                        { null, null, null, "700", null, "1", "a", "Snyder, Susan." },
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
+    @Override
+    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
+        parseOneInputStream(parser, inputStream, options);
     }
 
 }

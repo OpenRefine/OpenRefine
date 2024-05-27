@@ -27,19 +27,42 @@
 
 package com.google.refine.operations.recon;
 
+import java.io.Serializable;
+import java.util.Collections;
+
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ReconClearSimilarCellsOperationTests extends RefineTest {
 
+    Project project;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "recon-clear-similar-cells", ReconClearSimilarCellsOperation.class);
+    }
+
+    @BeforeMethod
+    public void setupInitialState() {
+        project = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) },
+                        { "d", new Cell("b", testRecon("e2", "h2", Recon.Judgment.Matched)) },
+                });
     }
 
     @Test
@@ -50,5 +73,23 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
                 + "\"columnName\":\"my column\","
                 + "\"similarValue\":\"some value\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class), json);
+    }
+
+    @Test
+    public void testReconClearSimilarCells() throws Exception {
+        AbstractOperation operation = new ReconClearSimilarCellsOperation(new EngineConfig(Collections.emptyList(), Mode.RowBased), "bar",
+                "b");
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", null) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) },
+                        { "d", new Cell("b", null) },
+                });
+
+        assertProjectEquals(project, expected);
     }
 }

@@ -100,7 +100,7 @@ describe(__filename, function () {
     cy.getCell(0, 'Fat')
       .trigger('mouseover')
       .within(() => {
-        cy.get('a.data-table-cell-edit').click();
+        cy.get('.data-table-cell-edit').click();
       });
     cy.get('select').select('boolean');
     cy.get('button').contains(new RegExp('Apply', 'g')).click();
@@ -108,7 +108,7 @@ describe(__filename, function () {
     cy.getCell(1, 'Fat')
       .trigger('mouseover')
       .within(() => {
-        cy.get('a.data-table-cell-edit').click();
+        cy.get('.data-table-cell-edit').click();
       });
     cy.get('select').select('boolean');
     cy.get('button').contains(new RegExp('Apply', 'g')).click();

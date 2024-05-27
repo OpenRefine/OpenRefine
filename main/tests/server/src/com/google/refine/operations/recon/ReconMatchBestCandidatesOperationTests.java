@@ -27,19 +27,42 @@
 
 package com.google.refine.operations.recon;
 
+import java.io.Serializable;
+import java.util.Collections;
+
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ReconMatchBestCandidatesOperationTests extends RefineTest {
 
+    Project project;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
+    }
+
+    @BeforeMethod
+    public void setupInitialState() throws Exception {
+        project = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched, 123L)) },
+                        { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.New, 456L)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None, 789L)) }
+                });
     }
 
     @Test
@@ -54,5 +77,43 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
                 + "\"columnName\":\"organization_name\""
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json);
+    }
+
+    @Test
+    public void testReconMatchBestCandidatesOperation() throws Exception {
+        AbstractOperation operation = new ReconMatchBestCandidatesOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased), "bar");
+
+        runOperation(operation, project);
+
+        long historyEntryId = project.history.getLastPastEntries(1).get(0).id;
+
+        Recon reconE = testRecon("e", "h", Recon.Judgment.Matched, project.rows.get(0).getCell(1).recon.id);
+        reconE.features = new Object[] { null, null, null, null };
+        reconE.judgmentHistoryEntry = historyEntryId;
+        reconE.matchRank = 0;
+        reconE.judgmentAction = "mass";
+        Recon reconX = testRecon("x", "p", Recon.Judgment.New, project.rows.get(1).getCell(1).recon.id);
+        reconX.features = new Object[] { null, null, null, null };
+        reconX.judgmentHistoryEntry = historyEntryId;
+        reconX.match = reconX.getBestCandidate();
+        reconX.matchRank = 0;
+        reconX.judgment = Recon.Judgment.Matched;
+        reconX.judgmentAction = "mass";
+        Recon reconB = testRecon("b", "j", Recon.Judgment.None, project.rows.get(2).getCell(1).recon.id);
+        reconB.features = new Object[] { null, null, null, null };
+        reconB.judgmentHistoryEntry = historyEntryId;
+        reconB.matchRank = 0;
+        reconB.match = reconB.getBestCandidate();
+        reconB.judgmentAction = "mass";
+        reconB.judgment = Recon.Judgment.Matched;
+        Project expected = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", reconE) },
+                        { "c", new Cell("b", reconX) },
+                        { "c", new Cell("d", reconB) }
+                });
+        assertProjectEquals(project, expected);
     }
 }

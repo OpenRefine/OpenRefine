@@ -28,6 +28,7 @@
 package com.google.refine.browsing.facets;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -98,9 +99,12 @@ public class ListFacetTests extends RefineTest {
 
     @Test
     public void serializeListFacet() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("Column A\n" +
-                "foo\n" +
-                "bar\n");
+        Project project = createProject(
+                new String[] { "Column A" },
+                new Serializable[][] {
+                        { "foo" },
+                        { "bar" }
+                });
         Engine engine = new Engine(project);
 
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
@@ -120,9 +124,12 @@ public class ListFacetTests extends RefineTest {
 
     @Test
     public void serializeListFacetWithError() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("other column\n" +
-                "foo\n" +
-                "bar\n");
+        Project project = createProject(
+                new String[] { "other column" },
+                new Serializable[][] {
+                        { "foo" },
+                        { "bar" }
+                });
 
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         Facet facet = facetConfig.apply(project);
@@ -131,10 +138,13 @@ public class ListFacetTests extends RefineTest {
 
     @Test
     public void testSelectedEmptyChoice() throws IOException {
-        Project project = createCSVProject("Column A\n" +
-                "a\n" +
-                "c\n" +
-                "e");
+        Project project = createProject(
+                new String[] { "Column A" },
+                new Serializable[][] {
+                        { "a" },
+                        { "c" },
+                        { "e" },
+                });
         Engine engine = new Engine(project);
 
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);

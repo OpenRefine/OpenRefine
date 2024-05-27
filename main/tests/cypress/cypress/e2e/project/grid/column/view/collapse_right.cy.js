@@ -9,8 +9,8 @@ const fixture = [
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('a', ['View', 'Collapse all columns to right']);
 
-    cy.get('[title="b"]').should('to.contain', '');
-    cy.get('[title="c"]').should('to.contain', '');
+    cy.get('[title="Expand column \'b\'"]').should('to.contain', '');
+    cy.get('[title="Expand column \'c\'"]').should('to.contain', '');
 
   });
 });

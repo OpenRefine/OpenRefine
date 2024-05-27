@@ -33,11 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Random;
 
@@ -69,7 +72,8 @@ public class Recon implements HasFields {
         @JsonProperty("none")
         None, @JsonProperty("matched")
         Matched, @JsonProperty("new")
-        New
+        New, @JsonProperty("error")
+        Error
     }
 
     @Deprecated
@@ -78,6 +82,8 @@ public class Recon implements HasFields {
             return "matched";
         } else if (judgment == Judgment.New) {
             return "new";
+        } else if (judgment == Judgment.Error) {
+            return "errors";
         } else {
             return "none";
         }
@@ -89,6 +95,8 @@ public class Recon implements HasFields {
             return Judgment.Matched;
         } else if ("new".equals(s)) {
             return Judgment.New;
+        } else if ("errors".equals(s)) {
+            return Judgment.Error;
         } else {
             return Judgment.None;
         }
@@ -198,6 +206,7 @@ public class Recon implements HasFields {
 
         r.match = match;
         r.matchRank = matchRank;
+        r.error = error;
     }
 
     public void addCandidate(ReconCandidate candidate) {
@@ -380,7 +389,7 @@ public class Recon implements HasFields {
         return null;
     }
 
-    static public Recon loadStreaming(String s) throws Exception {
+    static public Recon loadStreaming(String s) throws IOException {
         return ParsingUtilities.mapper.readValue(s, Recon.class);
     }
 
@@ -415,4 +424,42 @@ public class Recon implements HasFields {
         this.judgmentBatchSize = judgmentBatchSize != null ? judgmentBatchSize : 0;
         this.matchRank = matchRank != null ? matchRank : -1;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.deepHashCode(features);
+        result = prime * result + Objects.hash(candidates, error, id, identifierSpace, judgment, judgmentAction,
+                judgmentBatchSize, judgmentHistoryEntry, match, matchRank, schemaSpace, service);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Recon other = (Recon) obj;
+        return Objects.equals(candidates, other.candidates) && Objects.equals(error, other.error)
+                && Arrays.deepEquals(features, other.features) && id == other.id
+                && Objects.equals(identifierSpace, other.identifierSpace) && judgment == other.judgment
+                && Objects.equals(judgmentAction, other.judgmentAction) && judgmentBatchSize == other.judgmentBatchSize
+                && judgmentHistoryEntry == other.judgmentHistoryEntry && Objects.equals(match, other.match)
+                && matchRank == other.matchRank && Objects.equals(schemaSpace, other.schemaSpace)
+                && Objects.equals(service, other.service);
+    }
+
+    @Override
+    public String toString() {
+        return "Recon [id=" + id + ", service=" + service + ", identifierSpace=" + identifierSpace + ", schemaSpace="
+                + schemaSpace + ", features=" + Arrays.toString(features) + ", candidates=" + candidates + ", judgment="
+                + judgment + ", judgmentAction=" + judgmentAction + ", judgmentHistoryEntry=" + judgmentHistoryEntry
+                + ", judgmentBatchSize=" + judgmentBatchSize + ", match=" + match + ", error=" + error + ", matchRank="
+                + matchRank + "]";
+    }
+
 }

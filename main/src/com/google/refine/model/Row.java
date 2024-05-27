@@ -203,7 +203,7 @@ public class Row implements HasFields {
         }
     }
 
-    static public Row load(String s, Pool pool) throws Exception {
+    static public Row load(String s, Pool pool) throws IOException {
         return s.length() == 0 ? null : loadStreaming(s, pool);
     }
 
@@ -218,7 +218,7 @@ public class Row implements HasFields {
         return new Row(cells, flagged, starred);
     }
 
-    static public Row loadStreaming(String s, Pool pool) throws Exception {
+    static public Row loadStreaming(String s, Pool pool) throws IOException {
         InjectableValues injectableValues = new InjectableValues.Std()
                 .addValue("pool", pool);
         return ParsingUtilities.mapper.setInjectableValues(injectableValues)

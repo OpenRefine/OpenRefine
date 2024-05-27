@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -126,6 +128,18 @@ public class JSONUtilities {
             return (ObjectNode) n;
         }
         return null;
+    }
+
+    static public List<ObjectNode> getObjectList(ArrayNode a) {
+        List<ObjectNode> result = new ArrayList<>(a.size());
+        Iterator<JsonNode> iter = a.iterator();
+        while (iter.hasNext()) {
+            JsonNode n = iter.next();
+            if (n != null && n instanceof ObjectNode) {
+                result.add((ObjectNode) n);
+            }
+        }
+        return result;
     }
 
     static public int getIntElement(ArrayNode a, int i, int def) {

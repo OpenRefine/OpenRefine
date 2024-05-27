@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.concurrent.TimeUnit;
 
@@ -45,11 +46,13 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        project = createCSVProject(
-                "foo,bar\n"
-                        + "France,b\n"
-                        + "Japan,d\n"
-                        + "Paraguay,x");
+        project = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "France", "b" },
+                        { "Japan", "d" },
+                        { "Paraguay", "x" }
+                });
 
     }
 

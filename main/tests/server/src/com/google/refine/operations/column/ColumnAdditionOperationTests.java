@@ -27,19 +27,45 @@
 
 package com.google.refine.operations.column;
 
+import java.io.Serializable;
+import java.util.Collections;
+
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.DecoratedValue;
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.facets.ListFacet;
+import com.google.refine.expr.EvalError;
+import com.google.refine.model.Project;
+import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ColumnAdditionOperationTests extends RefineTest {
 
+    protected Project project;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "column-addition", ColumnAdditionOperation.class);
+    }
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        project = createProject(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "d" },
+                        { "v3", "a", "f" },
+                        { "", "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
     }
 
     @Test
@@ -51,5 +77,198 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json);
+    }
+
+    @Test
+    public void testAddColumnRowsMode() throws Exception {
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "v1_a", "d" },
+                        { "v3", "a", "v3_a", "f" },
+                        { "", "a", "_a", "g" },
+                        { "", "b", "_b", "h" },
+                        { new EvalError("error"), "a", null, "i" },
+                        { "v1", "b", "v1_b", "j" }
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testAddColumnRowsModeWithFacet() throws Exception {
+        ListFacet.ListFacetConfig facetConfig = new ListFacet.ListFacetConfig();
+        facetConfig.name = "my facet";
+        facetConfig.expression = "grel:value";
+        facetConfig.columnName = "bar";
+        facetConfig.selection = Collections.singletonList(new DecoratedValue("a", "a"));
+        EngineConfig engineConfig = new EngineConfig(Collections.singletonList(facetConfig), Mode.RowBased);
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                engineConfig,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "v1_a", "d" },
+                        { "v3", "a", "v3_a", "f" },
+                        { "", "a", "_a", "g" },
+                        { "", "b", null, "h" },
+                        { new EvalError("error"), "a", null, "i" },
+                        { "v1", "b", null, "j" }
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testAddColumnRecordsMode() throws Exception {
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                "bar",
+                "grel:length(row.record.cells['hello'])",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", 1, "d" },
+                        { "v3", "a", 4, "f" },
+                        { "", "a", 4, "g" },
+                        { "", "b", 4, "h" },
+                        { new EvalError("error"), "a", 4, "i" },
+                        { "v1", "b", 1, "j" }
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testAddColumnRecordsModeWithFacet() throws Exception {
+        ListFacet.ListFacetConfig facetConfig = new ListFacet.ListFacetConfig();
+        facetConfig.name = "my facet";
+        facetConfig.expression = "grel:value";
+        facetConfig.columnName = "bar";
+        facetConfig.selection = Collections.singletonList(new DecoratedValue("b", "b"));
+        EngineConfig engineConfig = new EngineConfig(Collections.singletonList(facetConfig), Mode.RecordBased);
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                engineConfig,
+                "bar",
+                "grel:length(row.record.cells['hello'])",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", null, "d" },
+                        { "v3", "a", 4, "f" },
+                        { "", "a", 4, "g" },
+                        { "", "b", 4, "h" },
+                        { new EvalError("error"), "a", 4, "i" },
+                        { "v1", "b", 1, "j" }
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testAddColumnRowsModeNotLocal() throws Exception {
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased),
+                "bar",
+                "grel:facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", 4, "d" },
+                        { "v3", "a", 4, "f" },
+                        { "", "a", 4, "g" },
+                        { "", "b", 2, "h" },
+                        { new EvalError("error"), "a", 4, "i" },
+                        { "v1", "b", 2, "j" }
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testAddColumnRecordsModeNotLocal() throws Exception {
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RecordBased),
+                "bar",
+                "grel:facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", 4, "d" },
+                        { "v3", "a", 4, "f" },
+                        { "", "a", 4, "g" },
+                        { "", "b", 2, "h" },
+                        { new EvalError("error"), "a", 4, "i" },
+                        { "v1", "b", 2, "j" }
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testAddColumnRecordsModeNotLocalWithFacet() throws Exception {
+        ListFacet.ListFacetConfig facetConfig = new ListFacet.ListFacetConfig();
+        facetConfig.name = "my facet";
+        facetConfig.expression = "grel:value";
+        facetConfig.columnName = "bar";
+        facetConfig.selection = Collections.singletonList(new DecoratedValue("b", "b"));
+        EngineConfig engineConfig = new EngineConfig(Collections.singletonList(facetConfig), Mode.RecordBased);
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                engineConfig,
+                "bar",
+                "grel:facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", null, "d" },
+                        { "v3", "a", 4, "f" },
+                        { "", "a", 4, "g" },
+                        { "", "b", 2, "h" },
+                        { new EvalError("error"), "a", 4, "i" },
+                        { "v1", "b", 2, "j" }
+                });
+        assertProjectEquals(project, expected);
     }
 }

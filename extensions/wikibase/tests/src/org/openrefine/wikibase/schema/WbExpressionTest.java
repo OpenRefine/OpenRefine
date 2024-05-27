@@ -88,8 +88,11 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
     @BeforeMethod
     public void createProject()
             throws IOException, ModelException {
-        project = createCSVProject("Wikidata variable test project",
-                "column A,column B,column C,column D,column E\n" + "value A,value B,value C,value D,value E");
+        project = createProject("Wikidata variable test project",
+                new String[] { "column A", "column B", "column C", "column D", "column E" },
+                new Serializable[][] {
+                        { "value A", "value B", "value C", "value D", "value E" }
+                });
         warningStore = new QAWarningStore();
         row = project.rows.get(0);
         ctxt = new ExpressionContext("http://www.wikidata.org/entity/", Collections.emptyMap(), server.url("/w/api.php").toString(), 0, row,

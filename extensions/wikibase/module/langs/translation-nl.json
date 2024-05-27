@@ -129,5 +129,9 @@
     "wikibase-account/password-remember-me-title": "Je wachtwoord wordt niet opgeslagen. Vink dit vakje niet aan als je op een publieke computer werkt.",
     "wikibase-account/owner-only-consumer-remember-me-title": "Je inloggegevens worden onversleuteld opgeslagen in cookies. Vink dit vakje niet aan als je op een publieke computer werkt.",
     "perform-wikibase-edits/review-your-edits": "Je gaat zo dadelijk $1 bewerkingen uploaden naar <a href=\"$2\" target=\"_blank\">$3</a>. Kijk deze grondig na. Grote batch-bewerkingen moeten eerst via een <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">bot-review</a> gecheckt worden.",
-    "wikibase-account/consumer-token-label": "Consumententoken"
+    "wikibase-account/consumer-token-label": "Consumententoken",
+    "wikibase-management/discover-manifests": "Ontdek Wikibase-instanties…",
+    "wikibase-management/cancel": "Annuleren",
+    "wikibase-management/ok": "OKÉ",
+    "wikibase-addition/version-error": "Manifest versie $1 wordt niet ondersteund. OpenRefine ondersteund alleen manifest versies 1.x en 2.x."
 }

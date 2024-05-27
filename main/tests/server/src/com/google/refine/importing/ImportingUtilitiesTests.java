@@ -47,7 +47,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.StreamSupport;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
@@ -59,13 +61,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileSystem;
 import org.apache.commons.io.FileUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.core5.http.ContentType;
@@ -220,7 +222,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
 
         ImportingJob job = ImportingManager.createJob();
-        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        Map<String, String> parameters = ParsingUtilities.parseParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
         ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         try {
@@ -271,7 +273,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
 
         ImportingJob job = ImportingManager.createJob();
-        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        Map<String, String> parameters = ParsingUtilities.parseParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
         ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         try {
@@ -381,7 +383,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 project,
                 metadata,
                 job,
-                IteratorUtils.toList(fileRecords.iterator()),
+                JSONUtilities.getObjectList(fileRecords),
                 "tsv",
                 -1,
                 options,
@@ -414,10 +416,16 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Test
     public void importUnsupportedZipFile() throws IOException {
-        String filename = "unsupportedPPMD.zip";
+        for (String basename : new String[] { "unsupportedPPMD", "notazip" }) {
+            testInvalidZipFile(basename);
+        }
+    }
+
+    private void testInvalidZipFile(String basename) throws IOException {
+        String filename = basename + ".zip";
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
-        File tmp = File.createTempFile("openrefine-test-unsupportedPPMD", ".zip", job.getRawDataDir());
+        File tmp = File.createTempFile("openrefine-test-" + basename, ".zip", job.getRawDataDir());
         tmp.deleteOnExit();
         FileUtils.copyFile(new File(filepath), tmp);
 
@@ -444,13 +452,13 @@ public class ImportingUtilitiesTests extends ImporterTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        assertThrows(IOException.class,
+        assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
-        assertThrows(FileUploadBase.InvalidContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request,
-                new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
-        assertThrows(IOException.class,
+        assertThrows("Failed to throw for " + filename, FileUploadBase.InvalidContentTypeException.class,
+                () -> ImportingUtilities.retrieveContentFromPostRequest(request,
+                        new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
+        assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
-
     }
 
     @Test
@@ -476,7 +484,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
             reader = new InputStreamReader(is);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
-            Assert.assertEquals(IterableUtils.size(records), LINES * 2, "row count mismatch for " + filename);
+            Assert.assertEquals(StreamSupport.stream(records.spliterator(), false).count(), LINES * 2,
+                    "row count mismatch for " + filename);
         }
         reader.close();
     }
@@ -497,4 +506,62 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     }
 
+    /**
+     * This test method is designed to validate the behavior of the system when a URL with a trailing space is used. It
+     * simulates a scenario where a URL with a trailing space is used to retrieve content from a POST request. The
+     * expected behavior is that the system should trim the URL and proceed with the request as normal.
+     *
+     * @throws IOException
+     *             if an I/O error occurs during the test
+     * @throws FileUploadException
+     *             if a file upload error occurs during the test
+     */
+    @Test
+    public void testTrailingSpaceInUrl() throws IOException, FileUploadException {
+        try (MockWebServer server = new MockWebServer()) {
+            String url = server.url("input.csv ").toString();
+            server.enqueue(new MockResponse()
+                    .setHttp2ErrorCode(404)
+                    .setStatus("HTTP/1.1 404 Not Found"));
+
+            String message = String.format("HTTP error %d : %s for URL %s", 404,
+                    "Not Found", url.trim());
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            StringBody stringBody = new StringBody(url, ContentType.MULTIPART_FORM_DATA);
+            builder = builder.addPart("download", stringBody);
+            HttpEntity entity = builder.build();
+
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            entity.writeTo(os);
+            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+            HttpServletRequest req = mock(HttpServletRequest.class);
+            when(req.getContentType()).thenReturn(entity.getContentType());
+            when(req.getParameter("download")).thenReturn(url);
+            when(req.getMethod()).thenReturn("POST");
+            when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+            when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+
+            ImportingJob job = ImportingManager.createJob();
+            Map<String, String> parameters = ParsingUtilities.parseParameters(req);
+            ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
+            Progress dummyProgress = new Progress() {
+
+                @Override
+                public void setProgress(String message, int percent) {
+                }
+
+                @Override
+                public boolean isCanceled() {
+                    return false;
+                }
+            };
+            try {
+                ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
+                fail("No Exception was thrown");
+            } catch (ClientProtocolException exception) {
+                assertEquals(exception.getMessage(), message);
+            }
+        }
+    }
 }

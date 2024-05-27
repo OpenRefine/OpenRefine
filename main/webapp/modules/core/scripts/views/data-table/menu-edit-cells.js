@@ -229,6 +229,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // replace "\newline" with "\n" and "\tab" with "\t"
       temp = temp.replace(/\\\n/g, '\\n').replace(/\\\t/g, '\\t');
     }
+    // replace """" with "\""
+    temp = temp.replace(/"/g, '\\"');
     // replace newline with "\n" and tab with "\t"
     return temp.replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/[\x00-\x1F\x80-\x9F]/g,'');
   }

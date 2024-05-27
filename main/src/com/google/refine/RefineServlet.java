@@ -64,7 +64,7 @@ import com.google.refine.io.FileProjectManager;
 
 public class RefineServlet extends Butterfly {
 
-    static private String ASSIGNED_VERSION = "3.8-SNAPSHOT";
+    static private String ASSIGNED_VERSION = "3.9-SNAPSHOT";
 
     static public String VERSION = "";
     static public String REVISION = "";
@@ -123,7 +123,7 @@ public class RefineServlet extends Butterfly {
         FULL_VERSION = VERSION + " [" + REVISION + "]";
         FULLNAME += FULL_VERSION;
 
-        logger.info("Starting " + FULLNAME + "...");
+        logger.info("Starting {} ...", FULLNAME);
 
         s_singleton = this;
 
@@ -134,8 +134,7 @@ public class RefineServlet extends Butterfly {
         if (data == null) {
             throw new ServletException("can't find servlet init config 'refine.data', I have to give up initializing");
         }
-        logger.error("initializing FileProjectManager with dir");
-        logger.error(data);
+        logger.info("Initializing FileProjectManager with data dir: {}", data);
         s_dataDir = new File(data);
         FileProjectManager.initialize(s_dataDir);
         ImportingManager.initialize(this);
@@ -221,6 +220,15 @@ public class RefineServlet extends Butterfly {
 
     public ButterflyModule getModule(String name) {
         return _modulesByName.get(name);
+    }
+
+    /**
+     * Get a list of the names of currently loaded modules.
+     *
+     * @return an array of module names in alphabetical order
+     */
+    public String[] getModuleNames() {
+        return _modulesByName.keySet().stream().sorted().toArray(String[]::new);
     }
 
     protected String getCommandKey(HttpServletRequest request) {

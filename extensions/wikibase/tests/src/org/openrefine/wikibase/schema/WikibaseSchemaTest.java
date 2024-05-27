@@ -108,7 +108,8 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
 
     @BeforeMethod
     public void setUpProject() {
-        project = this.createCSVProject(TestingData.inceptionCsv);
+        project = this.createProject(TestingData.inceptionColumns,
+                TestingData.inceptionProjectGrid);
         project.rows.get(0).cells.set(0, TestingData.makeMatchedCell("Q1377", "University of Ljubljana"));
         project.rows.get(1).cells.set(0, TestingData.makeMatchedCell("Q865528", "University of Warwick"));
     }

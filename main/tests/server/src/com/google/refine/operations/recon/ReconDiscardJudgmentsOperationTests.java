@@ -27,19 +27,41 @@
 
 package com.google.refine.operations.recon;
 
+import java.io.Serializable;
+import java.util.Collections;
+
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ReconDiscardJudgmentsOperationTests extends RefineTest {
 
+    Project project;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "recon-discard-judgments", ReconDiscardJudgmentsOperation.class);
+    }
+
+    @BeforeMethod
+    public void setupInitialState() {
+        project = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched, 1234L)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None, 5678L)) }
+                });
     }
 
     @Test
@@ -55,5 +77,46 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
                 "    \"clearData\": true\n" +
                 "  }";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class), json);
+    }
+
+    @Test
+    public void testReconDiscardJudgmentsOperation() throws Exception {
+        AbstractOperation operation = new ReconDiscardJudgmentsOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased), "bar", false);
+
+        runOperation(operation, project);
+
+        long historyEntryId = project.history.getLastPastEntries(1).get(0).id;
+        Recon reconE = testRecon("e", "h", Recon.Judgment.None, project.rows.get(0).getCell(1).recon.id);
+        reconE.features = new Object[] { null, null, null, null };
+        reconE.judgmentAction = "mass";
+        reconE.judgmentHistoryEntry = historyEntryId;
+        Recon reconB = testRecon("b", "j", Recon.Judgment.None, project.rows.get(1).getCell(1).recon.id);
+        reconB.features = new Object[] { null, null, null, null };
+        reconB.judgmentAction = "mass";
+        reconB.judgmentHistoryEntry = historyEntryId;
+        Project expected = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", reconE) },
+                        { "c", new Cell("d", reconB) }
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testClearReconOperation() throws Exception {
+        AbstractOperation operation = new ReconDiscardJudgmentsOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased), "bar", true);
+
+        runOperation(operation, project);
+
+        Project expected = createProject(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "c", "d" }
+                });
+        assertProjectEquals(project, expected);
     }
 }

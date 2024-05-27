@@ -30,7 +30,7 @@ package com.google.refine.operations.recon;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import java.util.Properties;
+import java.io.Serializable;
 
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -66,12 +66,16 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
 
     @Test
     public void testUseValuesAsIds() throws Exception {
-        Project project = createCSVProject("ids,v\n"
-                + "Q343,hello\n"
-                + ",world\n"
-                + "http://test.org/entities/Q31,test");
+        Project project = createProject(
+                new String[] { "ids", "v" },
+                new Serializable[][] {
+                        { "Q343", "hello" },
+                        { null, "world" },
+                        { "http://test.org/entities/Q31", "test" }
+                });
         ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
-        op.createProcess(project, new Properties()).performImmediate();
+
+        runOperation(op, project);
 
         assertEquals("Q343", project.rows.get(0).cells.get(0).recon.match.id);
         assertEquals("http://test.org/entities/", project.rows.get(0).cells.get(0).recon.identifierSpace);
