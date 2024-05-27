@@ -103,7 +103,7 @@
     <commons-io.version>2.16.1</commons-io.version>
     <guava.version>33.2.0-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
-    <juniversalchardet.version>2.4.0</juniversalchardet.version>
+    <juniversalchardet.version>2.5.0</juniversalchardet.version>
     <testng.version>7.10.2</testng.version>
     <httpmime.version>4.5.14</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
