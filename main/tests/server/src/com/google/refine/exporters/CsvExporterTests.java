@@ -224,6 +224,66 @@ public class CsvExporterTests extends RefineTest {
                 ",row2cell1,row2cell2\n");
     }
 
+    /*
+    check if CSV exporter can handle a semi-colon as a custom separator
+     */
+    @Test
+    public void exportCsvWithCustomSeparatorSemicolon() {
+        CreateGrid(2, 2);
+        when(options.getProperty("options")).thenReturn("{\"separator\":\";\"}");
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail("IOException should not have occurred", e);
+        }
+
+        assertEqualsSystemLineEnding(writer.toString(), "column0;column1\n" +
+                "row0cell0;row0cell1\n" +
+                "row1cell0;row1cell1\n");
+    }
+
+    /*
+    check output does not contain any quotes around the values, as expected when quoting is turned off
+     */
+    @Test
+    public void exportCsvWithoutQuotingFieldsExplicitly() {
+        CreateGrid(2, 2);
+        when(options.getProperty("options")).thenReturn("{\"quoteAll\":\"false\"}");
+        // Explicitly setting quoteAll to false
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail("IOException should not have occurred", e);
+        }
+
+        // Verifying that output does not contain quotes around text
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1\n" +
+                "row0cell0,row0cell1\n" +
+                "row1cell0,row1cell1\n");
+    }
+
+    /*
+    check a normal scenario without special characters, fields are not quoted
+     */
+    @Test
+    public void exportCsvWithoutQuotingFieldsByDefault() {
+        CreateGrid(2, 2);
+        // Not setting any options, should take default behavior
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail("IOException should not have occurred", e);
+        }
+
+        // Verifying that output does not contain quotes around text by default
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1\n" +
+                "row0cell0,row0cell1\n" +
+                "row1cell0,row1cell1\n");
+    }
+
     // all date type cells are in unified format
     /**
      * @Ignore
