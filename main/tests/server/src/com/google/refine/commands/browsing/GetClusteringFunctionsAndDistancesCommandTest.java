@@ -61,16 +61,12 @@ public class GetClusteringFunctionsAndDistancesCommandTest {
     protected Command command = null;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         command = new GetClusteringFunctionsAndDistancesCommand();
         writer = new StringWriter();
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
 
         DistanceFactory.put("levenshtein", new VicinoDistance(new LevenshteinDistance()));
         KeyerFactory.put("metaphone3", new Metaphone3Keyer());

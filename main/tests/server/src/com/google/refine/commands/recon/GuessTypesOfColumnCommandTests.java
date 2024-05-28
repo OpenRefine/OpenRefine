@@ -35,17 +35,13 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
     Project project = null;
 
     @BeforeMethod
-    public void setUpCommand() {
+    public void setUpCommand() throws IOException {
         command = new GuessTypesOfColumnCommand();
         command.setSampleSize(2);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         writer = new StringWriter();
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
         project = createProject(
                 new String[] { "foo", "bar" },
                 new Serializable[][] {

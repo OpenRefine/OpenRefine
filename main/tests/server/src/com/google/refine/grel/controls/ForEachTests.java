@@ -27,8 +27,8 @@
 
 package com.google.refine.grel.controls;
 
+import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.util.Properties;
 
@@ -60,21 +60,14 @@ public class ForEachTests extends GrelTestBase {
         bindings = new Properties();
         bindings.put("v", "");
         assertParseError("forEach('test', v, v)");
-        try {
-            assertParseError("forEach([], 1, 1)");
-            fail("Didn't throw a ParsingException for wrong argument type");
-        } catch (ParsingException e) {
-        }
-        try {
-            assertParseError("forEach([], v)");
-            fail("Didn't throw a ParsingException for 2 arguments");
-        } catch (ParsingException e) {
-        }
-        try {
-            assertParseError("forEach([])");
-            fail("Didn't throw a ParsingException for 1 argument");
-        } catch (ParsingException e) {
-        }
+        assertThrows("Didn't throw a ParsingException for wrong argument type", ParsingException.class,
+                () -> assertParseError("forEach([], 1, 1)"));
+
+        assertThrows("Didn't throw a ParsingException for 2 arguments", ParsingException.class,
+                () -> assertParseError("forEach([], v)"));
+
+        assertThrows("Didn't throw a ParsingException for 1 argument", ParsingException.class,
+                () -> assertParseError("forEach([])"));
     }
 
     @Test

@@ -37,7 +37,6 @@ package com.google.refine.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -117,33 +116,29 @@ public class ParsingUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void testParseGZIPInutstream() throws IOException {
+    public void testParseGZIPInutstream() throws Exception {
         // Test decompressing gzip
-        try {
-            String sampleBody = "<HTML>\n" +
-                    "\n" +
-                    "<HEAD>\n" +
-                    "\n" +
-                    "<TITLE>Your Title Here</TITLE>\n" +
-                    "\n" +
-                    "</HEAD>\n" +
-                    "\n" +
-                    "<BODY BGCOLOR=\"FFFFFF\">\n" +
-                    "\n" +
-                    "</BODY>\n" +
-                    "\n" +
-                    "</HTML>";
-            ByteArrayOutputStream obj = new ByteArrayOutputStream();
-            GZIPOutputStream gzip = new GZIPOutputStream(obj);
-            gzip.write(sampleBody.getBytes("UTF-8"));
-            gzip.close();
-            byte[] compressed = obj.toByteArray();
+        String sampleBody = "<HTML>\n" +
+                "\n" +
+                "<HEAD>\n" +
+                "\n" +
+                "<TITLE>Your Title Here</TITLE>\n" +
+                "\n" +
+                "</HEAD>\n" +
+                "\n" +
+                "<BODY BGCOLOR=\"FFFFFF\">\n" +
+                "\n" +
+                "</BODY>\n" +
+                "\n" +
+                "</HTML>";
+        ByteArrayOutputStream obj = new ByteArrayOutputStream();
+        GZIPOutputStream gzip = new GZIPOutputStream(obj);
+        gzip.write(sampleBody.getBytes("UTF-8"));
+        gzip.close();
+        byte[] compressed = obj.toByteArray();
 
-            String res = ParsingUtilities.inputStreamToString(new ByteArrayInputStream(compressed), "gzip");
-            Assert.assertEquals(res, sampleBody);
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        String res = ParsingUtilities.inputStreamToString(new ByteArrayInputStream(compressed), "gzip");
+        Assert.assertEquals(res, sampleBody);
     }
 
     @Test

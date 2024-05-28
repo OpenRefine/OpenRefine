@@ -38,13 +38,9 @@ import com.google.refine.util.ParsingUtilities;
 
 public class JsonValueConverterTests {
 
-    private void fieldEquals(String json, Object expectedValue) {
-        try {
-            ObjectNode n = (ObjectNode) ParsingUtilities.mapper.readTree(json);
-            assertEquals(expectedValue, JsonValueConverter.convert(n.get("foo")));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void fieldEquals(String json, Object expectedValue) throws IOException {
+        ObjectNode n = (ObjectNode) ParsingUtilities.mapper.readTree(json);
+        assertEquals(expectedValue, JsonValueConverter.convert(n.get("foo")));
     }
 
     @Test
@@ -58,32 +54,32 @@ public class JsonValueConverterTests {
     }
 
     @Test
-    public void testConvertInt() {
+    public void testConvertInt() throws IOException {
         fieldEquals("{\"foo\":3}", 3);
     }
 
     @Test
-    public void testConvertFloat() {
+    public void testConvertFloat() throws IOException {
         fieldEquals("{\"foo\":3.14}", 3.14);
     }
 
     @Test
-    public void testConvertBool() {
+    public void testConvertBool() throws IOException {
         fieldEquals("{\"foo\":true}", true);
     }
 
     @Test
-    public void testConvertNull() {
+    public void testConvertNull() throws IOException {
         fieldEquals("{\"foo\":null}", null);
     }
 
     @Test
-    public void testConvertString() {
+    public void testConvertString() throws IOException {
         fieldEquals("{\"foo\":\"bar\"}", "bar");
     }
 
     @Test
-    public void testConvertNoField() {
+    public void testConvertNoField() throws IOException {
         fieldEquals("{}", null);
     }
 }

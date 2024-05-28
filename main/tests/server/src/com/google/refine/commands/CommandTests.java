@@ -37,6 +37,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertThrows;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -88,50 +89,26 @@ public class CommandTests extends RefineTest {
 
     @Test
     public void getProjectThrowsWithNullParameter() {
-        try {
-            SUT.wrapGetProject(null);
-            Assert.fail(); // should throw exception before this
-        } catch (IllegalArgumentException e) {
-            // expected
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        assertThrows(IllegalArgumentException.class, () -> SUT.wrapGetProject(null));
     }
 
     @Test
     public void getProjectThrowsIfResponseHasNoOrBrokenProjectParameter() {
         when(request.getParameter("project")).thenReturn(""); // null
-        try {
-            SUT.wrapGetProject(request);
-        } catch (ServletException e) {
-            // expected
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        assertThrows(ServletException.class, () -> SUT.wrapGetProject(request));
         verify(request, times(1)).getParameter("project");
     }
 
     // -----------------getEngineConfig tests-----------------
     @Test
     public void getEngineConfigThrowsWithNullParameter() {
-        try {
-            SUT.wrapGetEngineConfig(null);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // expected
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        assertThrows(IllegalArgumentException.class, () -> SUT.wrapGetEngineConfig(null));
     }
 
     @Test
     public void getEngineConfigReturnsNullWithNullEngineParameter() {
         when(request.getParameter("engine")).thenReturn(null);
-        try {
-            Assert.assertNull(SUT.wrapGetEngineConfig(request));
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        Assert.assertNull(SUT.wrapGetEngineConfig(request));
     }
 
     @Test
@@ -147,57 +124,31 @@ public class CommandTests extends RefineTest {
     public void getEngineConfigRegressionTest() {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\"}");
         EngineConfig o = null;
-        try {
-            o = SUT.wrapGetEngineConfig(request);
-            Assert.assertEquals(Mode.RowBased, o.getMode());
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        o = SUT.wrapGetEngineConfig(request);
+        Assert.assertEquals(Mode.RowBased, o.getMode());
         verify(request, times(1)).getParameter("engine");
     }
 
     // -----------------getEngine tests----------------------
     @Test
     public void getEngineThrowsOnNullParameter() {
-        try {
-            SUT.wrapGetEngine(null, null);
-        } catch (IllegalArgumentException e) {
-            // expected
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        assertThrows(IllegalArgumentException.class, () -> SUT.wrapGetEngine(null, null));
 
-        try {
-            SUT.wrapGetEngine(null, project);
-        } catch (IllegalArgumentException e) {
-            // expected
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        assertThrows(IllegalArgumentException.class, () -> SUT.wrapGetEngine(null, project));
 
-        try {
-            SUT.wrapGetEngine(request, null);
-        } catch (IllegalArgumentException e) {
-            // expected
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        assertThrows(IllegalArgumentException.class, () -> SUT.wrapGetEngine(request, null));
     }
 
     @Test
-    public void getEngineRegressionTest() {
+    public void getEngineRegressionTest() throws Exception {
         // TODO refactor getEngine to use dependency injection, so a mock Engine
         // object can be used.
 
         Engine engine = null;
         when(request.getParameter("engine")).thenReturn("{\"hello\":\"world\"}");
 
-        try {
-            engine = SUT.wrapGetEngine(request, project);
-            Assert.assertNotNull(engine);
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        engine = SUT.wrapGetEngine(request, project);
+        Assert.assertNotNull(engine);
 
         verify(request, times(1)).getParameter("engine");
         // JSON configuration doesn't have 'facets' key or 'INCLUDE_DEPENDENT'
@@ -209,20 +160,10 @@ public class CommandTests extends RefineTest {
     @Test
     public void getIntegerParameterWithNullParameters() {
         // all null
-        try {
-            SUT.wrapGetIntegerParameter(null, null, 0);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> SUT.wrapGetIntegerParameter(null, null, 0));
 
         // request null
-        try {
-            SUT.wrapGetIntegerParameter(null, "name", 0);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> SUT.wrapGetIntegerParameter(null, "name", 0));
     }
 
     @Test
@@ -232,20 +173,12 @@ public class CommandTests extends RefineTest {
         when(request.getParameter("incorrect")).thenReturn(null);
 
         // name null
-        try {
-            int returned = SUT.wrapGetIntegerParameter(request, null, 5);
-            Assert.assertEquals(5, returned);
-        } catch (IllegalArgumentException e) {
-            Assert.fail();
-        }
+        int returned = SUT.wrapGetIntegerParameter(request, null, 5);
+        Assert.assertEquals(5, returned);
 
         // name incorrect
-        try {
-            int returned = SUT.wrapGetIntegerParameter(request, "incorrect", 5);
-            Assert.assertEquals(5, returned);
-        } catch (IllegalArgumentException e) {
-            Assert.fail();
-        }
+        returned = SUT.wrapGetIntegerParameter(request, "incorrect", 5);
+        Assert.assertEquals(5, returned);
 
         verify(request, times(1)).getParameter(null);
         verify(request, times(1)).getParameter("incorrect");
@@ -258,29 +191,17 @@ public class CommandTests extends RefineTest {
         when(request.getParameter("negativenumber")).thenReturn("-40");
 
         // positive
-        try {
-            int returned = SUT.wrapGetIntegerParameter(request, "positivenumber", 5);
-            Assert.assertEquals(22, returned);
-        } catch (IllegalArgumentException e) {
-            Assert.fail();
-        }
+        int returned = SUT.wrapGetIntegerParameter(request, "positivenumber", 5);
+        Assert.assertEquals(22, returned);
 
         // zero
-        try {
-            int returned = SUT.wrapGetIntegerParameter(request, "zeronumber", 5);
-            Assert.assertEquals(0, returned);
-        } catch (IllegalArgumentException e) {
-            Assert.fail();
-        }
+        returned = SUT.wrapGetIntegerParameter(request, "zeronumber", 5);
+        Assert.assertEquals(0, returned);
 
         // negative
-        try {
-            int returned = SUT.wrapGetIntegerParameter(request,
-                    "negativenumber", 5);
-            Assert.assertEquals(-40, returned);
-        } catch (IllegalArgumentException e) {
-            Assert.fail();
-        }
+        returned = SUT.wrapGetIntegerParameter(request,
+                "negativenumber", 5);
+        Assert.assertEquals(-40, returned);
 
         verify(request, times(1)).getParameter("positivenumber");
         verify(request, times(1)).getParameter("zeronumber");

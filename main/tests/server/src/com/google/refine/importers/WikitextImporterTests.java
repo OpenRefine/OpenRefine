@@ -86,12 +86,9 @@ public class WikitextImporterTests extends ImporterTest {
                 + "| d || e || f<br>\n"
                 + "|-\n"
                 + "|}\n";
-        try {
-            prepareOptions(0, 0, true, true, null, null);
-            parse(input);
-        } catch (Exception e) {
-            Assert.fail("Parsing failed", e);
-        }
+
+        prepareOptions(0, 0, true, true, null, null);
+        parse(input);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3) },
@@ -117,12 +114,9 @@ public class WikitextImporterTests extends ImporterTest {
                 + "| f<br>\n"
                 + "|-\n"
                 + "|}\n";
-        try {
-            prepareOptions(0, 0, true, true, null, null);
-            parse(input);
-        } catch (Exception e) {
-            Assert.fail("Parsing failed", e);
-        }
+
+        prepareOptions(0, 0, true, true, null, null);
+        parse(input);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3) },
@@ -155,12 +149,9 @@ public class WikitextImporterTests extends ImporterTest {
                     + "\"q2\":[{\"id\":\"Q1377256\",\"name\":\"European Monitoring Centre for Drugs and Drug Addiction\"}]}";
             server.enqueue(new MockResponse().setBody(jsonResponse));
 
-            try {
-                prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/", server.url("endpoint").url().toString());
-                parse(input);
-            } catch (Exception e) {
-                Assert.fail("Parsing failed", e);
-            }
+            prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/", server.url("endpoint").url().toString());
+            parse(input);
+
             Assert.assertEquals(project.columnModel.columns.size(), 3);
             Assert.assertEquals(project.rows.size(), 3);
             Assert.assertEquals(project.rows.get(0).cells.size(), 3);
@@ -202,12 +193,8 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|-\n"
                 + "|}\n";
 
-        try {
-            prepareOptions(-1, 1, true, true, null, null);
-            parse(input);
-        } catch (Exception e) {
-            Assert.fail("Parsing failed", e);
-        }
+        prepareOptions(-1, 1, true, true, null, null);
+        parse(input);
 
         Project expectedProject = createProject(
                 new String[] { "Offizieller Name", "Abkürzung", "Website", "Standort", "Staat", "Gründung", "Anmerkungen" },
@@ -240,12 +227,8 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|Yogurt\n"
                 + "|}\n";
 
-        try {
-            prepareOptions(-1, 1, true, true, null, null);
-            parse(input);
-        } catch (Exception e) {
-            Assert.fail("Parsing failed", e);
-        }
+        prepareOptions(-1, 1, true, true, null, null);
+        parse(input);
 
         Project expectedProject = createProject(
                 new String[] { "Shopping List", "Column", "Column2", "Column3", "Column4", "Column5" },
@@ -270,12 +253,8 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|-\n"
                 + "|}\n";
 
-        try {
-            prepareOptions(-1, 1, true, true, null, null);
-            parse(input);
-        } catch (Exception e) {
-            Assert.fail("Parsing failed", e);
-        }
+        prepareOptions(-1, 1, true, true, null, null);
+        parse(input);
 
         Project expectedProject = createProject(
                 new String[] { "price", "fruit", "Column", "merchant", "Column2" },
@@ -300,12 +279,8 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|-\n"
                 + "|}\n";
 
-        try {
-            prepareOptions(-1, 1, true, true, null, null);
-            parse(input);
-        } catch (Exception e) {
-            Assert.fail("Parsing failed", e);
-        }
+        prepareOptions(-1, 1, true, true, null, null);
+        parse(input);
 
         Project expectedProject = createProject(
                 new String[] { "price", "fruit", "Column", "merchant", "Column2" },
@@ -331,12 +306,9 @@ public class WikitextImporterTests extends ImporterTest {
                 + "| f<br>\n"
                 + "|-\n"
                 + "|}\n";
-        try {
-            prepareOptions(0, 0, true, true, null, null);
-            parse(input);
-        } catch (Exception e) {
-            Assert.fail("Parsing failed", e);
-        }
+
+        prepareOptions(0, 0, true, true, null, null);
+        parse(input);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3) },
