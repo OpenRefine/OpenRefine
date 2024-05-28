@@ -102,7 +102,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canParseSample() {
+    public void canParseSample() throws Exception {
         RunTest(getSample());
         assertProjectCreated(project, 4, 6);
 
@@ -113,7 +113,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canParseSampleWithComments() {
+    public void canParseSampleWithComments() throws Exception {
         RunTest(getSampleWithComments());
         assertProjectCreated(project, 4, 6);
 
@@ -124,7 +124,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canThrowError() {
+    public void canThrowError() throws UnsupportedEncodingException {
         String errJSON = getSampleWithError();
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
@@ -135,11 +135,7 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
 
-        try {
-            inputStream = new ByteArrayInputStream(errJSON.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e1) {
-            Assert.fail();
-        }
+        inputStream = new ByteArrayInputStream(errJSON.getBytes("UTF-8"));
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
 
@@ -159,7 +155,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void trimLeadingTrailingWhitespaceOnTrimStrings() {
+    public void trimLeadingTrailingWhitespaceOnTrimStrings() throws Exception {
         String ScraperwikiOutput = "[\n" +
                 "{\n" +
                 "        \"school\": \"  University of Cambridge  \",\n" +
@@ -179,7 +175,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings() {
+    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings() throws Exception {
         String ScraperwikiOutput = "[\n" +
                 "{\n" +
                 "        \"school\": \"  University of Cambridge  \",\n" +
@@ -199,7 +195,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canParseSampleWithDuplicateNestedElements() {
+    public void canParseSampleWithDuplicateNestedElements() throws Exception {
         RunTest(getSampleWithDuplicateNestedElements());
 
         Project expectedProject = createProject(
@@ -222,7 +218,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testCanParseLineBreak() {
+    public void testCanParseLineBreak() throws Exception {
         RunTest(getSampleWithLineBreak());
         assertProjectCreated(project, 4, 6);
 
@@ -240,7 +236,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testElementsWithVaryingStructure() {
+    public void testElementsWithVaryingStructure() throws Exception {
         RunTest(getSampleWithVaryingStructure());
         assertProjectCreated(project, 5, 6);
 
@@ -258,7 +254,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testElementWithNestedTree() {
+    public void testElementWithNestedTree() throws Exception {
         RunTest(getSampleWithTreeStructure());
 
         Project expectedProject = createProject(
@@ -275,7 +271,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testElementWithMqlReadOutput() {
+    public void testElementWithMqlReadOutput() throws Exception {
         String mqlOutput = "{\"code\":\"/api/status/ok\",\"result\":[{\"armed_force\":{\"id\":\"/en/wehrmacht\"},\"id\":\"/en/afrika_korps\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/en/sacred_band_of_thebes\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/en/british_army\"},\"id\":\"/en/british_16_air_assault_brigade\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/en/british_army\"},\"id\":\"/en/pathfinder_platoon\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0ch7qgz\"},\"id\":\"/en/sacred_band\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/en/polish_navy\"},\"id\":\"/en/3rd_ship_flotilla\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxn9\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxq9\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxqh\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxqp\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxqw\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c1wxl3\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c1wxlp\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0ck96kz\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0cm3j23\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0cw8hb4\",\"type\":\"/military/military_unit\"}],\"status\":\"200 OK\",\"transaction_id\":\"cache;cache01.p01.sjc1:8101;2010-10-04T15:04:33Z;0007\"}";
 
         ObjectNode options = SUT.createParserUIInitializationData(
@@ -312,7 +308,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testJSONMinimumArray() {
+    public void testJSONMinimumArray() throws Exception {
         String ScraperwikiOutput = "[\n" +
                 "{\n" +
                 "        \"school\": \"University of Cambridge\\n" +
@@ -366,66 +362,54 @@ public class JsonImporterTests extends ImporterTest {
         JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
         Token token = Token.Ignorable;
         int i = 0;
-        try {
-            while (token != null) {
-                token = parser.next();
-                if (token == null) {
-                    break;
-                }
-                i++;
-                if (i == 3) {
-                    Assert.assertEquals(Token.Value, token);
-                    Assert.assertEquals("field", parser.getFieldName());
-                }
+        while (token != null) {
+            token = parser.next();
+            if (token == null) {
+                break;
             }
-        } catch (Exception e) {
-            // silent
+            i++;
+            if (i == 3) {
+                Assert.assertEquals(Token.Value, token);
+                Assert.assertEquals("field", parser.getFieldName());
+            }
         }
 
         parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson2.getBytes("UTF-8")));
         token = Token.Ignorable;
         i = 0;
-        try {
-            while (token != null) {
-                token = parser.next();
-                if (token == null) {
-                    break;
-                }
-                i++;
-                if (i == 3) {
-                    Assert.assertEquals(Token.StartEntity, token);
-                    Assert.assertEquals(parser.getFieldName(), "field");
-                }
+        while (token != null) {
+            token = parser.next();
+            if (token == null) {
+                break;
             }
-        } catch (Exception e) {
-            // silent
+            i++;
+            if (i == 3) {
+                Assert.assertEquals(Token.StartEntity, token);
+                Assert.assertEquals(parser.getFieldName(), "field");
+            }
         }
 
         parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson3.getBytes("UTF-8")));
         token = Token.Ignorable;
         i = 0;
-        try {
-            while (token != null) {
-                token = parser.next();
-                if (token == null) {
-                    break;
-                }
-                i++;
-                if (i == 3) {
-                    Assert.assertEquals(token, Token.StartEntity);
-                    Assert.assertEquals(parser.getFieldName(), "field");
-                }
-                if (i == 4) {
-                    Assert.assertEquals(token, Token.StartEntity);
-                    Assert.assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
-                }
-                if (i == 6) {
-                    Assert.assertEquals(token, Token.StartEntity);
-                    Assert.assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
-                }
+        while (token != null) {
+            token = parser.next();
+            if (token == null) {
+                break;
             }
-        } catch (Exception e) {
-            // silent
+            i++;
+            if (i == 3) {
+                Assert.assertEquals(token, Token.StartEntity);
+                Assert.assertEquals(parser.getFieldName(), "field");
+            }
+            if (i == 4) {
+                Assert.assertEquals(token, Token.StartEntity);
+                Assert.assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
+            }
+            if (i == 6) {
+                Assert.assertEquals(token, Token.StartEntity);
+                Assert.assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
+            }
         }
     }
 
@@ -437,26 +421,22 @@ public class JsonImporterTests extends ImporterTest {
         JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
         Token token = Token.Ignorable;
         int i = 0;
-        try {
-            while (token != null) {
-                token = parser.next();
-                if (token == null) {
-                    break;
-                }
-                i++;
-                if (i == 3) {
-                    Assert.assertEquals(Token.Value, token);
-                    Assert.assertEquals("\tfield", parser.getFieldName());
-                    Assert.assertEquals("\tvalue", parser.getFieldValue());
-                }
+        while (token != null) {
+            token = parser.next();
+            if (token == null) {
+                break;
             }
-        } catch (Exception e) {
-            Assert.fail();
+            i++;
+            if (i == 3) {
+                Assert.assertEquals(Token.Value, token);
+                Assert.assertEquals("\tfield", parser.getFieldName());
+                Assert.assertEquals("\tvalue", parser.getFieldValue());
+            }
         }
     }
 
     @Test
-    public void testJsonDatatypes() {
+    public void testJsonDatatypes() throws Exception {
         RunTest(getSampleWithDataTypes());
 
         Project expectedProject = createProject(
@@ -488,7 +468,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testComplexJsonStructure() throws IOException {
+    public void testComplexJsonStructure() throws Exception {
         String fileName = "grid_small.json";
         RunComplexJSONTest(getComplexJSON(fileName));
 
@@ -694,30 +674,22 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    private void RunTest(String testString) {
+    private void RunTest(String testString) throws Exception {
         RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, false));
     }
 
-    private void RunComplexJSONTest(String testString) {
+    private void RunComplexJSONTest(String testString) throws Exception {
         RunTest(testString, getOptions(job, SUT, "institutes", false));
     }
 
-    private void RunTest(String testString, boolean trimStrings) {
+    private void RunTest(String testString, boolean trimStrings) throws Exception {
         RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, trimStrings));
     }
 
-    private void RunTest(String testString, ObjectNode options) {
-        try {
-            inputStream = new ByteArrayInputStream(testString.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e1) {
-            Assert.fail();
-        }
+    private void RunTest(String testString, ObjectNode options) throws Exception {
+        inputStream = new ByteArrayInputStream(testString.getBytes("UTF-8"));
 
-        try {
-            parseOneInputStream(SUT, inputStream, options);
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        parseOneInputStream(SUT, inputStream, options);
     }
 
     private String getComplexJSON(String fileName) throws IOException {

@@ -557,6 +557,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
                     return false;
                 }
             };
+
             try {
                 ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
                 fail("No Exception was thrown");

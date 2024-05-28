@@ -38,12 +38,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertThrows;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -114,69 +114,29 @@ public class CancelProcessesCommandTests extends RefineTest {
 
     @Test
     public void doPostFailsThrowsWithNullParameters() {
-
         // both parameters null
-        try {
-            SUT.doPost(null, null);
-            Assert.fail(); // should have thrown exception by this point
-        } catch (IllegalArgumentException e) {
-            // expected
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (Exception e) {
-            Assert.fail();
-        }
-
+        assertThrows(IllegalArgumentException.class, () -> SUT.doPost(null, null));
         // request is null
-        try {
-            SUT.doPost(null, response);
-            Assert.fail(); // should have thrown exception by this point
-        } catch (IllegalArgumentException e) {
-            // expected
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (Exception e) {
-            Assert.fail();
-        }
-
+        assertThrows(IllegalArgumentException.class, () -> SUT.doPost(null, response));
         // response parameter null
-        try {
-            SUT.doPost(request, null);
-            Assert.fail(); // should have thrown exception by this point
-        } catch (IllegalArgumentException e) {
-            // expected
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        assertThrows(IllegalArgumentException.class, () -> SUT.doPost(request, null));
     }
 
     /**
      * Contract for a complete working post
      */
     @Test
-    public void doPostRegressionTest() {
+    public void doPostRegressionTest() throws Exception {
 
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
-        try {
-            when(response.getWriter()).thenReturn(pw);
-        } catch (IOException e1) {
-            Assert.fail();
-        }
+        when(response.getWriter()).thenReturn(pw);
 
         // run
-        try {
-            SUT.doPost(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.doPost(request, response);
 
         // verify
         verify(request, times(1)).getParameter("project");
@@ -196,26 +156,16 @@ public class CancelProcessesCommandTests extends RefineTest {
     }
 
     @Test
-    public void doPostThrowsIfCommand_getProjectReturnsNull() {
+    public void doPostThrowsIfCommand_getProjectReturnsNull() throws Exception {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong()))
                 .thenReturn(null);
-        try {
-            when(response.getWriter()).thenReturn(pw);
-        } catch (IOException e1) {
-            Assert.fail();
-        }
+        when(response.getWriter()).thenReturn(pw);
 
         // run
-        try {
-            SUT.doPost(request, response);
-        } catch (ServletException e) {
-            // expected
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.doPost(request, response);
 
         // verify
         verify(request, times(1)).getParameter("project");
@@ -223,7 +173,7 @@ public class CancelProcessesCommandTests extends RefineTest {
     }
 
     @Test
-    public void doPostCatchesExceptionFromWriter() {
+    public void doPostCatchesExceptionFromWriter() throws Exception {
         String ERROR_MESSAGE = "hello world";
 
         // mock dependencies
@@ -231,21 +181,11 @@ public class CancelProcessesCommandTests extends RefineTest {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
-        try {
-            when(response.getWriter()).thenThrow(new IllegalStateException(ERROR_MESSAGE))
-                    .thenReturn(pw);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        when(response.getWriter()).thenThrow(new IllegalStateException(ERROR_MESSAGE))
+                .thenReturn(pw);
 
         // run
-        try {
-            SUT.doPost(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.doPost(request, response);
 
         verify(request, times(1)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
