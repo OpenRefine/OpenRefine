@@ -33,9 +33,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.clustering.binning.ColognePhoneticKeyer;
+import com.google.refine.clustering.binning.Keyer;
 import com.google.refine.clustering.binning.KeyerFactory;
-import com.google.refine.clustering.binning.Metaphone3Keyer;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.GrelTestBase;
 
@@ -43,8 +42,14 @@ public class PhoneticTests extends GrelTestBase {
 
     @BeforeTest
     public void registerKeyers() {
-        KeyerFactory.put("metaphone3", new Metaphone3Keyer());
-        KeyerFactory.put("cologne-phonetic", new ColognePhoneticKeyer());
+        KeyerFactory.put("mock-keyer", new Keyer() {
+
+            @Override
+            public String key(String string, Object... params) {
+                return string.toLowerCase();
+            }
+
+        });
     }
 
     @Test
@@ -63,10 +68,6 @@ public class PhoneticTests extends GrelTestBase {
 
     @Test
     public void testValidParameters() {
-        assertEquals(invoke("phonetic", "hello", "metaphone3"), "HL");
-        assertEquals(invoke("phonetic", "hello", "cologne-phonetic"), "05");
-        assertEquals(invoke("phonetic", "hello", "soundex"), "H400");
-        assertEquals(invoke("phonetic", "hello", "metaphone"), "HL");
-        assertEquals(invoke("phonetic", "hello", "doublemetaphone"), "HL");
+        assertEquals(invoke("phonetic", "HeLlo", "mock-keyer"), "hello");
     }
 }
