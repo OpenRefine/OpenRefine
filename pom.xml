@@ -47,11 +47,11 @@
 
   <developers>
     <developer>
-      <id>dfhuynh</id>
-      <name>David F. Huynh</name>
-      <url>https://github.com/dfhuynh</url>
+      <id>contributors</id>
+      <name>OpenRefine Contributors</name>
+      <url>https://github.com/OpenRefine/OpenRefine/graphs/contributors</url>
       <roles>
-        <role>Developer Emeritus</role>
+        <role>Contributor</role>
       </roles>  
     </developer>
   </developers>
