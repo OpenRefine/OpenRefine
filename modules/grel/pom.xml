@@ -41,6 +41,13 @@
               <goal>jar</goal>
             </goals>
           </execution>
+          <execution>
+            <id>test-jar</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
     </plugins>
