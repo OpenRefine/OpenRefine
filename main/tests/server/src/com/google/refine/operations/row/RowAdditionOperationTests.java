@@ -35,7 +35,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -60,10 +59,10 @@ public class RowAdditionOperationTests extends RefineTest {
     @BeforeMethod
     public void setUp() {
         json = "{"
-            + "\"op\":\"core/row-addition\","
-            + "\"rows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
-            + "\"index\":0,"
-            + "\"description\":\"Add rows\"}";
+                + "\"op\":\"core/row-addition\","
+                + "\"rows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
+                + "\"index\":0,"
+                + "\"description\":\"Add rows\"}";
     }
 
     @Override
@@ -81,9 +80,9 @@ public class RowAdditionOperationTests extends RefineTest {
     @Test
     public void testSerialization() throws JsonProcessingException {
         List<Row> rows = new ArrayList<>(2);
-        rows.add(new Row(0));  // Blank row
-        rows.add(new Row(0));  // Blank row
-        int index = 0;  // Prepend rows
+        rows.add(new Row(0)); // Blank row
+        rows.add(new Row(0)); // Blank row
+        int index = 0; // Prepend rows
 
         RowAdditionOperation op = new RowAdditionOperation(rows, index);
         ObjectMapper objectMapper = new ObjectMapper();
