@@ -53,10 +53,14 @@ public class RowAdditionOperation extends AbstractOperation {
     }
 
     @JsonProperty("rows")
-    public List<Row> getRows() { return _rows; }
+    public List<Row> getRows() {
+        return _rows;
+    }
 
     @JsonProperty("index")
-    public int getInsertionIndex() { return _insertionIndex; }
+    public int getInsertionIndex() {
+        return _insertionIndex;
+    }
 
     @Override
     protected String getBriefDescription(Project project) {

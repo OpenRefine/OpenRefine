@@ -156,7 +156,7 @@ public class RowAdditionChangeTests extends RefineTest {
     public void testPrependRevertCellValue() {
         change.apply(project);
         change.revert(project);
-        for (int i = 0 ; i < project.rows.size(); i++) {
+        for (int i = 0; i < project.rows.size(); i++) {
             Row row = project.rows.get(i);
             for (int j = 0; j < row.cells.size(); j++) {
                 Cell cell = row.cells.get(j);
@@ -225,7 +225,7 @@ public class RowAdditionChangeTests extends RefineTest {
         change.apply(project);
         change.revert(project);
 
-        for (int i = 0 ; i < project.rows.size(); i++) {
+        for (int i = 0; i < project.rows.size(); i++) {
             Row row = project.rows.get(i);
             for (int j = 0; j < row.cells.size(); j++) {
                 Cell cell = row.cells.get(j);
