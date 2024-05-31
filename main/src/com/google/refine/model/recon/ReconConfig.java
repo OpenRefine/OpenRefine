@@ -98,6 +98,10 @@ abstract public class ReconConfig {
         return ParsingUtilities.mapper.readValue(json, ReconConfig.class);
     }
 
+    @Deprecated
+    @JsonIgnore
+    public abstract int getBatchSize();
+
     @JsonIgnore
     public abstract int getBatchSize(int rowCount);
 
