@@ -49,6 +49,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -75,6 +77,7 @@ public class StandardReconConfig extends ReconConfig {
 
     private static final String DEFAULT_SCHEMA_SPACE = "http://localhost/schema";
     private static final String DEFAULT_IDENTIFIER_SPACE = "http://localhost/identifier";
+    private static final int DEFAULT_BATCH_SIZE = 10;
 
     static public class ColumnDetail {
 
@@ -143,6 +146,7 @@ public class StandardReconConfig extends ReconConfig {
     final public String typeName;
     @JsonProperty("autoMatch")
     final public boolean autoMatch;
+    @JsonSetter(nulls = Nulls.SKIP)
     @JsonProperty("batchSize")
     final public int batchSize;
     @JsonProperty("columnDetails")
@@ -173,7 +177,31 @@ public class StandardReconConfig extends ReconConfig {
             String service,
             String identifierSpace,
             String schemaSpace,
+            ReconType type,
+            boolean autoMatch,
+            List<ColumnDetail> columnDetails,
+            int limit) {
+        this(service, identifierSpace, schemaSpace,
+                type != null ? type.id : null,
+                type != null ? type.name : null,
+                autoMatch, DEFAULT_BATCH_SIZE, columnDetails, limit);
+    }
 
+    public StandardReconConfig(
+            String service,
+            String identifierSpace,
+            String schemaSpace,
+            String typeID,
+            String typeName,
+            boolean autoMatch,
+            List<ColumnDetail> columnDetails) {
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, DEFAULT_BATCH_SIZE, columnDetails, 0);
+    }
+
+    public StandardReconConfig(
+            String service,
+            String identifierSpace,
+            String schemaSpace,
             String typeID,
             String typeName,
             boolean autoMatch,
@@ -224,10 +252,17 @@ public class StandardReconConfig extends ReconConfig {
         return null;
     }
 
+    @Deprecated
+    @Override
+    @JsonIgnore
+    public int getBatchSize() {
+        return 10;
+    }
+
     @Override
     @JsonIgnore
     public int getBatchSize(int rowCount) {
-        return Math.min(Math.max(rowCount / 10, 10), batchSize);
+        return Math.min(Math.max(rowCount / DEFAULT_BATCH_SIZE, DEFAULT_BATCH_SIZE), batchSize);
     }
 
     @Override
@@ -348,6 +383,7 @@ public class StandardReconConfig extends ReconConfig {
         public double score;
         @JsonProperty("match")
         public boolean match = false;
+        // TODO: Do we need to do anything special for compatibility here?
         @JsonProperty("error")
         public ReconCandidate error = null;
 
