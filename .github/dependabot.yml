@@ -7,7 +7,7 @@ updates:
 - package-ecosystem: maven
   directory: "/"
   schedule:
-    interval: daily
+    interval: "weekly"
   open-pull-requests-limit: 15
   ignore:
   - dependency-name: com.thoughtworks.xstream:xstream
@@ -19,24 +19,32 @@ updates:
       - ">= 10.0.0"
   - dependency-name: "formatter-maven-plugin"
   target-branch: "master"
+  groups:
+    production-dependencies: # Maven dependencies of OpenRefine itself
+      dependency-type: "production"
+    development-dependencies: # Maven plugins
+      dependency-type: "development"
     
 # For main webapp
 - package-ecosystem: "npm"
   directory: "main/webapp"
   schedule:
-    interval: "daily"
-# For documentation website
-- package-ecosystem: "npm" # For Yarn
-  directory: "docs/"
-  schedule:
-    interval: "monthly"
+    interval: "weekly"
 # For github actions
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
     interval: "monthly"
+  groups:
+    actions:
+       patterns:
+         - "*"
 # For cypress test_suite
 - package-ecosystem: "npm"
   directory: "main/tests/cypress"
   schedule:
-    interval: "daily"
+    interval: "weekly"
+  groups:
+    cypress:
+      patterns:
+        - "*"
