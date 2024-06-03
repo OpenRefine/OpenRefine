@@ -174,7 +174,7 @@ class RefineServer extends Server {
 
     public void init(String iface, int port, String host) throws Exception {
         logger.info("Java runtime version {} from java.home: {}", Runtime.version().toString(), System.getProperty("java.home", ""));
-        logger.info("Java VM: {} {} {}", System.getProperty("java.vm.vendor", ""), System.getProperty("java.vm.name", ""),
+        logger.info("Java VM: {} {} {} {}", System.getProperty("java.vm.vendor", ""), System.getProperty("java.vm.name", ""),
                 System.getProperty("java.vm.version", ""), System.getProperty("java.vm.info", ""));
         logger.info("Starting Server bound to '{}:{}'", iface, port);
         logger.info("refine.memory size: {} JVM Max heap: {} MBytes", Configurations.get("refine.memory", "<default>"),
@@ -518,7 +518,7 @@ class RefineClient extends JFrame implements ActionListener {
         } else if (SystemUtils.IS_OS_LINUX) {
             rt.exec(new String[] { "xdg-open", String.valueOf(uri) });
         } else {
-            logger.warn("Java Desktop class not supported on this platform. Please open %s in your browser", uri.toString());
+            logger.warn("Java Desktop class not supported on this platform. Please open {} in your browser", uri.toString());
         }
     }
 }
