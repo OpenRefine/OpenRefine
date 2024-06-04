@@ -427,7 +427,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.5.0</version>
+        <version>2.5.1</version>
         <executions>
           <execution>
             <id>l4j-clui-with-jre</id>
