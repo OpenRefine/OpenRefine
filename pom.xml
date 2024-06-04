@@ -85,7 +85,7 @@
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-text.version>1.12.0</commons-text.version>
-    <commons-validator.version>1.8.0</commons-validator.version>
+    <commons-validator.version>1.9.0</commons-validator.version>
     <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
     <commons-codec.version>1.17.0</commons-codec.version>
