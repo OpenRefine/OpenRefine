@@ -116,6 +116,7 @@ import com.google.refine.expr.functions.strings.MD5;
 import com.google.refine.expr.functions.strings.Match;
 import com.google.refine.expr.functions.strings.NGram;
 import com.google.refine.expr.functions.strings.NGramFingerprint;
+import com.google.refine.expr.functions.strings.Normalize;
 import com.google.refine.expr.functions.strings.ParseJson;
 import com.google.refine.expr.functions.strings.ParseUri;
 import com.google.refine.expr.functions.strings.Partition;
@@ -341,6 +342,7 @@ public class ControlFunctionRegistry {
         registerFunction("cross", new Cross());
 
         registerFunction("facetCount", new FacetCount());
+        registerFunction("normalize", new Normalize());
 
         registerControl("if", new If());
         registerControl("with", new With());
