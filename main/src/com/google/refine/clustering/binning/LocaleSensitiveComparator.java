@@ -21,8 +21,8 @@ public class LocaleSensitiveComparator {
     /**
      * Compares two strings based on their content language and specified strength.
      *
-     * @param s1 The first string to compare.
-     * @param s2 The second string to compare.
+     * @param s1       The first string to compare.
+     * @param s2       The second string to compare.
      * @param strength The strength of comparison (primary, secondary, tertiary).
      * @return An integer representing the comparison result.
      */
@@ -33,21 +33,5 @@ public class LocaleSensitiveComparator {
         return collator.compare(s1, s2);
     }
 
-    public static void main(String[] args) {
-        String str1 = "Björn";
-        String str2 = "Borg";
-
-        // Compare using primary strength
-        int resultPrimary = compareStrings(str1, str2, Collator.PRIMARY);
-        System.out.println("Primary strength comparison: " + resultPrimary);
-
-        // Compare using secondary strength
-        int resultSecondary = compareStrings(str1, str2, Collator.SECONDARY);
-        System.out.println("Secondary strength comparison: " + resultSecondary);
-
-        // Compare using tertiary strength
-        int resultTertiary = compareStrings(str1, str2, Collator.TERTIARY);
-        System.out.println("Tertiary strength comparison: " + resultTertiary);
-    }
 }
 
