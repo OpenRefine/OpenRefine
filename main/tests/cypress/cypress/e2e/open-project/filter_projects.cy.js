@@ -36,4 +36,38 @@ describe(__filename, function () {
     cy.get('#projects-list table').contains(project2).should('be.visible');
     cy.get('#projects-list table').contains(project1).should('not.be.visible');
   });
+
+  it('Ensure projects are being filtered through search', function () {
+    const project1 = 'Project A';
+    const project2 = 'Project B';
+    cy.loadProject('food.mini', project1);
+    cy.loadProject('food.mini', project2);
+    cy.visitOpenRefine();
+    cy.navigateTo('Open project');
+    cy.get('#projects-list table').contains(project1);
+    cy.get('#searchIcon').click();
+
+    cy.get('#searchInProjects').type('Project B');
+    cy.wait(1500); // typing timeout is 1000 msec
+    cy.get('#projects-list table').contains(project1).should('not.be.visible');
+    cy.get('#projects-list table').contains(project2).should('be.visible');
+
+    // Test no results message
+    cy.get('#searchInProjects').type('Z');
+    cy.wait(1500); // typing timeout is 1000 msec
+    cy.get('#projects-list table').contains(project1).should('not.be.visible');
+    cy.get('#projects-list table').contains(project2).should('not.be.visible');
+    cy.get('#no-results-message').should('be.visible');
+
+    // Test matching both project names
+    cy.get('#searchInProjects').type('{backspace}{backspace}{backspace}');
+    cy.wait(1500); // typing timeout is 1000 msec
+    cy.get('#projects-list table').contains(project1).should('be.visible');
+    cy.get('#projects-list table').contains(project2).should('be.visible');
+
+    cy.get('#searchInProjects').type(' A');
+    cy.wait(1500); // typing timeout is 1000 msec
+    cy.get('#projects-list table').contains(project1).should('be.visible');
+    cy.get('#projects-list table').contains(project2).should('not.be.visible');
+  });
 });
