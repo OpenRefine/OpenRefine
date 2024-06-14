@@ -39,12 +39,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.clustering.Clusterer;
 import com.google.refine.clustering.ClustererConfig;
+import com.google.refine.clustering.binning.KeyerFactory;
+import com.google.refine.clustering.binning.UserDefinedKeyer;
+import com.google.refine.clustering.knn.DistanceFactory;
+import com.google.refine.clustering.knn.UserDefinedDistance;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
@@ -66,6 +71,19 @@ public class ComputeClustersCommand extends Command {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
             String clusterer_conf = request.getParameter("clusterer");
+
+            JSONObject jsonObject = new JSONObject(clusterer_conf);
+            JSONObject params = jsonObject.getJSONObject("params");
+
+            if (params.has("expression")) {
+                String expression = params.getString("expression");
+                if (jsonObject.getString("function") == "UserDefinedKeyer") {
+                    KeyerFactory.put("userdefinedkeyer", new UserDefinedKeyer(expression));
+                } else {
+                    DistanceFactory.put("userdefineddistance", new UserDefinedDistance(expression));
+                }
+            }
+
             ClustererConfig clustererConfig = ParsingUtilities.mapper.readValue(clusterer_conf, ClustererConfig.class);
 
             Clusterer clusterer = clustererConfig.apply(project);
