@@ -56,19 +56,21 @@ describe(__filename, function () {
             {
                 methodName: 'Key collision',
                 selector: 'keyingFunctionSelector',
+                btnId : '#keyingDropdownBtn',
                 functions: [
                     'Fingerprint',
-                    'ngram-fingerprint',
-                    'metaphone3',
-                    'cologne-phonetic',
+                    'n-Gram fingerprint',
+                    'Metaphone3',
+                    'Cologne phonetic',
                     'Daitch-Mokotoff',
-                    'Beider-Morse',
+                    'Beider-Morse'
                 ],
             },
             {
                 methodName: 'Nearest neighbor',
                 selector: 'distanceFunctionSelector',
-                functions: ['levenshtein', 'ppm'],
+                btnId : '#knnDropdownBtn',
+                functions: ['Levenshtein', 'PPM'],
             },
         ];
 
@@ -89,7 +91,8 @@ describe(__filename, function () {
 
                 // select each function
                 for (const functionName of method['functions']) {
-                    cy.get(`select[bind="${method['selector']}"]`).select(functionName);
+                    cy.get(method.btnId).click();
+                    cy.get(`[bind="${method.selector}"]`).contains(functionName).click();
                     cy.get('.clustering-dialog-entry-table')
                         .should('to.exist')
                         .should('be.visible');
