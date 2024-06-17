@@ -80,12 +80,12 @@ ClusteringDialog.prototype._createDialog = function() {
             dialog.find(".binning-controls").show();
             dialog.find(".knn-controls").hide();
             self._method = "binning";
-            self._elmts.keyingFunctionSelector.trigger('change');
+            $(self._elmts.keyingFunctionSelector).children().first().trigger('click');
         } else if (selection === $.i18n('core-dialogs/nearest-neighbor')) {
             dialog.find(".binning-controls").hide();
             dialog.find(".knn-controls").show();
             self._method = "knn";
-            self._elmts.distanceFunctionSelector.trigger('change');
+            $(self._elmts.distanceFunctionSelector).children().first().trigger('click');
         }
     });
 
@@ -107,15 +107,25 @@ ClusteringDialog.prototype._createDialog = function() {
         });
     }
 
-    var changer = function() {
-        self._function = $(this).find("option:selected").val();
-        $(".function-params").hide();
-        $("#" + self._function + "-params").show();
-        params_changer();
+    var changer = function(event) {
+        event.preventDefault();
+        var target = event.target;
+        if (target.tagName === "A") {
+            document.getElementById(this.id).classList.remove("show");
+            if(this.id == "keyingFunctionSelectorId"){
+                $('#keyingDropdownBtn').text(target.textContent); 
+            } else {
+                $('#knnDropdownBtn').text(target.textContent); 
+            }
+            self._function = $(target).data('value');
+            $(".function-params").hide();
+            $("#" + self._function + "-params").show();
+            params_changer();
+        }
     };
 
-    this._elmts.keyingFunctionSelector.on('change',changer);
-    this._elmts.distanceFunctionSelector.on('change',changer);
+    this._elmts.keyingFunctionSelector.on('click',changer);
+    this._elmts.distanceFunctionSelector.on('click',changer);
 
     var params_changer = function() {
         self._params = {};
@@ -174,12 +184,15 @@ ClusteringDialog.prototype._createDialog = function() {
           if (label.startsWith('clustering-keyers')) {
               label = keyers[i];
           }
-          var option = $('<option></option>')
-             .val(keyers[i])
+          var a = $('<a></a>')
+             .data('value', keyers[i])
              .text(label)
              .appendTo(self._elmts.keyingFunctionSelector);
           if (i == 0) {
-             option.prop('selected', 'true');
+             $('#keyingDropdownBtn').text(a.text());
+             $('#keyingDropdownBtn').on('click', function () {
+                document.getElementById("keyingFunctionSelectorId").classList.toggle("show");
+             });
           }
        }
        for(i = 0; i < distances.length; i++) {
@@ -187,12 +200,15 @@ ClusteringDialog.prototype._createDialog = function() {
           if (label.startsWith('clustering-distances')) {
               label = distances[i];
           }
-          var option = $('<option></option>')
-             .val(distances[i])
+          var a = $('<a></a>')
+             .data('value', distances[i])
              .text(label)
              .appendTo(self._elmts.distanceFunctionSelector);
           if (i == 0) {
-             option.prop('selected', 'true');
+             $('#knnDropdownBtn').text(a.text());
+             $('#knnDropdownBtn').on('click', function () {
+                document.getElementById("distanceFunctionSelectorId").classList.toggle("show");
+             });
           }
        }
     })

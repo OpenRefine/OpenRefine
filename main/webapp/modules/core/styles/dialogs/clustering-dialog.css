@@ -166,3 +166,78 @@ table.clustering-dialog-entry-table a:hover {
   text-decoration: none;
   visibility: hidden;
 }
+
+.binning-controls {
+  position: relative;
+  display: inline-block;
+}
+
+.keyingDropdown {
+  display: inline-block;
+}
+
+#keyingDropdownBtn {
+  min-width: 130px;
+  text-align: left;
+  background-color: #ffffff;
+  border: 1px solid #727272;
+}
+
+.keyingFunctionSelector {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 130px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.keyingFunctionSelector a {
+  color: black;
+  padding: 4px 8px;
+  text-decoration: none;
+  display: block;
+}
+
+.keyingFunctionSelector a:hover {
+  background-color: #f1f1f1;
+}
+
+.knn-controls {
+  position: relative;
+}
+
+.knnDropdown {
+  display: inline-block;
+}
+
+#knnDropdownBtn {
+  min-width: 130px;
+  text-align: left;
+  background-color: #ffffff;
+  border: 1px solid #727272;
+}
+
+.distanceFunctionSelector {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 130px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.distanceFunctionSelector a {
+  color: black;
+  padding: 4px 8px;
+  text-decoration: none;
+  display: block;
+}
+
+.distanceFunctionSelector a:hover {
+  background-color: #f1f1f1;
+}
+
+.show {
+  display: block;
+}

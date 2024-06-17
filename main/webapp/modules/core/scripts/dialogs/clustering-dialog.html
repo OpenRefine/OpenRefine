@@ -15,12 +15,23 @@
             </select>
             </div>
             <div  class="clustering-dialog-control-group">
-                <div class="binning-controls"><label for="keyingFunctionSelectorId" bind="or_dialog_keying"></label>
-                    <select bind="keyingFunctionSelector" id="keyingFunctionSelectorId"></select>
+
+                <div class="binning-controls">
+                    <label for="keyingFunctionSelectorId" bind="or_dialog_keying"></label>
+                    <div class = "keyingDropdown">
+                        <button id = "keyingDropdownBtn"></button>
+                        <div bind="keyingFunctionSelector" id="keyingFunctionSelectorId" class = "keyingFunctionSelector"></div>
+                    </div>
                 </div>
-                <div class="knn-controls hidden"><label for="distanceFunctionSelectorId" bind="or_dialog_distance"></label>
-                    <select bind="distanceFunctionSelector" id="distanceFunctionSelectorId"></select>
+
+                <div class="knn-controls hidden">
+                    <label for="distanceFunctionSelectorId" bind="or_dialog_distance"></label>
+                    <div class = "knnDropdown">
+                        <button id = "knnDropdownBtn"></button>
+                        <div bind="distanceFunctionSelector" id="distanceFunctionSelectorId" class = "distanceFunctionSelector"></div>
+                    </div>
                 </div>
+
             </div>
             <div  class="clustering-dialog-control-group">
                 <div id="ngram-fingerprint-params" class="function-params hidden">
