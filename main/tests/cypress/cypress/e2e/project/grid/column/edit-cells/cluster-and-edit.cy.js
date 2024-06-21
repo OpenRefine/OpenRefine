@@ -56,7 +56,7 @@ describe(__filename, function () {
             {
                 methodName: 'Key collision',
                 selector: 'keyingFunctionSelector',
-                btnId : '#keyingDropdownBtn',
+                btnId : '#keying-dropdown-btn',
                 functions: [
                     'Fingerprint',
                     'n-Gram fingerprint',
@@ -69,7 +69,7 @@ describe(__filename, function () {
             {
                 methodName: 'Nearest neighbor',
                 selector: 'distanceFunctionSelector',
-                btnId : '#knnDropdownBtn',
+                btnId : '#knn-dropdown-btn',
                 functions: ['Levenshtein', 'PPM'],
             },
         ];

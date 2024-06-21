@@ -172,18 +172,18 @@ table.clustering-dialog-entry-table a:hover {
   display: inline-block;
 }
 
-.keyingDropdown {
+.keying-dropdown {
   display: inline-block;
 }
 
-#keyingDropdownBtn {
+#keying-dropdown-btn {
   min-width: 130px;
   text-align: left;
   background-color: #ffffff;
   border: 1px solid #727272;
 }
 
-.keyingFunctionSelector {
+.keying-function-selector {
   display: none;
   position: absolute;
   background-color: #f9f9f9;
@@ -192,14 +192,14 @@ table.clustering-dialog-entry-table a:hover {
   z-index: 1;
 }
 
-.keyingFunctionSelector a {
+.keying-function-selector a {
   color: black;
   padding: 4px 8px;
   text-decoration: none;
   display: block;
 }
 
-.keyingFunctionSelector a:hover {
+.keying-function-selector a:hover {
   background-color: #f1f1f1;
 }
 
@@ -207,18 +207,18 @@ table.clustering-dialog-entry-table a:hover {
   position: relative;
 }
 
-.knnDropdown {
+.knn-dropdown {
   display: inline-block;
 }
 
-#knnDropdownBtn {
+#knn-dropdown-btn {
   min-width: 130px;
   text-align: left;
   background-color: #ffffff;
   border: 1px solid #727272;
 }
 
-.distanceFunctionSelector {
+.distance-function-selector {
   display: none;
   position: absolute;
   background-color: #f9f9f9;
@@ -227,14 +227,14 @@ table.clustering-dialog-entry-table a:hover {
   z-index: 1;
 }
 
-.distanceFunctionSelector a {
+.distance-function-selector a {
   color: black;
   padding: 4px 8px;
   text-decoration: none;
   display: block;
 }
 
-.distanceFunctionSelector a:hover {
+.distance-function-selector a:hover {
   background-color: #f1f1f1;
 }
 

@@ -113,9 +113,9 @@ ClusteringDialog.prototype._createDialog = function() {
         if (target.tagName === "A") {
             document.getElementById(this.id).classList.remove("show");
             if(this.id == "keyingFunctionSelectorId"){
-                $('#keyingDropdownBtn').text(target.textContent); 
+                $('#keying-dropdown-btn').text(target.textContent); 
             } else {
-                $('#knnDropdownBtn').text(target.textContent); 
+                $('#knn-dropdown-btn').text(target.textContent); 
             }
             self._function = $(target).data('value');
             $(".function-params").hide();
@@ -189,8 +189,8 @@ ClusteringDialog.prototype._createDialog = function() {
              .text(label)
              .appendTo(self._elmts.keyingFunctionSelector);
           if (i == 0) {
-             $('#keyingDropdownBtn').text(a.text());
-             $('#keyingDropdownBtn').on('click', function () {
+             $('#keying-dropdown-btn').text(a.text());
+             $('#keying-dropdown-btn').on('click', function () {
                 document.getElementById("keyingFunctionSelectorId").classList.toggle("show");
              });
           }
@@ -205,8 +205,8 @@ ClusteringDialog.prototype._createDialog = function() {
              .text(label)
              .appendTo(self._elmts.distanceFunctionSelector);
           if (i == 0) {
-             $('#knnDropdownBtn').text(a.text());
-             $('#knnDropdownBtn').on('click', function () {
+             $('#knn-dropdown-btn').text(a.text());
+             $('#knn-dropdown-btn').on('click', function () {
                 document.getElementById("distanceFunctionSelectorId").classList.toggle("show");
              });
           }
