@@ -76,15 +76,18 @@ public class Join implements Function {
                         int l = a.size();
 
                         for (int i = 0; i < l; i++) {
-                            if (!isFirst) {
-                                sb.append(separator);
+                            Object o = JsonValueConverter.convert(a.get(i));
+                            if (o != null) {
+                                if (!isFirst) {
+                                    sb.append(separator);
+                                }
+                                sb.append(o).toString();
+                                isFirst = false;
                             }
-                            // FIXME: This throws NPE for arrays containing nulls
-                            sb.append(JsonValueConverter.convert(a.get(i)).toString());
-                            isFirst = false;
                         }
                     } else {
                         for (Object o : ExpressionUtils.toObjectList(v)) {
+                            // TODO: Another instance of null being treated differently than empty string
                             if (o != null) {
                                 if (!isFirst) {
                                     sb.append(separator);
