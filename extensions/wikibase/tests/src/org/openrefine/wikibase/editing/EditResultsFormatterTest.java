@@ -21,16 +21,17 @@ import org.openrefine.wikibase.editing.EditBatchProcessor.EditResult;
 public class EditResultsFormatterTest {
 
     String apiEndpoint = "https://my.wikibase.instance/w/api.php";
-    EditResult success1 = new EditResult(Collections.singleton(1), null, null, 1234L, OptionalLong.of(4567L));
-    EditResult success1Dup = new EditResult(Collections.singleton(1), null, null, 111L, OptionalLong.of(3748L));
-    EditResult success2 = new EditResult(Collections.singleton(2), null, null, 555L, OptionalLong.of(8790L));
+    EditResult success1 = new EditResult(Collections.singleton(1), null, null, 1234L, OptionalLong.of(4567L), null);
+    EditResult success1Dup = new EditResult(Collections.singleton(1), null, null, 111L, OptionalLong.of(3748L), null);
+    EditResult success2 = new EditResult(Collections.singleton(2), null, null, 555L, OptionalLong.of(8790L), null);
+    EditResult newEntity = new EditResult(Collections.singleton(2), null, null, 0L, OptionalLong.empty(), "http://foo.com/bar");
     EditResult error1 = new EditResult(Collections.singleton(1), "blocked", "You have been blocked from editing.", 1234L,
-            OptionalLong.empty());
+            OptionalLong.empty(), null);
     EditResult error1Dup = new EditResult(Collections.singleton(1), "illegal-value", "The value supplied is invalid", 111L,
-            OptionalLong.empty());
+            OptionalLong.empty(), null);
     EditResult error2 = new EditResult(Collections.singleton(2), "duplicate-item", "You are attempting to create a duplicate of [[Q1234]]",
-            123L, OptionalLong.empty());
-    EditResult successNoEdit = new EditResult(Collections.singleton(1), null, null, 1234L, OptionalLong.of(1234L));
+            123L, OptionalLong.empty(), null);
+    EditResult successNoEdit = new EditResult(Collections.singleton(1), null, null, 1234L, OptionalLong.of(1234L), null);
 
     Comparator<CellAtRow> comparator = new Comparator<>() {
 
@@ -101,6 +102,19 @@ public class EditResultsFormatterTest {
                 Arrays.asList(
                         new CellAtRow(1, new Cell(
                                 "https://my.wikibase.instance/w/index.php?diff=prev&oldid=4567 https://my.wikibase.instance/w/index.php?diff=prev&oldid=3748",
+                                null))));
+    }
+
+    @Test
+    public void testNewEntity() {
+        EditResultsFormatter formatter = new EditResultsFormatter(apiEndpoint);
+        formatter.add(newEntity);
+
+        List<CellAtRow> results = formatter.toCells().stream().sorted(comparator).collect(Collectors.toList());
+        assertEquals(results,
+                Arrays.asList(
+                        new CellAtRow(2, new Cell(
+                                "http://foo.com/bar",
                                 null))));
     }
 

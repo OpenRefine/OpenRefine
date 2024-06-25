@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.model.Cell;
@@ -47,8 +48,8 @@ public class EditResultsFormatter {
                 } else {
                     rowIdToError.put(firstRowId, existingError + "; " + error);
                 }
-            } else if (result.getLastRevisionId().isPresent() && result.getBaseRevisionId() != result.getLastRevisionId().getAsLong()) {
-                String revisionLink = baseUrl + "w/index.php?diff=prev&oldid=" + result.getLastRevisionId().getAsLong();
+            } else if (getEditUrl(result).isPresent()) {
+                String revisionLink = getEditUrl(result).get();
                 String existingLinks = rowIdToEditLink.get(firstRowId);
                 if (existingLinks == null) {
                     rowIdToEditLink.put(firstRowId, revisionLink);
@@ -57,6 +58,15 @@ public class EditResultsFormatter {
                 }
             }
         }
+    }
+
+    private Optional<String> getEditUrl(EditResult result) {
+        if (result.getLastRevisionId().isPresent() && result.getBaseRevisionId() != result.getLastRevisionId().getAsLong()) {
+            return Optional.of(baseUrl + "w/index.php?diff=prev&oldid=" + result.getLastRevisionId().getAsLong());
+        } else if (result.getNewEntityUrl() != null) {
+            return Optional.of(result.getNewEntityUrl());
+        }
+        return Optional.empty();
     }
 
     /**

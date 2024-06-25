@@ -161,7 +161,7 @@ public class EditBatchProcessor {
             return new EditResult(update.getContributingRowIds(),
                     "rewrite-failed",
                     "Failed to rewrite update on entity " + update.getEntityId() + ". Missing entity: " + e.getMissingEntity(),
-                    0L, OptionalLong.empty());
+                    0L, OptionalLong.empty(), null);
         }
 
         // Pick a tag to apply to the edits
@@ -172,6 +172,7 @@ public class EditBatchProcessor {
 
         long oldRevisionId = 0L;
         OptionalLong lastRevisionId = OptionalLong.empty();
+        String newEntityUrl = null;
         try {
             if (update.isNew()) {
                 // New entities
@@ -184,6 +185,7 @@ public class EditBatchProcessor {
                     createdDocId = editor.createEntityDocument(update.toNewEntity(), summary, tags).getEntityId();
                 }
                 library.setId(newCell.getReconInternalId(), createdDocId.getId());
+                newEntityUrl = createdDocId.getSiteIri() + createdDocId.getId();
             } else {
                 // Existing entities
                 EntityUpdate entityUpdate;
@@ -230,14 +232,14 @@ public class EditBatchProcessor {
             } else {
                 batchCursor++;
                 return new EditResult(update.getContributingRowIds(), e.getErrorCode(), e.getErrorMessage(), oldRevisionId,
-                        OptionalLong.empty());
+                        OptionalLong.empty(), null);
             }
         } catch (IOException e) {
             logger.warn("IO error while editing: " + e.getMessage());
         }
 
         batchCursor++;
-        return new EditResult(update.getContributingRowIds(), null, null, oldRevisionId, lastRevisionId);
+        return new EditResult(update.getContributingRowIds(), null, null, oldRevisionId, lastRevisionId, newEntityUrl);
     }
 
     public static class EditResult {
@@ -247,16 +249,19 @@ public class EditBatchProcessor {
         private final String errorMessage;
         private final long baseRevisionId;
         private final OptionalLong lastRevisionId;
+        private final String newEntityUrl;
 
         public EditResult(Set<Integer> correspondingRowIds,
                 String errorCode, String errorMessage,
                 long baseRevisionId,
-                OptionalLong lastRevisionId) {
+                OptionalLong lastRevisionId,
+                String newEntityUrl) {
             this.correspondingRowIds = correspondingRowIds;
             this.errorCode = errorCode;
             this.errorMessage = errorMessage;
             this.baseRevisionId = baseRevisionId;
             this.lastRevisionId = lastRevisionId;
+            this.newEntityUrl = newEntityUrl;
         }
 
         public Set<Integer> getCorrespondingRowIds() {
@@ -277,6 +282,10 @@ public class EditBatchProcessor {
 
         public OptionalLong getLastRevisionId() {
             return lastRevisionId;
+        }
+
+        public String getNewEntityUrl() {
+            return newEntityUrl;
         }
     }
 

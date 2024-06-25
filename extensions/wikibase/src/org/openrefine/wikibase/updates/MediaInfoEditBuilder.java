@@ -146,7 +146,7 @@ public class MediaInfoEditBuilder {
         this.contributingRowIds.add(rowId);
         return this;
     }
-    
+
     /**
      * Adds a collection of row ids which contributed to this update.
      */
