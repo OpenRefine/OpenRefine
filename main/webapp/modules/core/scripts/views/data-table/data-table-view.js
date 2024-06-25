@@ -82,13 +82,15 @@ DataTableView.prototype.resize = function() {
 };
 
 DataTableView.prototype.update = function(onDone, preservePage) {
-  var paginationOptions = { start: 0 };
+  var paginationOptions = {};
   if (preservePage) {
     if (theProject.rowModel.start !== undefined) {
       paginationOptions.start = theProject.rowModel.start;
     } else {
       paginationOptions.end = theProject.rowModel.end;
     }
+  } else {
+    paginationOptions.start = 0;
   }
   this._showRows(paginationOptions, onDone);
 };
