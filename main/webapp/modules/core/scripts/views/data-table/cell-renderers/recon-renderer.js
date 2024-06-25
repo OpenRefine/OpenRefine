@@ -122,7 +122,7 @@ class ReconCellRenderer {
               a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
             }
 
-            self.previewOnHover(service, candidate, liSpan.parent(), liSpan, true, rowIndex, cellIndex, cell);
+            self.previewOnHover(service, candidate, liSpan.parent(), liSpan, true, rowIndex, cellIndex, cell, cellUI);
 
             var score;
             if (candidate.score < 1) {
