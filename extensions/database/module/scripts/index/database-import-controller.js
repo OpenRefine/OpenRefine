@@ -309,7 +309,7 @@ Refine.DatabaseImportController.prototype._getPreviewData = function(callback, n
             result.rowModel = data;
             callback(result);
           },
-          "jsonp"
+          "json"
         );
       },
       "json"

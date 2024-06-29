@@ -50,7 +50,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       "recon-discard-judgments",
       { columnName: column.name, clearData: false },
       null,
-      { cellsChanged: true, columnStatsChanged: true }
+      { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
     );
   };
 
@@ -59,7 +59,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       "recon-discard-judgments",
       { columnName: column.name, clearData: true },
       null,
-      { cellsChanged: true, columnStatsChanged: true }
+      { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
     );
   };
 
@@ -138,7 +138,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       "recon-match-best-candidates",
       { columnName: column.name },
       null,
-      { cellsChanged: true, columnStatsChanged: true }
+      { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
     );
   };
 
@@ -156,7 +156,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           schemaSpace: schemaSpace
         },
         null,
-        { cellsChanged: true, columnStatsChanged: true }
+        { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
       );
     };
 
@@ -221,7 +221,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             schemaSpace: service.schemaSpace
         },
         null,
-        { cellsChanged: true, columnStatsChanged: true }
+        { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
         );
 
         DialogSystem.dismissUntil(level - 1);
@@ -309,7 +309,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           schemaSpace: schemaSpace
         },
         null,
-        { cellsChanged: true, columnStatsChanged: true }
+        { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
       );
     };
 
@@ -328,7 +328,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         onError: "set-to-blank"
       },
       { expression: "cell.recon.match.id" },
-      { modelsChanged: true },
+      { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
       { onDone: dismissDialog },
         );
   }
@@ -337,7 +337,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
    promptForColumn(successCallBackForAddingIdColumn,'core-views/add-id-col');
 
-      
   };
 
 
@@ -396,7 +395,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           "recon-copy-across-columns", 
           null,
           config,
-          { rowsChanged: true }
+          { rowsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
         );
         dismiss();
       }
