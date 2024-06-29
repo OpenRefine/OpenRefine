@@ -117,7 +117,7 @@ commonTransformDialog.prototype._commit = function(expression) {
           repeatCount: repeatCount
         },
         null,
-        { cellsChanged: true }
+        { cellsChanged: true, rowIdsPreserved: true }
       );
   };
 
