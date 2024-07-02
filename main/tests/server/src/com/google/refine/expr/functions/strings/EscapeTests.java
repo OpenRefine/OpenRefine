@@ -32,9 +32,9 @@ import static org.testng.Assert.assertNull;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
+import com.google.refine.grel.GrelTestBase;
 
-public class EscapeTests extends RefineTest {
+public class EscapeTests extends GrelTestBase {
 
     @Test
     public void testEscape() {

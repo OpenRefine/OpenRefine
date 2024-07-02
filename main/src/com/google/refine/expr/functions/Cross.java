@@ -35,6 +35,7 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
+import com.google.refine.LookupCacheManager;
 import com.google.refine.LookupCacheManager.ProjectLookup;
 import com.google.refine.ProjectManager;
 import com.google.refine.expr.EvalError;
@@ -49,7 +50,11 @@ import com.google.refine.util.LookupException;
 
 public class Cross implements Function {
 
-    public static final String INDEX_COLUMN_NAME = "_OpenRefine_Index_Column_Name_";
+    /**
+     * @deprecated use {@link LookupCacheManager#INDEX_COLUMN_NAME}.
+     */
+    @Deprecated
+    public static final String INDEX_COLUMN_NAME = LookupCacheManager.INDEX_COLUMN_NAME;
 
     @Override
     public Object call(Properties bindings, Object[] args) {
@@ -65,7 +70,7 @@ public class Cross implements Function {
                 targetProjectName = args[1];
             }
             // if 3rd argument is omitted or set to "", use the index column
-            Object targetColumnName = args.length < 3 || "".equals(args[2]) ? INDEX_COLUMN_NAME : args[2];
+            Object targetColumnName = args.length < 3 || "".equals(args[2]) ? LookupCacheManager.INDEX_COLUMN_NAME : args[2];
 
             long targetProjectID;
             ProjectLookup lookup;

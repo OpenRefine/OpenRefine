@@ -27,6 +27,7 @@ package org.openrefine.wikibase.editing;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,8 +66,9 @@ public class EditBatchProcessor {
     private NewEntityLibrary library;
     private List<EntityEdit> scheduled;
     private String summary;
-    private List<String> tags;
+    private LinkedList<String> tagCandidates;
 
+    private String currentTag;
     private List<EntityEdit> remainingUpdates;
     private List<EntityEdit> currentBatch;
     private int batchCursor;
@@ -90,8 +92,8 @@ public class EditBatchProcessor {
      *            the library to use to keep track of new entity creation
      * @param summary
      *            the summary to append to all edits
-     * @param tags
-     *            the list of tags to apply to all edits
+     * @param tagCandidates
+     *            the list of tags to try to apply to edits. The first existing tag will be added to all edits (if any).
      * @param batchSize
      *            the number of entities that should be retrieved in one go from the API
      * @param maxEditsPerMinute
@@ -99,7 +101,7 @@ public class EditBatchProcessor {
      */
     public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, ApiConnection connection,
             List<EntityEdit> entityDocuments,
-            NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize, int maxEditsPerMinute) {
+            NewEntityLibrary library, String summary, int maxLag, List<String> tagCandidates, int batchSize, int maxEditsPerMinute) {
         this.fetcher = fetcher;
         this.editor = editor;
         this.connection = connection;
@@ -114,7 +116,7 @@ public class EditBatchProcessor {
 
         this.library = library;
         this.summary = summary;
-        this.tags = tags;
+        this.tagCandidates = new LinkedList<>(tagCandidates);
         this.batchSize = batchSize;
 
         // Schedule the edit batch
@@ -157,6 +159,12 @@ public class EditBatchProcessor {
             batchCursor++;
             return;
         }
+
+        // Pick a tag to apply to the edits
+        if (currentTag == null && !tagCandidates.isEmpty()) {
+            currentTag = tagCandidates.remove();
+        }
+        List<String> tags = currentTag == null ? Collections.emptyList() : Collections.singletonList(currentTag);
 
         try {
             if (update.isNew()) {
@@ -203,9 +211,16 @@ public class EditBatchProcessor {
                 }
             }
         } catch (MediaWikiApiErrorException e) {
-            // TODO find a way to report these errors to the user in a nice way
-            logger.warn("MediaWiki error while editing [" + e.getErrorCode()
-                    + "]: " + e.getErrorMessage());
+            if ("badtags".equals(e.getErrorCode()) && currentTag != null) {
+                // if we tried editing with a tag that does not exist, clear the tag and try again
+                currentTag = null;
+                performEdit();
+                return;
+            } else {
+                // TODO find a way to report these errors to the user in a nice way
+                logger.warn("MediaWiki error while editing [" + e.getErrorCode()
+                        + "]: " + e.getErrorMessage());
+            }
         } catch (IOException e) {
             logger.warn("IO error while editing: " + e.getMessage());
         }

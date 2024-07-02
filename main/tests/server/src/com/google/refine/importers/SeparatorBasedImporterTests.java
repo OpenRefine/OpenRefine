@@ -240,7 +240,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
 
         try {
-            prepareOptions(sep, -1, 0, 0, 0, false, false, false);
+            prepareOptions(sep, -1, 0, 0, 0, false, true, false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
             Assert.fail("Exception during file parse", e);

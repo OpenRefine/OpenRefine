@@ -383,7 +383,7 @@ Cypress.Commands.add('waitForProjectTable', (numRows) => {
   cy.get('#project-title').should('exist');
   cy.get(".data-table").find("tr").its('length').should('be.gte', 0);
   if (numRows) {
-    cy.get('#summary-bar').should('to.contain', numRows+' rows');
+    cy.get('#summary-bar').should('to.contain', numRows.toLocaleString('en')+' rows');
   }
 });
 

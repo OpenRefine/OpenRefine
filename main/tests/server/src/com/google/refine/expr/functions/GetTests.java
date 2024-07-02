@@ -27,44 +27,15 @@
 
 package com.google.refine.expr.functions;
 
-import java.util.Properties;
-
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.Evaluable;
-import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
-import com.google.refine.model.Project;
+import com.google.refine.grel.GrelTestBase;
 
-public class GetTests extends RefineTest {
-
-    Project project;
-    Properties bindings;
-
-    @Override
-    @BeforeTest
-    public void init() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
-
-    @BeforeMethod
-    public void SetUp() {
-        project = new Project();
-        bindings = ExpressionUtils.createBindings(project);
-    }
-
-    @AfterMethod
-    public void TearDown() {
-        project = null;
-        bindings = null;
-    }
+public class GetTests extends GrelTestBase {
 
     @Test
     public void testGetJsonFieldExists() throws ParsingException {

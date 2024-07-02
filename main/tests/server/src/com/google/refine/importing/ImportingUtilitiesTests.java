@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -481,7 +482,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
             InputStream is = ImportingUtilities.tryOpenAsCompressedFile(tmp, null, null);
             Assert.assertNotNull(is, "Failed to open compressed file: " + filename);
 
-            reader = new InputStreamReader(is);
+            reader = new InputStreamReader(is); // TODO: This needs an encoding
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
             Assert.assertEquals(StreamSupport.stream(records.spliterator(), false).count(), LINES * 2,
@@ -563,5 +564,15 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 assertEquals(exception.getMessage(), message);
             }
         }
+    }
+
+    @Test
+    public void testGetFileName() {
+        ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+        String fileName = "aFileName";
+
+        JSONUtilities.safePut(fileRecord, "fileName", fileName);
+
+        assertEquals(fileName, ImportingUtilities.getFileName(fileRecord));
     }
 }

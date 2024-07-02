@@ -27,7 +27,7 @@ package org.openrefine.wikibase.operations;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -35,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -128,6 +129,36 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 summary);
     }
 
+    /**
+     * @return the list of tags which we should attempt to add to our edits. The first existing tag in the list will be
+     *         used. If none of the returned tags exist, editing will happen without any tag.
+     */
+    @JsonIgnore
+    protected List<String> getTagCandidates(String refineVersion) {
+        List<String> results = new LinkedList<>();
+
+        if (tagTemplate.contains("${version}")) {
+            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
+            Matcher matcher = pattern.matcher(refineVersion);
+            if (matcher.matches()) {
+                results.add(tagTemplate.replace("${version}", matcher.group(1)));
+            }
+
+            // if the tag template includes the version, also add a version-independent tag as fallback.
+            // for instance, if the tag template is `openrefine-${version}`, also try adding the tag `openrefine`
+            // in case the version-specific tag isn't available.
+            // See https://github.com/OpenRefine/OpenRefine/issues/6551
+            if (tagTemplate.endsWith("-${version}")) {
+                results.add(tagTemplate.substring(0, tagTemplate.length() - "-${version}".length()));
+            }
+
+        } else {
+            results.add(tagTemplate);
+        }
+
+        return results;
+    }
+
     static public class PerformWikibaseEditsChange implements Change {
 
         private NewEntityLibrary newEntityLibrary;
@@ -186,7 +217,6 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         protected WikibaseSchema _schema;
         protected String _editGroupsUrlSchema;
         protected String _summary;
-        protected List<String> _tags;
         protected final long _historyEntryID;
 
         protected PerformEditsProcess(Project project, Engine engine, String description, String editGroupsUrlSchema, String summary) {
@@ -195,15 +225,6 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             this._engine = engine;
             this._schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
             this._summary = summary;
-            String tag = tagTemplate;
-            if (tag.contains("${version}")) {
-                Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
-                Matcher matcher = pattern.matcher(RefineServlet.VERSION);
-                if (matcher.matches()) {
-                    tag = tag.replace("${version}", matcher.group(1));
-                }
-            }
-            this._tags = tag.isEmpty() ? Collections.emptyList() : Collections.singletonList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
             if (editGroupsUrlSchema == null &&
                     ApiConnection.URL_WIKIDATA_API.equals(_schema.getMediaWikiApiEndpoint())) {
@@ -254,7 +275,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // Prepare the edits
             NewEntityLibrary newEntityLibrary = new NewEntityLibrary();
             EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, entityDocuments, newEntityLibrary, summary,
-                    maxlag, _tags, 50, maxEditsPerMinute);
+                    maxlag, getTagCandidates(RefineServlet.VERSION), 50, maxEditsPerMinute);
 
             // Perform edits
             logger.info("Performing edits");

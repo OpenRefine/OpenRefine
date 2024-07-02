@@ -53,6 +53,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.importing.EncodingGuesser;
 import com.google.refine.importing.FormatGuesser;
 
 public class TextFormatGuesserTests extends ImporterTest {
@@ -91,31 +92,32 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     @Test
-    public void csvGuesserTest() {
+    public void csvGuesserTest() throws IOException {
         extensionGuesserTests("csv", "text/line-based");
     }
 
     @Test
-    public void tsvGuesserTest() {
+    public void tsvGuesserTest() throws IOException {
         extensionGuesserTests("tsv", "text/line-based");
     }
 
     @Test(enabled = false) // FIXME: Our JSON guesser doesn't work on small files
-    public void jsonGuesserTest() {
+    public void jsonGuesserTest() throws IOException {
         extensionGuesserTests("json", "text/json");
     }
 
     @Test
-    public void xmlGuesserTest() {
+    public void xmlGuesserTest() throws IOException {
         extensionGuesserTests("xml", "text/xml");
     }
 
-    private void extensionGuesserTests(String extension, String expectedFormat) {
+    private void extensionGuesserTests(String extension, String expectedFormat) throws IOException {
         String dir = ClassLoader.getSystemResource("food.csv").getPath();
         dir = dir.substring(0, dir.lastIndexOf('/'));
         File testDataDir = new File(dir);
         for (String testFile : testDataDir.list(new PatternFilenameFilter(".+\\." + extension))) {
-            String format = guesser.guess(new File(dir, testFile), "UTF-8", "text");
+            String encoding = EncodingGuesser.guessEncoding(testDataDir, testFile);
+            String format = guesser.guess(new File(dir, testFile), encoding, "text");
             assertEquals(format, expectedFormat, "Format guess failed for " + testFile);
         }
     }

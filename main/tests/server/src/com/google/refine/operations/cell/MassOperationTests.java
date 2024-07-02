@@ -34,6 +34,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -44,6 +45,8 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.MassEditOperation.Edit;
@@ -54,6 +57,16 @@ public class MassOperationTests extends RefineTest {
 
     private List<Edit> editList;
     private String editsString;
+
+    @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
+    }
 
     @BeforeSuite
     public void setUp() {

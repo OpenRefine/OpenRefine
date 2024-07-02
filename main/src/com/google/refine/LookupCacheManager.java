@@ -37,7 +37,6 @@ import java.util.Map;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFieldsListImpl;
 import com.google.refine.expr.WrappedRow;
-import com.google.refine.expr.functions.Cross;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -49,6 +48,8 @@ import com.google.refine.util.LookupException;
  * @author Lu Liu
  */
 public class LookupCacheManager {
+
+    public static final String INDEX_COLUMN_NAME = "_OpenRefine_Index_Column_Name_";
 
     protected final Map<String, ProjectLookup> _lookups = new HashMap<>();
 
@@ -111,7 +112,7 @@ public class LookupCacheManager {
         }
 
         // if this is a lookup on the index column
-        if (lookup.targetColumnName.equals(Cross.INDEX_COLUMN_NAME)) {
+        if (INDEX_COLUMN_NAME.equals(lookup.targetColumnName)) {
             for (int r = 0; r < targetProject.rows.size(); r++) {
                 lookup.valueToRowIndices.put(String.valueOf(r), Collections.singletonList(r));
             }

@@ -31,38 +31,17 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class TypeTests extends RefineTest {
+public class TypeTests extends GrelTestBase {
 
     static final List<String> listArray = Arrays.asList("v1", "v2", "v3");
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-
-    @Override
-    @BeforeTest
-    public void init() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
-
-    @BeforeMethod
-    public void setUp() {
-        bindings = new Properties();
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        bindings = null;
-    }
 
     @Test
     public void testTypeInvalidParams() {

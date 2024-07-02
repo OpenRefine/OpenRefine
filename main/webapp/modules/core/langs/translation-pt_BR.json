@@ -769,7 +769,6 @@
     "core-dialogs/cluster-row-limit-exceeded": "Limite excedido de $1 escolhas totais",
     "core-index-import/warning-import-file": "Você deve especificar um nome para o projeto.",
     "core-index-import/single-project": "OpenRefine só pode importar vários arquivos em um único projeto se todos os arquivos selecionados tiverem o mesmo formato de arquivo.",
-    "core-index/download-now": "Baixe $1 agora.",
     "core-index/refine-version": "Versão $1",
     "core-about/contributors": "Contribuidores (em ordem cronológica)",
     "core-about/thanks": "Agradecimento especial",

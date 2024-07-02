@@ -29,11 +29,11 @@ package com.google.refine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.grel.GrelTestBase;
 
-public class SortTests extends RefineTest {
+public class SortTests extends GrelTestBase {
 
     @Test
     public void sortJsonArray() throws ParsingException {

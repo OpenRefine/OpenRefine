@@ -33,37 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.util.Properties;
-
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class CoalesceTests extends RefineTest {
+public class CoalesceTests extends GrelTestBase {
 
     private static final Integer[] ZERO_TO_TWO = new Integer[] { 0, 1, 2 };
-
-    @Override
-    @BeforeTest
-    public void init() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
-
-    @BeforeMethod
-    public void setUp() {
-        bindings = new Properties();
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        bindings = null;
-    }
 
     @Test
     public void testCoalesceInvalidParams() {

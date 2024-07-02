@@ -40,6 +40,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -300,6 +301,50 @@ public class ExtendDataOperationTests extends RefineTest {
             // adding an assertion for sourceReconConfig
             Assert.assertTrue(project.columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getSourceReconConfig() != null);
 
+        }
+    }
+
+    @Test
+    public void testFetchOtherDatatypes() throws Exception {
+
+        DataExtensionConfig extension = DataExtensionConfig
+                .reconstruct("{\"properties\":[{\"id\":\"P123\",\"name\":\"dummy property\"}]}");
+
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher);
+
+            mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P123\"}]}",
+                    "{"
+                            + "\"rows\": {"
+                            + "    \"Q794\": {\"P123\": [{\"int\": 4}]},"
+                            + "    \"Q863\": {\"P123\": []},"
+                            + "    \"Q30\": {\"P123\": [{\"date\": \"2023-05-03T04:05:06Z\"}]},"
+                            + "    \"Q17\": {\"P123\": [{\"bool\": true}]}"
+                            + "},"
+                            + "\"meta\": ["
+                            + "   {\"name\": \"dummy property\", \"id\": \"P123\"}"
+                            + "]}");
+
+            EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                    "country",
+                    server.url("/reconcile").url().toString(),
+                    RECON_IDENTIFIER_SPACE,
+                    RECON_SCHEMA_SPACE,
+                    extension,
+                    1);
+
+            runOperation(op, project);
+
+            Project expectedProject = createProject(
+                    new String[] { "country", "dummy property" },
+                    new Serializable[][] {
+                            { reconCell1, 4 },
+                            { reconCell2, true },
+                            { reconCell3, null },
+                            { reconCell4, OffsetDateTime.parse("2023-05-03T04:05:06Z") },
+                    });
+            assertProjectEquals(project, expectedProject);
         }
     }
 

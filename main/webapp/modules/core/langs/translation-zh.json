@@ -690,7 +690,6 @@
     "core-index-import/file-count": "$1 文件",
     "core-index-import/match-count": "$1匹配",
     "core-index-import/single-project": "如果所有选定的文件具有相同的文件格式，OpenRefine 只能将多个文件导入到单个项目中。",
-    "core-index/download-now": "现在下载$1。",
     "core-index-import/invalid-url": "无效的网址",
     "core-index-import/blank-url": "空白的网址",
     "core-index/prefs-loading-failed": "设置载入失败。",

@@ -30,6 +30,7 @@ package com.google.refine.operations.column;
 import java.io.Serializable;
 import java.util.Collections;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -40,6 +41,8 @@ import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.facets.ListFacet;
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationRegistry;
@@ -49,6 +52,16 @@ import com.google.refine.util.TestUtils;
 public class ColumnAdditionOperationTests extends RefineTest {
 
     protected Project project;
+
+    @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
+    }
 
     @BeforeSuite
     public void registerOperation() {

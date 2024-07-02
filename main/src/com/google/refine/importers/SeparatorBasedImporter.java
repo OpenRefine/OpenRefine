@@ -37,7 +37,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
@@ -89,7 +88,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", !nonNullSeparator.equals("\\t"));
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(DEFAULT_QUOTE_CHAR));
-        JSONUtilities.safePut(options, "trimStrings", true); // FIXME: ignored?
+        JSONUtilities.safePut(options, "trimStrings", true);
 
         return options;
     }
@@ -147,6 +146,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         if (tsv) {
             TsvParserSettings settings = new TsvParserSettings();
             settings.setMaxCharsPerColumn(256 * 1024); // TODO: Perhaps use a lower default and make user configurable?
+            settings.setIgnoreLeadingWhitespaces(false);
+            settings.setIgnoreTrailingWhitespaces(false);
             parser = new TsvParser(settings);
         } else {
             CsvParserSettings settings = new CsvParserSettings();
@@ -242,7 +243,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
 
     static public CsvFormat guessFormat(File file, String encoding) {
         try (InputStream is = new FileInputStream(file);
-                Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+                Reader reader = ImportingUtilities.getInputStreamReader(is, encoding);
                 LineNumberReader lineNumberReader = new LineNumberReader(reader)) {
             CsvParserSettings settings = new CsvParserSettings();
             // We could provide a set of delimiters to consider below if we wanted to restrict this
@@ -265,7 +266,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     static public Separator guessSeparator(File file, String encoding, boolean handleQuotes) {
         try {
             try (InputStream is = new FileInputStream(file);
-                    Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+                    Reader reader = ImportingUtilities.getInputStreamReader(is, encoding);
                     LineNumberReader lineNumberReader = new LineNumberReader(reader)) {
 
                 List<Separator> separators = new ArrayList<>();

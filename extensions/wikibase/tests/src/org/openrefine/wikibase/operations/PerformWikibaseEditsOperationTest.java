@@ -27,6 +27,8 @@ package org.openrefine.wikibase.operations;
 import static org.testng.Assert.assertEquals;
 
 import java.io.LineNumberReader;
+import java.util.Arrays;
+import java.util.List;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -61,6 +63,15 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructor() {
         new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "", 5, "", 60, "tag");
+    }
+
+    @Test
+    public void testGetTagCandidates() {
+        PerformWikibaseEditsOperation operation = new PerformWikibaseEditsOperation(
+                EngineConfig.reconstruct("{}"), "my summary", 5, "", 60, "openrefine-${version}");
+        List<String> candidates = operation.getTagCandidates("3.4");
+
+        assertEquals(candidates, Arrays.asList("openrefine-3.4", "openrefine"));
     }
 
     @Test

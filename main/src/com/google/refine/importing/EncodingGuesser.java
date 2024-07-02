@@ -23,7 +23,7 @@ import com.google.refine.util.JSONUtilities;
  */
 public final class EncodingGuesser {
 
-    public static final String UTF_8_BOM = "UTF-8-BOM";
+    public static final String UTF_8_BOM = "UTF-8-BOM"; // Fake encoding for weird Microsoft UFT-8 with BOM
 
     public static void guess(final ImportingJob job)
             throws IOException {
@@ -33,27 +33,35 @@ public final class EncodingGuesser {
             if (fileRecords != null) {
                 // TODO: If different files have different encodings, we're only able to present a single
                 // encoding to the user currently. Should we check for conflicts? Warn the user?
-                for (int i = 0; i < fileRecords.size(); i++) {
-                    ObjectNode record = JSONUtilities.getObjectElement(fileRecords, i);
-                    String encoding = ImportingUtilities.getEncoding(record);
-                    if (StringUtils.isBlank(encoding)) {
-                        String location = JSONUtilities.getString(record, "location", null);
-                        if (location != null) {
-                            try (UnicodeBOMInputStream is = new UnicodeBOMInputStream(
-                                    new FileInputStream(new File(job.getRawDataDir(), location)))) {
-                                String detected = UniversalDetector.detectCharset(is);
-                                UnicodeBOMInputStream.BOM bom = is.getBOM();
-                                if (UnicodeBOMInputStream.BOM.UTF_8.equals(bom)) {
-                                    detected = UTF_8_BOM;
-                                }
-                                if (detected != null) {
-                                    JSONUtilities.safePut(record, "encoding", detected);
-                                }
-                            }
-                        }
+                guessFilesEncodings(job, fileRecords);
+            }
+        }
+    }
+
+    private static void guessFilesEncodings(ImportingJob job, ArrayNode fileRecords) throws IOException {
+        for (int i = 0; i < fileRecords.size(); i++) {
+            ObjectNode record = JSONUtilities.getObjectElement(fileRecords, i);
+            String encoding = ImportingUtilities.getEncoding(record);
+            if (StringUtils.isBlank(encoding)) {
+                String location = JSONUtilities.getString(record, "location", null);
+                if (location != null) {
+                    String detected = guessEncoding(job.getRawDataDir(), location);
+                    if (detected != null) {
+                        JSONUtilities.safePut(record, "encoding", detected);
                     }
                 }
             }
+        }
+    }
+
+    public static String guessEncoding(File dir, String location) throws IOException {
+        try (UnicodeBOMInputStream is = new UnicodeBOMInputStream(
+                new FileInputStream(new File(dir, location)), false)) {
+            String detected = UniversalDetector.detectCharset(is);
+            if (UnicodeBOMInputStream.BOM.UTF_8.equals(is.getBOM())) {
+                detected = UTF_8_BOM;
+            }
+            return detected;
         }
     }
 
@@ -63,7 +71,7 @@ public final class EncodingGuesser {
      * @param fileRecords
      * @param options
      */
-    public final static void guessInitialEncoding(final List<ObjectNode> fileRecords, final ObjectNode options) {
+    public static void guessInitialEncoding(final List<ObjectNode> fileRecords, final ObjectNode options) {
         if (fileRecords != null) {
             for (ObjectNode record : fileRecords) {
                 String encoding = JSONUtilities.getString(record, "encoding", null);

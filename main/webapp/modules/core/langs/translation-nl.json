@@ -412,7 +412,6 @@
     "core-index-import/single-project": "OpenRefine kan alleen meerdere bestanden in een enkel project importeren als alle geselecteerde bestanden hetzelfde bestandsformaat hebben.",
     "core-index-import/file-count": "$1 {{meervoud:$1|bestand|bestanden}}",
     "core-index-import/match-count": "$1 {{meervoud:$1|match|matches}}",
-    "core-index/download-now": "Download nu $1.",
     "core-index/refine-version": "Versie $1",
     "core-about/thanks": "Speciale dank aan",
     "core-about/history": "OpenRefine werd oorspronkelijk ontwikkeld door <a href='$1'>$2</a> onder de naam 'Freebase Gridworks'  . Metaweb werd in juli 2010 overgenomen door <a href='$3'>$4</a>, dat de software de naam 'Google Refine' gaf. In oktober 2012 tenslotte is het product hernoemd naar  OpenRefine, omdat het vanaf dat moment een communityproject werd.",

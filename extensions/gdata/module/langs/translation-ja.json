@@ -49,5 +49,7 @@
     "gdata-exporter/export-to-google-drive": "プロジェクトをGoogle Driveへ…",
     "gdata-import/re-sign-in-another": "別のアカウントでサインイン",
     "gdata-import/please-signin": "サインしてGoogleのアクセス権限を認証してください",
-    "gdata-parsing/disable-auto-preview": "プレビューを自動更新しない"
+    "gdata-parsing/disable-auto-preview": "プレビューを自動更新しない",
+    "gdata-import/please-name-project": "プロジェクトの名前を入力してください.",
+    "gdata-import/errors": "エラー:\n $1"
 }

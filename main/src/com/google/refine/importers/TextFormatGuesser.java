@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
 import com.google.common.base.CharMatcher;
@@ -56,8 +55,7 @@ public class TextFormatGuesser implements FormatGuesser {
             }
 
             InputStream bis = new BoundedInputStream(fis, 64 * 1024); // TODO: This seems like a lot
-            try (BufferedReader reader = new BufferedReader(
-                    encoding != null ? new InputStreamReader(bis, encoding) : new InputStreamReader(bis))) {
+            try (BufferedReader reader = new BufferedReader(ImportingUtilities.getInputStreamReader(bis, encoding))) {
                 int totalChars = 0;
                 long openBraces = 0;
                 int closeBraces = 0;

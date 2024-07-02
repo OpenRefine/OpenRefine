@@ -51,15 +51,15 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.MetaParser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-public class FunctionTests extends RefineTest {
+public class FunctionTests extends GrelTestBase {
 
     Project project;
     Engine engine;
@@ -68,6 +68,16 @@ public class FunctionTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
+    }
+
+    @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
     }
 
     @BeforeMethod

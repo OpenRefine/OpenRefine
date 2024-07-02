@@ -92,7 +92,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
             Pool pool = new Pool();
             ZipEntry poolEntry = zipFile.getEntry("pool.txt");
             if (poolEntry != null) {
-                pool.load(new InputStreamReader(
+                pool.load(new InputStreamReader( // TODO: Missing encoding here
                         zipFile.getInputStream(poolEntry)));
             } // else, it's a legacy project file
 

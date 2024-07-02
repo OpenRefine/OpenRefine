@@ -46,8 +46,10 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
+import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.Parser;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
@@ -95,6 +97,7 @@ public class RowRemovalOperationTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
         projectIssue567 = createProjectWithColumns("RowRemovalOperationTests", "Column A");
         project = createProject(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
@@ -121,6 +124,7 @@ public class RowRemovalOperationTests extends RefineTest {
 
     @AfterMethod
     public void TearDown() {
+        MetaParser.unregisterLanguageParser("grel");
         projectIssue567 = null;
         engine = null;
         bindings = null;

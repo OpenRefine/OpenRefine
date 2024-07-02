@@ -35,10 +35,10 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.GrelTestBase;
 
-public class ParseHtmlTests extends RefineTest {
+public class ParseHtmlTests extends GrelTestBase {
 
     static Properties bindings;
     static String h = "<html>\n" +
