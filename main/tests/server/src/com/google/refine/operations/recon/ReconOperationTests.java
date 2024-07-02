@@ -302,11 +302,7 @@ public class ReconOperationTests extends RefineTest {
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
+            Thread.sleep(1000);
             Assert.assertFalse(process.isRunning());
 
             RecordedRequest request1 = server.takeRequest(5, TimeUnit.SECONDS);
@@ -412,11 +408,7 @@ public class ReconOperationTests extends RefineTest {
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
+            Thread.sleep(1500);
             Assert.assertFalse(process.isRunning());
 
             server.takeRequest(5, TimeUnit.SECONDS); // ignore the first request which was a 503 error

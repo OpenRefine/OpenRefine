@@ -122,11 +122,7 @@ public class XlsExporterTests extends RefineTest {
     public void exportSimpleXls() throws IOException {
         CreateGrid(2, 2);
 
-        try {
-            SUT.export(project, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, stream);
 
         Assert.assertEquals(stream.size(), 4096);
 
@@ -142,11 +138,7 @@ public class XlsExporterTests extends RefineTest {
     public void test256Columns() throws IOException {
         CreateGrid(2, 256);
 
-        try {
-            SUT.export(project, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, stream);
 
         try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
@@ -160,11 +152,7 @@ public class XlsExporterTests extends RefineTest {
     public void test257Columns() throws IOException {
         CreateGrid(2, 257);
 
-        try {
-            SUT.export(project, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, stream);
 
         try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
@@ -180,11 +168,7 @@ public class XlsExporterTests extends RefineTest {
         OffsetDateTime odt = OffsetDateTime.parse("2019-04-09T12:00+00:00");
         createDateGrid(2, 2, odt);
 
-        try {
-            SUT.export(project, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, stream);
 
         Assert.assertEquals(stream.size(), 4096);
 
@@ -196,14 +180,11 @@ public class XlsExporterTests extends RefineTest {
         }
     }
 
-    public void exportSimpleXlsNoHeader() {
+    public void exportSimpleXlsNoHeader() throws IOException {
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
-        try {
-            SUT.export(project, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+
+        SUT.export(project, options, engine, stream);
 
         Assert.assertEquals(stream.toString(), "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
@@ -211,16 +192,13 @@ public class XlsExporterTests extends RefineTest {
         verify(options, times(2)).getProperty("printColumnHeader");
     }
 
-    public void exportXlsWithEmptyCells() {
+    public void exportXlsWithEmptyCells() throws IOException {
         CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
-        try {
-            SUT.export(project, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+
+        SUT.export(project, options, engine, stream);
 
         Assert.assertEquals(stream.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +

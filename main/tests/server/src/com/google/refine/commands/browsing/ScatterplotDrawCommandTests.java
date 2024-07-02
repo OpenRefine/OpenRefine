@@ -29,16 +29,12 @@ public class ScatterplotDrawCommandTests {
     protected Command command = null;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         command = new GetScatterplotCommand();
         writer = new StringWriter();
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
     }
 
     public static String configJson = "{"

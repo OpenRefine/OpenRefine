@@ -14,9 +14,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -38,7 +36,7 @@ public class SetProjectTagsCommandTests extends CommandTestBase {
     PrintWriter pw = null;
 
     @BeforeMethod
-    public void setUpCommand() throws JsonProcessingException {
+    public void setUpCommand() throws IOException {
         command = new SetProjectTagsCommand();
 
         pw = new PrintWriter(writer);
@@ -56,28 +54,18 @@ public class SetProjectTagsCommandTests extends CommandTestBase {
         when(request.getParameter("project")).thenReturn(Long.toString(PROJECT_ID));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
-        try {
-            when(response.getWriter()).thenReturn(pw);
-        } catch (IOException e1) {
-            Assert.fail();
-        }
+        when(response.getWriter()).thenReturn(pw);
     }
 
     @Test
-    public void setProjectTagsTest() {
+    public void setProjectTagsTest() throws ServletException, IOException {
         // Check that our tags got set up correctly at project registration time.
         assertEquals(ProjectManager.singleton.getAllProjectsTags().keySet().stream().sorted().toArray(String[]::new), TAGS);
 
         when(request.getParameter("old")).thenReturn(String.join(",", TAGS));
         when(request.getParameter("new")).thenReturn("a b c");
         // run
-        try {
-            command.doPost(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        command.doPost(request, response);
 
         // verify
         verify(request, times(1)).getParameter("csrf_token");
@@ -85,11 +73,7 @@ public class SetProjectTagsCommandTests extends CommandTestBase {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        try {
-            verify(response, times(1)).getWriter();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        verify(response, times(1)).getWriter();
         assertEqualsAsJson(writer.toString(), "{\"code\":\"ok\"}");
 
         String[] tags = project.getMetadata().getTags();

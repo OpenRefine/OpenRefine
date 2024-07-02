@@ -89,7 +89,7 @@ public class ForRangeTests extends GrelTestBase {
     }
 
     @Test
-    public void testForRangeWithImpossibleStep() {
+    public void testForRangeWithImpossibleStep() throws ParsingException {
         String tests[] = {
                 "forRange(0,10,-1,v,v).join(',')",
                 "forRange(10,0,1,v,v).join(',')"
@@ -97,36 +97,28 @@ public class ForRangeTests extends GrelTestBase {
         bindings = new Properties();
         bindings.put("v", "");
         for (String test : tests) {
-            try {
-                Evaluable eval = MetaParser.parse("grel:" + test);
-                Object result = eval.evaluate(bindings);
-                Assert.assertEquals(result.toString(), "", "Wrong result for expression: " + test);
-            } catch (ParsingException e) {
-                Assert.fail("Unexpected parse failure: " + test);
-            }
+            Evaluable eval = MetaParser.parse("grel:" + test);
+            Object result = eval.evaluate(bindings);
+            Assert.assertEquals(result.toString(), "", "Wrong result for expression: " + test);
         }
     }
 
     @Test
-    public void testForRangeWithStepBiggerThanRange() {
+    public void testForRangeWithStepBiggerThanRange() throws ParsingException {
         String tests[] = {
                 "forRange(0,10,15,v,v).join(',')"
         };
         bindings = new Properties();
         bindings.put("v", "");
         for (String test : tests) {
-            try {
-                Evaluable eval = MetaParser.parse("grel:" + test);
-                Object result = eval.evaluate(bindings);
-                Assert.assertEquals(result.toString(), "0", "Wrong result for expression: " + test);
-            } catch (ParsingException e) {
-                Assert.fail("Unexpected parse failure: " + test);
-            }
+            Evaluable eval = MetaParser.parse("grel:" + test);
+            Object result = eval.evaluate(bindings);
+            Assert.assertEquals(result.toString(), "0", "Wrong result for expression: " + test);
         }
     }
 
     @Test
-    public void testEvalError() {
+    public void testEvalError() throws ParsingException {
         String tests[] = {
                 "forRange(test,0,1,v,v)",
                 "forRange(0,test,1,v,v)",
@@ -136,13 +128,9 @@ public class ForRangeTests extends GrelTestBase {
         bindings = new Properties();
         bindings.put("v", "");
         for (String test : tests) {
-            try {
-                Evaluable eval = MetaParser.parse("grel:" + test);
-                Object result = eval.evaluate(bindings);
-                Assert.assertTrue(result instanceof EvalError);
-            } catch (ParsingException e) {
-                Assert.fail("Unexpected parse failure: " + test);
-            }
+            Evaluable eval = MetaParser.parse("grel:" + test);
+            Object result = eval.evaluate(bindings);
+            Assert.assertTrue(result instanceof EvalError);
         }
     }
 }

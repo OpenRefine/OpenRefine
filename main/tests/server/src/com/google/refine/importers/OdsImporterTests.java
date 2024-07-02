@@ -49,7 +49,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -136,11 +135,7 @@ public class OdsImporterTests extends ImporterTest {
 
         InputStream stream = ClassLoader.getSystemResourceAsStream("films.ods");
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         // TODO dates should not be interpreted in a particular time zone like this
         DateTimeFormatter format = DateTimeFormatter.ISO_LOCAL_DATE;
@@ -183,17 +178,13 @@ public class OdsImporterTests extends ImporterTest {
 
         InputStream stream = ClassLoader.getSystemResourceAsStream("NoData_NoSpreadsheet.ods");
 
-        try {
-            List<Exception> exceptions = parseOneFileAndReturnExceptions(SUT, stream);
-            assertEquals(exceptions.size(), 1);
-            Exception NPE = exceptions.get(0);
-            assertEquals(NPE.getMessage(),
-                    "Attempted to parse file as Ods file but failed. " +
-                            "No tables found in Ods file. " +
-                            "Please validate file format on https://odfvalidator.org/, then try re-uploading the file.");
-            assert NPE.getCause() instanceof java.lang.NullPointerException;
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        List<Exception> exceptions = parseOneFileAndReturnExceptions(SUT, stream);
+        assertEquals(exceptions.size(), 1);
+        Exception NPE = exceptions.get(0);
+        assertEquals(NPE.getMessage(),
+                "Attempted to parse file as Ods file but failed. " +
+                        "No tables found in Ods file. " +
+                        "Please validate file format on https://odfvalidator.org/, then try re-uploading the file.");
+        assert NPE.getCause() instanceof java.lang.NullPointerException;
     }
 }
