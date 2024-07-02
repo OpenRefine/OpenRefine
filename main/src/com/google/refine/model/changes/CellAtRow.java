@@ -35,6 +35,7 @@ package com.google.refine.model.changes;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Objects;
 import java.util.Properties;
 
 import com.google.refine.model.Cell;
@@ -64,5 +65,27 @@ public class CellAtRow {
         Cell cell = semicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(semicolon + 1), pool) : null;
 
         return new CellAtRow(row, cell);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cell, row);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CellAtRow other = (CellAtRow) obj;
+        return Objects.equals(cell, other.cell) && row == other.row;
+    }
+
+    @Override
+    public String toString() {
+        return "CellAtRow [row=" + row + ", cell=" + cell + "]";
     }
 }

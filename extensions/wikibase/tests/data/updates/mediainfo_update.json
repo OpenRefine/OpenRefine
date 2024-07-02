@@ -1,5 +1,6 @@
 {
   "type": "mediainfo",
+  "contributingRowIds" : [ 123 ],
   "fileName": null,
   "filePath": null,
   "wikitext": null,

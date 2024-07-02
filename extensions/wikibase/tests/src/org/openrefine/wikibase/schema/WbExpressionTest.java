@@ -226,7 +226,8 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
                 row.cells.add(cell);
             }
         }
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", Collections.emptyMap(), server.url("/w/api.php").toString(), 0, row,
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", Collections.emptyMap(), server.url("/w/api.php").toString(), 123,
+                row,
                 project.columnModel, warningStore);
     }
 

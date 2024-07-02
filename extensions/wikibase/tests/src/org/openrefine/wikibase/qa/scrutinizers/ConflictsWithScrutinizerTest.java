@@ -65,6 +65,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
+                .addContributingRowId(123)
                 .build();
 
         Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
@@ -94,6 +95,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
         TermedStatementEntityEdit update = new ItemEditBuilder(id)
                 .addStatement(add(statement))
+                .addContributingRowId(123)
                 .build();
 
         Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
@@ -126,6 +128,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
+                .addContributingRowId(123)
                 .build();
 
         Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
@@ -155,6 +158,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> constraintDefinitions = new ArrayList<>();
@@ -183,6 +187,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .addStatement(add(statement3))
+                .addContributingRowId(123)
                 .build();
 
         Snak propertySnak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);

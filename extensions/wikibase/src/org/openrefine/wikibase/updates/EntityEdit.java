@@ -4,6 +4,7 @@ package org.openrefine.wikibase.updates;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,6 +32,11 @@ public interface EntityEdit {
      */
     @JsonProperty("subject")
     EntityIdValue getEntityId();
+
+    /**
+     * The set of row ids which contributed to generate this entity edit.
+     */
+    Set<Integer> getContributingRowIds();
 
     /**
      * In case the subject id is not new, returns the corresponding update given the current state of the entity. Throws

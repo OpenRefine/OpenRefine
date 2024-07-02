@@ -42,8 +42,8 @@ public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test
     public void testOrderPreserved()
             throws ImpossibleSchedulingException {
-        ItemEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoB).build();
-        ItemEdit updateB = new ItemEditBuilder(existingIdB).addStatement(sBtoA).build();
+        ItemEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoB).addContributingRowId(123).build();
+        ItemEdit updateB = new ItemEditBuilder(existingIdB).addStatement(sBtoA).addContributingRowId(123).build();
         List<EntityEdit> scheduled = schedule(updateA, updateB);
         assertEquals(scheduled, Arrays.asList(updateA, updateB));
     }
@@ -52,9 +52,11 @@ public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
     public void testUpdateIsNotSplit()
             throws ImpossibleSchedulingException {
         ItemEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA)
-                .addStatement(sAtoNewB).build();
-        ItemEdit newUpdateA = new ItemEditBuilder(newIdA).build();
-        ItemEdit newUpdateB = new ItemEditBuilder(newIdB).build();
+                .addStatement(sAtoNewB)
+                .addContributingRowId(123)
+                .build();
+        ItemEdit newUpdateA = new ItemEditBuilder(newIdA).addContributingRowId(123).build();
+        ItemEdit newUpdateB = new ItemEditBuilder(newIdB).addContributingRowId(123).build();
         List<EntityEdit> scheduled = schedule(updateA);
         assertSetEquals(scheduled, Arrays.asList(newUpdateA, newUpdateB, updateA));
     }
@@ -64,9 +66,11 @@ public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
             throws ImpossibleSchedulingException {
         EntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA)
                 .addStatement(sAtoNewB)
-                .addStatement(sAtoB).build();
-        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).addStatement(sNewAtoB).build();
-        EntityEdit newUpdateB = new ItemEditBuilder(newIdB).build();
+                .addStatement(sAtoB)
+                .addContributingRowId(123)
+                .build();
+        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).addStatement(sNewAtoB).addContributingRowId(123).build();
+        EntityEdit newUpdateB = new ItemEditBuilder(newIdB).addContributingRowId(123).build();
         List<EntityEdit> scheduled = schedule(updateA, newUpdateA);
         assertEquals(scheduled, Arrays.asList(newUpdateA, newUpdateB, updateA));
     }
@@ -75,8 +79,9 @@ public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
     public void testMediaInfoReferringToNewItem() throws ImpossibleSchedulingException {
         EntityEdit updateMediaInfo = new MediaInfoEditBuilder(existingMediaInfoId)
                 .addStatement(TestingData.generateStatementAddition(existingMediaInfoId, newIdA))
+                .addContributingRowId(123)
                 .build();
-        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).build();
+        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).addContributingRowId(123).build();
         List<EntityEdit> scheduled = schedule(updateMediaInfo);
         assertEquals(scheduled, Arrays.asList(newUpdateA, updateMediaInfo));
     }
