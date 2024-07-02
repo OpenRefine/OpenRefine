@@ -447,9 +447,9 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
     );
 
     window.setTimeout(function() {
-        if (!done) {
+      if (!done) {
         dismissBusy = DialogSystem.showBusy();
-        }
+      }
     }, 500);
   }
 
