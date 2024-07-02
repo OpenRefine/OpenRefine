@@ -78,7 +78,9 @@ public class Project {
     final static Logger logger = LoggerFactory.getLogger(Project.class);
 
     static public long generateID() {
-        return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
+
+//        return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
+        return (System.currentTimeMillis() << 20) + (long)(Math.random() * (1 << 20));
     }
 
     /**
