@@ -1,0 +1,21 @@
+<div class="dialog-frame history-erasure-dialog" style="width: 600px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <form bind="form">
+      <div class="dialog-body" bind="dialogBody">
+        <div bind="warningText"></div>
+        <div bind="entryList" class="history-entry-list"></div>
+        <div>
+          <label>
+            <input type="checkbox" name="do-not-warn-anymore" bind="doNotWarnCheckbox" />
+            <span bind="doNotWarnText"></span>
+          </label>
+        </div>
+      </div>
+      <div class="dialog-footer" bind="dialogFooter">
+        <button class="button" type="button" bind="cancelButton"></button>
+        <button class="button button-primary" bind="okButton" type="submit"></button>
+      </div>
+    </form>
+  </div>
+</div>
