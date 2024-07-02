@@ -40,6 +40,7 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
@@ -67,7 +68,7 @@ public class Filter implements Control {
         if (ExpressionUtils.isError(o)) {
             return o;
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return ControlEvalError.filter();
+            return new EvalError(ControlEvalError.expects_array_arg(o));
         }
 
         String name = ((VariableExpr) args[1]).getName();
