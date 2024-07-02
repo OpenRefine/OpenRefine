@@ -51,6 +51,30 @@ describe('In-cell reconciliation buttons', () => {
         //confirming the no. of candidates after we click on see less
         cy.getCell(0, 'species').find('.data-table-recon-candidate:visible').should('have.length', 4);
     });
+
+    it('Matching a single cell preserves pagination', () => {
+        cy.visitOpenRefine();
+        cy.navigateTo('Import project');
+        cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
+        cy.get('#project-tar-file-input').attachFile('reconciled-project-no-automatch.zip')
+        cy.get('#import-project-button').click();
+
+        // Set a smaller page number to make sure there are multiple pages
+        cy.get('.viewPanel-pagingControls-page:nth-of-type(1)').click();
+        // Go to the next page
+        cy.get('.viewpanel-paging .action').first().click();
+        // Check that we have a single row in view (second page)
+        cy.get('.data-table tbody tr').should('have.length', 1);
+
+        // Match the first recon candidate in the cell
+        cy.get('.data-table-recon-match').first().click();
+
+        // Make sure the cell is matched (no recon candidates are visible anymore)
+        cy.get('.data-table-recon-match').should('not.exist');
+        // We are still in the second page
+        cy.get('.data-table tbody tr').should('have.length', 1);
+    });
+
 });
 
 
