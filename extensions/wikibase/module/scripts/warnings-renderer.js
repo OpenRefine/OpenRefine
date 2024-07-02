@@ -57,6 +57,7 @@ WarningsRenderer._createFacetForWarning = function (warning) {
       'list',
       {
           columnName: '',
+          "i18n" : "wikibase-issues/warning-raised",
           name: title,
           expression: 'grel:if(wikibaseIssues().inArray('+JSON.stringify(warning.aggregationId)+'), '+JSON.stringify(warningRaised)+', '+JSON.stringify(noWarning)+')',
           selection: [
