@@ -117,6 +117,7 @@ abstract public class ImportingParserBase implements ImportingParser {
             final MultiFileReadingProgress progress) throws IOException {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
+        final String fileName = ImportingUtilities.getFileName(fileRecord);
         final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
         int filenameColumnIndex = -1;
         int archiveColumnIndex = -1;
@@ -136,7 +137,7 @@ abstract public class ImportingParserBase implements ImportingParser {
                 }
 
                 if (useInputStream) {
-                    parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
+                    parseOneFile(project, metadata, job, fileName, inputStream, limit, options, exceptions);
                 } else {
                     // Although this is called "common" encoding, it may represent the user's override of the encoding
                     String commonEncoding = JSONUtilities.getString(options, "encoding", null);
@@ -147,7 +148,7 @@ abstract public class ImportingParserBase implements ImportingParser {
                     Reader reader = ImportingUtilities.getReaderFromStream(
                             inputStream, fileRecord, commonEncoding);
 
-                    parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
+                    parseOneFile(project, metadata, job, fileName, reader, limit, options, exceptions);
                 }
 
                 // Fill in filename and archive name column for all rows added from this file
