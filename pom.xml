@@ -288,14 +288,6 @@
           <staticGroups>java,*</staticGroups>
           <removeUnused>true</removeUnused>
         </configuration>
-        <executions>
-          <execution>
-            <id>sort-imports</id>
-            <goals>
-              <goal>sort</goal><!-- runs at process-sources phase by default -->
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
