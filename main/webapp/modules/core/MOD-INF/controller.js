@@ -573,6 +573,7 @@ function init() {
       "styles/dialogs/custom-tabular-exporter-dialog.css",
       "styles/dialogs/sql-exporter-dialog.css",
       "styles/dialogs/recon-service-selection-dialog.css",
+      "styles/dialogs/confirm-history-erasure-dialog.less",
       "styles/reconciliation/recon-dialog.css",
       "styles/reconciliation/standard-service-panel.css",
       "styles/reconciliation/add-column-by-reconciliation.css",

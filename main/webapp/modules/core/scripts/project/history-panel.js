@@ -66,6 +66,13 @@ HistoryPanel.prototype.update = function(onDone) {
   );
 };
 
+// returns the changes "in the future", i.e. changes that have been undone
+// and will be erased by any new operation applied in this state
+HistoryPanel.prototype.undoneChanges = function() {
+  var self = this;
+  return self._data.future;
+}
+
 HistoryPanel.prototype._render = function() {
   var self = this;
   this._tabHeader.html($.i18n('core-project/undo-redo')+' <span class="count">' + this._data.past.length + ' / ' + ( this._data.future.length + this._data.past.length ) + '</span>');
@@ -171,7 +178,7 @@ HistoryPanel.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
       "undo-redo",
       { lastDoneID: lastDoneID },
       null,
-      { everythingChanged: true }
+      { everythingChanged: true, warnAgainstHistoryErasure: false }
   );
 };
 
