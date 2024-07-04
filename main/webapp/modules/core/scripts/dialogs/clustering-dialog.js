@@ -31,8 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-function ClusteringDialog(columnName, expression) {
-    this._columnName = columnName;
+function ClusteringDialog(column, expression) {
+    this._column = column;
+    this._columnName = column.name;
     this._expression = expression;
     this._method = "binning";
     this._function = "fingerprint";
@@ -56,6 +57,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts = DOM.bind(dialog);
     this._elmts.dialogHeader.text($.i18n('core-dialogs/cluster-edit')+' "' + this._columnName + '"');
 
+    this._elmts.ManageFunctionsBtn.html($.i18n('core-buttons/manage-clustering'));
     this._elmts.or_dialog_descr.html($.i18n('core-dialogs/cluster-descr'));
     this._elmts.or_dialog_findMore.html($.i18n('core-dialogs/find-more'));
     this._elmts.or_dialog_method.html($.i18n('core-dialogs/method'));
@@ -116,6 +118,13 @@ ClusteringDialog.prototype._createDialog = function() {
 
     this._elmts.keyingFunctionSelector.on('change',changer);
     this._elmts.distanceFunctionSelector.on('change',changer);
+
+    this._elmts.ManageFunctionsBtn.on('click', openManagementDialog);
+
+    function openManagementDialog() {
+        var title = "Manage Custom Clustering Functions";
+        new ManagementDialog(title, self._column);
+    }
 
     var params_changer = function() {
         self._params = {};
