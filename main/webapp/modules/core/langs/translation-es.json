@@ -870,5 +870,13 @@
     "core-index/notification-opt-in": "¿Quiere recibir notificaciones sobre nuevos lanzamientos y eventos de OpenRefine?",
     "core-index/notification-privacy-info": "información de privacidad",
     "core-buttons/yes": "Sí",
-    "core-buttons/no": "No"
+    "core-buttons/no": "No",
+    "core-project/confirm-erasure-of-project-history": "Confirmar la eliminación del historial del proyecto",
+    "core-project/applying-change-erases-entries": "Al aplicar este cambio se sobrescribirán las siguientes {{plural:$1|entrada del historial|$1 entradas del historial}}:",
+    "core-views/total-rows": "$1 filas",
+    "core-project/do-not-warn": "No advertir sobre la sobrescritura de entradas del historial en el futuro",
+    "core-buttons/apply-anyway": "Aplicar de todos modos",
+    "core-views/total-records": "$1 registros",
+    "core-views/total-matching-rows": "1 fila igual <span id=\"summary-total\"> (2 en total)</span>",
+    "core-views/total-matching-records": "$1 registro coincidente <span id=\"summary-total\">($2 total)</span>"
 }
