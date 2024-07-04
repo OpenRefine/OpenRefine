@@ -16,11 +16,7 @@ const AddRowsDialog = (function (path) {
     }
 
     serialize() {
-      return JSON.stringify({
-        flagged: this.#isFlagged,
-        starred: this.#isStarred,
-        cells: this.#cells
-      });
+      return JSON.stringify({});
     }
   }
 

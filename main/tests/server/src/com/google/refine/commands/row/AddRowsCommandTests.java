@@ -49,10 +49,7 @@ import com.google.refine.util.ParsingUtilities;
 public class AddRowsCommandTests extends CommandTestBase {
 
     private Project project = null;
-    private String[] additionalRows = {
-            "{ starred: false, flagged: false, cells: []}",
-            "{ starred: false, flagged: false, cells: []}",
-    };
+    private final String[] additionalRows = { "{}", "{}" };
 
     protected AddRowsCommand command;
 
@@ -146,7 +143,7 @@ public class AddRowsCommandTests extends CommandTestBase {
 
     @Test(expectedExceptions = IndexOutOfBoundsException.class)
     // If index parameter is negative, `doPost` call triggers IndexOutOfBoundsException
-    public void testNegativeIndexParameter() throws ServletException, IOException {
+    public void testNegativeIndexParameter() {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameterValues(AddRowsCommand.ROWS_PARAMETER)).thenReturn(additionalRows);
         when(request.getParameter(AddRowsCommand.INDEX_PARAMETER)).thenReturn("-1");
@@ -195,5 +192,4 @@ public class AddRowsCommandTests extends CommandTestBase {
 
         command.getRowData(request);
     }
-
 }
