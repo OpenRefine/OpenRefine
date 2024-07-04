@@ -68,7 +68,7 @@ public class Filter implements Control {
         if (ExpressionUtils.isError(o)) {
             return o;
         } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return new EvalError(ControlEvalError.expects_array_arg(ControlFunctionRegistry.getControlName(this)));
+            return new EvalError(ControlEvalError.expects_first_arg_array(ControlFunctionRegistry.getControlName(this)));
         }
 
         String name = ((VariableExpr) args[1]).getName();
