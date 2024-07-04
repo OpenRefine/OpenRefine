@@ -41,7 +41,10 @@ const AddRowsDialog = (function (path) {
     $elements["addRowsCountLabel"].html($.i18n("core-views/add-rows/count-label"));
     $elements["addRowsPositionLabel"].html($.i18n("core-views/add-rows/insertion-label"));
 
+    $elements["optionBeginning"].html($.i18n("core-views/add-rows/beginning-option"));
     $elements["optionBeginning"].val(0);
+
+    $elements["optionEnd"].html($.i18n("core-views/add-rows/end-option"));
     $elements["optionEnd"].val(theProject.metadata.rowCount);
 
     $elements["cancelButton"].html($.i18n('core-buttons/cancel'));
