@@ -30,6 +30,7 @@ package com.google.refine.commands.row;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -88,7 +89,11 @@ public class AddRowsCommand extends Command {
         List<Row> rows = new ArrayList<>(data.length);
         Pool pool = new Pool();
         for (String rowStr : data) {
-            rows.add(Row.load(rowStr, pool));
+            Row row = Row.load(rowStr, pool);
+            if (!Objects.equals(rowStr, "{}")) {
+                throw new IllegalArgumentException("Row is not empty");
+            }
+            rows.add(row);
         }
         return rows;
     }
