@@ -33,8 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.MalformedURLException;
 import java.util.Properties;
 
 import org.apache.commons.text.StringEscapeUtils;
@@ -45,6 +47,7 @@ import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 import com.google.refine.grel.FunctionDescription;
 import com.google.refine.util.StringUtils;
+import com.google.common.net.UrlEscapers;
 
 public class Escape implements Function {
 
@@ -74,9 +77,32 @@ public class Escape implements Function {
                     return StringEscapeUtils.escapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
-                        return URLEncoder.encode(s, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
+                        // Encode space initially to overcome URI exception and replae with escape sequence before calling escape
+                        String url = s.replace(" ", "+");
+                        URI uri = new URL(url).toURI();
+                        String scheme = uri.getScheme();
+                        String authority = uri.getAuthority();
+                        String path = uri.getPath();
+                        String query = uri.getQuery();
+                        String fragment = uri.getFragment();
+
+                        String encodedPath = path == null ? "" : UrlEscapers.urlPathSegmentEscaper().escape(path.replace("+", " "));
+                        String encodedQuery = query == null ? null : UrlEscapers.urlFormParameterEscaper().escape(query.replace("+", " "));
+                        String encodedFragment = fragment == null ? null : UrlEscapers.urlFragmentEscaper().escape(fragment.replace("+", " "));
+
+                        String encodedUrl = scheme + "://" + authority + encodedPath;
+                        if (encodedQuery != null) {
+                            encodedUrl += "?" + encodedQuery;
+                        }
+                        if (encodedFragment != null) {
+                            encodedUrl += "#" + encodedFragment;
+                        }
+                        return encodedUrl;
                     }
+                    catch (URISyntaxException e) {
+                        return s; }
+                    catch (MalformedURLException e) {
+                        return s; }
                 } else {
                     // + mode + "'.");
                     return new EvalError(EvalErrorMessage.unrecognized_mode(ControlFunctionRegistry.getFunctionName(this), mode));

@@ -44,6 +44,9 @@ public class EscapeTests extends GrelTestBase {
         assertEquals(invoke("escape", "mystring", "xml"), "mystring");
         assertEquals(invoke("escape", "mystring", "csv"), "mystring");
         assertEquals(invoke("escape", "mystring", "url"), "mystring");
+        assertEquals(invoke("escape", "http://example.com", "url"), "http://example.com");
+        assertEquals(invoke("escape", "http://example.com/path 1/path 2?key1=value 1", "url"), "http://example.com%2Fpath%201%2Fpath%202?key1%3Dvalue+1");
+        assertEquals(invoke("escape", "http://example.com/path 1/path 2?key1=value 1&key2=value@!$2#fragment 1 fragment 2", "url"), "http://example.com%2Fpath%201%2Fpath%202?key1%3Dvalue+1%26key2%3Dvalue%40%21%242#fragment%201%20fragment%202");
         assertEquals(invoke("escape", "mystring", "javascript"), "mystring");
         assertEquals(invoke("escape", 1, "html"), "1");
         assertEquals(invoke("escape", 1, "xml"), "1");
