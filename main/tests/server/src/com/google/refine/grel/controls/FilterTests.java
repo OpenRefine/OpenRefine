@@ -61,6 +61,11 @@ public class FilterTests extends GrelTestBase {
         bindings.put("v", "");
         assertParseError("filter('test', v, v)");
         try {
+            assertParseError("filter([], 1, 1)");
+            fail("Didn't throw a ParsingException for wrong argument type");
+        } catch (ParsingException e) {
+        }
+        try {
             assertParseError("filter([], v)");
             fail("Didn't throw a ParsingException for 2 arguments");
         } catch (ParsingException e) {
