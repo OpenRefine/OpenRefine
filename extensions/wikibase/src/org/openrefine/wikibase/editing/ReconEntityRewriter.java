@@ -187,7 +187,8 @@ public class ReconEntityRewriter extends DatamodelConverter {
                 Set<MonolingualTextValue> aliases = update.getAliases().stream().map(l -> copy(l)).collect(Collectors.toSet());
                 List<StatementEdit> statements = update.getStatementEdits().stream().map(l -> copy(l))
                         .collect(Collectors.toList());
-                return new ItemEdit(subject, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
+                return new ItemEdit(subject, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases,
+                        edit.getContributingRowIds());
             } else if (edit instanceof MediaInfoEdit) {
                 MediaInfoEdit update = (MediaInfoEdit) edit;
                 Set<MonolingualTextValue> labels = update.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
@@ -195,7 +196,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
                 List<StatementEdit> statements = update.getStatementEdits().stream().map(l -> copy(l))
                         .collect(Collectors.toList());
                 return new MediaInfoEdit(subject, statements, labels, labelsIfNew, update.getFilePath(),
-                        update.getFileName(), update.getWikitext(), update.isOverridingWikitext());
+                        update.getFileName(), update.getWikitext(), update.isOverridingWikitext(), edit.getContributingRowIds());
             } else {
                 throw new IllegalStateException(
                         "Rewriting of entities of this type (for subject id " + edit.getEntityId() + ") not supported yet");

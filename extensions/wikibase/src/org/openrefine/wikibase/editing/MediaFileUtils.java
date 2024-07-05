@@ -146,12 +146,13 @@ public class MediaFileUtils {
      *            the edit summary
      * @param tags
      *            any tags that should be applied to the edit
+     * @return the revision id created by the edit
      * @throws IOException
      *             if a network error happened
      * @throws MediaWikiApiErrorException
      *             if the editing failed for some reason, after a few retries
      */
-    public void editPage(long pageId, String wikitext, String summary, List<String> tags) throws IOException, MediaWikiApiErrorException {
+    public long editPage(long pageId, String wikitext, String summary, List<String> tags) throws IOException, MediaWikiApiErrorException {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("action", "edit");
         parameters.put("tags", String.join("|", tags));
@@ -165,8 +166,12 @@ public class MediaFileUtils {
         MediaWikiApiErrorException lastException = null;
         while (retries > 0) {
             try {
-                apiConnection.sendJsonRequest("POST", parameters);
-                return;
+                JsonNode response = apiConnection.sendJsonRequest("POST", parameters);
+                if (response.has("edit") && response.get("edit").has("newrevid")) {
+                    return response.get("edit").get("newrevid").asLong(0L);
+                } else {
+                    throw new IllegalStateException("Could not find the revision id in MediaWiki's response");
+                }
             } catch (MediaWikiApiErrorException e) {
                 lastException = e;
             }

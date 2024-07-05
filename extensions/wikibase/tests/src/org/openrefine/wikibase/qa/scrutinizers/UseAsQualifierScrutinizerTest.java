@@ -48,7 +48,7 @@ public class UseAsQualifierScrutinizerTest extends ScrutinizerTest {
         List<SnakGroup> qualifierList = makeSnakGroupList(statementQualifier);
         List<Statement> statementList = constraintParameterStatementList(useAsQualifierEntityId, qualifierList);
         Statement statement = statementList.get(0);
-        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).addContributingRowId(123).build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(qualifierPID, qualifierPropertyValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, qualifierAllowedValue);
@@ -69,7 +69,7 @@ public class UseAsQualifierScrutinizerTest extends ScrutinizerTest {
         List<SnakGroup> qualifierList = makeSnakGroupList(statementQualifier);
         List<Statement> statementList = constraintParameterStatementList(useAsQualifierEntityId, qualifierList);
         Statement statement = statementList.get(0);
-        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).addContributingRowId(123).build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(qualifierPID, qualifierPropertyValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, qualifierAllowedValue);
@@ -88,7 +88,7 @@ public class UseAsQualifierScrutinizerTest extends ScrutinizerTest {
         ItemIdValue id = TestingData.existingId;
         List<Statement> statementList = constraintParameterStatementList(useAsQualifierEntityId, new ArrayList<>());
         Statement statement = statementList.get(0);
-        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(id).addStatement(add(statement)).addContributingRowId(123).build();
 
         Snak qualifierSnak1 = Datamodel.makeValueSnak(qualifierPID, qualifierPropertyValue);
         Snak qualifierSnak2 = Datamodel.makeValueSnak(itemParameterPID, qualifierAllowedValue);

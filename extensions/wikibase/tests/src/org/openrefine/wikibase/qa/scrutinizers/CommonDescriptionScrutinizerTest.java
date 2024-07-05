@@ -20,6 +20,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
         String description = "good description";
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertNoWarningRaised();
@@ -33,6 +34,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
                 + "long description long description long description long description";
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertWarningsRaised(CommonDescriptionScrutinizer.descTooLongType);
@@ -44,6 +46,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .addLabel(Datamodel.makeMonolingualTextValue(description, "en"), true)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertWarningsRaised(CommonDescriptionScrutinizer.descIdenticalWithLabel);
@@ -55,6 +58,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), true)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertNoWarningRaised();
@@ -69,6 +73,7 @@ public class CommonDescriptionScrutinizerTest extends ScrutinizerTest {
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .addLabel(Datamodel.makeMonolingualTextValue(description, "en"), true)
+                .addContributingRowId(123)
                 .build();
         scrutinize(update);
         assertWarningsRaised(CommonDescriptionScrutinizer.descTooLongType, CommonDescriptionScrutinizer.descIdenticalWithLabel);

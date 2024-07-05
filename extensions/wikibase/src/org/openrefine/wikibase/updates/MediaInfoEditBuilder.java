@@ -2,6 +2,7 @@
 package org.openrefine.wikibase.updates;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class MediaInfoEditBuilder {
     private String fileName;
     private String wikitext;
     private boolean overrideWikitext;
+    private Set<Integer> contributingRowIds;
     private boolean built;
 
     /**
@@ -44,6 +46,7 @@ public class MediaInfoEditBuilder {
         this.fileName = null;
         this.wikitext = null;
         this.overrideWikitext = false;
+        this.contributingRowIds = new HashSet<>();
         this.built = false;
     }
 
@@ -139,6 +142,19 @@ public class MediaInfoEditBuilder {
         return this;
     }
 
+    public MediaInfoEditBuilder addContributingRowId(int rowId) {
+        this.contributingRowIds.add(rowId);
+        return this;
+    }
+
+    /**
+     * Adds a collection of row ids which contributed to this update.
+     */
+    public MediaInfoEditBuilder addContributingRowIds(Collection<Integer> rowIds) {
+        this.contributingRowIds.addAll(rowIds);
+        return this;
+    }
+
     /**
      * Constructs the {@link MediaInfoEdit}.
      * 
@@ -146,6 +162,6 @@ public class MediaInfoEditBuilder {
      */
     public MediaInfoEdit build() {
         built = true;
-        return new MediaInfoEdit(id, statements, labels, labelsIfNew, filePath, fileName, wikitext, overrideWikitext);
+        return new MediaInfoEdit(id, statements, labels, labelsIfNew, filePath, fileName, wikitext, overrideWikitext, contributingRowIds);
     }
 }

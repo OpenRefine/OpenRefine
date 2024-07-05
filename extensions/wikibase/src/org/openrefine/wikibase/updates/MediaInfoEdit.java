@@ -4,13 +4,7 @@ package org.openrefine.wikibase.updates;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -78,8 +72,9 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             String filePath,
             String fileName,
             String wikitext,
-            boolean overrideWikitext) {
-        super(id, statements, labels, labelsIfNew);
+            boolean overrideWikitext,
+            Set<Integer> contributingRowIds) {
+        super(id, statements, labels, labelsIfNew, contributingRowIds);
         this.filePath = filePath;
         this.fileName = fileName;
         this.wikitext = wikitext;
@@ -116,8 +111,9 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             String filePath,
             String fileName,
             String wikitext,
-            boolean overrideWikitext) {
-        super(id, statements, labels, labelsIfNew);
+            boolean overrideWikitext,
+            Set<Integer> contributingRowIds) {
+        super(id, statements, labels, labelsIfNew, contributingRowIds);
         this.filePath = filePath;
         this.fileName = fileName;
         this.wikitext = wikitext;
@@ -203,7 +199,10 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             newWikitext = wikitext;
         }
         boolean newOverrideWikitext = other.isOverridingWikitext() || overrideWikitext;
-        return new MediaInfoEdit(id, newStatements, newLabels, newLabelsIfNew, newFilePath, newFileName, newWikitext, newOverrideWikitext);
+        Set<Integer> contributingIds = new HashSet<>(contributingRowIds);
+        contributingIds.addAll(other.getContributingRowIds());
+        return new MediaInfoEdit(id, newStatements, newLabels, newLabelsIfNew, newFilePath, newFileName, newWikitext, newOverrideWikitext,
+                contributingIds);
     }
 
     @Override

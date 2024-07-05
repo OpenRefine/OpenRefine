@@ -436,20 +436,29 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
     }
   }
 
-  Refine.setAjaxInProgress();
+  var runChange = function() {
+    Refine.setAjaxInProgress();
 
-  Refine.postCSRF(
-    "command/" + moduleName + "/" + command + "?" + $.param(params),
-    body,
-    onDone,
-    "json"
-  );
+    Refine.postCSRF(
+        "command/" + moduleName + "/" + command + "?" + $.param(params),
+        body,
+        onDone,
+        "json"
+    );
 
-  window.setTimeout(function() {
-    if (!done) {
-      dismissBusy = DialogSystem.showBusy();
-    }
-  }, 500);
+    window.setTimeout(function() {
+      if (!done) {
+        dismissBusy = DialogSystem.showBusy();
+      }
+    }, 500);
+  }
+
+  var undoneChanges = ui.historyPanel.undoneChanges();
+  if (Refine.getPreference("ui.history.warnAgainstDeletion", 'true') === 'true' && undoneChanges.length > 0 && (!("warnAgainstHistoryErasure" in updateOptions) || updateOptions.warnAgainstHistoryErasure)) {
+    Refine._confirmHistoryErasure(undoneChanges, runChange);
+  } else {
+    runChange();
+  }
 };
 
 Refine.setAjaxInProgress = function() {
@@ -458,6 +467,46 @@ Refine.setAjaxInProgress = function() {
 
 Refine.clearAjaxInProgress = function() {
   $(document.body).attr("ajax_in_progress", "false");
+};
+
+/**
+ * Confirmation of erasure of history, when applying an operation with changes undone
+ */
+Refine._confirmHistoryErasure = function(entries, onDone) {
+  var self = this;
+  var frame = $(DOM.loadHTML("core", "scripts/util/confirm-history-erasure-dialog.html"));
+  var elmts = DOM.bind(frame);
+  var level = DialogSystem.showDialog(frame);
+  
+  elmts.dialogHeader.text($.i18n('core-project/confirm-erasure-of-project-history'));
+  elmts.warningText.text($.i18n('core-project/applying-change-erases-entries', entries.length));
+  elmts.doNotWarnText.text($.i18n('core-project/do-not-warn'));
+  elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+  elmts.okButton.text($.i18n('core-buttons/apply-anyway'));
+
+  // populate the history entries
+  for (let entry of entries) {
+    var entryDom = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(elmts.entryList);
+    var entryElmts = DOM.bind(entryDom);
+    entryElmts.entryDescription.text(entry.description);
+  }
+
+  var updateWarnPreferences = function () {
+    var doNotWarnCheckBox = elmts.doNotWarnCheckbox.is(':checked');
+    if (doNotWarnCheckBox) {
+      Refine.setPreference('ui.history.warnAgainstDeletion', 'false');
+    }
+  };
+  
+  elmts.form.on('submit', function() {
+    DialogSystem.dismissUntil(level - 1);
+    updateWarnPreferences();
+    onDone();
+  });
+  elmts.cancelButton.on('click',function() {
+    updateWarnPreferences();
+    DialogSystem.dismissUntil(level - 1);
+  });
 };
 
 /*
