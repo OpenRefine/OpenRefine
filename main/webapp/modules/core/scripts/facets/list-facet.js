@@ -101,8 +101,9 @@ class ListFacet extends Facet {
     (this._errorChoice !== null && this._errorChoice.s);
   };
 
-  updateState(data) {
+  updateState(data, column) {
     this._data = data;
+    this._column = column;
 
     if ("choices" in data) {
       var selection = [];
@@ -533,7 +534,7 @@ class ListFacet extends Facet {
   };
 
   _doEdit() {
-    new ClusteringDialog(this._config.columnName, this._config.expression);
+    new ClusteringDialog(this._column, this._config.expression);
   };
 
   _editChoice(choice, choiceDiv) {
