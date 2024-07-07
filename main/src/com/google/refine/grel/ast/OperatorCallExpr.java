@@ -76,10 +76,12 @@ public class OperatorCallExpr implements Evaluable {
                     } else if ("*".equals(_op)) {
                         return n1 * n2;
                     } else if ("/".equals(_op)) {
-                        if (n2 == 0 && n1 == 0) {
-                            return Double.NaN;
-                        } else if (n2 == 0) {
-                            return n1 > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+                        if (n2 == 0) {
+                            if (n1 == 0) {
+                                return Double.NaN;
+                            } else {
+                                return n1 > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+                            }
                         }
                         // TODO: This will throw on divide by zero - return Double.Infinity / -Infinity instead?
                         return n1 / n2;
