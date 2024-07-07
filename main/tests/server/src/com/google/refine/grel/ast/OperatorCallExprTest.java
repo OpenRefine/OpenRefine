@@ -1,14 +1,16 @@
+
 package com.google.refine.grel.ast;
+
+import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.Evaluable;
-import static org.testng.Assert.assertEquals;
-
 
 public class OperatorCallExprTest {
+
     private OperatorCallExpr expr;
     private Evaluable arg1;
     private Evaluable arg2;
@@ -18,7 +20,7 @@ public class OperatorCallExprTest {
     public void evaluateDivision() {
         arg1 = new MockEvaluable(10);
         arg2 = new MockEvaluable(2);
-        expr = new OperatorCallExpr(new Evaluable[] {arg1, arg2}, "/");
+        expr = new OperatorCallExpr(new Evaluable[] { arg1, arg2 }, "/");
         result = expr.evaluate(new Properties());
         assertEquals((long) 5, result);
     }
@@ -27,7 +29,7 @@ public class OperatorCallExprTest {
     public void evaluateZeroDivideZeroTest() {
         arg1 = new MockEvaluable(0);
         arg2 = new MockEvaluable(0);
-        expr = new OperatorCallExpr(new Evaluable[] {arg1, arg2}, "/");
+        expr = new OperatorCallExpr(new Evaluable[] { arg1, arg2 }, "/");
         result = expr.evaluate(new Properties());
         assertEquals(Double.NaN, result);
     }
@@ -36,7 +38,7 @@ public class OperatorCallExprTest {
     public void evaluatePositiveIntegerDivideZeroTest() {
         arg1 = new MockEvaluable(3);
         arg2 = new MockEvaluable(0);
-        expr = new OperatorCallExpr(new Evaluable[] {arg1, arg2}, "/");
+        expr = new OperatorCallExpr(new Evaluable[] { arg1, arg2 }, "/");
         result = expr.evaluate(new Properties());
         assertEquals(Double.POSITIVE_INFINITY, result);
     }
@@ -45,13 +47,14 @@ public class OperatorCallExprTest {
     public void evaluateNegativeIntegerDivideZeroTest() {
         arg1 = new MockEvaluable(-3);
         arg2 = new MockEvaluable(0);
-        expr = new OperatorCallExpr(new Evaluable[] {arg1, arg2}, "/");
+        expr = new OperatorCallExpr(new Evaluable[] { arg1, arg2 }, "/");
         result = expr.evaluate(new Properties());
         assertEquals(Double.NEGATIVE_INFINITY, result);
     }
 }
 
 class MockEvaluable implements Evaluable {
+
     private final Object value;
 
     public MockEvaluable(Object value) {
