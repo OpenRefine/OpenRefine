@@ -196,7 +196,7 @@ public class AddRowsCommandTests extends CommandTestBase {
     @Test(expectedExceptions = IllegalArgumentException.class)
     // If row parameter contains non-empty rows throw IllegalArgumentException
     public void testNonEmptyRows() throws Exception {
-        String [] rows = {
+        String[] rows = {
                 "{ starred: false, flagged: false, cells: [{v: 1}, {v:2}] }"
         };
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
