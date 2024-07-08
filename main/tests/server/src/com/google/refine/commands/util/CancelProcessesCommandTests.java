@@ -38,6 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.IOException;
@@ -60,7 +61,10 @@ import com.google.refine.commands.Command;
 import com.google.refine.commands.history.CancelProcessesCommand;
 import com.google.refine.model.Project;
 import com.google.refine.process.ProcessManager;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class CancelProcessesCommandTests extends RefineTest {
 
@@ -147,11 +151,7 @@ public class CancelProcessesCommandTests extends RefineTest {
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
         verify(proj, times(1)).getProcessManager();
-        try {
-            verify(response, times(1)).getWriter();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        verify(response, times(1)).getWriter();
         TestUtils.assertEqualsAsJson(sw.toString(), "{ \"code\" : \"ok\" }");
     }
 
@@ -170,6 +170,8 @@ public class CancelProcessesCommandTests extends RefineTest {
         // verify
         verify(request, times(1)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
+        ObjectNode jsonResponse = (ObjectNode) ParsingUtilities.mapper.readTree(sw.toString());
+        assertEquals(jsonResponse.get("code").asText(), "error");
     }
 
     @Test
