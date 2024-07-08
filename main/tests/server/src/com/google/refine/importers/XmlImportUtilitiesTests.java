@@ -36,6 +36,7 @@ package com.google.refine.importers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -559,8 +560,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadData(JsonImporterTests.getSample());
     }
 
-    public void loadData(String xml) throws Exception {
-        inputStream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+    public void loadData(String xml) {
+        inputStream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
     }
 
     public void ParserSkip() throws Exception {
