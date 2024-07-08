@@ -124,7 +124,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canThrowError() throws UnsupportedEncodingException {
+    public void canThrowError() {
         String errJSON = getSampleWithError();
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
@@ -135,7 +135,7 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
 
-        inputStream = new ByteArrayInputStream(errJSON.getBytes("UTF-8"));
+        inputStream = new ByteArrayInputStream(errJSON.getBytes(StandardCharsets.UTF_8));
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
 
@@ -436,7 +436,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testJsonDatatypes() throws Exception {
+    public void testJsonDatatypes() {
         RunTest(getSampleWithDataTypes());
 
         Project expectedProject = createProject(
@@ -468,7 +468,7 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testComplexJsonStructure() throws Exception {
+    public void testComplexJsonStructure() throws IOException {
         String fileName = "grid_small.json";
         RunComplexJSONTest(getComplexJSON(fileName));
 
@@ -674,20 +674,20 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    private void RunTest(String testString) throws Exception {
+    private void RunTest(String testString) {
         RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, false));
     }
 
-    private void RunComplexJSONTest(String testString) throws Exception {
+    private void RunComplexJSONTest(String testString) {
         RunTest(testString, getOptions(job, SUT, "institutes", false));
     }
 
-    private void RunTest(String testString, boolean trimStrings) throws Exception {
+    private void RunTest(String testString, boolean trimStrings) {
         RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, trimStrings));
     }
 
-    private void RunTest(String testString, ObjectNode options) throws Exception {
-        inputStream = new ByteArrayInputStream(testString.getBytes("UTF-8"));
+    private void RunTest(String testString, ObjectNode options) {
+        inputStream = new ByteArrayInputStream(testString.getBytes(StandardCharsets.UTF_8));
 
         parseOneInputStream(SUT, inputStream, options);
     }

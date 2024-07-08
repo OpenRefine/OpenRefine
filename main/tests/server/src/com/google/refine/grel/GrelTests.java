@@ -81,7 +81,7 @@ public class GrelTests extends GrelTestBase {
 //                "2^3" // TODO: Should this generate an error?
         };
         for (String test : tests) {
-            assertThrows(ParsingException.class, () -> MetaParser.parse("grel:" + test));
+            assertThrows("Expression failed to generate parse syntax error: " + test, ParsingException.class, () -> MetaParser.parse("grel:" + test));
         }
     }
 

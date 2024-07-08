@@ -551,7 +551,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     // ----------------helpers-------------
-    public void loadSampleXml() throws Exception {
+    public void loadSampleXml() {
         loadData(XmlImporterTests.getSample());
     }
 

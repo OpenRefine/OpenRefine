@@ -421,12 +421,12 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    private void RunTest(String testString) throws Exception {
+    private void RunTest(String testString) {
         RunTest(testString, getOptions(job, SUT));
     }
 
-    private void RunTest(String testString, ObjectNode objectNode) throws Exception {
-        inputStream = new ByteArrayInputStream(testString.getBytes("UTF-8"));
+    private void RunTest(String testString, ObjectNode objectNode) {
+        inputStream = new ByteArrayInputStream(testString.getBytes(StandardCharsets.UTF_8));
 
         parseOneFile(SUT, inputStream, objectNode);
     }
