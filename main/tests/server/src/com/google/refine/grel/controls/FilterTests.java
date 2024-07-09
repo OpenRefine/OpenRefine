@@ -27,14 +27,13 @@
 
 package com.google.refine.grel.controls;
 
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.fail;
 
 import java.util.Properties;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
@@ -49,31 +48,29 @@ public class FilterTests extends GrelTestBase {
         TestUtils.isSerializedTo(new Filter(), json);
     }
 
-    private void assertParseError(String expression) throws ParsingException {
-        Evaluable eval = MetaParser.parse("grel:" + expression);
-        Object result = eval.evaluate(bindings);
-        assertTrue(result instanceof EvalError, "Expression didn't return error : " + expression);
+    private void assertEvaluatesToSuccess(String expression)  {
+        try {
+            Evaluable eval = MetaParser.parse("grel:" + expression);
+            Object result = eval.evaluate(bindings);
+        }
+        catch (ParsingException e) {
+            fail("Expression returned error : " + expression);
+        }
     }
 
     @Test
     public void testInvalidParams() throws ParsingException {
         bindings = new Properties();
         bindings.put("v", "");
-        assertParseError("filter('test', v, v)");
-        try {
-            assertParseError("filter([], 1, 1)");
-            fail("Didn't throw a ParsingException for wrong argument type");
-        } catch (ParsingException e) {
-        }
-        try {
-            assertParseError("filter([], v)");
-            fail("Didn't throw a ParsingException for 2 arguments");
-        } catch (ParsingException e) {
-        }
-        try {
-            assertParseError("filter([])");
-            fail("Didn't throw a ParsingException for 1 argument");
-        } catch (ParsingException e) {
-        }
+        assertEvaluatesToSuccess("filter('test', v, v)");
+
+        assertThrows("Didn't throw a ParsingException for wrong argument type", ParsingException.class,
+                () -> MetaParser.parse("grel:filter([], 1, 1)"));
+
+        assertThrows("Didn't throw a ParsingException for 2 arguments", ParsingException.class,
+                () -> MetaParser.parse("grel:filter([], v)"));
+
+        assertThrows("Didn't throw a ParsingException for 1 argument", ParsingException.class,
+                () -> MetaParser.parse("grel:\"filter([])"));
     }
 }
