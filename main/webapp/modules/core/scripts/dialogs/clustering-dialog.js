@@ -123,7 +123,7 @@ ClusteringDialog.prototype._createDialog = function() {
 
     function openManagementDialog() {
         var title = "Manage Custom Clustering Functions";
-        new ManagementDialog(title, self._column);
+        new ManagementDialog(title, self);
     }
 
     var params_changer = function() {

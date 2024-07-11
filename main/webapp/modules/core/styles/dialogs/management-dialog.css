@@ -37,12 +37,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .manage-functions-heading {
     background: #ddd;
     font-weight: bold;
+    color: #000000cc;
 }
 
 .functions-container td {
     border: 1px solid #ccc;
     padding: 10px;
     text-align: left;
+    vertical-align: middle;
 }
 
 .functions-container td button {
@@ -50,4 +52,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     border: none;
     cursor: pointer;
     margin-right: 5px;
+}
+
+.main-text {
+    font-size: 16px;
+    color: #333;
+}
+
+.sub-text {
+    font-size: 12px;
+    color: #888;
 }
