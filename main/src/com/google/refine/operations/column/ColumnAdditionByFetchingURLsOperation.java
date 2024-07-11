@@ -72,6 +72,7 @@ import com.google.refine.operations.OperationDescription;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.HttpClient;
+import com.google.refine.util.URLUtils;
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
 
@@ -126,7 +127,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         _delay = delay;
         _cacheResponses = cacheResponses;
         _httpHeadersJson = httpHeadersJson;
-
         List<Header> headers = new ArrayList<Header>();
         if (_httpHeadersJson != null) {
             for (HttpHeader header : _httpHeadersJson) {
@@ -323,6 +323,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
         Serializable fetch(String urlString, Header[] headers) {
             try { // HttpClients.createDefault()) {
+                urlString = URLUtils.escapeURL(urlString);
                 try {
                     return _httpClient.getAsString(urlString, headers);
                 } catch (IOException e) {
