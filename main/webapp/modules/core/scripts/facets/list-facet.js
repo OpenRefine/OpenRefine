@@ -170,7 +170,7 @@ class ListFacet extends Facet {
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span bind="titleSpan"></span>' +
+            '<span class="facet-title-span" bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -190,6 +190,9 @@ class ListFacet extends Facet {
     this._elmts = DOM.bind(this._div);
 
     this._elmts.titleSpan.text(this._config.name);
+    this._elmts.titleSpan.attr("title", this.facetToolTipText);
+    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
+    
     this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).on('click',function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
@@ -512,7 +515,8 @@ class ListFacet extends Facet {
         "range", 
         {
           "name" : self._config.columnName,
-          "columnName" : self._config.columnName, 
+          "i18n" : "range",
+          "columnName" : self._config.columnName,
           "expression" : self._getMetaExpression(),
           "mode" : "range"
         },
