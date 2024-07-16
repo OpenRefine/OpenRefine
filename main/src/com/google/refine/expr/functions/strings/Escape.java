@@ -37,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Properties;
 
+import com.google.common.net.UrlEscapers;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.google.refine.expr.EvalError;
@@ -77,6 +78,12 @@ public class Escape implements Function {
                         return URLEncoder.encode(s, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                     }
+                } else if ("path".equals(mode)) {
+                    return UrlEscapers.urlPathSegmentEscaper().escape(s);
+                } else if ("query".equals(mode)) {
+                    return UrlEscapers.urlFormParameterEscaper().escape(s);
+                } else if ("fragment".equals(mode)) {
+                    return UrlEscapers.urlFragmentEscaper().escape(s);
                 } else {
                     // + mode + "'.");
                     return new EvalError(EvalErrorMessage.unrecognized_mode(ControlFunctionRegistry.getFunctionName(this), mode));

@@ -45,24 +45,40 @@ public class EscapeTests extends GrelTestBase {
         assertEquals(invoke("escape", "mystring", "csv"), "mystring");
         assertEquals(invoke("escape", "mystring", "url"), "mystring");
         assertEquals(invoke("escape", "mystring", "javascript"), "mystring");
+        assertEquals(invoke("escape", "mystring", "path"), "mystring");
+        assertEquals(invoke("escape", "mystring", "query"), "mystring");
+        assertEquals(invoke("escape", "mystring", "fragment"), "mystring");
         assertEquals(invoke("escape", 1, "html"), "1");
         assertEquals(invoke("escape", 1, "xml"), "1");
         assertEquals(invoke("escape", 1, "csv"), "1");
         assertEquals(invoke("escape", 1, "url"), "1");
         assertEquals(invoke("escape", 1, "javascript"), "1");
+        assertEquals(invoke("escape", 1, "path"), "1");
+        assertEquals(invoke("escape", 1, "query"), "1");
+        assertEquals(invoke("escape", 1, "fragment"), "1");
         assertEquals(invoke("escape", Long.parseLong("1"), "html"), "1");
         assertEquals(invoke("escape", Long.parseLong("1"), "xml"), "1");
         assertEquals(invoke("escape", Long.parseLong("1"), "csv"), "1");
         assertEquals(invoke("escape", Long.parseLong("1"), "url"), "1");
         assertEquals(invoke("escape", Long.parseLong("1"), "javascript"), "1");
+        assertEquals(invoke("escape", Long.parseLong("1"), "path"), "1");
+        assertEquals(invoke("escape", Long.parseLong("1"), "query"), "1");
+        assertEquals(invoke("escape", Long.parseLong("1"), "fragment"), "1");
         assertEquals(invoke("escape", Double.parseDouble("1.23"), "html"), "1.23");
         assertEquals(invoke("escape", Double.parseDouble("1.23"), "xml"), "1.23");
         assertEquals(invoke("escape", Double.parseDouble("1.23"), "csv"), "1.23");
         assertEquals(invoke("escape", Double.parseDouble("1.23"), "url"), "1.23");
         assertEquals(invoke("escape", Double.parseDouble("1.23"), "javascript"), "1.23");
+        assertEquals(invoke("escape", Double.parseDouble("1.23"), "path"), "1.23");
+        assertEquals(invoke("escape", Double.parseDouble("1.23"), "query"), "1.23");
+        assertEquals(invoke("escape", Double.parseDouble("1.23"), "fragment"), "1.23");
 
         assertEquals("\",\"", invoke("escape", ",", "csv")); // commas get quoted
         assertEquals("\"\n\"", invoke("escape", "\n", "csv")); // newlines get quoted
         assertEquals("\"\"\"\"", invoke("escape", "\"", "csv")); // quotes get doubled
+
+        assertEquals(invoke("escape", "/path 1/path 2", "path"), "%2Fpath%201%2Fpath%202");
+        assertEquals(invoke("escape", "key1=value 1&key2=value@!$2", "query"), "key1%3Dvalue+1%26key2%3Dvalue%40%21%242");
+        assertEquals(invoke("escape", "fragment 1 fragment 2", "fragment"), "fragment%201%20fragment%202");
     }
 }
