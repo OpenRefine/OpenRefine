@@ -864,7 +864,6 @@
     "core-buttons/discover-services": "Discover services...",
     "core-buttons/yes": "Yes",
     "core-buttons/no": "No",
-    "core-buttons/add-function":"Add new function",
     "core-buttons/manage-clustering":"Manage clustering fuctions",
     "core-buttons/apply-anyway": "Apply anyway",
     "core-import-formats/text/line-based": "Line-based text files",

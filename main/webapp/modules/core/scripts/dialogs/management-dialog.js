@@ -39,39 +39,64 @@ function ManagementDialog(title, clusteringDialog) {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").css('justify-content', 'space-between').appendTo(frame);
 
-    var html = $('<div class="functions-container" bind="functionsContainer"></div>').appendTo(body);
+    var html = $(DOM.loadHTML("core", "scripts/dialogs/management-dialog.html")).appendTo(body);
+
     this._elmts = DOM.bind(html);
 
-    $('<button class="button"></button>').text($.i18n('core-buttons/add-function')).on('click', function() {
+    $('<button class="button" id="add-new-functions"></button>').text("Add new keying function").on('click', function() {
         self._addFunction(self._column);
     }).appendTo(footer);
 
     $('<button class="button"></button>').html($.i18n('core-buttons/ok')).on('click', function() {
         // TO ITERATE ON NEXT WEEK
-        // var functions = Refine.getPreference("functions",[]);
+        // var functions = Refine.getPreference("functions",[]); // to edit
         // for(var i = 0; i < functions.length; i++){
         //     $('<option></option>')
         //      .val(functions[i].name)
         //      .text(functions[i].name)
         //      .appendTo(clusteringDialog._elmts.keyingFunctionSelector);
-        // }
+        // }ui.newTab.text().trim();
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
 
     this._level = DialogSystem.showDialog(frame);
-    this._renderTable(self._elmts);
+    this._renderTable();
 }
 
-ManagementDialog.prototype._renderTable = function(elmts) {
+ManagementDialog.prototype._renderTable = function() {
+
+    $("#management-tabs").tabs({
+        activate: function(event, ui) {
+            if(ui.newTab.text() == "Keying functions"){
+                $("#add-new-functions").text("Add new keying function");
+            } else {
+                $("#add-new-functions").text("Add new distance function");
+            }
+        }
+    });
+
+    this._elmts.or_dialog_keying.html("Keying functions");
+    this._elmts.or_dialog_distance.html("Distance functions");
+    
+    this._renderFunctions("keying");
+    this._renderFunctions("distance");
+};
+
+ManagementDialog.prototype._renderFunctions = function(functionsType) {
     var self = this;
-    this._elmts = elmts;
+    var container;
+    if(functionsType == "keying"){
+        container = this._elmts.keyingFunctionsContainer.empty();
+    } else {
+        container = this._elmts.distanceFunctionsContainer.empty();
+    }
 
-    var container = this._elmts.functionsContainer.empty();
-
-    var functions = Refine.getPreference("functions",[]);
-
+    var functions = Refine.getPreference(functionsType + " functions",[]);
     if(functions.length > 0){
-        var table = $('<table></table>').addClass("manage-functions-table").appendTo(container)[0];
+        var table = $('<table></table>')
+        .addClass("manage-functions-table")
+        .appendTo($('<div>').addClass("management-table-wrapper").appendTo(container))[0];
+
         var tr = table.insertRow(0);
         $(tr.insertCell(0)).addClass("manage-functions-heading").text("Name");
         $(tr.insertCell(1)).addClass("manage-functions-heading").text("Action");
@@ -106,7 +131,7 @@ ManagementDialog.prototype._renderTable = function(elmts) {
             '<div style="margin: 1em;"><div style="font-size: 130%; color: #333;">'+"No functions were found currently"+'</div><div style="padding-top: 5px; font-size: 110%; color: #888;">'+"Try adding a new functions below"+'</div></div>'
         );
     }
-};
+}
 
 ManagementDialog.prototype._addFunction = function(column) {
     var self = this;
@@ -141,19 +166,20 @@ ManagementDialog.prototype._addFunction = function(column) {
           alert($.i18n('core-views/warning-function-name'));
           return;
         }
-  
-        var _functions = Refine.getPreference("functions",[]);
+
+        var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text();
+        var _functions = Refine.getPreference(activeTabName.toLowerCase(),[]);
         var langAndExpr = previewWidget.getExpression().split(':');
         _functions.push({
             name:  columnName,
             expressionLang: langAndExpr[0],
             expression: langAndExpr[1]
         });
-        Refine.setPreference("functions",_functions);
+        Refine.setPreference(activeTabName.toLowerCase(),_functions);
 
         dismiss();
         
-        self._renderTable(self._elmts);
+        self._renderTable();
     });
 };
 
@@ -173,7 +199,8 @@ ManagementDialog.prototype._editFunction = function(column, index) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    var _functions = Refine.getPreference("functions",[]);
+    var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text();
+    var _functions = Refine.getPreference(activeTabName.toLowerCase(),[]);
     elmts.functionNameInput[0].value = _functions[index].name;
 
     var o = DataTableView.sampleVisibleRows(column);
@@ -194,7 +221,7 @@ ManagementDialog.prototype._editFunction = function(column, index) {
           return;
         }
   
-        _functions = Refine.getPreference("functions",[]);
+        _functions = Refine.getPreference(activeTabName.toLowerCase(),[]);
         var langAndExpr = previewWidget.getExpression().split(':');
         _functions[index].name = columnName;
         _functions[index].expressionLang = langAndExpr[0];
@@ -202,16 +229,17 @@ ManagementDialog.prototype._editFunction = function(column, index) {
 
         dismiss();
         
-        self._renderTable(self._elmts);
+        self._renderTable();
     });
 };
 
 ManagementDialog.prototype._deleteFunction = function(index) {
     var result = confirm("Are you sure you want to delete this function?");
     if (result) {
-         var functions = Refine.getPreference("functions");
+         var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text();
+         var functions = Refine.getPreference(activeTabName.toLowerCase(),[]);
          functions.splice(index, 1);
-         Refine.setPreference("functions", functions);
-         this._renderTable(this._elmts);
+         Refine.setPreference(activeTabName.toLowerCase(), functions);
+         this._renderTable();
     }
  };
