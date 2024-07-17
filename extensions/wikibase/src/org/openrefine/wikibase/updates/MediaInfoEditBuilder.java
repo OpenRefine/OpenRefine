@@ -27,6 +27,8 @@ public class MediaInfoEditBuilder {
     private String wikitext;
     private boolean overrideWikitext;
     private boolean built;
+    private int startWait;
+    private int maxWait;
 
     /**
      * Constructor.
@@ -45,6 +47,8 @@ public class MediaInfoEditBuilder {
         this.wikitext = null;
         this.overrideWikitext = false;
         this.built = false;
+        this.startWait = 1000;
+        this.maxWait = 60000;
     }
 
     /**
@@ -140,12 +144,26 @@ public class MediaInfoEditBuilder {
     }
 
     /**
+     * Sets the wait times when waiting for a page to exist after a file ha been uploaded
+     *
+     * @param start
+     *            Time to wait if the first check fails to check again.
+     * @param max
+     *            Maximum time to wait. The wait time will gradually increase, but won't go higher than this.
+     */
+    public MediaInfoEditBuilder setWaitForPageTimes(int start, int max) {
+        this.startWait = start;
+        this.maxWait = max;
+        return this;
+    }
+
+    /**
      * Constructs the {@link MediaInfoEdit}.
      * 
      * @return
      */
     public MediaInfoEdit build() {
         built = true;
-        return new MediaInfoEdit(id, statements, labels, labelsIfNew, filePath, fileName, wikitext, overrideWikitext);
+        return new MediaInfoEdit(id, statements, labels, labelsIfNew, filePath, fileName, wikitext, overrideWikitext, startWait, maxWait);
     }
 }

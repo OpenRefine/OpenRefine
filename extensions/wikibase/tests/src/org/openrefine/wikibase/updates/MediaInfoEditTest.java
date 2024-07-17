@@ -2,6 +2,7 @@
 package org.openrefine.wikibase.updates;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -130,14 +131,15 @@ public class MediaInfoEditTest {
         assertEquals(update.isOverridingWikitext(), true);
     }
 
-    @Test
-    public void testUploadNewFile() throws MediaWikiApiErrorException, IOException {
+    @Test(timeOut = 5000)
+    public void testUploadNewFile() throws MediaWikiApiErrorException, IOException, InterruptedException {
         String url = "https://my.site.com/file.png";
         MediaInfoEdit edit = new MediaInfoEditBuilder(newSubject)
                 .addStatement(statementUpdate1New)
                 .addFileName("Foo.png")
                 .addFilePath(url)
                 .addWikitext("{{wikitext}}")
+                .setWaitForPageTimes(1, 60)
                 .build();
         assertFalse(edit.requiresFetchingExistingState()); // new entities do not require fetching existing state
 
@@ -151,6 +153,39 @@ public class MediaInfoEditTest {
         when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}\n[[Category:Uploaded with OpenRefine]]", "summary",
                 Collections.emptyList()))
                         .thenReturn(response);
+        when(mediaFileUtils.checkIfPageNamesExist(anyList()))
+                .thenReturn(Collections.singleton("File:Foo.png"));
+
+        MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList());
+        assertEquals(returnedMid, mid);
+    }
+
+    @Test(timeOut = 5000)
+    public void testUploadNewFileWaitForPage() throws MediaWikiApiErrorException, IOException, InterruptedException {
+        String url = "https://my.site.com/file.png";
+        MediaInfoEdit edit = new MediaInfoEditBuilder(newSubject)
+                .addStatement(statementUpdate1New)
+                .addFileName("Foo.png")
+                .addFilePath(url)
+                .addWikitext("{{wikitext}}")
+                .setWaitForPageTimes(1, 60)
+                .build();
+        assertFalse(edit.requiresFetchingExistingState()); // new entities do not require fetching existing state
+
+        // set up dependencies
+        WikibaseDataEditor editor = mock(WikibaseDataEditor.class);
+        MediaFileUtils mediaFileUtils = mock(MediaFileUtils.class);
+        MediaUploadResponse response = mock(MediaUploadResponse.class);
+        MediaInfoIdValue mid = Datamodel.makeMediaInfoIdValue("M1234", "http://www.wikidata.org/entity/");
+        when(response.getMid(any(), any()))
+                .thenReturn(mid);
+        when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}\n[[Category:Uploaded with OpenRefine]]", "summary",
+                Collections.emptyList()))
+                        .thenReturn(response);
+        when(mediaFileUtils.checkIfPageNamesExist(anyList()))
+                .thenReturn(Collections.emptySet())
+                .thenReturn(Collections.emptySet())
+                .thenReturn(Collections.singleton("File:Foo.png"));
 
         MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList());
         assertEquals(returnedMid, mid);
