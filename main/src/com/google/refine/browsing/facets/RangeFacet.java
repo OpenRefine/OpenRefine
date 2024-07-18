@@ -139,9 +139,7 @@ public class RangeFacet implements Facet {
     /*
      * Computed data, to return to the client side
      */
-    protected double _min;
-    protected double _max;
-    protected double _step;
+    protected RangeData _rangeData;
     protected int[] _baseBins;
     protected int[] _bins;
 

@@ -113,9 +113,7 @@ public class TimeRangeFacet implements Facet {
     protected Evaluable _eval;
     protected String _errorMessage;
 
-    protected double _min;
-    protected double _max;
-    protected double _step;
+    protected RangeData _rangeData;
     protected int[] _baseBins;
     protected int[] _bins;
 

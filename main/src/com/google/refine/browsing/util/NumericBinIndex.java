@@ -54,10 +54,7 @@ abstract public class NumericBinIndex {
 
     protected int _totalValueCount;
     protected int _numbericValueCount;
-    protected double _min;
-    protected double _max;
-    protected double _step;
-    protected int[] _bins;
+    protected RangeData _rangeData;
 
     protected int _numericRowCount;
     protected int _nonNumericRowCount;
@@ -257,8 +254,7 @@ abstract public class NumericBinIndex {
 
     protected boolean processValue(double v, List<Double> allValues) {
         if (!Double.isInfinite(v) && !Double.isNaN(v)) {
-            _min = Math.min(_min, v);
-            _max = Math.max(_max, v);
+            _rangeData.updateMinMax(v);
             allValues.add(v);
             return true;
         } else {
