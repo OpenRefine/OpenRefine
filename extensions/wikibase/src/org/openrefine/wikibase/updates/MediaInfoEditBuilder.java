@@ -144,7 +144,7 @@ public class MediaInfoEditBuilder {
     }
 
     /**
-     * Sets the wait times when waiting for a page to exist after a file ha been uploaded
+     * Sets the wait times when waiting for a page to exist after a file has been uploaded
      *
      * @param start
      *            Time to wait if the first check fails to check again.
