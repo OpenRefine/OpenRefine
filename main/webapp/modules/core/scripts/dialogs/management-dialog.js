@@ -64,7 +64,8 @@ function ManagementDialog(title, clusteringDialog) {
 }
 
 ManagementDialog.prototype._renderTable = function() {
-
+    var self = this;
+    
     $("#management-tabs").tabs({
         activate: function(event, ui) {
             if(ui.newTab.text() == "Keying functions"){
@@ -78,11 +79,37 @@ ManagementDialog.prototype._renderTable = function() {
     this._elmts.or_dialog_keying.html("Keying functions");
     this._elmts.or_dialog_distance.html("Distance functions");
     
-    this._renderFunctions("keying");
-    this._renderFunctions("distance");
+    var renderKeyingFunctions = function() {
+        $.ajax({
+            url: "command/core/get-preference?" + $.param({
+              name: "keying functions"
+            }),
+            success: function(data) {
+                functions = JSON.parse(data.value);
+                self._renderFunctions("keying", functions);
+            },
+            dataType: "json",
+        });
+    }
+
+    var renderDistanceFunctions = function() {
+        $.ajax({
+            url: "command/core/get-preference?" + $.param({
+              name: "distance functions"
+            }),
+            success: function(data) {
+                functions = JSON.parse(data.value);
+                self._renderFunctions("distance", functions);
+            },
+            dataType: "json",
+        });
+    }
+
+    renderKeyingFunctions();
+    renderDistanceFunctions();
 };
 
-ManagementDialog.prototype._renderFunctions = function(functionsType) {
+ManagementDialog.prototype._renderFunctions = function(functionsType, functions) {
     var self = this;
     var container;
     if(functionsType == "keying"){
@@ -91,7 +118,6 @@ ManagementDialog.prototype._renderFunctions = function(functionsType) {
         container = this._elmts.distanceFunctionsContainer.empty();
     }
 
-    var functions = Refine.getPreference(functionsType + " functions",[]);
     if(functions.length > 0){
         var table = $('<table></table>')
         .addClass("manage-functions-table")
@@ -114,7 +140,7 @@ ManagementDialog.prototype._renderFunctions = function(functionsType) {
             (function (index){
                 $('<button>').text("Edit")
                 .on('click', function (){
-                    self._editFunction(self._column, index);
+                    self._editFunction(self._column, functionsType, index);
                 }).appendTo(actionsCell);
     
                 $('<button>').text("Remove")
@@ -168,22 +194,45 @@ ManagementDialog.prototype._addFunction = function(column) {
         }
 
         var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text();
-        var _functions = Refine.getPreference(activeTabName.toLowerCase(),[]);
-        var langAndExpr = previewWidget.getExpression().split(':');
-        _functions.push({
-            name:  columnName,
-            expressionLang: langAndExpr[0],
-            expression: langAndExpr[1]
-        });
-        Refine.setPreference(activeTabName.toLowerCase(),_functions);
+        var add = function() {
+            $.ajax({
+                url: "command/core/get-preference?" + $.param({
+                  name: activeTabName.toLowerCase()
+                }),
+                success: function(data1) {
+                    var _functions = JSON.parse(data1.value);
+                    var langAndExpr = previewWidget.getExpression().split(':');
+                    _functions.push({
+                        name:  columnName,
+                        expressionLang: langAndExpr[0],
+                        expression: langAndExpr[1]
+                    });
+            
+                    Refine.wrapCSRF(function(token) {
+                        $.ajax({
+                          type: "POST",
+                          url: "command/core/set-preference?" + $.param({ name: activeTabName.toLowerCase() }),
+                          data: {
+                            "value" : JSON.stringify(_functions),
+                            csrf_token: token
+                          },
+                          success: function(data) { 
+                             self._renderTable();
+                          },
+                          dataType: "json"
+                        });
+                    });
+                },
+                dataType: "json",
+            });
+        }
 
+        add();
         dismiss();
-        
-        self._renderTable();
     });
 };
 
-ManagementDialog.prototype._editFunction = function(column, index) {
+ManagementDialog.prototype._editFunction = function(column, functionsType, index) {
     var self = this;
     var frame = $(
         DOM.loadHTML("core", "scripts/dialogs/add-function-dialog.html")
@@ -199,19 +248,27 @@ ManagementDialog.prototype._editFunction = function(column, index) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text();
-    var _functions = Refine.getPreference(activeTabName.toLowerCase(),[]);
-    elmts.functionNameInput[0].value = _functions[index].name;
+    var previewWidget;
+    $.ajax({
+        url: "command/core/get-preference?" + $.param({
+          name: functionsType + " functions"
+        }),
+        success: function(data) {
+            var _functions = JSON.parse(data.value);
+            elmts.functionNameInput[0].value = _functions[index].name;
 
-    var o = DataTableView.sampleVisibleRows(column);
-    var previewWidget = new ExpressionPreviewDialog.Widget(
-      elmts, 
-      column.cellIndex,
-      o.rowIndices,
-      o.values,
-      _functions[index].expressionLang + ':' + _functions[index].expression
-    );
-    
+            var o = DataTableView.sampleVisibleRows(column);
+            previewWidget = new ExpressionPreviewDialog.Widget(
+                elmts, 
+                column.cellIndex,
+                o.rowIndices,
+                o.values,
+                _functions[index].expressionLang + ':' + _functions[index].expression
+            );
+        },
+        dataType: "json",
+    });
+
     elmts.cancelButton.on('click',dismiss);
     elmts.form.on('submit',function(event) {
         event.preventDefault();
@@ -220,26 +277,75 @@ ManagementDialog.prototype._editFunction = function(column, index) {
           alert($.i18n('core-views/warning-function-name'));
           return;
         }
-  
-        _functions = Refine.getPreference(activeTabName.toLowerCase(),[]);
-        var langAndExpr = previewWidget.getExpression().split(':');
-        _functions[index].name = columnName;
-        _functions[index].expressionLang = langAndExpr[0];
-        _functions[index].expression = langAndExpr[1];
 
+        var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text();
+        var edit = function() {
+            $.ajax({
+                url: "command/core/get-preference?" + $.param({
+                  name: activeTabName.toLowerCase()
+                }),
+                success: function(data1) {
+                    var _functions = JSON.parse(data1.value);
+                    var langAndExpr = previewWidget.getExpression().split(':');
+                    _functions[index].name = columnName;
+                    _functions[index].expressionLang = langAndExpr[0];
+                    _functions[index].expression = langAndExpr[1];
+            
+                    Refine.wrapCSRF(function(token) {
+                        $.ajax({
+                          type: "POST",
+                          url: "command/core/set-preference?" + $.param({ name: activeTabName.toLowerCase() }),
+                          data: {
+                            "value" : JSON.stringify(_functions),
+                            csrf_token: token
+                          },
+                          success: function(data) { 
+                             self._renderTable();
+                          },
+                          dataType: "json"
+                        });
+                    });
+                },
+                dataType: "json",
+            });
+        }
+
+        edit();
         dismiss();
-        
-        self._renderTable();
     });
 };
 
 ManagementDialog.prototype._deleteFunction = function(index) {
+    var self = this;
     var result = confirm("Are you sure you want to delete this function?");
     if (result) {
-         var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text();
-         var functions = Refine.getPreference(activeTabName.toLowerCase(),[]);
-         functions.splice(index, 1);
-         Refine.setPreference(activeTabName.toLowerCase(), functions);
-         this._renderTable();
+        var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text();
+        var remove = function() {
+            $.ajax({
+                url: "command/core/get-preference?" + $.param({
+                  name: activeTabName.toLowerCase()
+                }),
+                success: function(data1) {
+                    var _functions = JSON.parse(data1.value);
+                    _functions.splice(index, 1);
+                    Refine.wrapCSRF(function(token) {
+                        $.ajax({
+                          type: "POST",
+                          url: "command/core/set-preference?" + $.param({ name: activeTabName.toLowerCase() }),
+                          data: {
+                            "value" : JSON.stringify(_functions),
+                            csrf_token: token
+                          },
+                          success: function(data) { 
+                             self._renderTable();
+                          },
+                          dataType: "json"
+                        });
+                    });
+                },
+                dataType: "json",
+            });
+        }
+        remove();
     }
  };
