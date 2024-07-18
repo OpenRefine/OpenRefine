@@ -1,0 +1,7 @@
+3.9-SNAPSHOT
+com.google.refine.model.changes.RowAdditionChange
+index=0
+count=2
+{"starred":false,"flagged":false,"cells":[]}
+{"starred":false,"flagged":false,"cells":[]}
+/ec/

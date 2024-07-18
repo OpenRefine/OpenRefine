@@ -56,7 +56,7 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
         String s = "(abc";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
+            Assert.fail("Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
@@ -69,7 +69,7 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
         String s = "abc)";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
+            Assert.fail("Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
@@ -82,6 +82,7 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
         String s = "[abc";
         try {
             Pattern.compile(s);
+            Assert.fail("Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
@@ -94,7 +95,7 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
         String s = "abc\\";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
+            Assert.fail("Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
@@ -107,6 +108,7 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
         String s = "abc{3";
         try {
             Pattern.compile(s);
+            Assert.fail("Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
@@ -119,6 +121,7 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
         String s = "abc{";
         try {
             Pattern.compile(s);
+            Assert.fail("Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
@@ -131,7 +134,7 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
         String s = "abc+*";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
+            Assert.fail("Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
@@ -144,7 +147,7 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
         String s = "a{4,3}";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
+            Assert.fail("Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
@@ -157,7 +160,7 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
         String s = "abc[9-0]";
         try {
             Pattern.compile(s);
-            Assert.assertTrue(false, "Test pattern successfully compiled when it should fail");
+            Assert.fail("Test pattern successfully compiled when it should fail");
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),

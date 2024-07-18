@@ -93,14 +93,10 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleCsv() {
+    public void exportSimpleCsv() throws IOException {
         CreateGrid(2, 2);
 
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         assertEqualsSystemLineEnding(writer.toString(), "column0,column1\n" +
                 "row0cell0,row0cell1\n" +
@@ -108,14 +104,11 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleCsvNoHeader() {
+    public void exportSimpleCsvNoHeader() throws IOException {
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+
+        SUT.export(project, options, engine, writer);
 
         assertEqualsSystemLineEnding(writer.toString(), "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
@@ -124,15 +117,11 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleCsvCustomLineSeparator() {
+    public void exportSimpleCsvCustomLineSeparator() throws IOException {
         CreateGrid(2, 2);
         when(options.getProperty("options")).thenReturn("{\"lineSeparator\":\"X\"}");
 
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         Assert.assertEquals(writer.toString(), "column0,column1X" +
                 "row0cell0,row0cell1X" +
@@ -140,15 +129,11 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleCsvQuoteAll() {
+    public void exportSimpleCsvQuoteAll() throws IOException {
         CreateGrid(2, 2);
         when(options.getProperty("options")).thenReturn("{\"quoteAll\":\"true\"}");
 
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         assertEqualsSystemLineEnding(writer.toString(), "\"column0\",\"column1\"\n" +
                 "\"row0cell0\",\"row0cell1\"\n" +
@@ -156,15 +141,11 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportCsvWithLineBreaks() {
+    public void exportCsvWithLineBreaks() throws IOException {
         CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, new Cell("line\n\n\nbreak", null));
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
@@ -173,15 +154,11 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportCsvWithComma() {
+    public void exportCsvWithComma() throws IOException {
         CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, new Cell("with, comma", null));
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
@@ -190,15 +167,11 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportCsvWithQuote() {
+    public void exportCsvWithQuote() throws IOException {
         CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, new Cell("line has \"quote\"", null));
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
@@ -207,16 +180,12 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportCsvWithEmptyCells() {
+    public void exportCsvWithEmptyCells() throws IOException {
         CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
                 "row0cell0,row0cell1,row0cell2\n" +
