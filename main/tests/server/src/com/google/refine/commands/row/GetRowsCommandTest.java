@@ -56,7 +56,7 @@ public class GetRowsCommandTest extends RefineTest {
     StringWriter writer = null;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         project = createProject(new String[] { "a", "b" },
@@ -67,11 +67,7 @@ public class GetRowsCommandTest extends RefineTest {
         command = new GetRowsCommand();
         writer = new StringWriter();
         when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
     }
 
     @Test

@@ -32,7 +32,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +47,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
-import com.google.refine.util.GetProjectIDException;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
@@ -129,7 +127,7 @@ public class FileProjectManagerTests {
      * Tests whether only meta files of modified projects will be updated locally.
      */
     @Test
-    public void metaFileUpdateTest() throws GetProjectIDException, InterruptedException {
+    public void metaFileUpdateTest() throws Exception {
         FileProjectManager manager = new FileProjectManager(workspaceDir);
         ProjectMetadata metaA = new ProjectMetadata();
         ProjectMetadata metaB = new ProjectMetadata();
@@ -157,11 +155,7 @@ public class FileProjectManagerTests {
         assertEquals(timeBeforeB, timeAfterB, "Unmodified project written when it didn't need to be");
         assertNotEquals(timeBeforeA, timeAfterA, "Modified project not written");
         // Test handling of corrupted workspace with missing metadata file
-        try {
-            FileUtils.deleteDirectory(metaAFile.getParentFile());
-        } catch (IOException e) {
-            fail("Failed to delete metadata directory for " + metaAFile);
-        }
+        FileUtils.deleteDirectory(metaAFile.getParentFile());
         // Reload our intentionally corrupted workspace.
         manager = new FileProjectManager(workspaceDir);
         assertEquals(manager.getProjectID("B"), idB);

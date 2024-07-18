@@ -31,6 +31,7 @@ import static org.testng.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -92,7 +93,7 @@ public class ExpressionCommandTestBase extends CommandTestBase {
             FileProjectManager.initialize(workspaceDir);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e);
         }
     }
 

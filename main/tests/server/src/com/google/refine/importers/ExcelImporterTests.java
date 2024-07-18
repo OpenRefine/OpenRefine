@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -138,11 +139,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsFile);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3), numberedColumn(4), numberedColumn(5),
@@ -183,11 +180,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFile);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3), numberedColumn(4), numberedColumn(5),
@@ -229,11 +222,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFile);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
         decimalFormat.applyPattern("0.00");
@@ -270,12 +259,8 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = ClassLoader.getSystemResourceAsStream("excel95.xls");
 
-        try {
-            // We don't support Excel 95, but make sure we get an exception back
-            Assert.assertEquals(parseOneFileAndReturnExceptions(SUT, stream).size(), 1);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        // We don't support Excel 95, but make sure we get an exception back
+        Assert.assertEquals(parseOneFileAndReturnExceptions(SUT, stream).size(), 1);
     }
 
     @Test
@@ -331,11 +316,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsFileWithMultiSheets);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3), numberedColumn(4), numberedColumn(5),
@@ -397,11 +378,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFileWithMultiSheets);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3), numberedColumn(4), numberedColumn(5),
@@ -486,7 +463,7 @@ public class ExcelImporterTests extends ImporterTest {
             outputStream.close();
             wb.close();
         } catch (IOException e) {
-            return null;
+            throw new UncheckedIOException(e);
         }
         return file;
     }
@@ -534,7 +511,7 @@ public class ExcelImporterTests extends ImporterTest {
             outputStream.close();
             wb.close();
         } catch (IOException e) {
-            return null;
+            throw new UncheckedIOException(e);
         }
         return file;
     }
