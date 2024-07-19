@@ -31,35 +31,46 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 .manage-functions-table {
-    width: 100%;
+    width: 652px;
+    table-layout: fixed;
 }
 
-.manage-functions-heading {
+#manage-functions-heading {
     background: #ddd;
     font-weight: bold;
-    color: #000000cc;
+    padding: 6px 12px;
+}
+
+.functions-container {
+    min-height: 67px;
+    max-height: 240px;
+    overflow: auto;
 }
 
 .functions-container td {
-    border: 1px solid #ccc;
-    padding: 10px;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
     text-align: left;
     vertical-align: middle;
+    word-wrap: break-word;
 }
 
 .functions-container td button {
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
     margin-right: 5px;
+    padding: 2px 7px;
 }
 
 .main-text {
-    font-size: 16px;
+    font-size: 15px;
     color: #333;
 }
 
 .sub-text {
     font-size: 12px;
     color: #888;
+}
+
+.management-table-wrapper {
+    padding: var(--padding-normal);
+    width: 100%;
 }

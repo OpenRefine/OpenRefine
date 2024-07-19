@@ -124,26 +124,30 @@ ManagementDialog.prototype._renderFunctions = function(functionsType, functions)
         .appendTo($('<div>').addClass("management-table-wrapper").appendTo(container))[0];
 
         var tr = table.insertRow(0);
-        $(tr.insertCell(0)).addClass("manage-functions-heading").text("Name");
-        $(tr.insertCell(1)).addClass("manage-functions-heading").text("Action");
+        $(tr.insertCell(0)).attr("id", "manage-functions-heading").text("Name");
+        $(tr.insertCell(1)).attr("id", "manage-functions-heading").text("Action");
         
         for (var i = 0; i < functions.length; i++) {
             var newRow = $('<tr>');
 
-            var td = $("<td></td>");
+            var td = $("<td></td>").css({
+                "border-right" : "none"
+            });
             var name = $("<div></div>").addClass("main-text").text(functions[i].name);
             var expression = $("<div></div>").addClass("sub-text").text(functions[i].expression);
             td.append(name).append(expression).appendTo(newRow);
             
-            var actionsCell = $('<td>').appendTo(newRow);
+            var actionsCell = $('<td>').css({
+                "border-left" : "none"
+            }).appendTo(newRow);
     
             (function (index){
-                $('<button>').text("Edit")
+                $('<button>').text("Edit").addClass("button")
                 .on('click', function (){
                     self._editFunction(self._column, functionsType, index);
                 }).appendTo(actionsCell);
     
-                $('<button>').text("Remove")
+                $('<button>').text("Remove").addClass("button")
                 .on('click', function (){
                     self._deleteFunction(index);
                 })
