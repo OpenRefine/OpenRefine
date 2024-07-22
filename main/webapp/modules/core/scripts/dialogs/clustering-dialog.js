@@ -57,7 +57,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts = DOM.bind(dialog);
     this._elmts.dialogHeader.text($.i18n('core-dialogs/cluster-edit')+' "' + this._columnName + '"');
 
-    this._elmts.ManageFunctionsBtn.html($.i18n('core-buttons/manage-clustering'));
+    this._elmts.manageFunctionsBtn.html($.i18n('core-buttons/manage-clustering'));
     this._elmts.or_dialog_descr.html($.i18n('core-dialogs/cluster-descr'));
     this._elmts.or_dialog_findMore.html($.i18n('core-dialogs/find-more'));
     this._elmts.or_dialog_method.html($.i18n('core-dialogs/method'));
@@ -119,11 +119,11 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.keyingFunctionSelector.on('change',changer);
     this._elmts.distanceFunctionSelector.on('change',changer);
 
-    this._elmts.ManageFunctionsBtn.on('click', openManagementDialog);
+    this._elmts.manageFunctionsBtn.on('click', openClusteringFunctionsDialog);
 
-    function openManagementDialog() {
-        var title = "Manage Custom Clustering Functions";
-        new ManagementDialog(title, self);
+    function openClusteringFunctionsDialog() {
+        var title = $.i18n('core-dialogs/manage-clustering-functions');
+        new ClusteringFunctionsDialog(title, self);
     }
 
     var params_changer = function() {
