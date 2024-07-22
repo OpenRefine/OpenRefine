@@ -75,7 +75,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- dependency versions -->
-    <jackson.version>2.17.1</jackson.version>
+    <jackson.version>2.17.2</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.5</butterfly.version>
     <slf4j.version>2.0.13</slf4j.version>
@@ -83,7 +83,7 @@
     <jetty.version>10.0.16</jetty.version>
     <okhttp.version>4.12.0</okhttp.version>
     <jena.version>4.10.0</jena.version>
-    <poi.version>5.2.5</poi.version>
+    <poi.version>5.3.0</poi.version>
     <commons-lang3.version>3.14.0</commons-lang3.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
@@ -95,7 +95,7 @@
     <commons-compress.version>1.26.2</commons-compress.version>
     <velocity.version>2.3</velocity.version>
     <marc4j.version>2.9.5</marc4j.version>
-    <jsoup.version>1.17.2</jsoup.version>
+    <jsoup.version>1.18.1</jsoup.version>
     <odfdom-java.version>0.12.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2.1</vicino.version>
     <clojure.version>1.11.3</clojure.version>
@@ -120,7 +120,7 @@
     <exec-maven-plugin.version>3.3.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.7.1</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-    <surefire.version>3.3.0</surefire.version>
+    <surefire.version>3.3.1</surefire.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
