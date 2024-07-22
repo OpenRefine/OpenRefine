@@ -1,3 +1,4 @@
+
 package com.google.refine.util;
 
 import java.net.MalformedURLException;
@@ -8,6 +9,7 @@ import java.net.URL;
 import com.google.common.net.UrlEscapers;
 
 public class URLUtils {
+
     /**
      * URL Escape function that handles all url elements path, query, fragment
      *
@@ -38,10 +40,10 @@ public class URLUtils {
                 encodedUrl += "#" + encodedFragment;
             }
             return encodedUrl;
+        } catch (URISyntaxException e) {
+            return s;
+        } catch (MalformedURLException e) {
+            return s;
         }
-        catch (URISyntaxException e) {
-            return s; }
-        catch (MalformedURLException e) {
-            return s; }
     }
 }

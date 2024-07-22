@@ -78,11 +78,11 @@ public class Escape implements Function {
                         return URLEncoder.encode(s, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                     }
-                } else if ("path".equals(mode)) {
+                } else if ("urlpath".equals(mode)) {
                     return UrlEscapers.urlPathSegmentEscaper().escape(s);
-                } else if ("query".equals(mode)) {
+                } else if ("urlquery".equals(mode)) {
                     return UrlEscapers.urlFormParameterEscaper().escape(s);
-                } else if ("fragment".equals(mode)) {
+                } else if ("urlfragment".equals(mode)) {
                     return UrlEscapers.urlFragmentEscaper().escape(s);
                 } else {
                     // + mode + "'.");
