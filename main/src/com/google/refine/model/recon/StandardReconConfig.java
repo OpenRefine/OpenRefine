@@ -188,9 +188,16 @@ public class StandardReconConfig extends ReconConfig {
         this(service, identifierSpace, schemaSpace,
                 type != null ? type.id : null,
                 type != null ? type.name : null,
-                autoMatch, Optional.empty(), columnDetails, limit);
+                autoMatch, columnDetails, limit);
     }
 
+    /**
+     * Recently added by mistake, so slated for removal quickly after a short deprecation period.
+     * 
+     * @since 3.8.0
+     * @deprecated for 3.8.3
+     */
+    @Deprecated(since = "3.8.3")
     public StandardReconConfig(
             String service,
             String identifierSpace,
@@ -217,6 +224,13 @@ public class StandardReconConfig extends ReconConfig {
         this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, Optional.empty(), columnDetails, 0);
     }
 
+    /**
+     * Recently added by mistake, so slated for removal quickly after a short deprecation period.
+     * 
+     * @since 3.8.0
+     * @deprecated for 3.8.3
+     */
+    @Deprecated(since = "3.8.3")
     public StandardReconConfig(
             String service,
             String identifierSpace,
@@ -428,7 +442,8 @@ public class StandardReconConfig extends ReconConfig {
         public double score;
         @JsonProperty("match")
         public boolean match = false;
-        // TODO: Do we need to do anything special for compatibility here?
+        // TODO: Do we have a way of testing this for compatibility? Hopefully clients ignore unknown fields
+        @JsonInclude(Include.NON_NULL)
         @JsonProperty("error")
         public ReconCandidate error = null;
 
@@ -590,6 +605,7 @@ public class StandardReconConfig extends ReconConfig {
 
         while (recons.size() < jobs.size()) {
             Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+            // TODO: Needs i18n
             recon.error = "No. of recon objects was less than no. of jobs";
             recon.judgment = Judgment.Error;
             recons.add(recon);
