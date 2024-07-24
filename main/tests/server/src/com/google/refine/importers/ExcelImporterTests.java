@@ -35,9 +35,11 @@ package com.google.refine.importers;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -260,7 +262,7 @@ public class ExcelImporterTests extends ImporterTest {
         InputStream stream = ClassLoader.getSystemResourceAsStream("excel95.xls");
 
         // We don't support Excel 95, but make sure we get an exception back
-        Assert.assertEquals(parseOneFileAndReturnExceptions(SUT, stream).size(), 1);
+        assertEquals(parseOneFileAndReturnExceptions(SUT, stream).size(), 1);
     }
 
     @Test
@@ -418,6 +420,43 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("skipDataLines");
         verify(options, times(SHEETS)).get("limit");
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
+    }
+
+    @Test
+    public void testDeleteEmptyColumns() throws FileNotFoundException, IOException {
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+
+        whenGetArrayOption("sheets", options, sheets);
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 1);
+        whenGetIntegerOption("limit", options, -1);
+
+        // This will mock the situation of deleting empty columns(col6)
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, false);
+        whenGetBooleanOption("storeBlankColumns", options, false);
+
+        InputStream stream = new FileInputStream(xlsxFile);
+        try {
+            parseOneFile(SUT, stream);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+        // We should have one less than the start due to empty column being skipped
+        assertEquals(project.columnModel.columns.size(), 12);
+        // NOTE: we need to redirect through the column model because the rows will still have empty cells
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(1).getCellIndex()), true);
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(2).getCellIndex()), EXPECTED_DATE_TIME);
+
+        verify(options, times(1)).get("ignoreLines");
+        verify(options, times(1)).get("headerLines");
+        verify(options, times(1)).get("skipDataLines");
+        verify(options, times(1)).get("limit");
+        verify(options, times(1)).get("storeBlankCellsAsNulls");
+        verify(options, times(1)).get("storeBlankColumns");
+
     }
 
     private static File createSpreadsheet(boolean xml, LocalDateTime date) {
