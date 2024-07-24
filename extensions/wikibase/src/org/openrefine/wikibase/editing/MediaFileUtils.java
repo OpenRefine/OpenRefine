@@ -23,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -40,6 +42,8 @@ import com.google.refine.util.ParsingUtilities;
  *
  */
 public class MediaFileUtils {
+
+    static final Logger logger = LoggerFactory.getLogger(MediaFileUtils.class);
 
     protected ApiConnection apiConnection;
     protected String csrfToken = null;
@@ -96,8 +100,9 @@ public class MediaFileUtils {
      */
     public MediaUploadResponse uploadLocalFile(File path, String fileName, String wikitext, String summary, List<String> tags)
             throws IOException, MediaWikiApiErrorException {
-        if (path.length() > 100000000) {
+        if (path.length() > 100000000 /* 100 MB */) {
             try (ChunkedFile chunkedFile = new ChunkedFile(path)) {
+                logger.info("Uploading large file in chunks.");
                 return uploadLocalFileChunked(chunkedFile, fileName, wikitext, summary, tags);
             }
         }
@@ -137,6 +142,8 @@ public class MediaFileUtils {
             throws IOException, MediaWikiApiErrorException {
         MediaUploadResponse response = null;
         int i = 1;
+        long totalChunks = (long) Math.ceil((double) path.getLength() / path.chunkSize);
+        logger.debug("# of chunks: " + totalChunks);
         for (File chunk = path.readChunk(); chunk != null; chunk = path.readChunk()) {
             Map<String, String> parameters = new HashMap<>();
             parameters.put("action", "upload");
@@ -157,9 +164,12 @@ public class MediaFileUtils {
             response = uploadFile(parameters, files);
             chunk.delete();
             response.checkForErrors();
+            double percent = (double) i / totalChunks * 100.0;
+            logger.debug(i + "/" + totalChunks + " chunks uploaded (" + String.format("%.2f", percent) + " %).");
             i++;
         }
 
+        logger.info("All chunks uploaded.");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("action", "upload");
         parameters.put("token", getCsrfToken());
@@ -168,6 +178,7 @@ public class MediaFileUtils {
         parameters.put("tags", String.join("|", tags));
         parameters.put("comment", summary);
         parameters.put("text", wikitext);
+        logger.info("Chunked upload committed.");
 
         return uploadFile(parameters, null);
     }
@@ -398,7 +409,7 @@ public class MediaFileUtils {
     public static class ChunkedFile implements Closeable {
 
         protected FileInputStream stream;
-        protected final int chunkSize = 5000;
+        protected final int chunkSize = 10000000; // 10 MB
         protected File path;
         protected long bytesRead;
         protected int chunksRead;
