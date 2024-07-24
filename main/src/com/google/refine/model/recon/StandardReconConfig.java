@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -91,6 +92,8 @@ public class StandardReconConfig extends ReconConfig {
         /**
          * Unfortunately the format of ColumnDetail is inconsistent in the UI and the backend so we need to support two
          * deserialization formats. See the tests for that.
+         *
+         * FIXME: Clean this up the next time we make breaking changes
          */
         @JsonCreator
         public ColumnDetail(
@@ -146,9 +149,10 @@ public class StandardReconConfig extends ReconConfig {
     final public String typeName;
     @JsonProperty("autoMatch")
     final public boolean autoMatch;
+    @JsonInclude(Include.NON_EMPTY)
     @JsonSetter(nulls = Nulls.SKIP)
     @JsonProperty("batchSize")
-    final public int batchSize;
+    final public Optional<Integer> batchSize;
     @JsonProperty("columnDetails")
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
@@ -164,7 +168,7 @@ public class StandardReconConfig extends ReconConfig {
             @JsonProperty("schemaSpace") String schemaSpace,
             @JsonProperty("type") ReconType type,
             @JsonProperty("autoMatch") boolean autoMatch,
-            @JsonProperty("batchSize") int batchSize,
+            @JsonProperty("batchSize") Optional<Integer> batchSize,
             @JsonProperty("columnDetails") List<ColumnDetail> columnDetails,
             @JsonProperty("limit") int limit) {
         this(service, identifierSpace, schemaSpace,
@@ -184,7 +188,22 @@ public class StandardReconConfig extends ReconConfig {
         this(service, identifierSpace, schemaSpace,
                 type != null ? type.id : null,
                 type != null ? type.name : null,
-                autoMatch, DEFAULT_BATCH_SIZE, columnDetails, limit);
+                autoMatch, Optional.empty(), columnDetails, limit);
+    }
+
+    public StandardReconConfig(
+            String service,
+            String identifierSpace,
+            String schemaSpace,
+            ReconType type,
+            boolean autoMatch,
+            int batchSize,
+            List<ColumnDetail> columnDetails,
+            int limit) {
+        this(service, identifierSpace, schemaSpace,
+                type != null ? type.id : null,
+                type != null ? type.name : null,
+                autoMatch, Optional.of(batchSize), columnDetails, limit);
     }
 
     public StandardReconConfig(
@@ -195,7 +214,7 @@ public class StandardReconConfig extends ReconConfig {
             String typeName,
             boolean autoMatch,
             List<ColumnDetail> columnDetails) {
-        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, DEFAULT_BATCH_SIZE, columnDetails, 0);
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, Optional.empty(), columnDetails, 0);
     }
 
     public StandardReconConfig(
@@ -207,7 +226,7 @@ public class StandardReconConfig extends ReconConfig {
             boolean autoMatch,
             int batchSize,
             List<ColumnDetail> columnDetails) {
-        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, batchSize, columnDetails, 0);
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, Optional.of(batchSize), columnDetails, 0);
     }
 
     /**
@@ -228,7 +247,30 @@ public class StandardReconConfig extends ReconConfig {
             String typeID,
             String typeName,
             boolean autoMatch,
-            int batchSize,
+            List<ColumnDetail> columnDetails,
+            int limit) {
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, Optional.empty(), columnDetails, limit);
+    }
+
+    /**
+     * @param service
+     * @param identifierSpace
+     * @param schemaSpace
+     * @param typeID
+     * @param typeName
+     * @param autoMatch
+     * @param columnDetails
+     * @param limit
+     *            maximum number of results to return (0 = default)
+     */
+    public StandardReconConfig(
+            String service,
+            String identifierSpace,
+            String schemaSpace,
+            String typeID,
+            String typeName,
+            boolean autoMatch,
+            Optional<Integer> batchSize,
             List<ColumnDetail> columnDetails,
             int limit) {
         this.service = service;
@@ -256,13 +298,16 @@ public class StandardReconConfig extends ReconConfig {
     @Override
     @JsonIgnore
     public int getBatchSize() {
-        return 10;
+        return DEFAULT_BATCH_SIZE;
     }
 
     @Override
     @JsonIgnore
     public int getBatchSize(int rowCount) {
-        return Math.min(Math.max(rowCount / DEFAULT_BATCH_SIZE, DEFAULT_BATCH_SIZE), batchSize);
+        if (batchSize.isEmpty()) {
+            return DEFAULT_BATCH_SIZE;
+        }
+        return Math.min(Math.max(rowCount / DEFAULT_BATCH_SIZE, DEFAULT_BATCH_SIZE), batchSize.get());
     }
 
     @Override
@@ -607,6 +652,7 @@ public class StandardReconConfig extends ReconConfig {
             if (candidate.name != null) {
                 recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
                 recon.setFeature(Recon.Feature_nameLevenshtein,
+                        // TODO: Probably want diacritic folding as well as case folding here for i18n
                         StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name)));
                 recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.name));
             }
@@ -646,7 +692,7 @@ public class StandardReconConfig extends ReconConfig {
 
     static final protected Set<String> s_stopWords = new HashSet<String>();
     static {
-        // FIXME: This is English specific
+        // FIXME: This is English specific - needs i18n
         s_stopWords.add("the");
         s_stopWords.add("a");
         s_stopWords.add("and");
@@ -658,6 +704,7 @@ public class StandardReconConfig extends ReconConfig {
     }
 
     static protected Set<String> breakWords(String s) {
+        // TODO: This needs i18n
         String[] words = s.toLowerCase().split("\\s+");
 
         Set<String> set = new HashSet<String>(words.length);

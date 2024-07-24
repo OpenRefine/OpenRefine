@@ -66,6 +66,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.io.IOUtils;
@@ -90,6 +91,7 @@ public class ParsingUtilities {
         module.addDeserializer(Instant.class, new SerializationFilters.InstantDeserializer());
 
         mapper.registerModule(module);
+        mapper.registerModule(new Jdk8Module()/* .configureAbsentsAsNulls(true) */);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
     }
