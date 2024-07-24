@@ -195,7 +195,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
                 List<StatementEdit> statements = update.getStatementEdits().stream().map(l -> copy(l))
                         .collect(Collectors.toList());
                 return new MediaInfoEdit(subject, statements, labels, labelsIfNew, update.getFilePath(),
-                        update.getFileName(), update.getWikitext(), update.isOverridingWikitext(), 1000, 60000);
+                        update.getFileName(), update.getWikitext(), update.isOverridingWikitext());
             } else {
                 throw new IllegalStateException(
                         "Rewriting of entities of this type (for subject id " + edit.getEntityId() + ") not supported yet");

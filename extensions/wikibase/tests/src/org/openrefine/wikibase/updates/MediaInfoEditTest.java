@@ -139,7 +139,6 @@ public class MediaInfoEditTest {
                 .addFileName("Foo.png")
                 .addFilePath(url)
                 .addWikitext("{{wikitext}}")
-                .setWaitForPageTimes(1, 60)
                 .build();
         assertFalse(edit.requiresFetchingExistingState()); // new entities do not require fetching existing state
 
@@ -156,7 +155,7 @@ public class MediaInfoEditTest {
         when(mediaFileUtils.checkIfPageNamesExist(anyList()))
                 .thenReturn(Collections.singleton("File:Foo.png"));
 
-        MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList());
+        MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList(), 1, 60);
         assertEquals(returnedMid, mid);
     }
 
@@ -168,7 +167,6 @@ public class MediaInfoEditTest {
                 .addFileName("Foo.png")
                 .addFilePath(url)
                 .addWikitext("{{wikitext}}")
-                .setWaitForPageTimes(1, 60)
                 .build();
         assertFalse(edit.requiresFetchingExistingState()); // new entities do not require fetching existing state
 
@@ -187,7 +185,7 @@ public class MediaInfoEditTest {
                 .thenReturn(Collections.emptySet())
                 .thenReturn(Collections.singleton("File:Foo.png"));
 
-        MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList());
+        MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList(), 1, 60);
         assertEquals(returnedMid, mid);
     }
 
