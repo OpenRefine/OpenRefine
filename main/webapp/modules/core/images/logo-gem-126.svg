@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="-20 -6.5 160 151" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(0 -8.2001)" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width="4px">
+  <polygon points="31.5 31.5 63 31.5 31.5 63" fill="#00dcff"/>
+  <polygon points="31.5 31.5 0 63 31.5 63" fill="#0ff"/>
+  <polygon points="94.5 31.5 63 31.5 94.5 63" fill="#00b4ff"/>
+  <polygon points="63 31.5 94.5 63 31.5 63" fill="#00c8ff"/>
+  <polygon points="94.5 31.5 126 63 94.5 63" fill="#00a0ff"/>
+  <polygon points="0 63 63 126 31.5 63" fill="#00c8ff"/>
+  <polygon points="31.5 63 63 126 94.5 63" fill="#00a0ff"/>
+  <polygon points="94.5 63 63 126 126 63" fill="#0078ff"/>
+ </g>
+</svg>
