@@ -128,7 +128,7 @@ Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
  */
 Cypress.Commands.add('assertTextareaHaveJsonValue', (selector, json) => {
   cy.get(selector).then((el) => {
-    // expected json needs to be parsed / restringified, to avoid inconsitencies about spaces and tabs
+    // expected json needs to be parsed / restringified, to avoid inconsistencies about spaces and tabs
     const present = JSON.parse(el.val());
     cy.expect(JSON.stringify(present)).to.equal(JSON.stringify(json));
   });
