@@ -84,14 +84,14 @@
     <okhttp.version>4.12.0</okhttp.version>
     <jena.version>4.10.0</jena.version>
     <poi.version>5.3.0</poi.version>
-    <commons-lang3.version>3.14.0</commons-lang3.version>
+    <commons-lang3.version>3.15.0</commons-lang3.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-text.version>1.12.0</commons-text.version>
     <commons-validator.version>1.9.0</commons-validator.version>
     <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
-    <commons-codec.version>1.17.0</commons-codec.version>
+    <commons-codec.version>1.17.1</commons-codec.version>
     <commons-compress.version>1.26.2</commons-compress.version>
     <velocity.version>2.3</velocity.version>
     <marc4j.version>2.9.5</marc4j.version>
@@ -256,7 +256,7 @@
         <!-- Plugin for creating Javadocs; goal for preparing docs for upload to github: javadoc:aggregate -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>3.8.0</version>
         <configuration>
             <bottom>
                     <![CDATA[Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. Generated from source code published under the BSD Clause-3 license. For more information, see the <a href="https://openrefine.org">OpenRefine website</a>]]></bottom>
