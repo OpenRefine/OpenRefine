@@ -46,7 +46,7 @@ import java.util.stream.Stream;
  */
 public class NGramFingerprintKeyer extends FingerprintKeyer {
 
-    static final Pattern ctrlspace = Pattern.compile("\\p{Cntrl}|\\p{Space}", Pattern.UNICODE_CHARACTER_CLASS);
+    static final Pattern ctrlspace = Pattern.compile("[\\p{Cntrl}\\p{Space}]", Pattern.UNICODE_CHARACTER_CLASS);
 
     @Override
     public String key(String s, Object... o) {
