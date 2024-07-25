@@ -87,7 +87,6 @@ public class ReconOperationTests extends RefineTest {
             + "   \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
             + "   \"type\":{\"id\":\"Q5\",\"name\":\"human\"},"
             + "   \"autoMatch\":true,"
-            + "   \"batchSize\":10,"
             + "   \"columnDetails\":[],"
             + "   \"limit\":0"
             + "},"
@@ -174,6 +173,7 @@ public class ReconOperationTests extends RefineTest {
         recon3.judgment = Judgment.Matched;
 
         reconConfig = mock(StandardReconConfig.class, withSettings().serializable());
+        doReturn(2).when(reconConfig).getBatchSize();
         doReturn(2).when(reconConfig).getBatchSize(anyInt());
         // mock identifierSpace, service and schemaSpace
         when(reconConfig.batchRecon(eq(Arrays.asList(job1, job2)), anyLong())).thenReturn(Arrays.asList(recon1, recon2));
@@ -236,6 +236,7 @@ public class ReconOperationTests extends RefineTest {
         List<Recon> reconList = Arrays.asList((Recon) null, (Recon) null, (Recon) null);
         ReconJob reconJob = mock(ReconJob.class);
         when(reconConfig.batchRecon(Mockito.any(), Mockito.anyLong())).thenReturn(reconList);
+        when(reconConfig.getBatchSize()).thenReturn(10);
         when(reconConfig.getBatchSize(project.rows.size())).thenReturn(10);
         when(reconConfig.createJob(Mockito.eq(project), Mockito.anyInt(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(reconJob);

@@ -53,7 +53,13 @@ public class DataExtensionReconConfig extends StandardReconConfig {
             String identifierSpace,
             String schemaSpace,
             ReconType type) {
-        super(service, identifierSpace, schemaSpace, type != null ? type.id : null, type != null ? type.name : null, true, 10,
+        super(
+                service,
+                identifierSpace,
+                schemaSpace,
+                type != null ? type.id : null,
+                type != null ? type.name : null,
+                true,
                 new ArrayList<ColumnDetail>());
         this.type = type;
     }
@@ -61,6 +67,11 @@ public class DataExtensionReconConfig extends StandardReconConfig {
     @Override
     public ReconJob createJob(Project project, int rowIndex, Row row,
             String columnName, Cell cell) {
+        throw new RuntimeException(WARN);
+    }
+
+    @Override
+    public int getBatchSize() {
         throw new RuntimeException(WARN);
     }
 
