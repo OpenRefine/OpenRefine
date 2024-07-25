@@ -30,24 +30,24 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-.manage-functions-table {
+.clustering-functions-table {
     width: 652px;
     table-layout: fixed;
 }
 
-#manage-functions-heading {
+#clustering-functions-heading {
     background: #ddd;
     font-weight: bold;
     padding: 6px 12px;
 }
 
-.functions-container {
+.clustering-functions-container {
     min-height: 67px;
     max-height: 240px;
     overflow: auto;
 }
 
-.functions-container td {
+.clustering-functions-container td {
     border: 1px solid #ddd;
     padding: 8px 12px;
     text-align: left;
@@ -55,7 +55,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     word-wrap: break-word;
 }
 
-.functions-container td button {
+.clustering-functions-container td button {
     margin-right: 5px;
     padding: 2px 7px;
 }
@@ -70,7 +70,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     color: #888;
 }
 
-.management-table-wrapper {
+.clustering-functions-table-wrapper {
     padding: var(--padding-normal);
     width: 100%;
 }

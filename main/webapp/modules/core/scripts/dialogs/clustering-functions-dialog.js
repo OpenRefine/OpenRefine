@@ -48,14 +48,6 @@ function ClusteringFunctionsDialog(title, clusteringDialog) {
     }).appendTo(footer);
 
     $('<button class="button"></button>').html($.i18n('core-buttons/ok')).on('click', function () {
-        // TO ITERATE ON NEXT WEEK
-        // var functions = Refine.getPreference("functions",[]); // to edit
-        // for(var i = 0; i < functions.length; i++){
-        //     $('<option></option>')
-        //      .val(functions[i].name)
-        //      .text(functions[i].name)
-        //      .appendTo(clusteringDialog._elmts.keyingFunctionSelector);
-        // }ui.newTab.text().trim();
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
 
@@ -66,7 +58,7 @@ function ClusteringFunctionsDialog(title, clusteringDialog) {
 ClusteringFunctionsDialog.prototype._renderTable = function () {
     var self = this;
 
-    $("#management-tabs").tabs({
+    $("#clustering-functions-tabs").tabs({
         activate: function (event, ui) {
             if (ui.newTab.text() == $.i18n('core-dialogs/keying-functions')) {
                 $("#add-new-functions").text($.i18n('core-buttons/add-keying-function'));
@@ -120,12 +112,12 @@ ClusteringFunctionsDialog.prototype._renderFunctions = function (functionsType, 
 
     if (functions.length > 0) {
         var table = $('<table></table>')
-            .addClass("manage-functions-table")
-            .appendTo($('<div>').addClass("management-table-wrapper").appendTo(container))[0];
+            .addClass("clustering-functions-table")
+            .appendTo($('<div>').addClass("clustering-functions-table-wrapper").appendTo(container))[0];
 
         var tr = table.insertRow(0);
-        $(tr.insertCell(0)).attr("id", "manage-functions-heading").text("Name");
-        $(tr.insertCell(1)).attr("id", "manage-functions-heading").text("Action");
+        $(tr.insertCell(0)).attr("id", "clustering-functions-heading").text($.i18n('core-dialogs/name'));
+        $(tr.insertCell(1)).attr("id", "clustering-functions-heading").text($.i18n('core-dialogs/action'));
 
         for (var i = 0; i < functions.length; i++) {
             var newRow = $('<tr>');
@@ -142,12 +134,12 @@ ClusteringFunctionsDialog.prototype._renderFunctions = function (functionsType, 
             }).appendTo(newRow);
 
             (function (index) {
-                $('<button>').text("Edit").addClass("button")
+                $('<button>').text($.i18n('core-buttons/edit')).addClass("button")
                     .on('click', function () {
                         self._editFunction(self._column, functionsType, index);
                     }).appendTo(actionsCell);
 
-                $('<button>').text("Remove").addClass("button")
+                $('<button>').text($.i18n('core-buttons/remove')).addClass("button")
                     .on('click', function () {
                         self._deleteFunction(index);
                     })
@@ -158,7 +150,7 @@ ClusteringFunctionsDialog.prototype._renderFunctions = function (functionsType, 
         }
     } else {
         container.html(
-            '<div style="margin: 1em;"><div style="font-size: 130%; color: #333;">' + "No functions were found currently" + '</div><div style="padding-top: 5px; font-size: 110%; color: #888;">' + "Try adding a new functions below" + '</div></div>'
+            '<div style="margin: 1em;"><div style="font-size: 130%; color: #333;">' + $.i18n('core-index/no-custom-functions') + '</div><div style="padding-top: 5px; font-size: 110%; color: #888;">' + $.i18n('core-index/add-custom-function') + '</div></div>'
         );
     }
 }
@@ -197,7 +189,7 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
             return;
         }
 
-        var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+        var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
         var add = function () {
             $.ajax({
                 url: "command/core/get-preference?" + $.param({
@@ -288,7 +280,7 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
             return;
         }
 
-        var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+        var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
         var edit = function () {
             $.ajax({
                 url: "command/core/get-preference?" + $.param({
@@ -335,7 +327,7 @@ ClusteringFunctionsDialog.prototype._deleteFunction = function (index) {
     var self = this;
     var result = confirm($.i18n('core-views/warning-delete-functions'));
     if (result) {
-        var activeTabName = $("#management-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+        var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
         var remove = function () {
             $.ajax({
                 url: "command/core/get-preference?" + $.param({
