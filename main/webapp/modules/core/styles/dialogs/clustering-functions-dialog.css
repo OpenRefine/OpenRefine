@@ -60,12 +60,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     padding: 2px 7px;
 }
 
-.main-text {
+#clustering-functions-tabs .main-text {
     font-size: 15px;
     color: #333;
 }
 
-.sub-text {
+#clustering-functions-tabs .sub-text {
     font-size: 12px;
     color: #888;
 }
