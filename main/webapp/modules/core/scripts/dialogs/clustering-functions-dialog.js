@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function ClusteringFunctionsDialog(title, clusteringDialog) {
     var self = this;
     self._column = clusteringDialog._column;
+    self._clusters = clusteringDialog._getRestrictedClusters();
+    
     var frame = DialogSystem.createDialog();
     frame.css("min-width", "700px");
     var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
@@ -159,7 +161,7 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
     var self = this;
     var frame = $(
         DOM.loadHTML("core", "scripts/dialogs/add-function-dialog.html")
-            .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
+            .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionAndClustersPreviewDialog.generateWidgetHtml()));
 
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n('core-dialogs/add-function'));
@@ -172,12 +174,13 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
     var dismiss = function () { DialogSystem.dismissUntil(level - 1); };
 
     var o = DataTableView.sampleVisibleRows(column);
-    var previewWidget = new ExpressionPreviewDialog.Widget(
+    var previewWidget = new ExpressionAndClustersPreviewDialog.Widget(
         elmts,
         column.cellIndex,
         o.rowIndices,
         o.values,
-        null
+        null,
+        self._clusters
     );
 
     elmts.cancelButton.on('click', dismiss);

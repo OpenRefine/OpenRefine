@@ -221,6 +221,8 @@
     "core-dialogs/manage-clustering-functions": "Manage custom clustering functions",
     "core-dialogs/keying-functions": "Keying functions",
     "core-dialogs/distance-functions": "Distance functions",
+    "core-dialogs/clusters-preview": "Clusters preview",
+    "core-dialogs/expression-preview": "Expression preview",
     "core-dialogs/edit-function": "Edit function name and expression",
     "core-dialogs/edit-name": "Function name",
     "clustering-keyers/fingerprint": "Fingerprint",
