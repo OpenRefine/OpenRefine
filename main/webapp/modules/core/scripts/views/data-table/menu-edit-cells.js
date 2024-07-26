@@ -506,7 +506,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/cluster",
       label: $.i18n('core-views/cluster-edit'),
-      click: function() { new ClusteringDialog(column.name, "value"); }
+      click: function() { new ClusteringDialog(column, "value"); }
     },
     {},
     {

@@ -45,6 +45,21 @@ describe(__filename, function () {
         });
     });
 
+    it('Test the Add custom clustering function', function () {
+        cy.loadAndVisitProject(fixture);
+        cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);
+    
+        cy.get('.dialog-body button[bind="manageFunctionsBtn"]').click();
+        cy.get('#add-new-functions').click();
+        
+        cy.get('#expressionPreviewTextareaId').should('be.visible').type('value.length()');
+        cy.get('input[bind="functionNameInput"]').should('be.visible').type('length of the cell');
+        cy.get('button[bind="okButton"]').click();
+        
+        cy.get('.main-text').should('have.text', 'length of the cell');
+        cy.get(".sub-text").should('have.text',"value.length()")
+    });
+    
     it('Test the different clustering options for rendering and expected inputs', function () {
         cy.loadAndVisitProject(fixture);
         cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);

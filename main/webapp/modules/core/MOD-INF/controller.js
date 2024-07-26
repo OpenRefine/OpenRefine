@@ -537,7 +537,8 @@ function init() {
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
-      "scripts/dialogs/add-rows-dialog.js",
+      "scripts/dialogs/clustering-functions-dialog.js",
+      "scripts/dialogs/add-rows-dialog.js"
     ])
   );
 
@@ -569,6 +570,7 @@ function init() {
       "styles/views/data-table-view.css",
       "styles/views/column-join.css",
 
+      "styles/dialogs/clustering-functions-dialog.css",
       "styles/dialogs/expression-preview-dialog.css",
       "styles/dialogs/clustering-dialog.css",
       "styles/dialogs/scatterplot-dialog.css",
