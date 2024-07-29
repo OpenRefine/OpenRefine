@@ -47,7 +47,7 @@ public interface RecordVisitor {
     /**
      * @deprecated use {@link #visit(Project, int, Record)}
      */
-    @Deprecated
+    @Deprecated(since = "3.9")
     public boolean visit(
             Project project,
             Record record);
@@ -60,6 +60,7 @@ public interface RecordVisitor {
      * @param record
      *            the record to visit
      * @return true to abort visitation early - no further visit calls will be made
+     * @since 3.9
      */
     public default boolean visit(
             Project project,
