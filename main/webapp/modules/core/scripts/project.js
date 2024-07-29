@@ -304,8 +304,9 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
     pushFunction(Refine.reinitializeProjectData);
   }
   if (options.everythingChanged || options.modelsChanged || options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged) {
+    var preservePage = options.rowIdsPreserved && (options.recordIdsPreserved || ui.browsingEngine.getMode() === "row-based");
     pushFunction(function(onDone) {
-      ui.dataTableView.update(onDone);
+      ui.dataTableView.update(onDone, preservePage);
     });
     pushFunction(function(onDone) {
       ui.browsingEngine.update(onDone);
@@ -544,7 +545,11 @@ Refine.columnNameToColumnIndex = function(columnName) {
   return -1;
 };
 
-Refine.fetchRows = function(start, limit, onDone, sorting) {
+/*
+  Fetch rows after or before a given row id. The engine configuration can also
+  be used to set filters (facets) or switch between rows/records mode.
+*/
+Refine.fetchRows = function(paginationOptions, limit, onDone, sorting) {
   var body = {
     engine: JSON.stringify(ui.browsingEngine.getJSON())
   };
@@ -553,7 +558,7 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
   }
 
   $.post(
-    "command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }),
+    "command/core/get-rows?" + $.param({ ...paginationOptions, project: theProject.id, limit: limit }),
     body,
     function(data) {
       if(data.code === "error") {

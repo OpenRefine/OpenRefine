@@ -511,7 +511,7 @@ ClusteringDialog.prototype._apply = function(onDone) {
                 expression: this._expression,
                 edits: JSON.stringify(edits)
             },
-            { cellsChanged: true },
+            { cellsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
             {
                 onError: function(o) {
                     alert("Error: " + o.message);

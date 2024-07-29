@@ -74,7 +74,7 @@ public class ConjunctiveFilteredRows implements FilteredRows {
     }
 
     protected boolean visitRow(Project project, RowVisitor visitor, int rowIndex, Row row) {
-        return visitor.visit(project, rowIndex, row);
+        return visitor.visit(project, rowIndex, rowIndex, row);
     }
 
     protected boolean matchRow(Project project, int rowIndex, Row row) {

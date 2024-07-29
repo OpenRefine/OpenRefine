@@ -44,10 +44,7 @@ function DataTableView(div) {
   this._columnHeaderUIs = [];
   this._shownulls = false;
 
-  this._currentPageNumber = 1;
-  this._showRows(0);
-  
-  this._refocusPageInput = false;
+  this._showRows({start: 0});
 }
 
 DataTableView._extenders = [];
@@ -84,9 +81,18 @@ DataTableView.prototype.resize = function() {
   tableContainer.height((tableContainerIntendedHeight - tableContainerVPadding) + "px");
 };
 
-DataTableView.prototype.update = function(onDone) {
-  this._currentPageNumber = 1;
-  this._showRows(0, onDone);
+DataTableView.prototype.update = function(onDone, preservePage) {
+  var paginationOptions = {};
+  if (preservePage) {
+    if (theProject.rowModel.start !== undefined) {
+      paginationOptions.start = theProject.rowModel.start;
+    } else {
+      paginationOptions.end = theProject.rowModel.end;
+    }
+  } else {
+    paginationOptions.start = 0;
+  }
+  this._showRows(paginationOptions, onDone);
 };
 
 DataTableView.prototype.render = function() {
@@ -114,7 +120,6 @@ DataTableView.prototype.render = function() {
     '</div>'
   );
   var elmts = DOM.bind(html);
-  this._div.empty().append(html);
 
   ui.summaryBar.updateResultCount();
 
@@ -142,6 +147,7 @@ DataTableView.prototype.render = function() {
   }
 
   this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
+  this._div.empty().append(html);
 
   // show/hide null values in cells
   $(".data-table-null").toggle(self._shownulls);
@@ -167,14 +173,18 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
 DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
   var self = this;
 
-  self._lastPageNumber = Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) + 1;
-
-  var from = (theProject.rowModel.start + 1);
-  var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
+  var rowIds = theProject.rowModel.rows.map(row => row.k);
+  if (theProject.rowModel.start !== undefined) {
+     rowIds.push(theProject.rowModel.start);
+  } else {
+     rowIds.push(theProject.rowModel.end);
+  }
+  var minRowId = Math.min(... rowIds);
+  var maxRowId = Math.max(... rowIds);
 
   var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n('core-views/first')+'</a>').appendTo(pagingControls);
   var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n('core-views/previous')+'</a>').appendTo(pagingControls);
-  if (theProject.rowModel.start > 0) {
+  if (theProject.rowModel.previousPageEnd !== undefined) {
     firstPage.addClass("action").on('click',function(evt) { self._onClickFirstPage(this, evt); });
     previousPage.addClass("action").on('click',function(evt) { self._onClickPreviousPage(this, evt); });
   } else {
@@ -182,33 +192,20 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     previousPage.addClass("inaction");
   }
 
-  var pageControlsSpan = $('<span>').attr("id", "viewpanel-paging-current");
-  
-  var pageInputSize = 20 + (8 * ui.dataTableView._lastPageNumber.toString().length);
-  var currentPageInput = $('<input type="number">')
-    .on('change',function(evt) { self._onChangeGotoPage(this, evt); })
-    .on('keydown',function(evt) { self._onKeyDownGotoPage(this, evt); })
-    .attr("id", "viewpanel-paging-current-input")
+  var minRowInputSize = 20 + (8* theProject.rowModel.total.toString().length);
+  var minRowInput = $('<input type="number">')
+    .attr("id", "viewpanel-paging-current-min-row")
     .attr("min", 1)
-    .attr("max", self._lastPageNumber)
-    .attr("required", "required")
-    .val(self._currentPageNumber)
-    .css("width", pageInputSize +"px");
-    
-  pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber));
-  pageControlsSpan.appendTo(pagingControls);
+    .attr("max", theProject.rowModel.total)
+    .css("width", minRowInputSize)
+    .val(minRowId + 1)
+    .on('change', function(evt) { self._onChangeMinRow(this, evt); })
+    .appendTo(pagingControls);
+  $('<span>').addClass("viewpanel-pagingcount").html(" - " + (maxRowId + 1) + " ").appendTo(pagingControls);
 
-  $('span#currentPageInput').replaceWith($(currentPageInput));
-  
-  if(self._refocusPageInput == true) { 
-    self._refocusPageInput = false;
-    var currentPageInputForFocus = $('input#viewpanel-paging-current-input');
-    currentPageInputForFocus.ready(function(evt) { setTimeout(() => { currentPageInputForFocus.focus(); }, 250); });
-  }
-  
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
-  if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
+  if (theProject.rowModel.nextPageStart) {
     nextPage.addClass("action").on('click',function(evt) { self._onClickNextPage(this, evt); });
     lastPage.addClass("action").on('click',function(evt) { self._onClickLastPage(this, evt); });
   } else {
@@ -228,7 +225,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     } else {
       a.text(pageSize).addClass("action").on('click',function(evt) {
         self._pageSize = pageSize;
-        self.update();
+        self.update(undefined, true);
       });
     }
   };
@@ -491,9 +488,9 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   }
 };
 
-DataTableView.prototype._showRows = function(start, onDone) {
+DataTableView.prototype._showRows = function(paginationOptions, onDone) {
   var self = this;
-  Refine.fetchRows(start, this._pageSize, function() {
+  Refine.fetchRows(paginationOptions, this._pageSize, function() {
     self.render();
 
     if (onDone) {
@@ -502,60 +499,33 @@ DataTableView.prototype._showRows = function(start, onDone) {
   }, this._sorting);
 };
 
-DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
-  var gotoPageNumber = parseInt($('input#viewpanel-paging-current-input').val());
-  
-  if(typeof gotoPageNumber != "number" || isNaN(gotoPageNumber) || gotoPageNumber == "") { 
-    $('input#viewpanel-paging-current-input').val(this._currentPageNumber); 
-    return;
-  }
-  
-  if(gotoPageNumber > this._lastPageNumber) gotoPageNumber = this._lastPageNumber;
-  if(gotoPageNumber < 1) gotoPageNumber = 1;
-  
-  this._currentPageNumber = gotoPageNumber;
-  this._showRows((gotoPageNumber - 1) * this._pageSize);
-};
-
-DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
-  var keyDownCode = evt.key;
-  
-  if(['ArrowUp', 'ArrowDown'].indexOf(keyDownCode) == -1) return;
-  if(self._refocusPageInput == true) return; 
-
-  evt.preventDefault();
-  this._refocusPageInput = true;
-  
-  var newPageValue = $('input#viewpanel-paging-current-input')[0].value;
-  if(keyDownCode == 'ArrowUp') {
-    if(newPageValue <= 1) return;
-    this._onClickPreviousPage(elmt, evt);
-  }
-    
-  if(keyDownCode == 'ArrowDown') {
-    if(newPageValue >= this._lastPageNumber) return;
-    this._onClickNextPage(elmt, evt);
-  }
-};
-
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
-  this._currentPageNumber--;
-  this._showRows(theProject.rowModel.start - this._pageSize);
+  this._showRows({end: theProject.rowModel.previousPageEnd});
 };
 
 DataTableView.prototype._onClickNextPage = function(elmt, evt) {
-  this._currentPageNumber++;
-  this._showRows(theProject.rowModel.start + this._pageSize);
+  this._showRows({start: theProject.rowModel.nextPageStart});
 };
 
 DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
-  this._currentPageNumber = 1;
-  this._showRows(0);
+  this._showRows({start: 0});
 };
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-  this._currentPageNumber = this._lastPageNumber;
-  this._showRows((this._lastPageNumber - 1) * this._pageSize);
+  this._showRows({end: theProject.rowModel.totalRows});
+};
+
+DataTableView.prototype._onChangeMinRow = function(elmt, evt) {
+  var input = $('#viewpanel-paging-current-min-row');
+  var newMinRow = input.val();
+  if (newMinRow <= 0) {
+    newMinRow = 1;
+    input.val(newMinRow);
+  } else if (newMinRow > theProject.rowModel.total) {
+    newMinRow = theProject.rowModel.total;
+    input.val(theProject.rowModel.total);
+  }
+  this._showRows({start: newMinRow - 1});
 };
 
 DataTableView.prototype._getSortingCriteriaCount = function() {
@@ -891,14 +861,14 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/star-rows'),
           id: "core/star-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
+            Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {
           label: $.i18n('core-views/unstar-rows'),
           id: "core/unstar-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
+            Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {},
@@ -906,14 +876,14 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/flag-rows'),
           id: "core/flag-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
+            Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {
           label: $.i18n('core-views/unflag-rows'),
           id: "core/unflag-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
+            Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {},
