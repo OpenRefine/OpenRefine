@@ -117,7 +117,7 @@ public class GetRowsCommandTest extends RefineTest {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\" : 2,\n" +
+                "       \"nextPageStart\" : 2,\n" +
                 "       \"total\" : 5,\n" +
                 "       \"totalRows\" : 5\n" +
                 "     }";
@@ -158,7 +158,7 @@ public class GetRowsCommandTest extends RefineTest {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\": 2,\n" +
+                "       \"nextPageStart\": 2,\n" +
                 "       \"total\" : 5,\n" +
                 "       \"totalRows\" : 5\n" +
                 "     }";
@@ -189,8 +189,8 @@ public class GetRowsCommandTest extends RefineTest {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"end\" : 2,\n" +
-                "       \"previousPageId\": 1,\n" +
-                "       \"nextPageId\": 2,\n" +
+                "       \"previousPageEnd\": 1,\n" +
+                "       \"nextPageStart\": 2,\n" +
                 "       \"total\" : 5,\n" +
                 "       \"totalRows\" : 5\n" +
                 "     }";
@@ -231,7 +231,7 @@ public class GetRowsCommandTest extends RefineTest {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"end\" : 2,\n" +
-                "       \"nextPageId\": 2,\n" +
+                "       \"nextPageStart\": 2,\n" +
                 "       \"total\" : 5,\n" +
                 "       \"totalRows\" : 5\n" +
                 "     }";
@@ -250,7 +250,7 @@ public class GetRowsCommandTest extends RefineTest {
                 + "       \"filtered\" : 5,\n"
                 + "       \"limit\" : 3,\n"
                 + "       \"mode\" : \"row-based\",\n"
-                + "       \"nextPageId\" : 2,\n"
+                + "       \"nextPageStart\" : 2,\n"
                 + "       \"pool\" : {\n"
                 + "         \"recons\" : { }\n"
                 + "       },\n"
@@ -317,7 +317,7 @@ public class GetRowsCommandTest extends RefineTest {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\" : 2,\n" +
+                "       \"nextPageStart\" : 2,\n" +
                 "       \"total\" : 3,\n" +
                 "       \"totalRows\": 5\n" +
                 "     }";
@@ -380,7 +380,7 @@ public class GetRowsCommandTest extends RefineTest {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"nextPageId\" : 4,\n" +
+                "       \"nextPageStart\" : 4,\n" +
                 "       \"total\" : 3,\n" +
                 "       \"totalRows\": 5\n" +
                 "     }";
@@ -424,8 +424,8 @@ public class GetRowsCommandTest extends RefineTest {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 1,\n" +
-                "       \"previousPageId\" : 1,\n" +
-                "       \"nextPageId\" : 4,\n" +
+                "       \"previousPageEnd\" : 1,\n" +
+                "       \"nextPageStart\" : 4,\n" +
                 "       \"total\" : 3,\n" +
                 "       \"totalRows\": 5\n" +
                 "     }";
@@ -469,8 +469,8 @@ public class GetRowsCommandTest extends RefineTest {
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"end\" : 4,\n" +
-                "       \"previousPageId\" : 2,\n" +
-                "       \"nextPageId\" : 4,\n" +
+                "       \"previousPageEnd\" : 2,\n" +
+                "       \"nextPageStart\" : 4,\n" +
                 "       \"total\" : 3,\n" +
                 "       \"totalRows\": 5\n" +
                 "     }";
@@ -488,11 +488,11 @@ public class GetRowsCommandTest extends RefineTest {
                 + "       \"filtered\" : 3,\n"
                 + "       \"limit\" : 1,\n"
                 + "       \"mode\" : \"record-based\",\n"
-                + "       \"nextPageId\" : 3,\n"
+                + "       \"nextPageStart\" : 3,\n"
                 + "       \"pool\" : {\n"
                 + "         \"recons\" : { }\n"
                 + "       },\n"
-                + "       \"previousPageId\" : 1,\n"
+                + "       \"previousPageEnd\" : 1,\n"
                 + "       \"rows\" : [ {\n"
                 + "         \"cells\" : [ {\n"
                 + "           \"v\" : \"d\"\n"

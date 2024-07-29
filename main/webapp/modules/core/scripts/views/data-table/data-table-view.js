@@ -184,7 +184,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
 
   var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n('core-views/first')+'</a>').appendTo(pagingControls);
   var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n('core-views/previous')+'</a>').appendTo(pagingControls);
-  if (theProject.rowModel.previousPageId !== undefined) {
+  if (theProject.rowModel.previousPageEnd !== undefined) {
     firstPage.addClass("action").on('click',function(evt) { self._onClickFirstPage(this, evt); });
     previousPage.addClass("action").on('click',function(evt) { self._onClickPreviousPage(this, evt); });
   } else {
@@ -205,7 +205,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
 
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
-  if (theProject.rowModel.nextPageId) {
+  if (theProject.rowModel.nextPageStart) {
     nextPage.addClass("action").on('click',function(evt) { self._onClickNextPage(this, evt); });
     lastPage.addClass("action").on('click',function(evt) { self._onClickLastPage(this, evt); });
   } else {
@@ -500,11 +500,11 @@ DataTableView.prototype._showRows = function(paginationOptions, onDone) {
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
-  this._showRows({end: theProject.rowModel.previousPageId});
+  this._showRows({end: theProject.rowModel.previousPageEnd});
 };
 
 DataTableView.prototype._onClickNextPage = function(elmt, evt) {
-  this._showRows({start: theProject.rowModel.nextPageId});
+  this._showRows({start: theProject.rowModel.nextPageStart});
 };
 
 DataTableView.prototype._onClickFirstPage = function(elmt, evt) {

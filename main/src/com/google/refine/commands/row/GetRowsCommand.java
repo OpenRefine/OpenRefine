@@ -144,18 +144,18 @@ public class GetRowsCommand extends Command {
         /**
          * The value to use as 'end' when fetching the page before this one. Can be null if there is no such page.
          */
-        @JsonProperty("previousPageId")
+        @JsonProperty("previousPageEnd")
         @JsonInclude(Include.NON_NULL)
-        protected final Integer previousPageId;
+        protected final Integer previousPageEnd;
         /**
          * The value to use as 'start' when fetching the page after this one. Can be null if there is no such page.
          */
-        @JsonProperty("nextPageId")
+        @JsonProperty("nextPageStart")
         @JsonInclude(Include.NON_NULL)
-        protected final Integer nextPageId;
+        protected final Integer nextPageStart;
 
         protected JsonResult(Mode mode, List<WrappedRow> rows, int filtered,
-                int totalCount, int totalRows, int start, int end, int limit, Pool pool, Integer previousPageId, Integer nextPageId) {
+                int totalCount, int totalRows, int start, int end, int limit, Pool pool, Integer previousPageEnd, Integer nextPageStart) {
             this.mode = mode;
             this.rows = rows;
             this.filtered = filtered;
@@ -165,8 +165,8 @@ public class GetRowsCommand extends Command {
             this.end = end == -1 ? null : end;
             this.limit = limit;
             this.pool = pool;
-            this.previousPageId = previousPageId;
-            this.nextPageId = nextPageId;
+            this.previousPageEnd = previousPageEnd;
+            this.nextPageStart = nextPageStart;
         }
     }
 
@@ -270,26 +270,26 @@ public class GetRowsCommand extends Command {
             List<WrappedRow> wrappedRows = rwv.results;
 
             // Compute the indices of the previous and next pages
-            Integer previousPageId = null;
-            Integer nextPageId = null;
+            Integer previousPageEnd = null;
+            Integer nextPageStart = null;
             if (start != -1) {
                 if (start > 0) {
-                    previousPageId = start;
+                    previousPageEnd = start;
                 }
                 if (!wrappedRows.isEmpty()) {
-                    nextPageId = wrappedRows.get(wrappedRows.size() - 1).paginationIndex + 1;
+                    nextPageStart = wrappedRows.get(wrappedRows.size() - 1).paginationIndex + 1;
                 }
             } else {
                 if (!wrappedRows.isEmpty() && wrappedRows.get(0).paginationIndex > 0) {
-                    previousPageId = wrappedRows.get(0).paginationIndex;
+                    previousPageEnd = wrappedRows.get(0).paginationIndex;
                 }
-                nextPageId = end;
+                nextPageStart = end;
             }
 
             JsonResult result = new JsonResult(engine.getMode(),
                     rwv.results, rwv.total,
                     engine.getMode() == Mode.RowBased ? project.rows.size() : project.recordModel.getRecordCount(),
-                    rwv.totalRows, start, end, limit, pool, previousPageId, nextPageId);
+                    rwv.totalRows, start, end, limit, pool, previousPageEnd, nextPageStart);
 
             respondJSON(response, result);
         } catch (Exception e) {
