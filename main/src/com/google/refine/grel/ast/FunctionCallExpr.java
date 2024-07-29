@@ -33,11 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.functions.Get;
 import com.google.refine.grel.Function;
 
 /**
@@ -70,6 +75,27 @@ public class FunctionCallExpr implements Evaluable {
         } catch (Exception e) {
             return new EvalError(e);
         }
+    }
+
+    @Override
+    public final Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
+        // special case to handle "get(cells, "foo")" which only depends on the "foo" column
+        // even though the cells variable has a greater reach
+        if (_function instanceof Get && _args.length == 2 && (new VariableExpr("cells")).equals(_args[0]) &&
+                _args[1] != null && _args[1] instanceof LiteralExpr) {
+            String columnName = ((LiteralExpr) _args[1])._value.toString();
+            return Optional.of(Collections.singleton(columnName));
+        }
+        // TODO distinguish functions which are "pure" and those which access external data, like cross or facetCount
+        Set<String> dependencies = new HashSet<>();
+        for (Evaluable ev : _args) {
+            Optional<Set<String>> deps = ev.getColumnDependencies(baseColumn);
+            if (deps.isEmpty()) {
+                return Optional.empty();
+            }
+            dependencies.addAll(deps.get());
+        }
+        return Optional.of(dependencies);
     }
 
     @Override

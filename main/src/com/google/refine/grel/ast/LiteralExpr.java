@@ -33,7 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 
@@ -53,6 +56,11 @@ public class LiteralExpr implements Evaluable {
     @Override
     public Object evaluate(Properties bindings) {
         return _value;
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
+        return Optional.of(Collections.emptySet());
     }
 
     @Override
