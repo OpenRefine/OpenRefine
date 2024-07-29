@@ -54,8 +54,8 @@ abstract public class NumericBinIndex {
 
     protected int _totalValueCount;
     protected int _numbericValueCount;
-    protected RangeData _rangeData;
-
+    protected RangeData _rangeData=new RangeData(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1);
+    protected int[] _bins;
     protected int _numericRowCount;
     protected int _nonNumericRowCount;
     protected int _blankRowCount;
@@ -69,9 +69,9 @@ abstract public class NumericBinIndex {
     abstract protected void iterate(Project project, RowEvaluable rowEvaluable, List<Double> allValues);
 
     public NumericBinIndex(Project project, RowEvaluable rowEvaluable) {
-        _min = Double.POSITIVE_INFINITY;
-        _max = Double.NEGATIVE_INFINITY;
-
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
+        double step=0;
         // TODO: An array of doubles would be more memmory efficient - double[] allValues
         List<Double> allValues = new ArrayList<Double>();
 
@@ -79,48 +79,49 @@ abstract public class NumericBinIndex {
 
         _numbericValueCount = allValues.size();
 
-        if (_min >= _max) {
-            _step = 1;
-            _min = Math.min(_min, _max);
-            _max = _min + _step;
+        if (min >= max) {
+            step = 1;
+            min = Math.min(min, max);
+            max = min + step;
             _bins = new int[1];
 
             return;
         }
 
-        double diff = _max - _min;
+        double diff = max - min;
 
-        _step = 1;
+        step = 1;
         if (diff > 10) {
-            while (_step * 100 < diff) {
-                _step *= 10;
+            while (step * 100 < diff) {
+                step *= 10;
             }
         } else {
-            while (_step * 100 > diff) {
-                _step /= 10;
+            while (step * 100 > diff) {
+                step /= 10;
             }
         }
 
-        double originalMax = _max;
-        _min = (Math.floor(_min / _step) * _step);
-        _max = (Math.ceil(_max / _step) * _step);
+        double originalMax = max;
+        min = (Math.floor(min / step) * step);
+        max = (Math.ceil(max / step) * step);
 
-        double binCount = (_max - _min) / _step;
+        double binCount = (max - min) / step;
         if (binCount > 100) {
-            _step *= 2;
+            step *= 2;
             binCount = (binCount + 1) / 2;
         }
 
-        if (_max <= originalMax) {
-            _max += _step;
+        if (max <= originalMax) {
+            max += step;
             binCount++;
         }
 
         _bins = new int[(int) Math.round(binCount)];
         for (double d : allValues) {
-            int bin = Math.max((int) Math.floor((d - _min) / _step), 0);
+            int bin = Math.max((int) Math.floor((d - min) / step), 0);
             _bins[bin]++;
         }
+        _rangeData = new RangeData(min, max, step);
     }
 
     public boolean isNumeric() {
@@ -128,15 +129,15 @@ abstract public class NumericBinIndex {
     }
 
     public double getMin() {
-        return _min;
+        return _rangeData.getMin();
     }
 
     public double getMax() {
-        return _max;
+        return _rangeData.getMax();
     }
 
     public double getStep() {
-        return _step;
+        return _rangeData.getStep();
     }
 
     public int[] getBins() {

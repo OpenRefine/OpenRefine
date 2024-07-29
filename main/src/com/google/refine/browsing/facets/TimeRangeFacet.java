@@ -37,6 +37,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
@@ -46,6 +47,7 @@ import com.google.refine.browsing.filters.AnyRowRecordFilter;
 import com.google.refine.browsing.filters.ExpressionTimeComparisonRowFilter;
 import com.google.refine.browsing.util.ExpressionBasedRowEvaluable;
 import com.google.refine.browsing.util.ExpressionTimeValueBinner;
+import com.google.refine.browsing.util.RangeData;
 import com.google.refine.browsing.util.RowEvaluable;
 import com.google.refine.browsing.util.TimeBinIndex;
 import com.google.refine.browsing.util.TimeBinRecordIndex;
@@ -112,7 +114,7 @@ public class TimeRangeFacet implements Facet {
     protected int _cellIndex;
     protected Evaluable _eval;
     protected String _errorMessage;
-
+    @JsonUnwrapped
     protected RangeData _rangeData;
     protected int[] _baseBins;
     protected int[] _bins;
@@ -168,7 +170,7 @@ public class TimeRangeFacet implements Facet {
     @JsonInclude(Include.NON_NULL)
     public Double getMin() {
         if (getError() == null) {
-            return _min;
+            return _rangeData.getMin();
         }
         return null;
     }
@@ -177,7 +179,7 @@ public class TimeRangeFacet implements Facet {
     @JsonInclude(Include.NON_NULL)
     public Double getMax() {
         if (getError() == null) {
-            return _max;
+            return _rangeData.getMax();
         }
         return null;
     }
@@ -185,7 +187,7 @@ public class TimeRangeFacet implements Facet {
     @JsonProperty("step")
     @JsonInclude(Include.NON_NULL)
     public Double getStep() {
-        return _step;
+        return _rangeData.getStep();
     }
 
     @JsonProperty("bins")
@@ -306,9 +308,7 @@ public class TimeRangeFacet implements Facet {
     }
 
     protected void retrieveDataFromBaseBinIndex(TimeBinIndex index) {
-        _min = index.getMin();
-        _max = index.getMax();
-        _step = index.getStep();
+        _rangeData = new RangeData(index.getMin(), index.getMax(), index.getStep());
         _baseBins = index.getBins();
 
         _baseTimeCount = index.getTimeRowCount();
@@ -317,11 +317,11 @@ public class TimeRangeFacet implements Facet {
         _baseErrorCount = index.getErrorRowCount();
 
         if (_config.isSelected()) {
-            _config._from = Math.max(_config._from, _min);
-            _config._to = Math.min(_config._to, _max);
+            _config._from = Math.max(_config._from, _rangeData.getMin());
+            _config._to = Math.min(_config._to, _rangeData.getMax());
         } else {
-            _config._from = _min;
-            _config._to = _max;
+            _config._from = _rangeData.getMin();
+            _config._to = _rangeData.getMax();
         }
     }
 

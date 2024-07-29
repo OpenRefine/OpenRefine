@@ -1,8 +1,8 @@
+package com.google.refine.browsing.util;
 public class RangeData {
     private double min;
     private double max;
     private double step;
-    private int[] bins;
 
     public RangeData(double min, double max, double step) {
         this.min = min;
@@ -31,10 +31,6 @@ public class RangeData {
         return step;
     }
 
-    public int[] getBins() {
-        return bins;
-    }
 
-    // Additional methods for managing bins
-    // ...
+
 }

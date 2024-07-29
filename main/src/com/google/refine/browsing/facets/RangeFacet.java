@@ -50,6 +50,7 @@ import com.google.refine.browsing.util.ExpressionNumericValueBinner;
 import com.google.refine.browsing.util.NumericBinIndex;
 import com.google.refine.browsing.util.NumericBinRecordIndex;
 import com.google.refine.browsing.util.NumericBinRowIndex;
+import com.google.refine.browsing.util.RangeData;
 import com.google.refine.browsing.util.RowEvaluable;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
@@ -197,14 +198,14 @@ public class RangeFacet implements Facet {
 
     @JsonIgnore
     public boolean isFiniteRange() {
-        return !Double.isInfinite(_min) && !Double.isInfinite(_max);
+        return _rangeData.isFiniteRange();
     }
 
     @JsonProperty(MIN)
     @JsonInclude(Include.NON_NULL)
     public Double getMin() {
         if (getError() == null) {
-            return _min;
+            return _rangeData.getMin();
         }
         return null;
     }
@@ -213,7 +214,7 @@ public class RangeFacet implements Facet {
     @JsonInclude(Include.NON_NULL)
     public Double getMax() {
         if (getError() == null) {
-            return _max;
+            return _rangeData.getMax();
         }
         return null;
     }
@@ -222,7 +223,7 @@ public class RangeFacet implements Facet {
     @JsonInclude(Include.NON_NULL)
     public Double getStep() {
         if (getError() == null) {
-            return _step;
+            return _rangeData.getStep();
         }
         return null;
     }
@@ -357,9 +358,7 @@ public class RangeFacet implements Facet {
     }
 
     protected void retrieveDataFromBaseBinIndex(NumericBinIndex index) {
-        _min = index.getMin();
-        _max = index.getMax();
-        _step = index.getStep();
+        _rangeData = new RangeData(index.getMin(), index.getMax(), index.getStep());
         _baseBins = index.getBins();
 
         _baseNumericCount = index.getNumericRowCount();
@@ -368,11 +367,11 @@ public class RangeFacet implements Facet {
         _baseErrorCount = index.getErrorRowCount();
 
         if (_config._selected) {
-            _config._from = Math.max(_config._from, _min);
-            _config._to = Math.min(_config._to, _max);
+            _config._from = Math.max(_config._from, _rangeData.getMin());
+            _config._to = Math.min(_config._to, _rangeData.getMax());
         } else {
-            _config._from = _min;
-            _config._to = _max;
+            _config._from = _rangeData.getMin() ;
+            _config._to = _rangeData.getMax();
         }
     }
 
