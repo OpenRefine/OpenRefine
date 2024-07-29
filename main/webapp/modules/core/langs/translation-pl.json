@@ -806,7 +806,6 @@
     "core-project/use-to-select": "Użyj aspektów i filtrów, aby wybrać podzbiory danych, na których chcesz działać. Wybierz metody aspektów i filtrowania z menu u góry każdej kolumny danych.",
     "core-views/warn-of-pending-sort": "Trwa oczekiwanie na sortowanie. Dane widoczne na ekranie mogą nie odzwierciedlać danych, na których będzie działać ta operacja.",
     "core-views/discard-judg2": "Odrzuć rozstrzygnięcia uzgadniania w tej kolumnie dla wszystkich bieżących filtrowanych wierszy",
-    "core-views/goto-page": "$1 z $2 {{plural:$2|strona|strony}}",
     "core-views/collapse-expand": "Zwiń/rozwiń kolumny, aby wygodniej przeglądać dane",
     "core-views/judgment": "$1:rozstrzygnięcie",
     "core-views/judg-hist": "Znacznik czasowy działania rozstrzygnięcia",

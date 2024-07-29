@@ -710,7 +710,6 @@
     "core-index/change-metadata-value": "Alterar valor da chave do metadado",
     "core-views/text-length-facet": "Faceta pelo comprimento do texto",
     "core-views/by-number-rev-example": "[11AbcDef, 22]",
-    "core-views/goto-page": "$1 de $2 {{plural:$2|página|páginas}}",
     "core-views/previous": "anterior",
     "core-views/list-int": "Lista de inteiros separados por vírgulas, ex: 5, 7, 15",
     "core-index-parser/json-parser": "Clique no primeiro nó do JSON { } correspondente ao primeiro registo a carregar.",
