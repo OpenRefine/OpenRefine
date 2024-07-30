@@ -20,7 +20,6 @@ describe(__filename, function () {
     // Since the quotes in our input file aren't escaped, they aren't legal for any separator except comma(,)
     cy.get('input[bind="processQuoteMarksCheckbox"]').uncheck();
     cy.get('[type="radio"]').check('tab');
-    cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr')
@@ -29,7 +28,6 @@ describe(__filename, function () {
 
     cy.get('input[bind="columnSeparatorInput"]').type('{backspace};');
     cy.get('[type="radio"]').check('custom');
-    cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr')
@@ -39,7 +37,6 @@ describe(__filename, function () {
     // Re-enable quotes for CSV case since they're now in a legal configuration
     cy.get('input[bind="processQuoteMarksCheckbox"]').check();
     cy.get('[type="radio"]').check('comma');
-    cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
@@ -51,7 +48,6 @@ describe(__filename, function () {
 
     cy.get('input[bind="columnNamesCheckbox"]').check();
 
-    cy.waitForImportUpdate();
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', 'NDB_No');
     cy.get('table.data-table tr').eq(1).should('to.contain', 'Shrt_Desc');
@@ -110,7 +106,6 @@ describe(__filename, function () {
 
     cy.get('input[bind="ignoreInput"]').type('{backspace}1');
     cy.get('input[bind="ignoreCheckbox"]').check();
-    cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
@@ -123,10 +118,8 @@ describe(__filename, function () {
   it('Tests parse-next of parsing options', function () {
     navigateToProjectPreview();
     cy.get('input[bind="columnNamesCheckbox"]').check();
-    cy.waitForImportUpdate();
     cy.get('input[bind="headerLinesInput"]').type('{backspace}0');
     cy.get('input[bind="headerLinesCheckbox"]').check();
-    cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', 'NDB_No');
@@ -138,7 +131,6 @@ describe(__filename, function () {
     navigateToProjectPreview();
     cy.get('input[bind="skipInput"]').type('{backspace}1');
     cy.get('input[bind="skipCheckbox"]').check();
-    cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
@@ -152,7 +144,6 @@ describe(__filename, function () {
     navigateToProjectPreview();
     cy.get('input[bind="limitInput"]').type('{backspace}1');
     cy.get('input[bind="limitCheckbox"]').check();
-    cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
     cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
@@ -165,7 +156,6 @@ describe(__filename, function () {
   it('Tests attempt to parse into numbers of parsing options', function () {
     navigateToProjectPreview();
     cy.get('input[bind="guessCellValueTypesCheckbox"]').check();
-    cy.waitForImportUpdate();
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
     cy.get('table.data-table tr').eq(1).should('to.contain', '717');

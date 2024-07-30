@@ -276,22 +276,6 @@ Cypress.Commands.add('waitForOrOperation', () => {
 });
 
 /**
- * Wait for OpenRefine parsing options to be updated
- *
- * @deprecated
- *
- * NOTE: This command is unreliable because if you call it after starting an operation e.g. with a click(), the loading
- * indicator may have come and gone already by the time waitForImportUpdate() is called, causing the cypress test to
- * wait forever on ('#or-import-updating').should('be.visible') until it fails due to timeout.
- *
- */
-Cypress.Commands.add('waitForImportUpdate', () => {
-  cy.get('#or-import-updating').should('be.visible');
-  cy.get('#or-import-updating').should('not.be.visible');
-  cy.wait(1500); // eslint-disable-line
-});
-
-/**
  * Utility method to fill something into the expression input
  * Need to wait for OpenRefine to preview the result, hence the cy.wait
  */
