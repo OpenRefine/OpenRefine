@@ -54,7 +54,7 @@ abstract public class NumericBinIndex {
 
     protected int _totalValueCount;
     protected int _numbericValueCount;
-    protected RangeData _rangeData=new RangeData(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1);
+    protected RangeData _rangeData = new RangeData(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1);
     protected int[] _bins;
     protected int _numericRowCount;
     protected int _nonNumericRowCount;
@@ -71,7 +71,7 @@ abstract public class NumericBinIndex {
     public NumericBinIndex(Project project, RowEvaluable rowEvaluable) {
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
-        double step=0;
+        double step = 0;
         // TODO: An array of doubles would be more memmory efficient - double[] allValues
         List<Double> allValues = new ArrayList<Double>();
 

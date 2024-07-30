@@ -1,5 +1,8 @@
+
 package com.google.refine.browsing.util;
+
 public class RangeData {
+
     private double min;
     private double max;
     private double step;
@@ -30,7 +33,5 @@ public class RangeData {
     public double getStep() {
         return step;
     }
-
-
 
 }

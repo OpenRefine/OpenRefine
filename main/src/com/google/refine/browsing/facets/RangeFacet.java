@@ -370,7 +370,7 @@ public class RangeFacet implements Facet {
             _config._from = Math.max(_config._from, _rangeData.getMin());
             _config._to = Math.min(_config._to, _rangeData.getMax());
         } else {
-            _config._from = _rangeData.getMin() ;
+            _config._from = _rangeData.getMin();
             _config._to = _rangeData.getMax();
         }
     }
