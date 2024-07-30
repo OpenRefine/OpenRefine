@@ -81,6 +81,15 @@ public class RowAdditionChange implements Change {
     @Override
     public void save(Writer writer, Properties options) throws IOException {
 
+        writeFieldAndValue(writer);
+        for (Row row : _additionalRows) {
+            row.save(writer, options);
+            writer.write('\n');
+        }
+        writer.write(EOC + "\n");
+    }
+
+    private void writeFieldAndValue(Writer writer) throws IOException {
         writer.write(INDEX_FIELD + "=");
         writer.write(Integer.toString(_insertionIndex));
         writer.write('\n');
@@ -88,11 +97,6 @@ public class RowAdditionChange implements Change {
         writer.write(COUNT_FIELD + "=");
         writer.write(Integer.toString(_additionalRows.size()));
         writer.write('\n');
-        for (Row row : _additionalRows) {
-            row.save(writer, options);
-            writer.write('\n');
-        }
-        writer.write(EOC + "\n");
     }
 
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
@@ -102,21 +106,27 @@ public class RowAdditionChange implements Change {
 
         String line;
         while ((line = reader.readLine()) != null && !EOC.equals(line)) {
-            int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
-
-            if (INDEX_FIELD.contentEquals(field)) {
-                index = Integer.parseInt(line.substring(equal + 1));
-            } else if (COUNT_FIELD.contentEquals(field)) {
-                count = Integer.parseInt(line.substring(equal + 1));
-                for (int i = 0; i < count; i++) {
-                    if ((line = reader.readLine()) != null) {
-                        rows.add(Row.load(line, pool));
-                    }
-                }
-            }
+            index = processLine(reader, pool, rows, index, line);
         }
 
         return new RowAdditionChange(rows, index);
+    }
+
+    private static int processLine(LineNumberReader reader, Pool pool, List<Row> rows, int index, String line) throws IOException {
+        int count;
+        int equal = line.indexOf('=');
+        CharSequence field = line.subSequence(0, equal);
+
+        if (INDEX_FIELD.contentEquals(field)) {
+            index = Integer.parseInt(line.substring(equal + 1));
+        } else if (COUNT_FIELD.contentEquals(field)) {
+            count = Integer.parseInt(line.substring(equal + 1));
+            for (int i = 0; i < count; i++) {
+                if ((line = reader.readLine()) != null) {
+                    rows.add(Row.load(line, pool));
+                }
+            }
+        }
+        return index;
     }
 }
