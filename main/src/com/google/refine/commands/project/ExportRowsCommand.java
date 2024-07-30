@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.net.PercentEscaper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,9 +108,22 @@ public class ExportRowsCommand extends Command {
             if (!"true".equals(preview)) {
                 String path = request.getPathInfo();
                 String filename = path.substring(path.lastIndexOf('/') + 1);
-                PercentEscaper escaper = new PercentEscaper("", false);
-                filename = escaper.escape(filename);
-                response.setHeader("Content-Disposition", "attachment; filename=" + filename + "; filename*=utf-8' '" + filename);
+                String userAgent = request.getHeader("User-Agent");
+                if (userAgent != null && userAgent.contains("Safari/") && !userAgent.contains("Chrome/")
+                        && !userAgent.contains("Chromium/")) {
+                    // Safari doesn't support rfc5897 and just wants straight UTF-8
+                    response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+                } else {
+                    // We use the full suite of rc5987 safe characters even though some of them might not make sense
+                    // in a filename. The browser will drop any unsafe characters before saving the file.
+                    PercentEscaper escaper = new PercentEscaper("!#$&+-.^_`|~", false);
+                    // Fallback printable ASCII filename in case browser doesn't understand filename*
+                    // (percent encoded, just in case)
+                    String asciiFilename = escaper.escape(StringUtils.stripAccents(filename).replaceAll("[^ -~]", " "));
+                    String rfc5987Filename = escaper.escape(filename);
+                    response.setHeader("Content-Disposition",
+                            "attachment; filename=" + asciiFilename + "; filename*=UTF-8' '" + rfc5987Filename);
+                }
             }
 
             if (exporter instanceof WriterExporter) {
