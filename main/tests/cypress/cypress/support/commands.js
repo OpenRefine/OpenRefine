@@ -10,79 +10,8 @@
 
 import 'cypress-file-upload';
 
-// /**
-//  * Reconcile a column
-//  * Internally using the "apply" behavior for not having to go through the whole user interface
-//  */
-// Cypress.Commands.add('reconcileColumn', (columnName, autoMatch = true) => {
-//   cy.setPreference(
-//     'reconciliation.standardServices',
-//     encodeURIComponent(
-//       JSON.stringify([
-//         {
-//           name: 'CSV Reconciliation service',
-//           identifierSpace: 'http://localhost:8000/',
-//           schemaSpace: 'http://localhost:8000/',
-//           defaultTypes: [],
-//           view: { url: 'http://localhost:8000/view/{{id}}' },
-//           preview: {
-//             width: 500,
-//             url: 'http://localhost:8000/view/{{id}}',
-//             height: 350,
-//           },
-//           suggest: {
-//             entity: {
-//               service_url: 'http://localhost:8000',
-//               service_path: '/suggest',
-//               flyout_service_url: 'http://localhost:8000',
-//               flyout_sercice_path: '/flyout',
-//             },
-//           },
-//           url: 'http://localhost:8000/reconcile',
-//           ui: { handler: 'ReconStandardServicePanel', access: 'jsonp' },
-//         },
-//       ])
-//     )
-//   ).then(() => {
-//     const apply = [
-//       {
-//         op: 'core/recon',
-//         engineConfig: {
-//           facets: [],
-//           mode: 'row-based',
-//         },
-//         columnName: columnName,
-//         config: {
-//           mode: 'standard-service',
-//           service: 'http://localhost:8000/reconcile',
-//           identifierSpace: 'http://localhost:8000/',
-//           schemaSpace: 'http://localhost:8000/',
-//           type: {
-//             id: '/csv-recon',
-//             name: 'CSV-recon',
-//           },
-//           autoMatch: autoMatch,
-//           columnDetails: [],
-//           limit: 0,
-//         },
-//         description: 'Reconcile cells in column species to type /csv-recon',
-//       },
-//     ];
-//     cy.get('a#or-proj-undoRedo').click();
-//     cy.get('#refine-tabs-history .history-panel-controls')
-//       .contains('Apply')
-//       .click();
-//     cy.get('.dialog-container .history-operation-json').invoke(
-//       'val',
-//       JSON.stringify(apply)
-//     );
-//     cy.get('.dialog-container button[bind="applyButton"]').click();
-//   });
-// });
-
 /**
- * Reconcile a column
- * Internally using the "apply" behavior for not having to go through the whole user interface
+ * Check that a column is reconciled
  */
 Cypress.Commands.add('assertColumnIsReconciled', (columnName) => {
   cy.get(
