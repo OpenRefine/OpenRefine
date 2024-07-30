@@ -228,7 +228,7 @@ Cypress.Commands.add('assertGridEquals', (values) => {
   cy.get('table.data-table').should((table) => {
     const headers = Cypress.$('table.data-table th')
       .filter(function (index, element) {
-        return element.innerText != 'All';
+        return element.innerText !== 'All';
       })
       .map(function (index, element) {
         return element.innerText;
@@ -403,9 +403,9 @@ Cypress.Commands.add(
 
 /**
  * Performs drag and drop on target and source item
- * sourcSelector jquery selector for the element to be dragged
- * targetSelector jquery selector for the element to be dropped on
- * position position relative to the target element to perform the drop
+ * sourceSelector - jquery selector for the element to be dragged
+ * targetSelector - jquery selector for the element to be dropped on
+ * position - position relative to the target element to perform the drop
  */
 Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector, position = 'center') => {
   cy.get(sourceSelector).trigger('mousedown', { which: 1 });
