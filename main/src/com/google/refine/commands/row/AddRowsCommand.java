@@ -58,23 +58,31 @@ public class AddRowsCommand extends Command {
             return;
         }
 
+        processRequest(request, response);
+    }
+
+    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
             Project project = getProject(request);
-            List<Row> rows = getRowData(request);
+            List<Row> rowList = getRowData(request);
             int insertionIndex = getInsertionIndex(request, project);
 
-            AbstractOperation op = new RowAdditionOperation(rows, insertionIndex);
-            Process process = op.createProcess(project, new Properties());
-
-            performProcessAndRespond(request, response, project, process);
+            performProjectOperation(request, response, project, rowList, insertionIndex);
         } catch (Exception e) {
             respondException(response, e);
         }
     }
 
+    private static void performProjectOperation(HttpServletRequest request, HttpServletResponse response, Project project, List<Row> rows, int insertionIndex) throws Exception {
+        AbstractOperation op = new RowAdditionOperation(rows, insertionIndex);
+        Process process = op.createProcess(project, new Properties());
+
+        performProcessAndRespond(request, response, project, process);
+    }
+
     public int getInsertionIndex(HttpServletRequest request, Project project) {
-        String data = request.getParameter(INDEX_PARAMETER);
-        int index = Integer.parseInt(data);
+        String indexString = request.getParameter(INDEX_PARAMETER);
+        int index = Integer.parseInt(indexString);
         if (index < 0 || index > project.rows.size()) {
             throw new IndexOutOfBoundsException("Parameter " + INDEX_PARAMETER + " out of bounds");
         }
@@ -82,13 +90,13 @@ public class AddRowsCommand extends Command {
     }
 
     public List<Row> getRowData(HttpServletRequest request) throws Exception {
-        String[] data = request.getParameterValues(ROWS_PARAMETER);
-        if (data.length == 0) {
+        String[] rowDataArray = request.getParameterValues(ROWS_PARAMETER);
+        if (rowDataArray.length == 0) {
             throw new IllegalArgumentException("Parameter " + ROWS_PARAMETER + " is empty");
         }
-        List<Row> rows = new ArrayList<>(data.length);
+        List<Row> rows = new ArrayList<>(rowDataArray.length);
         Pool pool = new Pool();
-        for (String rowStr : data) {
+        for (String rowStr : rowDataArray) {
             Row row = Row.load(rowStr, pool);
             if (!Objects.equals(rowStr, "{}")) {
                 throw new IllegalArgumentException("Row is not empty");
