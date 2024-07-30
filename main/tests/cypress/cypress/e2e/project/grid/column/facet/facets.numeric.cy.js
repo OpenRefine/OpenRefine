@@ -43,6 +43,7 @@ describe(__filename, function () {
 
     //sliding the middle portion in numeric facet
     cy.get('.slider-widget-draggable').eq(0)
+      // FIXME: These are the last two uses of the hated waitForOrOperation
     .trigger('mousedown',{ force: true }).waitForOrOperation()
     .trigger('mousemove',130,0,{ force: true })
     .trigger('mouseup',{ force: true }).waitForOrOperation();
