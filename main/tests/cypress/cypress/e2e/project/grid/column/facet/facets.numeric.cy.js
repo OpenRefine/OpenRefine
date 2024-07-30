@@ -31,7 +31,8 @@ describe(__filename, function () {
     cy.get('.dialog-footer button').contains('OK').click();
     cy.get('#refine-tabs-facets').should('exist');
 
-    cy.waitForOrOperation();
+    // Wait for numeric facet to be populated before trying to manipulate it
+    cy.get('.facet-range-status').contains('0 — 94')
 
     //sliding the right slider
     cy.get('.slider-widget-bracket').eq(1)
