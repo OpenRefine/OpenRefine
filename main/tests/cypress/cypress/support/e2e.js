@@ -59,7 +59,7 @@ before(() => {
 // We want to catch some Javascript exception that we consider harmless
 Cypress.on('uncaught:exception', (err, runnable) => {
   // This message occasionally appears with edge
-  // Doesn't seems like a blocket, and the test should not fail 
+  // Doesn't seem like a blocker, and the test should not fail
   if (err.message.includes("Cannot read property 'offsetTop' of undefined")
       || err.message.includes("Cannot read properties of undefined (reading 'offsetTop')")
     ) {
@@ -67,4 +67,14 @@ Cypress.on('uncaught:exception', (err, runnable) => {
   }
   // we still want to ensure there are no other unexpected
   // errors, so we let them fail the test
+})
+
+// enable debugging of failing tests
+Cypress.on('fail', (error, runnable) => {
+  debugger
+
+  // we now have access to the err instance
+  // and the mocha runnable this failed on
+
+  throw error // throw error to have test still fail
 })
