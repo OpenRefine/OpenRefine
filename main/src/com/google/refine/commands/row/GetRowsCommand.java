@@ -191,15 +191,7 @@ public class GetRowsCommand extends Command {
         try {
             Project project = null;
 
-            // This command also supports retrieving rows for an importing job.
-            String importingJobID = request.getParameter("importingJobID");
-            if (importingJobID != null) {
-                long jobID = Long.parseLong(importingJobID);
-                ImportingJob job = ImportingManager.getJob(jobID);
-                if (job != null) {
-                    project = job.project;
-                }
-            }
+            project = getRowsForImportJob(request, project);
             if (project == null) {
                 project = getProject(request);
             }
@@ -217,7 +209,7 @@ public class GetRowsCommand extends Command {
 
             Pool pool = new Pool();
 
-            RowWritingVisitor rwv = new RowWritingVisitor(start, end, limit);
+            RowWritingVisitor rowWriter = new RowWritingVisitor(start, end, limit);
 
             SortingConfig sortingConfig = null;
             try {
@@ -230,44 +222,14 @@ public class GetRowsCommand extends Command {
                 return;
             }
 
-            if (engine.getMode() == Mode.RowBased) {
-                FilteredRows filteredRows = engine.getAllFilteredRows();
-                RowVisitor visitor = rwv;
-
-                if (sortingConfig != null) {
-                    SortingRowVisitor srv = new SortingRowVisitor(visitor);
-
-                    srv.initializeFromConfig(project, sortingConfig);
-                    if (srv.hasCriteria()) {
-                        visitor = srv;
-                    }
-                }
-                filteredRows.accept(project, visitor);
-            } else {
-                FilteredRecords filteredRecords = engine.getFilteredRecords();
-                RecordVisitor visitor = rwv;
-
-                if (sortingConfig != null) {
-                    SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
-
-                    srv.initializeFromConfig(project, sortingConfig);
-                    if (srv.hasCriteria()) {
-                        visitor = srv;
-                    }
-                }
-                filteredRecords.accept(project, visitor);
-            }
+            visitRowsOrRecords(project, engine, rowWriter, sortingConfig);
 
             // Pool all the recons occurring in the rows seen
-            for (WrappedRow wr : rwv.results) {
-                for (Cell c : wr.row.cells) {
-                    if (c != null && c.recon != null) {
-                        pool.pool(c.recon);
-                    }
-                }
+            for (WrappedRow currentWrappedRow : rowWriter.results) {
+                pool_reconstructions(pool, currentWrappedRow);
             }
 
-            List<WrappedRow> wrappedRows = rwv.results;
+            List<WrappedRow> wrappedRows = rowWriter.results;
 
             // Compute the indices of the previous and next pages
             Integer previousPageEnd = null;
@@ -287,14 +249,65 @@ public class GetRowsCommand extends Command {
             }
 
             JsonResult result = new JsonResult(engine.getMode(),
-                    rwv.results, rwv.total,
+                    rowWriter.results, rowWriter.total,
                     engine.getMode() == Mode.RowBased ? project.rows.size() : project.recordModel.getRecordCount(),
-                    rwv.totalRows, start, end, limit, pool, previousPageEnd, nextPageStart);
+                    rowWriter.totalRows, start, end, limit, pool, previousPageEnd, nextPageStart);
 
             respondJSON(response, result);
         } catch (Exception e) {
             respondException(response, e);
         }
+    }
+
+    private static void visitRowsOrRecords(Project project, Engine engine, RowWritingVisitor rowWriter, SortingConfig sortingConfig) {
+        if (engine.getMode() == Mode.RowBased) {
+            FilteredRows filteredRows = engine.getAllFilteredRows();
+            RowVisitor visitor = rowWriter;
+
+            if (sortingConfig != null) {
+                SortingRowVisitor sortingRowVisitor = new SortingRowVisitor(visitor);
+
+                sortingRowVisitor.initializeFromConfig(project, sortingConfig);
+                if (sortingRowVisitor.hasCriteria()) {
+                    visitor = sortingRowVisitor;
+                }
+            }
+            filteredRows.accept(project, visitor);
+        } else {
+            FilteredRecords filteredRecords = engine.getFilteredRecords();
+            RecordVisitor visitor = rowWriter;
+
+            if (sortingConfig != null) {
+                SortingRecordVisitor sortingRowVisitor = new SortingRecordVisitor(visitor);
+
+                sortingRowVisitor.initializeFromConfig(project, sortingConfig);
+                if (sortingRowVisitor.hasCriteria()) {
+                    visitor = sortingRowVisitor;
+                }
+            }
+            filteredRecords.accept(project, visitor);
+        }
+    }
+
+    private static void pool_reconstructions(Pool pool, WrappedRow currentWrappedRow) {
+        for (Cell cell : currentWrappedRow.row.cells) {
+            if (cell != null && cell.recon != null) {
+                pool.pool(cell.recon);
+            }
+        }
+    }
+
+    private static Project getRowsForImportJob(HttpServletRequest request, Project project) {
+        // This command also supports retrieving rows for an importing job.
+        String importingJobID = request.getParameter("importingJobID");
+        if (importingJobID != null) {
+            long jobID = Long.parseLong(importingJobID);
+            ImportingJob job = ImportingManager.getJob(jobID);
+            if (job != null) {
+                project = job.project;
+            }
+        }
+        return project;
     }
 
     static protected class RowWritingVisitor implements RowVisitor, RecordVisitor {
@@ -332,6 +345,14 @@ public class GetRowsCommand extends Command {
 
         @Override
         public boolean visit(Project project, int rowIndex, int sortedRowIndex, Row row) {
+            handleRequest(project, rowIndex, sortedRowIndex, row);
+            total++;
+            totalRows++;
+
+            return false;
+        }
+
+        private void handleRequest(Project project, int rowIndex, int sortedRowIndex, Row row) {
             if ((start != -1 && sortedRowIndex >= start && results.size() < limit) ||
                     (end != -1 && sortedRowIndex < end)) {
                 if (results.size() >= limit) {
@@ -339,10 +360,6 @@ public class GetRowsCommand extends Command {
                 }
                 internalVisit(project, rowIndex, row, sortedRowIndex);
             }
-            total++;
-            totalRows++;
-
-            return false;
         }
 
         @Override
