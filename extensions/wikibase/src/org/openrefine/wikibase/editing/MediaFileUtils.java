@@ -98,9 +98,10 @@ public class MediaFileUtils {
      * @throws IOException
      * @throws MediaWikiApiErrorException
      */
-    public MediaUploadResponse uploadLocalFile(File path, String fileName, String wikitext, String summary, List<String> tags)
+    public MediaUploadResponse uploadLocalFile(File path, String fileName, String wikitext, String summary, List<String> tags,
+            boolean shouldChunk)
             throws IOException, MediaWikiApiErrorException {
-        if (path.length() > 100000000 /* 100 MB */) {
+        if (shouldChunk) {
             try (ChunkedFile chunkedFile = new ChunkedFile(path)) {
                 logger.info("Uploading large file in chunks.");
                 return uploadLocalFileChunked(chunkedFile, fileName, wikitext, summary, tags);

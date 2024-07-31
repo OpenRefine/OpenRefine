@@ -59,6 +59,7 @@ public class NewEntityScrutinizer extends EditScrutinizer {
     public static final String newMediaWithoutFileNameType = "new-media-without-file-name";
     public static final String newMediaWithoutWikitextType = "new-media-without-wikitext";
     public static final String newMediaType = "new-media-created";
+    public static final String newMediaChunkedUpload = "new-media-chunked-upload";
     public static final String invalidFilePathType = "invalid-file-path";
     // TODO add checks for bad file names (which are page titles): https://www.mediawiki.org/wiki/Help:Bad_title
     // https://commons.wikimedia.org/wiki/Commons:File_naming
@@ -98,6 +99,10 @@ public class NewEntityScrutinizer extends EditScrutinizer {
                     issue.setFacetable(false); // for now
                     issue.setProperty("example_path", update.getFilePath());
                     addIssue(issue);
+                }
+
+                if (update.shouldUploadInChunks()) {
+                    addIssue(newMediaChunkedUpload, null, QAWarning.Severity.WARNING, 1, false);
                 }
             }
 

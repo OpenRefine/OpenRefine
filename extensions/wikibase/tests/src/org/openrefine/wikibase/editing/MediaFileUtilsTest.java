@@ -108,7 +108,7 @@ public class MediaFileUtilsTest {
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
         File path = new File("/tmp/image.png");
         MediaUploadResponse response = mediaFileUtils.uploadLocalFile(path, "My_test_file.png", "my wikitext", "my summary",
-                Collections.emptyList());
+                Collections.emptyList(), false);
         assertEquals(response.filename, "My_test_file.png");
         assertEquals(response.pageid, 12345L);
         assertEquals(response.getMid(connection, Datamodel.SITE_WIKIMEDIA_COMMONS),
