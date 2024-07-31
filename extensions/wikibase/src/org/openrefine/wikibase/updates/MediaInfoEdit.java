@@ -246,7 +246,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         MediaFileUtils.MediaUploadResponse response;
         File path = new File(filePath);
         if (path.exists()) {
-            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags);
+            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags, shouldUploadInChunks());
         } else {
             URL url = new URL(filePath);
             response = mediaFileUtils.uploadRemoteFile(url, fileName, wikitext, summary, tags);
@@ -311,6 +311,11 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         return !isNew() && !(statements.isEmpty() &&
                 labels.isEmpty() &&
                 labelsIfNew.isEmpty());
+    }
+
+    public boolean shouldUploadInChunks() {
+        File file = new File(filePath);
+        return file.length() > 100000000; // 100 MB
     }
 
     @Override

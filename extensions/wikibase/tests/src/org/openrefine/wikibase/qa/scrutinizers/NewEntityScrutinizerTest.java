@@ -24,6 +24,12 @@
 
 package org.openrefine.wikibase.qa.scrutinizers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 
 import org.testng.annotations.Test;
@@ -158,4 +164,17 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
         assertWarningsRaised(NewEntityScrutinizer.newMediaType);
     }
 
+    @Test
+    public void testFileShouldUploadInChunks() throws IOException {
+        MediaInfoEdit update = mock(MediaInfoEdit.class);
+        when(update.shouldUploadInChunks()).thenReturn(true);
+        when(update.isNew()).thenReturn(true);
+        Path file = Files.createTempFile("local-file", ".jpg");
+        when(update.getFilePath()).thenReturn(file.toString());
+        when(update.getFileName()).thenReturn("my_file.jpg");
+        when(update.getWikitext()).thenReturn("description");
+        scrutinizer.setEnableSlowChecks(true);
+        scrutinize(update);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaChunkedUpload);
+    }
 }
