@@ -174,6 +174,7 @@ public class MediaInfoEditTest {
                 .addFileName("Foo.png")
                 .addFilePath(url)
                 .addWikitext("{{wikitext}}")
+                .addContributingRowId(123)
                 .build();
         assertFalse(edit.requiresFetchingExistingState()); // new entities do not require fetching existing state
 
