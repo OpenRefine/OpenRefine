@@ -125,8 +125,8 @@ public class Zip implements Function {
         return "string";
     }
 
-    private static ArrayList collectElements(Object a, Object b) {
-        ArrayList returnList = new ArrayList<>();
+    private static List collectElements(Object a, Object b) {
+        List returnList = new ArrayList<>();
 
         if (a == null) {
             returnList.add(a);
