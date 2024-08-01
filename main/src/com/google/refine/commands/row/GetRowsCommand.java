@@ -226,7 +226,7 @@ public class GetRowsCommand extends Command {
 
             // Pool all the recons occurring in the rows seen
             for (WrappedRow currentWrappedRow : rowWriter.results) {
-                pool_reconstructions(pool, currentWrappedRow);
+                poolReconstructions(pool, currentWrappedRow);
             }
 
             List<WrappedRow> wrappedRows = rowWriter.results;
@@ -289,7 +289,7 @@ public class GetRowsCommand extends Command {
         }
     }
 
-    private static void pool_reconstructions(Pool pool, WrappedRow currentWrappedRow) {
+    private static void poolReconstructions(Pool pool, WrappedRow currentWrappedRow) {
         for (Cell cell : currentWrappedRow.row.cells) {
             if (cell != null && cell.recon != null) {
                 pool.pool(cell.recon);
