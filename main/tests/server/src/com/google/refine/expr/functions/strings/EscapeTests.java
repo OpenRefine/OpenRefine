@@ -77,7 +77,8 @@ public class EscapeTests extends GrelTestBase {
         assertEquals("\"\n\"", invoke("escape", "\n", "csv")); // newlines get quoted
         assertEquals("\"\"\"\"", invoke("escape", "\"", "csv")); // quotes get doubled
 
-        assertEquals(invoke("escape", "/path 1/path 2", "urlpath"), "%2Fpath%201%2Fpath%202");
+        assertEquals(invoke("escape", "/path 1/", "urlpath"), "/path%201/");
+        assertEquals(invoke("escape", "/path 1/path 2", "urlpath"), "/path%201/path%202");
         assertEquals(invoke("escape", "key1=value 1&key2=value@!$2", "urlquery"), "key1%3Dvalue+1%26key2%3Dvalue%40%21%242");
         assertEquals(invoke("escape", "fragment 1 fragment 2", "urlfragment"), "fragment%201%20fragment%202");
     }

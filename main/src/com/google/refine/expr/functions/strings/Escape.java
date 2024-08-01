@@ -79,7 +79,7 @@ public class Escape implements Function {
                     } catch (UnsupportedEncodingException e) {
                     }
                 } else if ("urlpath".equals(mode)) {
-                    return UrlEscapers.urlPathSegmentEscaper().escape(s);
+                    return UrlEscapers.urlPathSegmentEscaper().escape(s).replace("%2F", "/");
                 } else if ("urlquery".equals(mode)) {
                     return UrlEscapers.urlFormParameterEscaper().escape(s);
                 } else if ("urlfragment".equals(mode)) {
