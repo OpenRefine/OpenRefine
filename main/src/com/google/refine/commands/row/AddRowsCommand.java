@@ -73,7 +73,8 @@ public class AddRowsCommand extends Command {
         }
     }
 
-    private static void performProjectOperation(HttpServletRequest request, HttpServletResponse response, Project project, List<Row> rows, int insertionIndex) throws Exception {
+    private static void performProjectOperation(HttpServletRequest request, HttpServletResponse response, Project project, List<Row> rows,
+            int insertionIndex) throws Exception {
         AbstractOperation op = new RowAdditionOperation(rows, insertionIndex);
         Process process = op.createProcess(project, new Properties());
 
