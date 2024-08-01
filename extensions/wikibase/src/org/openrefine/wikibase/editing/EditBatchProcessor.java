@@ -78,6 +78,8 @@ public class EditBatchProcessor {
     private int globalCursor;
     private Map<String, EntityDocument> currentDocs;
     private int batchSize;
+    private int filePageWaitTime;
+    private int filePageMaxWaitTime;
 
     /**
      * Initiates the process of pushing a batch of updates to Wikibase. This schedules the updates and is a prerequisite
@@ -121,6 +123,8 @@ public class EditBatchProcessor {
         this.summary = summary;
         this.tagCandidates = new LinkedList<>(tagCandidates);
         this.batchSize = batchSize;
+        this.filePageWaitTime = 1000;
+        this.filePageMaxWaitTime = 60000;
 
         // Schedule the edit batch
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
@@ -180,7 +184,8 @@ public class EditBatchProcessor {
                 EntityIdValue createdDocId;
                 if (update instanceof MediaInfoEdit) {
                     MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
-                    createdDocId = ((MediaInfoEdit) update).uploadNewFile(editor, mediaFileUtils, summary, tags);
+                    createdDocId = ((MediaInfoEdit) update).uploadNewFile(editor, mediaFileUtils, summary, tags, filePageWaitTime,
+                            filePageMaxWaitTime);
                 } else {
                     createdDocId = editor.createEntityDocument(update.toNewEntity(), summary, tags).getEntityId();
                 }
