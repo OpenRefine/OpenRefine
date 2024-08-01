@@ -58,9 +58,9 @@ public class Zip implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object[] v = (Object[]) args[0];
-            List<ArrayList> output = new ArrayList<>();
-            ArrayList arg1 = new ArrayList<>();
-            ArrayList arg2 = new ArrayList<>();
+            List<List> output = new ArrayList<>();
+            List arg1 = new ArrayList<>();
+            List arg2 = new ArrayList<>();
 
             boolean isFirst = true;
             if (v != null) {
