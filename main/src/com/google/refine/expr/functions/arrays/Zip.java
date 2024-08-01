@@ -56,73 +56,79 @@ public class Zip implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 1) {
-            Object[] v = (Object[]) args[0];
+        if (args.length >= 2) {
             List<List> output = new ArrayList<>();
-            List arg1 = new ArrayList<>();
-            List arg2 = new ArrayList<>();
-
+            List ziparg1 = new ArrayList<>();
+            List ziparg2 = new ArrayList<>();
             boolean isFirst = true;
-            if (v != null) {
-                for (Object o : v) {
-                    if (o.getClass().isArray() || o instanceof List<?> || o instanceof ArrayNode) {
-                        if (o.getClass().isArray()) {
-                            arg2.addAll(Arrays.asList((Object[]) o));
-                        } else if (o instanceof ArrayNode) {
-                            ArrayNode a = (ArrayNode) o;
-                            if (a.isArray()) {
-                                for (JsonNode objNode : a) {
-                                    arg2.add(objNode);
-                                }
-                            }
-                        } else {
-                            for (Object z : ExpressionUtils.toObjectList(o)) {
-                                if (z != null) {
-                                    arg2.add(z.toString());
-                                } else {
-                                    arg2.add(z);
-                                }
-                            }
-                        }
-                        if (isFirst) {
-                            for (Object x : arg2) {
-                                arg1 = new ArrayList() {
 
-                                    {
-                                        add(x);
-                                    }
-                                };
-                                output.add(arg1);
-                            }
-                        } else {
-                            output = (List<ArrayList>) Streams.zip(output.stream(),
-                                    arg2.stream(),
-                                    (a, b) -> collectElements(a, b))
-                                    .collect(Collectors.toList());
-                        }
-                        isFirst = false;
-                    }
-                    arg2.clear();
+            for (int i = 0; i < args.length; i++) {
+                Object v = args[i];
+                if (v == null) {
+                    return new EvalError(
+                            EvalErrorMessage.expects_at_least_two_or_more_array_args(ControlFunctionRegistry.getFunctionName(this)));
                 }
+
+                if (!(v.getClass().isArray() || v instanceof List<?> || v instanceof ArrayNode)) {
+                    return new EvalError(
+                            EvalErrorMessage.expects_at_least_two_or_more_array_args(ControlFunctionRegistry.getFunctionName(this)));
+                }
+
+                if (v.getClass().isArray()) {
+                    ziparg2.addAll(Arrays.asList((Object[]) v));
+                } else if (v instanceof ArrayNode) {
+                    ArrayNode a = (ArrayNode) v;
+                    if (a.isArray()) {
+                        for (JsonNode objNode : a) {
+                            ziparg2.add(objNode);
+                        }
+                    }
+                } else {
+                    for (Object z : ExpressionUtils.toObjectList(v)) {
+                        if (z != null) {
+                            ziparg2.add(z.toString());
+                        } else {
+                            ziparg2.add(z);
+                        }
+                    }
+                }
+                if (isFirst) {
+                    for (Object x : ziparg2) {
+                        ziparg1 = new ArrayList() {
+
+                            {
+                                add(x);
+                            }
+                        };
+                        output.add(ziparg1);
+                    }
+                } else {
+                    output = (List<List>) Streams.zip(output.stream(),
+                            ziparg2.stream(),
+                            (a, b) -> collectElements(a, b))
+                            .collect(Collectors.toList());
+                }
+                isFirst = false;
+                ziparg2.clear();
             }
             return output;
         }
-        return new EvalError(EvalErrorMessage.expects_one_array(ControlFunctionRegistry.getFunctionName(this)));
+        return new EvalError(EvalErrorMessage.expects_at_least_two_or_more_array_args(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
     public String getDescription() {
-        return FunctionDescription.arr_join();
+        return FunctionDescription.arr_zip();
     }
 
     @Override
     public String getParams() {
-        return "array a, string sep";
+        return "array a, array b, ...";
     }
 
     @Override
     public String getReturns() {
-        return "string";
+        return "array of arrays";
     }
 
     private static List collectElements(Object a, Object b) {
