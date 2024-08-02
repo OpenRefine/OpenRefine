@@ -539,7 +539,6 @@ function init() {
       "scripts/dialogs/http-headers-dialog.js",
       "scripts/dialogs/clustering-functions-dialog.js",
       "scripts/dialogs/add-rows-dialog.js",
-      "scripts/dialogs/expression-and-clusters-preview-dialog.js"
     ])
   );
 

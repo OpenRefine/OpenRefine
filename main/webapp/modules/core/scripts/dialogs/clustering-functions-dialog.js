@@ -268,7 +268,8 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
                 column.cellIndex,
                 o.rowIndices,
                 o.values,
-                _functions[index].expressionLang + ':' + _functions[index].expression
+                _functions[index].expressionLang + ':' + _functions[index].expression,
+                self._clusters
             );
         },
         dataType: "json",
