@@ -1,3 +1,4 @@
+
 package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
@@ -9,15 +10,19 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class EditDistance implements Function {
+
     /**
      * Calculate the number of edits required to make one value perfectly match another.
-     * @param bindings bindings
-     * @param args arguments
+     * 
+     * @param bindings
+     *            bindings
+     * @param args
+     *            arguments
      * @return result
      */
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if(args != null && args.length >= 2 && args[0] instanceof String && args[1] instanceof String){
+        if (args != null && args.length >= 2 && args[0] instanceof String && args[1] instanceof String) {
             String s1 = (String) args[0];
             String s2 = (String) args[1];
 
