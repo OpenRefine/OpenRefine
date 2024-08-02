@@ -121,7 +121,7 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportEmptyTemplate() {
+    public void exportEmptyTemplate() throws IOException {
 
 //        when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //        when(options.getProperty("sorting")).thenReturn(""); //optional
@@ -131,17 +131,13 @@ public class TemplatingExporterTests extends RefineTest {
         when(options.getProperty("separator")).thenReturn(rowSeparator);
 //        when(options.getProperty("preview")).thenReturn("false"); // optional true|false
 
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         Assert.assertEquals(writer.toString(), prefix + suffix);
     }
 
     @Test
-    public void exportSimpleTemplate() {
+    public void exportSimpleTemplate() throws IOException {
         CreateGrid(2, 2);
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
 //      String template = "boilerplate${column0}{{4+3}}${column1}";
@@ -154,11 +150,7 @@ public class TemplatingExporterTests extends RefineTest {
         when(options.getProperty("separator")).thenReturn(rowSeparator);
 //        when(options.getProperty("preview")).thenReturn("false"); // optional true|false
 
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         Assert.assertEquals(writer.toString(),
                 prefix
@@ -168,7 +160,7 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
     @Test()
-    public void exportTemplateWithEmptyCells() {
+    public void exportTemplateWithEmptyCells() throws IOException {
 
 //      when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //      when(options.getProperty("sorting")).thenReturn(""); //optional
@@ -185,11 +177,7 @@ public class TemplatingExporterTests extends RefineTest {
 
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         // Template exporter returns null for empty cells
         Assert.assertEquals(writer.toString(),
@@ -202,7 +190,7 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
     @Test()
-    public void exportTemplateWithLimit() {
+    public void exportTemplateWithLimit() throws IOException {
 
         when(options.getProperty("limit")).thenReturn("2"); // optional integer
 //      when(options.getProperty("sorting")).thenReturn(""); //optional
@@ -215,11 +203,7 @@ public class TemplatingExporterTests extends RefineTest {
 
         CreateGrid(3, 3);
 
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         Assert.assertEquals(writer.toString(),
                 prefix
@@ -235,7 +219,7 @@ public class TemplatingExporterTests extends RefineTest {
      * https://github.com/OpenRefine/OpenRefine/issues/3955
      */
     @Test
-    public void exportTemplateInRecordMode() {
+    public void exportTemplateInRecordMode() throws IOException {
         CreateColumns(2);
         for (int i = 0; i < 2; i++) {
             Row row = new Row(2);
@@ -256,11 +240,8 @@ public class TemplatingExporterTests extends RefineTest {
         Engine engine = new Engine(project);
         engine.setMode(Mode.RecordBased);
         project.update();
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+
+        SUT.export(project, options, engine, writer);
 
         Assert.assertEquals(writer.toString(),
                 prefix
@@ -274,18 +255,14 @@ public class TemplatingExporterTests extends RefineTest {
      * https://github.com/OpenRefine/OpenRefine/issues/3381
      */
     @Test
-    public void exportTemplateWithProperEscaping() {
+    public void exportTemplateWithProperEscaping() throws IOException {
         CreateGrid(2, 2);
         String template = rowPrefix + "{{\"\\}\\}\"}}" + cellSeparator + "{{\"\\}\\}\"}}";
         when(options.getProperty("template")).thenReturn(template);
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         Assert.assertEquals(writer.toString(),
                 prefix

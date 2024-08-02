@@ -273,7 +273,8 @@ BrowsingEngine.prototype.update = function(onDone) {
       var facetData = data.facets;
 
       for (var i = 0; i < facetData.length; i++) {
-        self._facets[i].facet.updateState(facetData[i]);
+        const column = theProject.columnModel.columns.find(col => col.name === facetData[i].columnName);
+        self._facets[i].facet.updateState(facetData[i], column);
       }
 
       self._elmts.indicator.css("display", "none");

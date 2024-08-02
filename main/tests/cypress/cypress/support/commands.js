@@ -10,79 +10,8 @@
 
 import 'cypress-file-upload';
 
-// /**
-//  * Reconcile a column
-//  * Internally using the "apply" behavior for not having to go through the whole user interface
-//  */
-// Cypress.Commands.add('reconcileColumn', (columnName, autoMatch = true) => {
-//   cy.setPreference(
-//     'reconciliation.standardServices',
-//     encodeURIComponent(
-//       JSON.stringify([
-//         {
-//           name: 'CSV Reconciliation service',
-//           identifierSpace: 'http://localhost:8000/',
-//           schemaSpace: 'http://localhost:8000/',
-//           defaultTypes: [],
-//           view: { url: 'http://localhost:8000/view/{{id}}' },
-//           preview: {
-//             width: 500,
-//             url: 'http://localhost:8000/view/{{id}}',
-//             height: 350,
-//           },
-//           suggest: {
-//             entity: {
-//               service_url: 'http://localhost:8000',
-//               service_path: '/suggest',
-//               flyout_service_url: 'http://localhost:8000',
-//               flyout_sercice_path: '/flyout',
-//             },
-//           },
-//           url: 'http://localhost:8000/reconcile',
-//           ui: { handler: 'ReconStandardServicePanel', access: 'jsonp' },
-//         },
-//       ])
-//     )
-//   ).then(() => {
-//     const apply = [
-//       {
-//         op: 'core/recon',
-//         engineConfig: {
-//           facets: [],
-//           mode: 'row-based',
-//         },
-//         columnName: columnName,
-//         config: {
-//           mode: 'standard-service',
-//           service: 'http://localhost:8000/reconcile',
-//           identifierSpace: 'http://localhost:8000/',
-//           schemaSpace: 'http://localhost:8000/',
-//           type: {
-//             id: '/csv-recon',
-//             name: 'CSV-recon',
-//           },
-//           autoMatch: autoMatch,
-//           columnDetails: [],
-//           limit: 0,
-//         },
-//         description: 'Reconcile cells in column species to type /csv-recon',
-//       },
-//     ];
-//     cy.get('a#or-proj-undoRedo').click();
-//     cy.get('#refine-tabs-history .history-panel-controls')
-//       .contains('Apply')
-//       .click();
-//     cy.get('.dialog-container .history-operation-json').invoke(
-//       'val',
-//       JSON.stringify(apply)
-//     );
-//     cy.get('.dialog-container button[bind="applyButton"]').click();
-//   });
-// });
-
 /**
- * Reconcile a column
- * Internally using the "apply" behavior for not having to go through the whole user interface
+ * Check that a column is reconciled
  */
 Cypress.Commands.add('assertColumnIsReconciled', (columnName) => {
   cy.get(
@@ -128,7 +57,7 @@ Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
  */
 Cypress.Commands.add('assertTextareaHaveJsonValue', (selector, json) => {
   cy.get(selector).then((el) => {
-    // expected json needs to be parsed / restringified, to avoid inconsitencies about spaces and tabs
+    // expected json needs to be parsed / restringified, to avoid inconsistencies about spaces and tabs
     const present = JSON.parse(el.val());
     cy.expect(JSON.stringify(present)).to.equal(JSON.stringify(json));
   });
@@ -228,7 +157,7 @@ Cypress.Commands.add('assertGridEquals', (values) => {
   cy.get('table.data-table').should((table) => {
     const headers = Cypress.$('table.data-table th')
       .filter(function (index, element) {
-        return element.innerText != 'All';
+        return element.innerText !== 'All';
       })
       .map(function (index, element) {
         return element.innerText;
@@ -273,22 +202,6 @@ Cypress.Commands.add('navigateTo', (target) => {
 Cypress.Commands.add('waitForOrOperation', () => {
   cy.get('body[ajax_in_progress="true"]');
   cy.get('body[ajax_in_progress="false"]');
-});
-
-/**
- * Wait for OpenRefine parsing options to be updated
- *
- * @deprecated
- *
- * NOTE: This command is unreliable because if you call it after starting an operation e.g. with a click(), the loading
- * indicator may have come and gone already by the time waitForImportUpdate() is called, causing the cypress test to
- * wait forever on ('#or-import-updating').should('be.visible') until it fails due to timeout.
- *
- */
-Cypress.Commands.add('waitForImportUpdate', () => {
-  cy.get('#or-import-updating').should('be.visible');
-  cy.get('#or-import-updating').should('not.be.visible');
-  cy.wait(1500); // eslint-disable-line
 });
 
 /**
@@ -403,9 +316,9 @@ Cypress.Commands.add(
 
 /**
  * Performs drag and drop on target and source item
- * sourcSelector jquery selector for the element to be dragged
- * targetSelector jquery selector for the element to be dropped on
- * position position relative to the target element to perform the drop
+ * sourceSelector - jquery selector for the element to be dragged
+ * targetSelector - jquery selector for the element to be dropped on
+ * position - position relative to the target element to perform the drop
  */
 Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector, position = 'center') => {
   cy.get(sourceSelector).trigger('mousedown', { which: 1 });

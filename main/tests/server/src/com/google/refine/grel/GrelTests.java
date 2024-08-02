@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.fail;
 
 import java.util.Properties;
@@ -80,30 +81,21 @@ public class GrelTests extends GrelTestBase {
 //                "2^3" // TODO: Should this generate an error?
         };
         for (String test : tests) {
-            try {
-                MetaParser.parse("grel:" + test);
-            } catch (ParsingException e) {
-                // Test succeeded
-                continue;
-            }
-            fail("Expression failed to generate parse syntax error: " + test);
+            assertThrows("Expression failed to generate parse syntax error: " + test, ParsingException.class,
+                    () -> MetaParser.parse("grel:" + test));
         }
     }
 
     @Test
-    public void testEvalError() {
+    public void testEvalError() throws ParsingException {
         String tests[] = {
 //                "1=1", // TODO: Throws NullPointerException
                 "value.datePart()",
         };
         for (String test : tests) {
-            try {
-                Evaluable eval = MetaParser.parse("grel:" + test);
-                Object result = eval.evaluate(bindings);
-                Assert.assertTrue(result instanceof EvalError);
-            } catch (ParsingException e) {
-                fail("Unexpected parse failure: " + test);
-            }
+            Evaluable eval = MetaParser.parse("grel:" + test);
+            Object result = eval.evaluate(bindings);
+            Assert.assertTrue(result instanceof EvalError);
         }
     }
 
@@ -226,16 +218,12 @@ public class GrelTests extends GrelTestBase {
 
     // to demonstrate bug fixing for #1204
     @Test
-    public void testCrossFunctionEval() {
+    public void testCrossFunctionEval() throws ParsingException {
         String test = "cross(\"Mary\", \"My Address Book\", \"friend\")";
 
-        try {
-            Evaluable eval = MetaParser.parse("grel:" + test);
-            Object result = eval.evaluate(bindings);
-            Assert.assertTrue(result instanceof EvalError);
-        } catch (ParsingException e) {
-            fail("Unexpected parse failure for cross function: " + test);
-        }
+        Evaluable eval = MetaParser.parse("grel:" + test);
+        Object result = eval.evaluate(bindings);
+        Assert.assertTrue(result instanceof EvalError);
     }
 
     // Test for /\ throwing Internal Error

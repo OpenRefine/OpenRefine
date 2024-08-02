@@ -39,6 +39,9 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
+import com.google.refine.grel.Parser;
 
 public class KeyerTests extends RefineTest {
 
@@ -129,6 +132,16 @@ public class KeyerTests extends RefineTest {
     }
 
     @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
+    }
+
+    @BeforeMethod
     public void SetUp() {
         keyer = new FingerprintKeyer();
     }
@@ -152,4 +165,35 @@ public class KeyerTests extends RefineTest {
         }
     }
 
+    @Test
+    public void testUserDefinedKeyer1() {
+        try {
+            String expression = "value.fingerprint()";
+            keyer = new UserDefinedKeyer(expression);
+        } catch (ParsingException e) {
+            throw new RuntimeException(e);
+        }
+        for (String[] ss : testStrings) {
+            Assert.assertEquals(ss.length, 2, "Invalid test"); // Not a valid test
+            Assert.assertEquals(keyer.key(ss[0]), ss[1],
+                    "User defined keying for string: " + ss[0] + " failed");
+        }
+    }
+
+    @Test
+    public void testUserDefinedKeyer2() {
+        try {
+            String expression = "value + ' world'";
+            keyer = new UserDefinedKeyer(expression);
+        } catch (ParsingException e) {
+            throw new RuntimeException(e);
+        }
+
+        String[] strs = { "hello", "new", "fantastic" };
+        for (String s : strs) {
+            String output = keyer.key(s);
+            Assert.assertEquals(output, s + " world",
+                    "User defined keying for string: " + s + " failed");
+        }
+    }
 }

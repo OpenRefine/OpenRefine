@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -556,6 +557,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
                     return false;
                 }
             };
+
             try {
                 ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
                 fail("No Exception was thrown");
@@ -563,5 +565,15 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 assertEquals(exception.getMessage(), message);
             }
         }
+    }
+
+    @Test
+    public void testGetFileName() {
+        ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+        String fileName = "aFileName";
+
+        JSONUtilities.safePut(fileRecord, "fileName", fileName);
+
+        assertEquals(fileName, ImportingUtilities.getFileName(fileRecord));
     }
 }

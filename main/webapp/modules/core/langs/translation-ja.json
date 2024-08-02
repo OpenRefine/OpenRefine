@@ -753,7 +753,6 @@
     "core-views/by-number-rev-example": "[11AbcDef, 22]",
     "core-views/by-number-example": "[11, AbcDef22]",
     "core-views/by-case-example": "[11Abc, Def22]",
-    "core-views/goto-page": "$2ページの$1",
     "core-views/by-case-rev-example": "[11A, bcD, ef22]",
     "core-views/by-rev": "逆順（後ろから）",
     "core-views/by-number": "数字から文字に変わる場所で分割",

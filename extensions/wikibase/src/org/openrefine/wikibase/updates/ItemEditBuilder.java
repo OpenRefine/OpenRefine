@@ -24,10 +24,7 @@
 
 package org.openrefine.wikibase.updates;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.jsoup.helper.Validate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -48,6 +45,7 @@ public class ItemEditBuilder {
     private Set<MonolingualTextValue> descriptions;
     private Set<MonolingualTextValue> descriptionsIfNew;
     private Set<MonolingualTextValue> aliases;
+    private Set<Integer> contributingRowIds;
     private boolean built;
 
     /**
@@ -65,6 +63,7 @@ public class ItemEditBuilder {
         this.descriptions = new HashSet<MonolingualTextValue>();
         this.descriptionsIfNew = new HashSet<MonolingualTextValue>();
         this.aliases = new HashSet<MonolingualTextValue>();
+        this.contributingRowIds = new HashSet<>();
         this.built = false;
     }
 
@@ -189,13 +188,29 @@ public class ItemEditBuilder {
     }
 
     /**
+     * Adds a row id which contributed to this update.
+     */
+    public ItemEditBuilder addContributingRowId(int rowId) {
+        this.contributingRowIds.add(rowId);
+        return this;
+    }
+
+    /**
+     * Adds a collection of row ids which contributed to this update.
+     */
+    public ItemEditBuilder addContributingRowIds(Collection<Integer> rowIds) {
+        this.contributingRowIds.addAll(rowIds);
+        return this;
+    }
+
+    /**
      * Constructs the {@link ItemEdit}.
      * 
      * @return
      */
     public ItemEdit build() {
         built = true;
-        return new ItemEdit(id, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
+        return new ItemEdit(id, statements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases, contributingRowIds);
     }
 
 }

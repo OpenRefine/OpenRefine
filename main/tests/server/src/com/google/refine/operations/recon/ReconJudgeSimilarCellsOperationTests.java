@@ -78,7 +78,6 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 schemaSpace,
                 null,
                 true,
-                10,
                 Collections.emptyList(),
                 5);
         project = createProject(
@@ -134,7 +133,8 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 "http://my.database/schema/",
                 null,
                 null,
-                true, 10, Collections.emptyList());
+                true,
+                Collections.emptyList());
         column.setReconConfig(config);
 
         AbstractOperation op = new ReconJudgeSimilarCellsOperation(

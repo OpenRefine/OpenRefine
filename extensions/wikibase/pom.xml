@@ -15,7 +15,7 @@
   </parent>
 
   <properties>
-    <wdtk.version>0.14.7</wdtk.version>
+    <wdtk.version>0.15.3</wdtk.version>
   </properties>
 
   <build>
@@ -163,7 +163,12 @@
       <scope>test</scope>
     </dependency>
 
+  
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
   </dependencies>
 
 </project>
-

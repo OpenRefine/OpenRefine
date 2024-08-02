@@ -2,6 +2,7 @@
 package org.openrefine.wikibase.updates;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -74,8 +75,10 @@ public class MediaInfoEditTest {
 
     @Test
     public void testAddStatements() {
-        MediaInfoEdit update = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1)
+        MediaInfoEdit update = new MediaInfoEditBuilder(existingSubject)
+                .addStatement(statementUpdate1)
                 .addStatement(statementUpdate2)
+                .addContributingRowId(123)
                 .build();
         assertFalse(update.isNull());
         assertEquals(Arrays.asList(statementUpdate1, statementUpdate2), update.getStatementEdits());
@@ -86,17 +89,19 @@ public class MediaInfoEditTest {
     public void testSerializeStatements() throws IOException {
         MediaInfoEdit update = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1)
                 .addStatement(statementUpdate2)
+                .addContributingRowId(123)
                 .build();
         TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/mediainfo_update.json"));
     }
 
     @Test
     public void testMerge() {
-        MediaInfoEdit updateA = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1).build();
-        MediaInfoEdit updateB = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate2).build();
+        MediaInfoEdit updateA = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1).addContributingRowId(123).build();
+        MediaInfoEdit updateB = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate2).addContributingRowId(456).build();
         assertNotEquals(updateA, updateB);
         MediaInfoEdit merged = updateA.merge(updateB);
         assertEquals(statementGroups, merged.getStatementGroupEdits().stream().collect(Collectors.toSet()));
+        assertEquals(Arrays.asList(123, 456).stream().collect(Collectors.toSet()), merged.getContributingRowIds());
     }
 
     @Test
@@ -105,6 +110,7 @@ public class MediaInfoEditTest {
                 .addStatement(statementUpdate2)
                 .addFileName("Foo.png")
                 .addFilePath("C:\\Foo.png")
+                .addContributingRowId(123)
                 .build();
         assertTrue(edit.requiresFetchingExistingState());
 
@@ -119,6 +125,7 @@ public class MediaInfoEditTest {
         MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject)
                 .addWikitext("my new wikitext")
                 .setOverrideWikitext(true)
+                .addContributingRowId(123)
                 .build();
         assertFalse(edit.requiresFetchingExistingState());
 
@@ -130,14 +137,15 @@ public class MediaInfoEditTest {
         assertEquals(update.isOverridingWikitext(), true);
     }
 
-    @Test
-    public void testUploadNewFile() throws MediaWikiApiErrorException, IOException {
+    @Test(timeOut = 5000)
+    public void testUploadNewFile() throws MediaWikiApiErrorException, IOException, InterruptedException {
         String url = "https://my.site.com/file.png";
         MediaInfoEdit edit = new MediaInfoEditBuilder(newSubject)
                 .addStatement(statementUpdate1New)
                 .addFileName("Foo.png")
                 .addFilePath(url)
                 .addWikitext("{{wikitext}}")
+                .addContributingRowId(123)
                 .build();
         assertFalse(edit.requiresFetchingExistingState()); // new entities do not require fetching existing state
 
@@ -151,8 +159,41 @@ public class MediaInfoEditTest {
         when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}\n[[Category:Uploaded with OpenRefine]]", "summary",
                 Collections.emptyList()))
                         .thenReturn(response);
+        when(mediaFileUtils.checkIfPageNamesExist(anyList()))
+                .thenReturn(Collections.singleton("File:Foo.png"));
 
-        MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList());
+        MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList(), 1, 60);
+        assertEquals(returnedMid, mid);
+    }
+
+    @Test(timeOut = 5000)
+    public void testUploadNewFileWaitForPage() throws MediaWikiApiErrorException, IOException, InterruptedException {
+        String url = "https://my.site.com/file.png";
+        MediaInfoEdit edit = new MediaInfoEditBuilder(newSubject)
+                .addStatement(statementUpdate1New)
+                .addFileName("Foo.png")
+                .addFilePath(url)
+                .addWikitext("{{wikitext}}")
+                .addContributingRowId(123)
+                .build();
+        assertFalse(edit.requiresFetchingExistingState()); // new entities do not require fetching existing state
+
+        // set up dependencies
+        WikibaseDataEditor editor = mock(WikibaseDataEditor.class);
+        MediaFileUtils mediaFileUtils = mock(MediaFileUtils.class);
+        MediaUploadResponse response = mock(MediaUploadResponse.class);
+        MediaInfoIdValue mid = Datamodel.makeMediaInfoIdValue("M1234", "http://www.wikidata.org/entity/");
+        when(response.getMid(any(), any()))
+                .thenReturn(mid);
+        when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}\n[[Category:Uploaded with OpenRefine]]", "summary",
+                Collections.emptyList()))
+                        .thenReturn(response);
+        when(mediaFileUtils.checkIfPageNamesExist(anyList()))
+                .thenReturn(Collections.emptySet())
+                .thenReturn(Collections.emptySet())
+                .thenReturn(Collections.singleton("File:Foo.png"));
+
+        MediaInfoIdValue returnedMid = edit.uploadNewFile(editor, mediaFileUtils, "summary", Collections.emptyList(), 1, 60);
         assertEquals(returnedMid, mid);
     }
 
@@ -160,6 +201,7 @@ public class MediaInfoEditTest {
     public void testToString() {
         MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1)
                 .addStatement(statementUpdate2)
+                .addContributingRowId(123)
                 .build();
         assertTrue(edit.toString().contains("M5678"));
     }

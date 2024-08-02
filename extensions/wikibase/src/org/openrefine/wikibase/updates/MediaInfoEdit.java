@@ -4,13 +4,7 @@ package org.openrefine.wikibase.updates;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,6 +24,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import org.openrefine.wikibase.editing.MediaFileUtils;
+import org.openrefine.wikibase.editing.MediaFileUtils.MediaUploadResponse;
 import org.openrefine.wikibase.editing.NewEntityLibrary;
 import org.openrefine.wikibase.editing.ReconEntityRewriter;
 import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
@@ -78,8 +73,9 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             String filePath,
             String fileName,
             String wikitext,
-            boolean overrideWikitext) {
-        super(id, statements, labels, labelsIfNew);
+            boolean overrideWikitext,
+            Set<Integer> contributingRowIds) {
+        super(id, statements, labels, labelsIfNew, contributingRowIds);
         this.filePath = filePath;
         this.fileName = fileName;
         this.wikitext = wikitext;
@@ -116,8 +112,9 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             String filePath,
             String fileName,
             String wikitext,
-            boolean overrideWikitext) {
-        super(id, statements, labels, labelsIfNew);
+            boolean overrideWikitext,
+            Set<Integer> contributingRowIds) {
+        super(id, statements, labels, labelsIfNew, contributingRowIds);
         this.filePath = filePath;
         this.fileName = fileName;
         this.wikitext = wikitext;
@@ -203,7 +200,10 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             newWikitext = wikitext;
         }
         boolean newOverrideWikitext = other.isOverridingWikitext() || overrideWikitext;
-        return new MediaInfoEdit(id, newStatements, newLabels, newLabelsIfNew, newFilePath, newFileName, newWikitext, newOverrideWikitext);
+        Set<Integer> contributingIds = new HashSet<>(contributingRowIds);
+        contributingIds.addAll(other.getContributingRowIds());
+        return new MediaInfoEdit(id, newStatements, newLabels, newLabelsIfNew, newFilePath, newFileName, newWikitext, newOverrideWikitext,
+                contributingIds);
     }
 
     @Override
@@ -222,12 +222,18 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
      *            the edit summary
      * @param tags
      *            the tags to apply to both edits
+     * @param filePageWaitTime
+     *            initial time to wait between checking if the page exists
+     * @param filePageMaxWaitTime
+     *            maximum time to wait between checking if the page exists
      * @return the id of the created entity
      * @throws MediaWikiApiErrorException
      * @throws IOException
+     * @throws InterruptedException
      */
-    public MediaInfoIdValue uploadNewFile(WikibaseDataEditor editor, MediaFileUtils mediaFileUtils, String summary, List<String> tags)
-            throws MediaWikiApiErrorException, IOException {
+    public MediaInfoIdValue uploadNewFile(WikibaseDataEditor editor, MediaFileUtils mediaFileUtils, String summary, List<String> tags,
+            int filePageWaitTime, int filePageMaxWaitTime)
+            throws MediaWikiApiErrorException, IOException, InterruptedException {
         Validate.isTrue(isNew());
         // Temporary addition of the category (should be configurable)
         String wikitext = this.wikitext;
@@ -239,7 +245,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         MediaFileUtils.MediaUploadResponse response;
         File path = new File(filePath);
         if (path.exists()) {
-            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags);
+            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags, shouldUploadInChunks());
         } else {
             URL url = new URL(filePath);
             response = mediaFileUtils.uploadRemoteFile(url, fileName, wikitext, summary, tags);
@@ -247,7 +253,17 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
 
         response.checkForErrors();
 
+        List<String> filenames = Collections.singletonList(fileName);
+        logger.info("Checking if file page has been created.");
+        int waitTime = filePageWaitTime;
+        while (mediaFileUtils.checkIfPageNamesExist(filenames).isEmpty()) {
+            logger.debug("No file page yet, waiting " + waitTime / 1000.0 + " s to check again");
+            Thread.sleep(waitTime);
+            waitTime = Math.min(waitTime + filePageWaitTime, filePageMaxWaitTime);
+        }
+
         // Upload the structured data
+        logger.info("Uploading SDC.");
         ReconEntityIdValue reconEntityIdValue = (ReconEntityIdValue) id;
         MediaInfoIdValue mid = response.getMid(mediaFileUtils.getApiConnection(), reconEntityIdValue.getRecon().identifierSpace);
         NewEntityLibrary library = new NewEntityLibrary();
@@ -294,6 +310,11 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         return !isNew() && !(statements.isEmpty() &&
                 labels.isEmpty() &&
                 labelsIfNew.isEmpty());
+    }
+
+    public boolean shouldUploadInChunks() {
+        File file = new File(filePath);
+        return file.length() > 100000000; // 100 MB
     }
 
     @Override

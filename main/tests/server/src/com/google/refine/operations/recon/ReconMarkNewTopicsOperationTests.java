@@ -113,7 +113,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 "http://foo.com/identifierSpace",
                 "http://foo.com/schemaSpace",
                 null,
-                false, 10,
+                false,
                 Collections.emptyList(),
                 0);
 

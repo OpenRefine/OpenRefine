@@ -134,6 +134,7 @@ function registerCommands() {
   RS.registerCommand(module, "annotate-rows", new Packages.com.google.refine.commands.row.AnnotateRowsCommand());
   RS.registerCommand(module, "remove-rows", new Packages.com.google.refine.commands.row.RemoveRowsCommand());
   RS.registerCommand(module, "reorder-rows", new Packages.com.google.refine.commands.row.ReorderRowsCommand());
+  RS.registerCommand(module, "add-rows", new Packages.com.google.refine.commands.row.AddRowsCommand());
 
   RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
   RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
@@ -175,6 +176,7 @@ function registerOperations() {
   OR.registerOperation(module, "row-star", Packages.com.google.refine.operations.row.RowStarOperation);
   OR.registerOperation(module, "row-flag", Packages.com.google.refine.operations.row.RowFlagOperation);
   OR.registerOperation(module, "row-reorder", Packages.com.google.refine.operations.row.RowReorderOperation);
+  OR.registerOperation(module, "row-addition", Packages.com.google.refine.operations.row.RowAdditionOperation);
 
   OR.registerOperation(module, "recon", Packages.com.google.refine.operations.recon.ReconOperation);
   OR.registerOperation(module, "recon-mark-new-topics", Packages.com.google.refine.operations.recon.ReconMarkNewTopicsOperation);
@@ -535,6 +537,8 @@ function init() {
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
+      "scripts/dialogs/clustering-functions-dialog.js",
+      "scripts/dialogs/add-rows-dialog.js"
     ])
   );
 
@@ -566,6 +570,7 @@ function init() {
       "styles/views/data-table-view.css",
       "styles/views/column-join.css",
 
+      "styles/dialogs/clustering-functions-dialog.css",
       "styles/dialogs/expression-preview-dialog.css",
       "styles/dialogs/clustering-dialog.css",
       "styles/dialogs/scatterplot-dialog.css",
@@ -573,6 +578,7 @@ function init() {
       "styles/dialogs/custom-tabular-exporter-dialog.css",
       "styles/dialogs/sql-exporter-dialog.css",
       "styles/dialogs/recon-service-selection-dialog.css",
+      "styles/dialogs/confirm-history-erasure-dialog.less",
       "styles/reconciliation/recon-dialog.css",
       "styles/reconciliation/standard-service-panel.css",
       "styles/reconciliation/add-column-by-reconciliation.css",

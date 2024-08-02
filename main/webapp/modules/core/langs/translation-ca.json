@@ -678,7 +678,6 @@
     "core-views/sort/single": "Ordenació",
     "core-views/text": "text",
     "core-views/valid-values": "Valors vàlids",
-    "core-views/goto-page": "$1 de $2 {{plural:$2|pàgina|pàgines}}",
     "core-views/copy-val": "copia el valor de la columna original",
     "core-views/create-topic-cells": "Crea un element nou per a aquesta i totes les cel·les idèntiques",
     "core-project/last-op-er": "L'última operació ha trobat alguns errors:",

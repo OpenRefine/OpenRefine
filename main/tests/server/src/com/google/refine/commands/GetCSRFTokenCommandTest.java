@@ -29,16 +29,12 @@ public class GetCSRFTokenCommandTest {
     protected Command command = null;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         command = new GetCSRFTokenCommand();
         writer = new StringWriter();
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
     }
 
     @Test

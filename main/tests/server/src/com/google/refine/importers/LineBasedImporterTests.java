@@ -27,8 +27,6 @@
 
 package com.google.refine.importers;
 
-import static org.testng.Assert.fail;
-
 import java.io.Serializable;
 import java.io.StringReader;
 
@@ -73,12 +71,8 @@ public class LineBasedImporterTests extends ImporterTest {
                 + "bar\n"
                 + "baz";
 
-        try {
-            prepareOptions("\\r?\\n", 1, 0, false);
-            parseOneFile(SUT, new StringReader(contents));
-        } catch (Exception e) {
-            fail("Exception during file parse", e);
-        }
+        prepareOptions("\\r?\\n", 1, 0, false);
+        parseOneFile(SUT, new StringReader(contents));
 
         Project expected = createProject(new String[] { numberedColumn(1) },
                 new Serializable[][] {
@@ -100,12 +94,8 @@ public class LineBasedImporterTests extends ImporterTest {
                 + "e\n"
                 + "f\n";
 
-        try {
-            prepareOptions("\\r?\\n", 2, 0, false);
-            parseOneFile(SUT, new StringReader(contents));
-        } catch (Exception e) {
-            fail("Exception during file parse", e);
-        }
+        prepareOptions("\\r?\\n", 2, 0, false);
+        parseOneFile(SUT, new StringReader(contents));
 
         Project expected = createProject(new String[] {
                 numberedColumn(1),
@@ -123,12 +113,8 @@ public class LineBasedImporterTests extends ImporterTest {
     public void readSimpleData_1Header_1Row() {
         String input = "col1\ndata1";
 
-        try {
-            prepareOptions("\\r?\\n", 1, 1, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            fail("Exception during file parse", e);
-        }
+        prepareOptions("\\r?\\n", 1, 1, false);
+        parseOneFile(SUT, new StringReader(input));
 
         Project expectedProject = createProject(
                 new String[] { "col1" },
@@ -142,12 +128,8 @@ public class LineBasedImporterTests extends ImporterTest {
     public void readMixedLineData() {
         String input = "data1\r\ndata2\ndata3\rdata4";
 
-        try {
-            prepareOptions("\\r?\\n", 1, 0, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            fail("Exception during file parse", e);
-        }
+        prepareOptions("\\r?\\n", 1, 0, false);
+        parseOneFile(SUT, new StringReader(input));
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1) },
@@ -163,12 +145,8 @@ public class LineBasedImporterTests extends ImporterTest {
     public void readLineData(String pattern, String sep) {
         String input = "dataa,datab,datac,datad".replace(",", sep);
 
-        try {
-            prepareOptions(pattern, 1, 0, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            fail("Exception during file parse", e);
-        }
+        prepareOptions(pattern, 1, 0, false);
+        parseOneFile(SUT, new StringReader(input));
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1) },

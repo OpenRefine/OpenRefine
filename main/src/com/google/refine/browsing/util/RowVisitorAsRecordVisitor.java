@@ -59,7 +59,7 @@ public class RowVisitorAsRecordVisitor implements RecordVisitor {
     @Override
     public boolean visit(Project project, Record record) {
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-            if (_rowVisitor.visit(project, r, project.rows.get(r))) {
+            if (_rowVisitor.visit(project, r, r, project.rows.get(r))) {
                 return true;
             }
         }

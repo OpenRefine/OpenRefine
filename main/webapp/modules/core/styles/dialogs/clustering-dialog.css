@@ -54,7 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .clustering-dialog-control-row {
   margin: 1em 0;
   display: grid;
-  grid-template-columns: repeat(5, auto);
+  grid-template-columns: repeat(4, auto);
   justify-content: space-between;
   align-items: baseline;
   background: #eee;
