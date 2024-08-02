@@ -161,7 +161,7 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
     var self = this;
     var frame = $(
         DOM.loadHTML("core", "scripts/dialogs/add-function-dialog.html")
-            .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionAndClustersPreviewDialog.generateWidgetHtml()));
+            .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
 
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n('core-dialogs/add-function'));
@@ -174,7 +174,7 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
     var dismiss = function () { DialogSystem.dismissUntil(level - 1); };
 
     var o = DataTableView.sampleVisibleRows(column);
-    var previewWidget = new ExpressionAndClustersPreviewDialog.Widget(
+    var previewWidget = new ExpressionPreviewDialog.Widget(
         elmts,
         column.cellIndex,
         o.rowIndices,
