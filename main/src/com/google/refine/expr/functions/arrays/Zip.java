@@ -86,7 +86,7 @@ public class Zip implements Function {
                 } else {
                     for (Object z : ExpressionUtils.toObjectList(v)) {
                         if (z != null) {
-                            ziparg2.add(z.toString());
+                            ziparg2.add(z);
                         } else {
                             ziparg2.add(z);
                         }
@@ -140,7 +140,7 @@ public class Zip implements Function {
             ArrayList x = (ArrayList) a;
             returnList = (ArrayList) x.stream().collect(toCollection(ArrayList::new));
         } else {
-            returnList.add(a.toString());
+            returnList.add(a);
         }
 
         if (b == null) {
@@ -149,10 +149,10 @@ public class Zip implements Function {
             ArrayList y = (ArrayList) b;
             int i;
             for (i = 0; i < y.size(); i++) {
-                returnList.add(y.get(i).toString());
+                returnList.add(y.get(i));
             }
         } else {
-            returnList.add(b.toString());
+            returnList.add(b);
         }
         return returnList;
     }
