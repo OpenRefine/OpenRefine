@@ -111,8 +111,9 @@ public class ExportRowsCommand extends Command {
                 String userAgent = request.getHeader("User-Agent");
                 if (userAgent != null && userAgent.contains("Safari/") && !userAgent.contains("Chrome/")
                         && !userAgent.contains("Chromium/")) {
-                    // Safari doesn't support rfc5897 and just wants straight UTF-8
-                    response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+                    // Safari doesn't support rfc5897 and just wants straight UTF-8, but strip any controls to avoid
+                    // complaints about potential request/response splitting attacks
+                    response.setHeader("Content-Disposition", "attachment; filename=" + filename.replaceAll("\\p{Cntrl}", ""));
                 } else {
                     // We use the full suite of rc5987 safe characters even though some of them might not make sense
                     // in a filename. The browser will drop any unsafe characters before saving the file.
