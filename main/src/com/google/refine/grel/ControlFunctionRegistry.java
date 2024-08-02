@@ -105,6 +105,7 @@ import com.google.refine.expr.functions.strings.Contains;
 import com.google.refine.expr.functions.strings.Decode;
 import com.google.refine.expr.functions.strings.DetectLanguage;
 import com.google.refine.expr.functions.strings.Diff;
+import com.google.refine.expr.functions.strings.EditDistance;
 import com.google.refine.expr.functions.strings.Encode;
 import com.google.refine.expr.functions.strings.EndsWith;
 import com.google.refine.expr.functions.strings.Escape;
@@ -265,6 +266,7 @@ public class ControlFunctionRegistry {
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
         registerFunction("find", new Find());
+        registerFunction("editDistance", new EditDistance());
 
         registerFunction("parseUri", new ParseUri());
 
