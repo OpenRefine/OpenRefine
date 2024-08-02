@@ -29,11 +29,11 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-
 package com.google.refine.clustering.binning;
 
 import static org.testng.Assert.assertEquals;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class NGramFingerprintKeyerTest {
@@ -47,18 +47,41 @@ public class NGramFingerprintKeyerTest {
 
     @Test
     public void testKeyWithPunctuation() {
-        assertEquals(keyer.key("he!llo,. world",1), "dehlorw"); // Expected result after removing punctuation
+        assertEquals(keyer.key("he!llo,. world", 1), "dehlorw"); // Expected result after removing punctuation
     }
 
     @Test
     public void testKeyWithPunctAndControlCharsAndWhitespace() {
         assertEquals(keyer.key("\u0001a, !b-c_d\u00a0d\tz\u0003", 3), "abcbcdcddddz");
-         // Expected result after removing control char \u0009
-         // and non-breaking space char \u00a0 (stripped during normalize method from FingerprintKeyer)
-         // and should also remove control chars and punctuation
-         // which then leaves the string `abcddz` to generate n-grams from
-         // then building the final result fingerprint based on these size 3 n-gram's `abc`+`bcd`+`cdd`+`ddz`
+        // Expected result after removing control char \u0009
+        // and non-breaking space char \u00a0 (stripped during normalize method from FingerprintKeyer)
+        // and should also remove control chars and punctuation
+        // which then leaves the string `abcddz` to generate n-grams from
+        // then building the final result fingerprint based on these size 3 n-gram's `abc`+`bcd`+`cdd`+`ddz`
 
+    }
+
+    private static final String[][] testNGramStrings = {
+            { "abcdefg", "abbccddeeffg" },
+            { "gfedcba", "bacbdcedfegf" },
+            { "a b c d e f g", "abbccddeeffg" },
+            { " a,b.c d\te!f?g ", "abbccddeeffg" },
+            { "écÉCec", "ceec" },
+            // All the whitespace characters below should be skipped
+            { "a\u0009\nb\u000Bc\u000Cd\re\u0085f\u00A0g\u1680h\u2000i\u2001j\u2002k\u2003l\u2004m\u2005n\u2006o\u2007p\u2008q\u2009r\u200As\u2028t\u2029u\u202Fv\u205Fw\u3000z",
+                    "abbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwz" },
+            { "", "" }, // TODO: add more test cases
+            { "", "" },
+    };
+
+    @Test
+    public void testNGramKeyer() {
+        keyer = new NGramFingerprintKeyer();
+        for (String[] ss : testNGramStrings) {
+            Assert.assertEquals(ss.length, 2, "Invalid test"); // Not a valid test
+            Assert.assertEquals(keyer.key(ss[0]), ss[1],
+                    "Fingerprint for string: " + ss[0] + " failed");
+        }
     }
 
 }
