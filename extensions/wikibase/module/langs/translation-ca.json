@@ -346,5 +346,6 @@
     "wikibase-schema-management-dialog/import": "Importa un esquema nou",
     "wikibase-schema-management-dialog/rename": "Canvia el nom",
     "wikibase-schema-management-dialog/enter-new-schema-name": "Introduïu un nom nou per a l'esquema",
-    "wikibase-schema-management-dialog/invalid-schema": "Esquema no vàlid."
+    "wikibase-schema-management-dialog/invalid-schema": "Esquema no vàlid.",
+    "perform-wikibase-edits/wikibase-editing-results": "Resultats d'edició de Wikibase"
 }
