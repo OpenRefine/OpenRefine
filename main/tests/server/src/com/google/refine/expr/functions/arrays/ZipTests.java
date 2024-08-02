@@ -1,6 +1,11 @@
 
 package com.google.refine.expr.functions.arrays;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.ParsingException;
@@ -45,4 +50,52 @@ public class ZipTests extends GrelTestBase {
         // TODO: Add tests for List<Object> returned from ExpressionUtils.toObjectList()
     }
 
+    @Test
+    public void testZipwithIntArrays() {
+        List arg1 = Lists.newArrayList(1,2,3);
+        List arg2 = Lists.newArrayList(7.89,8.90,9.01);
+
+        List<List> output = new ArrayList<>();
+        output.add(Lists.newArrayList(1, 7.89));
+        output.add(Lists.newArrayList(2, 8.90));
+        output.add(Lists.newArrayList(3, 9.01));
+
+        List<List> testOutput =  (List<List>) invoke("zip", arg1, arg2);
+        for(int i=0; i < output.size(); ++i) {
+            Assert.assertTrue(testOutput.get(i).equals(output.get(i)));
+        }
+    }
+
+    @Test
+    public void testZipwithStrArrays() {
+        List arg1 = Lists.newArrayList("Ben", "Den", "Hen");
+        List arg2 = Lists.newArrayList("A","B","C");
+
+        List<List> output = new ArrayList<>();
+        output.add(Lists.newArrayList("Ben", "A"));
+        output.add(Lists.newArrayList("Den", "B"));
+        output.add(Lists.newArrayList("Hen", "C"));
+
+        List<List> testOutput =  (List<List>) invoke("zip", arg1, arg2);
+        for(int i=0; i < output.size(); ++i) {
+            Assert.assertTrue(testOutput.get(i).equals(output.get(i)));
+        }
+    }
+
+    @Test
+    public void testZipwithAllTypeArrays() {
+        List arg1 = Lists.newArrayList(1,null,3.142);
+        List arg2 = Lists.newArrayList("A","B","C");
+        List arg3 = Lists.newArrayList("Ben", null, "Hen");
+
+        List<List> output = new ArrayList<>();
+        output.add(Lists.newArrayList(1, "A", "Ben"));
+        output.add(Lists.newArrayList(null, "B", null));
+        output.add(Lists.newArrayList(3.142, "C", "Hen"));
+
+        List<List> testOutput =  (List<List>) invoke("zip", arg1, arg2, arg3);
+        for(int i=0; i < output.size(); ++i) {
+            Assert.assertTrue(testOutput.get(i).equals(output.get(i)));
+        }
+    }
 }
