@@ -96,7 +96,7 @@ public abstract class ImporterTest extends RefineTest {
                 -1,
                 options,
                 exceptions);
-        assertEquals(exceptions.size(), 0);
+        assertEquals(exceptions.size(), 0, "Unexpected exception(s) thrown: " + exceptions);
         project.update();
     }
 
@@ -111,7 +111,7 @@ public abstract class ImporterTest extends RefineTest {
                 -1,
                 options,
                 exceptions);
-        assertEquals(exceptions.size(), 0);
+        assertEquals(exceptions.size(), 0, "Unexpected exception(s) thrown: " + exceptions);
         project.update();
     }
 
@@ -143,7 +143,7 @@ public abstract class ImporterTest extends RefineTest {
                 -1,
                 options,
                 exceptions);
-        assertEquals(exceptions.size(), 0);
+        assertEquals(exceptions.size(), 0, "Unexpected exception(s) thrown: " + exceptions);
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
         project.columnModel.update();
     }
