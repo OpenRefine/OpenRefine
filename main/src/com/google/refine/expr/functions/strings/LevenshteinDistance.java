@@ -3,13 +3,12 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.apache.commons.text.similarity.LevenshteinDistance;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 
-public class EditDistance implements Function {
+public class LevenshteinDistance implements Function {
 
     /**
      * Calculate the number of edits required to make one value perfectly match another.
@@ -31,16 +30,16 @@ public class EditDistance implements Function {
                 threshold = (Integer) args[2];
             }
 
-            LevenshteinDistance levenshteinDistance;
+            org.apache.commons.text.similarity.LevenshteinDistance levenshteinDistance;
             if (threshold != null) {
-                levenshteinDistance = new LevenshteinDistance(threshold);
+                levenshteinDistance = new org.apache.commons.text.similarity.LevenshteinDistance(threshold);
             } else {
-                levenshteinDistance = new LevenshteinDistance();
+                levenshteinDistance = new org.apache.commons.text.similarity.LevenshteinDistance();
             }
 
             return levenshteinDistance.apply(s1, s2);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 arguments: string 1, string 2");
+        return new EvalError(EvalErrorMessage.expects_two_strings_optional_integer(ControlFunctionRegistry.getFunctionName(this)));
     }
 
     @Override
@@ -50,7 +49,7 @@ public class EditDistance implements Function {
 
     @Override
     public String getParams() {
-        return "string s1, string s2";
+        return "string s1, string s2, integer threshold (optional)";
     }
 
     @Override

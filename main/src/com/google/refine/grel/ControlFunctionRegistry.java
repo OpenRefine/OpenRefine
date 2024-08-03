@@ -105,7 +105,6 @@ import com.google.refine.expr.functions.strings.Contains;
 import com.google.refine.expr.functions.strings.Decode;
 import com.google.refine.expr.functions.strings.DetectLanguage;
 import com.google.refine.expr.functions.strings.Diff;
-import com.google.refine.expr.functions.strings.EditDistance;
 import com.google.refine.expr.functions.strings.Encode;
 import com.google.refine.expr.functions.strings.EndsWith;
 import com.google.refine.expr.functions.strings.Escape;
@@ -113,6 +112,7 @@ import com.google.refine.expr.functions.strings.Find;
 import com.google.refine.expr.functions.strings.Fingerprint;
 import com.google.refine.expr.functions.strings.IndexOf;
 import com.google.refine.expr.functions.strings.LastIndexOf;
+import com.google.refine.expr.functions.strings.LevenshteinDistance;
 import com.google.refine.expr.functions.strings.MD5;
 import com.google.refine.expr.functions.strings.Match;
 import com.google.refine.expr.functions.strings.NGram;
@@ -266,7 +266,7 @@ public class ControlFunctionRegistry {
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
         registerFunction("find", new Find());
-        registerFunction("editDistance", new EditDistance());
+        registerFunction("levenshteinDistance", new LevenshteinDistance());
 
         registerFunction("parseUri", new ParseUri());
 
