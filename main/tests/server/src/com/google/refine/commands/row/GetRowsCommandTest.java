@@ -54,30 +54,40 @@ public class GetRowsCommandTest extends RefineTest {
     Command command = null;
     Project project = null;
     StringWriter writer = null;
+    String sortingConfigJson = null;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        project = createProject(new String[] { "a", "b" },
+        project = createProject(new String[] { "foo", "bar" },
                 new Serializable[][] {
-                        { "c", "d" },
-                        { null, "f" }
+                        { "a", "b" },
+                        { null, "c" },
+                        { "d", "e" },
+                        { "", "f" },
+                        { "g", "h" },
                 });
         command = new GetRowsCommand();
         writer = new StringWriter();
+        sortingConfigJson = "{"
+                + "\"criteria\":["
+                + "  {"
+                + "     \"column\":\"bar\","
+                + "     \"valueType\":\"string\","
+                + "     \"reverse\":true,"
+                + "     \"blankPosition\":2,"
+                + "     \"errorPosition\":1,"
+                + "     \"caseSensitive\":false"
+                + "}]}";
         when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
     }
 
     @Test
-    public void testJsonOutputRows() throws ServletException, IOException {
+    public void testJsonOutputRowsStart() throws ServletException, IOException {
         String rowJson = "{\n" +
-                "       \"filtered\" : 2,\n" +
+                "       \"filtered\" : 5,\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
                 "       \"pool\" : {\n" +
@@ -85,34 +95,240 @@ public class GetRowsCommandTest extends RefineTest {
                 "       },\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
-                "           \"v\" : \"c\"\n" +
+                "           \"v\" : \"a\"\n" +
                 "         }, {\n" +
-                "           \"v\" : \"d\"\n" +
+                "           \"v\" : \"b\"\n" +
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
-                "           \"v\" : \"f\"\n" +
+                "           \"v\" : \"c\"\n" +
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"total\" : 2\n" +
+                "       \"nextPageStart\" : 2,\n" +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("limit")).thenReturn("2");
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
-    public void testJsonOutputRecords() throws ServletException, IOException {
+    public void testJsonOutputRowsStartWithNoNextPage() throws ServletException, IOException {
+        String rowJson = "{\n" +
+                "       \"filtered\" : 5,\n" +
+                "       \"limit\" : 2,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"a\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"b\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"c\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"start\" : 0,\n" +
+                "       \"nextPageStart\": 2,\n" +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("limit")).thenReturn("2");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testJsonOutputRowsEnd() throws ServletException, IOException {
+        String rowJson = "{\n" +
+                "       \"filtered\" : 5,\n" +
+                "       \"limit\" : 1,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"c\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"end\" : 2,\n" +
+                "       \"previousPageEnd\": 1,\n" +
+                "       \"nextPageStart\": 2,\n" +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("2");
+        when(request.getParameter("limit")).thenReturn("1");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testJsonOutputRowsEndWithNoPreviousPage() throws ServletException, IOException {
+        String rowJson = "{\n" +
+                "       \"filtered\" : 5,\n" +
+                "       \"limit\" : 3,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {" +
+                "         \"cells\": [ {\n" +
+                "            \"v\" : \"a\"\n" +
+                "           }, {\n" +
+                "            \"v\" : \"b\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"c\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"end\" : 2,\n" +
+                "       \"nextPageStart\": 2,\n" +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("2");
+        when(request.getParameter("limit")).thenReturn("3");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testJsonOutputRowsSorted() throws ServletException, IOException {
+        String rowJson = "{\n"
+                + "       \"end\" : 2,\n"
+                + "       \"filtered\" : 5,\n"
+                + "       \"limit\" : 3,\n"
+                + "       \"mode\" : \"row-based\",\n"
+                + "       \"nextPageStart\" : 2,\n"
+                + "       \"pool\" : {\n"
+                + "         \"recons\" : { }\n"
+                + "       },\n"
+                + "       \"rows\" : [ {\n"
+                + "         \"cells\" : [ {\n"
+                + "           \"v\" : \"g\"\n"
+                + "         }, {\n"
+                + "           \"v\" : \"h\"\n"
+                + "         } ],\n"
+                + "         \"flagged\" : false,\n"
+                + "         \"i\" : 4,\n"
+                + "         \"k\" : 0,\n"
+                + "         \"starred\" : false\n"
+                + "       }, {\n"
+                + "         \"cells\" : [ {\n"
+                + "           \"v\" : \"\"\n"
+                + "         }, {\n"
+                + "           \"v\" : \"f\"\n"
+                + "         } ],\n"
+                + "         \"flagged\" : false,\n"
+                + "         \"i\" : 3,\n"
+                + "         \"k\" : 1,\n"
+                + "         \"starred\" : false\n"
+                + "       } ],\n"
+                + "       \"total\" : 5,\n"
+                + "       \"totalRows\" : 5\n"
+                + "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("2");
+        when(request.getParameter("limit")).thenReturn("3");
+        when(request.getParameter("sorting")).thenReturn(sortingConfigJson);
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testJsonOutputSingleRecord() throws ServletException, IOException {
         String recordJson = "{\n" +
-                "       \"filtered\" : 1,\n" +
+                "       \"filtered\" : 3,\n" +
+                "       \"limit\" : 1,\n" +
+                "       \"mode\" : \"record-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"a\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"b\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 0,\n" +
+                "         \"j\" : 0,\n" +
+                "         \"k\" : 0,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ null, {\n" +
+                "           \"v\" : \"c\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"start\" : 0,\n" +
+                "       \"nextPageStart\" : 2,\n" +
+                "       \"total\" : 3,\n" +
+                "       \"totalRows\": 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("limit")).thenReturn("1");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
+    }
+
+    @Test
+    public void testJsonOutputTwoRecords() throws ServletException, IOException {
+        String recordJson = "{\n" +
+                "       \"filtered\" : 3,\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"record-based\",\n" +
                 "       \"pool\" : {\n" +
@@ -120,27 +336,190 @@ public class GetRowsCommandTest extends RefineTest {
                 "       },\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
-                "           \"v\" : \"c\"\n" +
+                "           \"v\" : \"a\"\n" +
                 "         }, {\n" +
-                "           \"v\" : \"d\"\n" +
+                "           \"v\" : \"b\"\n" +
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 0,\n" +
                 "         \"j\" : 0,\n" +
+                "         \"k\" : 0,\n" +
                 "         \"starred\" : false\n" +
                 "       }, {\n" +
                 "         \"cells\" : [ null, {\n" +
-                "           \"v\" : \"f\"\n" +
+                "           \"v\" : \"c\"\n" +
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
                 "         \"i\" : 1,\n" +
+                "         \"k\" : 1,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"d\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"e\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 2,\n" +
+                "         \"j\" : 1,\n" +
+                "         \"k\" : 2,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"f\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 3,\n" +
+                "         \"k\" : 3,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
                 "       \"start\" : 0,\n" +
-                "       \"total\" : 1\n" +
+                "       \"nextPageStart\" : 4,\n" +
+                "       \"total\" : 3,\n" +
+                "       \"totalRows\": 5\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("limit")).thenReturn("2");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
+    }
+
+    @Test
+    public void testJsonOutputRecordStartFromOffset() throws ServletException, IOException {
+        String recordJson = "{\n" +
+                "       \"filtered\" : 3,\n" +
+                "       \"limit\" : 1,\n" +
+                "       \"mode\" : \"record-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"d\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"e\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 2,\n" +
+                "         \"j\" : 1,\n" +
+                "         \"k\" : 2,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"f\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 3,\n" +
+                "         \"k\" : 3,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"start\" : 1,\n" +
+                "       \"previousPageEnd\" : 1,\n" +
+                "       \"nextPageStart\" : 4,\n" +
+                "       \"total\" : 3,\n" +
+                "       \"totalRows\": 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("1");
+        when(request.getParameter("limit")).thenReturn("1");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
+    }
+
+    @Test
+    public void testJsonOutputRecordEndToOffset() throws ServletException, IOException {
+        String recordJson = "{\n" +
+                "       \"filtered\" : 3,\n" +
+                "       \"limit\" : 1,\n" +
+                "       \"mode\" : \"record-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"d\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"e\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 2,\n" +
+                "         \"j\" : 1,\n" +
+                "         \"k\" : 2,\n" +
+                "         \"starred\" : false\n" +
+                "       }, {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"f\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 3,\n" +
+                "         \"k\" : 3,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"end\" : 4,\n" +
+                "       \"previousPageEnd\" : 2,\n" +
+                "       \"nextPageStart\" : 4,\n" +
+                "       \"total\" : 3,\n" +
+                "       \"totalRows\": 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("4");
+        when(request.getParameter("limit")).thenReturn("1");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
+    }
+
+    @Test
+    public void testJsonOutputRecordWithSorting() throws ServletException, IOException {
+        String recordJson = "{\n"
+                + "       \"filtered\" : 3,\n"
+                + "       \"limit\" : 1,\n"
+                + "       \"mode\" : \"record-based\",\n"
+                + "       \"nextPageStart\" : 3,\n"
+                + "       \"pool\" : {\n"
+                + "         \"recons\" : { }\n"
+                + "       },\n"
+                + "       \"previousPageEnd\" : 1,\n"
+                + "       \"rows\" : [ {\n"
+                + "         \"cells\" : [ {\n"
+                + "           \"v\" : \"d\"\n"
+                + "         }, {\n"
+                + "           \"v\" : \"e\"\n"
+                + "         } ],\n"
+                + "         \"flagged\" : false,\n"
+                + "         \"i\" : 2,\n"
+                + "         \"j\" : 1,\n"
+                + "         \"k\" : 1,\n"
+                + "         \"starred\" : false\n"
+                + "       }, {\n"
+                + "         \"cells\" : [ {\n"
+                + "           \"v\" : \"\"\n"
+                + "         }, {\n"
+                + "           \"v\" : \"f\"\n"
+                + "         } ],\n"
+                + "         \"flagged\" : false,\n"
+                + "         \"i\" : 3,\n"
+                + "         \"k\" : 2,\n"
+                + "         \"starred\" : false\n"
+                + "       } ],\n"
+                + "       \"start\" : 1,\n"
+                + "       \"total\" : 3,\n"
+                + "       \"totalRows\" : 5\n"
+                + "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+        when(request.getParameter("start")).thenReturn("1");
+        when(request.getParameter("limit")).thenReturn("1");
+        when(request.getParameter("sorting")).thenReturn(sortingConfigJson);
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
     }

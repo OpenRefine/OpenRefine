@@ -89,8 +89,10 @@ public class SortingRowVisitor extends BaseSorter implements RowVisitor {
             }
         }.init(project));
 
+        int sortedIndex = 0;
         for (IndexedRow indexedRow : _indexedRows) {
-            _visitor.visit(project, indexedRow.index, indexedRow.row);
+            _visitor.visit(project, indexedRow.index, sortedIndex, indexedRow.row);
+            sortedIndex++;
         }
 
         _visitor.end(project);

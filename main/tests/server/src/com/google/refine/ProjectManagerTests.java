@@ -128,7 +128,7 @@ public class ProjectManagerTests extends RefineTest {
     // TODO test registerProject in race condition
 
     @Test
-    public void canEnsureProjectSave() {
+    public void canEnsureProjectSave() throws Exception {
         whenGetSaveTimes(project, metadata);
         registerProject();
 
@@ -137,11 +137,7 @@ public class ProjectManagerTests extends RefineTest {
 
         // assert and verify
         AssertProjectRegistered();
-        try {
-            verify(SUT, times(1)).saveMetadata(metadata, project.id);
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        verify(SUT, times(1)).saveMetadata(metadata, project.id);
         this.verifySaveTimeCompared(1);
         verify(SUT, times(1)).saveProject(project);
         verify(metadata, times(1)).getTags();

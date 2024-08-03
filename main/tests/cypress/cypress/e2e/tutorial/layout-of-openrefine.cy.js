@@ -25,13 +25,13 @@ describe(__filename, function () {
     cy.get('.dialog-container input[bind="separatorInput"]').type('|');
     cy.confirmDialogPanel();
 
-    cy.get('#summary-bar').should('to.contain', '4009 rows');
+    cy.get('#summary-bar').should('to.contain', '4,009 rows');
 
     // Click the Records option to change to Records mode,
     // Note how the numbering has changed - indicating that several rows are related to the same record
     cy.get('span[bind="modeSelectors"]').contains('records').click();
 
-    cy.get('#summary-bar').should('to.contain', '1001 records');
+    cy.get('#summary-bar').should('to.contain', '1,001 records');
 
     /** ************
     Joining Cells
@@ -50,12 +50,12 @@ describe(__filename, function () {
       'Join multi-valued cells…',
     ]);
 
-    cy.get('#summary-bar').should('to.contain', '1001 records');
+    cy.get('#summary-bar').should('to.contain', '1,001 records');
 
     //       Click both the Rows and Records options and observe how the numbers of Rows and Records are equal
 
     cy.get('span[bind="modeSelectors"]').contains('rows').click();
 
-    cy.get('#summary-bar').should('to.contain', '1001 rows');
+    cy.get('#summary-bar').should('to.contain', '1,001 rows');
   });
 });

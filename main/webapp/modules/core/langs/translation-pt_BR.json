@@ -750,7 +750,6 @@
     "core-index-import/files-selected": "$1 de $2 {{plural:$2|arquivo selecionado|arquivos selecionados}}",
     "core-index-import/file-count": "$1 {{plural:$1|arquivo|arquivos}}",
     "core-index-import/match-count": "$1 {{plural:$1|corresponde|correspondem}}",
-    "core-views/goto-page": "$1 de $2 {{plural:$2|página|páginas}}",
     "core-views/by-number-rev-example": "[11AbcDef, 22]",
     "core-views/by-number-example": "[11, AbcDef22]",
     "core-views/by-case-rev-example": "[11A, bcD, ef22]",

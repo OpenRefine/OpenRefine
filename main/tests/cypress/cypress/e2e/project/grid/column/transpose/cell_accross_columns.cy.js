@@ -47,7 +47,6 @@ describe(__filename, function () {
       .type('Address');
 
     cy.confirmDialogPanel();
-    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Transpose cells in columns starting with Street'
     );
@@ -101,7 +100,6 @@ describe(__filename, function () {
     );
 
     cy.confirmDialogPanel();
-    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Transpose cells in columns starting with Street'
     );

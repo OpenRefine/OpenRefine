@@ -287,7 +287,7 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
             result.rowModel = data;
             callback(result);
         },
-        "jsonp"
+        "json"
          ).fail(() => {
            DialogSystem.alert($.i18n('core-index/rows-loading-failed'));
          });

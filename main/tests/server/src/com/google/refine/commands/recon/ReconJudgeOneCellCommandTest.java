@@ -62,7 +62,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
     PrintWriter writer = null;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         project = createProject(
                 new String[] { "reconciled column", "unreconciled column" },
                 new Serializable[][] {
@@ -76,7 +76,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
                 "http://my.recon.service/rdf/schema",
                 "type3894",
                 "octopus",
-                true, 10,
+                true,
                 Collections.emptyList(),
                 5);
         reconciled.setReconConfig(config);
@@ -88,11 +88,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
         writer = mock(PrintWriter.class);
-        try {
-            when(response.getWriter()).thenReturn(writer);
-        } catch (IOException e1) {
-            Assert.fail();
-        }
+        when(response.getWriter()).thenReturn(writer);
 
         command = new ReconJudgeOneCellCommand();
     }

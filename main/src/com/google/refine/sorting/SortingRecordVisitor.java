@@ -78,8 +78,10 @@ public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
             }
         }.init(project));
 
+        int sortedIndex = 0;
         for (Record record : _records) {
-            _visitor.visit(project, record);
+            _visitor.visit(project, sortedIndex, record);
+            sortedIndex += record.toRowIndex - record.fromRowIndex;
         }
 
         _visitor.end(project);

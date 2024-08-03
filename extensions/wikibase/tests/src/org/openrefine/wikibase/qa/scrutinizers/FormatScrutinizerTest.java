@@ -74,6 +74,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P18", value, idA);
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
@@ -92,6 +93,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P18", value, idA);
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
@@ -110,6 +112,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P18", value, idA);
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
@@ -128,6 +131,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P18", value, idA);
         TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
+                .addContributingRowId(123)
                 .build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(invalidRegularExpression);

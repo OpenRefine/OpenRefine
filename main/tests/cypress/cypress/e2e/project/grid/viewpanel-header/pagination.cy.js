@@ -27,7 +27,7 @@ describe(__filename, function () {
   it('Test the "next" button', function () {
     cy.loadAndVisitProject('food.small');
     cy.get('.viewpanel-paging').find('a').contains('next').click();
-    cy.get('#viewpanel-paging-current-input').should('have.value', 2);
+    cy.get('#viewpanel-paging-current-min-row').should('have.value', 11);
     cy.assertCellEquals(0, 'Shrt_Desc', 'CHEESE,COLBY');
     cy.assertCellEquals(9, 'Shrt_Desc', 'CHEESE,FONTINA');
   });
@@ -37,11 +37,11 @@ describe(__filename, function () {
 
     // First go next
     cy.get('.viewpanel-paging').find('a').contains('next').click();
-    cy.get('#viewpanel-paging-current-input').should('have.value', 2);
+    cy.get('#viewpanel-paging-current-min-row').should('have.value', 11);
 
     // Then test the previous button
     cy.get('.viewpanel-paging').find('a').contains('previous').click();
-    cy.get('#viewpanel-paging-current-input').should('have.value', 1);
+    cy.get('#viewpanel-paging-current-min-row').should('have.value', 1);
     cy.assertCellEquals(0, 'Shrt_Desc', 'BUTTER,WITH SALT');
     cy.assertCellEquals(9, 'Shrt_Desc', 'CHEESE,CHESHIRE');
   });
@@ -50,9 +50,9 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.small');
 
     cy.get('.viewpanel-paging').find('a').contains('last').click();
-    cy.get('#viewpanel-paging-current-input').should('have.value', 20);
-    cy.assertCellEquals(0, 'Shrt_Desc', 'SPICES,BASIL,DRIED');
-    cy.assertCellEquals(8, 'Shrt_Desc', 'CLOVES,GROUND');
+    cy.get('#viewpanel-paging-current-min-row').should('have.value', 190);
+    cy.assertCellEquals(0, 'Shrt_Desc', 'ANISE SEED');
+    cy.assertCellEquals(9, 'Shrt_Desc', 'CLOVES,GROUND');
   });
 
   it('Test the "first" button', function () {
@@ -60,11 +60,11 @@ describe(__filename, function () {
 
     // First go next
     cy.get('.viewpanel-paging').find('a').contains('next').click();
-    cy.get('#viewpanel-paging-current-input').should('have.value', 2);
+    cy.get('#viewpanel-paging-current-min-row').should('have.value', 11);
 
-    // Then test the previous button
+    // Then test the First button
     cy.get('.viewpanel-paging').find('a').contains('first').click();
-    cy.get('#viewpanel-paging-current-input').should('have.value', 1);
+    cy.get('#viewpanel-paging-current-min-row').should('have.value', 1);
     cy.assertCellEquals(0, 'Shrt_Desc', 'BUTTER,WITH SALT');
     cy.assertCellEquals(9, 'Shrt_Desc', 'CHEESE,CHESHIRE');
   });
@@ -72,8 +72,8 @@ describe(__filename, function () {
   it('Test entering an arbitrary page number', function () {
     cy.loadAndVisitProject('food.small');
 
-    cy.get('#viewpanel-paging-current-input').type('{backspace}2{enter}');
-    cy.get('#viewpanel-paging-current-input').should('have.value', 2);
+    cy.get('#viewpanel-paging-current-min-row').type('{backspace}11{enter}');
+    cy.get('#viewpanel-paging-current-min-row').should('have.value', 11);
     cy.assertCellEquals(0, 'Shrt_Desc', 'CHEESE,COLBY');
     cy.assertCellEquals(9, 'Shrt_Desc', 'CHEESE,FONTINA');
   });

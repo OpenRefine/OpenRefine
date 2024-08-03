@@ -34,6 +34,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function SummaryBar(div) {
   this._div = div;
   this._initializeUI();
+  // The browser might not support all the locale identifiers that our i18n library supports.
+  // For instance, firefox chokes on 'zh_Hant'.
+  this._numberFormat = null;
+  try {
+    let supportedLocales = Intl.NumberFormat.supportedLocalesOf([ $.i18n().locale ]);
+    if (supportedLocales.length > 0) {
+      this._numberFormat = new Intl.NumberFormat(supportedLocales[0]);
+    }
+  } catch (error) {
+    // leave no number formatter
+  }
 }
 
 SummaryBar.prototype._initializeUI = function() {
@@ -42,12 +53,21 @@ SummaryBar.prototype._initializeUI = function() {
 
 SummaryBar.prototype.updateResultCount = function() {
   var summaryText;
-  var units = theProject.rowModel.mode == "row-based" ? $.i18n('core-views/rows') : $.i18n('core-views/records');
+  var locale = $.i18n().locale;
+  var rowModel = theProject.rowModel;
   if (theProject.rowModel.filtered == theProject.rowModel.total) {
-    summaryText = (theProject.rowModel.total) + ' ' + units;
+    summaryText = $.i18n(theProject.rowModel.mode == "row-based" ? 'core-views/total-rows' : 'core-views/total-records', this.formatNumber(rowModel.total));
   } else {
-    summaryText = (theProject.rowModel.filtered) + ' matching ' + units + ' <span id="summary-total">(' + (theProject.rowModel.total) + ' total)</span>';
+    summaryText = $.i18n(theProject.rowModel.mode == "row-based" ? 'core-views/total-matching-rows' : 'core-views/total-matching-records', this.formatNumber(rowModel.filtered), this.formatNumber(rowModel.total));
   }
 
   $('<span>').html(summaryText).appendTo(this._div.empty());
 };
+
+SummaryBar.prototype.formatNumber = function(number) {
+  if (this._numberFormat == null) {
+    return number.toString();
+  } else {
+    return this._numberFormat.format(number);
+  }
+}

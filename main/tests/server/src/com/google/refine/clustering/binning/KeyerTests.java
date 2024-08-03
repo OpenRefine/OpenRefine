@@ -39,6 +39,9 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
+import com.google.refine.grel.Parser;
 
 public class KeyerTests extends RefineTest {
 
@@ -122,23 +125,20 @@ public class KeyerTests extends RefineTest {
             { "", "" },
     };
 
-    private static final String[][] testNGramStrings = {
-            { "abcdefg", "abbccddeeffg" },
-            { "gfedcba", "bacbdcedfegf" },
-            { "a b c d e f g", "abbccddeeffg" },
-            { " a,b.c d\te!f?g ", "abbccddeeffg" },
-            { "écÉCec", "ceec" },
-            // All the whitespace characters below should be skipped
-            { "a\u0009\nb\u000Bc\u000Cd\re\u0085f\u00A0g\u1680h\u2000i\u2001j\u2002k\u2003l\u2004m\u2005n\u2006o\u2007p\u2008q\u2009r\u200As\u2028t\u2029u\u202Fv\u205Fw\u3000z",
-                    "abbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwz" },
-            { "", "" }, // TODO: add more test cases
-            { "", "" },
-    };
-
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
+    }
+
+    @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
     }
 
     @BeforeMethod
@@ -166,13 +166,34 @@ public class KeyerTests extends RefineTest {
     }
 
     @Test
-    public void testNGramKeyer() {
-        keyer = new NGramFingerprintKeyer();
-        for (String[] ss : testNGramStrings) {
+    public void testUserDefinedKeyer1() {
+        try {
+            String expression = "value.fingerprint()";
+            keyer = new UserDefinedKeyer(expression);
+        } catch (ParsingException e) {
+            throw new RuntimeException(e);
+        }
+        for (String[] ss : testStrings) {
             Assert.assertEquals(ss.length, 2, "Invalid test"); // Not a valid test
             Assert.assertEquals(keyer.key(ss[0]), ss[1],
-                    "Fingerprint for string: " + ss[0] + " failed");
+                    "User defined keying for string: " + ss[0] + " failed");
         }
     }
 
+    @Test
+    public void testUserDefinedKeyer2() {
+        try {
+            String expression = "value + ' world'";
+            keyer = new UserDefinedKeyer(expression);
+        } catch (ParsingException e) {
+            throw new RuntimeException(e);
+        }
+
+        String[] strs = { "hello", "new", "fantastic" };
+        for (String s : strs) {
+            String output = keyer.key(s);
+            Assert.assertEquals(output, s + " world",
+                    "User defined keying for string: " + s + " failed");
+        }
+    }
 }

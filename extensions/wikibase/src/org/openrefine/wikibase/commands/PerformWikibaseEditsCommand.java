@@ -45,7 +45,9 @@ public class PerformWikibaseEditsCommand extends EngineDependentCommand {
         Integer maxEditsPerMinute = maxEditsPerMinuteStr == null ? null : Integer.parseInt(maxEditsPerMinuteStr);
         String tag = request.getParameter("tag");
         String editGroupsUrlSchema = request.getParameter("editGroupsUrlSchema");
-        return new PerformWikibaseEditsOperation(engineConfig, summary, maxlag, editGroupsUrlSchema, maxEditsPerMinute, tag);
+        String resultsColumnName = request.getParameter("resultsColumnName");
+        return new PerformWikibaseEditsOperation(engineConfig, summary, maxlag, editGroupsUrlSchema, maxEditsPerMinute, tag,
+                resultsColumnName);
     }
 
 }

@@ -27,13 +27,14 @@ import org.openrefine.wikibase.schema.strategies.StatementEditingMode;
 public abstract class LabeledStatementEntityEdit implements StatementEntityEdit {
 
     protected final EntityIdValue id;
+    protected final Set<Integer> contributingRowIds;
     protected final List<StatementEdit> statements;
     protected final Map<String, MonolingualTextValue> labels;
     protected final Map<String, MonolingualTextValue> labelsIfNew;
 
     /**
      * Constructor.
-     * 
+     *
      * @param id
      *            the subject of the document. It can be a reconciled entity value for new entities.
      * @param statements
@@ -43,8 +44,10 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
      * @param labelsIfNew
      *            the labels to add on the entity, only if no label for that language exists
      */
-    public LabeledStatementEntityEdit(EntityIdValue id, List<StatementEdit> statements,
-            Set<MonolingualTextValue> labels, Set<MonolingualTextValue> labelsIfNew) {
+    public LabeledStatementEntityEdit(
+            EntityIdValue id, List<StatementEdit> statements,
+            Set<MonolingualTextValue> labels, Set<MonolingualTextValue> labelsIfNew,
+            Set<Integer> contributingRowIds) {
         super();
         Validate.notNull(id);
         this.id = id;
@@ -55,13 +58,15 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
         this.labelsIfNew = new HashMap<>();
         mergeSingleTermMaps(this.labels, this.labelsIfNew, labels, labelsIfNew);
         this.statements = statements;
+        this.contributingRowIds = contributingRowIds;
+        Validate.isFalse(contributingRowIds.isEmpty(), "no contributing row id provided");
     }
 
     /**
      * Protected constructor to avoid re-constructing term maps when merging two entity updates.
-     * 
+     *
      * No validation is done on the arguments, they all have to be non-null.
-     * 
+     *
      * @param id
      *            the subject of the update
      * @param statements
@@ -75,12 +80,15 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
             EntityIdValue id,
             List<StatementEdit> statements,
             Map<String, MonolingualTextValue> labels,
-            Map<String, MonolingualTextValue> labelsIfNew) {
+            Map<String, MonolingualTextValue> labelsIfNew,
+            Set<Integer> contributingRowIds) {
         super();
         this.id = id;
         this.statements = statements;
         this.labels = labels;
         this.labelsIfNew = labelsIfNew;
+        this.contributingRowIds = contributingRowIds;
+        Validate.isFalse(contributingRowIds.isEmpty(), "no contributing row id provided");
     }
 
     /**
@@ -89,6 +97,11 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
     @Override
     public EntityIdValue getEntityId() {
         return id;
+    }
+
+    @Override
+    public Set<Integer> getContributingRowIds() {
+        return contributingRowIds;
     }
 
     /**

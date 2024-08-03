@@ -427,7 +427,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.5.0</version>
+        <version>2.5.1</version>
         <executions>
           <execution>
             <id>l4j-clui-with-jre</id>
@@ -475,7 +475,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>3.3.1</version>
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -541,7 +541,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.9.2</version>
+              <version>4.10.0</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>

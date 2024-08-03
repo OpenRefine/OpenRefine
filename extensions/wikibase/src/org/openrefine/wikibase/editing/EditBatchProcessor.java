@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalLong;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -38,6 +40,7 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.EditingResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -75,6 +78,8 @@ public class EditBatchProcessor {
     private int globalCursor;
     private Map<String, EntityDocument> currentDocs;
     private int batchSize;
+    private int filePageWaitTime;
+    private int filePageMaxWaitTime;
 
     /**
      * Initiates the process of pushing a batch of updates to Wikibase. This schedules the updates and is a prerequisite
@@ -118,6 +123,8 @@ public class EditBatchProcessor {
         this.summary = summary;
         this.tagCandidates = new LinkedList<>(tagCandidates);
         this.batchSize = batchSize;
+        this.filePageWaitTime = 1000;
+        this.filePageMaxWaitTime = 60000;
 
         // Schedule the edit batch
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
@@ -139,10 +146,10 @@ public class EditBatchProcessor {
      * 
      * @throws InterruptedException
      */
-    public void performEdit()
+    public EditResult performEdit()
             throws InterruptedException {
         if (remainingEdits() == 0) {
-            return;
+            throw new IllegalStateException("No edit to perform");
         }
         if (batchCursor == currentBatch.size()) {
             prepareNewBatch();
@@ -154,10 +161,11 @@ public class EditBatchProcessor {
         try {
             update = rewriter.rewrite(update);
         } catch (NewEntityNotCreatedYetException e) {
-            logger.warn("Failed to rewrite update on entity " + update.getEntityId() + ". Missing entity: " + e.getMissingEntity()
-                    + ". Skipping update.");
             batchCursor++;
-            return;
+            return new EditResult(update.getContributingRowIds(),
+                    "rewrite-failed",
+                    "Failed to rewrite update on entity " + update.getEntityId() + ". Missing entity: " + e.getMissingEntity(),
+                    0L, OptionalLong.empty(), null);
         }
 
         // Pick a tag to apply to the edits
@@ -166,6 +174,9 @@ public class EditBatchProcessor {
         }
         List<String> tags = currentTag == null ? Collections.emptyList() : Collections.singletonList(currentTag);
 
+        long oldRevisionId = 0L;
+        OptionalLong lastRevisionId = OptionalLong.empty();
+        String newEntityUrl = null;
         try {
             if (update.isNew()) {
                 // New entities
@@ -173,11 +184,13 @@ public class EditBatchProcessor {
                 EntityIdValue createdDocId;
                 if (update instanceof MediaInfoEdit) {
                     MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
-                    createdDocId = ((MediaInfoEdit) update).uploadNewFile(editor, mediaFileUtils, summary, tags);
+                    createdDocId = ((MediaInfoEdit) update).uploadNewFile(editor, mediaFileUtils, summary, tags, filePageWaitTime,
+                            filePageMaxWaitTime);
                 } else {
                     createdDocId = editor.createEntityDocument(update.toNewEntity(), summary, tags).getEntityId();
                 }
                 library.setId(newCell.getReconInternalId(), createdDocId.getId());
+                newEntityUrl = createdDocId.getSiteIri() + createdDocId.getId();
             } else {
                 // Existing entities
                 EntityUpdate entityUpdate;
@@ -193,8 +206,13 @@ public class EditBatchProcessor {
                     entityUpdate = update.toEntityUpdate(null);
                 }
 
+                if (entityUpdate != null) {
+                    oldRevisionId = entityUpdate.getBaseRevisionId();
+                }
+
                 if (entityUpdate != null && !entityUpdate.isEmpty()) { // skip updates which do not change anything
-                    editor.editEntityDocument(entityUpdate, false, summary, tags);
+                    EditingResult result = editor.editEntityDocument(entityUpdate, false, summary, tags);
+                    lastRevisionId = result.getLastRevisionId();
                 }
                 // custom code for handling our custom updates to mediainfo, which cover editing more than Wikibase
                 if (entityUpdate instanceof FullMediaInfoUpdate) {
@@ -202,7 +220,8 @@ public class EditBatchProcessor {
                     if (fullMediaInfoUpdate.isOverridingWikitext() && fullMediaInfoUpdate.getWikitext() != null) {
                         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
                         long pageId = Long.parseLong(fullMediaInfoUpdate.getEntityId().getId().substring(1));
-                        mediaFileUtils.editPage(pageId, fullMediaInfoUpdate.getWikitext(), summary, tags);
+                        long revisionId = mediaFileUtils.editPage(pageId, fullMediaInfoUpdate.getWikitext(), summary, tags);
+                        lastRevisionId = OptionalLong.of(revisionId);
                     } else {
                         // manually purge the wikitext page associated with this mediainfo
                         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
@@ -214,18 +233,65 @@ public class EditBatchProcessor {
             if ("badtags".equals(e.getErrorCode()) && currentTag != null) {
                 // if we tried editing with a tag that does not exist, clear the tag and try again
                 currentTag = null;
-                performEdit();
-                return;
+                return performEdit();
             } else {
-                // TODO find a way to report these errors to the user in a nice way
-                logger.warn("MediaWiki error while editing [" + e.getErrorCode()
-                        + "]: " + e.getErrorMessage());
+                batchCursor++;
+                return new EditResult(update.getContributingRowIds(), e.getErrorCode(), e.getErrorMessage(), oldRevisionId,
+                        OptionalLong.empty(), null);
             }
         } catch (IOException e) {
             logger.warn("IO error while editing: " + e.getMessage());
         }
 
         batchCursor++;
+        return new EditResult(update.getContributingRowIds(), null, null, oldRevisionId, lastRevisionId, newEntityUrl);
+    }
+
+    public static class EditResult {
+
+        private final Set<Integer> correspondingRowIds;
+        private final String errorCode;
+        private final String errorMessage;
+        private final long baseRevisionId;
+        private final OptionalLong lastRevisionId;
+        private final String newEntityUrl;
+
+        public EditResult(Set<Integer> correspondingRowIds,
+                String errorCode, String errorMessage,
+                long baseRevisionId,
+                OptionalLong lastRevisionId,
+                String newEntityUrl) {
+            this.correspondingRowIds = correspondingRowIds;
+            this.errorCode = errorCode;
+            this.errorMessage = errorMessage;
+            this.baseRevisionId = baseRevisionId;
+            this.lastRevisionId = lastRevisionId;
+            this.newEntityUrl = newEntityUrl;
+        }
+
+        public Set<Integer> getCorrespondingRowIds() {
+            return correspondingRowIds;
+        }
+
+        public String getErrorCode() {
+            return errorCode;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public long getBaseRevisionId() {
+            return baseRevisionId;
+        }
+
+        public OptionalLong getLastRevisionId() {
+            return lastRevisionId;
+        }
+
+        public String getNewEntityUrl() {
+            return newEntityUrl;
+        }
     }
 
     /**

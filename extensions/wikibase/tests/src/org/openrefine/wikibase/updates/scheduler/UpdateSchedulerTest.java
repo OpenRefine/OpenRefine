@@ -74,17 +74,17 @@ public abstract class UpdateSchedulerTest {
     @Test
     public void testNewItemNotMentioned()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA).build();
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA).addContributingRowId(123).build();
         List<EntityEdit> scheduled = schedule(updateA);
-        TermedStatementEntityEdit newUpdate = new ItemEditBuilder(newIdA).build();
+        TermedStatementEntityEdit newUpdate = new ItemEditBuilder(newIdA).addContributingRowId(123).build();
         assertEquals(Arrays.asList(newUpdate, updateA), scheduled);
     }
 
     @Test
     public void testNewItemMentioned()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA).build();
-        TermedStatementEntityEdit newUpdate = new ItemEditBuilder(newIdA).addStatement(sNewAtoB).build();
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(existingIdA).addStatement(sAtoNewA).addContributingRowId(123).build();
+        TermedStatementEntityEdit newUpdate = new ItemEditBuilder(newIdA).addStatement(sNewAtoB).addContributingRowId(123).build();
         List<EntityEdit> scheduled = schedule(updateA, newUpdate);
         assertEquals(Arrays.asList(newUpdate, updateA), scheduled);
     }
@@ -92,9 +92,15 @@ public abstract class UpdateSchedulerTest {
     @Test
     public void testMerge()
             throws ImpossibleSchedulingException {
-        ItemEdit update1 = new ItemEditBuilder(existingIdA).addStatement(sAtoB).build();
+        ItemEdit update1 = new ItemEditBuilder(existingIdA)
+                .addStatement(sAtoB)
+                .addContributingRowId(123)
+                .build();
         ItemEdit update2 = new ItemEditBuilder(existingIdA)
-                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true).addStatement(sAtoB).build();
+                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
+                .addStatement(sAtoB)
+                .addContributingRowId(456)
+                .build();
         TermedStatementEntityEdit merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));
     }
@@ -104,9 +110,12 @@ public abstract class UpdateSchedulerTest {
             throws ImpossibleSchedulingException {
         ItemEdit update1 = new ItemEditBuilder(newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
-                .addStatement(sNewAtoB).build();
+                .addStatement(sNewAtoB)
+                .addContributingRowId(123)
+                .build();
         ItemEdit update2 = new ItemEditBuilder(newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
+                .addContributingRowId(456)
                 .build();
         ItemEdit merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));

@@ -29,15 +29,11 @@ public class CommandTestBase extends RefineTest {
     protected StringWriter writer = null;
 
     @BeforeMethod
-    public void setUpRequestResponse() {
+    public void setUpRequestResponse() throws IOException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         writer = new StringWriter();
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
     }
 
     /**

@@ -31,7 +31,8 @@ describe(__filename, function () {
     cy.get('.dialog-footer button').contains('OK').click();
     cy.get('#refine-tabs-facets').should('exist');
 
-    cy.waitForOrOperation();
+    // Wait for numeric facet to be populated before trying to manipulate it
+    cy.get('.facet-range-status').contains('0 — 94')
 
     //sliding the right slider
     cy.get('.slider-widget-bracket').eq(1)
@@ -42,6 +43,7 @@ describe(__filename, function () {
 
     //sliding the middle portion in numeric facet
     cy.get('.slider-widget-draggable').eq(0)
+      // FIXME: These are the last two uses of the hated waitForOrOperation
     .trigger('mousedown',{ force: true }).waitForOrOperation()
     .trigger('mousemove',130,0,{ force: true })
     .trigger('mouseup',{ force: true }).waitForOrOperation();

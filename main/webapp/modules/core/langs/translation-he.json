@@ -679,7 +679,6 @@
     "core-views/blank-records": "רשומות ריקות לפי עמודה",
     "core-views/blank-values": "ערכים ריקים לפי עמודה",
     "core-views/blank-rows": "שורות ריקות",
-    "core-views/goto-page": "$1 מתוך {{plural:$2|דף אחד|$2 דפים}}",
     "core-dialogs/focusing-on-column": " (התמקדות על $1)",
     "core-import-formats/service": "שירותים",
     "core-index/refine-version": "גרסה $1",

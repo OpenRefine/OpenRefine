@@ -77,7 +77,7 @@ public class StandardReconConfigTests extends RefineTest {
     private class StandardReconConfigStub extends StandardReconConfig {
 
         public StandardReconConfigStub() {
-            super("", "", "", "", "", false, 10, new ArrayList<ColumnDetail>());
+            super("", "", "", "", "", false, new ArrayList<ColumnDetail>());
         }
 
         public double wordDistanceTest(String s1, String s2) {
@@ -118,7 +118,41 @@ public class StandardReconConfigTests extends RefineTest {
                 "                \"name\": \"scientific article\"\n" +
                 "        },\n" +
                 "        \"autoMatch\": true,\n" +
-                "        \"batchSize\": 10,\n" +
+                "        \"columnDetails\": [\n" +
+                "           {\n" +
+                "             \"column\": \"organization_country\",\n" +
+                "             \"propertyName\": \"SPARQL: P17/P297\",\n" +
+                "             \"propertyID\": \"P17/P297\"\n" +
+                "           },\n" +
+                "           {\n" +
+                "             \"column\": \"organization_id\",\n" +
+                "             \"propertyName\": \"SPARQL: P3500|P2427\",\n" +
+                "             \"propertyID\": \"P3500|P2427\"\n" +
+                "           }\n" +
+                "        ],\n" +
+                "        \"limit\": 0\n" +
+                " }";
+        ReconConfig config = ReconConfig.reconstruct(json);
+        TestUtils.isSerializedTo(config, json);
+
+        // the "mode" only appears once in the serialization result
+        String fullJson = ParsingUtilities.mapper.writeValueAsString(config);
+        assertEquals(fullJson.indexOf("\"mode\"", fullJson.indexOf("\"mode\"") + 1), -1);
+    }
+
+    @Test
+    public void serializeStandardReconConfigWithBatchSize() throws Exception {
+        String json = " {\n" +
+                "        \"mode\": \"standard-service\",\n" +
+                "        \"service\": \"https://tools.wmflabs.org/openrefine-wikidata/en/api\",\n" +
+                "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+                "        \"type\": {\n" +
+                "                \"id\": \"Q13442814\",\n" +
+                "                \"name\": \"scientific article\"\n" +
+                "        },\n" +
+                "        \"autoMatch\": true,\n" +
+                "        \"batchSize\": 20,\n" +
                 "        \"columnDetails\": [\n" +
                 "           {\n" +
                 "             \"column\": \"organization_country\",\n" +

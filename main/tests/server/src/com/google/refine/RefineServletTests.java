@@ -109,40 +109,22 @@ public class RefineServletTests extends RefineTest {
 
     // --------------------doGet tests----------------------
     @Test
-    public void doGetRegressionTest() {
+    public void doGetRegressionTest() throws Exception {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(GET);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
-        try {
-            verify(command, times(1)).doGet(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        verify(command, times(1)).doGet(request, response);
     }
 
     @Test
-    public void doGetReturnsError404WhenCommandNotFound() {
+    public void doGetReturnsError404WhenCommandNotFound() throws Exception {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(GET);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
         verifyError404Called();
@@ -151,17 +133,11 @@ public class RefineServletTests extends RefineTest {
 
     // ----------------doPost tests-------------------------
     @Test
-    public void doPostRegressionTest() {
+    public void doPostRegressionTest() throws Exception {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(POST);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
         try {
@@ -174,17 +150,11 @@ public class RefineServletTests extends RefineTest {
     }
 
     @Test
-    public void doPostReturns404WhenCommandNotFound() {
+    public void doPostReturns404WhenCommandNotFound() throws Exception {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(POST);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
         verifyError404Called();
@@ -192,40 +162,22 @@ public class RefineServletTests extends RefineTest {
 
     // ----------------doPut tests-------------------------
     @Test
-    public void doPutRegressionTest() {
+    public void doPutRegressionTest() throws Exception {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(PUT);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
-        try {
-            verify(command, times(1)).doPut(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        verify(command, times(1)).doPut(request, response);
     }
 
     @Test
-    public void doPutReturns404WhenCommandNotFound() {
+    public void doPutReturns404WhenCommandNotFound() throws Exception {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(PUT);
 
-        try {
-            SUT.wrapService(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.wrapService(request, response);
 
         verifyGetCommandNameCalled(2);
         verifyError404Called();

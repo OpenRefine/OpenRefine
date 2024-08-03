@@ -32,7 +32,6 @@ import java.io.StringReader;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -93,11 +92,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         whenGetIntegerOption("limit", options, -1);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
 
-        try {
-            parseOneFile(SUT, reader);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, reader);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3) },

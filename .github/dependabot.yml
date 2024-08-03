@@ -18,13 +18,9 @@ updates:
     versions:
       - ">= 10.0.0"
   - dependency-name: "formatter-maven-plugin"
+  - dependency-name: "impsort-maven-plugin"
   target-branch: "master"
-  groups:
-    production-dependencies: # Maven dependencies of OpenRefine itself
-      dependency-type: "production"
-    development-dependencies: # Maven plugins
-      dependency-type: "development"
-    
+   
 # For main webapp
 - package-ecosystem: "npm"
   directory: "main/webapp"
