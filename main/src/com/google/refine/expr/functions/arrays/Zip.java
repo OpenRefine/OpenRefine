@@ -57,59 +57,45 @@ public class Zip implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 2) {
-            List<List> output = new ArrayList<>();
-            List ziparg1 = new ArrayList<>();
-            List ziparg2 = new ArrayList<>();
-            boolean isFirst = true;
+            List<List> input = new ArrayList<>();
+            List<List> output;
 
-            for (int i = 0; i < args.length; i++) {
-                Object v = args[i];
-                if (v == null) {
-                    return new EvalError(
-                            EvalErrorMessage.expects_at_least_two_or_more_array_args(ControlFunctionRegistry.getFunctionName(this)));
-                }
-
-                if (!(v.getClass().isArray() || v instanceof List<?> || v instanceof ArrayNode)) {
+            for (Object v : args) {
+                List ziparg = new ArrayList<>();
+                if (v == null || !(v.getClass().isArray() || v instanceof List<?> || v instanceof ArrayNode)) {
                     return new EvalError(
                             EvalErrorMessage.expects_at_least_two_or_more_array_args(ControlFunctionRegistry.getFunctionName(this)));
                 }
 
                 if (v.getClass().isArray()) {
-                    ziparg2.addAll(Arrays.asList((Object[]) v));
+                    ziparg.addAll(Arrays.asList((Object[]) v));
                 } else if (v instanceof ArrayNode) {
                     ArrayNode a = (ArrayNode) v;
                     if (a.isArray()) {
                         for (JsonNode objNode : a) {
-                            ziparg2.add(objNode);
+                            ziparg.add(objNode);
                         }
                     }
                 } else {
                     for (Object z : ExpressionUtils.toObjectList(v)) {
-                        if (z != null) {
-                            ziparg2.add(z);
-                        } else {
-                            ziparg2.add(z);
-                        }
+                        ziparg.add(z);
                     }
                 }
-                if (isFirst) {
-                    for (Object x : ziparg2) {
-                        ziparg1 = new ArrayList() {
+                input.add(ziparg);
+            }
 
-                            {
-                                add(x);
-                            }
-                        };
-                        output.add(ziparg1);
-                    }
-                } else {
+            output = (List<List>) Streams.zip(input.get(0).stream(),
+                    input.get(1).stream(),
+                    (a, b) -> collectElements(a, b))
+                    .collect(Collectors.toList());
+
+            if (input.size() > 2) {
+                for (int i = 2; i < input.size(); i++) {
                     output = (List<List>) Streams.zip(output.stream(),
-                            ziparg2.stream(),
+                            input.get(i).stream(),
                             (a, b) -> collectElements(a, b))
                             .collect(Collectors.toList());
                 }
-                isFirst = false;
-                ziparg2.clear();
             }
             return output;
         }
@@ -134,26 +120,15 @@ public class Zip implements Function {
     private static List collectElements(Object a, Object b) {
         List returnList = new ArrayList<>();
 
-        if (a == null) {
-            returnList.add(a);
-        } else if (a instanceof ArrayList) {
+        if (a instanceof ArrayList) {
             ArrayList x = (ArrayList) a;
             returnList = (ArrayList) x.stream().collect(toCollection(ArrayList::new));
         } else {
             returnList.add(a);
         }
 
-        if (b == null) {
-            returnList.add(b);
-        } else if (b instanceof ArrayList) {
-            ArrayList y = (ArrayList) b;
-            int i;
-            for (i = 0; i < y.size(); i++) {
-                returnList.add(y.get(i));
-            }
-        } else {
-            returnList.add(b);
-        }
+        returnList.add(b);
+
         return returnList;
     }
 }

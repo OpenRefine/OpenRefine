@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import org.testng.annotations.Test;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.GrelTestBase;
 
@@ -75,10 +76,11 @@ public class ZipTests extends GrelTestBase {
 
         assertEquals(invoke("zip", arg1, arg2), expected);
     }
+
     @Test
     public void testZipwithAllTypeArrays() {
-        List arg1 = Lists.newArrayList(1,null,3.142);
-        List arg2 = Lists.newArrayList("A","B","C");
+        List arg1 = Lists.newArrayList(1, null, 3.142);
+        List arg2 = Lists.newArrayList("A", "B", "C");
         List arg3 = Lists.newArrayList("Ben", null, "Hen");
 
         List<List> expected = List.of(
@@ -87,5 +89,21 @@ public class ZipTests extends GrelTestBase {
                 Lists.newArrayList(3.142, "C", "Hen"));
 
         assertEquals(invoke("zip", arg1, arg2, arg3), expected);
+    }
+
+    @Test
+    public void testZipforParams() {
+        List arg1 = List.of(1, 2, 3);
+        List arg2 = List.of(7.89, 8.90, 9.01);
+
+        List<List> expected = List.of(
+                List.of(1, 7.89),
+                List.of(2, 8.90),
+                List.of(3, 9.01));
+
+        assertEquals(((EvalError) (invoke("zip", arg1, arg2, null))).message, "zip expects 2 or more arrays as arguments");
+
+        assertEquals(((EvalError) (invoke("zip", arg1, arg2, "test", null))).message, "zip expects 2 or more arrays as arguments");
+
     }
 }
