@@ -52,13 +52,13 @@ public class ZipTests extends GrelTestBase {
 
     @Test
     public void testZipwithIntArrays() {
-        List arg1 = Lists.newArrayList(1,2,3);
-        List arg2 = Lists.newArrayList(7.89,8.90,9.01);
+        List arg1 = List.of(1, 2, 3);
+        List arg2 = List.of(7.89, 8.90, 9.01);
 
-        List<List> output = new ArrayList<>();
-        output.add(Lists.newArrayList(1, 7.89));
-        output.add(Lists.newArrayList(2, 8.90));
-        output.add(Lists.newArrayList(3, 9.01));
+        List<List> expected = List.of(
+                List.of(1, 7.89),
+                List.of(2, 8.90),
+                List.of(3, 9.01));
 
         assertEquals(invoke("zip", arg1, arg2), expected);
     }
