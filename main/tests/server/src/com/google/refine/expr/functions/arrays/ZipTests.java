@@ -1,11 +1,11 @@
 
 package com.google.refine.expr.functions.arrays;
 
-import java.util.ArrayList;
+import static org.testng.AssertJUnit.assertEquals;
+
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.ParsingException;
@@ -74,7 +74,7 @@ public class ZipTests extends GrelTestBase {
                 List.of("Hen", "C"));
 
         assertEquals(invoke("zip", arg1, arg2), expected);
-
+    }
     @Test
     public void testZipwithAllTypeArrays() {
         List arg1 = Lists.newArrayList(1,null,3.142);
