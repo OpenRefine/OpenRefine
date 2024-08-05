@@ -81,14 +81,11 @@ public class ZipTests extends GrelTestBase {
         List arg2 = Lists.newArrayList("A","B","C");
         List arg3 = Lists.newArrayList("Ben", null, "Hen");
 
-        List<List> output = new ArrayList<>();
-        output.add(Lists.newArrayList(1, "A", "Ben"));
-        output.add(Lists.newArrayList(null, "B", null));
-        output.add(Lists.newArrayList(3.142, "C", "Hen"));
+        List<List> expected = List.of(
+                Lists.newArrayList(1, "A", "Ben"),
+                Lists.newArrayList(null, "B", null),
+                Lists.newArrayList(3.142, "C", "Hen"));
 
-        List<List> testOutput =  (List<List>) invoke("zip", arg1, arg2, arg3);
-        for(int i=0; i < output.size(); ++i) {
-            Assert.assertTrue(testOutput.get(i).equals(output.get(i)));
-        }
+        assertEquals(invoke("zip", arg1, arg2, arg3), expected);
     }
 }
