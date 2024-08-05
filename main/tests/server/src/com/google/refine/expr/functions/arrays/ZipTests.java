@@ -73,11 +73,7 @@ public class ZipTests extends GrelTestBase {
         output.add(Lists.newArrayList("Den", "B"));
         output.add(Lists.newArrayList("Hen", "C"));
 
-        List<List> testOutput =  (List<List>) invoke("zip", arg1, arg2);
-        for(int i=0; i < output.size(); ++i) {
-            Assert.assertTrue(testOutput.get(i).equals(output.get(i)));
-        }
-    }
+        assertEquals(invoke("zip", arg1, arg2), expected);
 
     @Test
     public void testZipwithAllTypeArrays() {
