@@ -538,7 +538,7 @@ function init() {
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
       "scripts/dialogs/clustering-functions-dialog.js",
-      "scripts/dialogs/add-rows-dialog.js",
+      "scripts/dialogs/add-rows-dialog.js"
     ])
   );
 

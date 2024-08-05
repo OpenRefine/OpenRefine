@@ -60,6 +60,14 @@ public class DistanceFactory {
     }
 
     /**
+     * Removes a distance under a code name.
+     */
+    public static void remove(String name) {
+        _distances.remove(name);
+        _distanceNames.remove(name);
+    }
+
+    /**
      * Lists the available distances, by name.
      */
     public static List<String> getDistanceNames() {

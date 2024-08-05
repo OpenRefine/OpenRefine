@@ -83,7 +83,7 @@ ExpressionPreviewDialog.Widget = function(
     rowIndices,
     values,
     expression,
-    clusters
+    columnName
 ) {
     var language = "grel";
     if (!(expression)) {
@@ -113,7 +113,7 @@ ExpressionPreviewDialog.Widget = function(
     this._cellIndex = cellIndex;
     this._rowIndices = rowIndices;
     this._values = values;
-    this._clusters = clusters;
+    this._columnName = columnName;
 
     this._results = null;
     this._timerID = null;
@@ -142,11 +142,10 @@ ExpressionPreviewDialog.Widget = function(
     this._elmts.or_dialog_starred.html($.i18n('core-dialogs/starred'));
     this._elmts.or_dialog_help.html($.i18n('core-dialogs/help'));
 
-    if(this._clusters != null){
+    if(this._columnName != null){
         this._elmts.or_dialog_preview.html($.i18n('core-dialogs/expression-preview'));
         this._elmts.or_dialog_clusters.html($.i18n('core-dialogs/clusters-preview'));
         this._elmts.or_dialog_clusters.closest('li').show();
-        this._renderClusters(this._clusters);
     }
 
     this.update();
@@ -440,6 +439,40 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
         },
         "json"
     );
+
+    if(self._columnName != null){
+        this._elmts.expressionPreviewClustersContainer.html(
+            '<div style="margin: 1em; font-size: 130%; color: #888;">'+$.i18n('core-dialogs/clustering')+'<img src="images/small-spinner.gif"></div>'
+        );
+    
+        var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+
+        $.post(
+            "command/core/compute-clusters?" + $.param({ project: theProject.id }),
+            {
+                engine: JSON.stringify(ui.browsingEngine.getJSON()),
+                clusterer: JSON.stringify({
+                    'type' : activeTabName === "Keying" ? "binning" : "knn",
+                    'function' : activeTabName === "Keying" ? "UserDefinedKeyer" : "UserDefinedDistance",
+                    'column' : self._columnName,
+                    'params' : {
+                        "expression" : expression
+                    }
+                })
+            },
+            function(data) {
+                var clusters = [];
+                $.each(data, function() {
+                    var cluster = {
+                        choices: this,
+                    };
+                    clusters.push(cluster);
+                });
+                self._renderClusters(clusters);
+            },
+            "json"
+        );
+    }
 };
 
 ExpressionPreviewDialog.Widget.prototype._prepareUpdate = function(params) {

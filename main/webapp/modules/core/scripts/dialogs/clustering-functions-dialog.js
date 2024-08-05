@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function ClusteringFunctionsDialog(title, clusteringDialog) {
     var self = this;
     self._column = clusteringDialog._column;
-    self._clusters = clusteringDialog._getRestrictedClusters();
+    self._columnName = clusteringDialog._columnName;
     
     var frame = DialogSystem.createDialog();
     frame.css("min-width", "700px");
@@ -180,14 +180,14 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
         o.rowIndices,
         o.values,
         null,
-        self._clusters
+        self._columnName
     );
 
     elmts.cancelButton.on('click', dismiss);
     elmts.form.on('submit', function (event) {
         event.preventDefault();
-        var columnName = jQueryTrim(elmts.functionNameInput[0].value);
-        if (!columnName.length) {
+        var functionName = jQueryTrim(elmts.functionNameInput[0].value);
+        if (!functionName.length) {
             alert($.i18n('core-views/warning-function-name'));
             return;
         }
@@ -206,7 +206,7 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
 
                     var _functions = data1.value == null ? [] : JSON.parse(data1.value);
                     _functions.push({
-                        name: columnName,
+                        name: functionName,
                         expressionLang: lang,
                         expression: fullExpr
                     });
@@ -269,7 +269,7 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
                 o.rowIndices,
                 o.values,
                 _functions[index].expressionLang + ':' + _functions[index].expression,
-                self._clusters
+                self._columnName
             );
         },
         dataType: "json",
@@ -278,8 +278,8 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
     elmts.cancelButton.on('click', dismiss);
     elmts.form.on('submit', function (event) {
         event.preventDefault();
-        var columnName = jQueryTrim(elmts.functionNameInput[0].value);
-        if (!columnName.length) {
+        var functionName = jQueryTrim(elmts.functionNameInput[0].value);
+        if (!functionName.length) {
             alert($.i18n('core-views/warning-function-name'));
             return;
         }
@@ -297,7 +297,7 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
                     var fullExpr = langAndExpr.substring(colonIndex + 1);
 
                     var _functions = data1.value == null ? [] : JSON.parse(data1.value);
-                    _functions[index].name = columnName;
+                    _functions[index].name = functionName;
                     _functions[index].expressionLang = lang;
                     _functions[index].expression = fullExpr;
 
