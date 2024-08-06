@@ -109,7 +109,7 @@
     <juniversalchardet.version>2.5.0</juniversalchardet.version>
     <testng.version>7.10.2</testng.version>
     <httpmime.version>4.5.14</httpmime.version>
-    <owasp-encoder.version>1.2.3</owasp-encoder.version>
+    <owasp-encoder.version>1.3.0</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
     <mockito.version>5.12.0</mockito.version>
 
