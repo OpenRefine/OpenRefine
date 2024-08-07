@@ -65,7 +65,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
      * @param overrideWikitext
      *            whether the supplied wikitext should override any existing one
      * @param contributingRowIds
-     *            the rowIds of the rows that will be contributed for this edit
+     *            the rowIds of the rows that contributed to generating this edit
      */
     public MediaInfoEdit(
             EntityIdValue id,
