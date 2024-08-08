@@ -34,7 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.text.Collator;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -199,6 +202,19 @@ public class OperatorCallExpr implements Evaluable {
             }
         }
         return null;
+    }
+
+    @Override
+    public final Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
+        Set<String> dependencies = new HashSet<>();
+        for (Evaluable ev : _args) {
+            Optional<Set<String>> deps = ev.getColumnDependencies(baseColumn);
+            if (deps.isEmpty()) {
+                return Optional.empty();
+            }
+            dependencies.addAll(deps.get());
+        }
+        return Optional.of(dependencies);
     }
 
     @Override

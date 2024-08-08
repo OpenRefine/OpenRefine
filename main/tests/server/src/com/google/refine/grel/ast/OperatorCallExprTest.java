@@ -3,13 +3,14 @@ package com.google.refine.grel.ast;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Optional;
 import java.util.Properties;
 
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.Evaluable;
 
-public class OperatorCallExprTest {
+public class OperatorCallExprTest extends ExprTestBase {
 
     private OperatorCallExpr expr;
     private Evaluable arg1;
@@ -50,6 +51,18 @@ public class OperatorCallExprTest {
         expr = new OperatorCallExpr(new Evaluable[] { arg1, arg2 }, "/");
         result = expr.evaluate(new Properties());
         assertEquals(Double.NEGATIVE_INFINITY, result);
+    }
+
+    @Test
+    public void testUnion() {
+        Evaluable ev = new OperatorCallExpr(new Evaluable[] { constant, currentColumn, twoColumns }, "+");
+        assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn", "a", "b"));
+    }
+
+    @Test
+    public void testUnanalyzable() {
+        Evaluable ev = new OperatorCallExpr(new Evaluable[] { currentColumn, unanalyzable }, "+");
+        assertEquals(ev.getColumnDependencies(baseColumn), Optional.empty());
     }
 }
 
