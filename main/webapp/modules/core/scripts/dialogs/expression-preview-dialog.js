@@ -82,7 +82,8 @@ ExpressionPreviewDialog.Widget = function(
     cellIndex,
     rowIndices,
     values,
-    expression
+    expression,
+    columnName
 ) {
     var language = "grel";
     if (!(expression)) {
@@ -112,7 +113,8 @@ ExpressionPreviewDialog.Widget = function(
     this._cellIndex = cellIndex;
     this._rowIndices = rowIndices;
     this._values = values;
-    
+    this._columnName = columnName;
+
     this._results = null;
     this._timerID = null;
     
@@ -139,7 +141,13 @@ ExpressionPreviewDialog.Widget = function(
     this._elmts.or_dialog_history.html($.i18n('core-dialogs/history'));
     this._elmts.or_dialog_starred.html($.i18n('core-dialogs/starred'));
     this._elmts.or_dialog_help.html($.i18n('core-dialogs/help'));
-    
+
+    if(this._columnName != null){
+        this._elmts.or_dialog_preview.html($.i18n('core-dialogs/expression-preview'));
+        this._elmts.or_dialog_clusters.html($.i18n('core-dialogs/clusters-preview'));
+        this._elmts.or_dialog_clusters.closest('li').show();
+    }
+
     this.update();
     this._renderExpressionHistoryTab();
     this._renderStarredExpressionsTab();
@@ -431,6 +439,40 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
         },
         "json"
     );
+
+    if(self._columnName != null){
+        this._elmts.expressionPreviewClustersContainer.html(
+            '<div style="margin: 1em; font-size: 130%; color: #888;">'+$.i18n('core-dialogs/clustering')+'<img src="images/small-spinner.gif"></div>'
+        );
+    
+        var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+
+        $.post(
+            "command/core/compute-clusters?" + $.param({ project: theProject.id }),
+            {
+                engine: JSON.stringify(ui.browsingEngine.getJSON()),
+                clusterer: JSON.stringify({
+                    'type' : activeTabName === "Keying" ? "binning" : "knn",
+                    'function' : activeTabName === "Keying" ? "UserDefinedKeyer" : "UserDefinedDistance",
+                    'column' : self._columnName,
+                    'params' : {
+                        "expression" : expression
+                    }
+                })
+            },
+            function(data) {
+                var clusters = [];
+                $.each(data, function() {
+                    var cluster = {
+                        choices: this,
+                    };
+                    clusters.push(cluster);
+                });
+                self._renderClusters(clusters);
+            },
+            "json"
+        );
+    }
 };
 
 ExpressionPreviewDialog.Widget.prototype._prepareUpdate = function(params) {
@@ -480,5 +522,64 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
             var v = this._results[i];
             renderValue(tdValue, v);
         }
+    }
+};
+
+ExpressionPreviewDialog.Widget.prototype._renderClusters = function(clusters) {
+    var container = this._elmts.expressionPreviewClustersContainer.empty();
+    
+    if (clusters.length > 0) {
+        var table = $('<table></table>')
+            .addClass("clustering-dialog-preview-table")
+            .appendTo($('<div>').addClass("clusters-preview-table-wrapper").appendTo(container))[0];
+
+        var trHead = table.insertRow(table.rows.length);
+        trHead.className = "header";
+        $(trHead.insertCell(0)).text("Number");
+        $(trHead.insertCell(1)).text("Clusters");
+
+        var entryTemplate = document.createElement('a');
+
+        var renderCluster = function(cluster, index) {
+            var tr = table.insertRow();
+            tr.className = index % 2 === 0 ? "odd" : "even"; // TODO: Unused?
+
+            var ul = document.createElement('ul');
+            ul.style.listStyleType = 'none';
+            var choices = cluster.choices;
+            for (let c = 0; c < choices.length; c++) {
+                let choice = choices[c];
+                var li = document.createElement('li');
+
+                var entry = entryTemplate.cloneNode();
+                entry.textContent = choice.v.toString().replaceAll(' ', '\xa0');
+                li.append(entry);
+
+                if (choice.c > 1) { 
+                  $('<span></span>').text($.i18n("core-dialogs/cluster-rows", choice.c)).addClass("clustering-dialog-preview-count").appendTo(li);
+                }
+                ul.append(li);
+            }
+
+            $('<span>' + (index+1) +'.</span>').appendTo(tr.insertCell(0));
+
+            $(tr.insertCell(1))
+                .append(ul);
+                        
+            return choices.length;
+        };
+
+        var maxRenderRows = parseInt(
+            Refine.getPreference("ui.clustering.choices.limit", 5000)
+        );
+        maxRenderRows = isNaN(maxRenderRows) || maxRenderRows <= 0 ? 5000 : maxRenderRows;
+        var totalRows = 0;
+        for (var clusterIndex = 0; clusterIndex < clusters.length && totalRows < maxRenderRows; clusterIndex++) {
+            totalRows += renderCluster(clusters[clusterIndex], clusterIndex);
+        }
+    } else {
+        container.html(
+            '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">'+$.i18n('core-dialogs/no-cluster-found')+'</div><div style="padding-top: 1em; font-size: 110%; color: #888;">'+$.i18n('core-dialogs/try-another-method')+'</div></div>'
+        );
     }
 };
