@@ -62,6 +62,7 @@
         <module>extensions</module>
         <module>packaging</module>
         <module>benchmark</module>
+        <module>launcher</module>
   </modules>
 
 
