@@ -43,6 +43,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.CharMatcher;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -111,7 +112,7 @@ public class ExpressionUtils {
     static public boolean isNonBlankData(Object o) {
         return o != null &&
                 !(o instanceof EvalError) &&
-                (!(o instanceof String) || ((String) o).length() > 0);
+                (!(o instanceof String) || !CharMatcher.javaIsoControl().removeFrom((String) o).isEmpty());
     }
 
     static public boolean isTrue(Object o) {
