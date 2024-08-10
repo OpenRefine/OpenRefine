@@ -5,8 +5,42 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import org.controlsfx.control.StatusBar?>
 
-<VBox alignment="CENTER" prefHeight="158.0" prefWidth="275.0" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/22" fx:controller="org.openrefine.launcher.Controller">
+
+<BorderPane prefHeight="158.0" prefWidth="275.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/22" fx:controller="org.openrefine.launcher.Controller">
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <Menu mnemonicParsing="false" text="Archivo">
+                <MenuItem mnemonicParsing="false" onAction="#search" text=" Buscar conexión"/>
+                <SeparatorMenuItem mnemonicParsing="false"/>
+                <MenuItem mnemonicParsing="false" onAction="#close" text="Salir"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Editar">
+                <MenuItem mnemonicParsing="false" onAction="#newProxy" text="Nuevo Proxy"/>
+                <MenuItem mnemonicParsing="false" onAction="#removeProxy" text="Eliminar Proxy"/>
+                <SeparatorMenuItem mnemonicParsing="false"/>
+                <MenuItem mnemonicParsing="false" onAction="#settings" text="Preferencias"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Ayuda">
+                <MenuItem mnemonicParsing="false" onAction="#aboutBox" text="Acerca de"/>
+            </Menu>
+        </MenuBar>
+    </top>
+
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -20,5 +54,11 @@
     <Button fx:id="btStart" onAction="#onStartButtonClick" prefHeight="73.0" prefWidth="238.0" text="Start OpenRefine!">
         <font>
             <Font name="System Bold" size="20.0" />
-        </font></Button>
-</VBox>
+        </font>
+    </Button>
+    <Button fx:id="btStop" onAction="#onStopButtonClick" prefHeight="73.0" prefWidth="238.0" text="Stop OpenRefine">
+        <font>
+            <Font name="System Bold" size="20.0" />
+        </font>
+    </Button>
+</BorderPane>
