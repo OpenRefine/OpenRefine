@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openrefine.launcher.Controller">
+  <MenuBar VBox.vgrow="NEVER">
+    <Menu mnemonicParsing="false" text="File">
+      <MenuItem mnemonicParsing="false" text="New" />
+      <MenuItem mnemonicParsing="false" text="Open…" />
+      <Menu mnemonicParsing="false" text="Open Recent" />
+      <SeparatorMenuItem mnemonicParsing="false" />
+      <MenuItem mnemonicParsing="false" text="Close" />
+      <MenuItem mnemonicParsing="false" text="Save" />
+      <MenuItem mnemonicParsing="false" text="Save As…" />
+      <MenuItem mnemonicParsing="false" text="Revert" />
+      <SeparatorMenuItem mnemonicParsing="false" />
+      <MenuItem mnemonicParsing="false" text="Preferences…" />
+      <SeparatorMenuItem mnemonicParsing="false" />
+      <MenuItem mnemonicParsing="false" text="Quit" />
+    </Menu>
+    <Menu mnemonicParsing="false" text="Edit">
+      <MenuItem mnemonicParsing="false" text="Undo" />
+      <MenuItem mnemonicParsing="false" text="Redo" />
+      <SeparatorMenuItem mnemonicParsing="false" />
+      <MenuItem mnemonicParsing="false" text="Cut" />
+      <MenuItem mnemonicParsing="false" text="Copy" />
+      <MenuItem mnemonicParsing="false" text="Paste" />
+      <MenuItem mnemonicParsing="false" text="Delete" />
+      <SeparatorMenuItem mnemonicParsing="false" />
+      <MenuItem mnemonicParsing="false" text="Select All" />
+      <MenuItem mnemonicParsing="false" text="Unselect All" />
+    </Menu>
+    <Menu mnemonicParsing="false" text="Help">
+      <MenuItem mnemonicParsing="false" text="About this Launcher" />
+    </Menu>
+  </MenuBar>
+  <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <AnchorPane id="main">
+      <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Main" textAlignment="CENTER" wrapText="false">
+        <font>
+          <Font fx:id="c1" size="18.0" />
+        </font>
+        <textFill>
+          <Color red="0.624" green="0.624" blue="0.624" fx:id="c2" />
+        </textFill>
+      </Label>
+      <Button id="start" layoutX="5.0" layoutY="50.0" mnemonicParsing="false" onAction="#onStartButtonClick" prefHeight="62.0" prefWidth="151.0" text="START" />
+      <Button id="stop" layoutX="5.0" layoutY="130.0" mnemonicParsing="false" onAction="#onStopButtonClick" prefHeight="62.0" prefWidth="151.0" text="STOP" />
+      <Button id="log" layoutX="5.0" layoutY="305.0" mnemonicParsing="false" onAction="#onLogButtonClick" prefHeight="62.0" prefWidth="151.0" text="LOG" />
+    </AnchorPane>
+    <ScrollPane id="view">
+      <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="297.0">
+        <Label alignment="CENTER" font="$c1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$c2" wrapText="false" />
+      </AnchorPane>
+    </ScrollPane>
+    <AnchorPane id="details">
+      <Label alignment="CENTER" font="$c1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" textFill="$c2" wrapText="false" />
+    </AnchorPane>
+  </SplitPane>
+  <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+    <padding>
+      <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+    </padding>
+    <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">
+      <font>
+        <Font fx:id="c3" size="11.0" />
+      </font>
+      <textFill>
+        <Color red="0.625" green="0.625" blue="0.625" fx:id="c4" />
+      </textFill>
+    </Label>
+    <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+    <Label font="$c3" maxWidth="-1.0" text="Right status" textFill="$c4" HBox.hgrow="NEVER" />
+  </HBox>
+</VBox>
