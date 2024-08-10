@@ -11,8 +11,8 @@ public class LevenshteinDistanceTest extends GrelTestBase {
 
     @Test
     public void testValidArguments() {
-        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "New York", "newyork" }), 3);
-        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "M. Makeba", "Miriam Makeba" }), 5);
+        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "New York", "NewYork" }), 1.0);
+        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "M. Makeba", "Miriam Makeba" }), 5.0);
     }
 
     @Test
@@ -24,16 +24,16 @@ public class LevenshteinDistanceTest extends GrelTestBase {
 
     @Test
     public void testEmptyStrings() {
-        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "", "" }), 0);
+        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "", "" }), 0.0);
     }
 
     @Test
     public void testSingleCharacterStrings() {
-        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "a", "b" }), 1);
+        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "a", "b" }), 1.0);
     }
 
     @Test
     public void testDifferentLengthStrings() {
-        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "", "abc" }), 3);
+        Assert.assertEquals(invoke("levenshteinDistance", new Object[] { "", "abc" }), 3.0);
     }
 }
