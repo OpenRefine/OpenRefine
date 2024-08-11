@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
@@ -9,6 +10,9 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -49,26 +53,34 @@
     </Menu>
   </MenuBar>
   <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-    <AnchorPane id="main">
-      <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Main" textAlignment="CENTER" wrapText="false">
-        <font>
-          <Font fx:id="c1" size="18.0" />
-        </font>
-        <textFill>
-          <Color red="0.624" green="0.624" blue="0.624" fx:id="c2" />
-        </textFill>
-      </Label>
-      <Button id="start" layoutX="5.0" layoutY="50.0" mnemonicParsing="false" onAction="#onStartButtonClick" prefHeight="62.0" prefWidth="151.0" text="START" />
-      <Button id="stop" layoutX="5.0" layoutY="130.0" mnemonicParsing="false" onAction="#onStopButtonClick" prefHeight="62.0" prefWidth="151.0" text="STOP" />
-      <Button id="log" layoutX="5.0" layoutY="305.0" mnemonicParsing="false" onAction="#onLogButtonClick" prefHeight="62.0" prefWidth="151.0" text="LOG" />
+    <AnchorPane id="main" minWidth="-Infinity" prefWidth="163.0" style="-fx-background-color: linear-gradient(#0078ff, #00c8ff);" styleClass="leftPanel">
+         <ImageView fitHeight="184.0" fitWidth="308.0" layoutX="-72.0" layoutY="-31.0" pickOnBounds="true" preserveRatio="true" scaleX="0.5" scaleY="0.5">
+            <image>
+               <Image url="@../../../logo-text-openrefine-MOD.png" />
+            </image>
+         </ImageView>
+      <Button id="start" layoutX="5.0" layoutY="104.0" mnemonicParsing="false" onAction="#onStartButtonClick" prefHeight="62.0" prefWidth="151.0" text="START" />
+      <Button id="stop" layoutX="5.0" layoutY="178.0" mnemonicParsing="false" onAction="#onStopButtonClick" prefHeight="62.0" prefWidth="151.0" text="STOP" />
+      <Button id="log" layoutX="5.0" layoutY="317.0" mnemonicParsing="false" onAction="#onLogButtonClick" prefHeight="62.0" prefWidth="151.0" text="LOG" />
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
     </AnchorPane>
-    <ScrollPane id="view">
-      <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="297.0">
-        <Label alignment="CENTER" font="$c1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$c2" wrapText="false" />
+    <ScrollPane id="view" prefHeight="421.0" prefWidth="291.0" styleClass="middlePanel">
+      <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0">
+        <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" wrapText="false">
+               <font>
+             <Font fx:id="c1" size="24.0" />
+               </font></Label>
+
+        <TextArea fx:id="outputArea" layoutX="14" layoutY="50" prefWidth="260" text="outputArea" wrapText="true" />
+
       </AnchorPane>
     </ScrollPane>
-    <AnchorPane id="details">
-      <Label alignment="CENTER" font="$c1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" textFill="$c2" wrapText="false" />
+    <AnchorPane id="details" prefHeight="421.0" prefWidth="150.0" styleClass="rightPanel">
+      <Label alignment="CENTER" font="$c1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" wrapText="false" />
+      <TextArea fx:id="refineOut" layoutX="14" layoutY="50" prefWidth="260" text="refineOutput" wrapText="true" />
+
     </AnchorPane>
   </SplitPane>
   <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
