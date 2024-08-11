@@ -137,7 +137,15 @@ public class WbDateConstant implements WbExpression<TimeValue> {
 
         for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
             ParsePosition position = new ParsePosition(0);
-            Date date = entry.getKey().parse(trimmedDatestamp, position);
+            Date date;
+            try {
+                date = entry.getKey().parse(trimmedDatestamp, position);
+            } catch (NumberFormatException e) {
+                // Despite this method's documentation, this exception
+                // can be thrown in certain cases
+                // See https://github.com/OpenRefine/OpenRefine/issues/6774
+                date = null;
+            }
 
             if (date == null) {
                 continue;
