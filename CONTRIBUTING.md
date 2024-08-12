@@ -15,8 +15,7 @@ tracker, so anything not included there risks getting lost.
 ## Promote OpenRefine
 
 Promoting OpenRefine is a great way to give back. Did you write a tutorial or article about OpenRefine on your blog or site?
-Are you organizing a workshop or presentation for OpenRefine in your city? Let us know via our [forum](https://forum.openrefine.org/) or Twitter account ([@OpenRefine](http://twitter.com/OpenRefine)).
-We will share the news via our monthly update and via our Twitter handle.
+Are you organizing a workshop or presentation for OpenRefine in your city? Let us, and the community, know via our [forum](https://forum.openrefine.org/) or social media.
 
 ## Contribute translations
 
@@ -27,7 +26,8 @@ like Spanish, Brazilian Portuguese, and French could use help.
 
 ## Contribute documentation
 
-When browsing our [user manual](https://openrefine.org/docs/) or other documentation, feel free to use the edit button to suggest improvements. For large changes, you might want to [prepare your changes locally](https://openrefine.org/docs/technical-reference/documentation-contributions).
+When browsing our [user manual](https://openrefine.org/docs/) or other documentation, feel free to use the edit button to suggest improvements.
+For large changes, you might want to first discuss your proposed changes on the forum and then [prepare your changes locally](https://openrefine.org/docs/technical-reference/documentation-contributions).
 
 ##  Contribute code 
 
