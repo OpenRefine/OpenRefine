@@ -64,6 +64,8 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
      *            the wikitext to associate to the file (depending on overriding settings)
      * @param overrideWikitext
      *            whether the supplied wikitext should override any existing one
+     * @param contributingRowIds
+     *            the rowIds of the rows that contributed to generating this edit
      */
     public MediaInfoEdit(
             EntityIdValue id,

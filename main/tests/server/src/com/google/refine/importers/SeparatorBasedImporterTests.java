@@ -46,6 +46,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.input.CharSequenceReader;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -294,6 +295,39 @@ public class SeparatorBasedImporterTests extends ImporterTest {
                 new String[] { "col1", "col2", "col3", numberedColumn(4), numberedColumn(5), numberedColumn(6) },
                 new Serializable[][] {
                         { "data1", "data2", "data3", "data4", "data5", "data6" },
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
+    public void readManyColumns(String sep) {
+        // create input
+        int width = 16 * 1024; // Excel supports 16K columns max, so let's test that
+        String inputSeparator = sep == null ? "\t" : sep;
+        StringBuilder input = new StringBuilder();
+        String[] colNames = new String[width];
+        for (int i = 0; i < width; i++) {
+            String name = "col" + (i + 1);
+            input.append(name + inputSeparator);
+            colNames[i] = name;
+        }
+        input = input.deleteCharAt(input.length() - 1); // we don't need the last separator
+        input.append('\n');
+        String[] data = new String[width];
+        for (int i = 0; i < width; i++) {
+            String value = "data" + (i + 1);
+            input.append(value + inputSeparator);
+            data[i] = value;
+        }
+        input = input.deleteCharAt(input.length() - 1); // we don't need the last separator
+
+        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        parseOneFile(SUT, new CharSequenceReader(input));
+
+        Project expectedProject = createProject(
+                colNames,
+                new Serializable[][] {
+                        data,
                 });
         assertProjectEquals(project, expectedProject);
     }
