@@ -29,7 +29,6 @@ describe(__filename, function () {
     cy.get('select[bind="noteColumnSelect"]').select('Source');
 
     cy.confirmDialogPanel();
-    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Columnize by key column Field and value column Data with note column Source'
     );
@@ -66,7 +65,6 @@ describe(__filename, function () {
     cy.get('select[bind="valueColumnSelect"]').select('Data');
 
     cy.confirmDialogPanel();
-    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Columnize by key column Field and value column Data'
     );

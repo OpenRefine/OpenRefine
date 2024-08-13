@@ -52,13 +52,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .file-input-container {
     position: relative;
+    width: fit-content;
 }
 
 .file-input-text {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-65%, 0%);
+    left: 0px;
+    width: 100%;
     pointer-events: none;
     text-align: center;
     color: #555;

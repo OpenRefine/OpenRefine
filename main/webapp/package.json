@@ -16,7 +16,7 @@
     "js-cookie": "3.0.5",
     "select2": "4.1.0-rc.0",
     "tablesorter": "2.31.3",
-    "underscore": "1.13.6"
+    "underscore": "1.13.7"
   },
   "devDependencies": {}
 }
