@@ -8,8 +8,6 @@
     <artifactId>launcher</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>launcher</name>
-    <archtypeGroupId>org.openjfx</archtypeGroupId>
-
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
