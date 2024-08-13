@@ -8,7 +8,6 @@ module org.openrefine.launcher {
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
-    requires eu.hansolo.tilesfx;
 
     opens org.openrefine.launcher to javafx.fxml;
     exports org.openrefine.launcher;
