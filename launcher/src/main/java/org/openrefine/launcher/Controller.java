@@ -46,26 +46,9 @@ public class Controller {
         ProcessBuilder processBuilder = new ProcessBuilder("java", "-cp", classPath, mainClass);
 
         try {
-            Process process = processBuilder.start();
+            process = processBuilder.start();
 
-            refineOut.appendText("PROCESS SUPPORTS NORMAL TERMINATION? :  " + String.valueOf(process.supportsNormalTermination()) + "\n");
-            refineOut.appendText("PROCESS COMMAND:  " + String.valueOf(process.info().command()) + "\n");
-            refineOut.appendText("PROCESS ARGS:  " + String.valueOf(process.info().arguments()) + "\n");
-            refineOut.appendText("PROCESS COMMANDLINE:  " + String.valueOf(process.info().commandLine()) + "\n");
-            refineOut.appendText("PROCESS INFO:  " + String.valueOf(process.info().toString()) + "\n");
-            refineOut.appendText("PROCESS PID: " + String.valueOf(process.pid()) + "\n");
-            // Optionally, we can handle the process's input/output streams here
-//            BufferedReader refineOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//            String line;
-//            while ((line = refineOutput.readLine()) != null) {
-//                try {
-//                    refineOut.appendText(line + "\n");
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//            }
-
+            // Wwe can handle the process's input/output streams here
             WATCH.submit(() -> {
                 runLater(() -> refineOut.clear());
                 runLater(() -> refineOut.setText("Started OpenRefine:\n\n"));
@@ -78,33 +61,27 @@ public class Controller {
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
-                runLater(() -> refineOut.appendText("\nOpenRefine is running."));
                 runLater(() -> running.set(true));
             });
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
+          }
+   }
 
-    }
     @FXML
     protected void onStopButtonClick() {
         outputArea.setText("OpenRefine is stopping...");
-        // outputArea.appendText(String.valueOf((process.pid())));
         try {
             boolean alive = process.isAlive();
-            System.out.println("IS ALIVE: " + alive);
-
             process.destroy();
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         finally {
             outputArea.appendText("OpenRefine has STOPPED.");
         }
-
     }
+
     @FXML
     protected void onLogButtonClick() {
         msgStop.setText("Showing Logs...");
