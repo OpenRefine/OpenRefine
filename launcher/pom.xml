@@ -8,6 +8,8 @@
     <artifactId>launcher</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>launcher</name>
+    <archtypeGroupId>org.openjfx</archtypeGroupId>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -73,17 +75,6 @@
             <version>0.4.0</version>
         </dependency>
         <dependency>
-            <groupId>eu.hansolo</groupId>
-            <artifactId>tilesfx</artifactId>
-            <version>21.0.3</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.version}</version>
@@ -109,6 +100,29 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>2.24.1</version>
+            </plugin>
+            <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>impsort-maven-plugin</artifactId>
+                <version>1.9.0</version>
+                <configuration>
+                    <groups>java.,javax.,*,com.google.refine,org.openrefine</groups>
+                    <staticGroups>java,*</staticGroups>
+                    <removeUnused>true</removeUnused>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sort-imports</id>
+                        <goals>
+                            <goal>sort</goal><!-- runs at process-sources phase by default -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
@@ -120,8 +134,8 @@
                             <mainClass>org.openrefine.javafxlauncher/org.openrefine.launcher.App
                             </mainClass>
                             <launcher>app</launcher>
-                            <jlinkZipName>app</jlinkZipName>
-                            <jlinkImageName>app</jlinkImageName>
+                            <jlinkZipName>openrefine</jlinkZipName>
+                            <jlinkImageName>openrefine</jlinkImageName>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
