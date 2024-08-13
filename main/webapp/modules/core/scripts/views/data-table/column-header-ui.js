@@ -161,7 +161,7 @@ DataTableColumnHeaderUI.mouseReleaseListener = function(e) {
   if (state.dragging) {
     var totalMovement = e.pageX - state.originalPosition;
     var newWidth = state.originalWidth + totalMovement;
-    state.col.width((newWidth / state.emFactor) + 'em');
+    state.col.width((Math.floor(newWidth) / state.emFactor) + 'em');
     state.dragging = false;
     $('body')
         .off('mousemove', DataTableColumnHeaderUI.mouseMoveListener)

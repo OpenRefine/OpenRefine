@@ -510,8 +510,10 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
     if (cachedWidth !== undefined && !self._collapsedColumnNames.hasOwnProperty(column.name)) {
       col.width(cachedWidth + 'em');
     } else {
-      // Not set in CSS directly because the user needs to be able to override that by dragging 
-      col.css('min-width', '5em');
+      // Not set in CSS directly because the user needs to be able to override that by dragging.
+      // Set in px rather than in em because with em it can lead to a fractional width in pixels,
+      // which causes the right border not to display correctly. 
+      col.css('min-width', '50px');
     }
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
       DOM.bind( 
