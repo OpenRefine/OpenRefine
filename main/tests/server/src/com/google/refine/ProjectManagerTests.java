@@ -41,7 +41,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Field;
 import java.time.Instant;
@@ -238,8 +238,8 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     protected void AssertProjectRegistered() {
-        Assert.assertEquals(SUT.getProject(project.id), project);
-        Assert.assertEquals(SUT.getProjectMetadata(project.id), metadata);
+        assertEquals(SUT.getProject(project.id), project);
+        assertEquals(SUT.getProjectMetadata(project.id), metadata);
     }
 
     protected void whenGetSaveTimes(Project proj, ProjectMetadata meta) {
