@@ -14,7 +14,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 
 public class Controller {
-
     private static final ExecutorService WATCH = Executors.newSingleThreadExecutor(r -> {
         var t = new Thread(r);
         t.setDaemon(true);
@@ -37,12 +36,14 @@ public class Controller {
 
     @FXML
     protected void onStartButtonClick() {
-        if(process.isAlive()) {
+        this.outputArea.clear();
+
+        if ( process != null && process.isAlive()) {
             this.outputArea.setText("OpenRefine is already running.\n");
 
         } else {
 
-            outputArea.setText("OpenRefine is starting\n and will launch your browser...\n");
+            runLater(() -> outputArea.setText("OpenRefine is starting\n and will launch your browser...\n"));
 
             // Path to the OpenRefine application we want to start
 
@@ -54,14 +55,32 @@ public class Controller {
             // String javaOptions = "-Djava.library.path=" + refinePath + "/server/target/lib/native/windows";
 
             ProcessBuilder processBuilder = new ProcessBuilder("java", "-cp", classPath, mainClass);
+            // redirect errors from process to the standard output stream of the process.
+            processBuilder.redirectErrorStream(true);
 
             try {
+                Boolean error = false;
                 process = processBuilder.start();
-                //TODO: OpenRefine COULD already be running at this point outside of Launcher control
-                // and we need to check the error coming back from the process start?
-                outputArea.appendText("OpenRefine STARTED.\n ");
 
-                // We handle the process's input/output streams here
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()));) {
+                        String ebuffer;
+                        while ((ebuffer = br.readLine()) != null) {
+                            final String ebufferLine = ebuffer + "\n";
+                            runLater(() -> refineOut.appendText(ebufferLine));
+            // Check if we had an error during start
+                            if(ebufferLine.contains("Exception")) {
+                                error = true;
+                            }
+                        }
+                        if(error) {
+                            runLater(() -> outputArea.appendText("ERROR OCCURRED WHILE STARTING.\nCheck the logs."));
+                        }
+                        runLater(() -> running.set(false));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+            // We handle the process's input/output streams here
                 WATCH.submit(() -> {
                     runLater(() -> refineOut.clear());
 
@@ -74,73 +93,70 @@ public class Controller {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-//                    runLater(() -> running.set(true));
 
                 });
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        } runLater(() -> running.set(true));
     }
 
     @FXML
     public void onStopButtonClick() {
-        if(!(process == null)) {
+        if (!(process == null)) {
             if (process.isAlive()) {
-                this.outputArea.setText("OpenRefine is stopping...\n");
+                runLater(() -> outputArea.setText("OpenRefine is stopping...\n"));
 
                 try {
-                    process.destroy();
-                    outputArea.appendText("OpenRefine STOPPED.\n");
+                    runLater(() -> process.destroy());
+                    runLater(() -> outputArea.appendText("OpenRefine STOPPED.\n"));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+
             } else
-                this.outputArea.setText("""
-                        No running OpenRefine process found.
-                        There might have been an error.
-                        Check Linux `ps` or Windows Task Manager for "OpenJDK openrefine" and kill the PID manually.\n
-                        """
-                );
+                runLater(() -> outputArea.setText("No running OpenRefine process found.\nThere might have been an error.\nCheck Linux `ps` or Windows Task Manager for `OpenJDK openrefine` and kill the PID manually.\n"));
         }
+    }
+
+
+    void runLater(Runnable r) {
+        Platform.runLater(r::run);
     }
 
     @FXML
     protected void onLogButtonClick() {
         msgStop.setText("Showing Logs...");
     }
+//
+//    @FXML
+//    protected void search() {
+//        msgStop.setText("search...");
+//    }
+//
+//    @FXML
+//    protected void close() {
+//        msgStop.setText("close...");
+//    }
+//
+//    @FXML
+//    protected void newProxy() {
+//        msgStop.setText("exampleText1...");
+//    }
+//
+//    @FXML
+//    protected void removeProxy() {
+//        msgStop.setText("exampleText2...");
+//    }
+//
+//    @FXML
+//    protected void settings() {
+//        msgStop.setText("Show Settings/Preferences?...");
+//    }
+//
+//    @FXML
+//    protected void aboutBox() {
+//        msgStop.setText("Showing About...");
+//    }
 
-    @FXML
-    protected void search() {
-        msgStop.setText("search...");
-    }
-
-    @FXML
-    protected void close() {
-        msgStop.setText("close...");
-    }
-
-    @FXML
-    protected void newProxy() {
-        msgStop.setText("exampleText1...");
-    }
-
-    @FXML
-    protected void removeProxy() {
-        msgStop.setText("exampleText2...");
-    }
-
-    @FXML
-    protected void settings() {
-        msgStop.setText("Show Settings/Preferences?...");
-    }
-
-    @FXML
-    protected void aboutBox() {
-        msgStop.setText("Showing About...");
-    }
-
-    void runLater(Runnable r) {
-        Platform.runLater(r::run);
-    }
 }
