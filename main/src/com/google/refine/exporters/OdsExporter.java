@@ -133,7 +133,7 @@ public class OdsExporter implements StreamExporter {
         };
 
         CustomizableTabularExporterUtilities.exportRows(
-                project, engine, params, serializer);
+                project, engine, params.get("optipns"), serializer);
 
         try {
             odfDoc.save(outputStream);
