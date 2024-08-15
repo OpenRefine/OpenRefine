@@ -33,8 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -584,7 +584,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     public void testThatDefaultGuessIsATabSeparatorAndDefaultProcessQuotesToFalse() {
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
-        assertEquals("\\t", options.get("separator").textValue());
+        assertEquals(options.get("separator").textValue(), "\\t");
         assertFalse(options.get("processQuotes").asBoolean());
     }
 
@@ -593,7 +593,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords("food.small.csv");
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, fileRecords, "text/csv");
-        assertEquals(",", options.get("separator").textValue());
+        assertEquals(options.get("separator").textValue(), ",");
     }
 
     @Test
@@ -601,7 +601,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords("movies-condensed.tsv");
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, fileRecords, "text/tsv");
-        assertEquals("\\t", options.get("separator").textValue());
+        assertEquals(options.get("separator").textValue(), "\\t");
         assertFalse(options.get("processQuotes").asBoolean());
     }
 

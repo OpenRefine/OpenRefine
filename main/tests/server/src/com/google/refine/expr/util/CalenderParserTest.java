@@ -1,10 +1,10 @@
 
 package com.google.refine.expr.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+// TODO: The static import below should really use the native parameter ordering, but we're too lazy to switch all the calls
+import static org.testng.AssertJUnit.assertEquals; // JUnit compatible parameter order
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -182,132 +182,100 @@ public class CalenderParserTest {
         assertEquals(expected, CalendarParser.getOrderString(input));
     }
 
-    @Test
-    public void shouldThrowExceptionWhenNegativeNumberInDateStr_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Found negative number in date \"-22/02/2024\"")
+    public void shouldThrowExceptionWhenNegativeNumberInDateStr_parseTest() throws CalendarParserException {
         String dateStr = "-22/02/2024";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.DD_MM_YY));
-        assertEquals(String.format("Found negative number in date \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.DD_MM_YY);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenYearMissingDD_MM_YY_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Year missing from \"20/01/\"")
+    public void shouldThrowExceptionWhenYearMissingDD_MM_YY_parseTest() throws CalendarParserException {
         String dateStr = "20/01/";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.DD_MM_YY));
-        assertEquals(String.format("Year missing from \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.DD_MM_YY);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenMonthMissingDD_MM_YY_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Month missing from \"20//2024\"")
+    public void shouldThrowExceptionWhenMonthMissingDD_MM_YY_parseTest() throws CalendarParserException {
         String dateStr = "20//2024";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.DD_MM_YY));
-        assertEquals(String.format("Month missing from \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.DD_MM_YY);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenDateMissingMM_DD_YY_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "^Day missing from .*")
+    public void shouldThrowExceptionWhenDateMissingMM_DD_YY_parseTest() throws CalendarParserException {
         String dateStr = "01//2024";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.MM_DD_YY));
-        assertEquals(String.format("Day missing from \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.MM_DD_YY);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenMonthAndYearAreMissingDD_MM_YY_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "^Year and month missing from .*")
+    public void shouldThrowExceptionWhenMonthAndYearAreMissingDD_MM_YY_parseTest() throws CalendarParserException {
         String dateStr = "20/";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.DD_MM_YY));
-        assertEquals(String.format("Year and month missing from \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.DD_MM_YY);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenMonthAndDayAreMissingYY_DD_MM_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "^Day and month missing from .*")
+    public void shouldThrowExceptionWhenMonthAndDayAreMissingYY_DD_MM_parseTest() throws CalendarParserException {
         String dateStr = "2024-";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Day and month missing from \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenHourValueIsBad_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Bad hour 28 in .*")
+    public void shouldThrowExceptionWhenHourValueIsBad_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 28:30:54:003 pm +05:30";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Bad hour 28 in \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenHourIsBad_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Bad hour string \"1hour\" in .*")
+    public void shouldThrowExceptionWhenHourIsBad_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 1hour:30:54:003 pm +05:30";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Bad hour string \"1hour\" in \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenMinuteValueIsBad_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Bad minute 90 in .*")
+    public void shouldThrowExceptionWhenMinuteValueIsBad_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 8:90:54:003 pm +05:30";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Bad minute 90 in \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenMinuteIsBad_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Bad minute string \"30Minute\" in .*")
+    public void shouldThrowExceptionWhenMinuteIsBad_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 2:30Minute:54:003 pm +05:30";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Bad minute string \"30Minute\" in \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenSecondValueIsBad_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Bad second 94 in .*")
+    public void shouldThrowExceptionWhenSecondValueIsBad_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 8:30:94:003 pm +05:30";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Bad second 94 in \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenSecondIsBad_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Bad second string \"54Sec\" in .*")
+    public void shouldThrowExceptionWhenSecondIsBad_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 2:30:54Sec:003 pm +05:30";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Bad second string \"54Sec\" in \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenMilliSecondValueIsBad_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Bad millisecond 1111 in .*")
+    public void shouldThrowExceptionWhenMilliSecondValueIsBad_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 8:30:44:1111 pm +05:30";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Bad millisecond 1111 in \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenMilliSecondIsBad_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Bad millisecond string \"003milli\" in .*")
+    public void shouldThrowExceptionWhenMilliSecondIsBad_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 2:30:54:003milli pm +05:30";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Bad millisecond string \"003milli\" in \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenBadTime_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "Unrecognized time \"hour:minute:second\" in date .*")
+    public void shouldThrowExceptionWhenBadTime_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 hour:minute:second";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Unrecognized time \"hour:minute:second\" in date \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
-    @Test
-    public void shouldThrowExceptionWhenBadTimeZone_parseTest() {
+    @Test(expectedExceptions = CalendarParserException.class, expectedExceptionsMessageRegExp = "^Bad time zone minute offset \"30min\" in .*")
+    public void shouldThrowExceptionWhenBadTimeZone_parseTest() throws CalendarParserException {
         String dateStr = "20/01/2024 8:30:54:003 pm +05:30min";
-        CalendarParserException exception = assertThrows(CalendarParserException.class,
-                () -> CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM));
-        assertEquals(String.format("Bad time zone minute offset \"30min\" in \"%s\"", dateStr), exception.getMessage());
+        CalendarParser.parse(dateStr, CalendarParser.YY_DD_MM);
     }
 
     private static Calendar getCalendar(int year, int month, int date, int hour, int minutes, int seconds, int milliSeconds,

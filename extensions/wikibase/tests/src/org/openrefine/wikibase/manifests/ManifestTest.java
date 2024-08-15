@@ -3,6 +3,7 @@ package org.openrefine.wikibase.manifests;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
+// The version below has parameter order backwards from the standard TestNG assertEquals we use everywhere else
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
