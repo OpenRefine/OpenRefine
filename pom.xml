@@ -78,13 +78,13 @@
     <jackson.version>2.17.2</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.5</butterfly.version>
-    <slf4j.version>2.0.13</slf4j.version>
+    <slf4j.version>2.0.16</slf4j.version>
     <log4j.version>2.23.1</log4j.version>
     <jetty.version>10.0.16</jetty.version>
     <okhttp.version>4.12.0</okhttp.version>
     <jena.version>4.10.0</jena.version>
     <poi.version>5.3.0</poi.version>
-    <commons-lang3.version>3.15.0</commons-lang3.version>
+    <commons-lang3.version>3.16.0</commons-lang3.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-text.version>1.12.0</commons-text.version>
@@ -92,7 +92,7 @@
     <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
     <commons-codec.version>1.17.1</commons-codec.version>
-    <commons-compress.version>1.26.2</commons-compress.version>
+    <commons-compress.version>1.27.0</commons-compress.version>
     <velocity.version>2.3</velocity.version>
     <marc4j.version>2.9.5</marc4j.version>
     <jsoup.version>1.18.1</jsoup.version>
@@ -117,7 +117,7 @@
     <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-    <exec-maven-plugin.version>3.3.0</exec-maven-plugin.version>
+    <exec-maven-plugin.version>3.4.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.7.1</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <surefire.version>3.3.1</surefire.version>
@@ -312,7 +312,7 @@
         <!-- Signature -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.5</version>
         <executions>
             <execution>
                 <id>sign-artifacts</id>
