@@ -61,14 +61,6 @@ public class KeyerFactory {
     }
 
     /**
-     * Removes a keyer under a code name.
-     */
-    public static void remove(String name) {
-        _keyers.remove(name);
-        _keyerNames.remove(name);
-    }
-
-    /**
      * Set of available keyer, by names. The first keyer is considered the default one.
      */
     public static List<String> getKeyerNames() {
