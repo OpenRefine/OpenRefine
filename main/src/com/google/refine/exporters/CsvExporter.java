@@ -148,7 +148,7 @@ public class CsvExporter implements WriterExporter {
             }
         };
 
-        CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
+        CustomizableTabularExporterUtilities.exportRows(project, engine, optionsString, serializer);
 
     }
 

@@ -175,7 +175,6 @@ abstract public class CustomizableTabularExporterUtilities {
                     Column column = project.columnModel.getColumnByName(columnName);
                     CellFormatter formatter = columnNameToFormatter.get(columnName);
                     CellData cellData = formatter.format(
-                            project,
                             column,
                             row.getCell(column.getCellIndex()));
 
@@ -207,7 +206,7 @@ abstract public class CustomizableTabularExporterUtilities {
     static public int[] countColumnsRows(
             final Project project,
             final Engine engine,
-            Map<String, String> params) {
+            Properties params) {
         RowCountingTabularSerializer serializer = new RowCountingTabularSerializer();
         exportRows(project, engine, params, serializer);
         return new int[] { serializer.columns, serializer.rows };
@@ -349,7 +348,12 @@ abstract public class CustomizableTabularExporterUtilities {
             }
         }
 
+        @Deprecated(since = "3.9")
         CellData format(Project project, Column column, Cell cell) {
+            return format(column, cell);
+        }
+
+        CellData format(Column column, Cell cell) {
             if (cell != null) {
                 String link = null;
                 String text = null;
