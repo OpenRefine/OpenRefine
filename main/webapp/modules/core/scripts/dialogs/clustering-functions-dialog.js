@@ -49,6 +49,7 @@ function ClusteringFunctionsDialog(title, clusteringDialog) {
 
     $('<button class="button"></button>').html($.i18n('core-buttons/ok')).on('click', function () {
         DialogSystem.dismissUntil(self._level - 1);
+        clusteringDialog._renderClusteringFunctions();
     }).appendTo(footer);
 
     this._level = DialogSystem.showDialog(frame);
