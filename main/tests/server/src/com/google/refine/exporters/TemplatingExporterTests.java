@@ -50,6 +50,7 @@ import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
 import com.google.refine.model.Cell;
@@ -105,7 +106,7 @@ public class TemplatingExporterTests extends RefineTest {
         ProjectManager.singleton.registerProject(project, projectMetadata);
         engine = new Engine(project);
         writer = new StringWriter();
-        options = new HashMap<String, String>();
+        options = new HashMap<>();
     }
 
     @AfterMethod
@@ -221,6 +222,9 @@ public class TemplatingExporterTests extends RefineTest {
         options.put("prefix", prefix);
         options.put("suffix", suffix);
         options.put("separator", rowSeparator);
+        Engine engine = new Engine(project);
+        engine.setMode(Mode.RecordBased);
+        project.update();
 
         SUT.export(project, options, engine, writer);
 

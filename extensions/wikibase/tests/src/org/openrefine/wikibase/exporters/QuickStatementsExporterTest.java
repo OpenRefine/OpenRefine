@@ -31,7 +31,6 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.testng.annotations.Test;
@@ -84,8 +83,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
         Engine engine = new Engine(project);
 
         StringWriter writer = new StringWriter();
-        Map<String, String> properties = new HashMap<>();
-        exporter.export(project, properties, engine, writer);
+        exporter.export(project, Map.of(), engine, writer);
         assertEquals(writer.toString(), TestingData.inceptionWithNewQS);
     }
 
@@ -96,12 +94,12 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
                 .addContributingRowId(123)
                 .build();
 
-        assertEquals(QuickStatementsExporter.impossibleSchedulingErrorMessage, export(update));
+        assertEquals(export(update), QuickStatementsExporter.impossibleSchedulingErrorMessage);
     }
 
     @Test
     public void testNameDesc() throws IOException {
-        /**
+        /*
          * Adding labels and description without overriding is not supported by QS, so we fall back on adding them with
          * overriding.
          */
@@ -111,7 +109,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
                 .addContributingRowId(123)
                 .build();
 
-        assertEquals("Q1377\tLen\t\"some label\"\n" + "Q1377\tDen\t\"some description\"\n", export(update));
+        assertEquals(export(update), "Q1377\tLen\t\"some label\"\n" + "Q1377\tDen\t\"some description\"\n");
     }
 
     @Test
@@ -123,8 +121,8 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
                 .addContributingRowId(123)
                 .build();
 
-        assertEquals("CREATE\n" + "LAST\tLen\t\"my new item\"\n" + "LAST\tDen\t\"isn't it awesome?\"\n"
-                + "LAST\tAen\t\"fabitem\"\n", export(update));
+        assertEquals(export(update), "CREATE\n" + "LAST\tLen\t\"my new item\"\n" + "LAST\tDen\t\"isn't it awesome?\"\n"
+                + "LAST\tAen\t\"fabitem\"\n");
     }
 
     @Test
@@ -135,7 +133,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
                 .addContributingRowId(123)
                 .build();
 
-        assertEquals("- Q1377\tP38\tQ865528\n", export(update));
+        assertEquals(export(update), "- Q1377\tP38\tQ865528\n");
     }
 
     @Test
@@ -152,7 +150,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
                 StatementEditingMode.ADD_OR_MERGE);
         TermedStatementEntityEdit update = new ItemEditBuilder(qid1).addStatement(statementUpdate).addContributingRowId(123).build();
 
-        assertEquals("Q1377\tP38\tQ865528\tP38\tQ1377\n", export(update));
+        assertEquals(export(update), "Q1377\tP38\tQ865528\tP38\tQ1377\n");
     }
 
     @Test
@@ -167,7 +165,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
                 .addContributingRowId(123)
                 .build();
 
-        assertEquals("Q1377\tP123\tsomevalue\n", export(update));
+        assertEquals(export(update), "Q1377\tP123\tsomevalue\n");
     }
 
     @Test
@@ -182,7 +180,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
                 .addContributingRowId(123)
                 .build();
 
-        assertEquals("Q1377\tP123\tnovalue\n", export(update));
+        assertEquals(export(update), "Q1377\tP123\tnovalue\n");
     }
 
     /**
@@ -215,8 +213,8 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
                 .build();
 
         assertEquals(
-                "Q1377\tP38\tQ865528\tP38\tQ1377\tS38\tQ865528\n" + "Q1377\tP38\tQ865528\tP38\tQ1377\tS38\tQ1377\n",
-                export(update));
+                export(update),
+                "Q1377\tP38\tQ865528\tP38\tQ1377\tS38\tQ865528\n" + "Q1377\tP38\tQ865528\tP38\tQ1377\tS38\tQ1377\n");
     }
 
     @Test
@@ -228,13 +226,12 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
                 });
         Engine engine = new Engine(project);
         StringWriter writer = new StringWriter();
-        Map<String, String> properties = new HashMap<>();
-        exporter.export(project, properties, engine, writer);
-        assertEquals(QuickStatementsExporter.noSchemaErrorMessage, writer.toString());
+        exporter.export(project, Map.of(), engine, writer);
+        assertEquals(writer.toString(), QuickStatementsExporter.noSchemaErrorMessage);
     }
 
     @Test
     public void testGetContentType() {
-        assertEquals("text/plain", exporter.getContentType());
+        assertEquals(exporter.getContentType(), "text/plain");
     }
 }

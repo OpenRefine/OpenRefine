@@ -93,7 +93,7 @@ public class TsvExporterTests extends RefineTest {
         options = null;
     }
 
-    // TODO: Do we actually want this to be supported? If so, we need to test legacy API
+    // TODO: We need to test the flip side of this with the framework calling legacy exporters.
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void exportLegacyApiThrows() throws IOException {
         CreateGrid(2, 2);

@@ -53,7 +53,7 @@ public interface Exporter {
      */
     static Properties remapOptions(Map<String, String> options) {
         Properties legacyOptions = new Properties();
-        for (Map.Entry e : options.entrySet()) {
+        for (Map.Entry<String, String> e : options.entrySet()) {
             if (e.getValue() != null) { // Properties don't accept null values
                 legacyOptions.put(e.getKey(), e.getValue());
             }

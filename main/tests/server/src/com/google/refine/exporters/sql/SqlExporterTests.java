@@ -275,11 +275,7 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("trimColumnNames", true);
 
         when(options.get("options")).thenReturn(optionsJson.toString());
-        try {
-            SUT.export(project, options, engine, writer);
-        } catch (IOException e) {
-            Assert.fail();
-        }
+        SUT.export(project, options, engine, writer);
 
         String result = writer.toString();
         logger.debug("\nresult:={} ", result);

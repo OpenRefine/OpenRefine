@@ -123,6 +123,6 @@ public class HtmlTableExporter implements WriterExporter {
         };
 
         CustomizableTabularExporterUtilities.exportRows(
-                project, engine, params, serializer);
+                project, engine, params.get("options"), serializer);
     }
 }
