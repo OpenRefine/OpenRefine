@@ -45,7 +45,7 @@ describe(__filename, function () {
         });
     });
 
-    it('Test the Add custom clustering function', function () {
+    it('Test the clustering using custom function', function () {
         cy.loadAndVisitProject(fixture);
         cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);
     
@@ -58,6 +58,35 @@ describe(__filename, function () {
         
         cy.get('.main-text').should('have.text', 'length of the cell');
         cy.get(".sub-text").should('have.text',"value.length()")
+
+        cy.get('.dialog-footer').find('button').contains('OK').click();
+
+        cy.get('#keyingFunctionSelectorId').select('UserDefinedKeyer');
+        cy.get('#keyingFunctionSelectorId option:selected').should('have.text', 'length of the cell')
+
+        cy.get('.dialog-container').within(() => {
+            // check lines to be merged
+            cy.get(
+                '.clustering-dialog-entry-table tr.odd input[type="checkbox"]'
+            ).check();
+
+            // enter a new cell value
+            cy.get('.clustering-dialog-entry-table tr.odd input[type="text"]').type(
+                'testing'
+            );
+
+            cy.get('.dialog-footer button[bind="applyCloseButton"]').click();
+        });
+
+        cy.assertGridEquals([
+            ['location'],
+            ['GRAVEL HILLtesting'],
+            ['SWABYS   HOME'],
+            ['BALLARDS river'],
+            ['BALLARDS River'],
+            ['MOUNT ZION'],
+            ['GRAVEL HILLtesting'],
+        ]);
     });
     
     it('Test the different clustering options for rendering and expected inputs', function () {
