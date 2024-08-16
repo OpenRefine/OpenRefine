@@ -41,7 +41,6 @@ Lists of 109 third-party dependencies.
      (CDDL/GPLv2+CE) JavaBeans Activation Framework API jar (javax.activation:javax.activation-api:1.2.0 - http://java.net/all/javax.activation-api/)
      (CDDL + GPLv2 with classpath exception) Java Servlet API (javax.servlet:javax.servlet-api:4.0.1 - https://javaee.github.io/servlet-spec/)
      (CDDL 1.1) (GPL2 w/ CPE) jaxb-api (javax.xml.bind:jaxb-api:2.3.1 - https://github.com/javaee/jaxb-spec/jaxb-api)
-     (Eclipse Public License 1.0) JUnit (junit:junit:4.13 - http://junit.org)
      (The Apache Software License, Version 2.0) jsonic (net.arnx:jsonic:1.2.11 - http://jsonic.sourceforge.jp/)
      (Apache License, Version 2.0) Byte Buddy (without dependencies) (net.bytebuddy:byte-buddy:1.12.22 - https://bytebuddy.net/byte-buddy)
      (Apache License, Version 2.0) Byte Buddy agent (net.bytebuddy:byte-buddy-agent:1.12.22 - https://bytebuddy.net/byte-buddy-agent)
