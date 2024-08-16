@@ -150,8 +150,8 @@ abstract public class HttpUtilities {
     }
 
     /**
-     * @deprecated deprecated for v3.8. No internal uses. There is an implementation in the {@link Command} class for
-     *             commands which need it.
+     * @deprecated deprecated for v3.8. No internal uses. There is an implementation in
+     *             {@link Command#getIntegerParameter(HttpServletRequest, String, int)} for commands which need it.
      */
     @Deprecated
     static public int getIntegerParameter(HttpServletRequest request, String name, int def) {

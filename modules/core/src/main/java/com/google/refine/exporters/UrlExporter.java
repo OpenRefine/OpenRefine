@@ -40,8 +40,14 @@ import java.util.Properties;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 
+/**
+ * @deprecated for 3.9 by tfmorris - this interface is unused internally and will be deleted at the end of the
+ *             deprecation period
+ */
+@Deprecated(since = "3.9")
 public interface UrlExporter extends Exporter {
 
-    public void export(Project project, Properties options, Engine engine, URL url) throws IOException;
+    @Deprecated(since = "3.9")
+    void export(Project project, Properties options, Engine engine, URL url) throws IOException;
 
 }

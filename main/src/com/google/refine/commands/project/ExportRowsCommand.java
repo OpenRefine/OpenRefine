@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -69,6 +70,7 @@ public class ExportRowsCommand extends Command {
      * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
      */
 
+    @Deprecated(since = "3.9")
     @SuppressWarnings("unchecked")
     static public Properties getRequestParameters(HttpServletRequest request) {
         Properties options = new Properties();
@@ -90,21 +92,21 @@ public class ExportRowsCommand extends Command {
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-            Properties params = getRequestParameters(request);
+            Map<String, String> params = getParameters(request);
 
-            String format = params.getProperty("format");
+            String format = params.get("format");
             Exporter exporter = ExporterRegistry.getExporter(format);
             if (exporter == null) {
                 exporter = new CsvExporter('\t');
             }
 
-            String contentType = params.getProperty("contentType");
+            String contentType = params.get("contentType");
             if (contentType == null) {
                 contentType = exporter.getContentType();
             }
             response.setHeader("Content-Type", contentType);
 
-            String preview = params.getProperty("preview");
+            String preview = params.get("preview");
             if (!"true".equals(preview)) {
                 String path = request.getPathInfo();
                 String filename = path.substring(path.lastIndexOf('/') + 1);
@@ -128,7 +130,7 @@ public class ExportRowsCommand extends Command {
             }
 
             if (exporter instanceof WriterExporter) {
-                String encoding = params.getProperty("encoding");
+                String encoding = params.get("encoding");
 
                 response.setCharacterEncoding(encoding != null ? encoding : "UTF-8");
                 Writer writer = encoding == null ? response.getWriter() : new OutputStreamWriter(response.getOutputStream(), encoding);
@@ -141,9 +143,6 @@ public class ExportRowsCommand extends Command {
                 OutputStream stream = response.getOutputStream();
                 ((StreamExporter) exporter).export(project, params, engine, stream);
                 stream.close();
-//          } else if (exporter instanceof UrlExporter) {
-//              ((UrlExporter) exporter).export(project, options, engine);
-
             } else {
                 // TODO: Should this use ServletException instead of respondException?
                 respondException(response, new RuntimeException("Unknown exporter type"));
