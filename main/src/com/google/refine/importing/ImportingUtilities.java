@@ -1016,26 +1016,7 @@ public class ImportingUtilities {
 
             if (location != null) {
                 File file = new File(job.getRawDataDir(), location);
-
-                while (true) {
-                    String betterFormat = null;
-
-                    List<FormatGuesser> guessers = ImportingManager.formatToGuessers.get(bestFormat);
-                    if (guessers != null) {
-                        for (FormatGuesser guesser : guessers) {
-                            betterFormat = guesser.guess(file, encoding, bestFormat);
-                            if (betterFormat != null) {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (betterFormat != null && !betterFormat.equals(bestFormat)) {
-                        bestFormat = betterFormat;
-                    } else {
-                        break;
-                    }
-                }
+                bestFormat = guessBetterFormat(file, encoding, bestFormat);
             }
         }
         return bestFormat;
