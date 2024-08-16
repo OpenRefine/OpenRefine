@@ -1,6 +1,7 @@
 /*
 
 Copyright 2010, Google Inc.
+Copyright 2024, OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,13 +36,44 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.Properties;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 
+// TODO: Do we want to simplify this and only support one of WriterExporter / StreamExporter
+// This interface is used by OdsExporter and XlsExporter (only)
 public interface StreamExporter extends Exporter {
 
-    public void export(Project project, Properties options, Engine engine, OutputStream outputStream) throws IOException;
+    /**
+     *
+     * @deprecated for 3.9 by tfmorris - use {@link #export(Project, Map, Engine, OutputStream)}
+     */
+    @Deprecated(since = "3.9")
+    default void export(Project project, Properties options, Engine engine, OutputStream outputStream) throws IOException {
+        // We provide a default implementation for new exporters so that they don't have to implement the legacy
+        // interface
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Export a project to an OutputStream using the given faceted browsing engines and options.
+     *
+     * @param project
+     *            the project to be exported
+     * @param options
+     *            option settings to be used for the export
+     * @param engine
+     *            faceted browsing configuration
+     * @param outputStream
+     *            the OutputStream to be written to
+     * @throws IOException
+     * @since 3.9
+     */
+    default void export(Project project, Map<String, String> options, Engine engine, OutputStream outputStream) throws IOException {
+        // Default implementation for modern callers invoking legacy 3rd party extensions
+        export(project, Exporter.remapOptions(options), engine, outputStream);
+    };
 
 }

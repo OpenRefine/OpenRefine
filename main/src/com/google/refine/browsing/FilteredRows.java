@@ -47,5 +47,5 @@ public interface FilteredRows {
      * @param project
      * @param visitor
      */
-    public void accept(Project project, RowVisitor visitor);
+    void accept(Project project, RowVisitor visitor);
 }
