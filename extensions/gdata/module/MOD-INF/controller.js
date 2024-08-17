@@ -101,23 +101,10 @@ function process(path, request, response) {
     
     send(request, response, "authorize.vt", context);
   } else if (path == "authorized") {
-    var context = {};
-    context.state = request.getParameter("state");
-    
-    (function() {
-      if (Packages.com.google.refine.extension.gdata.TokenCookie.getToken(request) !== null) {
-          return;
-      }
-      var tokenAndExpiresInSeconds =  Packages.com.google.refine.extension.gdata.GoogleAPIExtension.getTokenFromCode(module,request);
-      if (tokenAndExpiresInSeconds) {
-        var tokenInfo = tokenAndExpiresInSeconds.split(",");
-        Packages.com.google.refine.extension.gdata.TokenCookie.setToken(request, response, tokenInfo[0], tokenInfo[1]);
-        return;
-      }
-      Packages.com.google.refine.extension.gdata.TokenCookie.deleteToken(request, response);
-    })();
-    
-    send(request, response, "authorized.vt", context);
+    // it's a command but we handle it manually here, so as to preserve the URL
+    var command = new Packages.com.google.refine.extension.gdata.AuthorizedCommand(module);
+    command.doGet(request, response);
+    butterfly.responded();
   } else if (path == "/" || path == "") {
       var context = {};
       context.version = version;
