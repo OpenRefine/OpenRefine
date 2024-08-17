@@ -65,7 +65,8 @@ public class ExportRowsCommand extends Command {
     private static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
 
     /**
-     * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
+     * This command uses POST but is left CSRF-unprotected as it does not incur a state change. TODO: add CSRF
+     * protection anyway, as it does not cost much and could still have prevented an XSS vulnerability
      */
 
     @SuppressWarnings("unchecked")
@@ -102,11 +103,9 @@ public class ExportRowsCommand extends Command {
                 exporter = new CsvExporter('\t');
             }
 
-            String contentType = params.getProperty("contentType");
-            if (contentType == null) {
-                contentType = exporter.getContentType();
-            }
-            response.setHeader("Content-Type", contentType);
+            response.setHeader("Content-Type", exporter.getContentType());
+            // in case the content-type is text/html, to avoid XSS attacks
+            response.setHeader("Content-Security-Policy", "script-src 'none'; connect-src 'none'");
 
             String preview = params.getProperty("preview");
             if (!"true".equals(preview)) {
@@ -131,8 +130,8 @@ public class ExportRowsCommand extends Command {
                 OutputStream stream = response.getOutputStream();
                 ((StreamExporter) exporter).export(project, params, engine, stream);
                 stream.close();
-//          } else if (exporter instanceof UrlExporter) {
-//              ((UrlExporter) exporter).export(project, options, engine);
+                // } else if (exporter instanceof UrlExporter) {
+                // ((UrlExporter) exporter).export(project, options, engine);
 
             } else {
                 // TODO: Should this use ServletException instead of respondException?
