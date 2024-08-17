@@ -36,6 +36,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.escape.Escaper;
+import com.google.common.html.HtmlEscapers;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
@@ -197,7 +199,8 @@ abstract public class HttpUtilities {
         VelocityContext context = new VelocityContext();
 
         context.put("message", message);
-        context.put("stack", e == null ? "" : ExceptionUtils.getStackTrace(e));
+        Escaper escaper = HtmlEscapers.htmlEscaper();
+        context.put("stack", e == null ? "" : escaper.escape(ExceptionUtils.getStackTrace(e)));
 
         try {
             response.setStatus(status);
