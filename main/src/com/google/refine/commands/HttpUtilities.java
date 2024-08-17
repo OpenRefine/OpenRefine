@@ -38,6 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.google.common.escape.Escaper;
+import com.google.common.html.HtmlEscapers;
 import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,7 +173,8 @@ abstract public class HttpUtilities {
 
             e.printStackTrace(new PrintWriter(writer));
 
-            context.put("stack", writer.toString());
+            Escaper escaper = HtmlEscapers.htmlEscaper();
+            context.put("stack", escaper.escape(writer.toString()));
         } else {
             context.put("stack", "");
         }
