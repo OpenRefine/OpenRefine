@@ -1,3 +1,4 @@
+
 package org.openrefine.launcher;
 
 import java.io.BufferedReader;
@@ -14,6 +15,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 
 public class Controller {
+
     private static final ExecutorService WATCH = Executors.newSingleThreadExecutor(r -> {
         var t = new Thread(r);
         t.setDaemon(true);
@@ -38,7 +40,7 @@ public class Controller {
     protected void onStartButtonClick() {
         this.outputArea.clear();
 
-        if ( process != null && process.isAlive()) {
+        if (process != null && process.isAlive()) {
             this.outputArea.setText("OpenRefine is already running.\n");
 
         } else {
@@ -62,25 +64,25 @@ public class Controller {
                 Boolean error = false;
                 process = processBuilder.start();
 
-                    try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()));) {
-                        String ebuffer;
-                        while ((ebuffer = br.readLine()) != null) {
-                            final String ebufferLine = ebuffer + "\n";
-                            runLater(() -> refineOut.appendText(ebufferLine));
-            // Check if we had an error during start
-                            if(ebufferLine.contains("Exception")) {
-                                error = true;
-                            }
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()));) {
+                    String ebuffer;
+                    while ((ebuffer = br.readLine()) != null) {
+                        final String ebufferLine = ebuffer + "\n";
+                        runLater(() -> refineOut.appendText(ebufferLine));
+                        // Check if we had an error during start
+                        if (ebufferLine.contains("Exception")) {
+                            error = true;
                         }
-                        if(error) {
-                            runLater(() -> outputArea.appendText("ERROR OCCURRED WHILE STARTING.\nCheck the logs."));
-                        }
-                        runLater(() -> running.set(false));
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                    if (error) {
+                        runLater(() -> outputArea.appendText("ERROR OCCURRED WHILE STARTING.\nCheck the logs."));
+                    }
+                    runLater(() -> running.set(false));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-            // We handle the process's input/output streams here
+                // We handle the process's input/output streams here
                 WATCH.submit(() -> {
                     runLater(() -> refineOut.clear());
 
@@ -98,7 +100,8 @@ public class Controller {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } runLater(() -> running.set(true));
+        }
+        runLater(() -> running.set(true));
     }
 
     @FXML
@@ -115,10 +118,10 @@ public class Controller {
                 }
 
             } else
-                runLater(() -> outputArea.setText("No running OpenRefine process found.\nThere might have been an error.\nCheck Linux `ps` or Windows Task Manager for `OpenJDK openrefine` and kill the PID manually.\n"));
+                runLater(() -> outputArea.setText(
+                        "No running OpenRefine process found.\nThere might have been an error.\nCheck Linux `ps` or Windows Task Manager for `OpenJDK openrefine` and kill the PID manually.\n"));
         }
     }
-
 
     void runLater(Runnable r) {
         Platform.runLater(r::run);
@@ -128,35 +131,35 @@ public class Controller {
     protected void onLogButtonClick() {
         msgStop.setText("Showing Logs...");
     }
-//
-//    @FXML
-//    protected void search() {
-//        msgStop.setText("search...");
-//    }
-//
-//    @FXML
-//    protected void close() {
-//        msgStop.setText("close...");
-//    }
-//
-//    @FXML
-//    protected void newProxy() {
-//        msgStop.setText("exampleText1...");
-//    }
-//
-//    @FXML
-//    protected void removeProxy() {
-//        msgStop.setText("exampleText2...");
-//    }
-//
-//    @FXML
-//    protected void settings() {
-//        msgStop.setText("Show Settings/Preferences?...");
-//    }
-//
-//    @FXML
-//    protected void aboutBox() {
-//        msgStop.setText("Showing About...");
-//    }
+    //
+    // @FXML
+    // protected void search() {
+    // msgStop.setText("search...");
+    // }
+    //
+    // @FXML
+    // protected void close() {
+    // msgStop.setText("close...");
+    // }
+    //
+    // @FXML
+    // protected void newProxy() {
+    // msgStop.setText("exampleText1...");
+    // }
+    //
+    // @FXML
+    // protected void removeProxy() {
+    // msgStop.setText("exampleText2...");
+    // }
+    //
+    // @FXML
+    // protected void settings() {
+    // msgStop.setText("Show Settings/Preferences?...");
+    // }
+    //
+    // @FXML
+    // protected void aboutBox() {
+    // msgStop.setText("Showing About...");
+    // }
 
 }
