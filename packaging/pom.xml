@@ -434,16 +434,16 @@
             <phase>package</phase>
             <goals><goal>launch4j</goal></goals>
             <configuration>
-              <headerType>console</headerType>
+              <headerType>gui</headerType>
               <outfile>target/openrefine_with_jre.exe</outfile>
-              <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
+              <jar>launcher/target/launcher-${project.version}.jar</jar>
               <dontWrapJar>true</dontWrapJar>
               <saveConfig>true</saveConfig>
               <icon>openrefine.ico</icon>
               <classPath>
-                <mainClass>com.google.refine.Refine</mainClass>
-                <jarLocation>server/target/lib/</jarLocation>
-                <postCp>server/target/lib/*.jar</postCp>
+                <mainClass>org.openrefine.launcher.App</mainClass>
+                <jarLocation>launcher/target/</jarLocation>
+<!--                <postCp>server/target/lib/*.jar</postCp>-->
               </classPath>
               <jre>
                 <path>server/target/jre</path>
