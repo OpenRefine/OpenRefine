@@ -235,6 +235,7 @@ function registerImporting() {
   IM.registerExtension(".txt", "text");
   IM.registerExtension(".csv", "text/line-based/*sv");
   IM.registerExtension(".tsv", "text/line-based/*sv");
+  IM.registerExtension(".md", "text");
 
   IM.registerExtension(".xml", "text/xml");
   IM.registerExtension(".atom", "text/xml");
