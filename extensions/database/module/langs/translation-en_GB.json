@@ -48,5 +48,17 @@
     "database-import/creating": "Creating project …",
     "database-import/checking": "Validating query …",
     "database-import/preparing": "Preparing result …",
-    "database-import/title": "Database Servers"
+    "database-import/title": "Database Servers",
+    "database-import/importer-name": "Database",
+    "database-source/connectionNamePlaceholder": "Enter a new Connection Name",
+    "database-source/databaseHostPlaceholder": "Enter the database server domain or IP",
+    "database-source/databasePortPlaceholder": "Enter the database port e.g. 3306",
+    "database-source/databaseUserPlaceholder": "Enter the database user",
+    "database-source/databasePasswordPlaceholder": "Enter the database password",
+    "database-source/databaseNamePlaceholder": "Enter the name of the database",
+    "database-source/databaseSchemaPlaceholder": "Enter the initial schema of the database",
+    "database-source/databaseFileNamePlaceholder": "Enter the full path to the database file",
+    "database-parsing/disable-auto-preview": "Disable auto preview",
+    "database-source/new-connection-legend": "New Connection Editor",
+    "database-source/connectionNameDefaultValue": "New_Connection_Name"
 }
