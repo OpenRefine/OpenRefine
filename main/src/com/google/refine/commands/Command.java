@@ -61,6 +61,9 @@ import com.google.refine.util.ParsingUtilities;
 
 /**
  * The super class of all calls that the client side can invoke, most of which are AJAX calls.
+ *
+ * TODO: There are probably better designs for this than an abstract class using more
+ * modern Java capabilities like interfaces with default methods.
  */
 public abstract class Command {
 
@@ -217,6 +220,7 @@ public abstract class Command {
         return def;
     }
 
+    // TODO: Do we have another implementation of this now that we can use?
     static protected boolean getBooleanParameter(HttpServletRequest request, String name) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");

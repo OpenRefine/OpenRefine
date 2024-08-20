@@ -75,6 +75,7 @@ public class LoadLanguageCommand extends Command {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String modname = request.getParameter("module");
+        String modulePath = request.getServletContext().getServletRegistration("refine").getInitParameter("butterfly.modules.path");
         if (modname == null) {
             modname = "core";
         }
@@ -144,6 +145,7 @@ public class LoadLanguageCommand extends Command {
         }
     }
 
+    // TODO: servlet & module are just used to find a resource path. Can we provide it directly instead?
     static ObjectNode loadLanguage(RefineServlet servlet, String strModule, String strLang)
             throws UnsupportedEncodingException {
         ButterflyModule module = servlet.getModule(strModule);
