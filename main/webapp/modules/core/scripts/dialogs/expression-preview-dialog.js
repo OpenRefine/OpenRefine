@@ -683,7 +683,7 @@ ExpressionPreviewDialog.Widget.prototype._renderDistancePreview = function(first
                     if ($.isPlainObject(result)) {
                         $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + result.message).appendTo(tr.insertCell(2));
                     } else if(isNaN(result)) {
-                        let message = "your expression should return a number"
+                        let message = $.i18n('core-dialogs/should-return-number');
                         $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + message).appendTo(tr.insertCell(2));
                     } else {
                         $('<span>' + result + '</span>').appendTo(tr.insertCell(2));

@@ -78,7 +78,7 @@ public class UserDefinedDistance implements SimilarityDistance {
 
         if (obj instanceof Number) {
             return ((Number) obj).doubleValue();
-        } else if(obj instanceof EvalError){
+        } else if (obj instanceof EvalError) {
             throw new IllegalArgumentException(((EvalError) obj).message);
         } else if (obj instanceof String) {
             try {
