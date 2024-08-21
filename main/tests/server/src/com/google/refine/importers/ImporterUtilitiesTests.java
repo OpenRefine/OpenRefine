@@ -37,6 +37,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,7 +185,7 @@ public class ImporterUtilitiesTests extends RefineTest {
     public void testDeleteEmptyColumns() {
         Project project = new Project();
         // Set up column names in project
-        List<String> columnNames = new ArrayList<String>();
+        List<String> columnNames = new ArrayList<>();
         List<Boolean> columnsHasData = new ArrayList<>();
         columnNames.add("Column 1");
         columnsHasData.add(true);
@@ -208,9 +209,9 @@ public class ImporterUtilitiesTests extends RefineTest {
 
         // This will mock the situation of deleting empty columns(col2&col4)
         try {
-            ImporterUtilities.deleteEmptyColumns(columnsHasData, project);
+            TabularImportingParserBase.deleteEmptyColumns(columnsHasData, project);
         } catch (ModelException e) {
-            e.printStackTrace();
+            fail();
         }
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 3");

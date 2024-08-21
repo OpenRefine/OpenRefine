@@ -136,7 +136,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
 
-        List<Boolean> columnsHasData = new ArrayList<>();// Determine if there is data in each column,def = false
+        List<Boolean> columnsHasData = new ArrayList<>(); // Determine if there is data in each column,def = false
 
         List<Object> cells = null;
         int rowsWithData = 0;
@@ -178,16 +178,22 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
                     if (skipDataLines <= 0 || rowsWithData > skipDataLines) {
                         boolean rowHasData = false;
-                        ImporterUtilities.ensureColumnsHasDataExpands(columnsHasData, cells.size());
+
                         for (int c = 0; c < cells.size(); c++) {
                             Column column = ImporterUtilities.getOrAllocateColumn(
                                     project, columnNames, c, hasOurOwnColumnNames);
+                            int cellIndex = column.getCellIndex();
+                            // TODO: Can we make this more efficient? It's only inside this loop for the case where we
+                            // have an extra unexpected cell in a row
+                            while (cellIndex >= columnsHasData.size()) {
+                                columnsHasData.add(false);
+                            }
 
                             Object value = cells.get(c);
                             if (value instanceof Cell) {
-                                row.setCell(column.getCellIndex(), (Cell) value);
+                                row.setCell(cellIndex, (Cell) value);
                                 rowHasData = true;
-                                columnsHasData.set(c, true);
+                                columnsHasData.set(cellIndex, true);
                             } else if (ExpressionUtils.isNonBlankData(value)) {
                                 Serializable storedValue;
                                 if (value instanceof String) {
@@ -200,13 +206,13 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                     storedValue = ExpressionUtils.wrapStorable(value);
                                 }
 
-                                row.setCell(column.getCellIndex(), new Cell(storedValue, null));
+                                row.setCell(cellIndex, new Cell(storedValue, null));
                                 rowHasData = true;
-                                columnsHasData.set(c, true);
+                                columnsHasData.set(cellIndex, true);
                             } else if (!storeBlankCellsAsNulls) {
-                                row.setCell(column.getCellIndex(), new Cell("", null));
+                                row.setCell(cellIndex, new Cell("", null));
                             } else {
-                                row.setCell(column.getCellIndex(), null);
+                                row.setCell(cellIndex, null);
                             }
                         }
 
@@ -221,12 +227,29 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                 }
             }
             if (!storeBlankColumns) {// if user don't choose storeBlankColumns, delete all empty columns.
-                ImporterUtilities.deleteEmptyColumns(columnsHasData, project);
+                deleteEmptyColumns(columnsHasData, project);
             }
         } catch (IOException e) {
             exceptions.add(e);
         } catch (ModelException e) {
-            e.printStackTrace();
+            exceptions.add(e);
         }
+    }
+
+    /**
+     * If "storeBlankColumns" == false, delete blank columns.
+     *
+     * @param columnsHasData
+     *            Record if there is data in each column( false:null;true:has data)
+     */
+    static public void deleteEmptyColumns(List<Boolean> columnsHasData, Project project) throws ModelException {
+        project.columnModel.update(); // make sure all our cell indexes are up to date
+        for (int c = 0; c < columnsHasData.size(); c++) {
+            if (!columnsHasData.get(c)) {
+                // remove column from columns
+                project.columnModel.removeColumnByCellIndex(c);
+            }
+        }
+        project.columnModel.update();
     }
 }

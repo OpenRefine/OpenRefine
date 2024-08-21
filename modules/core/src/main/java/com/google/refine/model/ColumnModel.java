@@ -36,7 +36,14 @@ package com.google.refine.model;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -110,6 +117,20 @@ public class ColumnModel {
         internalInitialize();
     }
 
+    /**
+     * Add a new column to the list of columns. NOTE: This does not update all indices, so the caller is responsible for
+     * calling {@link #update()} at the appropriate time.
+     *
+     * @param index
+     *            index to add column at or -1 to add after the last column
+     * @param column
+     *            column to insert
+     * @param avoidNameCollision
+     *            true if column name should be made unique. If false, this method will throw a ModelException on
+     *            duplicate column names
+     * @throws ModelException
+     *             if the name of the column to be inserted already exists
+     */
     synchronized public void addColumn(int index, Column column, boolean avoidNameCollision) throws ModelException {
         String name = column.getName();
 
@@ -305,21 +326,9 @@ public class ColumnModel {
         }
     }
 
-    public void removeColumn(int index) {
-        // if index = cellindex, then remove ColumnName.
-        if (index <= _nameToColumn.size()) {
-            Iterator<Map.Entry<String, Column>> iterator = _nameToColumn.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, Column> next = iterator.next();
-                String key = next.getKey();
-                Column column = _nameToColumn.get(key);
-                int cellIndex = column.getCellIndex();
-                if (cellIndex == index) {
-                    columns.remove(column);
-                }
-            }
-        }
-
+    public void removeColumnByCellIndex(int index) {
+        Column column = getColumnByCellIndex(index);
+        columns.remove(column);
     }
 
 }
