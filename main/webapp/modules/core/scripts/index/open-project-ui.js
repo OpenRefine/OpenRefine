@@ -84,7 +84,7 @@ Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
 
 Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
   const self = this;
-  self._searchAnimation();
+  self._openSearchInput();
   self._searchInput();
 }
 
@@ -130,63 +130,63 @@ Refine.OpenProjectUI._filterTags = function(tag) {
   });
 };
 
-Refine.OpenProjectUI.prototype._searchAnimation = function() {
-  const search = $('#searchIcon');
-  const form = $('.header-search-box');
-  const icon = $('.magnifying_glass');
-  search.click(function () {
-    if (form.is(':hidden')) {
-      $("#tagsUl").hide();
-      $("#divInput").show();
+Refine.OpenProjectUI.prototype._openSearchInput = function() {
+  const icon = $('#search-icon');
+  const input = $('#search-input');
+  input.attr("placeholder", $.i18n("core-index-open/search-placeholder"));
+  icon.click(function () {
+    if (input.is(':hidden')) {
+      // $("#tagsUl").hide();
+      $("#search-input").show();
       icon.addClass("magnifying-glass-open");
-      form.show();
-      form.focus();
+      input.show();
+      input.focus();
+    } else {
+      input.hide();
+      input.val('');
+      icon.removeClass("magnifying-glass-open");
+      $("#tableBody").filterListSearch("");
+      $("#search-input").hide();
+      // $("#tagsUl").show();
     }
-    const widthFormOpen = Math.floor($('#right-panel-body').width() * 4 / 5);
-
-    form.animate({
-      // In Chrome, Edge and I.E., form.width() != widthFormOpen
-      'width': Math.round(form.width()) == widthFormOpen ? '0' : widthFormOpen + "px"
-    }, 'fast', function () {
-      if (Math.abs(Math.round(form.width())) === 0) {
-        form.hide()
-        form.val('')
-        icon.removeClass("magnifying-glass-open")
-        $("#tableBody").filterListSearch("")
-        $("#divInput").hide()
-        $("#tagsUl").show()
-      }
-    });
   });
 };
 
 Refine.OpenProjectUI.prototype._searchInput = function() {
-  const search = $('#searchInProjects');
+  const input = $('#search-input');
   //setup before functions
   let typingTimer;                //timer identifier
-  const doneTypingInterval = 1000;  //time in ms
+  const doneTypingInterval = 500;  //time in ms
   // search when done typing interval is over when not typing anymore
 
-  // TODO: Does this handle pasting using the mouse?
   //on keyup, start the countdown
-  search.on('keyup', function (e) {
+  input.on('keyup', function (e) {
     clearTimeout(typingTimer);
-    if (e.keyCode == '13') {
+    if (e.key === 'Enter') {
       e.preventDefault();
       doneTyping();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      $('#search-icon').click(); // close search box on ESC
     } else {
       typingTimer = setTimeout(doneTyping, doneTypingInterval);
     }
   });
 
-  //on keydown, clear the countdown
-  search.on('keydown', function () {
+  input.on('paste', function (e) {
+    clearTimeout(typingTimer);
+    doneTyping();
+  });
+
+
+    //on keydown, clear the countdown
+  input.on('keydown', function () {
     clearTimeout(typingTimer);
   });
 
   //user is "finished typing," do something
   function doneTyping () {
-    const text = search.val();
+    const text = input.val();
     // get the text, get back the projects that contains the text in the metadata
     $("#tableBody").filterListSearch(text);
   }
@@ -394,7 +394,7 @@ Refine.OpenProjectUI.prototype._addTagFilter = function() {
 };
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
-
+    
     var refreshMetaField = function(data, index) {
         if (index === 3) {
             $('a', $('td', tr).eq(index))
