@@ -117,6 +117,7 @@ div.viewpanel-pagesize span:first-of-type {
 .data-table td {
   border-bottom: 0.02rem dotted #ddd;
   border-right: 0.02rem solid #ddd;
+  position: relative;
 }
 
 .data-table-header td, .data-table-header th {
@@ -222,7 +223,6 @@ table.data-table td.column-header, table.data-table th.column-header {
 div.data-table-cell-content {
   line-height: 1.2;
   color: #222;
-  position: relative;
   white-space: pre-wrap;
 }
 
