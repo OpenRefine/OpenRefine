@@ -109,7 +109,6 @@
     "core-index-open/tags": "Etiquetas",
     "core-index-open/edit-tags": "Editar etiquetas de proyecto",
     "core-index-open/edit-tags-desc": "Editar las etiquetas del proyecto (el espacio y las comas son delimitadores):",
-    "core-index-open/no-results-message": "Sin resultados",
     "core-index-lang/label": "Seleccione el idioma preferido",
     "core-index-lang/send-req": "Cambiar el idioma",
     "core-index-lang/page-reload": "Se actualizará la página para aplicar los cambios.",

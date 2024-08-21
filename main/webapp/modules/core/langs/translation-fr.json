@@ -112,7 +112,6 @@
     "core-index-open/warning-data-file": "Vous devez indiquer un fichier ou une url pour télécharger les données.",
     "core-index-open/new-title": "Nouveau nom du projet :",
     "core-index-open/name": "Nom",
-    "core-index-open/no-results-message": "Sans résultats",
     "core-index-lang/lang-settings": "Langues",
     "core-index-lang/send-req": "Changer la langue",
     "core-index-lang/page-reload": "Cette page sera actualisée pour appliquer le changement.",
