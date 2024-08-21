@@ -417,61 +417,83 @@ ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
 ExpressionPreviewDialog.Widget.prototype.update = function() {
     var self = this;
     var expression = this.expression = jQueryTrim(this._elmts.expressionPreviewTextarea[0].value);
+    var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
     var params = {
         project: theProject.id,
         cellIndex: this._cellIndex
     };
     this._prepareUpdate(params);
     
-    $.post(
-        "command/core/preview-expression?" + $.param(params), 
-        {
-        	expression: this._getLanguage() + ":" + expression,
-            rowIndices: JSON.stringify(this._rowIndices) 
-        },
-        function(data) {
-            if (data.code != "error") {
-                self._results = data.results;
-            } else {
-                self._results = null;
-            }
-            self._renderPreview(expression, data);
-        },
-        "json"
-    );
+    if(activeTabName === "Distance"){
+        $(".distance-clustering-parameters").show();
+        let radius = document.getElementById('radius');
+        radius.value = Number(1);
+        radius.addEventListener('input', cluster);
 
-    if(self._columnName != null){
-        this._elmts.expressionPreviewClustersContainer.html(
-            '<div style="margin: 1em; font-size: 130%; color: #888;">'+$.i18n('core-dialogs/clustering')+'<img src="images/small-spinner.gif"></div>'
-        );
-    
-        var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+        let blockingChars = document.getElementById('blockingChars');
+        blockingChars.value = Number(6);
+        blockingChars.addEventListener('input', cluster);
 
+        self._renderDistancePreview(this._values[0]);
+    } else {
         $.post(
-            "command/core/compute-clusters?" + $.param({ project: theProject.id }),
+            "command/core/preview-expression?" + $.param(params), 
             {
-                engine: JSON.stringify(ui.browsingEngine.getJSON()),
-                clusterer: JSON.stringify({
-                    'type' : activeTabName === "Keying" ? "binning" : "knn",
-                    'function' : activeTabName === "Keying" ? "UserDefinedKeyer" : "UserDefinedDistance",
-                    'column' : self._columnName,
-                    'params' : {
-                        "expression" : expression
-                    }
-                })
+                expression: this._getLanguage() + ":" + expression,
+                rowIndices: JSON.stringify(this._rowIndices) 
             },
             function(data) {
-                var clusters = [];
-                $.each(data, function() {
-                    var cluster = {
-                        choices: this,
-                    };
-                    clusters.push(cluster);
-                });
-                self._renderClusters(clusters);
+                if (data.code != "error") {
+                    self._results = data.results;
+                } else {
+                    self._results = null;
+                }
+                self._renderPreview(expression, data);
             },
             "json"
         );
+    }
+
+    cluster();
+
+    function cluster(){
+        if(self._columnName != null){
+            self._elmts.expressionPreviewClustersContainer.html(
+                '<div style="margin: 1em; font-size: 130%; color: #888;">'+$.i18n('core-dialogs/clustering')+'<img src="images/small-spinner.gif"></div>'
+            );
+    
+            self._params = {
+                "expression" : expression,
+                "radius" : Number(document.getElementById('radius').value),
+                "blocking-ngram-size" : Number(document.getElementById('blockingChars').value)
+            };
+    
+            $.post(
+                "command/core/compute-clusters?" + $.param({ project: theProject.id }),
+                {
+                    engine: JSON.stringify(ui.browsingEngine.getJSON()),
+                    clusterer: JSON.stringify({
+                        'type' : activeTabName === "Keying" ? "binning" : "knn",
+                        'function' : activeTabName === "Keying" ? "UserDefinedKeyer" : "UserDefinedDistance",
+                        'column' : self._columnName,
+                        'params' : self._params
+                    })
+                },
+                function(data) {
+                    var clusters = [];
+                    if (data.code != "error") {
+                        $.each(data, function() {
+                            var cluster = {
+                                choices: this,
+                            };
+                            clusters.push(cluster);
+                        });
+                    }
+                    self._renderClusters(clusters);
+                },
+                "json"
+            );
+        }
     }
 };
 
@@ -537,6 +559,7 @@ ExpressionPreviewDialog.Widget.prototype._renderClusters = function(clusters) {
         trHead.className = "header";
         $(trHead.insertCell(0)).text("Number");
         $(trHead.insertCell(1)).text("Clusters");
+        $(trHead.insertCell(2)).text(theProject.metadata.rowCount + " rows, " + clusters.length + (clusters.length === 1 ? " cluster" : " clusters"));
 
         var entryTemplate = document.createElement('a');
 
@@ -565,7 +588,9 @@ ExpressionPreviewDialog.Widget.prototype._renderClusters = function(clusters) {
 
             $(tr.insertCell(1))
                 .append(ul);
-                        
+
+            tr.insertCell(2);
+
             return choices.length;
         };
 
@@ -581,5 +606,93 @@ ExpressionPreviewDialog.Widget.prototype._renderClusters = function(clusters) {
         container.html(
             '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">'+$.i18n('core-dialogs/no-cluster-found')+'</div><div style="padding-top: 1em; font-size: 110%; color: #888;">'+$.i18n('core-dialogs/try-another-method')+'</div></div>'
         );
+    }
+};
+
+ExpressionPreviewDialog.Widget.prototype._renderDistancePreview = function(firstValue) {
+    var self = this;
+    var value1 = document.getElementById('value1') === null ? firstValue : document.getElementById('value1').value;
+    var value2 = document.getElementById('value2') === null ? firstValue : document.getElementById('value2').value;
+    var container = this._elmts.expressionPreviewPreviewContainer.empty();    
+    var expression = this.expression = jQueryTrim(this._elmts.expressionPreviewTextarea[0].value);
+    var params = {
+        project: theProject.id,
+        cellIndex: this._cellIndex
+    };
+
+    var table = $('<table></table>')
+        .addClass("clustering-dialog-preview-table")
+        .appendTo(container)[0];
+
+    var truncExpression = expression.length > 30 ? expression.substring(0, 30) + ' ...' : expression; 
+
+    var tr = table.insertRow(0);
+    $(tr.insertCell(0)).addClass("expression-preview-heading").text("value1");
+    $(tr.insertCell(1)).addClass("expression-preview-heading").text("value2");
+    $(tr.insertCell(2)).addClass("expression-preview-heading").text(truncExpression);
+    
+    tr = table.insertRow(1);
+
+    function addTextBox(value, id){
+        var ul = document.createElement('ul');
+        ul.style.listStyleType = 'none';
+        var li = document.createElement('li');
+    
+        var input = document.createElement('input');
+        input.value = value.toString().replaceAll(' ', '\xa0');
+        input.id = id;
+        input.addEventListener('input', renderExpressionResult);
+        li.append(input);
+        
+        ul.append(li);
+        return ul;
+    }
+
+    $(tr.insertCell(0)).append(addTextBox(value1, "value1"));
+    $(tr.insertCell(1)).append(addTextBox(value2, "value2"));
+    tr.insertCell(2);
+
+    renderExpressionResult();
+
+    function renderExpressionResult(){
+        value1 = document.getElementById('value1').value;
+        value2 = document.getElementById('value2').value;
+        let newExpression = expression.replace(/value1/g, '"' + value1.toString().replaceAll(' ', '\xa0') + '"')
+                                .replace(/value2/g, '"' + value2.toString().replaceAll(' ', '\xa0') + '"')
+                                .replace(/value/g,"");
+        $.post(
+            "command/core/preview-expression?" + $.param(params), 
+            {
+                expression: self._getLanguage() + ":" + newExpression,
+                rowIndices: JSON.stringify(self._rowIndices) 
+            },
+            function(data) {
+                let result;
+                if (data.code != "error") {
+                    result = data.results[0];
+                    self._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text($.i18n('core-dialogs/no-syntax-err')+".");
+                } else {
+                    result = null;
+                    var message = (data.type == "parser") ? data.message : $.i18n('core-dialogs/internal-err');
+                    self._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
+                }
+                
+                tr.deleteCell(-1);
+
+                if (result !== null && result !== undefined) {
+                    if ($.isPlainObject(result)) {
+                        $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + result.message).appendTo(tr.insertCell(2));
+                    } else if(isNaN(result)) {
+                        let message = "your expression should return a number"
+                        $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + message).appendTo(tr.insertCell(2));
+                    } else {
+                        $('<span>' + result + '</span>').appendTo(tr.insertCell(2));
+                    }
+                } else {
+                    $('<span>' + result + '</span>').addClass("expression-preview-special-value").appendTo(tr.insertCell(2));
+                }
+            },
+            "json"
+        ); 
     }
 };

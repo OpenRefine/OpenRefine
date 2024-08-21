@@ -104,6 +104,7 @@ table.clustering-dialog-preview-table>tbody>tr.header {
 
 table.clustering-dialog-preview-table>tbody>tr>td {
     padding: 2px 5px;
+    max-width: 300px;
 }
 
 table.clustering-dialog-preview-table>tbody>tr.odd>td {

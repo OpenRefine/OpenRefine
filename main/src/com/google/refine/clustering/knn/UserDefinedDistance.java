@@ -35,6 +35,7 @@ package com.google.refine.clustering.knn;
 
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
@@ -77,6 +78,8 @@ public class UserDefinedDistance implements SimilarityDistance {
 
         if (obj instanceof Number) {
             return ((Number) obj).doubleValue();
+        } else if(obj instanceof EvalError){
+            throw new IllegalArgumentException(((EvalError) obj).message);
         } else if (obj instanceof String) {
             try {
                 return Double.parseDouble((String) obj);

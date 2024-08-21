@@ -173,13 +173,15 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function () { DialogSystem.dismissUntil(level - 1); };
 
+    var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+
     var o = DataTableView.sampleVisibleRows(column);
     var previewWidget = new ExpressionPreviewDialog.Widget(
         elmts,
         column.cellIndex,
         o.rowIndices,
         o.values,
-        null,
+        activeTabName === "Distance" ? "grel:levenshteinDistance(value1, value2)" : null,
         self._columnName
     );
 
@@ -192,7 +194,6 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
             return;
         }
 
-        var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
         var add = function () {
             $.ajax({
                 url: "command/core/get-preference?" + $.param({
