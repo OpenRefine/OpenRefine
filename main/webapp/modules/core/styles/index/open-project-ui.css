@@ -221,51 +221,23 @@ ul#tagsUl li a {
   color: white;
 }
 
-/* Search bar in open project */
-/* search */
-#divSearch{
-   float: left;
-   width: 2.5%;
-   margin-left: -0.5%;
-}
-
-#search-icon {
-  float: left;
-  width: 22px;
-}
-
-#divInput {
-  float: right;
-  width: 10%;
-  display: none;
-}
+/* Search bar in open project page */
 
 /* input */
-#searchInProjects {
-     border-radius: 10px;
-     margin: 1px auto 7px 14px;
-}
-
-.header-search-box {
-  display: none;
-  width: 0px;
+#search-input {
+  margin: 0px 10px 0px 0px;
+  padding: 4px;
   float: left;
+  display: none;
 }
 
 /* icon search */
 .magnifying_glass {
-     width: 100%;
-     height: 20px;
-     border-radius: 100%;
-     padding: 4px;
-}
-
-.magnifying_glass:hover {
-  cursor: pointer;
-}
-
-.magnifying-glass-open {
-  background-color: #dee6ff;
+  float: left;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  padding: 4px;
 }
 
 #no-results-message {
