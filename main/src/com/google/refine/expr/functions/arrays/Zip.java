@@ -33,20 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.arrays;
 
-import static java.util.stream.Collectors.toCollection;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
+import java.util.Spliterator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.collect.Streams;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
@@ -57,45 +53,44 @@ public class Zip implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length >= 2) {
-            List<List> input = new ArrayList<>();
-            List<List> output;
-
+            List<Spliterator> iterators = new ArrayList<>();
             for (Object v : args) {
-                List ziparg = new ArrayList<>();
                 if (v == null || !(v.getClass().isArray() || v instanceof List<?> || v instanceof ArrayNode)) {
                     return new EvalError(
                             EvalErrorMessage.expects_at_least_two_or_more_array_args(ControlFunctionRegistry.getFunctionName(this)));
-                }
-
-                if (v.getClass().isArray()) {
-                    ziparg.addAll(Arrays.asList((Object[]) v));
+                } else if (v.getClass().isArray()) {
+                    iterators.add(Arrays.stream((Object[]) v).spliterator());
                 } else if (v instanceof ArrayNode) {
                     ArrayNode a = (ArrayNode) v;
+                    List<Object> ziparg = new ArrayList<>();
                     if (a.isArray()) {
                         for (JsonNode objNode : a) {
                             ziparg.add(objNode);
                         }
                     }
+                    iterators.add(ziparg.stream().spliterator());
                 } else {
-                    for (Object z : ExpressionUtils.toObjectList(v)) {
-                        ziparg.add(z);
-                    }
+                    iterators.add(((List<Object>) v).spliterator());
                 }
-                input.add(ziparg);
             }
 
-            output = (List<List>) Streams.zip(input.get(0).stream(),
-                    input.get(1).stream(),
-                    (a, b) -> collectElements(a, b))
-                    .collect(Collectors.toList());
+            int minSize = Integer.MAX_VALUE;
+            for (Spliterator<?> iterator : iterators) {
+                minSize = Math.min(minSize, (int) iterator.estimateSize());
+            }
 
-            if (input.size() > 2) {
-                for (int i = 2; i < input.size(); i++) {
-                    output = (List<List>) Streams.zip(output.stream(),
-                            input.get(i).stream(),
-                            (a, b) -> collectElements(a, b))
-                            .collect(Collectors.toList());
+            List<List> output = new ArrayList<>();
+            List<Object> currentElements = new ArrayList<>(minSize);
+
+            for (int i = 0; i < minSize; i++) {
+                currentElements.clear();
+                for (Spliterator<?> iterator : iterators) {
+                    Object[] elementHolder = new Object[1];
+                    if (iterator.tryAdvance(e -> elementHolder[0] = e)) {
+                        currentElements.add(elementHolder[0]);
+                    }
                 }
+                output.add(new ArrayList<>(currentElements));
             }
             return output;
         }
@@ -117,18 +112,4 @@ public class Zip implements Function {
         return "array of arrays";
     }
 
-    private static List collectElements(Object a, Object b) {
-        List returnList = new ArrayList<>();
-
-        if (a instanceof ArrayList) {
-            ArrayList x = (ArrayList) a;
-            returnList = (ArrayList) x.stream().collect(toCollection(ArrayList::new));
-        } else {
-            returnList.add(a);
-        }
-
-        returnList.add(b);
-
-        return returnList;
-    }
 }
