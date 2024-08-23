@@ -84,12 +84,13 @@ public class Zip implements Function {
             while (!done)  {
                 List<Object> currentElements = new ArrayList<>();
                 for (Spliterator<?> iterator : iterators) {
-                    Object[] elementHolder = new Object[1];
-                    if (iterator.tryAdvance(e -> elementHolder[0] = e)) {
-                        currentElements.add(elementHolder[0]);
+                    if (!iterator.tryAdvance(e -> currentElements.add(e)) {
+                        done = true;
                     }
                 }
-                output.add(new ArrayList<>(currentElements));
+                if (!done) {
+                    output.add(currentElements);
+                }
             }
             return output;
         }
