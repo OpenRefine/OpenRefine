@@ -80,10 +80,9 @@ public class Zip implements Function {
             }
 
             List<List> output = new ArrayList<>();
-            List<Object> currentElements = new ArrayList<>(minSize);
-
-            for (int i = 0; i < minSize; i++) {
-                currentElements.clear();
+            boolean done = false;
+            while (!done)  {
+                List<Object> currentElements = new ArrayList<>();
                 for (Spliterator<?> iterator : iterators) {
                     Object[] elementHolder = new Object[1];
                     if (iterator.tryAdvance(e -> elementHolder[0] = e)) {
