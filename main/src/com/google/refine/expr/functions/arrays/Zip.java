@@ -74,17 +74,12 @@ public class Zip implements Function {
                 }
             }
 
-            int minSize = Integer.MAX_VALUE;
-            for (Spliterator<?> iterator : iterators) {
-                minSize = Math.min(minSize, (int) iterator.estimateSize());
-            }
-
             List<List> output = new ArrayList<>();
             boolean done = false;
-            while (!done)  {
+            while (!done) {
                 List<Object> currentElements = new ArrayList<>();
                 for (Spliterator<?> iterator : iterators) {
-                    if (!iterator.tryAdvance(e -> currentElements.add(e)) {
+                    if (!iterator.tryAdvance(e -> currentElements.add(e))) {
                         done = true;
                     }
                 }
