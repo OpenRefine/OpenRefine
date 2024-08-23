@@ -12,7 +12,7 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.process.Process;
 
-    abstract public class OperationCommand extends Command {
+abstract public class OperationCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)

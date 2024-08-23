@@ -62,8 +62,8 @@ import com.google.refine.util.ParsingUtilities;
 /**
  * The super class of all calls that the client side can invoke, most of which are AJAX calls.
  *
- * TODO: There are probably better designs for this than an abstract class using more
- * modern Java capabilities like interfaces with default methods.
+ * TODO: There are probably better designs for this than an abstract class using more modern Java capabilities like
+ * interfaces with default methods.
  */
 public abstract class Command {
 
