@@ -411,7 +411,7 @@ ClusteringDialog.prototype._cluster = function() {
             })
         },
         function(data) {
-            self._updateData(data);
+            self._updateData(data.results);
             $(".clustering-dialog-facet").css("display","block");
             $('#cluster-and-edit-dialog :input').not('.Checkbox_Choice').prop('disabled', false);
         },

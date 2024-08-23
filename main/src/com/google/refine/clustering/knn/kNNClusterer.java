@@ -189,7 +189,11 @@ public class kNNClusterer extends Clusterer {
 
             @Override
             public double d(String arg0, String arg1) {
-                return _d.compute(arg0, arg1);
+                try {
+                    return _d.compute(arg0, arg1);
+                } catch (DistanceCalculationFailedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 

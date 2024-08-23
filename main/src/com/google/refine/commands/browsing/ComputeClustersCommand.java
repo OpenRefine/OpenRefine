@@ -39,6 +39,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,30 @@ import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
 public class ComputeClustersCommand extends Command {
+
+    protected static class ClusterResult {
+
+        @JsonProperty("code")
+        protected String code;
+        @JsonProperty("message")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        protected String message;
+        @JsonProperty("results")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        Clusterer results;
+
+        public ClusterResult(String code, String message) {
+            this.code = code;
+            this.message = message;
+            this.results = null;
+        }
+
+        public ClusterResult(Clusterer clusterer) {
+            this.code = "ok";
+            this.message = null;
+            this.results = clusterer;
+        }
+    }
 
     final static Logger logger = LoggerFactory.getLogger("compute-clusters_command");
 
@@ -90,11 +116,11 @@ public class ComputeClustersCommand extends Command {
 
             clusterer.computeClusters(engine);
 
-            respondJSON(response, clusterer);
+            respondJSON(response, new ClusterResult(clusterer));
             logger.info("computed clusters [{}] in {}ms",
                     new Object[] { clustererConfig.getType(), Long.toString(System.currentTimeMillis() - start) });
         } catch (Exception e) {
-            respondException(response, e);
+            respondJSON(response, new ClusterResult("error", e.getMessage()));
         }
     }
 }
