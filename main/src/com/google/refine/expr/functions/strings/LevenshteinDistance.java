@@ -35,7 +35,6 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import com.google.refine.clustering.knn.DistanceCalculationFailedException;
 import com.google.refine.clustering.knn.SimilarityDistance;
 import com.google.refine.clustering.knn.VicinoDistance;
 import com.google.refine.expr.EvalError;
@@ -61,11 +60,7 @@ public class LevenshteinDistance implements Function {
             String s2 = (String) args[1];
 
             SimilarityDistance levenshteinDistance = new VicinoDistance(new edu.mit.simile.vicino.distances.LevenshteinDistance());
-            try {
-                return levenshteinDistance.compute(s1, s2);
-            } catch (DistanceCalculationFailedException e) {
-                return new EvalError(EvalErrorMessage.invalid_arg());
-            }
+            return levenshteinDistance.compute(s1, s2);
         }
         return new EvalError(EvalErrorMessage.expects_two_strings(ControlFunctionRegistry.getFunctionName(this)));
     }

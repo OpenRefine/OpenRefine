@@ -482,9 +482,9 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
                 function(data) {
                     var clusters = [];
                     if (data.code != "error") {
-                        $.each(data.results, function() {
+                        $.each(data, function() {
                             var cluster = {
-                                choices: this
+                                choices: this,
                             };
                             clusters.push(cluster);
                         });

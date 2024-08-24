@@ -66,7 +66,7 @@ public class DistanceTests extends RefineTest {
     }
 
     @Test
-    public void testUserDefinedDistance() throws DistanceCalculationFailedException {
+    public void testUserDefinedDistance() {
         String expression = "value1.length() - value2.length()";
 
         try {

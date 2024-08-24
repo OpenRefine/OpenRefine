@@ -35,6 +35,7 @@ package com.google.refine.clustering.knn;
 
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
@@ -54,7 +55,7 @@ public class UserDefinedDistance implements SimilarityDistance {
     }
 
     @Override
-    public double compute(String a, String b) throws DistanceCalculationFailedException {
+    public double compute(String a, String b) {
         if (a == null || b == null) {
             throw new IllegalArgumentException("Input strings cannot be null");
         }
@@ -67,24 +68,26 @@ public class UserDefinedDistance implements SimilarityDistance {
 
         Object result = eval.evaluate(bindings);
 
-        try {
-            return convertToDouble(result);
-        } catch (Exception e) {
-            throw new DistanceCalculationFailedException(
-                    "Computing the clusters failed, The distance function returned a non-numeric value for inputs ", a, b);
-        }
+        return convertToDouble(result);
     }
 
     public static double convertToDouble(Object obj) {
+        if (obj == null) {
+            throw new IllegalArgumentException("The object is null");
+        }
+
         if (obj instanceof Number) {
             return ((Number) obj).doubleValue();
+        } else if (obj instanceof EvalError) {
+            throw new IllegalArgumentException(((EvalError) obj).message);
         } else if (obj instanceof String) {
             try {
                 return Double.parseDouble((String) obj);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("The string cannot be converted to a double", e);
             }
+        } else {
+            throw new IllegalArgumentException("The object type cannot be converted to a double");
         }
-        throw new IllegalArgumentException();
     }
 }
