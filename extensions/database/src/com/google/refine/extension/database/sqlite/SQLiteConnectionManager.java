@@ -29,6 +29,7 @@
 
 package com.google.refine.extension.database.sqlite;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
@@ -69,8 +70,21 @@ public class SQLiteConnectionManager {
     }
 
     public static String getDatabaseUrl(DatabaseConfiguration dbConfig) {
+        String dbPath = dbConfig.getDatabaseName();
+        if (dbPath.contains("?")) {
+            throw new IllegalArgumentException("Paths to SQLite databases are not allowed to contain '?'");
+        }
+        if (dbPath.startsWith("//") || dbPath.startsWith("\\\\") || dbPath.startsWith("\\/") || dbPath.startsWith("/\\")) {
+            throw new IllegalArgumentException("File path starts with illegal prefix; only local files are accepted.");
+        }
+        if (!new File(dbPath).isFile()) {
+            throw new IllegalArgumentException("File could not be read: " + dbPath);
+        }
         try {
-            URI uri = new URI("jdbc:" + dbConfig.getDatabaseType().toLowerCase(), dbConfig.getDatabaseName(), null);
+            URI uri = new URI(
+                    "jdbc:" + dbConfig.getDatabaseType().toLowerCase(),
+                    dbPath + "?open_mode=1&limit_attached=0", // open_mode=1 means read-only
+                    null);
             return uri.toASCIIString();
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
