@@ -29,20 +29,17 @@
 
 package com.google.refine.extension.database.sqlite;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.refine.extension.database.DBExtensionTestUtils;
 import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
@@ -69,18 +66,8 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
         testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
 
         testTable = sqliteTestTable;
-        DBExtensionTestUtils.initTestData(testDbConfig, sqliteTestTable);
 
         DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
-    }
-
-    @AfterTest
-    @Parameters({ "sqliteDbName" })
-    public void afterTest(@Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName) {
-        File f = new File(sqliteDbName);
-        if (f.exists()) {
-            f.delete();
-        }
     }
 
     @Test
@@ -90,7 +77,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
         String dbUrl = sqLiteDatabaseService.getDatabaseUrl(testDbConfig);
 
         Assert.assertNotNull(dbUrl);
-        Assert.assertEquals(dbUrl, "jdbc:sqlite:extension_test_db.sqlite");
+        Assert.assertEquals(dbUrl, "jdbc:sqlite:tests/resources/test_db.sqlite?open_mode=1&limit_attached=0");
     }
 
     @Test
@@ -101,6 +88,35 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
         Connection conn = sqLiteDatabaseService.getConnection(testDbConfig);
 
         Assert.assertNotNull(conn);
+    }
+
+    /*
+     * We don't allow loading extensions because that executes arbitrary code
+     */
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testGetConnectionWithExtensions() throws DatabaseServiceException {
+        DatabaseConfiguration testDbConfigWithExtensions = new DatabaseConfiguration();
+        testDbConfigWithExtensions.setDatabaseName("test_db.sqlite?enable_load_extension=true");
+        testDbConfigWithExtensions.setDatabaseType(SQLiteDatabaseService.DB_NAME);
+
+        SQLiteDatabaseService sqLiteDatabaseService = (SQLiteDatabaseService) DatabaseService
+                .get(SQLiteDatabaseService.DB_NAME);
+        sqLiteDatabaseService.getConnection(testDbConfigWithExtensions);
+    }
+
+    /*
+     * We don't allow loading a remote SQLite file to make remote code execution harder
+     */
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testGetConnectionWithRemoteFile() throws DatabaseServiceException {
+        DatabaseConfiguration testDbConfigWithExtensions = new DatabaseConfiguration();
+        testDbConfigWithExtensions
+                .setDatabaseName("https://github.com/xerial/sqlite-jdbc/raw/master/src/test/resources/org/sqlite/sample.db");
+        testDbConfigWithExtensions.setDatabaseType(SQLiteDatabaseService.DB_NAME);
+
+        SQLiteDatabaseService sqLiteDatabaseService = (SQLiteDatabaseService) DatabaseService
+                .get(SQLiteDatabaseService.DB_NAME);
+        sqLiteDatabaseService.getConnection(testDbConfigWithExtensions);
     }
 
     @Test
