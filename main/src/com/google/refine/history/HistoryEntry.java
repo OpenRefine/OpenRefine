@@ -96,7 +96,9 @@ public class HistoryEntry {
     }
 
     static public long allocateID() {
-        return Math.round(Math.random() * 1000000) + System.currentTimeMillis();
+        //        return Math.round(Math.random() * 1000000) + System.currentTimeMillis();
+        return (System.currentTimeMillis() << 20) + (long)(Math.random() * (1 << 20));
+
     }
 
     @JsonCreator
