@@ -223,6 +223,7 @@
     "core-dialogs/distance-functions": "Distance functions",
     "core-dialogs/edit-function": "Edit function name and expression",
     "core-dialogs/edit-name": "Function name",
+    "core-dialogs/custom-cluster-descr": "Personalize your clustering strategy by writing expressions in GREL, Jython, or Clojure to better align with your data, achieve more accurate results, and explore innovative approaches.",
     "clustering-keyers/fingerprint": "Fingerprint",
     "clustering-keyers/ngram-fingerprint": "n-Gram fingerprint",
     "clustering-keyers/metaphone3": "Metaphone3",
