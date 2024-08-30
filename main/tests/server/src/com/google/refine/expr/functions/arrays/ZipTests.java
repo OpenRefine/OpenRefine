@@ -92,7 +92,7 @@ public class ZipTests extends GrelTestBase {
     }
 
     @Test
-    public void testZipforParams() {
+    public void testZipForParams() {
         List arg1 = List.of(1, 2, 3);
         List arg2 = List.of(7.89, 8.90, 9.01);
 
