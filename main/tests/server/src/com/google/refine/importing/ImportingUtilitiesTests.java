@@ -582,28 +582,28 @@ public class ImportingUtilitiesTests extends ImporterTest {
     }
 
     @Test
-    public void testFormatforMultipleCSVFiles() throws IOException {
+    public void testFormatForMultipleCSVFiles() throws IOException, FileUploadException {
         testMultipleFiles("birds", "food.small", ".csv", ContentType.create("text/csv"), "text/line-based/*sv");
     }
 
     @Test
-    public void testFormatforMultipleTSVFiles() throws IOException {
+    public void testFormatForMultipleTSVFiles() throws IOException, FileUploadException {
         testMultipleFiles("movies", "presidents", ".tsv", ContentType.create("text/tsv"), "text/line-based/*sv");
     }
 
     @Test
-    public void testFormatforMultipleExcelFiles() throws IOException {
+    public void testFormatForMultipleExcelFiles() throws IOException, FileUploadException {
         testMultipleFiles("dates", "excel95", ".xls",
                 ContentType.create("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "binary");
     }
 
     @Test
-    public void testFormatforMultipleJSONFiles() throws IOException {
+    public void testFormatForMultipleJSONFiles() throws IOException, FileUploadException {
         testMultipleFiles("grid_small", "grid_small", ".json", ContentType.create("text/json"), "text/json");
     }
 
     private void testMultipleFiles(String file1, String file2, String fileSuffix, ContentType contentType, String expectedFormat)
-            throws IOException {
+            throws IOException, FileUploadException {
 
         String filepath1 = ClassLoader.getSystemResource(file1 + fileSuffix).getPath();
         String filepath2 = ClassLoader.getSystemResource(file2 + fileSuffix).getPath();
@@ -645,26 +645,23 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         final ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(config, "progress", progress);
-        try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
-                    new ImportingUtilities.Progress() {
 
-                        @Override
-                        public void setProgress(String message, int percent) {
-                            if (message != null) {
-                                JSONUtilities.safePut(progress, "message", message);
-                            }
-                            JSONUtilities.safePut(progress, "percent", percent);
-                        }
+        ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                new ImportingUtilities.Progress() {
 
-                        @Override
-                        public boolean isCanceled() {
-                            return job.canceled;
+                    @Override
+                    public void setProgress(String message, int percent) {
+                        if (message != null) {
+                            JSONUtilities.safePut(progress, "message", message);
                         }
-                    });
-        } catch (Exception exception) {
-            fail("Exception thrown");
-        }
+                        JSONUtilities.safePut(progress, "percent", percent);
+                    }
+
+                    @Override
+                    public boolean isCanceled() {
+                        return job.canceled;
+                    }
+                });
 
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(0).get("format").asText());
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(1).get("format").asText());
