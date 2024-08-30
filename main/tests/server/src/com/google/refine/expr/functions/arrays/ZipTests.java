@@ -96,11 +96,6 @@ public class ZipTests extends GrelTestBase {
         List arg1 = List.of(1, 2, 3);
         List arg2 = List.of(7.89, 8.90, 9.01);
 
-        List<List> expected = List.of(
-                List.of(1, 7.89),
-                List.of(2, 8.90),
-                List.of(3, 9.01));
-
         assertEquals(((EvalError) (invoke("zip", arg1, arg2, null))).message, "zip expects 2 or more arrays as arguments");
 
         assertEquals(((EvalError) (invoke("zip", arg1, arg2, "test", null))).message, "zip expects 2 or more arrays as arguments");
