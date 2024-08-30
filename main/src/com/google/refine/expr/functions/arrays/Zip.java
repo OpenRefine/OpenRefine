@@ -61,14 +61,7 @@ public class Zip implements Function {
                 } else if (v.getClass().isArray()) {
                     iterators.add(Arrays.stream((Object[]) v).spliterator());
                 } else if (v instanceof ArrayNode) {
-                    ArrayNode a = (ArrayNode) v;
-                    List<Object> ziparg = new ArrayList<>();
-                    if (a.isArray()) {
-                        for (JsonNode objNode : a) {
-                            ziparg.add(objNode);
-                        }
-                    }
-                    iterators.add(ziparg.stream().spliterator());
+                    iterators.add(((ArrayNode) v).spliterator());
                 } else {
                     iterators.add(((List<Object>) v).spliterator());
                 }
