@@ -57,6 +57,7 @@ import com.google.refine.expr.functions.arrays.Join;
 import com.google.refine.expr.functions.arrays.Reverse;
 import com.google.refine.expr.functions.arrays.Sort;
 import com.google.refine.expr.functions.arrays.Uniques;
+import com.google.refine.expr.functions.arrays.Zip;
 import com.google.refine.expr.functions.booleans.And;
 import com.google.refine.expr.functions.booleans.Not;
 import com.google.refine.expr.functions.booleans.Or;
@@ -294,6 +295,7 @@ public class ControlFunctionRegistry {
         registerFunction("sort", new Sort());
         registerFunction("uniques", new Uniques());
         registerFunction("inArray", new InArray());
+        registerFunction("zip", new Zip());
 
         registerFunction("now", new Now());
         registerFunction("inc", new Inc());
