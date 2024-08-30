@@ -65,7 +65,7 @@ public class ZipTests extends GrelTestBase {
     }
 
     @Test
-    public void testZipwithStrArrays() {
+    public void testZipWithStrArrays() {
         List arg1 = List.of("Ben", "Den", "Hen");
         List arg2 = List.of("A", "B", "C");
 
