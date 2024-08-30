@@ -200,8 +200,16 @@ describe(__filename, function () {
     // Make sure it's in the local project history, not the global history
     cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(2) td:nth-child(3)')
       .should('to.contain', "This");
-    // The next one down should be from a previous project, so should be in the global list
-    cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(3) td:nth-child(3)')
+
+    // To test global expression saving, we need a new project
+    cy.loadAndVisitProject('food.mini');
+    loadExpressionPanel();
+    cy.get('#expression-preview-tabs li').contains('History').click();
+    // The top one should now be from a previous project, so should be in the global list
+    cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(2) td:last-child')
+      .should('be.visible')
+      .should('to.have.text', uniqueExpression);
+    cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(2) td:nth-child(3)')
       .should('to.contain', "Other");
   });
 
