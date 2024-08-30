@@ -439,6 +439,7 @@ public class ImportingUtilities {
                             calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
+                    JSONUtilities.safePut(fileRecord, "format", guessBetterFormat(file, request.getCharacterEncoding(), "text"));
                     // TODO: This needs to be refactored to be able to test import from archives
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                         archiveCount++;
@@ -1015,27 +1016,34 @@ public class ImportingUtilities {
 
             if (location != null) {
                 File file = new File(job.getRawDataDir(), location);
+                bestFormat = guessBetterFormat(file, encoding, bestFormat);
+            }
+        }
+        return bestFormat;
+    }
 
-                while (true) {
-                    String betterFormat = null;
+    static String guessBetterFormat(File file, String fileEncoding, String bestFormat) {
+        if (bestFormat != null && file != null) {
+            while (true) {
+                String betterFormat = null;
 
-                    List<FormatGuesser> guessers = ImportingManager.formatToGuessers.get(bestFormat);
-                    if (guessers != null) {
-                        for (FormatGuesser guesser : guessers) {
-                            betterFormat = guesser.guess(file, encoding, bestFormat);
-                            if (betterFormat != null) {
-                                break;
-                            }
+                List<FormatGuesser> guessers = ImportingManager.formatToGuessers.get(bestFormat);
+                if (guessers != null) {
+                    for (FormatGuesser guesser : guessers) {
+                        betterFormat = guesser.guess(file, fileEncoding, bestFormat);
+                        if (betterFormat != null) {
+                            break;
                         }
                     }
+                }
 
-                    if (betterFormat != null && !betterFormat.equals(bestFormat)) {
-                        bestFormat = betterFormat;
-                    } else {
-                        break;
-                    }
+                if (betterFormat != null && !betterFormat.equals(bestFormat)) {
+                    bestFormat = betterFormat;
+                } else {
+                    break;
                 }
             }
+
         }
         return bestFormat;
     }
