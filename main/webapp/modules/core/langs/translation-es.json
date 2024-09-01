@@ -877,5 +877,12 @@
     "core-buttons/apply-anyway": "Aplicar de todos modos",
     "core-views/total-records": "$1 registros",
     "core-views/total-matching-rows": "1 fila igual <span id=\"summary-total\"> (2 en total)</span>",
-    "core-views/total-matching-records": "$1 registro coincidente <span id=\"summary-total\">($2 total)</span>"
+    "core-views/total-matching-records": "$1 registro coincidente <span id=\"summary-total\">($2 total)</span>",
+    "core-dialogs/distance-functions": "Funciones de distancia",
+    "core-dialogs/edit-function": "Editar el nombre de la función y la expresión",
+    "core-index/no-custom-functions": "Sin funciones personalizadas",
+    "core-index/add-custom-function": "Agregar una nueva función abajo",
+    "core-dialogs/manage-clustering-functions": "Administrar funciones de agrupación personalizadas",
+    "core-dialogs/edit-name": "Nombre de la función",
+    "core-dialogs/new-function-name": "Nuevo nombre de función"
 }
