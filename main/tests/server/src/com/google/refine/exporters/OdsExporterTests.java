@@ -39,7 +39,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
@@ -76,7 +76,7 @@ public class OdsExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
-    Properties options;
+    Map<String, String> options;
 
     // System Under Test
     StreamExporter SUT;
@@ -91,7 +91,7 @@ public class OdsExporterTests extends RefineTest {
         projectMetadata.setName(TEST_PROJECT_NAME);
         ProjectManager.singleton.registerProject(project, projectMetadata);
         engine = new Engine(project);
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod

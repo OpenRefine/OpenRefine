@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.poi.common.usermodel.HyperlinkType;
@@ -71,7 +71,7 @@ public class XlsExporter implements StreamExporter {
     }
 
     @Override
-    public void export(final Project project, Properties params, Engine engine,
+    public void export(final Project project, Map<String, String> params, Engine engine,
             OutputStream outputStream) throws IOException {
 
         final Workbook wb = xml ? new SXSSFWorkbook() : new HSSFWorkbook();
@@ -149,7 +149,7 @@ public class XlsExporter implements StreamExporter {
         };
 
         CustomizableTabularExporterUtilities.exportRows(
-                project, engine, params, serializer);
+                project, engine, params.get("options"), serializer);
 
         wb.write(outputStream);
         outputStream.flush();

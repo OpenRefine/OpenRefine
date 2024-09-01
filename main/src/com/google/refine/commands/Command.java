@@ -218,6 +218,21 @@ public abstract class Command {
     }
 
     /**
+     * Shim for {@link HttpServletRequest#getParameterMap()} which returns single values instead of arrays
+     *
+     * @param request
+     * @return Map of String values, keyed by Strings
+     */
+    static protected Map<String, String> getParameters(HttpServletRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
+        Map<String, String> result = new HashMap<>();
+        request.getParameterMap().forEach((k, v) -> result.put(k, v == null ? null : v[0]));
+        return result;
+    }
+
+    /**
      * Utility method for retrieving the CSRF token stored in the "csrf_token" parameter of the request, and checking
      * that it is valid.
      *

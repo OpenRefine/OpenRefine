@@ -33,12 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -92,7 +90,7 @@ public class TemplatingExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
-    Properties options;
+    Map<String, String> options;
 
     // System Under Test
     WriterExporter SUT;
@@ -107,7 +105,8 @@ public class TemplatingExporterTests extends RefineTest {
         projectMetadata.setName(TEST_PROJECT_NAME);
         ProjectManager.singleton.registerProject(project, projectMetadata);
         engine = new Engine(project);
-        options = mock(Properties.class);
+        writer = new StringWriter();
+        options = new HashMap<>();
     }
 
     @AfterMethod
@@ -123,13 +122,11 @@ public class TemplatingExporterTests extends RefineTest {
     @Test
     public void exportEmptyTemplate() throws IOException {
 
-//        when(options.getProperty("limit")).thenReturn("100"); // optional integer
-//        when(options.getProperty("sorting")).thenReturn(""); //optional
-        when(options.getProperty("template")).thenReturn("a template that should never get used");
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
-//        when(options.getProperty("preview")).thenReturn("false"); // optional true|false
+        String template = "a template that should never get used";
+        options.put("template", template);
+        options.put("prefix", prefix);
+        options.put("suffix", suffix);
+        options.put("separator", rowSeparator);
 
         SUT.export(project, options, engine, writer);
 
@@ -140,15 +137,10 @@ public class TemplatingExporterTests extends RefineTest {
     public void exportSimpleTemplate() throws IOException {
         CreateGrid(2, 2);
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
-//      String template = "boilerplate${column0}{{4+3}}${column1}";
-
-//        when(options.getProperty("limit")).thenReturn("100"); // optional integer
-//        when(options.getProperty("sorting")).thenReturn(""); //optional
-        when(options.getProperty("template")).thenReturn(template);
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
-//        when(options.getProperty("preview")).thenReturn("false"); // optional true|false
+        options.put("template", template);
+        options.put("prefix", prefix);
+        options.put("suffix", suffix);
+        options.put("separator", rowSeparator);
 
         SUT.export(project, options, engine, writer);
 
@@ -162,16 +154,11 @@ public class TemplatingExporterTests extends RefineTest {
     @Test()
     public void exportTemplateWithEmptyCells() throws IOException {
 
-//      when(options.getProperty("limit")).thenReturn("100"); // optional integer
-//      when(options.getProperty("sorting")).thenReturn(""); //optional
-        when(options.getProperty("template"))
-                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-        when(options.getProperty("template"))
-                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
-//      when(options.getProperty("preview")).thenReturn("false"); // optional true|false
+        String template = rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}";
+        options.put("template", template);
+        options.put("prefix", prefix);
+        options.put("suffix", suffix);
+        options.put("separator", rowSeparator);
 
         CreateGrid(3, 3);
 
@@ -192,14 +179,12 @@ public class TemplatingExporterTests extends RefineTest {
     @Test()
     public void exportTemplateWithLimit() throws IOException {
 
-        when(options.getProperty("limit")).thenReturn("2"); // optional integer
-//      when(options.getProperty("sorting")).thenReturn(""); //optional
-        when(options.getProperty("template"))
-                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
-//      when(options.getProperty("preview")).thenReturn("false"); // optional true|false
+        String template = rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}";
+        options.put("limit", "2");
+        options.put("template", template);
+        options.put("prefix", prefix);
+        options.put("suffix", suffix);
+        options.put("separator", rowSeparator);
 
         CreateGrid(3, 3);
 
@@ -233,10 +218,10 @@ public class TemplatingExporterTests extends RefineTest {
             project.rows.add(row);
         }
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
-        when(options.getProperty("template")).thenReturn(template);
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        options.put("template", template);
+        options.put("prefix", prefix);
+        options.put("suffix", suffix);
+        options.put("separator", rowSeparator);
         Engine engine = new Engine(project);
         engine.setMode(Mode.RecordBased);
         project.update();
@@ -258,10 +243,11 @@ public class TemplatingExporterTests extends RefineTest {
     public void exportTemplateWithProperEscaping() throws IOException {
         CreateGrid(2, 2);
         String template = rowPrefix + "{{\"\\}\\}\"}}" + cellSeparator + "{{\"\\}\\}\"}}";
-        when(options.getProperty("template")).thenReturn(template);
-        when(options.getProperty("prefix")).thenReturn(prefix);
-        when(options.getProperty("suffix")).thenReturn(suffix);
-        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        options.put("template", template);
+        options.put("prefix", prefix);
+        options.put("suffix", suffix);
+        options.put("separator", rowSeparator);
+
         SUT.export(project, options, engine, writer);
 
         Assert.assertEquals(writer.toString(),

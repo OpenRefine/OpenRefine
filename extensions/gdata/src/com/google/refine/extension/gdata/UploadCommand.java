@@ -36,7 +36,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +57,6 @@ import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpUtilities;
-import com.google.refine.commands.project.ExportRowsCommand;
 import com.google.refine.exporters.CustomizableTabularExporterUtilities;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
@@ -89,8 +88,8 @@ public class UploadCommand extends Command {
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-            Properties params = ExportRowsCommand.getRequestParameters(request);
-            String name = params.getProperty("name");
+            Map<String, String> params = getParameters(request);
+            String name = params.get("name");
 
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
@@ -135,11 +134,12 @@ public class UploadCommand extends Command {
     }
 
     private String upload(
-            Project project, Engine engine, Properties params,
+            Project project, Engine engine, Map<String, String> params,
             String token, String name, List<Exception> exceptions) {
-        String format = params.getProperty("format");
+        String format = params.get("format");
+        String options = params.get("options");
         if ("gdata/google-spreadsheet".equals(format)) {
-            return uploadSpreadsheet(project, engine, params, token, name, exceptions);
+            return uploadSpreadsheet(project, engine, options, token, name, exceptions);
         } else if (("raw/openrefine-project").equals(format)) {
             return uploadOpenRefineProject(project, token, name, exceptions);
         }
@@ -191,7 +191,7 @@ public class UploadCommand extends Command {
     }
 
     static private String uploadSpreadsheet(
-            final Project project, final Engine engine, final Properties params,
+            final Project project, final Engine engine, final String options,
             String token, String name, List<Exception> exceptions) {
 
         Drive driveService = GoogleAPIExtension.getDriveService(token);
@@ -212,7 +212,7 @@ public class UploadCommand extends Command {
                     exceptions);
 
             CustomizableTabularExporterUtilities.exportRows(
-                    project, engine, params, serializer);
+                    project, engine, options, serializer);
 
             return serializer.getUrl();
         } catch (IOException e) {

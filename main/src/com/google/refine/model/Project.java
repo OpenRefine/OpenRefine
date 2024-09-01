@@ -61,6 +61,9 @@ import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
+/**
+ * Project with all its associated metadata and data
+ */
 public class Project {
 
     final static protected Map<String, Class<? extends OverlayModel>> s_overlayModelClasses = new HashMap<String, Class<? extends OverlayModel>>();

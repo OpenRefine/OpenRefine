@@ -35,7 +35,7 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Properties;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -83,16 +83,16 @@ public class TemplatingExporter implements WriterExporter {
     }
 
     @Override
-    public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
-        String limitString = options.getProperty("limit");
+    public void export(Project project, Map<String, String> options, Engine engine, Writer writer) throws IOException {
+        String limitString = options.get("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;
 
-        String sortingJson = options.getProperty("sorting");
+        String sortingJson = options.get("sorting");
 
-        String templateString = options.getProperty("template");
-        String prefixString = options.getProperty("prefix");
-        String suffixString = options.getProperty("suffix");
-        String separatorString = options.getProperty("separator");
+        String templateString = options.get("template");
+        String prefixString = options.get("prefix");
+        String suffixString = options.get("suffix");
+        String separatorString = options.get("separator");
 
         Template template;
         try {
@@ -105,7 +105,7 @@ public class TemplatingExporter implements WriterExporter {
         template.setSuffix(suffixString);
         template.setSeparator(separatorString);
 
-        if (!"true".equals(options.getProperty("preview"))) {
+        if (!"true".equals(options.get("preview"))) {
             TemplateConfig config = new TemplateConfig(templateString, prefixString,
                     suffixString, separatorString);
             project.getMetadata().getPreferenceStore().put("exporters.templating.template",

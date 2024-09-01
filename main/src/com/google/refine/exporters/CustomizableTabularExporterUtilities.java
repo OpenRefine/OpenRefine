@@ -74,13 +74,35 @@ abstract public class CustomizableTabularExporterUtilities {
 
     final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
+    @Deprecated(since = "3.9")
     static public void exportRows(
             final Project project,
             final Engine engine,
             Properties params,
             final TabularSerializer serializer) {
+        exportRows(project, engine, params.getProperty("options"), serializer);
+    }
 
-        String optionsString = (params != null) ? params.getProperty("options") : null;
+    /**
+     * Export a set of rows determined by the given engine configuration to the TabularSerializer using the given
+     * options.
+     *
+     * @param project
+     *            project to export the rows from
+     * @param engine
+     *            faceted browsing configuration to filter the rows
+     * @param optionsString
+     *            JSON options dictionary serialized as a string
+     * @param serializer
+     *            a serializer which implements the TabularSerializer interface
+     * @since 3.9
+     */
+    static public void exportRows(
+            final Project project,
+            final Engine engine,
+            String optionsString,
+            final TabularSerializer serializer) {
+
         JsonNode optionsTemp = null;
         if (optionsString != null) {
             try {
@@ -153,7 +175,6 @@ abstract public class CustomizableTabularExporterUtilities {
                     Column column = project.columnModel.getColumnByName(columnName);
                     CellFormatter formatter = columnNameToFormatter.get(columnName);
                     CellData cellData = formatter.format(
-                            project,
                             column,
                             row.getCell(column.getCellIndex()));
 
@@ -181,6 +202,7 @@ abstract public class CustomizableTabularExporterUtilities {
         filteredRows.accept(project, visitor);
     }
 
+    @Deprecated(since = "3.9")
     static public int[] countColumnsRows(
             final Project project,
             final Engine engine,
@@ -326,7 +348,12 @@ abstract public class CustomizableTabularExporterUtilities {
             }
         }
 
+        @Deprecated(since = "3.9")
         CellData format(Project project, Column column, Cell cell) {
+            return format(column, cell);
+        }
+
+        CellData format(Column column, Cell cell) {
             if (cell != null) {
                 String link = null;
                 String text = null;
@@ -365,7 +392,7 @@ abstract public class CustomizableTabularExporterUtilities {
                                 try {
                                     link = new URI(text).toString();
                                 } catch (URISyntaxException e) {
-                                    ;
+                                    // Skip links which are not valid
                                 }
                             }
                         } else if (value instanceof OffsetDateTime) {
@@ -377,11 +404,9 @@ abstract public class CustomizableTabularExporterUtilities {
                     return new CellData(column.getName(), value, text, link);
                 }
             } else {// added for sql exporter
-
                 if (includeNullFieldValue) {
                     return new CellData(column.getName(), "", "", "");
                 }
-
             }
             return null;
         }

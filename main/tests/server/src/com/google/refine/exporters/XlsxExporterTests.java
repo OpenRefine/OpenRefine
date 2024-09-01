@@ -40,7 +40,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.Properties;
+import java.util.Map;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -80,7 +80,7 @@ public class XlsxExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
-    Properties options;
+    Map<String, String> options;
 
     // System Under Test
     StreamExporter SUT;
@@ -95,7 +95,7 @@ public class XlsxExporterTests extends RefineTest {
         projectMetadata.setName(TEST_PROJECT_NAME);
         ProjectManager.singleton.registerProject(project, projectMetadata);
         engine = new Engine(project);
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod

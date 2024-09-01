@@ -42,7 +42,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.Properties;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -79,7 +79,7 @@ public class XlsExporterTests extends RefineTest {
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
-    Properties options;
+    Map<String, String> options;
 
     // System Under Test
     StreamExporter SUT;
@@ -94,7 +94,7 @@ public class XlsExporterTests extends RefineTest {
         projectMetadata.setName(TEST_PROJECT_NAME);
         ProjectManager.singleton.registerProject(project, projectMetadata);
         engine = new Engine(project);
-        options = mock(Properties.class);
+        options = mock(Map.class);
     }
 
     @AfterMethod
@@ -182,14 +182,14 @@ public class XlsExporterTests extends RefineTest {
 
     public void exportSimpleXlsNoHeader() throws IOException {
         CreateGrid(2, 2);
-        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        when(options.get("printColumnHeader")).thenReturn("false");
 
         SUT.export(project, options, engine, stream);
 
         Assert.assertEquals(stream.toString(), "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
 
-        verify(options, times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).get("printColumnHeader");
     }
 
     public void exportXlsWithEmptyCells() throws IOException {
