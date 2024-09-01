@@ -148,6 +148,23 @@ ExpressionPreviewDialog.Widget = function(
         this._elmts.or_dialog_clusters.closest('li').show();
     }
 
+    var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+    if(activeTabName === "Distance"){
+        $(".distance-clustering-parameters").show();
+
+        let radius = document.getElementById('radius');
+        radius.value = 1;
+        radius.addEventListener('input', function(){
+            self._scheduleUpdate();
+        });
+
+        let blockingChars = document.getElementById('blockingChars');
+        blockingChars.value = 6;
+        blockingChars.addEventListener('input', function(){
+            self._scheduleUpdate();
+        });
+    }
+
     this.update();
     this._renderExpressionHistoryTab();
     this._renderStarredExpressionsTab();
@@ -425,15 +442,6 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     this._prepareUpdate(params);
     
     if(activeTabName === "Distance"){
-        $(".distance-clustering-parameters").show();
-        let radius = document.getElementById('radius');
-        radius.value = Number(1);
-        radius.addEventListener('input', cluster);
-
-        let blockingChars = document.getElementById('blockingChars');
-        blockingChars.value = Number(6);
-        blockingChars.addEventListener('input', cluster);
-
         self._renderDistancePreview(this._values[0]);
     } else {
         $.post(
@@ -454,46 +462,42 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
         );
     }
 
-    cluster();
+    if(self._columnName != null){
+        self._elmts.expressionPreviewClustersContainer.html(
+            '<div style="margin: 1em; font-size: 130%; color: #888;">'+$.i18n('core-dialogs/clustering')+'<img src="images/small-spinner.gif"></div>'
+        );
 
-    function cluster(){
-        if(self._columnName != null){
-            self._elmts.expressionPreviewClustersContainer.html(
-                '<div style="margin: 1em; font-size: 130%; color: #888;">'+$.i18n('core-dialogs/clustering')+'<img src="images/small-spinner.gif"></div>'
-            );
-    
-            self._params = {
-                "expression" : expression,
-                "radius" : Number(document.getElementById('radius').value),
-                "blocking-ngram-size" : Number(document.getElementById('blockingChars').value)
-            };
-    
-            $.post(
-                "command/core/compute-clusters?" + $.param({ project: theProject.id }),
-                {
-                    engine: JSON.stringify(ui.browsingEngine.getJSON()),
-                    clusterer: JSON.stringify({
-                        'type' : activeTabName === "Keying" ? "binning" : "knn",
-                        'function' : activeTabName === "Keying" ? "UserDefinedKeyer" : "UserDefinedDistance",
-                        'column' : self._columnName,
-                        'params' : self._params
-                    })
-                },
-                function(data) {
-                    var clusters = [];
-                    if (data.code != "error") {
-                        $.each(data, function() {
-                            var cluster = {
-                                choices: this,
-                            };
-                            clusters.push(cluster);
-                        });
-                    }
-                    self._renderClusters(clusters);
-                },
-                "json"
-            );
-        }
+        self._params = {
+            "expression" : expression,
+            "radius" : Number(document.getElementById('radius').value),
+            "blocking-ngram-size" : Number(document.getElementById('blockingChars').value)
+        };
+
+        $.post(
+            "command/core/compute-clusters?" + $.param({ project: theProject.id }),
+            {
+                engine: JSON.stringify(ui.browsingEngine.getJSON()),
+                clusterer: JSON.stringify({
+                    'type' : activeTabName === "Keying" ? "binning" : "knn",
+                    'function' : activeTabName === "Keying" ? "UserDefinedKeyer" : "UserDefinedDistance",
+                    'column' : self._columnName,
+                    'params' : self._params
+                })
+            },
+            function(data) {
+                var clusters = [];
+                if (data.code != "error") {
+                    $.each(data, function() {
+                        var cluster = {
+                            choices: this,
+                        };
+                        clusters.push(cluster);
+                    });
+                }
+                self._renderClusters(clusters);
+            },
+            "json"
+        );
     }
 };
 
