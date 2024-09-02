@@ -12,6 +12,20 @@ function generateUniqueExpression() {
   return `value+${Date.now()}`;
 }
 
+function selectPython() {
+  cy.get('textarea.expression-preview-code').clear()
+  cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
+  // Wait for Jython interpreter to load (as indicated by changed error message)
+  cy.get('.expression-preview-parsing-status').contains('Internal error');
+}
+
+function selectClojure() {
+  cy.get('textarea.expression-preview-code').clear().type('(');
+  cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
+  // Wait for Clojure interpreter to load (as indicated by changed error message)
+  cy.get('.expression-preview-parsing-status').contains('Syntax error reading source at (2:1).');
+}
+
 describe(__filename, function () {
   it('Test the layout of the expression panel', function () {
     cy.loadAndVisitProject('food.mini');
@@ -46,8 +60,8 @@ describe(__filename, function () {
   it('Test a valid Python expression', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    cy.typeExpression('return value.lower()',{timeout: 10000});
+    selectPython();
+    cy.typeExpression('return value.lower()');
     cy.get('.expression-preview-parsing-status').contains('No syntax error.');
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child',{timeout: 10000}
@@ -57,7 +71,7 @@ describe(__filename, function () {
   it('Test a valid Clojure expression', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
+    selectClojure();
     cy.typeExpression('(.. value (toLowerCase) )');
     cy.get('.expression-preview-parsing-status').contains('No syntax error.');
     cy.get(
@@ -75,15 +89,15 @@ describe(__filename, function () {
   it('Test a Python syntax error', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    cy.typeExpression('(;)',{timeout: 10000});
+    selectPython();
+    cy.typeExpression('(;)');
     cy.get('.expression-preview-parsing-status').contains('Internal error');
   });
 
   it('Test a Clojure syntax error', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
+    selectClojure();
     cy.typeExpression('(;)');
     cy.get('.expression-preview-parsing-status').contains(
       'Syntax error reading source'
@@ -102,8 +116,8 @@ describe(__filename, function () {
   it('Test a Python language error', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    cy.typeExpression('return value.thisPythonFunctionDoesNotExists()',{timeout: 10000});
+    selectPython();
+    cy.typeExpression('return value.thisPythonFunctionDoesNotExists()');
 
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
@@ -113,7 +127,7 @@ describe(__filename, function () {
   it('Test a Clojure language error', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
+    selectClojure();
     cy.typeExpression('(.. value (thisClojureFunctionDoesNotExists) )');
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
@@ -186,8 +200,16 @@ describe(__filename, function () {
     // Make sure it's in the local project history, not the global history
     cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(2) td:nth-child(3)')
       .should('to.contain', "This");
-    // The next one down should be from a previous project, so should be in the global list
-    cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(3) td:nth-child(3)')
+
+    // To test global expression saving, we need a new project
+    cy.loadAndVisitProject('food.mini');
+    loadExpressionPanel();
+    cy.get('#expression-preview-tabs li').contains('History').click();
+    // The top one should now be from a previous project, so should be in the global list
+    cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(2) td:last-child')
+      .should('be.visible')
+      .should('to.have.text', uniqueExpression);
+    cy.get('#expression-preview-tabs-history .expression-preview-table-wrapper tr:nth-child(2) td:nth-child(3)')
       .should('to.contain', "Other");
   });
 
