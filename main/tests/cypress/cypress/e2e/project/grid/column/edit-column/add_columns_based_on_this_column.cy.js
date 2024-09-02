@@ -32,11 +32,11 @@ describe(__filename, function () {
     cy.get('textarea.expression-preview-code').clear()
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
     // Wait for Jython interpreter to load (as indicated by changed error message)
-    cy.get('.expression-preview-parsing-status').contains('Internal error');
+    cy.get('.expression-preview-parsing-status').contains('Internal error', {timeout: 8000});
 
     cy.typeExpression('return value.lower()');
     cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child',{timeout: 10000}
+      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
     ).should('to.contain', 'butter,with salt');
     cy.confirmDialogPanel();
 
@@ -57,7 +57,8 @@ describe(__filename, function () {
     cy.get('textarea.expression-preview-code').clear().type('(');
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
     // Wait for Clojure interpreter to load (as indicated by changed error message)
-    cy.get('.expression-preview-parsing-status').contains('Syntax error reading source at (2:1).');
+    // Takes close to default timeout of 4000msec, so allow 100% buffer
+    cy.get('.expression-preview-parsing-status').contains('Syntax error reading source at (2:1).', {timeout: 8000});
 
     cy.typeExpression('(.. value (toLowerCase) )');
     cy.get(
