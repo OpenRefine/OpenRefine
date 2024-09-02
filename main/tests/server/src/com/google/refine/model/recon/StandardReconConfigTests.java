@@ -428,6 +428,10 @@ public class StandardReconConfigTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            // enqueue a few responses to cater for the automatic retries
+            server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
+            server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
+            server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
             server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
 
             String configJson = " {\n" +
@@ -459,11 +463,10 @@ public class StandardReconConfigTests extends RefineTest {
 
             RecordedRequest request1 = server.takeRequest();
             assertNotNull(request1);
-            String query = request1.getBody().readUtf8Line();
 
             // assertions
             assertNotNull(returnReconList.get(0).error);
-            assertEquals(returnReconList.get(0).error, "Read timed out");
+            assertTrue(returnReconList.get(0).error.contains("failed to respond"));
             assertNotNull(returnReconList);
         }
     }
