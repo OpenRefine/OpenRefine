@@ -58,7 +58,7 @@ describe(__filename, function () {
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
     // Wait for Clojure interpreter to load (as indicated by changed error message)
     // Takes close to default timeout of 4000msec, so allow 100% buffer
-    cy.get('.expression-preview-parsing-status').contains('Syntax error reading source at (2:1).', {timeout: 8000});
+    cy.get('.expression-preview-parsing-status').contains('Syntax error reading source at (2:1).', {timeout: 10000});
 
     cy.typeExpression('(.. value (toLowerCase) )');
     cy.get(

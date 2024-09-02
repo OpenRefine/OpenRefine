@@ -23,7 +23,7 @@ function selectClojure() {
   cy.get('textarea.expression-preview-code').clear().type('(');
   cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
   // Wait for Clojure interpreter to load (as indicated by changed error message)
-  cy.get('.expression-preview-parsing-status').contains('Syntax error reading source at (2:1).', {timeout: 8000});
+  cy.get('.expression-preview-parsing-status').contains('Syntax error reading source at (2:1).', {timeout: 10000});
 }
 
 describe(__filename, function () {
