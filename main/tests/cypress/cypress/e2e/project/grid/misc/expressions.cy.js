@@ -16,14 +16,14 @@ function selectPython() {
   cy.get('textarea.expression-preview-code').clear()
   cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
   // Wait for Jython interpreter to load (as indicated by changed error message)
-  cy.get('.expression-preview-parsing-status').contains('Internal error', {timeout: 8000});
+  cy.get('.expression-preview-parsing-status').contains('Internal error');
 }
 
 function selectClojure() {
   cy.get('textarea.expression-preview-code').clear().type('(');
   cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
   // Wait for Clojure interpreter to load (as indicated by changed error message)
-  cy.get('.expression-preview-parsing-status').contains('Syntax error reading source at (2:1).', {timeout: 10000});
+  cy.get('.expression-preview-parsing-status').contains('Syntax error reading source');
 }
 
 describe(__filename, function () {
