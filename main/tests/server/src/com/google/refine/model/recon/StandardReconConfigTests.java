@@ -464,10 +464,8 @@ public class StandardReconConfigTests extends RefineTest {
             RecordedRequest request1 = server.takeRequest();
             assertNotNull(request1);
 
-            // assertions
+            // the error message is unstable and system-dependent, so we are not asserting for its exact contents.
             assertNotNull(returnReconList.get(0).error);
-            assertTrue(returnReconList.get(0).error.contains("failed to respond"));
-            assertNotNull(returnReconList);
         }
     }
 
