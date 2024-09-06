@@ -74,3 +74,65 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     padding: var(--padding-normal);
     width: 100%;
 }
+
+.clusters-preview-table-wrapper {
+    padding: var(--padding-normal);
+    width: 100%;
+}
+
+.expression-preview-clusters-container {
+    max-height: 250px;
+    overflow: auto;
+}
+
+.clustering-preview-table-container {
+    height: 450px;
+    width: 650px;
+    overflow: auto;
+    border: 1px solid #aaa;
+}
+
+table.clustering-dialog-preview-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.clustering-dialog-preview-table>tbody>tr.header {
+    background: #ccc;
+    font-weight: bold;
+}
+
+table.clustering-dialog-preview-table>tbody>tr>td {
+    padding: 2px 5px;
+    max-width: 300px;
+}
+
+table.clustering-dialog-preview-table>tbody>tr.odd>td {
+    background: #eee;
+}
+
+table.clustering-dialog-preview-table>tbody>tr.even>td {
+    background: var(--background-primary);
+}
+
+table.clustering-dialog-preview-table input {
+    border: 1px solid #ccc;
+    padding: 0 0.1em;
+}
+
+table.clustering-dialog-preview-table a {
+    text-decoration: none;
+}
+
+table.clustering-dialog-preview-table ul {
+    margin: 10px 0 10px 0;
+}
+
+table.clustering-dialog-preview-table a:hover {
+    text-decoration: underline
+}
+
+.clustering-dialog-preview-count {
+    color: #aaa;
+    margin-left: 0.5em;
+}

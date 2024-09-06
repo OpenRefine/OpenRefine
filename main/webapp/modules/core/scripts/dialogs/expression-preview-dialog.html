@@ -8,17 +8,25 @@
     <td colspan="3"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" id="expressionPreviewTextareaId" spellcheck="false"></textarea></div></td>
     <td class="expression-preview-parsing-status" bind="expressionPreviewParsingStatus" width="150" style="vertical-align: top;"></td>
   </tr>
+  <tr class="distance-clustering-parameters" style="display: none;">
+    <td colspan="2"><div class="input-group"> <label for="radius">radius:</label> <input type="text" id="radius"> </div> </td>
+    <td colspan="2"><div class="input-group"> <label for="blockingChars">blocking chars:</label> <input type="text" id="blockingChars"> </div> </td>
+  </tr>
   <tr>
-    <td colspan="4">
+    <td colspan="5">
       <div id="expression-preview-tabs" class="refine-tabs">
         <ul>
           <li><a href="#expression-preview-tabs-preview" bind="or_dialog_preview"></a></li>
+          <li style="display: none;"><a href="#expression-preview-tabs-clusters" bind="or_dialog_clusters"></a></li>
           <li><a href="#expression-preview-tabs-history" bind="or_dialog_history"></a></li>
           <li><a href="#expression-preview-tabs-starred" bind="or_dialog_starred"></a></li>
           <li><a href="#expression-preview-tabs-help" bind="or_dialog_help"></a></li>
         </ul>
         <div id="expression-preview-tabs-preview">
           <div class="expression-preview-container" bind="expressionPreviewPreviewContainer"></div>
+        </div>
+        <div id="expression-preview-tabs-clusters" style="display: none;">
+          <div class="expression-preview-clusters-container" bind="expressionPreviewClustersContainer"></div>
         </div>
         <div id="expression-preview-tabs-history" style="display: none;">
           <div class="expression-preview-container" bind="expressionPreviewHistoryContainer"></div>
