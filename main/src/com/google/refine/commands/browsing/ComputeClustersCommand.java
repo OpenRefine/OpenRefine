@@ -90,6 +90,9 @@ public class ComputeClustersCommand extends Command {
 
             clusterer.computeClusters(engine);
 
+            KeyerFactory.remove("userdefinedkeyer");
+            DistanceFactory.remove("userdefineddistance");
+
             respondJSON(response, clusterer);
             logger.info("computed clusters [{}] in {}ms",
                     new Object[] { clustererConfig.getType(), Long.toString(System.currentTimeMillis() - start) });

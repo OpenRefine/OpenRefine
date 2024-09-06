@@ -36,7 +36,7 @@ function ClusteringFunctionsDialog(title, clusteringDialog) {
     self._columnName = clusteringDialog._columnName;
     
     var frame = DialogSystem.createDialog();
-    frame.css("min-width", "700px");
+    frame.css("width", "700px");
     var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").css('justify-content', 'space-between').appendTo(frame);
@@ -44,6 +44,8 @@ function ClusteringFunctionsDialog(title, clusteringDialog) {
     var html = $(DOM.loadHTML("core", "scripts/dialogs/clustering-functions-dialog.html")).appendTo(body);
 
     this._elmts = DOM.bind(html);
+    this._elmts.or_dialog_descr.html($.i18n('core-dialogs/custom-cluster-descr'));
+    this._elmts.or_dialog_findMore.html($.i18n('core-dialogs/find-more'));
 
     $('<button class="button" id="add-new-functions"></button>').text($.i18n("core-buttons/add-keying-function")).on('click', function () {
         self._addFunction(self._column);
@@ -51,6 +53,7 @@ function ClusteringFunctionsDialog(title, clusteringDialog) {
 
     $('<button class="button"></button>').html($.i18n('core-buttons/ok')).on('click', function () {
         DialogSystem.dismissUntil(self._level - 1);
+        clusteringDialog._renderClusteringFunctions();
     }).appendTo(footer);
 
     this._level = DialogSystem.showDialog(frame);

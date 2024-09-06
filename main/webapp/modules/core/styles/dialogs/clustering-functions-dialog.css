@@ -60,6 +60,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     padding: 2px 7px;
 }
 
+#clustering-functions-tabs {
+    margin: 1em 0 0;
+}
+
 #clustering-functions-tabs .main-text {
     font-size: 15px;
     color: #333;
