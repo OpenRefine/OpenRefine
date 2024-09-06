@@ -86,6 +86,10 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelFileTable =
   var self = this;
   var files = this._job.config.retrievalRecord.files;
 
+  files.sort(function(a, b) {
+    return a.fileName.toLowerCase().localeCompare(b.fileName.toLowerCase());
+  });
+
   this._fileSelectionPanelElmts.filePanel.empty();
 
   var fileTable = $('<table><tr><th>'+$.i18n('core-index-import/import')+'</th><th>'+$.i18n('core-index-import/name')+'</th><th>'+$.i18n('core-index-import/mime-type')+'</th><th>'+$.i18n('core-index-import/format')+'</th><th>'+$.i18n('core-index-import/size')+'</th></tr></table>')
