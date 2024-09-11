@@ -206,12 +206,31 @@ Cypress.Commands.add('waitForOrOperation', () => {
 
 /**
  * Utility method to fill something into the expression input
- * Need to wait for OpenRefine to preview the result, hence the cy.wait
  */
 Cypress.Commands.add('typeExpression', (expression, options = {}) => {
-    cy.get('textarea.expression-preview-code', options).type(expression);
+    cy.get('textarea.expression-preview-code', options).clear().type(expression);
     const expectedText = expression.length <= 30 ? expression : `${expression.substring(0, 30)} ...`;
     cy.get('tbody > tr:nth-child(1) > td:nth-child(3)', options).should('contain', expectedText);
+});
+
+/**
+ * Utility method to select the Python/Jython interpreter
+ */
+Cypress.Commands.add('selectPython', () => {
+  cy.get('textarea.expression-preview-code').clear()
+  cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
+  // Wait for Jython interpreter to load (as indicated by changed error message)
+  cy.get('.expression-preview-parsing-status').contains('Internal error');
+});
+
+/**
+ * Utility method to select the Clojure interpreter
+ */
+Cypress.Commands.add('selectClojure', () => {
+  cy.get('textarea.expression-preview-code').clear().type('(');
+  cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
+  // Wait for Clojure interpreter to load (as indicated by changed error message)
+  cy.get('.expression-preview-parsing-status').contains('Syntax error reading source');
 });
 
 /**

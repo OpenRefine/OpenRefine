@@ -83,6 +83,10 @@ describe(__filename, function () {
       'to.contain',
       'Configure parsing options'
     );
+
+    // Make sure all our column headers are rendered before starting over so we don't get errors from a deleted project
+    cy.get('table.data-table tr').eq(0).should('to.contain', 'Energ_Kcal');
+
     cy.get('button[bind="startOverButton"]').click();
 
     cy.get('#or-create-question').should(

@@ -33,8 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function ClusteringFunctionsDialog(title, clusteringDialog) {
     var self = this;
     self._column = clusteringDialog._column;
+    self._columnName = clusteringDialog._columnName;
+    
     var frame = DialogSystem.createDialog();
-    frame.css("min-width", "700px");
+    frame.css("width", "700px");
     var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").css('justify-content', 'space-between').appendTo(frame);
@@ -42,6 +44,8 @@ function ClusteringFunctionsDialog(title, clusteringDialog) {
     var html = $(DOM.loadHTML("core", "scripts/dialogs/clustering-functions-dialog.html")).appendTo(body);
 
     this._elmts = DOM.bind(html);
+    this._elmts.or_dialog_descr.html($.i18n('core-dialogs/custom-cluster-descr'));
+    this._elmts.or_dialog_findMore.html($.i18n('core-dialogs/find-more'));
 
     $('<button class="button" id="add-new-functions"></button>').text($.i18n("core-buttons/add-keying-function")).on('click', function () {
         self._addFunction(self._column);
@@ -49,6 +53,7 @@ function ClusteringFunctionsDialog(title, clusteringDialog) {
 
     $('<button class="button"></button>').html($.i18n('core-buttons/ok')).on('click', function () {
         DialogSystem.dismissUntil(self._level - 1);
+        clusteringDialog._renderClusteringFunctions();
     }).appendTo(footer);
 
     this._level = DialogSystem.showDialog(frame);
@@ -171,25 +176,27 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function () { DialogSystem.dismissUntil(level - 1); };
 
+    var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+
     var o = DataTableView.sampleVisibleRows(column);
     var previewWidget = new ExpressionPreviewDialog.Widget(
         elmts,
         column.cellIndex,
         o.rowIndices,
         o.values,
-        null
+        activeTabName === "Distance" ? "grel:levenshteinDistance(value1, value2)" : null,
+        self._columnName
     );
 
     elmts.cancelButton.on('click', dismiss);
     elmts.form.on('submit', function (event) {
         event.preventDefault();
-        var columnName = jQueryTrim(elmts.functionNameInput[0].value);
-        if (!columnName.length) {
+        var functionName = jQueryTrim(elmts.functionNameInput[0].value);
+        if (!functionName.length) {
             alert($.i18n('core-views/warning-function-name'));
             return;
         }
 
-        var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
         var add = function () {
             $.ajax({
                 url: "command/core/get-preference?" + $.param({
@@ -203,7 +210,7 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
 
                     var _functions = data1.value == null ? [] : JSON.parse(data1.value);
                     _functions.push({
-                        name: columnName,
+                        name: functionName,
                         expressionLang: lang,
                         expression: fullExpr
                     });
@@ -265,7 +272,8 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
                 column.cellIndex,
                 o.rowIndices,
                 o.values,
-                _functions[index].expressionLang + ':' + _functions[index].expression
+                _functions[index].expressionLang + ':' + _functions[index].expression,
+                self._columnName
             );
         },
         dataType: "json",
@@ -274,8 +282,8 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
     elmts.cancelButton.on('click', dismiss);
     elmts.form.on('submit', function (event) {
         event.preventDefault();
-        var columnName = jQueryTrim(elmts.functionNameInput[0].value);
-        if (!columnName.length) {
+        var functionName = jQueryTrim(elmts.functionNameInput[0].value);
+        if (!functionName.length) {
             alert($.i18n('core-views/warning-function-name'));
             return;
         }
@@ -293,7 +301,7 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
                     var fullExpr = langAndExpr.substring(colonIndex + 1);
 
                     var _functions = data1.value == null ? [] : JSON.parse(data1.value);
-                    _functions[index].name = columnName;
+                    _functions[index].name = functionName;
                     _functions[index].expressionLang = lang;
                     _functions[index].expression = fullExpr;
 

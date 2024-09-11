@@ -63,6 +63,6 @@ public class UserDefinedKeyer extends Keyer {
 
         Object result = eval.evaluate(bindings);
 
-        return result.toString();
+        return result == null ? "null" : result.toString();
     }
 }

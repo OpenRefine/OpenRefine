@@ -389,6 +389,26 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
+    public void readCRLF(String sep) {
+        // create input
+        String inputSeparator = sep == null ? "\t" : sep;
+        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\r\n"
+                + "data1" + inputSeparator + "data2" + inputSeparator + "data3\r\n"
+                + "row2data1" + inputSeparator + "row2data2" + inputSeparator + "row2data3\r\n";
+
+        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        parseOneFile(SUT, new StringReader(input));
+
+        Project expectedProject = createProject(
+                new String[] { "col1", "col2", "col3" },
+                new Serializable[][] {
+                        { "data1", "data2", "data3" },
+                        { "row2data1", "row2data2", "row2data3" },
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readIgnore3_Header2_Skip1(String sep) {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
@@ -423,9 +443,8 @@ public class SeparatorBasedImporterTests extends ImporterTest {
                 "skip1\n" +
                 "skip2\n" +
                 "data-row1-cell1" + inputSeparator + "data-row1-cell2" + inputSeparator + "data-row1-cell3\n" +
-                "data-row2-cell1" + inputSeparator + "data-row2-cell2" + inputSeparator + "\n" + // missing last data
-                                                                                                 // point of this row on
-                                                                                                 // purpose
+                // the last data point of the row below is skipped on purpose
+                "data-row2-cell1" + inputSeparator + "data-row2-cell2" + inputSeparator + "\n" +
                 "data-row3-cell1" + inputSeparator + "data-row3-cell2" + inputSeparator + "data-row1-cell3";
 
         prepareOptions(sep, 2, 2, 3, 2, false, false);

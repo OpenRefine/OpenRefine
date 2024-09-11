@@ -144,6 +144,24 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
     }
 
     @Test
+    public void testEmptyEdit()
+            throws InterruptedException, MediaWikiApiErrorException, IOException {
+        List<EntityEdit> batch = new ArrayList<>();
+        batch.add(new ItemEditBuilder(TestingData.existingId).addContributingRowId(123).build());
+
+        // Plan expected edits
+        when(fetcher.getEntityDocuments(Collections.emptyList()))
+                .thenReturn(Collections.emptyMap());
+
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, 50, 60);
+        assertEquals(1, processor.remainingEdits());
+        assertEquals(0, processor.progress());
+        processor.performEdit();
+        assertEquals(0, processor.remainingEdits());
+        assertEquals(100, processor.progress());
+    }
+
+    @Test
     public void testFallbackToSecondTag() throws Exception {
         List<EntityEdit> batch = new ArrayList<>();
         batch.add(new ItemEditBuilder(TestingData.existingId)
