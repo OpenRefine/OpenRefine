@@ -51,6 +51,7 @@ import org.openrefine.wikibase.qa.scrutinizers.FileNameScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.FormatScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.InverseConstraintScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.ItemRequiresScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.LabelScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.MultiValueScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.NewEntityScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.NoEditsMadeScrutinizer;
@@ -136,6 +137,7 @@ public class EditInspector {
         register(new ItemRequiresScrutinizer());
         register(new UseAsQualifierScrutinizer());
         register(new FileNameScrutinizer());
+        register(new LabelScrutinizer());
     }
 
     /**
