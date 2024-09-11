@@ -225,7 +225,7 @@
     "wikibase-addition/version-error": "La versión $1 del manifiesto no es compatible. OpenRefine solo admite las versiones de manifiesto 1.x y 2.x.",
     "wikibase-schema/mediainfo-file-path": "Ruta de archivo:",
     "wikibase-schema/start-from-an-existing-schema": "Partir de un esquema existente:",
-    "wikibase-schema/save-new-schema": "Guardar nuevo...",
+    "wikibase-schema/save-new-schema": "Guardar cambios del esquema",
     "wikibase-schema/target-wikibase-instance": "Instancia Wikibase de destino:",
     "wikibase-schema/captions-header": "Subtítulos",
     "wikibase-schema/mediainfo-file-name": "Nombre de archivo:",
@@ -259,5 +259,13 @@
     "warnings-messages/invalid-entity-id-format/title": "Identificadores de entidad no válidos",
     "wikibase-schema/caption": "Leyenda",
     "wikibase-schema/empty-captions": "no se agregaron subtítulos",
-    "wikibase-schema/configure-statement": "Configuración"
+    "wikibase-schema/configure-statement": "Configuración",
+    "wikibase-statement-settings/dialog-header": "Ajustes de la declaración",
+    "wikibase-statement-settings/mode-label": "Modo de edición",
+    "wikibase-statement-settings/no-strategy-options": "No hay opciones para esta estrategia de emparejamiento.",
+    "wikibase-statement-settings/strategy-label": "Estrategia de emparejamiento",
+    "wikibase-statement-settings/strategy-options": "Opciones de estrategia",
+    "warnings-messages/label-too-long/title": "Subtítulos que sobrepasan la longitud máxima",
+    "warnings-messages/label-too-long/body": "Los subtítulos no pueden tener más de {max_length} caracteres. Algunos subtítulos de este lote son demasiado largos, como por ejemplo para <span class=\"wb-issue-preformat\">{example_entity}</span> en el idioma <span class=\"wb-issue-preformat\">{lang_code}</span> que tiene {length} caracteres.",
+    "wikibase-statement-settings/lax-value-matching": "Coincidencia de valores laxa (ignora diferencias insignificantes entre valores, como espacios en blanco al final o diferencias de redondeo)"
 }
