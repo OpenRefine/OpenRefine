@@ -193,7 +193,7 @@ public class EditBatchProcessor {
                 newEntityUrl = createdDocId.getSiteIri() + createdDocId.getId();
             } else {
                 // Existing entities
-                EntityUpdate entityUpdate;
+                EntityUpdate entityUpdate = null;
                 if (update.requiresFetchingExistingState()) {
                     String entityId = update.getEntityId().getId();
                     if (currentDocs.get(entityId) != null) {
@@ -202,7 +202,7 @@ public class EditBatchProcessor {
                         logger.warn(String.format("Skipping editing of %s as it could not be retrieved", entityId));
                         entityUpdate = null;
                     }
-                } else {
+                } else if (!update.isEmpty()) {
                     entityUpdate = update.toEntityUpdate(null);
                 }
 

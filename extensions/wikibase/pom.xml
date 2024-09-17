@@ -126,7 +126,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>main</artifactId>
+      <artifactId>core</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
       <type>test-jar</type>

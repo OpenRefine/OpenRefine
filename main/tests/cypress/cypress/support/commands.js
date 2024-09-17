@@ -214,6 +214,26 @@ Cypress.Commands.add('typeExpression', (expression, options = {}) => {
 });
 
 /**
+ * Utility method to select the Python/Jython interpreter
+ */
+Cypress.Commands.add('selectPython', () => {
+  cy.get('textarea.expression-preview-code').clear()
+  cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
+  // Wait for Jython interpreter to load (as indicated by changed error message)
+  cy.get('.expression-preview-parsing-status').contains('Internal error');
+});
+
+/**
+ * Utility method to select the Clojure interpreter
+ */
+Cypress.Commands.add('selectClojure', () => {
+  cy.get('textarea.expression-preview-code').clear().type('(');
+  cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
+  // Wait for Clojure interpreter to load (as indicated by changed error message)
+  cy.get('.expression-preview-parsing-status').contains('Syntax error reading source');
+});
+
+/**
  * Delete a column from the grid
  */
 Cypress.Commands.add('deleteColumn', (columnName) => {

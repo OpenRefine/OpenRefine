@@ -294,6 +294,8 @@
     "warnings-messages/inconsistent-file-name-and-path-extension/body": "Some file paths and their corresponding target file name on the wiki have different extensions, such as <span class=\"wb-issue-preformat\">{example_filepath}</span> and <span class=\"wb-issue-preformat\">{example_filename}</span>.",
     "warnings-messages/replaced-characters-in-filename/title": "Some special characters in file names will be replaced",
     "warnings-messages/replaced-characters-in-filename/body": "The characaters <span class=\"wb-issue-preformat\">:/\\</span> will be replaced by <span class=\"wb-issue-preformat\">-</span>. For instance, filename <span class=\"wb-issue-preformat\">{original}</span> will become <span class=\"wb-issue-preformat\">{normalized}</span>.",
+    "warnings-messages/label-too-long/title": "Captions exceeding the maximum length",
+    "warnings-messages/label-too-long/body": "Captions cannot be longer than {max_length} characters. Some captions in this batch are too long, such as for <span class=\"wb-issue-preformat\">{example_entity}</span> in language <span class=\"wb-issue-preformat\">{lang_code}</span> which is {length} characters long.",
     "wikibase-statement-settings/dialog-header": "Statement settings",
     "wikibase-statement-settings/mode-label": "Editing mode",
     "wikibase-statement-settings/strategy-label": "Matching strategy",

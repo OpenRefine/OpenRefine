@@ -151,6 +151,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             TsvParserSettings settings = new TsvParserSettings();
             settings.setMaxCharsPerColumn(MAX_CHARACTERS_PER_CELL);
             settings.setMaxColumns(MAX_COLUMNS);
+            settings.setLineSeparatorDetectionEnabled(true);
             settings.setIgnoreLeadingWhitespaces(false);
             settings.setIgnoreTrailingWhitespaces(false);
             parser = new TsvParser(settings);
@@ -159,7 +160,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             CsvFormat format = settings.getFormat();
             format.setDelimiter(sep);
             format.setQuote(quote);
-            format.setLineSeparator("\n");
+            settings.setLineSeparatorDetectionEnabled(true);
             settings.setIgnoreLeadingWhitespaces(false);
             settings.setIgnoreTrailingWhitespaces(false);
             if (strictQuotes) {
