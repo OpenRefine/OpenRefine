@@ -71,7 +71,7 @@ Refine.DefaultImportingController.prototype._startOver = function() {
   this._createProjectUI.showSourceSelectionPanel();
 };
 
-Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, callback) {
+Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, sortCriteria, sortOrder, callback) {
     var self = this;
 
     Refine.wrapCSRF(function(token) {
@@ -85,7 +85,9 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
                     "controller": "core/default-importing-controller",
                     "jobID": jobID,
                     "subCommand": "load-raw-data",
-                    "csrf_token": token
+                    "csrf_token": token,
+                    "sortCriteria": sortCriteria,
+                    "sortOrder": sortOrder
                 });
                 var formData = new FormData(form[0]);
                 $.ajax({

@@ -10,6 +10,23 @@
 
     </td>
   </tr>
+  <tr>
+    <td>
+      <!-- Add sorting criteria dropdown -->
+      <label for="sortCriteria" bind="sortCriteriaLabel"></label>
+      <select id="sortCriteria" class="dropdown">
+        <option value="fileName" bind="sortFileName"></option>
+        <option value="fileSize" bind="sortFileSize"></option>
+      </select>
+
+      <!-- Add sorting order dropdown -->
+      <label for="sortOrder" bind="sortOrderLabel"></label>
+      <select id="sortOrder" class="dropdown">
+        <option value="asc" bind="sortAsc"></option>
+        <option value="desc" bind="sortDesc"></option>
+      </select>
+    </td>
+  </tr>
   <tr><td><button bind="nextButton" class="button button-primary" type="button"></button></td></tr>
 </table></div></form>
 
