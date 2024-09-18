@@ -1,7 +1,16 @@
 {
     "gdata-import/auth-doc": "Authorised Documents",
-    "gdata-import/sign-in": "sign in and authorise",
+    "gdata-import/sign-in": "Sign in",
     "gdata-auth/authorize-label": "OpenRefine - Authorisation",
     "gdata-auth/authorized-label": "Authorisation process completed. Close this window and return to OpenRefine.",
-    "gdata-import/preparing": "Preparing …"
+    "gdata-import/preparing": "Preparing …",
+    "gdata-import/please-signin": "Please sign in and authorise to access your Google data",
+    "gdata-import/re-sign-in-another": "Sign in with different account",
+    "gdata-import/import-by-url": "Import a <em>public</em> Google Spreadsheet by its URL:",
+    "gdata-import/creating": "Creating project …",
+    "gdata-import/sign-out": "Sign out",
+    "gdata-import/title": "Public Documents",
+    "gdata-import/next->": "Next &raquo;",
+    "gdata-import/retrieving": "Retrieving Google Docs documents …",
+    "gdata-import/please-name-project": "Please name the project."
 }
