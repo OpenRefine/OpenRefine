@@ -71,7 +71,7 @@ public class ToTitlecase implements Function {
 
     @Override
     public String getParams() {
-        return "string s, string delimiter (optional)";
+        return "string s, string delimiters (optional)";
     }
 
     @Override
