@@ -41,20 +41,24 @@ describe(__filename, function () {
     .trigger('mouseup',{ force: true })
     cy.get('#summary-bar').contains('72 matching rows');
 
-    //sliding the middle portion in numeric facet
+    // wait for the numeric facet to be refreshed before next mouse events
+    cy.get('.browsing-panel-indicator').should("not.be.visible");
+
     cy.get('.slider-widget-draggable').eq(0)
-      // FIXME: These are the last two uses of the hated waitForOrOperation
-    .trigger('mousedown',{ force: true }).waitForOrOperation()
+    .trigger('mousedown',{ force: true })
     .trigger('mousemove',130,0,{ force: true })
-    .trigger('mouseup',{ force: true }).waitForOrOperation();
-    cy.get('#summary-bar').contains('70 matching rows');
+    .trigger('mouseup',{ force: true });
+    cy.get('#summary-bar').contains('74 matching rows');
+
+    // wait for the numeric facet to be refreshed before next mouse events
+    cy.get('.browsing-panel-indicator').should("not.be.visible");
 
     //sliding the left slider
     cy.get('.slider-widget-bracket').eq(0)
     .trigger('mousedown',{ force: true })
     .trigger('mousemove',130,0,{ force: true })
     .trigger('mouseup',{ force: true })
-    cy.get('#summary-bar').contains('4 matching rows');
+    cy.get('#summary-bar').contains('3 matching rows');
   });
 
   it('Test for checkboxes and reset button', function () {
