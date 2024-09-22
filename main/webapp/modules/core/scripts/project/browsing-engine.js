@@ -169,7 +169,7 @@ BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
   return a;
 };
 
-BrowsingEngine.prototype.addFacet = function(type, config, options) {
+BrowsingEngine.prototype.addFacet = function(type, config, options, avoidDuplicates) {
   var elmt = this._createFacetContainer();
   var facet;
   switch (type) {
@@ -187,6 +187,14 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
     break;
   default:
     facet = new ListFacet(elmt, config, options);
+  }
+
+  if (avoidDuplicates) {
+    let criterion = facet.uniquenessCriterion();
+    if (this._facets.findIndex(existingFacet => existingFacet.facet.uniquenessCriterion() == criterion) != -1) {
+      // skip addition of the facet because it already exists
+      return;
+    }
   }
 
   this._facets.push({ elmt: elmt, facet: facet });

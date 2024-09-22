@@ -266,6 +266,14 @@ class RangeFacet extends Facet {
     this._elmts.statusDiv.html($.i18n('core-facets/value-range', this._formatter.format(this._from), this._formatter.format(this._to)));
   };
 
+  uniquenessCriterion() {
+    return JSON.stringify([
+      'range',
+      this._config.expression,
+      this._config.columnName
+    ]);
+  }
+
   updateState(data) {
     if ("min" in data && "max" in data) {
       this._error = false;

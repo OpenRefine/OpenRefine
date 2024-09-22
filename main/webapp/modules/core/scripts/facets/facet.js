@@ -71,6 +71,17 @@ class Facet {
   	this._options = null;
   };
 
+  // Method to be overriden by subclasses to return a value which
+  // should generally be unique among all facets currently open. This is to
+  // avoid automatically opening facets defined with the exact same type.
+  uniquenessCriterion() {
+    // This default implementation returns a Javascript object, so that
+    // by default no deduplication happens, to avoid preventing legitimate
+    // opening of distinct facets. This works because `new Object() != new Object()`
+    // (no deep equality).
+    return new Object() 
+  }
+
   dispose() {
   };
 };

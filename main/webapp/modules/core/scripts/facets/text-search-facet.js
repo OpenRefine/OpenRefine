@@ -154,6 +154,13 @@ class TextSearchFacet extends Facet {
 
   };
 
+  uniquenessCriterion() {
+    return JSON.stringify([
+      'text-search',
+      this._config.columnName
+    ]);
+  }
+
   updateState(data) {
     this._update();
   };

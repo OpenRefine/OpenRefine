@@ -105,6 +105,14 @@ class ListFacet extends Facet {
     (this._errorChoice !== null && this._errorChoice.s);
   };
 
+  uniquenessCriterion() {
+    return JSON.stringify([
+      "list",
+      this._config.columnName,
+      this._config.expression
+    ]);
+  }
+
   updateState(data, column) {
     this._data = data;
     this._column = column;
