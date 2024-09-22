@@ -188,7 +188,7 @@ public class JythonEvaluable implements Evaluable {
                     po.__getattr__("hour").asInt(),
                     po.__getattr__("minute").asInt(),
                     po.__getattr__("second").asInt(),
-                    po.__getattr__("microsecond").asInt() * 1000,
+                    po.__getattr__("microsecond").asInt() * 1000, // scale to nanoseconds
                     ZoneOffset.UTC);
         } else if (po.isNumberType()) {
             return po.asDouble();
