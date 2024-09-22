@@ -63,6 +63,7 @@ function BrowsingEngine(div, facetConfigs) {
       }
 
       this._facets.push({ elmt: elmt, facet: facet });
+      facet.prepareUI();
     }
   }
 }
@@ -189,6 +190,7 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
   }
 
   this._facets.push({ elmt: elmt, facet: facet });
+  facet.prepareUI();
 
   ui.leftPanelTabs.tabs();
   ui.leftPanelTabs.on( "tabsactivate", ( event, ui ) =>  {

@@ -32,14 +32,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 class Facet {
+  // Facet constructors shouldn't make any changes to the DOM yet.
+  // Any such effects should go in prepareUI(), which is called
+  // after adding the facet by the BrowsingEngine.
   constructor(div, config, options) {
   	this._div = div;
   	this._config = config;
   	this._options = options || {};
   	this._minimizeState = false;
-  	
-  	Refine.showLeftPanel();
   };
+
+  // Do any changes to the UI when the facet is added, before
+  // the facet is supplied with any state.
+  prepareUI() {
+    Refine.showLeftPanel();
+  }
 
   _minimize() {
   	if(!this._minimizeState) {

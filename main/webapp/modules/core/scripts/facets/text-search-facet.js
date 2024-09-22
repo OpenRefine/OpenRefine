@@ -40,7 +40,10 @@ class TextSearchFacet extends Facet {
 
     this._query = config.query || null;
     this._timerID = null;
+  }
 
+  prepareUI() {
+    Refine.showLeftPanel();
     this._initializeUI();
     this._update();
   };

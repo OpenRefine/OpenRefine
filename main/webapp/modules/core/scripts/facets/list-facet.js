@@ -51,6 +51,10 @@ class ListFacet extends Facet {
     this._data = null;
 
     this._initialHeightSet = false;
+  };
+
+  prepareUI() {
+    Refine.showLeftPanel();
     this._initializeUI();
     this._update();
   };
