@@ -38,16 +38,19 @@ describe(__filename, function () {
     cy.get('.slider-widget-bracket').eq(1)
     .trigger('mousedown',{ force: true })
     .trigger('mousemove',-130,0,{ force: true })
-    .trigger('mouseup',{ force: true })
+    .trigger('mouseup',{ force: true });
+    cy.get('.facet-range-status').contains('0 — 45');
     cy.get('#summary-bar').contains('72 matching rows');
 
     // wait for the numeric facet to be refreshed before next mouse events
     cy.get('.browsing-panel-indicator').should("not.be.visible");
 
+    // sliding entire selection by the body (middle)
     cy.get('.slider-widget-draggable').eq(0)
     .trigger('mousedown',{ force: true })
     .trigger('mousemove',130,0,{ force: true })
     .trigger('mouseup',{ force: true });
+    cy.get('.facet-range-status').contains('23 — 68');
     cy.get('#summary-bar').contains('74 matching rows');
 
     // wait for the numeric facet to be refreshed before next mouse events
@@ -57,7 +60,8 @@ describe(__filename, function () {
     cy.get('.slider-widget-bracket').eq(0)
     .trigger('mousedown',{ force: true })
     .trigger('mousemove',130,0,{ force: true })
-    .trigger('mouseup',{ force: true })
+    .trigger('mouseup',{ force: true });
+    cy.get('.facet-range-status').contains('66 — 68');
     cy.get('#summary-bar').contains('3 matching rows');
   });
 
