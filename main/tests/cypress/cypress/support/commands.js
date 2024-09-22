@@ -190,21 +190,6 @@ Cypress.Commands.add('navigateTo', (target) => {
 });
 
 /**
- * Wait for OpenRefine to finish an Ajax load
- *
- * @deprecated
- *
- * NOTE: This command is unreliable because if you call it after starting an operation e.g. with a click(), the loading
- * indicator may have come and gone already by the time waitForOrOperation() is called, causing the cypress test to
- * wait forever on ajax_in_progress=true until it fails due to timeout.
- *
- */
-Cypress.Commands.add('waitForOrOperation', () => {
-  cy.get('body[ajax_in_progress="true"]');
-  cy.get('body[ajax_in_progress="false"]');
-});
-
-/**
  * Utility method to fill something into the expression input
  */
 Cypress.Commands.add('typeExpression', (expression, options = {}) => {
