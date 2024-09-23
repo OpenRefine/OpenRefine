@@ -14,18 +14,22 @@ import org.mozilla.universalchardet.UnicodeBOMInputStream;
 import org.mozilla.universalchardet.UniversalDetector;
 
 import com.google.refine.util.JSONUtilities;
-import com.google.refine.util.ParsingUtilities;
 
 /**
  * This class tries to find the correct encoding based on https://github.com/albfernandez/juniversalchardet which is a
  * Java port of Mozilla's universalchardet library
  * https://hg.mozilla.org/mozilla-central/file/tip/extensions/universalchardet/
- * 
+ *
  * @author <a href="mailto:kontakt@stundzig.de">Steffen Stundzig</a>
  */
 public final class EncodingGuesser {
 
     public static final String UTF_8_BOM = "UTF-8-BOM"; // Fake encoding for weird Microsoft UFT-8 with BOM
+
+    // Overloaded method without sortCriteria and sortOrder
+    public static void guess(final ImportingJob job) throws IOException {
+        guess(job, null, null);
+    }
 
     public static void guess(final ImportingJob job, String sortCriteria, String sortOrder)
             throws IOException {
@@ -40,21 +44,27 @@ public final class EncodingGuesser {
                 for (int i = 0; i < fileRecords.size(); i++) {
                     fileList.add((ObjectNode) fileRecords.get(i));
                 }
+                if (sortCriteria != null && sortOrder != null) {
+                    fileList.sort((o1, o2) -> {
+                        int comparison = 0;
+                        switch (sortCriteria) {
+                            case "fileName":
+                                comparison = o1.get("fileName").asText().compareTo(o2.get("fileName").asText());
+                                break;
+                            case "fileSize":
+                                comparison = Long.compare(o1.get("size").asLong(), o2.get("size").asLong());
+                                break;
+                        }
+                        return "desc".equals(sortOrder) ? -comparison : comparison;
+                    });
+                }
 
-                fileList.sort((o1, o2) -> {
-                    int comparison = 0;
-                    switch (sortCriteria) {
-                        case "fileName":
-                            comparison = o1.get("fileName").asText().compareTo(o2.get("fileName").asText());
-                            break;
-                        case "fileSize":
-                            comparison = Long.compare(o1.get("size").asLong(), o2.get("size").asLong());
-                            break;
-                    }
-                    return "desc".equals(sortOrder) ? -comparison : comparison;
-                });
+                // Clear the original ArrayNode and populate it with sorted elements
+                fileRecords.removeAll();
+                for (ObjectNode fileObject : fileList) {
+                    fileRecords.add(fileObject);
+                }
 
-                retrievalRecord.set("files", ParsingUtilities.mapper.valueToTree(fileList));
                 guessFilesEncodings(job, fileRecords);
             }
         }

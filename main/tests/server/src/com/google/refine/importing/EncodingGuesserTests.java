@@ -64,7 +64,7 @@ public class EncodingGuesserTests {
                 String.format("{ \"files\": [ {\"location\": \"%s\"}]}", filename));
         JSONUtilities.safePut(config, "retrievalRecord", filesObj);
 
-        EncodingGuesser.guess(job, "fileName", "asc");
+        EncodingGuesser.guess(job);
 
         ObjectNode retrievalRecord = job.getRetrievalRecord();
         assertNotNull(retrievalRecord);
