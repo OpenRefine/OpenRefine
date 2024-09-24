@@ -45,7 +45,7 @@ public interface Exporter {
     String getContentType();
 
     /**
-     * Helper to create legacy {@link Properties} from modern {@link Map<String, String>}
+     * Helper to create legacy {@link Properties} from modern {@link Map}
      * 
      * @param options
      *            a map of the option key/values to be remapped
