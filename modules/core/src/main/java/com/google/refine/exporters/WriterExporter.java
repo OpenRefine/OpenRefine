@@ -1,6 +1,7 @@
 /*
 
 Copyright 2010, Google Inc.
+Copyright 2024, OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,13 +36,44 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Map;
 import java.util.Properties;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 
+// TODO: Do we want to simplify this and only support StreamExporter (stream is more general)
+// or would it be general to provide the exporter with the HttpServletResponse from which we're currently getting the stream/writer?
 public interface WriterExporter extends Exporter {
 
-    public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException;
+    /**
+     *
+     * @param project
+     * @param options
+     * @param engine
+     * @param writer
+     * @throws IOException
+     * @deprecated by tfmorris for 3.9 Implement/use {@link #export(Project, Map, Engine, Writer)}
+     */
+    @Deprecated(since = "3.9")
+    default void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
+        // We provide a default implementation for new exporters so that they don't have to implement the legacy
+        // interface
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     *
+     * @param project
+     * @param options
+     * @param engine
+     * @param writer
+     * @throws IOException
+     * @since 3.9
+     */
+    default void export(Project project, Map<String, String> options, Engine engine, Writer writer) throws IOException {
+        // Default implementation for modern callers invoking legacy 3rd party extensions
+        export(project, Exporter.remapOptions(options), engine, writer);
+    }
 
 }
