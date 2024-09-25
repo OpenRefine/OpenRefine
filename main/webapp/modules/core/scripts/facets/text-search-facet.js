@@ -40,7 +40,10 @@ class TextSearchFacet extends Facet {
 
     this._query = config.query || null;
     this._timerID = null;
+  }
 
+  prepareUI() {
+    Refine.showLeftPanel();
     this._initializeUI();
     this._update();
   };
@@ -150,6 +153,13 @@ class TextSearchFacet extends Facet {
     }).trigger('focus');
 
   };
+
+  uniquenessCriterion() {
+    return JSON.stringify([
+      'text-search',
+      this._config.columnName
+    ]);
+  }
 
   updateState(data) {
     this._update();

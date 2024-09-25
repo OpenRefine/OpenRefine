@@ -32,14 +32,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 class Facet {
+  // Facet constructors shouldn't make any changes to the DOM yet.
+  // Any such effects should go in prepareUI(), which is called
+  // after adding the facet by the BrowsingEngine.
   constructor(div, config, options) {
   	this._div = div;
   	this._config = config;
   	this._options = options || {};
   	this._minimizeState = false;
-  	
-  	Refine.showLeftPanel();
   };
+
+  // Do any changes to the UI when the facet is added, before
+  // the facet is supplied with any state.
+  prepareUI() {
+    Refine.showLeftPanel();
+  }
 
   _minimize() {
   	if(!this._minimizeState) {
@@ -63,6 +70,17 @@ class Facet {
   	this._data = null;
   	this._options = null;
   };
+
+  // Method to be overriden by subclasses to return a value which
+  // should generally be unique among all facets currently open. This is to
+  // avoid automatically opening facets defined with the exact same type.
+  uniquenessCriterion() {
+    // This default implementation returns a Javascript object, so that
+    // by default no deduplication happens, to avoid preventing legitimate
+    // opening of distinct facets. This works because `new Object() != new Object()`
+    // (no deep equality).
+    return new Object() 
+  }
 
   dispose() {
   };
