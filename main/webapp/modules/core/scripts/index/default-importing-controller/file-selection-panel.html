@@ -31,6 +31,27 @@
       <td width="1%"><button bind="deselectRegexButton" class="button"></button></td>
     </tr>
   </table></div>
+
+  <h2 bind="sortFiles"></h2>
+  <div class="grid-layout layout-full layout-tighter"><table>
+    <tr>
+      <td colspan="3">
+        <label for="sortCriteria" bind="sortCriteriaLabel"></label>
+        <select id="sortCriteria" class="dropdown">
+          <option value="fileName" bind="sortFileName"></option>
+          <option value="fileSize" bind="sortFileSize"></option>
+        </select>
+        </td>
+
+      <td colspan="3">
+        <label for="sortOrder" bind="sortOrderLabel"></label>
+        <select id="sortOrder" class="dropdown">
+          <option value="asc" bind="sortAsc"></option>
+          <option value="desc" bind="sortDesc"></option>
+        </select>
+      </td>
+    </tr>
+  </table></div>
 </div>
 
 <div bind="filePanel" class="default-importing-file-selection-file-panel"></div>

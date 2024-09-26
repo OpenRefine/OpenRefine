@@ -4,7 +4,6 @@ package com.google.refine.importing;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -26,12 +25,7 @@ public final class EncodingGuesser {
 
     public static final String UTF_8_BOM = "UTF-8-BOM"; // Fake encoding for weird Microsoft UFT-8 with BOM
 
-    // Overloaded method without sortCriteria and sortOrder
-    public static void guess(final ImportingJob job) throws IOException {
-        guess(job, null, null);
-    }
-
-    public static void guess(final ImportingJob job, String sortCriteria, String sortOrder)
+    public static void guess(final ImportingJob job)
             throws IOException {
         ObjectNode retrievalRecord = job.getRetrievalRecord();
         if (retrievalRecord != null) {
@@ -39,32 +33,6 @@ public final class EncodingGuesser {
             if (fileRecords != null) {
                 // TODO: If different files have different encodings, we're only able to present a single
                 // encoding to the user currently. Should we check for conflicts? Warn the user?
-
-                List<ObjectNode> fileList = new ArrayList<>();
-                for (int i = 0; i < fileRecords.size(); i++) {
-                    fileList.add((ObjectNode) fileRecords.get(i));
-                }
-                if (sortCriteria != null && sortOrder != null) {
-                    fileList.sort((o1, o2) -> {
-                        int comparison = 0;
-                        switch (sortCriteria) {
-                            case "fileName":
-                                comparison = o1.get("fileName").asText().compareTo(o2.get("fileName").asText());
-                                break;
-                            case "fileSize":
-                                comparison = Long.compare(o1.get("size").asLong(), o2.get("size").asLong());
-                                break;
-                        }
-                        return "desc".equals(sortOrder) ? -comparison : comparison;
-                    });
-                }
-
-                // Clear the original ArrayNode and populate it with sorted elements
-                fileRecords.removeAll();
-                for (ObjectNode fileObject : fileList) {
-                    fileRecords.add(fileObject);
-                }
-
                 guessFilesEncodings(job, fileRecords);
             }
         }

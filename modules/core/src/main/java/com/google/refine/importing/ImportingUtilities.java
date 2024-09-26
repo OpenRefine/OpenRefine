@@ -180,10 +180,7 @@ public class ImportingUtilities {
         ArrayNode fileSelectionIndexes = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(config, "fileSelection", fileSelectionIndexes);
 
-        String sortCriteria = request.getParameter("sortCriteria");
-        String sortOrder = request.getParameter("sortOrder");
-
-        EncodingGuesser.guess(job, sortCriteria, sortOrder);
+        EncodingGuesser.guess(job);
 
         String bestFormat = ImportingUtilities.autoSelectFiles(job, retrievalRecord, fileSelectionIndexes);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);

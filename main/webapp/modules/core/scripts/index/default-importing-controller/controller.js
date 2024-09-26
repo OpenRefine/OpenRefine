@@ -85,9 +85,7 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
                     "controller": "core/default-importing-controller",
                     "jobID": jobID,
                     "subCommand": "load-raw-data",
-                    "csrf_token": token,
-                    "sortCriteria": sortCriteria,
-                    "sortOrder": sortOrder
+                    "csrf_token": token
                 });
                 var formData = new FormData(form[0]);
                 $.ajax({

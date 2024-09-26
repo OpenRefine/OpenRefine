@@ -111,6 +111,7 @@
     "core-index-import/uploading-pasted-data": "Uploading pasted data…",
     "core-index-import/locate-files": "Locate one or more files on your computer to upload:",
     "core-index-import/drag-files": "Drag files here",
+    "core-index-import/sort-files-header": "Sort files",
     "core-index-import/sort-criteria-label": "Sort by:",
     "core-index-import/sort-order-label": "Order:",
     "core-index-import/sort-filename": "File name",
