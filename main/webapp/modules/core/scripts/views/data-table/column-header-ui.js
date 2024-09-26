@@ -59,17 +59,6 @@ DataTableColumnHeaderUI.prototype.getColumn = function() {
   return this._column;
 };
 
-// global state for the resizing of column headers
-DataTableColumnHeaderUI.resizingState = {
-  dragging: false, // whether we are currently resizing any column
-  col: null, // the column being resized
-  columnName: null, // the name of the column being resized
-  originalWidth: 0, // the original width of the header when the dragging started
-  originalPosition: 0, // the original position of the cursor when the dragging started
-  moveListener: null, // the event listener for mouse move events
-  releaseListener: null, // the event listener for mouse release events
-};
-
 DataTableColumnHeaderUI.prototype._render = function() {
   var self = this;
   var td = $(this._td);
@@ -118,56 +107,6 @@ DataTableColumnHeaderUI.prototype._render = function() {
       }
     }
   }
-};
-
-DataTableColumnHeaderUI.prototype._startResizing = function(clickEvent) {
-  var self = this;
-  clickEvent.preventDefault();
-  var state = DataTableColumnHeaderUI.resizingState;
-  state.dragging = true;
-  state.col = self._col;
-  state.columnName = self._column.name;
-  state.originalWidth = self._col.width();
-  state.originalPosition = clickEvent.pageX;
-  // for conversion from px to em
-  state.emFactor = parseFloat(getComputedStyle($(".data-table-container colgroup")[0]).fontSize);
-
-  $('body')
-      .on('mousemove', DataTableColumnHeaderUI.mouseMoveListener)
-      .on('mouseup', DataTableColumnHeaderUI.mouseReleaseListener);
-};
-
-// event handlers to react to mouse moves during resizing
-DataTableColumnHeaderUI.mouseMoveListener = function(e) {
-  var state = DataTableColumnHeaderUI.resizingState;
-  if (state.dragging) {
-    var totalMovement = e.pageX - state.originalPosition;
-    var newWidth = state.originalWidth + totalMovement;
-    if (state.col.css('min-width')) {
-      state.col.css('min-width', '');
-    }
-    state.col.width(newWidth);
-
-    e.preventDefault();
-  }
-};
-
-DataTableColumnHeaderUI.mouseReleaseListener = function(e) {
-  // only capture left clicks
-  if (e.button !== 0) {
-    return;
-  }
-  var state = DataTableColumnHeaderUI.resizingState;
-  if (state.dragging) {
-    var totalMovement = e.pageX - state.originalPosition;
-    var newWidth = state.originalWidth + totalMovement;
-    state.col.width((Math.floor(newWidth) / state.emFactor) + 'em');
-    state.dragging = false;
-    $('body')
-        .off('mousemove', DataTableColumnHeaderUI.mouseMoveListener)
-        .off('mouseup', DataTableColumnHeaderUI.mouseReleaseListener);
-  }
-  e.preventDefault();
 };
 
 DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
