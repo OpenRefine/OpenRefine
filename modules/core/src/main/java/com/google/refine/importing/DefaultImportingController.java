@@ -173,7 +173,6 @@ public class DefaultImportingController extends Command implements ImportingCont
             }
         }
 
-
         ImportingUtilities.updateJobWithNewFileSelection(job, fileSelectionArray);
 
         replyWithJobData(request, response, job);
