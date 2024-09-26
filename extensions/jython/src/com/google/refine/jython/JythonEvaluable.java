@@ -34,8 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.jython;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -128,10 +130,19 @@ public class JythonEvaluable implements Evaluable {
     @Override
     public Object evaluate(Properties bindings) {
         try {
+            Object value = bindings.get("value");
+            PyObject pyValue;
+            if (value instanceof OffsetDateTime) {
+                // We know the OffsetDateTime is always at UTC, but just in case it ever changes, do the UTC change
+                pyValue = Py.newDatetime(Timestamp.valueOf(((OffsetDateTime) value).atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()));
+            } else {
+                pyValue = Py.java2py(value);
+            }
             // call the temporary PyFunction directly
             Object result = ((PyFunction) _engine.get(s_functionName)).__call__(
+
                     new PyObject[] {
-                            Py.java2py(bindings.get("value")),
+                            pyValue,
                             new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
                             new JythonHasFieldsWrapper((HasFields) bindings.get("cells"), bindings),
                             new JythonHasFieldsWrapper((HasFields) bindings.get("row"), bindings),
@@ -169,16 +180,23 @@ public class JythonEvaluable implements Evaluable {
     protected Object unwrap(PyObject po) {
         if (po instanceof PyNone) {
             return null;
+        } else if ("datetime".equals(po.getType().getName())) {
+            return OffsetDateTime.of(
+                    po.__getattr__("year").asInt(),
+                    po.__getattr__("month").asInt(),
+                    po.__getattr__("day").asInt(),
+                    po.__getattr__("hour").asInt(),
+                    po.__getattr__("minute").asInt(),
+                    po.__getattr__("second").asInt(),
+                    po.__getattr__("microsecond").asInt() * 1000, // scale to nanoseconds
+                    ZoneOffset.UTC);
         } else if (po.isNumberType()) {
             return po.asDouble();
         } else if (po.isSequenceType()) {
-            Iterator<PyObject> i = po.asIterable().iterator();
-
-            List<Object> list = new ArrayList<Object>();
-            while (i.hasNext()) {
-                list.add(unwrap((Object) i.next()));
+            List<Object> list = new ArrayList<>();
+            for (Object o : po.asIterable()) {
+                list.add(unwrap(o));
             }
-
             return list.toArray();
         } else {
             return po;

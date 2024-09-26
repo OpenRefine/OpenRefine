@@ -1,6 +1,7 @@
 /*
 
 Copyright 2010, Google Inc.
+Copyright 2024, OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,10 +34,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
+import java.util.Map;
+import java.util.Properties;
+
 public interface Exporter {
 
     /**
      * @return MIME content type handled by exporter
      */
-    public String getContentType();
+    String getContentType();
+
+    /**
+     * Helper to create legacy {@link Properties} from modern {@link Map}
+     * 
+     * @param options
+     *            a map of the option key/values to be remapped
+     * @return equivalent Properties object with nulls deleted per our convention
+     */
+    static Properties remapOptions(Map<String, String> options) {
+        Properties legacyOptions = new Properties();
+        for (Map.Entry e : options.entrySet()) {
+            if (e.getValue() != null) { // Properties don't accept null values
+                legacyOptions.put(e.getKey(), e.getValue());
+            }
+        }
+        return legacyOptions;
+    }
 }

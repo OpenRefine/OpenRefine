@@ -277,6 +277,14 @@ class TimeRangeFacet extends Facet{
     }
   };
 
+  uniquenessCriterion() {
+    return JSON.stringify([
+      'timerange',
+      this._config.expression,
+      this._config.columnName,
+    ]);
+  }
+
   updateState(data) {
     if ("min" in data && "max" in data) {
       this._error = false;

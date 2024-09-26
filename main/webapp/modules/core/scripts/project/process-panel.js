@@ -230,7 +230,8 @@ ProcessPanel.prototype._perform = function(jobs) {
         ui.browsingEngine.addFacet(
             job.facetType,
             job.facetConfig,
-            job.facetOptions
+            job.facetOptions,
+            true
         );
       } catch (e) {
         //

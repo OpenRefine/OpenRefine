@@ -284,6 +284,17 @@ class ScatterplotFacet extends Facet {
     return "command/core/get-scatterplot?" + $.param(params);
   };
 
+  uniquenessCriterion() {
+    return JSON.stringify([
+      'scatterplot',
+      this._config.ex, // expression for X
+      this._config.cx, // columnName for X
+      this._config.ey, // expression for Y
+      this._config.cy, // column name for Y
+      this._config.r // rotation
+    ]);
+  }
+
   updateState(data) {
     if ("error" in data) {
       this._error = true;

@@ -81,7 +81,7 @@
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.5</butterfly.version>
     <slf4j.version>2.0.16</slf4j.version>
-    <log4j.version>2.23.1</log4j.version>
+    <log4j.version>2.24.0</log4j.version>
     <jetty.version>10.0.16</jetty.version>
     <okhttp.version>4.12.0</okhttp.version>
     <jena.version>4.10.0</jena.version>
@@ -100,12 +100,12 @@
     <jsoup.version>1.18.1</jsoup.version>
     <odfdom-java.version>0.12.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2.1</vicino.version>
-    <clojure.version>1.11.4</clojure.version>
+    <clojure.version>1.12.0</clojure.version>
     <httpclient5.version>5.3.1</httpclient5.version>
-    <httpcore5.version>5.2.5</httpcore5.version>
+    <httpcore5.version>5.3</httpcore5.version>
     <univocity-csv.version>2.9.1</univocity-csv.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
-    <commons-io.version>2.16.1</commons-io.version>
+    <commons-io.version>2.17.0</commons-io.version>
     <guava.version>33.3.0-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <juniversalchardet.version>2.5.0</juniversalchardet.version>
@@ -311,7 +311,7 @@
         <!-- Signature -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>3.2.6</version>
         <executions>
             <execution>
                 <id>sign-artifacts</id>
