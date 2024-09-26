@@ -1,40 +1,71 @@
-### OpenRefine GitHub Issue Policy
+# OpenRefine Issue Template
 
-When opening a GitHub issue for OpenRefine, please ensure the following:
-
--   The issue is a **bug**, **performance issue**, **feature request**, **build issue**, or **documentation problem**. For small doc fixes, submit a Pull Request instead.
--   Complete the **Issue Template** in full.
--   Make sure the issue relates to the appropriate repository.
--   For individual support, please use **Stack Overflow** or community channels to keep the team focused on improving the tool for everyone.
+Thank you for taking the time to report an issue with OpenRefine. Please ensure all sections are filled out to help us diagnose the problem effectively. Before submitting, check the [OpenRefine documentation](https://openrefine.org/docs) and please review the [CONTRIBUTING.md](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md) file to ensure your contribution aligns with our guidelines. Make sure the issue hasn't already been reported by searching the issue tracker.
 
 ---
 
-### Issue Template with Examples
+## Issue Type:
 
-**Issue Type**: Bug, feature request, documentation, or build issue.
-Select one: Bug / Performance Issue / Feature Request / Build Issue / Documentation
+_Select one_:
 
-**Description**: A brief but clear explanation of the issue.
-_Example_: "Filtering by date is not working as expected when applying a facet to large datasets."
+-   Bug
+-   Performance Issue
+-   Feature Request
+-   Build Issue
+-   Documentation
 
-**Steps to Reproduce**: How the issue can be replicated.
+## Description:
 
-1. Open a dataset with over 10,000 rows.
-2. Add a date facet.
-3. Filter by a specific date range.
-4. Observe that no results are returned.
+_A concise, clear description of the issue._  
+Example: "Date facet is not functioning correctly with large datasets."
 
-**Expected Behavior**: What should happen.
-_Example_: "The facet should return results within the specified date range."
+## Steps to Reproduce:
 
-**Actual Behavior**: What actually occurs.
-_Example_: "No results are returned, even though data exists within the range."
+_Provide a detailed, step-by-step process to replicate the issue._
 
-**Environment Details**: Version info (OpenRefine, Java, OS).
+1. Step 1 (e.g., Load dataset with over 10,000 rows)
+2. Step 2 (e.g., Apply date facet)
+3. Step 3 (e.g., Filter by specific date range)
 
--   **OpenRefine version**: e.g., 3.5.1
--   **Java version**: e.g., JDK 11
--   **OS**: e.g., Windows 10 / macOS 11
+## Expected Behavior:
 
-**Additional Information**: Any other relevant details.
-_Example_: "The issue only occurs when the dataset exceeds 10,000 rows."
+_What should have happened?_  
+Example: "Results within the filtered date range should display."
+
+## Actual Behavior:
+
+_What happened instead?_  
+Example: "No results are shown, even though data exists within that range."
+
+## Logs and Screenshots:
+
+_Include any relevant logs, error messages, or screenshots._
+
+## Environment Details:
+
+-   OpenRefine Version: (e.g., 3.5.1)
+-   Java Version: (e.g., JDK 11)
+-   Browser (if applicable): (e.g., Chrome 90)
+-   Operating System: (e.g., macOS 11, Windows 10)
+
+## Reproducibility:
+
+_How often does this issue occur?_
+
+-   Always
+-   Sometimes
+-   Rarely
+
+## Severity:
+
+_Rate the impact of this issue on your work._
+
+-   Blocking (stops workflow)
+-   High (major issue, but workarounds exist)
+-   Medium (noticeable, but not disruptive)
+-   Low (minor annoyance)
+
+## Additional Information:
+
+_Include any other relevant context or information._
+Example: "This issue only occurs with datasets containing more than 10,000 rows."
