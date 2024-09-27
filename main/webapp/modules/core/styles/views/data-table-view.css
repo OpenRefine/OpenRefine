@@ -137,6 +137,10 @@ th.column-header {
   z-index: 1;
 }
 
+th.column-group-header {
+  position: relative;
+}
+
 th {
   text-align: left;
 }

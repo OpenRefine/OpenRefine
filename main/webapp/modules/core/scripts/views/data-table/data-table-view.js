@@ -361,6 +361,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader, colGrou
       for (var c = 0; c < columns.length; c++) {
         var column = columns[c];
         var th = tr.appendChild(document.createElement("th"));
+        $(th).attr('class', 'column-group-header');
         if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
           $(th).html('&nbsp;');
         } else {
@@ -373,6 +374,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader, colGrou
               break;
             }
           }
+          self._addResizingControls(th, c);
         }
       }
     }
@@ -592,34 +594,39 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
       var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th, col);
       self._columnHeaderUIs.push(columnHeaderUI);
 
-      // add resizing controls
-      var resizerLeft = $('<div></div>').addClass('column-header-resizer-left')
-            .appendTo(th);
-      resizerLeft.on('mousedown', function(e) {
-        // only capture left clicks
-        if (e.button !== 0) {
-          return;
-        }
-        self._startResizing(index, e);
-      });
-
-      // add resizing control for the previous column (if uncollapsed)
-      if (index > 0 && !self._collapsedColumnNames.hasOwnProperty(columns[index-1].name)) {
-        var resizerRight = $('<div></div>').addClass('column-header-resizer-right')
-              .appendTo(th);
-        resizerRight.on('mousedown', function(e) {
-          // only capture left clicks
-          if (e.button !== 0) {
-            return;
-          }
-          self._startResizing(index - 1, e);
-        });
-      }
+      self._addResizingControls(th, index);
     }
   };
 
   for (var i = 0; i < columns.length; i++) {
     createColumnHeader(columns[i], i);
+  }
+}
+
+DataTableView.prototype._addResizingControls = function(th, index) {
+  var self = this;
+  var columns = theProject.columnModel.columns;
+  var resizerLeft = $('<div></div>').addClass('column-header-resizer-left')
+        .appendTo(th);
+  resizerLeft.on('mousedown', function(e) {
+    // only capture left clicks
+    if (e.button !== 0) {
+      return;
+    }
+    self._startResizing(index, e);
+  });
+
+  // add resizing control for the previous column (if uncollapsed)
+  if (index > 0 && !self._collapsedColumnNames.hasOwnProperty(columns[index-1].name)) {
+    var resizerRight = $('<div></div>').addClass('column-header-resizer-right')
+          .appendTo(th);
+    resizerRight.on('mousedown', function(e) {
+      // only capture left clicks
+      if (e.button !== 0) {
+        return;
+      }
+      self._startResizing(index - 1, e);
+    });
   }
 }
 
