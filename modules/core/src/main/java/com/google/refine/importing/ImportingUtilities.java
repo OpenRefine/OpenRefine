@@ -426,6 +426,8 @@ public class ImportingUtilities {
                     long fileSize = fileItem.getSize();
 
                     File file = allocateFile(rawDataDir, fileName);
+                    String bestFormat = ImportingManager.extensionToFormat.get(file.getName().substring(file.getName().indexOf('.')));
+                    bestFormat = bestFormat == null ? "text" : bestFormat;
 
                     ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(fileRecord, "origin", "upload");
@@ -439,7 +441,7 @@ public class ImportingUtilities {
                             calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
-                    JSONUtilities.safePut(fileRecord, "format", guessBetterFormat(file, request.getCharacterEncoding(), "text"));
+                    JSONUtilities.safePut(fileRecord, "format", guessBetterFormat(file, request.getCharacterEncoding(), bestFormat));
                     // TODO: This needs to be refactored to be able to test import from archives
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                         archiveCount++;

@@ -602,6 +602,11 @@ public class ImportingUtilitiesTests extends ImporterTest {
         testMultipleFiles("grid_small", "grid_small", ".json", ContentType.create("text/json"), "text/json");
     }
 
+    @Test
+    public void testFormatForMultipleODSFiles() throws IOException, FileUploadException {
+        testMultipleFiles("films", "films", ".ods", ContentType.create("application/vnd.oasis.opendocument.spreadsheet"), "binary");
+    }
+
     private void testMultipleFiles(String file1, String file2, String fileSuffix, ContentType contentType, String expectedFormat)
             throws IOException, FileUploadException {
 
