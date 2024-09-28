@@ -36,6 +36,7 @@ package com.google.refine.importing;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -138,6 +139,39 @@ public class DefaultImportingController extends Command implements ImportingCont
 
         ArrayNode fileSelectionArray = ParsingUtilities.evaluateJsonStringToArrayNode(
                 request.getParameter("fileSelection"));
+
+        String sortCriteria = request.getParameter("sortCriteria");
+        String sortOrder = request.getParameter("sortOrder");
+
+        if (sortCriteria != null && sortOrder != null) {
+            ObjectNode retrievalRecord = job.getRetrievalRecord();
+            if (retrievalRecord != null) {
+                ArrayNode fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
+                if (fileRecords != null) {
+                    List<ObjectNode> fileList = new ArrayList<>();
+                    for (int i = 0; i < fileRecords.size(); i++) {
+                        fileList.add((ObjectNode) fileRecords.get(i));
+                    }
+                    fileList.sort((o1, o2) -> {
+                        int comparison = 0;
+                        switch (sortCriteria) {
+                            case "fileName":
+                                comparison = o1.get("fileName").asText().compareTo(o2.get("fileName").asText());
+                                break;
+                            case "fileSize":
+                                comparison = Long.compare(o1.get("size").asLong(), o2.get("size").asLong());
+                                break;
+                        }
+                        return "desc".equals(sortOrder) ? -comparison : comparison;
+                    });
+
+                    fileRecords.removeAll();
+                    for (ObjectNode fileObject : fileList) {
+                        fileRecords.add(fileObject);
+                    }
+                }
+            }
+        }
 
         ImportingUtilities.updateJobWithNewFileSelection(job, fileSelectionArray);
 

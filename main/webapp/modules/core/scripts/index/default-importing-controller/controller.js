@@ -71,7 +71,7 @@ Refine.DefaultImportingController.prototype._startOver = function() {
   this._createProjectUI.showSourceSelectionPanel();
 };
 
-Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, callback) {
+Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, sortCriteria, sortOrder, callback) {
     var self = this;
 
     Refine.wrapCSRF(function(token) {
