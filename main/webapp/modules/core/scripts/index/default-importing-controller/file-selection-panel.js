@@ -64,6 +64,16 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
   $('#or-import-severalFile').text($.i18n('core-index-import/several-file'));
   $('#or-import-selExt').text($.i18n('core-index-import/sel-by-extension'));
   $('#or-import-regex').text($.i18n('core-index-import/sel-by-regex'));
+
+  this._fileSelectionPanelElmts.sortFiles.text($.i18n('core-index-import/sort-files-header'));
+  this._fileSelectionPanelElmts.sortCriteriaLabel.text($.i18n('core-index-import/sort-criteria-label'));
+  this._fileSelectionPanelElmts.sortOrderLabel.text($.i18n('core-index-import/sort-order-label'));
+
+  this._fileSelectionPanelElmts.sortAsc.text($.i18n('core-index-import/sort-asc'));
+  this._fileSelectionPanelElmts.sortDesc.text($.i18n('core-index-import/sort-desc'));
+
+  this._fileSelectionPanelElmts.sortFileName.text($.i18n('core-index-import/sort-filename'));
+  this._fileSelectionPanelElmts.sortFileSize.text($.i18n('core-index-import/sort-filesize'));
   
   this._fileSelectionPanelElmts.startOverButton.html($.i18n('core-buttons/startover'));
   this._fileSelectionPanelElmts.nextButton.html($.i18n('core-buttons/conf-pars-opt'));
@@ -75,9 +85,44 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
   this._fileSelectionPanelElmts.startOverButton.on('click',function() {
     self._startOver();
   });
+  $('#sortCriteria').on('change',function() {
+    self._renderFileSelectionPanel();
+  });
+  $('#sortOrder').on('change',function() {
+    self._renderFileSelectionPanel();
+  });
 };
 
 Refine.DefaultImportingController.prototype._renderFileSelectionPanel = function() {
+  const sortCriteria = $('#sortCriteria').val();
+  const sortOrder = $('#sortOrder').val();
+
+  this._job.config.retrievalRecord.files.sort(function(a, b) {
+    var valueA, valueB;
+
+    switch (sortCriteria) {
+      case 'fileName':
+        valueA = a.fileName;
+        valueB = b.fileName;
+        break;
+      case 'fileSize':
+        valueA = a.size;
+        valueB = b.size;
+        break;
+      // Add cases for other criteria if needed
+      default:
+        valueA = a.fileName;
+        valueB = b.fileName;
+    }
+
+    if (valueA < valueB) {
+      return sortOrder === 'asc' ? -1 : 1;
+    }
+    if (valueA > valueB) {
+      return sortOrder === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
   this._renderFileSelectionPanelFileTable();
   this._renderFileSelectionPanelControlPanel();
 };
@@ -308,13 +353,17 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
 
   var self = this;
   var dismissBusy = DialogSystem.showBusy($.i18n('core-index-import/inspecting-files'));
+  const sortCriteria = $('#sortCriteria').val();
+  const sortOrder = $('#sortOrder').val();
   Refine.wrapCSRF(function(token) {
     $.post(
         "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
         "jobID": self._jobID,
         "subCommand": "update-file-selection",
-        "csrf_token": token
+        "csrf_token": token,
+        "sortCriteria": sortCriteria,
+        "sortOrder": sortOrder
         }),
         {
         "fileSelection" : JSON.stringify(self._job.config.fileSelection)

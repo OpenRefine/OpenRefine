@@ -18,7 +18,7 @@ import com.google.refine.util.JSONUtilities;
  * This class tries to find the correct encoding based on https://github.com/albfernandez/juniversalchardet which is a
  * Java port of Mozilla's universalchardet library
  * https://hg.mozilla.org/mozilla-central/file/tip/extensions/universalchardet/
- * 
+ *
  * @author <a href="mailto:kontakt@stundzig.de">Steffen Stundzig</a>
  */
 public final class EncodingGuesser {

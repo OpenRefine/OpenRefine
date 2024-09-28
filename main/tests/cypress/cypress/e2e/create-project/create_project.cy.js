@@ -250,7 +250,7 @@ describe(__filename, function () {
     // then ensure we are on the preview page
     cy.get(
       '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).should('have.value', 'food mini csv');
+    ).should('have.value', 'food mini 2 csv');
 
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
