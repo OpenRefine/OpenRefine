@@ -343,5 +343,11 @@
     "core-facets/current-exp": "Geçerli İfade",
     "core-dialogs/linear-plot": "Doğrusal grafik",
     "core-dialogs/help/grelreference": "Daha fazla ayrıntı için OpenRefine Kullanım Kılavuzundaki GREL referansına bakın",
-    "core-dialogs/tsv": "Sekmeyle ayrılmış değerler (TSV)"
+    "core-dialogs/tsv": "Sekmeyle ayrılmış değerler (TSV)",
+    "core-index/refine-extensions": "Eklentiler: $1",
+    "core-index/new-version-available": "OpenRefine 1$ şimdi indirin.",
+    "core-index/notification-opt-in": "Yeni OpenRefine sürümleri ve etkinliklerinden haberdar olmak ister misiniz?",
+    "core-index/no-custom-functions": "Özel fonksiyon yok",
+    "core-index/add-custom-function": "Aşağıya yeni bir fonksiyon ekleyin",
+    "core-index/notification-privacy-info": "gizlilik bilgisi"
 }

@@ -910,5 +910,12 @@
     "core-views/add-rows/insertion-label": "Punto de inserción",
     "core-views/add-rows/description": "Utiliza el formulario para anteponer nuevas filas",
     "core-views/add-rows/label": "Crear más filas",
-    "core-views/add-rows/beginning-option": "Empezando"
+    "core-views/add-rows/beginning-option": "Empezando",
+    "core-index-import/sort-files-header": "Ordenar archivos",
+    "core-index-import/sort-criteria-label": "Ordenar por:",
+    "core-index-import/sort-order-label": "Orden:",
+    "core-index-import/sort-filename": "Nombre del archivo",
+    "core-index-import/sort-filesize": "Tamaño del archivo",
+    "core-index-import/sort-asc": "Ascendente",
+    "core-index-import/sort-desc": "Descendente"
 }
