@@ -30,5 +30,10 @@
     "wikibase-addition/manifest-paste-input": "Bildirim JSON",
     "wikibase-addition/explain-paste-manifest": "Veya bildirim JSON metnini doğrudan yapıştırın (bazı genel Wikitabanlarının bildirimlerini <a href=\"https://github.com/OpenRefine/wikibase-manifests\" target=\"_blank\">burada</a> bulabilirsiniz, ayrıca şunları da yapabilirsiniz: Bu <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Write-a-Wikibase-manifest\" target=\"_blank\">eğitim</a>'e göre kendiniz de yazabilirsiniz):",
     "wikibase-addition/explain-add-manifest-via-url": "Wikibase bildiriminin URL'sini girin (önerilir; bu en son bildirimi takip etmek için faydalıdır):",
-    "wikibase-addition/manifest-url-input": "Bildirim URL"
+    "wikibase-addition/manifest-url-input": "Bildirim URL",
+    "wikibase-schema/save-new-schema": "Şema değişikliklerini kaydet",
+    "wikibase-schema/schema-tab-header": "Şema",
+    "wikibase-schema/warnings-tab-header": "Sorunlar",
+    "wikibase-schema/edits-preview-tab-header": "Önizleme",
+    "wikibase-schema/statements-header": "İfadeler"
 }
