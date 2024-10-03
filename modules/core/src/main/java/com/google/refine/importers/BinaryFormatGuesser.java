@@ -28,11 +28,6 @@
 package com.google.refine.importers;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 
 import com.google.refine.importing.FormatGuesser;
 
@@ -42,23 +37,6 @@ public class BinaryFormatGuesser implements FormatGuesser {
     public String guess(File file, String encoding, String seedFormat) {
 
         // TODO: Guess based on sniffing magic numbers
-
-        try (InputStream is = new FileInputStream(file)) {
-            byte[] magic = new byte[8];
-            int count = is.read(magic);
-            if (count == 8
-                    && Arrays.equals(magic,
-                            new byte[] { (byte) 0xD0, (byte) 0xCF, 0x11, (byte) 0xE0, (byte) 0xA1, (byte) 0xB1, 0x1A, (byte) 0xE1 })
-                    || // xls 50 4B 03 04
-                    (magic[0] == 0x50 && magic[1] == 0x4B && magic[2] == 0x03 && magic[3] == 0x04) // xlsx ods
-            ) {
-                return "binary";
-            }
-        } catch (FileNotFoundException e) {
-            // do nothing
-        } catch (IOException e) {
-            // do nothing
-        }
         return null;
     }
 }
