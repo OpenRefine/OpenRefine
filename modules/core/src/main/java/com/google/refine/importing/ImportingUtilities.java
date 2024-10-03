@@ -426,7 +426,7 @@ public class ImportingUtilities {
                     long fileSize = fileItem.getSize();
 
                     File file = allocateFile(rawDataDir, fileName);
-                    String bestFormat = ImportingManager.extensionToFormat.get(file.getName().substring(file.getName().indexOf('.')));
+                    String bestFormat = ImportingManager.getFormatFromFileName(file.getName());
                     bestFormat = bestFormat == null ? "text" : bestFormat;
 
                     ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();

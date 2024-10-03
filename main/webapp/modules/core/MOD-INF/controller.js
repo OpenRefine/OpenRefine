@@ -307,6 +307,7 @@ function registerImporting() {
    */
   IM.registerFormatGuesser("text", new Packages.com.google.refine.importers.TextFormatGuesser());
   IM.registerFormatGuesser("text/line-based", new Packages.com.google.refine.importers.LineBasedFormatGuesser());
+  IM.registerFormatGuesser("binary/text/xml/xls/xlsx", new Packages.com.google.refine.importers.BinaryFormatGuesser());
 
   /*
    *  Controllers: these implement high-level UI flows for importing data. For example, the default
