@@ -37,6 +37,7 @@ public class BinaryFormatGuesser implements FormatGuesser {
     public String guess(File file, String encoding, String seedFormat) {
 
         // TODO: Guess based on sniffing magic numbers
+        
         return null;
     }
 }
