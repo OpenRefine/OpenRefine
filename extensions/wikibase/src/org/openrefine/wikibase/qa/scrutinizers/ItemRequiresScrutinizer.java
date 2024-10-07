@@ -134,4 +134,9 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
 
         return true;
     }
+
+    @Override
+    public List<String> getWarningsRelatedPropertyKeys() {
+        return List.of("added_property_entity");
+    }
 }

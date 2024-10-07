@@ -175,4 +175,9 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         }
     }
 
+    @Override
+    public List<String> getWarningsRelatedPropertyKeys() {
+        return List.of("missing_property_entity", "disallowed_property_entity");
+    }
+
 }

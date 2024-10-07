@@ -26,6 +26,7 @@ package org.openrefine.wikibase.qa;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
@@ -65,6 +67,7 @@ import org.openrefine.wikibase.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.UseAsQualifierScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
@@ -206,6 +209,30 @@ public class EditInspector {
             QAWarning warning = new QAWarning("no-issue-detected", null, QAWarning.Severity.INFO, 0);
             warning.setFacetable(false);
             warningStore.addWarning(warning);
+        } else {
+            for (EditScrutinizer scrutinizer : scrutinizers.values()) {
+                resolveWarningPropertyLabels(scrutinizer.getWarningsRelatedPropertyKeys());
+            }
+        }
+    }
+
+    private void resolveWarningPropertyLabels(List<String> propertyKeys) throws ExecutionException {
+        for (String key : propertyKeys) {
+            entityCache.getMultipleDocuments(
+                    warningStore.getWarnings().stream()
+                            .filter(warning -> warning.getProperties().containsKey(key))
+                            .map(warning -> (PropertyIdValue) warning.getProperties().get(key))
+                            .collect(Collectors.toList()));
+            warningStore.getWarnings().stream()
+                    .filter(warning -> warning.getProperties().containsKey(key))
+                    .forEach(warning -> {
+                        PropertyIdValue missed = (PropertyIdValue) warning.getProperties().get(key);
+                        String label = "";
+                        if (((PropertyDocument) entityCache.get(missed)).getLabels().get((Locale.getDefault().getLanguage())) != null)
+                            label = ((PropertyDocument) entityCache.get(missed)).getLabels().get(Locale.getDefault().getLanguage())
+                                    .getText();
+                        warning.setProperty(key, new SuggestedPropertyIdValue(missed.getId(), missed.getSiteIri(), label));
+                    });
         }
     }
 }
