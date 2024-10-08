@@ -86,6 +86,11 @@ public class ExportRowsCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // This command triggers evaluation expression and therefore requires CSRF-protection
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         ProjectManager.singleton.setBusy(true);
 

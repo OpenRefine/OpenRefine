@@ -58,13 +58,14 @@ public class ComputeClustersCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("compute-clusters_command");
 
-    /**
-     * This command uses POST (probably to allow for larger parameters) but does not actually modify any state so we do
-     * not add CSRF protection to it.
-     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // This command triggers evaluation expression and therefore requires CSRF-protection
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             long start = System.currentTimeMillis();

@@ -444,7 +444,7 @@ ClusteringDialog.prototype._cluster = function() {
 
     this._elmts.resultSummary.empty();
 
-    $.post(
+    Refine.postCSRF(
         "command/core/compute-clusters?" + $.param({ project: theProject.id }),
         {
             engine: JSON.stringify(ui.browsingEngine.getJSON()),
