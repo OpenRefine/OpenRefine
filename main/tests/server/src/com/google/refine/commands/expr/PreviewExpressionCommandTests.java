@@ -27,44 +27,27 @@
 
 package com.google.refine.commands.expr;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.CommandTestBase;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
-public class PreviewExpressionCommandTests extends RefineTest {
+public class PreviewExpressionCommandTests extends CommandTestBase {
 
     protected Project project = null;
-    protected HttpServletRequest request = null;
-    protected HttpServletResponse response = null;
-    protected Command command = null;
-    protected StringWriter writer = null;
 
     @BeforeMethod
-    public void setUpRequestResponse() {
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
-        writer = new StringWriter();
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(writer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setUpCommandAndProject() {
         command = new PreviewExpressionCommand();
         project = createProject(
                 new String[] { "a", "b" },
@@ -76,8 +59,14 @@ public class PreviewExpressionCommandTests extends RefineTest {
     }
 
     @Test
-    public void testJsonResponse() throws ServletException, IOException {
+    public void testCSRFProtection() throws ServletException, IOException {
+        command.doPost(request, response);
+        assertCSRFCheckFailed();
+    }
 
+    @Test
+    public void testJsonResponse() throws ServletException, IOException {
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter("project")).thenReturn(Long.toString(project.id));
         when(request.getParameter("cellIndex")).thenReturn("1");
         when(request.getParameter("expression")).thenReturn("grel:value + \"_u\"");
@@ -93,7 +82,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
 
     @Test
     public void testParseError() throws ServletException, IOException {
-
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter("project")).thenReturn(Long.toString(project.id));
         when(request.getParameter("cellIndex")).thenReturn("1");
         when(request.getParameter("expression")).thenReturn("grel:value +");

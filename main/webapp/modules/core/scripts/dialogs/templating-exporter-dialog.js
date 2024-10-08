@@ -53,7 +53,12 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
     this._elmts.previewTextarea.attr('aria-label',$.i18n('core-dialogs/template-preview'))
     
-    this._elmts.exportButton.on('click',function() { self._export(); self._dismiss(); });
+    this._elmts.exportButton.on('click',function() {
+      Refine.wrapCSRF(function(csrfToken) {
+        self._export(csrfToken);
+        self._dismiss();
+      });
+    });
     this._elmts.cancelButton.on('click',function() { self._dismiss(); });
     this._elmts.resetButton.on('click',function() {
         self._fillInTemplate(self._createDefaultTemplate());
@@ -122,7 +127,7 @@ TemplatingExporterDialog.prototype._dismiss = function() {
 
 TemplatingExporterDialog.prototype._updatePreview = function() {
     var self = this;
-    $.post(
+    Refine.postCSRF(
         "command/core/export-rows/preview.txt",
         {
             "project" : theProject.id, 
@@ -147,7 +152,7 @@ TemplatingExporterDialog.prototype._updatePreview = function() {
     });
 };
 
-TemplatingExporterDialog.prototype._export = function() {
+TemplatingExporterDialog.prototype._export = function(csrfToken) {
     var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
     var form = document.createElement("form");
     $(form)
@@ -162,6 +167,7 @@ TemplatingExporterDialog.prototype._export = function() {
             .appendTo(form);
     };
 
+    appendField("csrf_token", csrfToken);
     appendField("engine", JSON.stringify(ui.browsingEngine.getJSON()));
     appendField("project", theProject.id);
     appendField("format", "template");
