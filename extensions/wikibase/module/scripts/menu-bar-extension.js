@@ -35,8 +35,10 @@ WikibaseExporterMenuBar.exportTo = function (format) {
   var form = document.createElement("form");
   $(form).css("display", "none")
       .attr("method", "post")
-      .attr("action", "command/core/export-rows/" + targetUrl)
       .attr("target", "openrefine-export-" + format);
+  Refine.wrapCSRF(function(csrfToken) {
+    $(form).attr("action", "command/core/export-rows/" + targetUrl + "?" + $.attr({csrf_token: csrfToken}))
+  });
   $('<input />')
       .attr("name", "engine")
       .val(JSON.stringify(ui.browsingEngine.getJSON()))

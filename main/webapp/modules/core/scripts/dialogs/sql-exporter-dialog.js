@@ -347,38 +347,39 @@ function SqlExporterDialog(options) {
       options.limit = 10;
     }
 
-  // var ext = SqlExporterDialog.formats[format].extension;
-    var form = self._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql");
-    if (preview) {
-      $(form).attr("target", "refine-export");
-    }
-    $('<input />')
-    .attr("name", "options")
-    .val(JSON.stringify(options))
-    .appendTo(form);
-    if (encoding) {
+    Refine.wrapCSRF(function(csrfToken) { 
+      var form = self._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql", csrfToken);
+      if (preview) {
+        $(form).attr("target", "refine-export");
+      }
       $('<input />')
-      .attr("name", "encoding")
-      .val(encoding)
-      .appendTo(form);
-    }
-    $('<input />')
-    .attr("name", "preview")
-    .val(preview)
-    .appendTo(form);
+        .attr("name", "options")
+        .val(JSON.stringify(options))
+        .appendTo(form);
+      if (encoding) {
+        $('<input />')
+          .attr("name", "encoding")
+          .val(encoding)
+          .appendTo(form);
+      }
+      $('<input />')
+        .attr("name", "preview")
+        .val(preview)
+        .appendTo(form);
 
-    document.body.appendChild(form);
+      document.body.appendChild(form);
 
-    if (preview) {
-      window.open(" ", "refine-export");
-    }
-    form.submit();
+      if (preview) {
+        window.open(" ", "refine-export");
+      }
+      form.submit();
 
-    document.body.removeChild(form);
+      document.body.removeChild(form);
+    });
     return true;
   };
 
-  SqlExporterDialog.prototype._prepareSqlExportRowsForm = function(format, includeEngine, ext) {
+  SqlExporterDialog.prototype._prepareSqlExportRowsForm = function(format, includeEngine, ext, csrfToken) {
       var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
       var form = document.createElement("form");
       $(form)
@@ -387,18 +388,22 @@ function SqlExporterDialog(options) {
       .attr("action", "command/core/export-rows/" + name + ((ext) ? ("." + ext) : ""));
 
       $('<input />')
-      .attr("name", "project")
-      .val(theProject.id)
-      .appendTo(form);
+        .attr('name', 'csrf_token')
+        .attr('value', csrfToken)
+        .appendTo(form);
       $('<input />')
-      .attr("name", "format")
-      .val(format)
-      .appendTo(form);
+        .attr("name", "project")
+        .val(theProject.id)
+        .appendTo(form);
+      $('<input />')
+        .attr("name", "format")
+        .val(format)
+        .appendTo(form);
       if (includeEngine) {
         $('<input />')
-        .attr("name", "engine")
-        .val(JSON.stringify(ui.browsingEngine.getJSON()))
-        .appendTo(form);
+          .attr("name", "engine")
+          .val(JSON.stringify(ui.browsingEngine.getJSON()))
+          .appendTo(form);
       }
 
       return form;
