@@ -122,7 +122,7 @@
     <exec-maven-plugin.version>3.4.1</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.8.0</maven-dependency-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-    <surefire.version>3.5.0</surefire.version>
+    <surefire.version>3.5.1</surefire.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
