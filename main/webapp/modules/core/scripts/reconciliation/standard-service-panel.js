@@ -44,6 +44,9 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
   var dismissBusy = self.showBusyReconciling();
 
+  // refetch manifest for latest changes
+  ReconciliationManager.refetchServiceManifest(self._service, true);
+
   Refine.postCSRF(
     "command/core/guess-types-of-column?" + $.param({
       project: theProject.id, 

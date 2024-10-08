@@ -146,6 +146,15 @@ ReconciliationManager.unregisterService = function(service, f) {
   ReconciliationManager.save(f);
 };
 
+ReconciliationManager.refetchServiceManifest = function(service, silent) {
+  var self = this;
+  if ("url" in service) {
+    self.unregisterService(service, function () {
+      self.registerStandardService(service.url, function(service) {}, silent);
+    });
+  }
+}
+
 ReconciliationManager.save = function(f) {
   Refine.wrapCSRF(function(token) {
     $.ajax({
