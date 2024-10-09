@@ -55,12 +55,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin: 1em 0;
   display: grid;
   grid-template-columns: repeat(4, auto);
-  justify-content: space-between;
   align-items: baseline;
   background: #eee;
   border: 1px #ccc solid;
-  padding: 0.5em;
-  gap: 0.5em;
+  padding: 0.25em;
+  gap: 0.25em;
 }
 
 .control-group {
