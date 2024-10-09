@@ -67,7 +67,7 @@ public class PreviewWikibaseWarningTest extends SchemaCommandTest {
     public void testWarningData() throws Exception {
 
         String schemaJson = jsonFromFile("schema/warning_data_test.json");
-        String manifestJson = jsonFromFile("manifest/wikidata-manifest-warning-data-test.json");
+        String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");
         when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
         when(request.getParameter("schema")).thenReturn(schemaJson);
         when(request.getParameter("manifest")).thenReturn(manifestJson);
