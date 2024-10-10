@@ -29,6 +29,9 @@ package com.google.refine.grel.ast;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Collections;
+import java.util.Optional;
+
 import org.testng.annotations.Test;
 
 public class LiteralExprTest {
@@ -37,6 +40,14 @@ public class LiteralExprTest {
     public void intLiteralToString() {
         LiteralExpr expr = new LiteralExpr(42);
         assertEquals("42", expr.toString());
+    }
+
+    @Test
+    public void columnDependencies() {
+        LiteralExpr expr = new LiteralExpr(34);
+        assertEquals(expr.getColumnDependencies(Optional.of("column")), Optional.of(Collections.emptySet()));
+        LiteralExpr string = new LiteralExpr("foo");
+        assertEquals(string.getColumnDependencies(Optional.of("foo")), Optional.of(Collections.emptySet()));
     }
 
     @Test

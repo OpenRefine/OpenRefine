@@ -33,7 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -71,6 +74,22 @@ public class FieldAccessorExpr implements Evaluable {
             return JsonValueConverter.convert(value);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
+        Optional<Set<String>> innerDeps = _inner.getColumnDependencies(baseColumn);
+        if (innerDeps.isPresent()) {
+            return innerDeps;
+        } else {
+            String innerStr = _inner.toString();
+            if ("cells".equals(innerStr) || "row.cells".equals(innerStr)) {
+                return Optional.of(Collections.singleton(_fieldName));
+            }
+            // TODO add support for starred, flagged, rowIndex, which are not real columns
+            // but whose dependency could also be analyzed.
+            return Optional.empty();
         }
     }
 
