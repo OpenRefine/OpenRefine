@@ -220,3 +220,29 @@ ul#tagsUl li a {
   background: #28458A;
   color: white;
 }
+
+/* Search bar in open project page */
+
+/* input */
+#search-input {
+  margin: 0px 10px 0px 0px;
+  padding: 4px;
+  float: left;
+  display: none;
+}
+
+/* icon search */
+.magnifying_glass {
+  float: left;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  padding: 4px;
+}
+
+#no-results-message {
+  color: #777;
+  display: none;
+  text-align: center;
+  font-size: x-large;
+}
