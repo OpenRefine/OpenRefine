@@ -31,11 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function DataTableColumnHeaderUI(dataTableView, column, columnIndex, td) {
+function DataTableColumnHeaderUI(dataTableView, column, columnIndex, td, col) {
   this._dataTableView = dataTableView;
   this._column = column;
   this._columnIndex = columnIndex;
   this._td = td;
+  this._col = col;
 
   this._render();
 }
