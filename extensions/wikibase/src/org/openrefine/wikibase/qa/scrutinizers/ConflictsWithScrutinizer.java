@@ -130,8 +130,4 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
         return false;
     }
 
-    @Override
-    public List<String> getWarningsRelatedPropertyKeys() {
-        return List.of("added_property_entity");
-    }
 }

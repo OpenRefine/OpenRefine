@@ -210,28 +210,41 @@ public class EditInspector {
             warning.setFacetable(false);
             warningStore.addWarning(warning);
         } else {
-            for (EditScrutinizer scrutinizer : scrutinizers.values()) {
-                resolveWarningPropertyLabels(scrutinizer.getWarningsRelatedPropertyKeys());
-            }
+            resolveWarningPropertyLabels();
         }
     }
 
-    private void resolveWarningPropertyLabels(List<String> propertyKeys) throws ExecutionException {
-        for (String key : propertyKeys) {
-            entityCache.getMultipleDocuments(
-                    warningStore.getWarnings().stream()
-                            .filter(warning -> warning.getProperties().containsKey(key))
-                            .map(warning -> (PropertyIdValue) warning.getProperties().get(key))
-                            .collect(Collectors.toList()));
+    private void resolveWarningPropertyLabels() throws ExecutionException {
+        if (entityCache != null) {
+            List<EntityIdValue> propertyIdValues = warningStore.getWarnings().stream()
+                    .flatMap(warning -> warning.getProperties().entrySet().stream()
+                            .filter(entry -> entry.getValue() instanceof PropertyIdValue)
+                            .map(entry -> (PropertyIdValue) entry.getValue()))
+                    .collect(Collectors.toList());
+
+            entityCache.getMultipleDocuments(propertyIdValues);
+
             warningStore.getWarnings().stream()
-                    .filter(warning -> warning.getProperties().containsKey(key))
                     .forEach(warning -> {
-                        PropertyIdValue missed = (PropertyIdValue) warning.getProperties().get(key);
-                        String label = "";
-                        if (((PropertyDocument) entityCache.get(missed)).getLabels().get((Locale.getDefault().getLanguage())) != null)
-                            label = ((PropertyDocument) entityCache.get(missed)).getLabels().get(Locale.getDefault().getLanguage())
-                                    .getText();
-                        warning.setProperty(key, new SuggestedPropertyIdValue(missed.getId(), missed.getSiteIri(), label));
+                        // Iterate through each entry in the properties map
+                        warning.getProperties().forEach((key, value) -> {
+                            // Check if the value is of type PropertyIdValue
+                            if (value instanceof PropertyIdValue) {
+                                PropertyIdValue property = (PropertyIdValue) value;
+                                String label = "";
+
+                                // Retrieve the label based on the locale
+                                PropertyDocument propertyDocument = (PropertyDocument) entityCache.get(property);
+                                if (propertyDocument != null && propertyDocument.getLabels() != null) {
+                                    label = propertyDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
+                                            ? propertyDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
+                                            : "";
+                                }
+
+                                // Update the property with a new SuggestedPropertyIdValue
+                                warning.setProperty(key, new SuggestedPropertyIdValue(property.getId(), property.getSiteIri(), label));
+                            }
+                        });
                     });
         }
     }

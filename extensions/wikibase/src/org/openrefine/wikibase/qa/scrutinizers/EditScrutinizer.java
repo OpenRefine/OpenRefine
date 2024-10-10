@@ -144,10 +144,6 @@ public abstract class EditScrutinizer {
 
     }
 
-    public List<String> getWarningsRelatedPropertyKeys() {
-        return new ArrayList<>();
-    }
-
     /**
      * Emits an issue that will be reported to the user, after merging with other issues of the same kind.
      * 

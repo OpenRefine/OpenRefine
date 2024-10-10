@@ -170,8 +170,4 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
         }
     }
 
-    @Override
-    public List<String> getWarningsRelatedPropertyKeys() {
-        return List.of("inverse_property_entity");
-    }
 }
