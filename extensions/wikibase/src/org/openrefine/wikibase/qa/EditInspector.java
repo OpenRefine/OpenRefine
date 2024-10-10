@@ -26,6 +26,7 @@ package org.openrefine.wikibase.qa;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
@@ -65,6 +67,7 @@ import org.openrefine.wikibase.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.UseAsQualifierScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
@@ -206,6 +209,43 @@ public class EditInspector {
             QAWarning warning = new QAWarning("no-issue-detected", null, QAWarning.Severity.INFO, 0);
             warning.setFacetable(false);
             warningStore.addWarning(warning);
+        } else {
+            resolveWarningPropertyLabels();
+        }
+    }
+
+    private void resolveWarningPropertyLabels() throws ExecutionException {
+        if (entityCache != null) {
+            List<EntityIdValue> propertyIdValues = warningStore.getWarnings().stream()
+                    .flatMap(warning -> warning.getProperties().entrySet().stream()
+                            .filter(entry -> entry.getValue() instanceof PropertyIdValue)
+                            .map(entry -> (PropertyIdValue) entry.getValue()))
+                    .collect(Collectors.toList());
+
+            entityCache.getMultipleDocuments(propertyIdValues);
+
+            warningStore.getWarnings().stream()
+                    .forEach(warning -> {
+                        // Iterate through each entry in the properties map
+                        warning.getProperties().forEach((key, value) -> {
+                            // Check if the value is of type PropertyIdValue
+                            if (value instanceof PropertyIdValue) {
+                                PropertyIdValue property = (PropertyIdValue) value;
+                                String label = "";
+
+                                // Retrieve the label based on the locale
+                                PropertyDocument propertyDocument = (PropertyDocument) entityCache.get(property);
+                                if (propertyDocument != null && propertyDocument.getLabels() != null) {
+                                    label = propertyDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
+                                            ? propertyDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
+                                            : "";
+                                }
+
+                                // Update the property with a new SuggestedPropertyIdValue
+                                warning.setProperty(key, new SuggestedPropertyIdValue(property.getId(), property.getSiteIri(), label));
+                            }
+                        });
+                    });
         }
     }
 }
