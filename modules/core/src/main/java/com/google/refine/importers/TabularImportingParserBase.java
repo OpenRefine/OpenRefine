@@ -46,6 +46,7 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
@@ -67,6 +68,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
         JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
         JSONUtilities.safePut(options, "storeBlankRows", true);
+        JSONUtilities.safePut(options, "storeBlankColumns", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
 
         return options;
@@ -75,7 +77,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
     /**
      * @param useInputStream
      *            true if parser takes an InputStream, false if it takes a Reader.
-     * 
+     *
      */
     protected TabularImportingParserBase(boolean useInputStream) {
         super(useInputStream);
@@ -126,13 +128,15 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         }
 
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", false);
-
+        boolean storeBlankColumns = JSONUtilities.getBoolean(options, "storeBlankColumns", true);
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
 
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
+
+        List<Boolean> columnsHasData = new ArrayList<>(); // Determine if there is data in each column,def = false
 
         List<Object> cells = null;
         int rowsWithData = 0;
@@ -174,14 +178,22 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
                     if (skipDataLines <= 0 || rowsWithData > skipDataLines) {
                         boolean rowHasData = false;
+
                         for (int c = 0; c < cells.size(); c++) {
                             Column column = ImporterUtilities.getOrAllocateColumn(
                                     project, columnNames, c, hasOurOwnColumnNames);
+                            int cellIndex = column.getCellIndex();
+                            // TODO: Can we make this more efficient? It's only inside this loop for the case where we
+                            // have an extra unexpected cell in a row
+                            while (cellIndex >= columnsHasData.size()) {
+                                columnsHasData.add(false);
+                            }
 
                             Object value = cells.get(c);
                             if (value instanceof Cell) {
-                                row.setCell(column.getCellIndex(), (Cell) value);
+                                row.setCell(cellIndex, (Cell) value);
                                 rowHasData = true;
+                                columnsHasData.set(cellIndex, true);
                             } else if (ExpressionUtils.isNonBlankData(value)) {
                                 Serializable storedValue;
                                 if (value instanceof String) {
@@ -194,12 +206,13 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                     storedValue = ExpressionUtils.wrapStorable(value);
                                 }
 
-                                row.setCell(column.getCellIndex(), new Cell(storedValue, null));
+                                row.setCell(cellIndex, new Cell(storedValue, null));
                                 rowHasData = true;
+                                columnsHasData.set(cellIndex, true);
                             } else if (!storeBlankCellsAsNulls) {
-                                row.setCell(column.getCellIndex(), new Cell("", null));
+                                row.setCell(cellIndex, new Cell("", null));
                             } else {
-                                row.setCell(column.getCellIndex(), null);
+                                row.setCell(cellIndex, null);
                             }
                         }
 
@@ -213,8 +226,30 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                     }
                 }
             }
+            if (!storeBlankColumns) {// if user don't choose storeBlankColumns, delete all empty columns.
+                deleteEmptyColumns(columnsHasData, project);
+            }
         } catch (IOException e) {
             exceptions.add(e);
+        } catch (ModelException e) {
+            exceptions.add(e);
         }
+    }
+
+    /**
+     * If "storeBlankColumns" == false, delete blank columns.
+     *
+     * @param columnsHasData
+     *            Record if there is data in each column( false:null;true:has data)
+     */
+    static public void deleteEmptyColumns(List<Boolean> columnsHasData, Project project) throws ModelException {
+        project.columnModel.update(); // make sure all our cell indexes are up to date
+        for (int c = 0; c < columnsHasData.size(); c++) {
+            if (!columnsHasData.get(c)) {
+                // remove column from columns
+                project.columnModel.removeColumnByCellIndex(c);
+            }
+        }
+        project.columnModel.update();
     }
 }

@@ -117,6 +117,20 @@ public class ColumnModel {
         internalInitialize();
     }
 
+    /**
+     * Add a new column to the list of columns. NOTE: This does not update all indices, so the caller is responsible for
+     * calling {@link #update()} at the appropriate time.
+     *
+     * @param index
+     *            index to add column at or -1 to add after the last column
+     * @param column
+     *            column to insert
+     * @param avoidNameCollision
+     *            true if column name should be made unique. If false, this method will throw a ModelException on
+     *            duplicate column names
+     * @throws ModelException
+     *             if the name of the column to be inserted already exists
+     */
     synchronized public void addColumn(int index, Column column, boolean avoidNameCollision) throws ModelException {
         String name = column.getName();
 
@@ -311,4 +325,10 @@ public class ColumnModel {
             column.clearPrecomputes();
         }
     }
+
+    public void removeColumnByCellIndex(int index) {
+        Column column = getColumnByCellIndex(index);
+        columns.remove(column);
+    }
+
 }

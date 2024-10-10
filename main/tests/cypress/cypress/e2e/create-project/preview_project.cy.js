@@ -197,4 +197,27 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
     cy.get('input[bind="disableAutoPreviewCheckbox"]').uncheck();
   });
+
+  it('Tests save blank columns of parsing options', function () {
+    cy.visitOpenRefine();
+    cy.createProjectThroughUserInterface('food-blank-column.mini.csv');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
+    // FIXME: data-table in preview has no thead, so first tr in tbody is a header
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(1)').should('to.contain', '1.');
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(2)').should('to.contain', '01001');
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(3)').should('to.contain', 'BUTTER,WITH SALT');
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(4)').should('to.contain', '15.87');
+    // empty cells are filled with NBSP when rendered
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(5)').should('to.contain', '\u00a0');
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(6)').should('to.contain', '717');
+
+    cy.get('input[bind="storeBlankColumnsCheckbox"]').uncheck();
+
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(1)').should('to.contain', '1.');
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(2)').should('to.contain', '01001');
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(3)').should('to.contain', 'BUTTER,WITH SALT');
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(4)').should('to.contain', '15.87');
+    // The next column should be one further to the left with the empty column gone
+    cy.get('table.data-table > tbody > tr:nth-child(2) > td:nth-child(6)').should('to.contain', '717');
+  });
 });
