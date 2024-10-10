@@ -44,6 +44,7 @@ import org.wikidata.wdtk.wikibaseapi.EditingResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiErrorMessage;
 
 import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikibase.schema.exceptions.NewEntityNotCreatedYetException;
@@ -236,11 +237,23 @@ public class EditBatchProcessor {
                 return performEdit();
             } else {
                 batchCursor++;
+                if ("failed-save".equals(e.getErrorCode())) {
+                    // special case for the failed-save error which isn't very informative.
+                    // We look for a better error message.
+                    for (MediaWikiErrorMessage detailedMessage : e.getDetailedMessages()) {
+                        if (!"wikibase-api-failed-save".equals(detailedMessage.getName())) {
+                            return new EditResult(update.getContributingRowIds(), detailedMessage.getName(),
+                                    detailedMessage.getHTMLText(), oldRevisionId, OptionalLong.empty(), null);
+                        }
+                    }
+                }
                 return new EditResult(update.getContributingRowIds(), e.getErrorCode(), e.getErrorMessage(), oldRevisionId,
                         OptionalLong.empty(), null);
             }
         } catch (IOException e) {
-            logger.warn("IO error while editing: " + e.getMessage());
+            batchCursor++;
+            return new EditResult(update.getContributingRowIds(), "network-error", e.getMessage(), oldRevisionId, lastRevisionId,
+                    newEntityUrl);
         }
 
         batchCursor++;
