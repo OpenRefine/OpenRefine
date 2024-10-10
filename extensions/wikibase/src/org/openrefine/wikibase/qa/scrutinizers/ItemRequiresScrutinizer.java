@@ -134,5 +134,4 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
 
         return true;
     }
-
 }

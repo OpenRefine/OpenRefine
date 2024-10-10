@@ -129,5 +129,4 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
 
         return false;
     }
-
 }
