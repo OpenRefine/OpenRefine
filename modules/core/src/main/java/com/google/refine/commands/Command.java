@@ -79,31 +79,31 @@ public abstract class Command {
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void doHead(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     /**
      * Whether each request to this command should be logged. For some commands that can get called too frequently, such
