@@ -70,7 +70,7 @@ Refine.GDataImportingController.prototype.startImportingDocument = function(doc)
             function(data2) {
             dismiss();
 
-            if (data2.status == 'ok') {
+            if (data2.status === 'ok') {
                 self._doc = doc;
                 self._jobID = data.jobID;
                 self._options = data2.options;
@@ -106,7 +106,7 @@ Refine.GDataImportingController.prototype.getOptions = function() {
     return def;
   };
 
-  if (this._doc.type != 'table') {
+  if (this._doc.type !== 'table') {
     this._parsingPanelElmts.sheetRecordContainer.find('input').each(function() {
       if (this.checked) {
         options.sheetUrl = this.getAttribute('sheetUrl');
@@ -217,7 +217,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
 
   this._parsingPanelElmts.projectNameInput[0].value = this._doc.title;
 
-  if (this._doc.type != 'table') {
+  if (this._doc.type !== 'table') {
     var sheetTable = this._parsingPanelElmts.sheetRecordContainer[0];
     $.each(this._options.worksheets, function(i, v) {
       var id = 'gdata_worksheet-' + Math.round(Math.random() * 1000000);
@@ -320,7 +320,7 @@ Refine.GDataImportingController.prototype._updatePreview = function() {
         "options" : JSON.stringify(self.getOptions())
         },
         function(result) {
-        if (result.status == "ok") {
+        if (result.status === "ok") {
             self._getPreviewData(function(projectData) {
             self._parsingPanelElmts.progressPanel.hide();
             self._parsingPanelElmts.dataPanel.show();
@@ -363,7 +363,7 @@ Refine.GDataImportingController.prototype._getPreviewData = function(callback, n
           result.rowModel = data;
           callback(result);
         },
-        "jsonp"
+        "json"
       );
     },
     "json"
@@ -372,7 +372,7 @@ Refine.GDataImportingController.prototype._getPreviewData = function(callback, n
 
 Refine.GDataImportingController.prototype._createProject = function() {
   var projectName = jQueryTrim(this._parsingPanelElmts.projectNameInput[0].value);
-  if (projectName.length == 0) {
+  if (projectName.length === 0) {
     DialogSystem.alert($.i18n('gdata-import/please-name-project'));
     this._parsingPanelElmts.projectNameInput.focus();
     return;
@@ -393,7 +393,7 @@ Refine.GDataImportingController.prototype._createProject = function() {
         "options" : JSON.stringify(options)
         },
         function(o) {
-        if (o.status == 'error') {
+        if (o.status === 'error') {
             DialogSystem.alert(o.message);
         } else {
             var start = new Date();
