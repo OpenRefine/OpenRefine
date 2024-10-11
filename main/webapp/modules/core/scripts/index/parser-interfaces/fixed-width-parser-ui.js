@@ -107,6 +107,7 @@ Refine.FixedWidthParserUI.prototype.getOptions = function() {
   options.guessCellValueTypes = this._optionContainerElmts.guessCellValueTypesCheckbox[0].checked;
 
   options.storeBlankRows = this._optionContainerElmts.storeBlankRowsCheckbox[0].checked;
+  options.storeBlankColumns = this._optionContainerElmts.storeBlankColumnsCheckbox[0].checked;
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
   options.includeArchiveFile = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
@@ -143,6 +144,7 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   $('#or-import-rows2').text($.i18n('core-index-parser/rows-data'));
   $('#or-import-parseCell').html($.i18n('core-index-parser/parse-cell'));
   $('#or-import-blank').text($.i18n('core-index-parser/store-blank'));
+  $('#or-import-blank-columns').text($.i18n('core-index-parser/store-blank-columns'));
   $('#or-import-null').text($.i18n('core-index-parser/store-nulls'));
   $('#or-import-source').html($.i18n('core-index-parser/store-source'));
   $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
@@ -180,7 +182,9 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   if (this._config.storeBlankRows) {
     this._optionContainerElmts.storeBlankRowsCheckbox.prop('checked', true);
   }
-
+  if (this._config.storeBlankColumns) {
+    this._optionContainerElmts.storeBlankColumnsCheckbox.prop("checked", true);
+  }
   if (this._config.guessCellValueTypes) {
     this._optionContainerElmts.guessCellValueTypesCheckbox.prop('checked', true);
   }
