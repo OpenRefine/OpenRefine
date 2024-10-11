@@ -32,6 +32,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,9 +60,11 @@ import org.wikidata.wdtk.wikibaseapi.EditingResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiErrorMessage;
 
 import com.google.refine.util.ParsingUtilities;
 
+import org.openrefine.wikibase.editing.EditBatchProcessor.EditResult;
 import org.openrefine.wikibase.testing.TestingData;
 import org.openrefine.wikibase.testing.WikidataRefineTest;
 import org.openrefine.wikibase.updates.EntityEdit;
@@ -235,6 +238,99 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         processor.performEdit();
         assertEquals(processor.progress(), 100);
         verify(editor, times(0)).editEntityDocument(any(), anyBoolean(), any(), any());
+    }
+
+    @Test
+    public void testSaveHasFailedError() throws Exception {
+        List<EntityEdit> batch = new ArrayList<>();
+        batch.add(new ItemEditBuilder(TestingData.existingId)
+                .addAlias(Datamodel.makeMonolingualTextValue("see https://tinyurl.com/some_url", "en"))
+                .addContributingRowId(123)
+                .build());
+        ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
+                .withLabel(Datamodel.makeMonolingualTextValue("pomme", "fr"))
+                .withDescription(Datamodel.makeMonolingualTextValue("fruit délicieux", "fr")).build();
+        when(fetcher.getEntityDocuments(Collections.singletonList(TestingData.existingId.getId())))
+                .thenReturn(Collections.singletonMap(TestingData.existingId.getId(), existingItem));
+
+        when(editor.editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag"))))
+                .thenThrow(new MediaWikiApiErrorException("failed-save", "The save has failed.",
+                        Arrays.asList(new MediaWikiErrorMessage("wikibase-api-failed-save", "The save has failed."),
+                                new MediaWikiErrorMessage("spam-blacklisted-link",
+                                        "The text you wanted to publish was blocked by the spam filter."))));
+
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag,
+                Arrays.asList("first-tag", "second-tag"), 50, 60);
+        assertEquals(1, processor.remainingEdits());
+        EditResult editResult = processor.performEdit();
+        assertEquals(0, processor.remainingEdits());
+
+        verify(editor, times(1)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag")));
+        verify(editor, times(0)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("second-tag")));
+        assertEquals(editResult.getErrorCode(), "spam-blacklisted-link");
+        assertEquals(editResult.getErrorMessage(), "The text you wanted to publish was blocked by the spam filter.");
+        assertEquals(editResult.getCorrespondingRowIds().size(), 1);
+        assertTrue(editResult.getCorrespondingRowIds().contains(123));
+    }
+
+    @Test
+    public void testGenericEditingError() throws Exception {
+        List<EntityEdit> batch = new ArrayList<>();
+        batch.add(new ItemEditBuilder(TestingData.existingId)
+                .addAlias(Datamodel.makeMonolingualTextValue("see https://tinyurl.com/some_url", "en"))
+                .addContributingRowId(123)
+                .build());
+        ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
+                .withLabel(Datamodel.makeMonolingualTextValue("pomme", "fr"))
+                .withDescription(Datamodel.makeMonolingualTextValue("fruit délicieux", "fr")).build();
+        when(fetcher.getEntityDocuments(Collections.singletonList(TestingData.existingId.getId())))
+                .thenReturn(Collections.singletonMap(TestingData.existingId.getId(), existingItem));
+
+        when(editor.editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag"))))
+                .thenThrow(new MediaWikiApiErrorException("some-mediawiki-error", "Something wrong, not sure what"));
+
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag,
+                Arrays.asList("first-tag", "second-tag"), 50, 60);
+        assertEquals(1, processor.remainingEdits());
+        EditResult editResult = processor.performEdit();
+        assertEquals(0, processor.remainingEdits());
+
+        verify(editor, times(1)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag")));
+        verify(editor, times(0)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("second-tag")));
+        assertEquals(editResult.getErrorCode(), "some-mediawiki-error");
+        assertEquals(editResult.getErrorMessage(), "Something wrong, not sure what");
+        assertEquals(editResult.getCorrespondingRowIds().size(), 1);
+        assertTrue(editResult.getCorrespondingRowIds().contains(123));
+    }
+
+    @Test
+    public void testIOException() throws Exception {
+        List<EntityEdit> batch = new ArrayList<>();
+        batch.add(new ItemEditBuilder(TestingData.existingId)
+                .addAlias(Datamodel.makeMonolingualTextValue("see https://tinyurl.com/some_url", "en"))
+                .addContributingRowId(123)
+                .build());
+        ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
+                .withLabel(Datamodel.makeMonolingualTextValue("pomme", "fr"))
+                .withDescription(Datamodel.makeMonolingualTextValue("fruit délicieux", "fr")).build();
+        when(fetcher.getEntityDocuments(Collections.singletonList(TestingData.existingId.getId())))
+                .thenReturn(Collections.singletonMap(TestingData.existingId.getId(), existingItem));
+
+        when(editor.editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag"))))
+                .thenThrow(new IOException("connection to Wikibase failed"));
+
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag,
+                Arrays.asList("first-tag", "second-tag"), 50, 60);
+        assertEquals(1, processor.remainingEdits());
+        EditResult editResult = processor.performEdit();
+        assertEquals(0, processor.remainingEdits());
+
+        verify(editor, times(1)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("first-tag")));
+        verify(editor, times(0)).editEntityDocument(any(), anyBoolean(), any(), eq(Collections.singletonList("second-tag")));
+        assertEquals(editResult.getErrorCode(), "network-error");
+        assertEquals(editResult.getErrorMessage(), "connection to Wikibase failed");
+        assertEquals(editResult.getCorrespondingRowIds().size(), 1);
+        assertTrue(editResult.getCorrespondingRowIds().contains(123));
     }
 
     @Test
