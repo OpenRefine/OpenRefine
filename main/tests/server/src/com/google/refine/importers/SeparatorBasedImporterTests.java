@@ -613,14 +613,11 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         columnNames.add("Col 5");
 
         // This will mock the situation of deleting empty columns(col2&col4)
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, true);
-            whenGetBooleanOption("storeBlankColumns", options, false);
-            whenGetArrayOption("columnNames", options, columnNames);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
+        prepareOptions(sep, -1, 0, 0, 1, false, true);
+        whenGetBooleanOption("storeBlankColumns", options, false);
+        whenGetArrayOption("columnNames", options, columnNames);
+        parseOneFile(SUT, new StringReader(input));
+
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Col 1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Col 3");
