@@ -292,6 +292,8 @@ public class GetRowsCommand extends Command {
                     rwv.totalRows, start, end, limit, pool, previousPageEnd, nextPageStart);
 
             respondJSON(response, result);
+        } catch (IllegalJsonpException e2) {
+            respondNoJsonpException(request, response);
         } catch (Exception e) {
             respondException(response, e);
         }

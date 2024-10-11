@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -145,6 +146,7 @@ public abstract class Command {
         if (project == null) {
             throw new IllegalArgumentException("parameter 'project' should not be null");
         }
+        checkJSONP(request);
 
         Engine engine = new Engine(project);
         EngineConfig c = getEngineConfig(request);
@@ -152,6 +154,12 @@ public abstract class Command {
             engine.initializeFromConfig(c);
         }
         return engine;
+    }
+
+    private static void checkJSONP(HttpServletRequest request) {
+        if (request.getParameter("callback") != null) {
+            throw new IllegalJsonpException("JSONP is no longer supported. Please use JSON for AJAX requests");
+        }
     }
 
     /**
@@ -165,6 +173,7 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
+        checkJSONP(request);
         String param = request.getParameter("project");
         if (param == null || "".equals(param)) {
             throw new ServletException("Can't find project: missing ID parameter");
@@ -209,6 +218,7 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
+        checkJSONP(request);
         try {
             return Integer.parseInt(request.getParameter(name));
         } catch (Exception e) {
@@ -227,6 +237,7 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
+        checkJSONP(request);
         Map<String, String> result = new HashMap<>();
         request.getParameterMap().forEach((k, v) -> result.put(k, v == null ? null : v[0]));
         return result;
@@ -244,6 +255,7 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
+        checkJSONP(request);
         try {
             String token = request.getParameter("csrf_token");
             return token != null && csrfFactory.validToken(token);
@@ -261,6 +273,7 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
+        checkJSONP(request);
         Map<String, String> options = ParsingUtilities.parseParameters(request);
         String token = options.get("csrf_token");
         return token != null && csrfFactory.validToken(token);
@@ -404,6 +417,26 @@ public abstract class Command {
         }
     }
 
+    static protected void respondNoJsonpException(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        if (response == null) {
+            throw new ServletException("Response object can't be null");
+        }
+
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        String cb = request.getParameter("callback");
+        Pattern validIdentifier = Pattern.compile("[a-zA-Z0-9_]+");
+        if (validIdentifier.matcher(cb).matches()) {
+            PrintWriter pw = response.getWriter();
+            pw.write(cb + "(");
+            ParsingUtilities.defaultWriter.writeValue(pw,
+                    Map.of("code", "error",
+                            "status", "error",
+                            "message", "JSONP is not supported by the server. Please use JSON in your AJAX requests."));
+            pw.write(")");
+        }
+    }
+
     /**
      * Used by @link DefaultImportingController} and GData importer to report non-fatal exceptions
      */
@@ -425,4 +458,10 @@ public abstract class Command {
         response.sendRedirect(url);
     }
 
+    public static class IllegalJsonpException extends IllegalArgumentException {
+
+        public IllegalJsonpException(String s) {
+            super(s);
+        }
+    }
 }
