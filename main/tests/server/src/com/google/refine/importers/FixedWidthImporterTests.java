@@ -159,7 +159,7 @@ public class FixedWidthImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns() {
+    public void testDeleteEmptyColumns() throws Exception {
         StringReader reader = new StringReader(SAMPLE_ROW + "\nTooShort");
 
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
@@ -189,11 +189,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         whenGetBooleanOption("storeBlankCellsAsNulls", options, false);
         whenGetBooleanOption("storeBlankColumns", options, false);
 
-        try {
-            parseOneFile(SUT, reader);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, reader);
 
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Col 1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Col 3");
