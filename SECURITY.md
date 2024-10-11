@@ -2,8 +2,9 @@
 
 ## Supported Versions
 
-Security updates are provided for the latest stable release, and are published as patch releases. For instance, if the latest stable version is 3.7.4, any vulnerabilities affecting it will be fixed by releasing further patch releases (such as 3.7.5).
-Previous releases do not get security updates.
+Security updates are provided for the latest stable release, and are published as patch releases. For instance, if the latest stable version is 3.8.2, reported vulnerabilities affecting it will be fixed by releasing further patch releases (such as 3.8.3). Accumulated patches are included in the next minor or major release (e.g. 3.9 or 4.0)
+
+Previous releases do not get security updates, so we recommend always running the latest stable release.
 
 ## Reporting a Vulnerability
 
