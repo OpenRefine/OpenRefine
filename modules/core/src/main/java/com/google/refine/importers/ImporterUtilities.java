@@ -152,7 +152,7 @@ public class ImporterUtilities {
                 } else {
                     column = new Column(project.columnModel.allocateNewCellIndex(), columnName);
                     try {
-                        project.columnModel.addColumn(project.columnModel.columns.size(), column, false);
+                        project.columnModel.addColumn(-1, column, false);
                     } catch (ModelException e) {
                         // Ignore: shouldn't get in here since we just checked for duplicate names.
                     }
@@ -189,12 +189,13 @@ public class ImporterUtilities {
             if (project.columnModel.getColumnByName(cell) == null) {
                 Column column = new Column(project.columnModel.allocateNewCellIndex(), cell);
                 try {
-                    project.columnModel.addColumn(project.columnModel.columns.size(), column, false);
+                    project.columnModel.addColumn(-1, column, false);
                 } catch (ModelException e) {
                     // Ignore: shouldn't get in here since we just checked for duplicate names.
                 }
             }
         }
+        project.columnModel.update();
     }
 
     static public interface MultiFileReadingProgress {

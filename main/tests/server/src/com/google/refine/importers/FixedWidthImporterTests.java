@@ -32,6 +32,7 @@ import java.io.StringReader;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -157,4 +158,41 @@ public class FixedWidthImporterTests extends ImporterTest {
         assertProjectEquals(project, expectedProject);
     }
 
+    @Test
+    public void testDeleteEmptyColumns() throws Exception {
+        StringReader reader = new StringReader(SAMPLE_ROW + "\nTooShort");
+
+        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
+        // Set up blank column in project
+        JSONUtilities.append(columnWidths, 6);
+        JSONUtilities.append(columnWidths, 0);
+        JSONUtilities.append(columnWidths, 5);
+        JSONUtilities.append(columnWidths, 0);
+        JSONUtilities.append(columnWidths, 3);
+        whenGetArrayOption("columnWidths", options, columnWidths);
+
+        ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
+        columnNames.add("Col 1");
+        columnNames.add("Col 2");
+        columnNames.add("Col 3");
+        columnNames.add("Col 4");
+        columnNames.add("Col 5");
+        columnNames.add("Col 6");
+        whenGetArrayOption("columnNames", options, columnNames);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 1);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+
+        // This will mock the situation of deleting empty columns(col2&col4)
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, false);
+        whenGetBooleanOption("storeBlankColumns", options, false);
+
+        parseOneFile(SUT, reader);
+
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Col 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Col 3");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Col 5");
+    }
 }
