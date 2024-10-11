@@ -2,10 +2,8 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 3.7.x   | :white_check_mark: |
-| <= 3.6   | :x:                |
+Security updates are provided for the latest stable release, and are published as patch releases. For instance, if the latest stable version is 3.7.4, any vulnerabilities affecting it will be fixed by releasing further patch releases (such as 3.7.5).
+Previous releases do not get security updates.
 
 ## Reporting a Vulnerability
 
