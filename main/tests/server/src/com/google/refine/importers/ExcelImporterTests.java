@@ -422,7 +422,7 @@ public class ExcelImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns() throws FileNotFoundException, IOException {
+    public void testDeleteEmptyColumns() throws Exception {
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
                 .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
@@ -438,11 +438,8 @@ public class ExcelImporterTests extends ImporterTest {
         whenGetBooleanOption("storeBlankColumns", options, false);
 
         InputStream stream = new FileInputStream(xlsxFile);
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
+
         // We should have one less than the start due to empty column being skipped
         assertEquals(project.columnModel.columns.size(), 12);
         // NOTE: we need to redirect through the column model because the rows will still have empty cells
