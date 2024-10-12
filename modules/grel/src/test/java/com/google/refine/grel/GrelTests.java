@@ -36,7 +36,11 @@ package com.google.refine.grel;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.fail;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -224,6 +228,37 @@ public class GrelTests extends GrelTestBase {
         Evaluable eval = MetaParser.parse("grel:" + test);
         Object result = eval.evaluate(bindings);
         Assert.assertTrue(result instanceof EvalError);
+    }
+
+    @Test
+    public void testColumnDependencies() throws ParsingException {
+        // integration test for column dependency extraction
+
+        String baseColumn = "base";
+        String tests[][] = {
+                { "value", "base" },
+                { "cell.recon.match.id", "base" },
+                { "value + 'a'", "base" },
+                { "\"constant\"", "" },
+                { "1", "" },
+                { "cells.foo", "foo" },
+                { "value + ' ' + cells.foo.value", "base,foo" },
+                { "cells[\"foo\"].value+'_'+value", "base,foo" },
+                { "parseHtml(value.trim())", "base" },
+                { "cells", null },
+                // this could be analyzed too, but we will never reach completeness anyway!
+                { "get(cells, 'foo'+'bar')", null },
+                // TODO this should fail to extract any dependencies because facetCount is not a pure function
+                // { "facetCount(value, 'value', 'col')", null },
+        };
+        for (String[] test : tests) {
+            Evaluable eval = MetaParser.parse("grel:" + test[0]);
+            Optional<Set<String>> expected = test[1] == null ? Optional.empty()
+                    : Optional.of(Arrays.asList(test[1].split(",")).stream()
+                            .filter(s -> !s.isEmpty()).collect(Collectors.toSet()));
+            Optional<Set<String>> columnDependencies = eval.getColumnDependencies(Optional.of(baseColumn));
+            Assert.assertEquals(columnDependencies, expected, "for expression: " + test[0]);
+        }
     }
 
     // Test for /\ throwing Internal Error
