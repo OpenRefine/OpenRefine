@@ -158,8 +158,10 @@ public abstract class Command {
     /**
      * Check for attempts to use JSONP with a `callback` parameter and throw an exception if found.
      *
-     * @param request the request to be checked
-     * @throws IllegalJsonpException when a JSONP style call is found
+     * @param request
+     *            the request to be checked
+     * @throws IllegalJsonpException
+     *             when a JSONP style call is found
      */
     protected static void checkJSONP(HttpServletRequest request) {
         if (request.getParameter("callback") != null) {
@@ -170,10 +172,12 @@ public abstract class Command {
     /**
      * Utility method for retrieving the Project object having the ID specified in the "project" URL parameter.
      *
-     * @param request the HTTP request to be parsed
-     * @return the {@link  Project} identified by the ID in the "project" parameter
-     * @throws ServletException if there's no "project" parameter, it's badly formatted, or doesn't a have a project
-     * associated with the ID.
+     * @param request
+     *            the HTTP request to be parsed
+     * @return the {@link Project} identified by the ID in the "project" parameter
+     * @throws ServletException
+     *             if there's no "project" parameter, it's badly formatted, or doesn't a have a project associated with
+     *             the ID.
      */
     protected Project getProject(HttpServletRequest request) throws ServletException {
         if (request == null) {
@@ -200,10 +204,12 @@ public abstract class Command {
     /**
      * Utility method for retrieving the ProjectMetadata object having the ID specified in the "project" URL parameter.
      *
-     * @param request the HTTP request to be parsed
-     * @return the {@link  ProjectMetadata} identified by the ID in the "project" parameter
-     * @throws ServletException if there's no "project" parameter, it's badly formatted, or doesn't a have a project
-     * metadata associated with the ID.
+     * @param request
+     *            the HTTP request to be parsed
+     * @return the {@link ProjectMetadata} identified by the ID in the "project" parameter
+     * @throws ServletException
+     *             if there's no "project" parameter, it's badly formatted, or doesn't a have a project metadata
+     *             associated with the ID.
      */
     protected ProjectMetadata getProjectMetadata(HttpServletRequest request) throws ServletException {
         if (request == null) {
@@ -235,7 +241,8 @@ public abstract class Command {
     /**
      * Shim for {@link HttpServletRequest#getParameterMap()} which returns single values instead of arrays
      *
-     * @param request the HTTP request to be parsed
+     * @param request
+     *            the HTTP request to be parsed
      * @return Map of String values, keyed by Strings
      */
     static protected Map<String, String> getParameters(HttpServletRequest request) {
@@ -251,7 +258,8 @@ public abstract class Command {
      * Utility method for retrieving the CSRF token stored in the "csrf_token" parameter of the request, and checking
      * that it is valid.
      *
-     * @param request HTTP request to be checked
+     * @param request
+     *            HTTP request to be checked
      * @return true if token is valid or false if it is not
      * @throws ServletException
      */
