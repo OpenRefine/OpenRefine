@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Interface for evaluable expressions in any arbitrary language.
@@ -47,4 +49,21 @@ public interface Evaluable {
      * @return
      */
     public Object evaluate(Properties bindings);
+
+    /**
+     * Returns an approximation of the names of the columns this expression depends on. This approximation is designed
+     * to be safe: if a set of column names is returned, then the expression does not read any other column than the
+     * ones mentioned, regardless of the data it is executed on.
+     *
+     * @param baseColumn
+     *            the name of the column this expression is based on (none if the expression is not evaluated on a
+     *            particular column)
+     * @return {@link Optional#empty()} if the columns could not be isolated: in this case, the expression might depend
+     *         on all columns in the project. Note that this is different from returning an empty set, which means that
+     *         the expression is constant.
+     */
+    public default Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
+        return Optional.empty();
+    }
+
 }
