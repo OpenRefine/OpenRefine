@@ -146,7 +146,6 @@ public abstract class Command {
         if (project == null) {
             throw new IllegalArgumentException("parameter 'project' should not be null");
         }
-        checkJSONP(request);
 
         Engine engine = new Engine(project);
         EngineConfig c = getEngineConfig(request);
@@ -156,7 +155,13 @@ public abstract class Command {
         return engine;
     }
 
-    private static void checkJSONP(HttpServletRequest request) {
+    /**
+     * Check for attempts to use JSONP with a `callback` parameter and throw an exception if found.
+     *
+     * @param request the request to be checked
+     * @throws IllegalJsonpException when a JSONP style call is found
+     */
+    protected static void checkJSONP(HttpServletRequest request) {
         if (request.getParameter("callback") != null) {
             throw new IllegalJsonpException("JSONP is no longer supported. Please use JSON for AJAX requests");
         }
@@ -165,15 +170,15 @@ public abstract class Command {
     /**
      * Utility method for retrieving the Project object having the ID specified in the "project" URL parameter.
      *
-     * @param request
-     * @return
-     * @throws ServletException
+     * @param request the HTTP request to be parsed
+     * @return the {@link  Project} identified by the ID in the "project" parameter
+     * @throws ServletException if there's no "project" parameter, it's badly formatted, or doesn't a have a project
+     * associated with the ID.
      */
     protected Project getProject(HttpServletRequest request) throws ServletException {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-        checkJSONP(request);
         String param = request.getParameter("project");
         if (param == null || "".equals(param)) {
             throw new ServletException("Can't find project: missing ID parameter");
@@ -195,9 +200,10 @@ public abstract class Command {
     /**
      * Utility method for retrieving the ProjectMetadata object having the ID specified in the "project" URL parameter.
      *
-     * @param request
-     * @return
-     * @throws ServletException
+     * @param request the HTTP request to be parsed
+     * @return the {@link  ProjectMetadata} identified by the ID in the "project" parameter
+     * @throws ServletException if there's no "project" parameter, it's badly formatted, or doesn't a have a project
+     * metadata associated with the ID.
      */
     protected ProjectMetadata getProjectMetadata(HttpServletRequest request) throws ServletException {
         if (request == null) {
@@ -218,7 +224,6 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-        checkJSONP(request);
         try {
             return Integer.parseInt(request.getParameter(name));
         } catch (Exception e) {
@@ -230,14 +235,13 @@ public abstract class Command {
     /**
      * Shim for {@link HttpServletRequest#getParameterMap()} which returns single values instead of arrays
      *
-     * @param request
+     * @param request the HTTP request to be parsed
      * @return Map of String values, keyed by Strings
      */
     static protected Map<String, String> getParameters(HttpServletRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-        checkJSONP(request);
         Map<String, String> result = new HashMap<>();
         request.getParameterMap().forEach((k, v) -> result.put(k, v == null ? null : v[0]));
         return result;
@@ -247,15 +251,14 @@ public abstract class Command {
      * Utility method for retrieving the CSRF token stored in the "csrf_token" parameter of the request, and checking
      * that it is valid.
      *
-     * @param request
-     * @return
+     * @param request HTTP request to be checked
+     * @return true if token is valid or false if it is not
      * @throws ServletException
      */
     protected boolean hasValidCSRFToken(HttpServletRequest request) throws ServletException {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-        checkJSONP(request);
         try {
             String token = request.getParameter("csrf_token");
             return token != null && csrfFactory.validToken(token);
@@ -273,7 +276,6 @@ public abstract class Command {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
-        checkJSONP(request);
         Map<String, String> options = ParsingUtilities.parseParameters(request);
         String token = options.get("csrf_token");
         return token != null && csrfFactory.validToken(token);
@@ -432,7 +434,7 @@ public abstract class Command {
             ParsingUtilities.defaultWriter.writeValue(pw,
                     Map.of("code", "error",
                             "status", "error",
-                            "message", "JSONP is not supported by the server. Please use JSON in your AJAX requests."));
+                            "message", "JSONP is not supported for this command. Please use JSON in your AJAX requests."));
             pw.write(")");
         }
     }
