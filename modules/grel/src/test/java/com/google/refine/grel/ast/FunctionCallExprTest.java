@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Function;
 
 public class FunctionCallExprTest extends ExprTestBase {
@@ -23,13 +22,13 @@ public class FunctionCallExprTest extends ExprTestBase {
 
     @Test
     public void testUnion() {
-        Evaluable ev = new FunctionCallExpr(new Evaluable[] { constant, currentColumn, twoColumns }, function);
+        GrelExpr ev = new FunctionCallExpr(new GrelExpr[] { constant, currentColumn, twoColumns }, function);
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn", "a", "b"));
     }
 
     @Test
     public void testUnanalyzable() {
-        Evaluable ev = new FunctionCallExpr(new Evaluable[] { currentColumn, unanalyzable }, function);
+        GrelExpr ev = new FunctionCallExpr(new GrelExpr[] { currentColumn, unanalyzable }, function);
         assertEquals(ev.getColumnDependencies(baseColumn), Optional.empty());
     }
 }

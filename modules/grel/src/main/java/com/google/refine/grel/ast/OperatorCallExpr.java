@@ -39,18 +39,17 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
-import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 
 /**
  * An abstract syntax tree node encapsulating an operator call, such as "+".
  */
-public class OperatorCallExpr implements Evaluable {
+public class OperatorCallExpr implements GrelExpr {
 
-    final protected Evaluable[] _args;
+    final protected GrelExpr[] _args;
     final protected String _op;
 
-    public OperatorCallExpr(Evaluable[] args, String op) {
+    public OperatorCallExpr(GrelExpr[] args, String op) {
         _args = args;
         _op = op;
     }
@@ -207,7 +206,7 @@ public class OperatorCallExpr implements Evaluable {
     @Override
     public final Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
         Set<String> dependencies = new HashSet<>();
-        for (Evaluable ev : _args) {
+        for (GrelExpr ev : _args) {
             Optional<Set<String>> deps = ev.getColumnDependencies(baseColumn);
             if (deps.isEmpty()) {
                 return Optional.empty();
@@ -221,7 +220,7 @@ public class OperatorCallExpr implements Evaluable {
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
-        for (Evaluable ev : _args) {
+        for (GrelExpr ev : _args) {
             if (sb.length() > 0) {
                 sb.append(' ');
                 sb.append(_op);

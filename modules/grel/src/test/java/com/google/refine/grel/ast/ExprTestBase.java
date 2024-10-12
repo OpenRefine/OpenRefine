@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 
 import org.testng.annotations.BeforeMethod;
 
-import com.google.refine.expr.Evaluable;
-
 /**
  * Base class to test expression classes. Contains utilities to test column dependency extraction.
  * 
@@ -21,17 +19,17 @@ import com.google.refine.expr.Evaluable;
 public class ExprTestBase {
 
     protected Optional<String> baseColumn = Optional.of("baseColumn");
-    protected Evaluable currentColumn;
-    protected Evaluable unanalyzable;
-    protected Evaluable twoColumns;
-    protected Evaluable constant;
+    protected GrelExpr currentColumn;
+    protected GrelExpr unanalyzable;
+    protected GrelExpr twoColumns;
+    protected GrelExpr constant;
 
     @BeforeMethod
     public void setUp() {
-        currentColumn = mock(Evaluable.class);
-        unanalyzable = mock(Evaluable.class);
-        twoColumns = mock(Evaluable.class);
-        constant = mock(Evaluable.class);
+        currentColumn = mock(GrelExpr.class);
+        unanalyzable = mock(GrelExpr.class);
+        twoColumns = mock(GrelExpr.class);
+        constant = mock(GrelExpr.class);
 
         when(currentColumn.getColumnDependencies(baseColumn))
                 .thenReturn(set("baseColumn"));

@@ -40,7 +40,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.functions.Get;
 import com.google.refine.grel.Function;
@@ -50,12 +49,12 @@ import com.google.refine.grel.Function;
  * before the function is applied. If any argument is an error, the function is not applied, and the error is the result
  * of the expression.
  */
-public class FunctionCallExpr implements Evaluable {
+public class FunctionCallExpr implements GrelExpr {
 
-    final protected Evaluable[] _args;
+    final protected GrelExpr[] _args;
     final protected Function _function;
 
-    public FunctionCallExpr(Evaluable[] args, Function f) {
+    public FunctionCallExpr(GrelExpr[] args, Function f) {
         _args = args;
         _function = f;
     }
@@ -88,7 +87,7 @@ public class FunctionCallExpr implements Evaluable {
         }
         // TODO distinguish functions which are "pure" and those which access external data, like cross or facetCount
         Set<String> dependencies = new HashSet<>();
-        for (Evaluable ev : _args) {
+        for (GrelExpr ev : _args) {
             Optional<Set<String>> deps = ev.getColumnDependencies(baseColumn);
             if (deps.isEmpty()) {
                 return Optional.empty();
@@ -102,7 +101,7 @@ public class FunctionCallExpr implements Evaluable {
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
-        for (Evaluable ev : _args) {
+        for (GrelExpr ev : _args) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }

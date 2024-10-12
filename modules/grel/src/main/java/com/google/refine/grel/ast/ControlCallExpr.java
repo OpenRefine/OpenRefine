@@ -39,18 +39,17 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
 
 /**
  * An abstract syntax tree node encapsulating a control call, such as "if".
  */
-public class ControlCallExpr implements Evaluable {
+public class ControlCallExpr implements GrelExpr {
 
-    final protected Evaluable[] _args;
+    final protected GrelExpr[] _args;
     final protected Control _control;
 
-    public ControlCallExpr(Evaluable[] args, Control c) {
+    public ControlCallExpr(GrelExpr[] args, Control c) {
         _args = args;
         _control = c;
     }
@@ -67,7 +66,7 @@ public class ControlCallExpr implements Evaluable {
     @Override
     public final Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
         Set<String> dependencies = new HashSet<>();
-        for (Evaluable ev : _args) {
+        for (GrelExpr ev : _args) {
             Optional<Set<String>> deps = ev.getColumnDependencies(baseColumn);
             if (deps.isEmpty()) {
                 return Optional.empty();
@@ -81,7 +80,7 @@ public class ControlCallExpr implements Evaluable {
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
-        for (Evaluable ev : _args) {
+        for (GrelExpr ev : _args) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }

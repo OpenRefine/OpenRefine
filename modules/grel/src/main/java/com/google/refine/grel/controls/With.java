@@ -35,17 +35,17 @@ package com.google.refine.grel.controls;
 
 import java.util.Properties;
 
-import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlDescription;
 import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.ast.GrelExpr;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class With implements Control {
 
     @Override
-    public String checkArguments(Evaluable[] args) {
+    public String checkArguments(GrelExpr[] args) {
         if (args.length != 3) {
             return ControlEvalError.expects_three_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
@@ -55,7 +55,7 @@ public class With implements Control {
     }
 
     @Override
-    public Object call(Properties bindings, Evaluable[] args) {
+    public Object call(Properties bindings, GrelExpr[] args) {
         Object o = args[0].evaluate(bindings);
         String name = ((VariableExpr) args[1]).getName();
 

@@ -7,13 +7,11 @@ import java.util.Optional;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.Evaluable;
-
 public class VariableExprTest extends ExprTestBase {
 
     @Test
     public void testBaseColumn() {
-        Evaluable ev = new VariableExpr("value");
+        GrelExpr ev = new VariableExpr("value");
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn"));
         ev = new VariableExpr("cell");
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn"));
@@ -23,7 +21,7 @@ public class VariableExprTest extends ExprTestBase {
 
     @Test
     public void testUnanalyzable() {
-        Evaluable ev = new VariableExpr("cells");
+        GrelExpr ev = new VariableExpr("cells");
         assertEquals(ev.getColumnDependencies(baseColumn), Optional.empty());
         ev = new VariableExpr("row");
         assertEquals(ev.getColumnDependencies(baseColumn), Optional.empty());
@@ -33,7 +31,7 @@ public class VariableExprTest extends ExprTestBase {
 
     @Test
     public void testSingleton() {
-        Evaluable ev = new VariableExpr("foo");
+        GrelExpr ev = new VariableExpr("foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set());
     }
 }
