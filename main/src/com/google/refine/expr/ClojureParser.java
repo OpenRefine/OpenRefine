@@ -45,12 +45,12 @@ import clojure.lang.RT;
 public class ClojureParser implements LanguageSpecificParser {
 
     @Override
-    public Evaluable parse(String s) throws ParsingException {
+    public Evaluable parse(String source, String languagePrefix) throws ParsingException {
         try {
 //                    RT.load("clojure/core"); // Make sure RT is initialized
             Object foo = RT.CURRENT_NS; // Make sure RT is initialized
             IFn fn = (IFn) clojure.lang.Compiler.load(new StringReader(
-                    "(fn [value cell cells row rowIndex] " + s + ")"));
+                    "(fn [value cell cells row rowIndex] " + source + ")"));
 
             // TODO: We should to switch from using Compiler.load
             // because it's technically an internal interface
@@ -79,6 +79,16 @@ public class ClojureParser implements LanguageSpecificParser {
                     } catch (Exception e) {
                         return new EvalError(e.getMessage());
                     }
+                }
+
+                @Override
+                public String getSource() {
+                    return source;
+                }
+
+                @Override
+                public String getLanguagePrefix() {
+                    return languagePrefix;
                 }
             }.init(fn);
         } catch (Exception e) {

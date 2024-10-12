@@ -273,4 +273,12 @@ public class GrelTests extends GrelTestBase {
                     "Parsing error at offset 14: Missing number, string, identifier, regex, or parenthesized expression");
         }
     }
+
+    @Test
+    public void testGetters() throws ParsingException {
+        Evaluable evaluable = MetaParser.parse("grel:value + \" foo\"");
+
+        Assert.assertEquals(evaluable.getSource(), "value + \" foo\"");
+        Assert.assertEquals(evaluable.getLanguagePrefix(), "grel");
+    }
 }

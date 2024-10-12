@@ -50,7 +50,7 @@ import com.google.refine.grel.Function;
  * before the function is applied. If any argument is an error, the function is not applied, and the error is the result
  * of the expression.
  */
-public class FunctionCallExpr implements Evaluable {
+public class FunctionCallExpr extends GrelExpr {
 
     final protected Evaluable[] _args;
     final protected Function _function;
@@ -111,4 +111,5 @@ public class FunctionCallExpr implements Evaluable {
 
         return _function.getClass().getSimpleName() + "(" + sb.toString() + ")";
     }
+
 }

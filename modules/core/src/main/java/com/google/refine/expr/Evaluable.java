@@ -43,6 +43,17 @@ import java.util.Set;
 public interface Evaluable {
 
     /**
+     * The source string which generated this expression. This does not include the language prefix, which can be
+     * obtained by {@link #getLanguagePrefix()}.
+     */
+    public String getSource();
+
+    /**
+     * The language prefix used to generate this evaluable (without final colon).
+     */
+    public String getLanguagePrefix();
+
+    /**
      * Evaluate this expression in the given environment (bindings).
      * 
      * @param bindings
