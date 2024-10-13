@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -78,31 +79,31 @@ public abstract class Command {
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void doHead(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         throw new UnsupportedOperationException();
-    };
+    }
 
     /**
      * Whether each request to this command should be logged. For some commands that can get called too frequently, such
@@ -155,11 +156,28 @@ public abstract class Command {
     }
 
     /**
+     * Check for attempts to use JSONP with a `callback` parameter and throw an exception if found.
+     *
+     * @param request
+     *            the request to be checked
+     * @throws IllegalJsonpException
+     *             when a JSONP style call is found
+     */
+    protected static void checkJSONP(HttpServletRequest request) {
+        if (request.getParameter("callback") != null) {
+            throw new IllegalJsonpException("JSONP is no longer supported. Please use JSON for AJAX requests");
+        }
+    }
+
+    /**
      * Utility method for retrieving the Project object having the ID specified in the "project" URL parameter.
      *
      * @param request
-     * @return
+     *            the HTTP request to be parsed
+     * @return the {@link Project} identified by the ID in the "project" parameter
      * @throws ServletException
+     *             if there's no "project" parameter, it's badly formatted, or doesn't a have a project associated with
+     *             the ID.
      */
     protected Project getProject(HttpServletRequest request) throws ServletException {
         if (request == null) {
@@ -187,8 +205,11 @@ public abstract class Command {
      * Utility method for retrieving the ProjectMetadata object having the ID specified in the "project" URL parameter.
      *
      * @param request
-     * @return
+     *            the HTTP request to be parsed
+     * @return the {@link ProjectMetadata} identified by the ID in the "project" parameter
      * @throws ServletException
+     *             if there's no "project" parameter, it's badly formatted, or doesn't a have a project metadata
+     *             associated with the ID.
      */
     protected ProjectMetadata getProjectMetadata(HttpServletRequest request) throws ServletException {
         if (request == null) {
@@ -221,6 +242,7 @@ public abstract class Command {
      * Shim for {@link HttpServletRequest#getParameterMap()} which returns single values instead of arrays
      *
      * @param request
+     *            the HTTP request to be parsed
      * @return Map of String values, keyed by Strings
      */
     static protected Map<String, String> getParameters(HttpServletRequest request) {
@@ -237,7 +259,8 @@ public abstract class Command {
      * that it is valid.
      *
      * @param request
-     * @return
+     *            HTTP request to be checked
+     * @return true if token is valid or false if it is not
      * @throws ServletException
      */
     protected boolean hasValidCSRFToken(HttpServletRequest request) throws ServletException {
@@ -404,6 +427,26 @@ public abstract class Command {
         }
     }
 
+    static protected void respondNoJsonpException(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        if (response == null) {
+            throw new ServletException("Response object can't be null");
+        }
+
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        String cb = request.getParameter("callback");
+        Pattern validIdentifier = Pattern.compile("[a-zA-Z0-9_]+");
+        if (validIdentifier.matcher(cb).matches()) {
+            PrintWriter pw = response.getWriter();
+            pw.write(cb + "(");
+            ParsingUtilities.defaultWriter.writeValue(pw,
+                    Map.of("code", "error",
+                            "status", "error",
+                            "message", "JSONP is not supported for this command. Please use JSON in your AJAX requests."));
+            pw.write(")");
+        }
+    }
+
     /**
      * Used by @link DefaultImportingController} and GData importer to report non-fatal exceptions
      */
@@ -425,4 +468,10 @@ public abstract class Command {
         response.sendRedirect(url);
     }
 
+    public static class IllegalJsonpException extends IllegalArgumentException {
+
+        public IllegalJsonpException(String s) {
+            super(s);
+        }
+    }
 }
