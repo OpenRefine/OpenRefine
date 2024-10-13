@@ -60,7 +60,10 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.cancelButton.on('click',function() { self._dismiss(); });
   this._elmts.nextButton.on('click',function() { 
     if(self._record){
-    self._nextDialog(self._column, self._selectedServiceRecordIndex, self._serviceRecords, self._record, self.previousRecord);
+      // refetch selected service manifest then navigate to next dialog on success
+      self._refetchServiceManifest(self._record.service, function() {
+        self._nextDialog(self._column, self._selectedServiceRecordIndex, self._serviceRecords, self._record, self.previousRecord);
+      });
     }
     else{
       var message = document.getElementById('popup-message');
@@ -211,4 +214,20 @@ ReconDialog.prototype._onAddStandardService = function() {
   elmts.input.trigger('focus').trigger('select');
 };
 
-
+/**
+ * Refetches the manifest for a reconciliation service and re-registers it.
+ * 
+ * @param {Object} service - The reconciliation service object
+ * @param {Function} [f] - Optional callback function to execute after re-registering
+ */
+ReconDialog.prototype._refetchServiceManifest = function(service, f) {
+  var dismissBusy = DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
+  $.ajax({ url: service.url })
+    .done(function() {
+      ReconciliationManager.reRegisterService(service, f, true);
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + service.url);
+    })
+    .always(function() { dismissBusy(); });
+};
