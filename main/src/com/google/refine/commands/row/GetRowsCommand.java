@@ -189,6 +189,7 @@ public class GetRowsCommand extends Command {
             throws ServletException, IOException {
 
         try {
+            checkJSONP(request); // We used to support JSONP, but don't anymore
             Project project = null;
 
             // This command also supports retrieving rows for an importing job.
@@ -292,6 +293,8 @@ public class GetRowsCommand extends Command {
                     rwv.totalRows, start, end, limit, pool, previousPageEnd, nextPageStart);
 
             respondJSON(response, result);
+        } catch (IllegalJsonpException e2) {
+            respondNoJsonpException(request, response);
         } catch (Exception e) {
             respondException(response, e);
         }
