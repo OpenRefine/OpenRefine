@@ -14,8 +14,12 @@ WarningsRenderer._renderEntity = function (entity, plainText) {
   if (entity.label) {
     fullLabel = entity.label + ' (' + id + ')';
   }
+  var suggestedValue = "";
+  if (entity.suggestedValue) {
+    suggestedValue = $.i18n('wikibase-schema/expected-value') +'<a href="' + entity.suggestedValue.iri + '" class="wb-preview-entity" target="_blank">' +  entity.suggestedValue.label + '</a>';
+  }
   if (plainText) {
-    return fullLabel;
+    return fullLabel + entity.suggestedValue ? $.i18n('wikibase-schema/expected-value') + entity.suggestedValue.label : "";
   }
 
   var url = entity.iri;
@@ -24,9 +28,9 @@ WarningsRenderer._renderEntity = function (entity, plainText) {
   }
 
   if (is_new) {
-    return '<span class="wb-preview-new-entity">' + fullLabel + '</span>';
+    return '<span class="wb-preview-new-entity">' + fullLabel + '</span>' + suggestedValue;
   } else {
-    return '<a href="' + url + '" class="wb-preview-entity" target="_blank">' + fullLabel + '</a>';
+    return '<a href="' + url + '" class="wb-preview-entity" target="_blank">' + fullLabel + '</a>' + suggestedValue;
   }
 };
 

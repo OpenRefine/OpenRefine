@@ -109,6 +109,7 @@
     "wikibase-schema/incomplete-schema-could-not-be-saved": "Your schema is incomplete so it cannot be saved yet.",
     "wikibase-schema/unsaved-warning": "You have made unsaved changes to your Wikibase schema. Close anyway?",
     "wikibase-schema/incompatible-site-iri-reconciled-column": "This column is reconciled to the identifier space $1, but this input requires a column reconciled to $2.",
+    "wikibase-schema/expected-value": " with value set as ",
     "wikibase-preview/new-id": "new item",
     "wikibase-preview/delete-all-existing-statements": "Delete all existing statements",
     "wikibase-account/dialog-header": "$1 account",

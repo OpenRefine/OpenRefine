@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -67,6 +68,7 @@ import org.openrefine.wikibase.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.UseAsQualifierScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedItemIdValue;
 import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
@@ -215,6 +217,11 @@ public class EditInspector {
     }
 
     private void resolveWarningPropertyLabels() throws ExecutionException {
+        List<String> warningTypeswithSuggestedData = List.of("new-item-requires-property-to-have-certain-values",
+                "new-item-requires-certain-other-statement",
+                "existing-item-requires-property-to-have-certain-values",
+                "existing-item-requires-certain-other-statement");
+
         if (entityCache != null) {
             List<EntityIdValue> propertyIdValues = warningStore.getWarnings().stream()
                     .flatMap(warning -> warning.getProperties().entrySet().stream()
@@ -226,26 +233,50 @@ public class EditInspector {
 
             warningStore.getWarnings().stream()
                     .forEach(warning -> {
-                        // Iterate through each entry in the properties map
                         warning.getProperties().forEach((key, value) -> {
-                            // Check if the value is of type PropertyIdValue
                             if (value instanceof PropertyIdValue) {
                                 PropertyIdValue property = (PropertyIdValue) value;
                                 String label = "";
 
-                                // Retrieve the label based on the locale
                                 PropertyDocument propertyDocument = (PropertyDocument) entityCache.get(property);
                                 if (propertyDocument != null && propertyDocument.getLabels() != null) {
                                     label = propertyDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
                                             ? propertyDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
                                             : "";
                                 }
-
-                                // Update the property with a new SuggestedPropertyIdValue
                                 warning.setProperty(key, new SuggestedPropertyIdValue(property.getId(), property.getSiteIri(), label));
                             }
                         });
                     });
+
+            warningStore.getWarnings().stream().forEach(warning -> {
+                if (warningTypeswithSuggestedData.contains(warning.getType())) {
+                    PropertyIdValue parentProperty = (PropertyIdValue) warning.getProperties().get("property_entity");
+                    PropertyIdValue relatedProperty = (PropertyIdValue) warning.getProperties().get("added_property_entity");
+                    PropertyDocument propertyDocument = (PropertyDocument) entityCache.get(parentProperty);
+                    if (propertyDocument != null) {
+                        propertyDocument.getAllStatements().forEachRemaining(statement -> {
+                            if (statement.getClaim().getMainSnak().getPropertyId().getId().equals(relatedProperty.getId())) {
+                                ItemDocument itemDocument = (ItemDocument) entityCache.get(((EntityIdValue) statement.getValue()));
+
+                                String itemLabel = "";
+                                if (itemDocument != null && itemDocument.getLabels() != null) {
+                                    itemLabel = itemDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
+                                            ? itemDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
+                                            : "";
+                                }
+                                SuggestedPropertyIdValue current = (SuggestedPropertyIdValue) warning.getProperties()
+                                        .get("added_property_entity");
+                                SuggestedItemIdValue itemIdValue = new SuggestedItemIdValue(((EntityIdValue) statement.getValue()).getId(),
+                                        current.getSiteIri(), itemLabel);
+                                SuggestedPropertyIdValue updated = new SuggestedPropertyIdValue(current.getId(), current.getSiteIri(),
+                                        current.getLabel(), itemIdValue);
+                                warning.setProperty("added_property_entity", updated);
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 }
