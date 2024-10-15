@@ -26,19 +26,11 @@ package org.openrefine.wikibase.schema.entityvalues;
 
 import org.wikidata.wdtk.datamodel.helpers.ToString;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 public class SuggestedPropertyIdValue extends SuggestedEntityIdValue implements PropertyIdValue {
 
-    private Value suggestedValue;
-
     public SuggestedPropertyIdValue(String id, String siteIRI, String label) {
         super(id, siteIRI, label);
-    }
-
-    public SuggestedPropertyIdValue(String id, String siteIRI, String label, Value suggestedValue) {
-        super(id, siteIRI, label);
-        this.suggestedValue = suggestedValue;
     }
 
     @Override
@@ -48,11 +40,6 @@ public class SuggestedPropertyIdValue extends SuggestedEntityIdValue implements 
 
     @Override
     public String toString() {
-        return "suggested " + ToString.toString(this) + " (\"" + getLabel() + "\")"
-                + " (\"" + getsuggestedValue() + "\")";
-    }
-
-    public Value getsuggestedValue() {
-        return suggestedValue;
+        return "suggested " + ToString.toString(this) + " (\"" + getLabel() + "\")";
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
@@ -106,6 +107,9 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
                     issue.setProperty("example_entity", update.getEntityId());
+                    if (constraint.itemList.size() == 1) {
+                        issue.setProperty("item_entity", (ItemIdValue) constraint.itemList.get(0));
+                    }
                     addIssue(issue);
                 } else if (raiseWarning(propertyIdValueValueMap, itemRequiresPid, itemList)) {
                     QAWarning issue = new QAWarning(update.isNew() ? newItemRequireValuesType : existingItemRequireValuesType,
@@ -114,6 +118,9 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
                     issue.setProperty("example_entity", update.getEntityId());
+                    if (constraint.itemList.size() == 1) {
+                        issue.setProperty("item_entity", (ItemIdValue) constraint.itemList.get(0));
+                    }
                     addIssue(issue);
                 }
             }

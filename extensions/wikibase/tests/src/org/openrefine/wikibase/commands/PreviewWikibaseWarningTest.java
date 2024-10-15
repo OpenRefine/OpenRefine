@@ -51,12 +51,11 @@ public class PreviewWikibaseWarningTest extends SchemaCommandTest {
         command = new PreviewWikibaseSchemaCommand();
 
         project = createProject("wiki-warnings-test",
-                new String[] { "Column 1", "male population", "population", "country" },
+                new String[] { "Column 1", "Quebec cultural heritage directory ID" },
                 new Serializable[][] {
-                        { "Wikidata Sandbox 3", "111", "121", "India" }
+                        { "Habitat 67", "98890" }
                 });
-        project.rows.get(0).cells.set(0, TestingData.makeMatchedCell("Q15397819", "Wikidata Sandbox 3"));
-        project.rows.get(0).cells.set(3, TestingData.makeMatchedCell("Q668", "India"));
+        project.rows.get(0).cells.set(0, TestingData.makeMatchedCell("Q1032248", "Habitat 67"));
     }
 
     @AfterMethod
@@ -80,15 +79,14 @@ public class PreviewWikibaseWarningTest extends SchemaCommandTest {
             // Read aggregationId
             String aggregationId = node.get("aggregationId").asText();
             // Check for nested property properties/missing_property_entity/label
-            JsonNode missingPropertyLabel = node.path("properties").path("missing_property_entity").path("label");
             JsonNode addedPropertyLabel = node.path("properties").path("added_property_entity").path("label");
+            JsonNode itemEntityLabel = node.path("properties").path("item_entity").path("label");
 
-            if (aggregationId.equals("missing-mandatory-qualifiers_P1082-P459")) {
-                assertEquals(missingPropertyLabel.asText(), "determination method or standard");
-            } else if (aggregationId.equals("missing-mandatory-qualifiers_P1540-P585")) {
-                assertEquals(missingPropertyLabel.asText(), "point in time");
-            } else if (aggregationId.equals("existing-item-requires-certain-other-statement_P1540P1539")) {
-                assertEquals(addedPropertyLabel.asText(), "female population");
+            if (aggregationId.equals("existing-item-requires-certain-other-statement_P633P17")) {
+                assertEquals(addedPropertyLabel.asText(), "country");
+                assertEquals(itemEntityLabel.asText(), "Canada");
+            } else if (aggregationId.equals("existing-item-requires-certain-other-statement_P633P18")) {
+                assertEquals(addedPropertyLabel.asText(), "image");
             }
         }
     }

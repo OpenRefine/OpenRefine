@@ -14,12 +14,9 @@ WarningsRenderer._renderEntity = function (entity, plainText) {
   if (entity.label) {
     fullLabel = entity.label + ' (' + id + ')';
   }
-  var suggestedValue = "";
-  if (entity.suggestedValue) {
-    suggestedValue = $.i18n('wikibase-schema/expected-value') +'<a href="' + entity.suggestedValue.iri + '" class="wb-preview-entity" target="_blank">' +  entity.suggestedValue.label + '</a>';
-  }
+
   if (plainText) {
-    return fullLabel + entity.suggestedValue ? $.i18n('wikibase-schema/expected-value') + entity.suggestedValue.label : "";
+    return fullLabel;
   }
 
   var url = entity.iri;
@@ -28,9 +25,9 @@ WarningsRenderer._renderEntity = function (entity, plainText) {
   }
 
   if (is_new) {
-    return '<span class="wb-preview-new-entity">' + fullLabel + '</span>' + suggestedValue;
+    return '<span class="wb-preview-new-entity">' + fullLabel + '</span>';
   } else {
-    return '<a href="' + url + '" class="wb-preview-entity" target="_blank">' + fullLabel + '</a>' + suggestedValue;
+    return '<a href="' + url + '" class="wb-preview-entity" target="_blank">' + fullLabel + '</a>';
   }
 };
 
@@ -85,8 +82,12 @@ WarningsRenderer._createFacetForWarning = function (warning) {
 };
 
 WarningsRenderer._renderWarning = function (warning, onLocateRows) {
-  var title = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warning.type + '/title'), warning.properties);
-  var body = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warning.type + '/body'), warning.properties);
+  var warningKey = warning.type;
+  if ( warning.properties && warning.properties.hasOwnProperty("item_entity") ) {
+       warningKey += "-with-suggested-value";
+       }
+  var title = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warningKey + '/title'), warning.properties);
+  var body = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warningKey + '/body'), warning.properties);
   var tr = $('<tr></tr>').addClass('wb-warning');
   var severityTd = $('<td></td>')
       .addClass('wb-warning-severity')
