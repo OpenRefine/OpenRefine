@@ -59,18 +59,23 @@ public class ApplyOperationsCommand extends Command {
             respondCSRFError(response);
             return;
         }
-
-        Project project = getProject(request);
-        String jsonString = request.getParameter("operations");
         try {
-            ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
-            int count = a.size();
-            for (int i = 0; i < count; i++) {
-                if (a.get(i) instanceof ObjectNode) {
-                    ObjectNode obj = (ObjectNode) a.get(i);
+            Project project = getProject(request);
+            String jsonString = request.getParameter("operations");
 
-                    reconstructOperation(project, obj);
+            try {
+                ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
+                int count = a.size();
+                for (int i = 0; i < count; i++) {
+                    if (a.get(i) instanceof ObjectNode) {
+                        ObjectNode obj = (ObjectNode) a.get(i);
+
+                        reconstructOperation(project, obj);
+                    }
                 }
+            } catch (IllegalArgumentException e) {
+                respondCodeError(response, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, null);
+                return;
             }
 
             if (project.processManager.hasPending()) {
@@ -78,7 +83,7 @@ public class ApplyOperationsCommand extends Command {
             } else {
                 respond(response, "{ \"code\" : \"ok\" }");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             respondException(response, e);
         }
     }
