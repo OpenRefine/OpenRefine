@@ -82,10 +82,10 @@ public class PreviewWikibaseWarningTest extends SchemaCommandTest {
             JsonNode addedPropertyLabel = node.path("properties").path("added_property_entity").path("label");
             JsonNode itemEntityLabel = node.path("properties").path("item_entity").path("label");
 
-            if (aggregationId.equals("existing-item-requires-certain-other-statement_P633P17")) {
+            if (aggregationId.equals("existing-item-requires-certain-other-statement-with-suggested-value_P633P17")) {
                 assertEquals(addedPropertyLabel.asText(), "country");
                 assertEquals(itemEntityLabel.asText(), "Canada");
-            } else if (aggregationId.equals("existing-item-requires-certain-other-statement_P633P18")) {
+            } else if (aggregationId.equals("existing-item-requires-certain-other-statement-with-suggested-value_P633P18")) {
                 assertEquals(addedPropertyLabel.asText(), "image");
             }
         }

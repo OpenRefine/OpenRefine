@@ -82,12 +82,8 @@ WarningsRenderer._createFacetForWarning = function (warning) {
 };
 
 WarningsRenderer._renderWarning = function (warning, onLocateRows) {
-  var warningKey = warning.type;
-  if ( warning.properties && warning.properties.hasOwnProperty("item_entity") ) {
-       warningKey += "-with-suggested-value";
-       }
-  var title = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warningKey + '/title'), warning.properties);
-  var body = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warningKey + '/body'), warning.properties);
+  var title = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warning.type + '/title'), warning.properties);
+  var body = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/' + warning.type + '/body'), warning.properties);
   var tr = $('<tr></tr>').addClass('wb-warning');
   var severityTd = $('<td></td>')
       .addClass('wb-warning-severity')
