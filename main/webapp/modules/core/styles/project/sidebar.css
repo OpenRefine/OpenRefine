@@ -251,3 +251,7 @@ textarea.history-operation-json {
   min-height: 450px;
   min-width: 374px;
 }
+
+.history-operation-json-error {
+  color: var(--error-red);
+}

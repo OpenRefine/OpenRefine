@@ -43,4 +43,28 @@ describe(__filename, function () {
     );
     cy.get('table.data-table thead th[title="Water"]').should('not.to.exist');
   });
+
+  it('Use an invalid JSON payload', function () {
+    cy.loadAndVisitProject('food.mini');
+
+    // find the "apply" button
+    cy.get('#or-proj-undoRedo').click();
+    cy.wait(500); // eslint-disable-line
+    cy.get('#refine-tabs-history .history-panel-controls')
+      .contains('Apply')
+      .click();
+      
+    cy.get('.dialog-container .history-operation-json').type(
+      "[{foo",
+      {
+        parseSpecialCharSequences: false,
+        delay: 0,
+        waitForAnimations: false,
+      }
+    );
+    cy.get('.dialog-container button[bind="applyButton"]').click();
+
+    cy.get('.dialog-container .history-operation-json-error').contains('Invalid JSON format');
+  });
+
 });
