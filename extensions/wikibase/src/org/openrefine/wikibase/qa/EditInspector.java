@@ -35,9 +35,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
+import org.wikidata.wdtk.datamodel.interfaces.LabeledDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
@@ -69,6 +68,7 @@ import org.openrefine.wikibase.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.UseAsQualifierScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedItemIdValue;
 import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
@@ -229,29 +229,23 @@ public class EditInspector {
             warningStore.getWarnings().stream()
                     .forEach(warning -> {
                         warning.getProperties().forEach((key, value) -> {
-                            if (value instanceof PropertyIdValue) {
-                                PropertyIdValue property = (PropertyIdValue) value;
+                            if (value instanceof PropertyIdValue || value instanceof ItemIdValue) {
+                                EntityIdValue entityIdValue = (EntityIdValue) value;
                                 String label = "";
 
-                                PropertyDocument propertyDocument = (PropertyDocument) entityCache.get(property);
-                                if (propertyDocument != null && propertyDocument.getLabels() != null) {
-                                    label = propertyDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
-                                            ? propertyDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
+                                LabeledDocument labeledDocument = (LabeledDocument) entityCache.get(entityIdValue);
+                                if (labeledDocument != null && labeledDocument.getLabels() != null) {
+                                    label = labeledDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
+                                            ? labeledDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
                                             : "";
                                 }
-                                warning.setProperty(key, new SuggestedPropertyIdValue(property.getId(), property.getSiteIri(), label));
-                            } else if (value instanceof ItemIdValue) {
-                                ItemIdValue itemIdValue = (ItemIdValue) value;
-                                String itemLabel = "";
-                                ItemDocument itemDocument = (ItemDocument) entityCache.get(itemIdValue);
-
-                                if (itemDocument != null && itemDocument.getLabels() != null) {
-                                    itemLabel = itemDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
-                                            ? itemDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
-                                            : "";
+                                if (value instanceof PropertyIdValue) {
+                                    warning.setProperty(key,
+                                            new SuggestedPropertyIdValue(entityIdValue.getId(), entityIdValue.getSiteIri(), label));
+                                } else {
+                                    warning.setProperty(key,
+                                            new SuggestedItemIdValue(entityIdValue.getId(), entityIdValue.getSiteIri(), label));
                                 }
-                                warning.setProperty(key,
-                                        new SuggestedPropertyIdValue(itemIdValue.getId(), itemIdValue.getSiteIri(), itemLabel));
                             }
                         });
                     });
