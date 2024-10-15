@@ -144,7 +144,7 @@
 }
 
 .wbs-unvalidated-input {
-  border: 1px solid red !important;
+  border: 1px solid var(--error-red) !important;
   background-color: #ffbfbf;
 }
 

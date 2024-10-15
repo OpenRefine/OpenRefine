@@ -1,6 +1,6 @@
 .wikibase-invalid-schema {
   margin-top: 10px;
-  color: red;
+  color: var(--error-red);
 }
 
 .wikibase-schema-textarea {

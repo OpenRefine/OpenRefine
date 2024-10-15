@@ -295,7 +295,7 @@ div.data-table-cell-content-numeric>a.data-table-cell-edit {
 }
 
 .data-table-error {
-  color: red;
+  color: var(--error-red);
 }
 
 div.data-table-recon-candidates {

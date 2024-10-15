@@ -9,7 +9,7 @@
 }
 
 .add-wikibase-dialog .invalid-manifest {
-  color: red;
+  color: var(--error-red);
 }
 
 .save-new-template-dialog-input-group select {
