@@ -225,7 +225,7 @@ public class EditInspector {
                             .filter(entry -> {
                                 if (entry instanceof SuggestedEntityIdValue) {
                                     String label = ((SuggestedEntityIdValue) entry.getValue()).getLabel();
-                                    return label != null && !label.isEmpty();
+                                    return label == null || label.isEmpty();
                                 }
                                 return true;
                             })
