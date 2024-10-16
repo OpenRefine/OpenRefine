@@ -68,6 +68,7 @@ import org.openrefine.wikibase.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.UseAsQualifierScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedEntityIdValue;
 import org.openrefine.wikibase.schema.entityvalues.SuggestedItemIdValue;
 import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
 import org.openrefine.wikibase.updates.EntityEdit;
@@ -220,8 +221,15 @@ public class EditInspector {
         if (entityCache != null) {
             List<EntityIdValue> propertyIdValues = warningStore.getWarnings().stream()
                     .flatMap(warning -> warning.getProperties().entrySet().stream()
-                            .filter(entry -> entry.getValue() instanceof PropertyIdValue)
-                            .map(entry -> (PropertyIdValue) entry.getValue()))
+                            .filter(entry -> entry.getValue() instanceof EntityIdValue)
+                            .filter(entry -> {
+                                if (entry instanceof SuggestedEntityIdValue) {
+                                    String label = ((SuggestedEntityIdValue) entry.getValue()).getLabel();
+                                    return label != null && !label.isEmpty();
+                                }
+                                return true;
+                            })
+                            .map(entry -> (EntityIdValue) entry.getValue()))
                     .collect(Collectors.toList());
 
             entityCache.getMultipleDocuments(propertyIdValues);

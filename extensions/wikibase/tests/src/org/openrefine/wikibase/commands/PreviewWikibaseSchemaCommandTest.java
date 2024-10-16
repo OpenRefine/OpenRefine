@@ -29,9 +29,11 @@ import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.servlet.ServletException;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.AfterMethod;
@@ -40,6 +42,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.util.ParsingUtilities;
 
+import org.openrefine.wikibase.testing.TestingData;
 import org.openrefine.wikibase.utils.EntityCache;
 import org.openrefine.wikibase.utils.EntityCacheStub;
 
@@ -50,6 +53,13 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         command = new PreviewWikibaseSchemaCommand();
         EntityCacheStub entityCacheStub = new EntityCacheStub();
         EntityCache.setEntityCache("http://www.wikidata.org/entity/", entityCacheStub);
+
+        project = createProject("wiki-warnings-test",
+                new String[] { "Column 1", "Quebec cultural heritage directory ID" },
+                new Serializable[][] {
+                        { "Habitat 67", "98890" }
+                });
+        project.rows.get(0).cells.set(0, TestingData.makeMatchedCell("Q1032248", "Habitat 67"));
     }
 
     @AfterMethod
@@ -109,5 +119,34 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         assertEquals(writer.toString(),
                 "{\"code\":\"error\",\"message\":\"Wikibase manifest could not be parsed. Error message: invalid manifest format\"}");
+    }
+
+    @Test
+    public void testWarningData() throws Exception {
+
+        String schemaJson = jsonFromFile("schema/warning_data_test.json");
+        String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");
+        when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
+
+        command.doPost(request, response);
+
+        ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+        ArrayNode issues = (ArrayNode) response.get("warnings");
+        for (JsonNode node : issues) {
+            // Read aggregationId
+            String aggregationId = node.get("aggregationId").asText();
+            // Check for nested property properties/missing_property_entity/label
+            JsonNode addedPropertyLabel = node.path("properties").path("added_property_entity").path("label");
+            JsonNode itemEntityLabel = node.path("properties").path("item_entity").path("label");
+
+            if (aggregationId.equals("existing-item-requires-certain-other-statement-with-suggested-value_P633P17")) {
+                assertEquals(addedPropertyLabel.asText(), "country");
+                assertEquals(itemEntityLabel.asText(), "Canada");
+            } else if (aggregationId.equals("existing-item-requires-certain-other-statement-with-suggested-value_P633P18")) {
+                assertEquals(addedPropertyLabel.asText(), "image");
+            }
+        }
     }
 }
