@@ -134,6 +134,8 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
         ArrayNode issues = (ArrayNode) response.get("warnings");
+        boolean existingitemrequirescertainotherstatementwithsuggestedvalue_P633P17 = false;
+        boolean existingitemrequirescertainotherstatement_P633P18 = false;
         for (JsonNode node : issues) {
             // Read aggregationId
             String aggregationId = node.get("aggregationId").asText();
@@ -144,9 +146,13 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
             if (aggregationId.equals("existing-item-requires-certain-other-statement-with-suggested-value_P633P17")) {
                 assertEquals(addedPropertyLabel.asText(), "country");
                 assertEquals(itemEntityLabel.asText(), "Canada");
-            } else if (aggregationId.equals("existing-item-requires-certain-other-statement-with-suggested-value_P633P18")) {
+                existingitemrequirescertainotherstatementwithsuggestedvalue_P633P17 = true;
+            } else if (aggregationId.equals("existing-item-requires-certain-other-statement_P633P18")) {
                 assertEquals(addedPropertyLabel.asText(), "image");
+                existingitemrequirescertainotherstatement_P633P18 = true;
             }
         }
+        assertEquals(existingitemrequirescertainotherstatementwithsuggestedvalue_P633P17, true);
+        assertEquals(existingitemrequirescertainotherstatement_P633P18, true);
     }
 }
