@@ -86,6 +86,7 @@ public class ApplyOperationsCommand extends Command {
     protected void reconstructOperation(Project project, ObjectNode obj) throws IOException {
         AbstractOperation operation = ParsingUtilities.mapper.convertValue(obj, AbstractOperation.class);
         if (operation != null && !(operation instanceof UnknownOperation)) {
+            operation.validate();
             try {
                 Process process = operation.createProcess(project, new Properties());
 
