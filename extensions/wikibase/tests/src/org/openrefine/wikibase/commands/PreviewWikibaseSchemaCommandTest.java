@@ -143,7 +143,7 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
             JsonNode addedPropertyLabel = node.path("properties").path("added_property_entity").path("label");
             JsonNode itemEntityLabel = node.path("properties").path("item_entity").path("label");
 
-            if (aggregationId.equals("existing-item-requires-certain-other-statement-with-suggested-value_P633P17")) {
+            if (aggregationId.equals("existing-item-requires-property-to-have-certain-values-with-suggested-value_P633P17")) {
                 assertEquals(addedPropertyLabel.asText(), "country");
                 assertEquals(itemEntityLabel.asText(), "Canada");
                 existingitemrequirescertainotherstatementwithsuggestedvalue_P633P17 = true;

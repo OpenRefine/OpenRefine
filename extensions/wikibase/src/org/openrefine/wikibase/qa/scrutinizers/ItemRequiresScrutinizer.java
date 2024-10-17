@@ -28,9 +28,7 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
     public static final String existingItemRequireValuesType = "existing-item-requires-property-to-have-certain-values";
     public static final String existingItemRequirePropertyType = "existing-item-requires-certain-other-statement";
     public static final String newItemRequireValueswithSuggestedValueType = "new-item-requires-property-to-have-certain-values-with-suggested-value";
-    public static final String newItemRequirePropertywithSuggestedValueType = "new-item-requires-certain-other-statement-with-suggested-value";
     public static final String existingItemRequireValueswithSuggestedValueType = "existing-item-requires-property-to-have-certain-values-with-suggested-value";
-    public static final String existingItemRequirePropertywithSuggestedValueType = "existing-item-requires-certain-other-statement-with-suggested-value";
 
     public String itemRequiresConstraintQid;
     public String itemRequiresPropertyPid;
@@ -107,8 +105,8 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
                 List<Value> itemList = constraint.itemList;
                 if (!propertyIdValueValueMap.containsKey(itemRequiresPid)) {
                     QAWarning issue = new QAWarning(update.isNew()
-                            ? (constraint.itemList.size() == 1 ? newItemRequirePropertywithSuggestedValueType : newItemRequirePropertyType)
-                            : (constraint.itemList.size() == 1 ? existingItemRequirePropertywithSuggestedValueType
+                            ? (constraint.itemList.size() == 1 ? newItemRequireValueswithSuggestedValueType : newItemRequirePropertyType)
+                            : (constraint.itemList.size() == 1 ? existingItemRequireValueswithSuggestedValueType
                                     : existingItemRequirePropertyType),
                             propertyId.getId() + itemRequiresPid.getId(),
                             update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);

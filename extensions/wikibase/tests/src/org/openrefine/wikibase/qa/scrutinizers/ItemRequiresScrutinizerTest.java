@@ -61,7 +61,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         setFetcher(fetcher);
 
         scrutinize(updateA);
-        assertWarningsRaised(ItemRequiresScrutinizer.existingItemRequirePropertywithSuggestedValueType);
+        assertWarningsRaised(ItemRequiresScrutinizer.existingItemRequireValueswithSuggestedValueType);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         setFetcher(fetcher);
 
         scrutinize(updateA);
-        assertWarningsRaised(ItemRequiresScrutinizer.newItemRequirePropertywithSuggestedValueType);
+        assertWarningsRaised(ItemRequiresScrutinizer.newItemRequireValueswithSuggestedValueType);
     }
 
     @Test
