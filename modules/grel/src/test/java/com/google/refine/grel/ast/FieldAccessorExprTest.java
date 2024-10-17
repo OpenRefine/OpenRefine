@@ -8,13 +8,11 @@ import java.util.Optional;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.Evaluable;
-
 public class FieldAccessorExprTest extends ExprTestBase {
 
     @Test
     public void testInnerAnalyzable() {
-        Evaluable ev = new FieldAccessorExpr(constant, "foo");
+        GrelExpr ev = new FieldAccessorExpr(constant, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set());
         ev = new FieldAccessorExpr(currentColumn, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn"));
@@ -25,14 +23,14 @@ public class FieldAccessorExprTest extends ExprTestBase {
     @Test
     public void testUnanalyzable() {
         when(unanalyzable.toString()).thenReturn("bar");
-        Evaluable ev = new FieldAccessorExpr(unanalyzable, "foo");
+        GrelExpr ev = new FieldAccessorExpr(unanalyzable, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), Optional.empty());
     }
 
     @Test
     public void testCells() {
         when(unanalyzable.toString()).thenReturn("cells");
-        Evaluable ev = new FieldAccessorExpr(unanalyzable, "foo");
+        GrelExpr ev = new FieldAccessorExpr(unanalyzable, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set("foo"));
     }
 }

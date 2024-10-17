@@ -41,7 +41,6 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
 import com.google.refine.expr.util.JsonValueConverter;
@@ -50,12 +49,12 @@ import com.google.refine.expr.util.JsonValueConverter;
  * An abstract syntax tree node encapsulating a field accessor, e.g., "cell.value" is accessing the field named "value"
  * on the variable called "cell".
  */
-public class FieldAccessorExpr implements Evaluable {
+public class FieldAccessorExpr implements GrelExpr {
 
-    final protected Evaluable _inner;
+    final protected GrelExpr _inner;
     final protected String _fieldName;
 
-    public FieldAccessorExpr(Evaluable inner, String fieldName) {
+    public FieldAccessorExpr(GrelExpr inner, String fieldName) {
         _inner = inner;
         _fieldName = fieldName;
     }

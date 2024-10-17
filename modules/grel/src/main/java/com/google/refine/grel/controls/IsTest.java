@@ -36,15 +36,15 @@ package com.google.refine.grel.controls;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.ast.GrelExpr;
 
 abstract class IsTest implements Control {
 
     @Override
-    public String checkArguments(Evaluable[] args) {
+    public String checkArguments(GrelExpr[] args) {
         if (args.length != 1) {
             return ControlEvalError.expects_one_arg(ControlFunctionRegistry.getControlName(this));
         }
@@ -52,7 +52,7 @@ abstract class IsTest implements Control {
     }
 
     @Override
-    public Object call(Properties bindings, Evaluable[] args) {
+    public Object call(Properties bindings, GrelExpr[] args) {
         Object o;
         try {
             o = args[0].evaluate(bindings);
