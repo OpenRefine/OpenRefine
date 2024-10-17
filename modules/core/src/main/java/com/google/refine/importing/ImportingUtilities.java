@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -62,6 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -83,6 +86,17 @@ import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.compress.utils.InputStreamStatistics;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.StreamingNotSupportedException;
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
@@ -112,6 +126,7 @@ import com.google.refine.util.ParsingUtilities;
 
 public class ImportingUtilities {
 
+    public static final int BUFFER_SIZE = 128 * 1024;
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
 
     final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
@@ -407,20 +422,17 @@ public class ImportingUtilities {
                         URLConnection urlConnection = url.openConnection();
                         urlConnection.setConnectTimeout(5000);
                         urlConnection.connect();
-                        InputStream stream2 = urlConnection.getInputStream();
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding",
-                                urlConnection.getContentEncoding());
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType",
-                                urlConnection.getContentType());
-                        try {
+                        try (InputStream stream2 = urlConnection.getInputStream()) {
+                            JSONUtilities.safePut(fileRecord, "declaredEncoding",
+                                    urlConnection.getContentEncoding());
+                            JSONUtilities.safePut(fileRecord, "declaredMimeType",
+                                    urlConnection.getContentType());
                             if (saveStream(stream2, url, rawDataDir, progress,
                                     update, fileRecord, fileRecords,
                                     urlConnection.getContentLength())) {
                                 archiveCount++;
                             }
                             downloadCount++;
-                        } finally {
-                            stream2.close();
                         }
                     }
                 } else {
@@ -510,7 +522,7 @@ public class ImportingUtilities {
 
     /**
      * Replace the illegal character with '-' in the path in Windows
-     * 
+     *
      * @param path:
      *            file path
      * @return the replaced path or original path if the OS is not Windows
@@ -683,8 +695,21 @@ public class ImportingUtilities {
         String contentEncoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
 
         if (explodeArchive(rawDataDir, file, mimeType, fileRecord, fileRecords, progress)) {
+            // FIXME: We really don't want to unpack the entire archive before doing our preview
             file.delete();
             return true;
+        }
+
+        if (file.getName().endsWith(".7z")) {
+            try {
+                // FIXME: We really don't want to unpack the entire archive before doing our preview
+                if (explode7zipArchive(rawDataDir, file, fileRecord, fileRecords, progress)) {
+                    file.delete();
+                    return true;
+                }
+            } catch (Exception e) {
+                throw new IOException("Unexpected error attempting to explode .7z file", e);
+            }
         }
 
         File file2 = uncompressFile(rawDataDir, file, mimeType, contentEncoding, fileRecord, progress);
@@ -715,9 +740,28 @@ public class ImportingUtilities {
         return null;
     }
 
+    private static boolean isFileGZipped(File file) {
+        int magic = 0;
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+            magic = raf.read() & 0xff | ((raf.read() << 8) & 0xff00);
+        } catch (IOException ignored) {
+        }
+        return magic == GZIPInputStream.GZIP_MAGIC;
+    }
+
     public static boolean isCompressed(File file) throws IOException {
         // Check for common compressed file types to protect ourselves from binary data
         try (final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));) {
+            try {
+                is.mark(10);
+                CompressorInputStream input = new CompressorStreamFactory()
+                        .createCompressorInputStream(is);
+                if (input != null) {
+                    return true;
+                }
+            } catch (CompressorException e) {
+                // Fall through and try other methods
+            }
             byte[] magic = new byte[4];
             is.mark(100);
             int count = is.read(magic);
@@ -747,6 +791,7 @@ public class ImportingUtilities {
     }
 
     // FIXME: This is wasteful of space and time. We should try to process on the fly
+    // (also for preview, we don't want the user to wait while we unpack the entire thing)
     static private boolean explodeArchive(
             File rawDataDir,
             File file,
@@ -832,8 +877,56 @@ public class ImportingUtilities {
                         }
                     }
                 } catch (ArchiveException ex) {
+                    // TODO: We could try skipping just this entry and continuing, but this is the historical behavior
                     throw new IOException("Error expanding archive", ex);
                 }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Explode a 7-zip archive. The decompessor doesn't support stream based decompression, so we need to do it
+     * separately/differently from all the others.
+     */
+    private static boolean explode7zipArchive(File rawDataDir, File file, ObjectNode archiveFileRecord, ArrayNode fileRecords,
+            Progress progress) throws IOException {
+
+        SevenZFile sevenZFile = new SevenZFile.Builder().setFile(file).get();
+        if (sevenZFile == null) {
+            return false;
+        }
+
+        SevenZArchiveEntry entry;
+        while (!progress.isCanceled() && (entry = sevenZFile.getNextEntry()) != null) {
+            String fileName2 = entry.getName();
+            if (!entry.isDirectory()) {
+                File file2 = allocateFile(rawDataDir, fileName2);
+                progress.setProgress("Extracting " + fileName2, -1);
+                ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
+                JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
+                JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
+                JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
+                JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
+                JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
+                JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
+
+                byte[] content = new byte[BUFFER_SIZE];
+                // TODO: Track progress and/or decompression ratio
+//                    sevenZFile.getStatisticsForCurrentEntry().getCompressedCount();
+//                    sevenZFile.getStatisticsForCurrentEntry().getUncompressedCount();
+                try (FileOutputStream fos = new FileOutputStream(file2)) {
+                    int len;
+                    long total = 0;
+                    while ((len = sevenZFile.read(content, 0, BUFFER_SIZE)) > 0) {
+                        fos.write(content, 0, len);
+                        total = total + len;
+                    }
+                    JSONUtilities.safePut(fileRecord2, "size", total);
+                }
+
+                postProcessSingleRetrievedFile(file2, fileRecord2);
+                JSONUtilities.append(fileRecords, fileRecord2);
             }
         }
         return true;
