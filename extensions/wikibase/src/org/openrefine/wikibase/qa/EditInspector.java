@@ -26,6 +26,7 @@ package org.openrefine.wikibase.qa;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -34,6 +35,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.LabeledDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
@@ -65,6 +68,9 @@ import org.openrefine.wikibase.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.UseAsQualifierScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedEntityIdValue;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedItemIdValue;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
 import org.openrefine.wikibase.updates.EntityEdit;
 import org.openrefine.wikibase.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
@@ -206,6 +212,51 @@ public class EditInspector {
             QAWarning warning = new QAWarning("no-issue-detected", null, QAWarning.Severity.INFO, 0);
             warning.setFacetable(false);
             warningStore.addWarning(warning);
+        } else {
+            resolveWarningPropertyLabels();
+        }
+    }
+
+    private void resolveWarningPropertyLabels() throws ExecutionException {
+        if (entityCache != null) {
+            List<EntityIdValue> propertyIdValues = warningStore.getWarnings().stream()
+                    .flatMap(warning -> warning.getProperties().entrySet().stream()
+                            .filter(entry -> entry.getValue() instanceof EntityIdValue)
+                            .filter(entry -> {
+                                if (entry instanceof SuggestedEntityIdValue) {
+                                    String label = ((SuggestedEntityIdValue) entry.getValue()).getLabel();
+                                    return label == null || label.isEmpty();
+                                }
+                                return true;
+                            })
+                            .map(entry -> (EntityIdValue) entry.getValue()))
+                    .collect(Collectors.toList());
+
+            entityCache.getMultipleDocuments(propertyIdValues);
+
+            warningStore.getWarnings().stream()
+                    .forEach(warning -> {
+                        warning.getProperties().forEach((key, value) -> {
+                            if (value instanceof PropertyIdValue || value instanceof ItemIdValue) {
+                                EntityIdValue entityIdValue = (EntityIdValue) value;
+                                String label = "";
+
+                                LabeledDocument labeledDocument = (LabeledDocument) entityCache.get(entityIdValue);
+                                if (labeledDocument != null && labeledDocument.getLabels() != null) {
+                                    label = labeledDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
+                                            ? labeledDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
+                                            : "";
+                                }
+                                if (value instanceof PropertyIdValue) {
+                                    warning.setProperty(key,
+                                            new SuggestedPropertyIdValue(entityIdValue.getId(), entityIdValue.getSiteIri(), label));
+                                } else {
+                                    warning.setProperty(key,
+                                            new SuggestedItemIdValue(entityIdValue.getId(), entityIdValue.getSiteIri(), label));
+                                }
+                            }
+                        });
+                    });
         }
     }
 }
