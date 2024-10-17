@@ -74,6 +74,9 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.StreamingNotSupportedException;
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorException;
@@ -108,6 +111,7 @@ import com.google.refine.util.ParsingUtilities;
 
 public class ImportingUtilities {
 
+    public static final int BUFFER_SIZE = 128 * 1024;
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
 
     final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
@@ -409,20 +413,17 @@ public class ImportingUtilities {
                         URLConnection urlConnection = url.openConnection();
                         urlConnection.setConnectTimeout(5000);
                         urlConnection.connect();
-                        InputStream stream2 = urlConnection.getInputStream();
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding",
-                                urlConnection.getContentEncoding());
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType",
-                                urlConnection.getContentType());
-                        try {
+                        try (InputStream stream2 = urlConnection.getInputStream()) {
+                            JSONUtilities.safePut(fileRecord, "declaredEncoding",
+                                    urlConnection.getContentEncoding());
+                            JSONUtilities.safePut(fileRecord, "declaredMimeType",
+                                    urlConnection.getContentType());
                             if (saveStream(stream2, url, rawDataDir, progress,
                                     update, fileRecord, fileRecords,
                                     urlConnection.getContentLength())) {
                                 archiveCount++;
                             }
                             downloadCount++;
-                        } finally {
-                            stream2.close();
                         }
                     }
                 } else {
@@ -744,6 +745,9 @@ public class ImportingUtilities {
                 is.reset();
                 try (ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream(is);) {
                     return true;
+                } catch (StreamingNotSupportedException e1) {
+                    // This is a recognized archive format, but one that doesn't support streaming
+                    return true;
                 } catch (ArchiveException ex) {
                     return false;
                 }
@@ -752,6 +756,7 @@ public class ImportingUtilities {
     }
 
     // FIXME: This is wasteful of space and time. We should try to process on the fly
+    // (also for preview, we don't want the user to wait while we unpack the entire thing)
     static private boolean explodeArchive(
             File rawDataDir,
             File file,
@@ -803,6 +808,19 @@ public class ImportingUtilities {
                         ZipFile zf = new ZipFile.Builder().setSeekableByteChannel(fc.position(0)).get();
                         for (Iterator<ZipArchiveEntry> it = zf.getEntries().asIterator(); it.hasNext();) {
                             ZipArchiveEntry entry = it.next();
+                            if (progress.isCanceled()) {
+                                break;
+                            }
+                            if (!entry.isDirectory()) {
+                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
+                                        zf.getInputStream(entry));
+                                JSONUtilities.append(fileRecords, fileRecord2);
+                            }
+                        }
+                    } else if (ArchiveStreamFactory.SEVEN_Z.equals(format)) {
+                        // SevenZFile requires a SeekableByteChannel also, but has slightly different methods
+                        SevenZFile zf = new SevenZFile.Builder().setSeekableByteChannel(fc.position(0)).get();
+                        for (SevenZArchiveEntry entry : zf.getEntries()) {
                             if (progress.isCanceled()) {
                                 break;
                             }
