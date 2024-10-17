@@ -46,7 +46,7 @@ textarea.expression-preview-code {
 }
 
 .expression-preview-parsing-status.error {
-  color: red;
+  color: var(--error-red);
 }
 
 #expression-preview-tabs-preview,
