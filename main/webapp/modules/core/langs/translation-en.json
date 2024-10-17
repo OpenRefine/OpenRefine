@@ -434,7 +434,7 @@
     "core-project/custom-tabular": "Custom tabular…",
     "core-project/sql-export": "SQL…",
     "core-project/templating": "Templating…",
-    "core-project/json-invalid": "The JSON you pasted is invalid",
+    "core-project/json-invalid": "Invalid JSON format: $1",
     "core-project/undo-history": "Infinite undo history",
     "core-project/mistakes": "Don't worry about making mistakes. Every change you make will be shown here, and you can undo your changes anytime.",
     "core-project/learn-more": "Learn more &raquo;",

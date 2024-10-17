@@ -309,14 +309,16 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
             textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
           }
         } catch (error) {
-            window.alert($.i18n('core-project/json-invalid'));
-          }
+          elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));   
+        }
       };
       reader.readAsText(file);
     };
     fileInput.click();
   });
-  
+  elmts.textarea.on('change', function() {
+     elmts.errorContainer.empty();
+  });
   
   elmts.applyButton.html($.i18n('core-buttons/perform-op'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
@@ -342,7 +344,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
       json = fixJson(json);
       json = JSON.parse(json);
     } catch (e) {
-      alert($.i18n('core-project/json-invalid')+".");
+      elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));   
       return;
     }
 
