@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +42,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -109,7 +112,7 @@ public class JsonImporterTests extends ImporterTest {
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+        assertEquals(row.getCell(1).value, "Author 1, The");
     }
 
     @Test
@@ -120,14 +123,27 @@ public class JsonImporterTests extends ImporterTest {
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+        assertEquals(row.getCell(1).value, "Author 1, The");
     }
 
     @Test
-    public void canThrowError() {
+    public void canThrowError() throws IOException {
         String errJSON = getSampleWithError();
+        ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(fileRecord, "origin", "clipboard");
+        JSONUtilities.safePut(fileRecord, "declaredEncoding", StandardCharsets.UTF_8.toString());
+        JSONUtilities.safePut(fileRecord, "declaredMimeType", "text/json");
+        JSONUtilities.safePut(fileRecord, "format", "text/json");
+        JSONUtilities.safePut(fileRecord, "fileName", "(clipboard)");
+        File jsonFile = new File(job.getRawDataDir(), "test.json");
+        Files.write(jsonFile.toPath(), errJSON.getBytes(StandardCharsets.UTF_8));
+        JSONUtilities.safePut(fileRecord, "location", "test.json");
         ObjectNode options = SUT.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                job, List.of(fileRecord), "text/json");
+        assertEquals(options.get("error").asText(),
+                "com.fasterxml.jackson.core.JsonParseException: Unexpected character (';' (code 59)): was expecting comma to separate Object entries\n"
+                        +
+                        " at [Source: (File); line: 1, column: 11]");
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, JsonImporter.ANONYMOUS);
         JSONUtilities.safePut(options, "recordPath", path);
@@ -137,7 +153,7 @@ public class JsonImporterTests extends ImporterTest {
 
         inputStream = new ByteArrayInputStream(errJSON.getBytes(StandardCharsets.UTF_8));
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        List<Exception> exceptions = new ArrayList<Exception>();
+        List<Exception> exceptions = new ArrayList<>();
 
         SUT.parseOneFile(
                 project,
@@ -150,7 +166,7 @@ public class JsonImporterTests extends ImporterTest {
                 options,
                 exceptions);
         Assert.assertFalse(exceptions.isEmpty());
-        Assert.assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate Object entries",
+        assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate Object entries",
                 exceptions.get(0).getMessage());
     }
 
@@ -369,8 +385,8 @@ public class JsonImporterTests extends ImporterTest {
             }
             i++;
             if (i == 3) {
-                Assert.assertEquals(Token.Value, token);
-                Assert.assertEquals("field", parser.getFieldName());
+                assertEquals(Token.Value, token);
+                assertEquals("field", parser.getFieldName());
             }
         }
 
@@ -384,8 +400,8 @@ public class JsonImporterTests extends ImporterTest {
             }
             i++;
             if (i == 3) {
-                Assert.assertEquals(Token.StartEntity, token);
-                Assert.assertEquals(parser.getFieldName(), "field");
+                assertEquals(Token.StartEntity, token);
+                assertEquals(parser.getFieldName(), "field");
             }
         }
 
@@ -399,16 +415,16 @@ public class JsonImporterTests extends ImporterTest {
             }
             i++;
             if (i == 3) {
-                Assert.assertEquals(token, Token.StartEntity);
-                Assert.assertEquals(parser.getFieldName(), "field");
+                assertEquals(token, Token.StartEntity);
+                assertEquals(parser.getFieldName(), "field");
             }
             if (i == 4) {
-                Assert.assertEquals(token, Token.StartEntity);
-                Assert.assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
+                assertEquals(token, Token.StartEntity);
+                assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
             }
             if (i == 6) {
-                Assert.assertEquals(token, Token.StartEntity);
-                Assert.assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
+                assertEquals(token, Token.StartEntity);
+                assertEquals(parser.getFieldName(), JsonImporter.ANONYMOUS);
             }
         }
     }
@@ -428,9 +444,9 @@ public class JsonImporterTests extends ImporterTest {
             }
             i++;
             if (i == 3) {
-                Assert.assertEquals(Token.Value, token);
-                Assert.assertEquals("\tfield", parser.getFieldName());
-                Assert.assertEquals("\tvalue", parser.getFieldValue());
+                assertEquals(Token.Value, token);
+                assertEquals("\tfield", parser.getFieldName());
+                assertEquals("\tvalue", parser.getFieldValue());
             }
         }
     }
