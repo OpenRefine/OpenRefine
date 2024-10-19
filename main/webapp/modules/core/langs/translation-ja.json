@@ -331,7 +331,7 @@
     "core-project/clear-selection": "全ファセットの選択をクリア",
     "core-project/open": "開く",
     "core-project/facet-filter": "ファセット/フィルタ",
-    "core-project/json-invalid": "貼り付けたJSONは無効です",
+    "core-project/json-invalid": "JSON形式としては無効: $1",
     "core-project/last-op-er": "最後の操作でエラーが発生しました",
     "core-project/apply-operation": "操作履歴を適用",
     "core-project/sql-export": "SQL…",
@@ -917,5 +917,6 @@
     "core-dialogs/edit-name": "関数名",
     "core-dialogs/action": "アクション",
     "core-views/warning-function-name": "関数名を入力してください.",
-    "core-views/warning-delete-functions": "本当にこの関数を削除しますか?"
+    "core-views/warning-delete-functions": "本当にこの関数を削除しますか?",
+    "core-index-parser/store-blank-columns": "空白カラムも保存"
 }
