@@ -290,7 +290,7 @@
     "core-project/odf": "גיליון נתונים ODF",
     "core-project/custom-tabular": "מייצא טבלאי מותאם אישית…",
     "core-project/templating": "נוצרת תבנית…",
-    "core-project/json-invalid": "ה־JSON שהדבקת אינו תקני",
+    "core-project/json-invalid": "תבנית JSON שגויה: $1",
     "core-project/undo-history": "היסטוריית ביטולים אינסופית",
     "core-project/mistakes": "אל תחששו לבצע טעויות. כל שינוי שתעשו יוצג כאן, ותוכלו לבטל כל שינוי בכל עת.",
     "core-project/learn-more": "מידע נוסף &laquo;",
