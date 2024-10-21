@@ -583,8 +583,6 @@ class ListFacet extends Facet {
     var commit = function() {
       var text = elmts.textarea[0].value;
 
-      MenuSystem.dismissAll();
-
       var edit = { to : text };
       if (choice === self._blankChoice) {
         edit.fromBlank = true;
@@ -609,6 +607,7 @@ class ListFacet extends Facet {
         },
         {
           onDone: function(o) {
+            MenuSystem.dismissAll();
             var selection = [];
             var gotSelection = false;
             for (var i = 0; i < self._selection.length; i++) {

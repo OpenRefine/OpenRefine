@@ -166,9 +166,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           httpHeaders: JSON.stringify(elmts.setHttpHeadersContainer.find("input").serializeArray())
         },
         null,
-        { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+        { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
+        { onDone: dismiss }
       );
-      dismiss();
     });
   };
 
@@ -358,9 +358,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         "split-column", 
         config,
         null,
-        { modelsChanged: true }
+        { modelsChanged: true },
+        { onDone: dismiss }
       );
-      dismiss();
     });
   }; 
   
@@ -399,7 +399,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // function called in a callback
       var deleteColumns = function() {
         if (deleteJoinedColumns) {
-          console.log (theProject);
           var columnsToKeep = theProject.columnModel.columns
           .map (function (col) {return col.name;})
           .filter (function(colName) {
@@ -466,7 +465,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           },
           { expression: expression },
           { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
-          { onFinallyDone: deleteColumns}
+          { onDone: dismiss, onFinallyDone: deleteColumns}
         );
       } 
       else {
@@ -476,7 +475,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             onError,
             repeat,
             repeatCount,
-            { onFinallyDone: deleteColumns});
+            { onDone: dismiss, onFinallyDone: deleteColumns});
       }
     };
     // core of doJoinColumn
@@ -549,7 +548,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       });
     elmts.okButton.on('click',function() {
       transform();
-      dismiss();
     });
     elmts.cancelButton.on('click',function() {
       dismiss();
