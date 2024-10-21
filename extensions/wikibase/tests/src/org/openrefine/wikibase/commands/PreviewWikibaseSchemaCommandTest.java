@@ -27,9 +27,11 @@ package org.openrefine.wikibase.commands;
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 
@@ -144,11 +146,20 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
             JsonNode itemEntityLabel = node.path("properties").path("item_entity").path("label");
 
             if (aggregationId.equals("existing-item-requires-property-to-have-certain-values-with-suggested-value_P633P17")) {
-                assertEquals(addedPropertyLabel.asText(), "country");
-                assertEquals(itemEntityLabel.asText(), "Canada");
+                if (Locale.getDefault().getLanguage().equals("en")) {
+                    assertEquals(addedPropertyLabel.asText(), "country");
+                    assertEquals(itemEntityLabel.asText(), "Canada");
+                } else {
+                    assertTrue(addedPropertyLabel.asText().length() > 0);
+                    assertTrue(itemEntityLabel.asText().length() > 0);
+                }
                 existingitemrequirescertainotherstatementwithsuggestedvalue_P633P17 = true;
             } else if (aggregationId.equals("existing-item-requires-certain-other-statement_P633P18")) {
-                assertEquals(addedPropertyLabel.asText(), "image");
+                if (Locale.getDefault().getLanguage().equals("en")) {
+                    assertEquals(addedPropertyLabel.asText(), "image");
+                } else {
+                    assertTrue(addedPropertyLabel.asText().length() > 0);
+                }
                 existingitemrequirescertainotherstatement_P633P18 = true;
             }
         }
