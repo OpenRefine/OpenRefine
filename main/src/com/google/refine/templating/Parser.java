@@ -38,6 +38,7 @@ import java.util.List;
 
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.grel.GrelEvaluable;
 import com.google.refine.grel.ast.FieldAccessorExpr;
 import com.google.refine.grel.ast.VariableExpr;
 
@@ -96,11 +97,12 @@ public class Parser {
 
                     fragments.add(
                             new DynamicFragment(
-                                    new FieldAccessorExpr(
+                                    new GrelEvaluable(
                                             new FieldAccessorExpr(
-                                                    new VariableExpr("cells"),
-                                                    columnName),
-                                            "value")));
+                                                    new FieldAccessorExpr(
+                                                            new VariableExpr("cells"),
+                                                            columnName),
+                                                    "value"))));
 
                     continue;
                 }

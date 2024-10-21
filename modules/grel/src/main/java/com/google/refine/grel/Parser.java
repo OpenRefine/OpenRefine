@@ -48,6 +48,7 @@ import com.google.refine.grel.Scanner.TokenType;
 import com.google.refine.grel.ast.ControlCallExpr;
 import com.google.refine.grel.ast.FieldAccessorExpr;
 import com.google.refine.grel.ast.FunctionCallExpr;
+import com.google.refine.grel.ast.GrelExpr;
 import com.google.refine.grel.ast.LiteralExpr;
 import com.google.refine.grel.ast.OperatorCallExpr;
 import com.google.refine.grel.ast.VariableExpr;
@@ -59,13 +60,13 @@ public class Parser {
         @Override
         public Evaluable parse(String source) throws ParsingException {
             Parser parser = new Parser(source);
-            return parser.getExpression();
+            return new GrelEvaluable(parser.getExpression());
         }
     };
 
     protected Scanner _scanner;
     protected Token _token;
-    protected Evaluable _root;
+    protected GrelExpr _root;
 
     public Parser(String s) throws ParsingException {
         this(s, 0, s.length());
@@ -78,7 +79,7 @@ public class Parser {
         _root = parseExpression();
     }
 
-    public Evaluable getExpression() {
+    public GrelExpr getExpression() {
         return _root;
     }
 
@@ -95,8 +96,8 @@ public class Parser {
     /*
      * <expression> := <sub-expression> | <expression> [ "<" "<=" ">" ">=" "==" "!=" ] <sub-expression>
      */
-    protected Evaluable parseExpression() throws ParsingException {
-        Evaluable sub = parseSubExpression();
+    protected GrelExpr parseExpression() throws ParsingException {
+        GrelExpr sub = parseSubExpression();
 
         while (_token != null &&
                 _token.type == TokenType.Operator &&
@@ -108,9 +109,9 @@ public class Parser {
 
             next(true);
 
-            Evaluable sub2 = parseSubExpression();
+            GrelExpr sub2 = parseSubExpression();
 
-            sub = new OperatorCallExpr(new Evaluable[] { sub, sub2 }, op);
+            sub = new OperatorCallExpr(new GrelExpr[] { sub, sub2 }, op);
         }
 
         return sub;
@@ -119,8 +120,8 @@ public class Parser {
     /*
      * <sub-expression> := <term> | <sub-expression> [ "+" "-" ] <term>
      */
-    protected Evaluable parseSubExpression() throws ParsingException {
-        Evaluable sub = parseTerm();
+    protected GrelExpr parseSubExpression() throws ParsingException {
+        GrelExpr sub = parseTerm();
 
         while (_token != null &&
                 _token.type == TokenType.Operator &&
@@ -130,9 +131,9 @@ public class Parser {
 
             next(true);
 
-            Evaluable sub2 = parseTerm();
+            GrelExpr sub2 = parseTerm();
 
-            sub = new OperatorCallExpr(new Evaluable[] { sub, sub2 }, op);
+            sub = new OperatorCallExpr(new GrelExpr[] { sub, sub2 }, op);
         }
 
         return sub;
@@ -141,8 +142,8 @@ public class Parser {
     /*
      * <term> := <factor> | <term> [ "*" "/" "%" ] <factor>
      */
-    protected Evaluable parseTerm() throws ParsingException {
-        Evaluable factor = parseFactor();
+    protected GrelExpr parseTerm() throws ParsingException {
+        GrelExpr factor = parseFactor();
 
         while (_token != null &&
                 _token.type == TokenType.Operator &&
@@ -152,9 +153,9 @@ public class Parser {
 
             next(true);
 
-            Evaluable factor2 = parseFactor();
+            GrelExpr factor2 = parseFactor();
 
-            factor = new OperatorCallExpr(new Evaluable[] { factor, factor2 }, op);
+            factor = new OperatorCallExpr(new GrelExpr[] { factor, factor2 }, op);
         }
 
         return factor;
@@ -167,12 +168,12 @@ public class Parser {
      * <path-segment> := "[" <expression-list> "]" | "." <identifier> | "." <identifier> "(" <expression-list> ")"
      *
      */
-    protected Evaluable parseFactor() throws ParsingException {
+    protected GrelExpr parseFactor() throws ParsingException {
         if (_token == null) {
             throw makeException("Expecting something more at end of expression");
         }
 
-        Evaluable eval = null;
+        GrelExpr eval = null;
 
         if (_token.type == TokenType.String) {
             eval = new LiteralExpr(_token.text);
@@ -225,10 +226,10 @@ public class Parser {
 
                 next(true); // swallow (
 
-                List<Evaluable> args = parseExpressionList(")");
+                List<GrelExpr> args = parseExpressionList(")");
 
                 if (c != null) {
-                    Evaluable[] argsA = makeArray(args);
+                    GrelExpr[] argsA = makeArray(args);
                     String errorMessage = c.checkArguments(argsA);
                     if (errorMessage != null) {
                         throw makeException(errorMessage);
@@ -251,7 +252,7 @@ public class Parser {
         } else if (_token.type == TokenType.Delimiter && _token.text.equals("[")) { // [ ... ] array
             next(true); // swallow [
 
-            List<Evaluable> args = parseExpressionList("]");
+            List<GrelExpr> args = parseExpressionList("]");
 
             eval = new FunctionCallExpr(makeArray(args), new ArgsToArray());
         } else {
@@ -279,7 +280,7 @@ public class Parser {
                         throw makeException("Unknown function " + identifier);
                     }
 
-                    List<Evaluable> args = parseExpressionList(")");
+                    List<GrelExpr> args = parseExpressionList(")");
                     args.add(0, eval);
 
                     eval = new FunctionCallExpr(makeArray(args), f);
@@ -289,7 +290,7 @@ public class Parser {
             } else if (_token.type == TokenType.Delimiter && _token.text.equals("[")) {
                 next(true); // swallow [
 
-                List<Evaluable> args = parseExpressionList("]");
+                List<GrelExpr> args = parseExpressionList("]");
                 args.add(0, eval);
 
                 eval = new FunctionCallExpr(makeArray(args), ControlFunctionRegistry.getFunction("get"));
@@ -305,14 +306,14 @@ public class Parser {
      * <expression-list> := <empty> | <expression> ( "," <expression> )*
      *
      */
-    protected List<Evaluable> parseExpressionList(String closingDelimiter) throws ParsingException {
-        List<Evaluable> l = new LinkedList<Evaluable>();
+    protected List<GrelExpr> parseExpressionList(String closingDelimiter) throws ParsingException {
+        List<GrelExpr> l = new LinkedList<>();
 
         if (_token != null &&
                 (_token.type != TokenType.Delimiter || !_token.text.equals(closingDelimiter))) {
 
             while (_token != null) {
-                Evaluable eval = parseExpression();
+                GrelExpr eval = parseExpression();
 
                 l.add(eval);
 
@@ -333,8 +334,8 @@ public class Parser {
         return l;
     }
 
-    protected Evaluable[] makeArray(List<Evaluable> l) {
-        Evaluable[] a = new Evaluable[l.size()];
+    protected GrelExpr[] makeArray(List<GrelExpr> l) {
+        GrelExpr[] a = new GrelExpr[l.size()];
         l.toArray(a);
 
         return a;

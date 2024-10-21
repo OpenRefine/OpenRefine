@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
 
 public class ControlCallExprTest extends ExprTestBase {
@@ -23,19 +22,19 @@ public class ControlCallExprTest extends ExprTestBase {
 
     @Test
     public void testConstant() {
-        Evaluable c = new ControlCallExpr(new Evaluable[] { constant }, control);
+        GrelExpr c = new ControlCallExpr(new GrelExpr[] { constant }, control);
         assertEquals(c.getColumnDependencies(baseColumn), set());
     }
 
     @Test
     public void testUnion() {
-        Evaluable c = new ControlCallExpr(new Evaluable[] { twoColumns, currentColumn }, control);
+        GrelExpr c = new ControlCallExpr(new GrelExpr[] { twoColumns, currentColumn }, control);
         assertEquals(c.getColumnDependencies(baseColumn), set("a", "b", "baseColumn"));
     }
 
     @Test
     public void testUnanalyzable() {
-        Evaluable c = new ControlCallExpr(new Evaluable[] { twoColumns, unanalyzable }, control);
+        GrelExpr c = new ControlCallExpr(new GrelExpr[] { twoColumns, unanalyzable }, control);
         assertEquals(c.getColumnDependencies(baseColumn), Optional.empty());
     }
 }

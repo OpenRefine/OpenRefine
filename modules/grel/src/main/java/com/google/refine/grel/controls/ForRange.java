@@ -38,19 +38,19 @@ import java.util.List;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlDescription;
 import com.google.refine.grel.ControlEvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.EvalErrorMessage;
+import com.google.refine.grel.ast.GrelExpr;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class ForRange implements Control {
 
     @Override
-    public String checkArguments(Evaluable[] args) {
+    public String checkArguments(GrelExpr[] args) {
         if (args.length != 5) {
             return ControlEvalError.expects_five_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[3] instanceof VariableExpr)) {
@@ -61,7 +61,7 @@ public class ForRange implements Control {
     }
 
     @Override
-    public Object call(Properties bindings, Evaluable[] args) {
+    public Object call(Properties bindings, GrelExpr[] args) {
         Object fromO = args[0].evaluate(bindings);
         Object toO = args[1].evaluate(bindings);
         Object stepO = args[2].evaluate(bindings);
