@@ -27,7 +27,6 @@ package org.openrefine.wikibase.commands;
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -42,6 +41,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.util.LocaleUtils;
 import com.google.refine.util.ParsingUtilities;
 
 import org.openrefine.wikibase.testing.TestingData;
@@ -49,6 +49,8 @@ import org.openrefine.wikibase.utils.EntityCache;
 import org.openrefine.wikibase.utils.EntityCacheStub;
 
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
+
+    private String localeSetting;
 
     @BeforeMethod
     public void SetUp() {
@@ -123,6 +125,17 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
                 "{\"code\":\"error\",\"message\":\"Wikibase manifest could not be parsed. Error message: invalid manifest format\"}");
     }
 
+    @BeforeMethod
+    public void setLocale() {
+        localeSetting = Locale.getDefault().getLanguage();
+        LocaleUtils.setLocale("en");
+    }
+
+    @AfterMethod
+    public void unsetLocale() {
+        LocaleUtils.setLocale(localeSetting);
+    }
+
     @Test
     public void testWarningData() throws Exception {
 
@@ -146,20 +159,11 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
             JsonNode itemEntityLabel = node.path("properties").path("item_entity").path("label");
 
             if (aggregationId.equals("existing-item-requires-property-to-have-certain-values-with-suggested-value_P633P17")) {
-                if (Locale.getDefault().getLanguage().equals("en")) {
-                    assertEquals(addedPropertyLabel.asText(), "country");
-                    assertEquals(itemEntityLabel.asText(), "Canada");
-                } else {
-                    assertTrue(addedPropertyLabel.asText().length() > 0);
-                    assertTrue(itemEntityLabel.asText().length() > 0);
-                }
+                assertEquals(addedPropertyLabel.asText(), "country");
+                assertEquals(itemEntityLabel.asText(), "Canada");
                 existingitemrequirescertainotherstatementwithsuggestedvalue_P633P17 = true;
             } else if (aggregationId.equals("existing-item-requires-certain-other-statement_P633P18")) {
-                if (Locale.getDefault().getLanguage().equals("en")) {
-                    assertEquals(addedPropertyLabel.asText(), "image");
-                } else {
-                    assertTrue(addedPropertyLabel.asText().length() > 0);
-                }
+                assertEquals(addedPropertyLabel.asText(), "image");
                 existingitemrequirescertainotherstatement_P633P18 = true;
             }
         }
