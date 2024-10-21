@@ -439,7 +439,6 @@ public class ImportingUtilities {
                             calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
-                    JSONUtilities.safePut(fileRecord, "format", guessBetterFormat(file, request.getCharacterEncoding(), "text"));
                     // TODO: This needs to be refactored to be able to test import from archives
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                         archiveCount++;
@@ -700,10 +699,11 @@ public class ImportingUtilities {
 
     static public void postProcessSingleRetrievedFile(File file, ObjectNode fileRecord) {
         if (!fileRecord.has("format")) {
-            JSONUtilities.safePut(fileRecord, "format",
-                    ImportingManager.getFormat(
-                            file.getName(),
-                            JSONUtilities.getString(fileRecord, "declaredMimeType", null)));
+            String encoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
+            String bestFormat = ImportingManager.getFormat(file.getName(), JSONUtilities.getString(fileRecord, "declaredMimeType", null));
+            bestFormat = bestFormat == null ? "text" : bestFormat;
+            String format = guessBetterFormat(file, encoding, bestFormat);
+            JSONUtilities.safePut(fileRecord, "format", format);
         }
     }
 
