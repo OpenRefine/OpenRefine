@@ -30,6 +30,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 
@@ -40,6 +41,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.util.LocaleUtils;
 import com.google.refine.util.ParsingUtilities;
 
 import org.openrefine.wikibase.testing.TestingData;
@@ -47,6 +49,8 @@ import org.openrefine.wikibase.utils.EntityCache;
 import org.openrefine.wikibase.utils.EntityCacheStub;
 
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
+
+    private String localeSetting;
 
     @BeforeMethod
     public void SetUp() {
@@ -119,6 +123,17 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         assertEquals(writer.toString(),
                 "{\"code\":\"error\",\"message\":\"Wikibase manifest could not be parsed. Error message: invalid manifest format\"}");
+    }
+
+    @BeforeMethod
+    public void setLocale() {
+        localeSetting = Locale.getDefault().getLanguage();
+        LocaleUtils.setLocale("en");
+    }
+
+    @AfterMethod
+    public void unsetLocale() {
+        LocaleUtils.setLocale(localeSetting);
     }
 
     @Test
