@@ -94,8 +94,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        ImportingManager.registerFormatGuesser("text", new TextFormatGuesser());
-        ImportingManager.registerFormatGuesser("text/line-based", new LineBasedFormatGuesser());
+        importFlpwSettings();
     }
 
     @Test
@@ -594,7 +593,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @Test
     public void testFormatForMultipleExcelFiles() throws IOException, FileUploadException {
         testMultipleFiles("dates", "excel95", ".xls",
-                ContentType.create("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "binary");
+                ContentType.create("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "binary/text/xml/xls/xlsx");
     }
 
     @Test
@@ -604,7 +603,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Test
     public void testFormatForMultipleODSFiles() throws IOException, FileUploadException {
-        testMultipleFiles("films", "films", ".ods", ContentType.create("application/vnd.oasis.opendocument.spreadsheet"), "binary");
+        testMultipleFiles("films", "films", ".ods", ContentType.create("application/vnd.oasis.opendocument.spreadsheet"), "text/xml/ods");
     }
 
     private void testMultipleFiles(String file1, String file2, String fileSuffix, ContentType contentType, String expectedFormat)
@@ -670,5 +669,66 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(0).get("format").asText());
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(1).get("format").asText());
+    }
+
+    private void importFlpwSettings() {
+        // Register Format guessers
+        ImportingManager.registerFormatGuesser("text", new TextFormatGuesser());
+        ImportingManager.registerFormatGuesser("text/line-based", new LineBasedFormatGuesser());
+
+        // Extension to format mappings
+        ImportingManager.registerExtension(".txt", "text");
+        ImportingManager.registerExtension(".csv", "text/line-based/*sv");
+        ImportingManager.registerExtension(".tsv", "text/line-based/*sv");
+        ImportingManager.registerExtension(".xml", "text/xml");
+        ImportingManager.registerExtension(".atom", "text/xml");
+        ImportingManager.registerExtension(".json", "text/json");
+        ImportingManager.registerExtension(".js", "text/json");
+        ImportingManager.registerExtension(".xls", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerExtension(".ods", "text/xml/ods");
+        ImportingManager.registerExtension(".nt", "text/rdf/nt");
+        ImportingManager.registerExtension(".ntriples", "text/rdf/nt");
+        ImportingManager.registerExtension(".n3", "text/rdf/n3");
+        ImportingManager.registerExtension(".ttl", "text/rdf/ttl");
+        ImportingManager.registerExtension(".jsonld", "text/rdf/ld+json");
+        ImportingManager.registerExtension(".rdf", "text/rdf/xml");
+        ImportingManager.registerExtension(".marc", "text/marc");
+        ImportingManager.registerExtension(".mrc", "text/marc");
+        ImportingManager.registerExtension(".wiki", "text/wiki");
+
+        // Mime type to format mappings
+        ImportingManager.registerMimeType("text/plain", "text");
+        ImportingManager.registerMimeType("text/csv", "text/line-based/*sv");
+        ImportingManager.registerMimeType("text/x-csv", "text/line-based/*sv");
+        ImportingManager.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
+        ImportingManager.registerMimeType("text/tab-separated-values", "text/line-based/*sv");
+        ImportingManager.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
+        ImportingManager.registerMimeType("application/n-triples", "text/rdf/nt");
+        ImportingManager.registerMimeType("text/n3", "text/rdf/n3");
+        ImportingManager.registerMimeType("text/rdf+n3", "text/rdf/n3");
+        ImportingManager.registerMimeType("text/turtle", "text/rdf/ttl");
+        ImportingManager.registerMimeType("application/xml", "text/xml");
+        ImportingManager.registerMimeType("text/xml", "text/xml");
+        ImportingManager.registerMimeType("+xml", "text/xml"); // suffix will be tried only as fallback
+        ImportingManager.registerMimeType("application/rdf+xml", "text/rdf/xml");
+        ImportingManager.registerMimeType("application/ld+json", "text/rdf/ld+json");
+        ImportingManager.registerMimeType("application/atom+xml", "text/xml");
+        ImportingManager.registerMimeType("application/msexcel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/x-msexcel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/x-ms-excel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/vnd.ms-excel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.template",
+                "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/vnd.oasis.opendocument.spreadsheet", "text/xml/ods");
+        ImportingManager.registerMimeType("application/json", "text/json");
+        ImportingManager.registerMimeType("application/javascript", "text/json");
+        ImportingManager.registerMimeType("text/json", "text/json");
+        ImportingManager.registerMimeType("+json", "text/json"); // suffix will be tried only as fallback
+        ImportingManager.registerMimeType("application/marc", "text/marc");
     }
 }

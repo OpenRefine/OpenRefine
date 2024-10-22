@@ -301,7 +301,6 @@ public class ImportingUtilities {
                     JSONUtilities.safePut(fileRecord, "origin", "clipboard");
                     JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
                     JSONUtilities.safePut(fileRecord, "declaredMimeType", (String) null);
-                    JSONUtilities.safePut(fileRecord, "format", "text");
                     JSONUtilities.safePut(fileRecord, "fileName", "(clipboard)");
                     JSONUtilities.safePut(fileRecord, "location", getRelativePath(file, rawDataDir));
 
@@ -309,6 +308,7 @@ public class ImportingUtilities {
                             calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
+                    JSONUtilities.safePut(fileRecord, "format", guessBetterFprmat(file, fileRecord));
                     JSONUtilities.append(fileRecords, fileRecord);
 
                     clipboardCount++;
@@ -699,11 +699,7 @@ public class ImportingUtilities {
 
     static public void postProcessSingleRetrievedFile(File file, ObjectNode fileRecord) {
         if (!fileRecord.has("format")) {
-            String encoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
-            String bestFormat = ImportingManager.getFormat(file.getName(), JSONUtilities.getString(fileRecord, "declaredMimeType", null));
-            bestFormat = bestFormat == null ? "text" : bestFormat;
-            String format = guessBetterFormat(file, encoding, bestFormat);
-            JSONUtilities.safePut(fileRecord, "format", format);
+            JSONUtilities.safePut(fileRecord, "format", guessBetterFprmat(file, fileRecord));
         }
     }
 
@@ -1046,6 +1042,13 @@ public class ImportingUtilities {
 
         }
         return bestFormat;
+    }
+
+    static String guessBetterFprmat(File file, ObjectNode fileRecord) {
+        String encoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
+        String bestFormat = ImportingManager.getFormat(file.getName(), JSONUtilities.getString(fileRecord, "declaredMimeType", null));
+        bestFormat = bestFormat == null ? "text" : bestFormat;
+        return guessBetterFormat(file, encoding, bestFormat);
     }
 
     static void rankFormats(ImportingJob job, final String bestFormat, ArrayNode rankedFormats) {
