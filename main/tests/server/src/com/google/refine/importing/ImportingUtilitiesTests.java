@@ -94,7 +94,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        importFlpwSettings();
+        importFlowSettings();
     }
 
     @Test
@@ -671,7 +671,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(1).get("format").asText());
     }
 
-    private void importFlpwSettings() {
+    private void importFlowSettings() {
         // Register Format guessers
         ImportingManager.registerFormatGuesser("text", new TextFormatGuesser());
         ImportingManager.registerFormatGuesser("text/line-based", new LineBasedFormatGuesser());
