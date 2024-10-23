@@ -37,6 +37,7 @@ import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Properties;
 
+import com.google.refine.annotations.Internal;
 import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
@@ -47,6 +48,7 @@ import com.google.refine.model.Row;
 /**
  * Visit matched rows or records and slot them into bins based on the date computed from a given expression.
  */
+@Internal(since = "3.9")
 public class ExpressionTimeValueBinner implements RowVisitor, RecordVisitor {
 
     /*
