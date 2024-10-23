@@ -208,7 +208,6 @@ public class BinningClusterer extends Clusterer {
                     List<String> keys2 = o2.keySet().stream().sorted().collect(Collectors.toList());
                     return keys1.toString().compareTo(keys2.toString());
                 }
-
                 return total2 - total1;
             } else {
                 return s2 - s1;
