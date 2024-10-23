@@ -93,8 +93,7 @@ public class SQLiteDatabaseService extends DatabaseService {
      * @throws DatabaseServiceException
      */
     private DatabaseInfo getMetadata(DatabaseConfiguration connectionInfo) throws DatabaseServiceException {
-        try {
-            Connection connection = SQLiteConnectionManager.getInstance().getConnection(connectionInfo);
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(connectionInfo)) {
             if (connection != null) {
                 java.sql.DatabaseMetaData metadata = connection.getMetaData();
                 int dbMajorVersion = metadata.getDatabaseMajorVersion();
@@ -109,7 +108,6 @@ public class SQLiteDatabaseService extends DatabaseService {
                 return dbInfo;
             }
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
         return null;
@@ -117,8 +115,8 @@ public class SQLiteDatabaseService extends DatabaseService {
 
     @Override
     public DatabaseInfo executeQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
-        Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-        try (Statement statement = connection.createStatement();
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
+                Statement statement = connection.createStatement();
                 ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
@@ -147,46 +145,26 @@ public class SQLiteDatabaseService extends DatabaseService {
             dbInfo.setRows(rows);
             return dbInfo;
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } finally {
-            SQLiteConnectionManager.getInstance().shutdown();
         }
     }
 
     @Override
     public DatabaseInfo testQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
-        Statement statement = null;
-        ResultSet queryResult = null;
-        try {
-            Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-            statement = connection.createStatement();
-            queryResult = statement.executeQuery(query);
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
+                Statement statement = connection.createStatement();
+                ResultSet queryResult = statement.executeQuery(query)) {
             return new DatabaseInfo();
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } finally {
-            try {
-                if (queryResult != null) {
-                    queryResult.close();
-                }
-                if (statement != null) {
-                    statement.close();
-                }
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            SQLiteConnectionManager.getInstance().shutdown();
         }
     }
 
     @Override
     public List<DatabaseColumn> getColumns(DatabaseConfiguration dbConfig, String query)
             throws DatabaseServiceException {
-        Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-        try (Statement statement = connection.createStatement();
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
+                Statement statement = connection.createStatement();
                 ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
@@ -199,20 +177,15 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return columns;
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
     }
 
     @Override
     public List<DatabaseRow> getRows(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
-        Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-        Statement statement = null;
-        ResultSet queryResult = null;
-        try {
-            statement = connection.createStatement();
-            statement.setFetchSize(10);
-            queryResult = statement.executeQuery(query);
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
+                Statement statement = connection.createStatement();
+                ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             int index = 0;
@@ -230,20 +203,7 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return rows;
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } finally {
-            try {
-                if (queryResult != null) {
-                    queryResult.close();
-                }
-                if (statement != null) {
-                    statement.close();
-                }
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         }
     }
 }
