@@ -116,8 +116,8 @@ public class SQLiteDatabaseService extends DatabaseService {
     @Override
     public DatabaseInfo executeQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
         try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-             Statement statement = connection.createStatement();
-             ResultSet queryResult = statement.executeQuery(query)) {
+                Statement statement = connection.createStatement();
+                ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<>(columnCount);
@@ -152,8 +152,8 @@ public class SQLiteDatabaseService extends DatabaseService {
     @Override
     public DatabaseInfo testQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
         try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-             Statement statement = connection.createStatement();
-             ResultSet queryResult = statement.executeQuery(query)) {
+                Statement statement = connection.createStatement();
+                ResultSet queryResult = statement.executeQuery(query)) {
             return new DatabaseInfo();
         } catch (SQLException e) {
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
@@ -164,8 +164,8 @@ public class SQLiteDatabaseService extends DatabaseService {
     public List<DatabaseColumn> getColumns(DatabaseConfiguration dbConfig, String query)
             throws DatabaseServiceException {
         try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-             Statement statement = connection.createStatement();
-             ResultSet queryResult = statement.executeQuery(query)) {
+                Statement statement = connection.createStatement();
+                ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<>(columnCount);
@@ -184,8 +184,8 @@ public class SQLiteDatabaseService extends DatabaseService {
     @Override
     public List<DatabaseRow> getRows(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
         try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-             Statement statement = connection.createStatement();
-             ResultSet queryResult = statement.executeQuery(query)) {
+                Statement statement = connection.createStatement();
+                ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             int index = 0;
