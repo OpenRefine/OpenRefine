@@ -146,6 +146,22 @@ ReconciliationManager.unregisterService = function(service, f) {
   ReconciliationManager.save(f);
 };
 
+/**
+ * Re-registers a service.
+ * 
+ * @param {Object} service - The service to re-register
+ * @param {Function} f - Optional callback function to execute after re-registering
+ * @param {boolean} silent - If true, suppresses any error alerts
+ */
+ReconciliationManager.reRegisterService = function(service, f, silent) {
+  var self = this;
+  if ("url" in service) {
+    self.unregisterService(service, function () {
+      self.registerStandardService(service.url, f, silent);
+    });
+  }
+}
+
 ReconciliationManager.save = function(f) {
   Refine.wrapCSRF(function(token) {
     $.ajax({
