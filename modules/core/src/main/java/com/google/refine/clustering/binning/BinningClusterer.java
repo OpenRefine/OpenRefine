@@ -193,7 +193,7 @@ public class BinningClusterer extends Clusterer {
         public int compare(Map<String, Integer> o1, Map<String, Integer> o2) {
             int s1 = o1.size();
             int s2 = o2.size();
-            if (o1 == o2) {
+            if (s1 == s2) {
                 int total1 = 0;
                 for (int i : o1.values()) {
                     total1 += i;
@@ -202,6 +202,13 @@ public class BinningClusterer extends Clusterer {
                 for (int i : o2.values()) {
                     total2 += i;
                 }
+
+                if(total2 == total1) {
+                    List<String> keys1 = o1.keySet().stream().sorted().collect(Collectors.toList());
+                    List<String> keys2 = o2.keySet().stream().sorted().collect(Collectors.toList());
+                    return keys1.toString().compareTo(keys2.toString());
+                }
+
                 return total2 - total1;
             } else {
                 return s2 - s1;
