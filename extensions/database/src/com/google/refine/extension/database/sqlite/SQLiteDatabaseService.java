@@ -53,6 +53,7 @@ public class SQLiteDatabaseService extends DatabaseService {
 
     public static final String DB_NAME = "sqlite";
     public static final String DB_DRIVER = "org.sqlite.JDBC";
+    private static final String SQL_EXCEPTION_MESSAGE = "SQLException::";
     private static final Logger logger = LoggerFactory.getLogger("SQLiteDatabaseService");
     private static SQLiteDatabaseService instance;
 
@@ -93,9 +94,7 @@ public class SQLiteDatabaseService extends DatabaseService {
      * @throws DatabaseServiceException
      */
     private DatabaseInfo getMetadata(DatabaseConfiguration connectionInfo) throws DatabaseServiceException {
-        Connection connection = null;
-        try {
-            connection = SQLiteConnectionManager.getInstance().getConnection(connectionInfo);
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(connectionInfo)) {
             if (connection != null) {
                 java.sql.DatabaseMetaData metadata = connection.getMetaData();
                 int dbMajorVersion = metadata.getDatabaseMajorVersion();
@@ -109,27 +108,19 @@ public class SQLiteDatabaseService extends DatabaseService {
                 dbInfo.setDatabaseProductName(dbProductName);
                 return dbInfo;
             }
-
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                logger.error("SQLException::", e);
-            }
+            logger.error(SQL_EXCEPTION_MESSAGE, e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
+                String.format("%s %s while getting metadata", SQL_EXCEPTION_MESSAGE, e.getMessage()));
         }
         return null;
     }
 
     @Override
     public DatabaseInfo executeQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
-        Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-        try (Statement statement = connection.createStatement();
-                ResultSet queryResult = statement.executeQuery(query)) {
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
+             Statement statement = connection.createStatement();
+             ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<>(columnCount);
@@ -157,57 +148,31 @@ public class SQLiteDatabaseService extends DatabaseService {
             dbInfo.setRows(rows);
             return dbInfo;
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                logger.error("SQLException::", e);
-            }
-            SQLiteConnectionManager.getInstance().shutdown();
+            logger.error(SQL_EXCEPTION_MESSAGE, e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
+                String.format("%s %s", SQL_EXCEPTION_MESSAGE, e.getMessage()));
         }
     }
 
     @Override
     public DatabaseInfo testQuery(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
-        Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-        Statement statement = null;
-        ResultSet queryResult = null;
-        try {
-            statement = connection.createStatement();
-            queryResult = statement.executeQuery(query);
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
+             Statement statement = connection.createStatement();
+             ResultSet queryResult = statement.executeQuery(query)) {
             return new DatabaseInfo();
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } finally {
-            try {
-                if (queryResult != null) {
-                    queryResult.close();
-                }
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            SQLiteConnectionManager.getInstance().shutdown();
+            logger.error(SQL_EXCEPTION_MESSAGE, e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
+                String.format("%s %s", SQL_EXCEPTION_MESSAGE, e.getMessage()));
         }
     }
 
     @Override
     public List<DatabaseColumn> getColumns(DatabaseConfiguration dbConfig, String query)
             throws DatabaseServiceException {
-        Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-        try (Statement statement = connection.createStatement();
-                ResultSet queryResult = statement.executeQuery(query)) {
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
+             Statement statement = connection.createStatement();
+             ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<>(columnCount);
@@ -219,29 +184,17 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return columns;
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                logger.error("SQLException::", e);
-            }
+            logger.error(SQL_EXCEPTION_MESSAGE, e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
+                String.format("%s %s", SQL_EXCEPTION_MESSAGE, e.getMessage()));
         }
     }
 
     @Override
     public List<DatabaseRow> getRows(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException {
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet queryResult = null;
-        try {
-            connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
-            statement = connection.createStatement();
-            statement.setFetchSize(10);
-            queryResult = statement.executeQuery(query);
+        try (Connection connection = SQLiteConnectionManager.getInstance().getConnection(dbConfig);
+             Statement statement = connection.createStatement();
+             ResultSet queryResult = statement.executeQuery(query)) {
             ResultSetMetaData metadata = queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             int index = 0;
@@ -259,23 +212,9 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return rows;
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
-        } finally {
-            try {
-                if (queryResult != null) {
-                    queryResult.close();
-                }
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+            logger.error(SQL_EXCEPTION_MESSAGE, e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
+            String.format("%s %s", SQL_EXCEPTION_MESSAGE, e.getMessage()));
+           }
     }
 }
