@@ -53,7 +53,6 @@ public class SQLiteDatabaseService extends DatabaseService {
 
     public static final String DB_NAME = "sqlite";
     public static final String DB_DRIVER = "org.sqlite.JDBC";
-    private static final String SQL_EXCEPTION_MESSAGE = "SQLException::";
     private static final Logger logger = LoggerFactory.getLogger("SQLiteDatabaseService");
     private static SQLiteDatabaseService instance;
 
@@ -109,7 +108,6 @@ public class SQLiteDatabaseService extends DatabaseService {
                 return dbInfo;
             }
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
         return null;
@@ -147,7 +145,6 @@ public class SQLiteDatabaseService extends DatabaseService {
             dbInfo.setRows(rows);
             return dbInfo;
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
     }
@@ -159,7 +156,6 @@ public class SQLiteDatabaseService extends DatabaseService {
              ResultSet queryResult = statement.executeQuery(query)) {
             return new DatabaseInfo();
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
     }
@@ -181,7 +177,6 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return columns;
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
     }
@@ -208,7 +203,6 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return rows;
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
     }
