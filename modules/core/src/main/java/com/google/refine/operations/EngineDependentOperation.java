@@ -35,11 +35,13 @@ package com.google.refine.operations;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 
+@ExtensionAPI
 abstract public class EngineDependentOperation extends AbstractOperation {
 
     transient protected EngineConfig _engineConfig;

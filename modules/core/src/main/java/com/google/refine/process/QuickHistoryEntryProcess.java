@@ -35,9 +35,11 @@ package com.google.refine.process;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 
+@ExtensionAPI
 abstract public class QuickHistoryEntryProcess extends Process {
 
     final protected Project _project;

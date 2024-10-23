@@ -39,6 +39,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -50,6 +51,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.MassCellChange;
 
+@ExtensionAPI
 abstract public class EngineDependentMassCellOperation extends EngineDependentOperation {
 
     @JsonIgnore

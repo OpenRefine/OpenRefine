@@ -36,8 +36,10 @@ package com.google.refine.process;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.history.HistoryEntry;
 
+@ExtensionAPI
 public abstract class Process {
 
     @JsonProperty("immediate")

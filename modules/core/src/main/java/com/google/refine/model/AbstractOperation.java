@@ -40,6 +40,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.OperationResolver;
@@ -60,6 +61,7 @@ import com.google.refine.process.QuickHistoryEntryProcess;
                                                                                                                  // own
                                                                                                                  // id
 @JsonTypeIdResolver(OperationResolver.class)
+@ExtensionAPI
 abstract public class AbstractOperation {
 
     public Process createProcess(Project project, Properties options) throws Exception {

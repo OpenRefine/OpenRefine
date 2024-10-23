@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
+import com.google.refine.annotations.ExtensionAPI;
+
+@ExtensionAPI
 abstract public class ReconJob {
 
     public int getKey() {

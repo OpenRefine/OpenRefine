@@ -46,8 +46,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.util.ParsingUtilities;
 
+@ExtensionAPI
 public class PreferenceStore {
 
     public static final String USER_METADATA_KEY = "userMetadata";

@@ -60,6 +60,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -72,6 +73,7 @@ import com.google.refine.model.Row;
 import com.google.refine.util.HttpClient;
 import com.google.refine.util.ParsingUtilities;
 
+@ExtensionAPI
 public class StandardReconConfig extends ReconConfig {
 
     final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");

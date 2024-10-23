@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.history.History;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
@@ -64,6 +65,7 @@ import com.google.refine.util.Pool;
 /**
  * Project with all its associated metadata and data
  */
+@ExtensionAPI
 public class Project {
 
     final static protected Map<String, Class<? extends OverlayModel>> s_overlayModelClasses = new HashMap<String, Class<? extends OverlayModel>>();

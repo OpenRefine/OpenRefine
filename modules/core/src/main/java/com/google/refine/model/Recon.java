@@ -51,10 +51,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
+@ExtensionAPI
 @JsonFilter("reconCandidateFilter")
 public class Recon implements HasFields {
 

@@ -35,6 +35,9 @@ package com.google.refine.operations;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.google.refine.annotations.ExtensionAPI;
+
+@ExtensionAPI
 public enum OnError {
     @JsonProperty("keep-original")
     KeepOriginal, @JsonProperty("set-to-blank")

@@ -38,12 +38,14 @@ import java.io.IOException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.util.ParsingUtilities;
 
 /**
  * This represents a type from the reconciliation service. It is used when extending data to store the (expected) types
  * of new columns.
  */
+@ExtensionAPI
 public class ReconType {
 
     @JsonProperty("id")
