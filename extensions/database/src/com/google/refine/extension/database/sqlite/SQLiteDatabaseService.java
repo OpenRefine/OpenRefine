@@ -109,9 +109,8 @@ public class SQLiteDatabaseService extends DatabaseService {
                 return dbInfo;
             }
         } catch (SQLException e) {
-            logger.error(SQL_EXCEPTION_MESSAGE, e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
-                String.format("%s %s while getting metadata", SQL_EXCEPTION_MESSAGE, e.getMessage()));
+            logger.error("SQLException::", e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
         return null;
     }
@@ -148,9 +147,8 @@ public class SQLiteDatabaseService extends DatabaseService {
             dbInfo.setRows(rows);
             return dbInfo;
         } catch (SQLException e) {
-            logger.error(SQL_EXCEPTION_MESSAGE, e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
-                String.format("%s %s", SQL_EXCEPTION_MESSAGE, e.getMessage()));
+            logger.error("SQLException::", e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
     }
 
@@ -161,9 +159,8 @@ public class SQLiteDatabaseService extends DatabaseService {
              ResultSet queryResult = statement.executeQuery(query)) {
             return new DatabaseInfo();
         } catch (SQLException e) {
-            logger.error(SQL_EXCEPTION_MESSAGE, e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
-                String.format("%s %s", SQL_EXCEPTION_MESSAGE, e.getMessage()));
+            logger.error("SQLException::", e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
     }
 
@@ -184,9 +181,8 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return columns;
         } catch (SQLException e) {
-            logger.error(SQL_EXCEPTION_MESSAGE, e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
-                String.format("%s %s", SQL_EXCEPTION_MESSAGE, e.getMessage()));
+            logger.error("SQLException::", e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
     }
 
@@ -212,9 +208,8 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return rows;
         } catch (SQLException e) {
-            logger.error(SQL_EXCEPTION_MESSAGE, e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), 
-            String.format("%s %s", SQL_EXCEPTION_MESSAGE, e.getMessage()));
-           }
+            logger.error("SQLException::", e);
+            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+        }
     }
 }
