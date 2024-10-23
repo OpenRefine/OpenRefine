@@ -203,7 +203,7 @@ public class BinningClusterer extends Clusterer {
                     total2 += i;
                 }
 
-                if(total2 == total1) {
+                if (total2 == total1) {
                     List<String> keys1 = o1.keySet().stream().sorted().collect(Collectors.toList());
                     List<String> keys2 = o2.keySet().stream().sorted().collect(Collectors.toList());
                     return keys1.toString().compareTo(keys2.toString());
