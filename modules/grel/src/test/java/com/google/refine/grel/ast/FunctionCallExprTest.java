@@ -25,11 +25,14 @@ public class FunctionCallExprTest extends ExprTestBase {
     public void testUnion() {
         Evaluable ev = new FunctionCallExpr(new Evaluable[] { constant, currentColumn, twoColumns }, function);
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn", "a", "b"));
+        assertEquals(ev.renameColumnDependencies(sampleRename),
+                Optional.of(new FunctionCallExpr(new Evaluable[] { constant, currentColumnRenamed, twoColumnsRenamed }, function)));
     }
 
     @Test
     public void testUnanalyzable() {
         Evaluable ev = new FunctionCallExpr(new Evaluable[] { currentColumn, unanalyzable }, function);
         assertEquals(ev.getColumnDependencies(baseColumn), Optional.empty());
+        assertEquals(ev.renameColumnDependencies(sampleRename), Optional.empty());
     }
 }
