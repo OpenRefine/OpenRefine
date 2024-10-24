@@ -45,7 +45,7 @@ import com.google.refine.expr.ExpressionUtils;
 /**
  * An abstract syntax tree node encapsulating an operator call, such as "+".
  */
-public class OperatorCallExpr implements Evaluable {
+public class OperatorCallExpr extends GrelExpr {
 
     final protected Evaluable[] _args;
     final protected String _op;

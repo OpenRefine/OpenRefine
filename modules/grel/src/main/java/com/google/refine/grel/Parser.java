@@ -57,7 +57,7 @@ public class Parser {
     static public LanguageSpecificParser grelParser = new LanguageSpecificParser() {
 
         @Override
-        public Evaluable parse(String source) throws ParsingException {
+        public Evaluable parse(String source, String languagePrefix) throws ParsingException {
             Parser parser = new Parser(source);
             return parser.getExpression();
         }

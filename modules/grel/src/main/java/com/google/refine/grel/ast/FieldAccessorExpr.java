@@ -50,7 +50,7 @@ import com.google.refine.expr.util.JsonValueConverter;
  * An abstract syntax tree node encapsulating a field accessor, e.g., "cell.value" is accessing the field named "value"
  * on the variable called "cell".
  */
-public class FieldAccessorExpr implements Evaluable {
+public class FieldAccessorExpr extends GrelExpr {
 
     final protected Evaluable _inner;
     final protected String _fieldName;
@@ -97,4 +97,5 @@ public class FieldAccessorExpr implements Evaluable {
     public String toString() {
         return _inner.toString() + "." + _fieldName;
     }
+
 }

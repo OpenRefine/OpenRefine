@@ -40,12 +40,10 @@ import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 
-import com.google.refine.expr.Evaluable;
-
 /**
  * An abstract syntax tree node encapsulating a literal value.
  */
-public class LiteralExpr implements Evaluable {
+public class LiteralExpr extends GrelExpr {
 
     final protected Object _value;
 

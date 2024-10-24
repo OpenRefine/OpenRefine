@@ -45,7 +45,7 @@ import com.google.refine.grel.Control;
 /**
  * An abstract syntax tree node encapsulating a control call, such as "if".
  */
-public class ControlCallExpr implements Evaluable {
+public class ControlCallExpr extends GrelExpr {
 
     final protected Evaluable[] _args;
     final protected Control _control;
@@ -90,4 +90,5 @@ public class ControlCallExpr implements Evaluable {
 
         return _control.getClass().getSimpleName() + "(" + sb.toString() + ")";
     }
+
 }
