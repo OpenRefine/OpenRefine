@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -90,6 +91,22 @@ public class FieldAccessorExpr extends GrelExpr {
             }
             // TODO add support for starred, flagged, rowIndex, which are not real columns
             // but whose dependency could also be analyzed.
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
+        Optional<Evaluable> innerTranslated = _inner.renameColumnDependencies(substitutions);
+        if (innerTranslated.isPresent()) {
+            return Optional.of(new FieldAccessorExpr(innerTranslated.get(), _fieldName));
+        } else {
+            String innerStr = _inner.toString();
+            if ("cells".equals(innerStr) || "row.cells".equals(innerStr)) {
+                String newColumnName = substitutions.getOrDefault(_fieldName, _fieldName);
+                return Optional.of(new FieldAccessorExpr(_inner, newColumnName));
+            }
+            // TODO add support for starred, flagged, rowIndex
             return Optional.empty();
         }
     }

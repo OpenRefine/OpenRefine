@@ -34,12 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
+
+import com.google.refine.expr.Evaluable;
 
 /**
  * An abstract syntax tree node encapsulating a literal value.
@@ -52,6 +55,10 @@ public class LiteralExpr extends GrelExpr {
         _value = value;
     }
 
+    protected Object getValue() {
+        return _value;
+    }
+
     @Override
     public Object evaluate(Properties bindings) {
         return _value;
@@ -60,6 +67,11 @@ public class LiteralExpr extends GrelExpr {
     @Override
     public Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
         return Optional.of(Collections.emptySet());
+    }
+
+    @Override
+    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
+        return Optional.of(this);
     }
 
     @Override

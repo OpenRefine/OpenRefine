@@ -1,6 +1,9 @@
 
 package com.google.refine.grel.ast;
 
+import java.util.Map;
+import java.util.Optional;
+
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.functions.arrays.ArgsToArray;
 import com.google.refine.grel.Function;
@@ -8,6 +11,7 @@ import com.google.refine.grel.Function;
 /**
  * Node for an expression which introduces an array explicitly, with square brackets.
  */
+
 public class ArrayExpr extends FunctionCallExpr {
 
     private final static Function argsToArray = new ArgsToArray();
@@ -18,6 +22,20 @@ public class ArrayExpr extends FunctionCallExpr {
      */
     public ArrayExpr(Evaluable[] elements) {
         super(elements, argsToArray, "argsToArray", false);
+    }
+
+    @Override
+    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
+        Evaluable[] translatedArgs = new Evaluable[_args.length];
+        for (int i = 0; i != _args.length; i++) {
+            Optional<Evaluable> translatedArg = _args[i].renameColumnDependencies(substitutions);
+            if (translatedArg.isEmpty()) {
+                return Optional.empty();
+            } else {
+                translatedArgs[i] = translatedArg.get();
+            }
+        }
+        return Optional.of(new ArrayExpr(translatedArgs));
     }
 
     @Override

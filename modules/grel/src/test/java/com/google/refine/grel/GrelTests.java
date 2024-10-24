@@ -37,6 +37,7 @@ import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -286,6 +287,32 @@ public class GrelTests extends GrelTestBase {
             // check that the produced source can still be parsed
             Evaluable reparsed = MetaParser.parse(eval.getSource());
             Assert.assertEquals(reparsed, eval);
+        }
+    }
+
+    @Test
+    public void testRenameDependencies() throws ParsingException {
+        // integration test for column dependency renaming
+
+        Map<String, String> rename = Map.of("foo", "bar");
+        String tests[][] = {
+                { "value", "value" },
+                { "cell.recon.match.id", "cell.recon.match.id" },
+                { "value + 'a'", "value + 'a'" },
+                { "\"foo\"", "\"foo\"" },
+                { "1", "1" },
+                { "cells.foo", "cells.bar" },
+                { "value + ' ' + cells.foo.value", "value + ' ' + cells.bar.value" },
+                { "cells[\"foo\"].value+'_'+value", "cells[\"bar\"].value+'_'+value" },
+                { "parseHtml(value.trim())", "parseHtml(value.trim())" },
+                { "cells", null },
+                // this could be analyzed too, but we will never reach completeness anyway!
+                { "get(cells, 'foo'+'bar')", null },
+        };
+        for (String[] test : tests) {
+            Evaluable eval = MetaParser.parse("grel:" + test[0]);
+            Optional<Evaluable> expected = test[1] == null ? Optional.empty() : Optional.of(MetaParser.parse("grel:" + test[1]));
+            Assert.assertEquals(eval.renameColumnDependencies(rename), expected, "for expression: " + test[0]);
         }
     }
 

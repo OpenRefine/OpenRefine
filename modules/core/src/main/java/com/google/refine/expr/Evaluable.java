@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -86,6 +87,19 @@ public interface Evaluable {
      *         the expression is constant.
      */
     public default Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
+        return Optional.empty();
+    }
+
+    /**
+     * Translates this expression by simultaneously substituting column names, as specified by the supplied map.
+     *
+     * @param substitutions
+     *            a map specifying new names for some columns. Keys of the map are old column names, values are the new
+     *            names for those columns. If a column name is not present in the map, the column is not renamed.
+     * @return a new expression with updated column names. If this renaming isn't supported, {@link Optional#empty()}
+     *         should be returned.
+     */
+    public default Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
         return Optional.empty();
     }
 

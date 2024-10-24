@@ -1,6 +1,7 @@
 
 package com.google.refine.grel.ast;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -32,6 +33,11 @@ public class BracketedExpr extends GrelExpr {
     @Override
     public Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
         return inner.getColumnDependencies(baseColumn);
+    }
+
+    @Override
+    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
+        return inner.renameColumnDependencies(substitutions).map(renamed -> new BracketedExpr(renamed));
     }
 
     @Override

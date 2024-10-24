@@ -35,6 +35,7 @@ package com.google.refine.grel.ast;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -97,6 +98,20 @@ public class ControlCallExpr extends GrelExpr {
             dependencies.addAll(deps.get());
         }
         return Optional.of(dependencies);
+    }
+
+    @Override
+    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
+        Evaluable[] translatedArgs = new Evaluable[_args.length];
+        for (int i = 0; i != _args.length; i++) {
+            Optional<Evaluable> translatedArg = _args[i].renameColumnDependencies(substitutions);
+            if (translatedArg.isEmpty()) {
+                return Optional.empty();
+            } else {
+                translatedArgs[i] = translatedArg.get();
+            }
+        }
+        return Optional.of(new ControlCallExpr(translatedArgs, _control, _controlName));
     }
 
     @Override
