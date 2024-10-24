@@ -574,7 +574,7 @@ function process(path, request, response) {
     butterfly.sendString(
       request, 
       response, 
-      "var ModuleWirings = " + butterfly.toJSONString(wirings) + ";", 
+      "var ModuleWirings = " + JSON.stringify(wirings) + ";",
       encoding, 
       "text/javascript"
     );
@@ -696,8 +696,8 @@ function process(path, request, response) {
             });
           }
           
-          context.encodingJson = butterfly.toJSONString(encodings);
-          context.defaultEncoding = butterfly.toJSONString(Packages.java.nio.charset.Charset.defaultCharset().name());
+          context.encodingJson = JSON.stringify(encodings);
+          context.defaultEncoding = JSON.stringify(Packages.java.nio.charset.Charset.defaultCharset().name());
         }
         
         send(request, response, path + ".vt", context);
