@@ -62,8 +62,8 @@ public class DatabaseImportController implements ImportingController {
 
     private static final Logger logger = LoggerFactory.getLogger("DatabaseImportController");
     protected RefineServlet servlet;
-    public static int DEFAULT_PREVIEW_LIMIT = 100;
-    public static String OPTIONS_KEY = "options";
+    public static final int DEFAULT_PREVIEW_LIMIT = 100;
+    public static final String OPTIONS_KEY = "options";
 
     @Override
     public void init(RefineServlet servlet) {
@@ -99,7 +99,7 @@ public class DatabaseImportController implements ImportingController {
                 doParsePreview(request, response, parameters);
 
             } catch (DatabaseServiceException e) {
-                logger.error("doPost::DatabaseServiceException::{}", e);
+                logger.error("doPost::DatabaseServiceException::{}", e.getMessage(), e);
                 HttpUtilities.respond(response, "error", getDbServiceException(e));
             }
         } else if ("create-project".equals(subCommand)) {
@@ -131,8 +131,7 @@ public class DatabaseImportController implements ImportingController {
      * @throws ServletException
      * @throws IOException
      */
-    private void doInitializeParserUI(HttpServletRequest request, HttpServletResponse response,
-            Map<String, String> parameters)
+    private void doInitializeParserUI(HttpServletRequest request, HttpServletResponse response, Map<String, String> parameters)
             throws ServletException, IOException {
         if (logger.isDebugEnabled()) {
             logger.debug("::doInitializeParserUI::");
@@ -141,13 +140,13 @@ public class DatabaseImportController implements ImportingController {
         ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(result, "status", "ok");
-        JSONUtilities.safePut(result, OPTIONS_KEY, options);
+        JSONUtilities.safePut(result, DatabaseImportController.OPTIONS_KEY, options);
 
-        JSONUtilities.safePut(options, "skipDataLines", 0);
-        JSONUtilities.safePut(options, "storeBlankRows", true);
+        JSONUtilities.safePut(options, DatabaseImportController.OPTIONS_KEY, 0);
+        JSONUtilities.safePut(options, DatabaseImportController.OPTIONS_KEY, true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
         if (logger.isDebugEnabled()) {
-            logger.debug("doInitializeParserUI:::{}", result.toString());
+            logger.debug("doInitializeParserUI:::{}", result);
         }
 
         HttpUtilities.respond(response, result.toString());
@@ -189,7 +188,7 @@ public class DatabaseImportController implements ImportingController {
             ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                     request.getParameter("options"));
 
-            List<Exception> exceptions = new LinkedList<Exception>();
+            List<Exception> exceptions = new LinkedList<>();
 
             job.prepareNewProject();
 
@@ -205,7 +204,7 @@ public class DatabaseImportController implements ImportingController {
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             try {
                 writer.writeStartObject();
-                if (exceptions.size() == 0) {
+                if (exceptions.isEmpty()) {
                     job.project.update(); // update all internal models, indexes, caches, etc.
                     writer.writeStringField("status", "ok");
                 } else {
@@ -231,12 +230,12 @@ public class DatabaseImportController implements ImportingController {
     }
 
     private String getExceptionString(List<Exception> exceptions) {
-        String ex = "";
+        StringBuilder ex = new StringBuilder();
         for (Exception e : exceptions) {
-            ex = ex + e.getLocalizedMessage() + "\n";
+            ex.append(e.getLocalizedMessage()).append("\n");
         }
         // TODO Auto-generated method stub
-        return ex;
+        return ex.toString();
     }
 
     /**
@@ -314,7 +313,7 @@ public class DatabaseImportController implements ImportingController {
             final ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                     request.getParameter("options"));
 
-            final List<Exception> exceptions = new LinkedList<Exception>();
+            final List<Exception> exceptions = new LinkedList<>();
 
             job.setState("creating-project");
 
@@ -338,12 +337,12 @@ public class DatabaseImportController implements ImportingController {
                                 optionObj,
                                 exceptions);
                     } catch (DatabaseServiceException e) {
-                        logger.error("DatabaseImportController::doCreateProject:::run{}", e);
+                        logger.error("DatabaseImportController::doCreateProject:::run {}", e.getMessage(), e);
                         // throw new RuntimeException("DatabaseServiceException::", e);
                     }
 
                     if (!job.canceled) {
-                        if (exceptions.size() > 0) {
+                        if (!exceptions.isEmpty()) {
                             job.setError(exceptions);
                         } else {
                             project.update(); // update all internal models, indexes, caches, etc.
@@ -423,6 +422,7 @@ public class DatabaseImportController implements ImportingController {
             try {
                 batchSize = Integer.parseInt(propBatchSize);
             } catch (NumberFormatException nfe) {
+                logger.error("Invalid batch size format: {}", nfe.getMessage());
 
             }
         }
@@ -441,7 +441,7 @@ public class DatabaseImportController implements ImportingController {
         try {
             jdbcConfig.setDatabasePort(Integer.parseInt(request.getParameter("databasePort")));
         } catch (NumberFormatException nfE) {
-            logger.error("getQueryInfo :: invalid database port ::{}", nfE);
+            logger.error("getQueryInfo :: invalid database port ::{}", nfE.getMessage(), nfE);
         }
         jdbcConfig.setDatabaseUser(request.getParameter("databaseUser"));
         jdbcConfig.setDatabasePassword(request.getParameter("databasePassword"));
