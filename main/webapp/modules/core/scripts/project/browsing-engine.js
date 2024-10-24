@@ -265,7 +265,7 @@ BrowsingEngine.prototype.update = function(onDone) {
   this._elmts.controls.css("display", "none");
   this._elmts.indicator.css("display", "block");
 
-  $.post(
+  Refine.postCSRF(
     "command/core/compute-facets?" + $.param({ project: theProject.id }),
     { engine: JSON.stringify(this.getJSON(true)) },
     function(data) {

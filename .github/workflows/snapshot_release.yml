@@ -219,12 +219,6 @@ jobs:
       env:
         P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
 
-    - name: Apply patch to insert Google API credentials
-      run: |
-        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/gdata.patch --decrypt .github/workflows/release/gdata.patch.asc
-        git am .github/workflows/release/gdata.patch
-        git reset HEAD^
-
     - name: Install webapp dependencies
       run: cd main/webapp && npm install
 

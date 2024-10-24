@@ -444,7 +444,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     if(activeTabName === "Distance"){
         self._renderDistancePreview(this._values[0]);
     } else {
-        $.post(
+        Refine.postCSRF(
             "command/core/preview-expression?" + $.param(params), 
             {
                 expression: this._getLanguage() + ":" + expression,
