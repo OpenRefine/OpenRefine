@@ -1,5 +1,5 @@
 CSRFUtil = {
-    _tokenMaxAge: 1800000 // half an hour in milliseconds (tokens live for 1 hour in the backend)
+    _tokenMaxAge: 30 * 60 * 1000 // half an hour in milliseconds (tokens live for 1 hour in the backend)
 };
 
 
