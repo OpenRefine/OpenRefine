@@ -221,10 +221,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             schemaSpace: service.schemaSpace
         },
         null,
-        { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+        { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
+        { onDone: function() { DialogSystem.dismissUntil(level - 1); } }
         );
-
-        DialogSystem.dismissUntil(level - 1);
     });
 
     $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).on('click',function() {
@@ -395,9 +394,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           "recon-copy-across-columns", 
           null,
           config,
-          { rowsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
+          { rowsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
+          { onDone: dismiss }
         );
-        dismiss();
       }
     });
   };
