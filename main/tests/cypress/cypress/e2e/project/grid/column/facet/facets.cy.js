@@ -376,27 +376,15 @@ describe(__filename, function () {
     );
   });
 
-  // // This test is unstable, mouseover behavior is unpredictable
-  // // This might be because the element is detached from the DOM in the middle
-  // // it('Test include/exlude toggle', function () {
-  // // 	cy.loadAndVisitProject('food.small');
-  // // 	cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"]').trigger('mouseover');
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('include').should('be.visible');
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').click();
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('exclude');
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').click();
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('include');
-  // // });
+  it('Test collapsing facet panels', function () {
+    cy.loadAndVisitProject('food.small');
+    cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
+    // ensure facet inner panel is visible
+    cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body-inner').should('be.visible');
+    // collapse the panel
+    cy.get('#refine-tabs-facets .facets-container li:nth-child(1) a[bind="minimizeButton"]').click();
+    // Make sure the body is hidden
+    cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body').should('not.be.visible');
+  });
 
-  // it('Test collapsing facet panels', function () {
-  // The following test does not work
-  // Because the facet panels uses soem weird CSS with overflow:hidden, Cypress can not detect it
-  // //// # cy.loadAndVisitProject('food.small');
-  // //// # cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
-  // //// # ensure facet inner panel is visible
-  // //// # cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body-inner').should('be.visible');
-  // //// #collapse the panel
-  // //// # cy.get('#refine-tabs-facets .facets-container li:nth-child(1) a[bind="minimizeButton"]').click();
-  // ////
 });
