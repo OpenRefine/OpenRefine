@@ -20,11 +20,7 @@ CSRFUtil.postCSRF = function(url, data, success, dataType, failCallback) {
     return CSRFUtil.wrapCSRF(function(token) {
         var fullData = data || {};
         if (typeof fullData == 'string') {
-            if (fullData.includes('?')) {
-              fullData = fullData + "&" + $.param({csrf_token: token});
-            } else {
-              fullData = fullData + "?" + $.param({csrf_token: token});
-            }
+            fullData = fullData + "&" + $.param({csrf_token: token});
         } else {
             fullData['csrf_token'] = token;
         }
