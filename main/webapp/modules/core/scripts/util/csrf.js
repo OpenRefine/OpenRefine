@@ -3,7 +3,7 @@ CSRFUtil = {};
 // Requests a CSRF token and calls the supplied callback
 // with the token
 CSRFUtil.wrapCSRF = function(onCSRF) {
-    return $.get(
+    $.get(
         "command/core/get-csrf-token",
         {},
         function(response) {
@@ -17,7 +17,7 @@ CSRFUtil.wrapCSRF = function(onCSRF) {
 // is supplied in the POST data. The arguments match those
 // of $.post().
 CSRFUtil.postCSRF = function(url, data, success, dataType, failCallback) {
-    return CSRFUtil.wrapCSRF(function(token) {
+    CSRFUtil.wrapCSRF(function(token) {
         var fullData = data || {};
         if (typeof fullData == 'string') {
             if (fullData.includes('?')) {
