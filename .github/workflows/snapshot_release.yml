@@ -42,10 +42,6 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-      - name: Set up secrets
-        run: |
-          echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
-
       - name: Set up Java 11
         uses: actions/setup-java@v4
         with:
@@ -87,7 +83,7 @@ jobs:
         env:
           CYPRESS_BROWSER: ${{ matrix.browser }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
+          CYPRESS_PROJECT_ID: s5du3k
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs.paths }}
           CYPRESS_GROUP: ${{ matrix.specs.group }}
