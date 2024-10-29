@@ -308,7 +308,7 @@ public class ImportingUtilities {
                             calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
-                    JSONUtilities.safePut(fileRecord, "format", guessBetterFprmat(file, fileRecord));
+                    JSONUtilities.safePut(fileRecord, "format", guessBetterFormat(file, fileRecord));
                     JSONUtilities.append(fileRecords, fileRecord);
 
                     clipboardCount++;
@@ -699,7 +699,7 @@ public class ImportingUtilities {
 
     static public void postProcessSingleRetrievedFile(File file, ObjectNode fileRecord) {
         if (!fileRecord.has("format")) {
-            JSONUtilities.safePut(fileRecord, "format", guessBetterFprmat(file, fileRecord));
+            JSONUtilities.safePut(fileRecord, "format", guessBetterFormat(file, fileRecord));
         }
     }
 
@@ -1044,7 +1044,7 @@ public class ImportingUtilities {
         return bestFormat;
     }
 
-    static String guessBetterFprmat(File file, ObjectNode fileRecord) {
+    static String guessBetterFormat(File file, ObjectNode fileRecord) {
         String encoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
         String bestFormat = ImportingManager.getFormat(file.getName(), JSONUtilities.getString(fileRecord, "declaredMimeType", null));
         bestFormat = bestFormat == null ? "text" : bestFormat;
