@@ -12,7 +12,11 @@ const clickFacetAction = (facetType, text, action) => {
   cy.getFacetContainer(facetType)
     .contains(text)
     .parent()
-    .invoke('trigger', 'mouseenter') // include/exclude not visible until we mouse over
+    .invoke('trigger', 'mouseenter'); // include/exclude not visible until we mouse over
+  // start a new chain after the trigger
+  cy.getFacetContainer(facetType)
+    .contains(text)
+    .siblings()
     .get(".facet-choice-toggle")
     .contains(action)
     .should('have.css', 'visibility', 'visible') // partially occluded, so "be.visible" won't work
