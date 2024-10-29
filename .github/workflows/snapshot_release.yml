@@ -83,7 +83,7 @@ jobs:
         env:
           CYPRESS_BROWSER: ${{ matrix.browser }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_PROJECT_ID: s5du3k
+          CYPRESS_PROJECT_ID: ${{ vars.CYPRESS_PROJECT_ID }}
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs.paths }}
           CYPRESS_GROUP: ${{ matrix.specs.group }}
