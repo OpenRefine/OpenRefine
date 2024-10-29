@@ -79,7 +79,7 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
     @Test
     public void testInvalidJSON() throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(request.getParameter("project")).thenReturn(project.toString());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
         when(request.getParameter("operations")).thenReturn("[{}]");
 
         command.doPost(request, response);

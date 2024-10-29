@@ -34,14 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.history;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
@@ -63,19 +63,11 @@ public class ApplyOperationsCommand extends Command {
             Project project = getProject(request);
             String jsonString = request.getParameter("operations");
 
-            try {
-                ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
-                int count = a.size();
-                for (int i = 0; i < count; i++) {
-                    if (a.get(i) instanceof ObjectNode) {
-                        ObjectNode obj = (ObjectNode) a.get(i);
-
-                        reconstructOperation(project, obj);
-                    }
-                }
-            } catch (IllegalArgumentException e) {
-                respondCodeError(response, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST, null);
-                return;
+            List<AbstractOperation> operations = ParsingUtilities.mapper.readValue(jsonString,
+                    new TypeReference<List<AbstractOperation>>() {
+                    });
+            for (AbstractOperation operation : operations) {
+                runOperation(project, operation);
             }
 
             if (project.processManager.hasPending()) {
@@ -88,17 +80,12 @@ public class ApplyOperationsCommand extends Command {
         }
     }
 
-    protected void reconstructOperation(Project project, ObjectNode obj) throws IOException {
-        AbstractOperation operation = ParsingUtilities.mapper.convertValue(obj, AbstractOperation.class);
+    protected void runOperation(Project project, AbstractOperation operation) throws Exception {
         if (operation != null && !(operation instanceof UnknownOperation)) {
             operation.validate();
-            try {
-                Process process = operation.createProcess(project, new Properties());
+            Process process = operation.createProcess(project, new Properties());
 
-                project.processManager.queueProcess(process);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            project.processManager.queueProcess(process);
         }
     }
 }
