@@ -12,12 +12,14 @@ const clickFacetAction = (facetType, text, action) => {
   cy.getFacetContainer(facetType)
     .contains(text)
     .parent()
-    // TODO: Ideally, we'd like to use the native event handlers rather than forcing things
-    // .trigger("mouseenter") // this doesn't appear to have any affect
+    .invoke('trigger', 'mouseenter'); // include/exclude not visible until we mouse over
+  // start a new chain after the trigger
+  cy.getFacetContainer(facetType)
+    .contains(text)
+    .siblings()
     .get(".facet-choice-toggle")
     .contains(action)
-    .invoke('css', 'visibility', 'visible') // force visibility
-    .should('have.css', 'visibility', 'visible')
+    .should('have.css', 'visibility', 'visible') // partially occluded, so "be.visible" won't work
     .click();
 };
 
