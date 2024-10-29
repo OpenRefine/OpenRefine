@@ -42,11 +42,6 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-      - name: Set up secrets
-        run: |
-          echo "CYPRESS_RECORD_KEY=$(echo YzE3ZDU4OGItZTBkOC00ZjJmLTg4NjYtNzJmNmFmYmRhNGQxCg== | base64 -d)" >> $GITHUB_ENV
-          echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
-
       - name: Set up Java 11
         uses: actions/setup-java@v4
         with:
@@ -87,8 +82,8 @@ jobs:
           ./refine e2e_tests
         env:
           CYPRESS_BROWSER: ${{ matrix.browser }}
-          CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
-          CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ vars.CYPRESS_PROJECT_ID }}
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs.paths }}
           CYPRESS_GROUP: ${{ matrix.specs.group }}
