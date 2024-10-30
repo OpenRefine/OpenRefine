@@ -30,27 +30,27 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-function serviceLogoFromReconConfig(reconConfig){
+
+function serviceLogoFromReconConfig(reconConfig) {
   var serviceUrl = null;
   var service = null;
-  var serviceLogo=null;
+  var serviceLogo = null;
   if (reconConfig) {
-    serviceUrl =reconConfig.service;
+    serviceUrl = reconConfig.service;
   }
   if (serviceUrl) {
     service = ReconciliationManager.getServiceFromUrl(serviceUrl);
   }
   if (service) {
-    serviceLogo=service.logo;
+    serviceLogo = service.logo;
   }
   try {
     return new URL(serviceLogo);  
-  }
-  catch {
+  } catch {
     console.warn("Invalid logo URL supplied by service "+serviceUrl)
   }
-  
 };
+
 var SchemaAlignment = {
   _isSetUp: false
 };
@@ -454,16 +454,13 @@ SchemaAlignment._changesCleared = function() {
 };
 
 SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI, reconConfig) {
-  var logo=serviceLogoFromReconConfig(reconConfig);
+  var logo = serviceLogoFromReconConfig(reconConfig);
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
-  if(logo) {
+  if (logo) {
     var img =$("<img>");
-    if(serviceLogo) {
-      var imageUrl = serviceLogo;
-      img.attr("src", imageUrl);
-      img.attr("title", service.name);
-      img.addClass("serviceLogo-for-schema")
-   }
+    img.attr("src", logo);
+    img.attr("title", reconConfig.name);
+    img.addClass("serviceLogo-for-schema")
     cell.append(img);
   }
   cell.data({
@@ -1498,21 +1495,19 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
   }
 
   var acceptDraggableColumn = function(column) {
-    var Logo=serviceLogoFromReconConfig(reconConfig);
-    var img =$("<img>");
-    if(Logo ){
-      var imageUrl = serviceLogo;
+    var logo = serviceLogoFromReconConfig(reconConfig);
+    var img = $("<img>");
+    if (logo) {
+      var imageUrl = logo;
       img.attr("src", imageUrl);
-      img.attr("title", service.name);
+      img.attr("title", reconConfig.name);
       img.addClass("serviceLogo-for-schema")
-  
     };
 
     input.hide();
     input.val("");
     var columnDiv = $('<div></div>').appendTo(inputContainer);
     column.appendTo(columnDiv);
-    //columnDiv.append(img);
 
     var origText = column.text();
     column.text("");

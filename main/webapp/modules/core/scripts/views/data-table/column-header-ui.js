@@ -72,30 +72,28 @@ DataTableColumnHeaderUI.prototype._render = function() {
 
   var serviceUrl = null;
   var service = null;
-  var serviceLogo=null;
+  var serviceLogo = null;
   if (this._column.reconConfig) {
-   serviceUrl =this._column.reconConfig.service;
+   serviceUrl = this._column.reconConfig.service;
   }
   try {
-    
     if (new URL(serviceUrl)) {
       service = ReconciliationManager.getServiceFromUrl(serviceUrl);
     }
-    if(service) {
+    if (service) {
       serviceLogo=service.logo;
    }
 
-    var img =$("<img>");
-    if(serviceLogo) {
+    var img = $("<img>");
+    if (serviceLogo) {
       var imageUrl = serviceLogo;
       img.attr("src", imageUrl);
       img.attr("title", service.name);
       img.addClass("serviceLogo")
       img.appendTo(elmts.serviceLogoContainer.show());
-   }
-  }
-  catch {
-    console.log("The URL is not valid");
+    }
+  } catch {
+    console.log("Invalid logo URL supplied by service "+serviceUrl);
   }
 
   if ("reconStats" in this._column) {
