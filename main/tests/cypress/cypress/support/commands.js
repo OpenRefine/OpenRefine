@@ -202,10 +202,10 @@ Cypress.Commands.add('typeExpression', (expression, options = {}) => {
  * Utility method to select the Python/Jython interpreter
  */
 Cypress.Commands.add('selectPython', () => {
-
-  cy.get('#expressionPreviewLanguageSelectId').select('jython');
+  cy.get('textarea.expression-preview-code').clear()
+  cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
   // Wait for Jython interpreter to load (as indicated by changed error message)
-  cy.get('.expression-preview-parsing-status').contains('No syntax error');
+  cy.get('.expression-preview-parsing-status').contains('Internal error');
 });
 
 /**
