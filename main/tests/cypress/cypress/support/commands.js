@@ -335,13 +335,13 @@ Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector, position = 
 Cypress.Commands.add(
   'loadAndVisitSampleJSONProject',
   (projectName, fixture) => {
+    const jsonText = JSON.stringify(fixture)
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
     cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('Clipboard')
       .click();
-
-    cy.get('textarea').invoke('val', fixture);
+    cy.get('textarea').invoke('val', jsonText);
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     )
