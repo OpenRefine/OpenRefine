@@ -202,10 +202,10 @@ Cypress.Commands.add('typeExpression', (expression, options = {}) => {
  * Utility method to select the Python/Jython interpreter
  */
 Cypress.Commands.add('selectPython', () => {
-  cy.get('textarea.expression-preview-code').clear()
-  cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
+
+  cy.get('#expressionPreviewLanguageSelectId').select('jython');
   // Wait for Jython interpreter to load (as indicated by changed error message)
-  cy.get('.expression-preview-parsing-status').contains('Internal error');
+  cy.get('.expression-preview-parsing-status').contains('No syntax error');
 });
 
 /**
@@ -335,13 +335,13 @@ Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector, position = 
 Cypress.Commands.add(
   'loadAndVisitSampleJSONProject',
   (projectName, fixture) => {
+    const jsonText = JSON.stringify(fixture)
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
     cy.get('#create-project-ui-source-selection-tabs > a')
       .contains('Clipboard')
       .click();
-
-    cy.get('textarea').invoke('val', fixture);
+    cy.get('textarea').invoke('val', jsonText);
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     )
