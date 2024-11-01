@@ -225,4 +225,20 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
         assertNoWarningRaised();
         verifyNoInteractions(connection);
     }
+
+    @Test
+    public void testAlreadyExistsOnWikiNewVersion() throws IOException, MediaWikiApiErrorException {
+        // mock API call to search for existing filenames
+        when(connection.sendJsonRequest(any(), any())).thenReturn(apiResponseFound);
+
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.matchedMid)
+                .addFileName("Matched.png")
+                .addFilePath("/path/to/Matched.png")
+                .addContributingRowId(123)
+                .build();
+
+        scrutinize(edit);
+
+        assertWarningsRaised(FileNameScrutinizer.uploadNewFileVersionType);
+    }
 }

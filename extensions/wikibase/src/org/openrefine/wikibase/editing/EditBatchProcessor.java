@@ -217,14 +217,19 @@ public class EditBatchProcessor {
                 // custom code for handling our custom updates to mediainfo, which cover editing more than Wikibase
                 if (entityUpdate instanceof FullMediaInfoUpdate) {
                     FullMediaInfoUpdate fullMediaInfoUpdate = (FullMediaInfoUpdate) entityUpdate;
+                    MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+
+                    if (fullMediaInfoUpdate.getFilePath() != null) {
+                        ((MediaInfoEdit) update).uploadFile(mediaFileUtils, summary, tags, filePageWaitTime,
+                                filePageMaxWaitTime);
+                    }
+
                     if (fullMediaInfoUpdate.isOverridingWikitext() && fullMediaInfoUpdate.getWikitext() != null) {
-                        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
                         long pageId = Long.parseLong(fullMediaInfoUpdate.getEntityId().getId().substring(1));
                         long revisionId = mediaFileUtils.editPage(pageId, fullMediaInfoUpdate.getWikitext(), summary, tags);
                         lastRevisionId = OptionalLong.of(revisionId);
                     } else {
                         // manually purge the wikitext page associated with this mediainfo
-                        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
                         mediaFileUtils.purgePage(Long.parseLong(entityUpdate.getEntityId().getId().substring(1)));
                     }
                 }
