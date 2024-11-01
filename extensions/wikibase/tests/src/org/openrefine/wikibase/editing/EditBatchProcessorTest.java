@@ -498,6 +498,57 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         verify(connection, times(1)).sendJsonRequest("POST", editParams);
     }
 
+    @Test
+    public void testNewFileVersion()
+            throws InterruptedException, MediaWikiApiErrorException, IOException {
+        MediaInfoIdValue mid = Datamodel.makeWikimediaCommonsMediaInfoIdValue("M12345");
+        MediaInfoEdit edit = new MediaInfoEditBuilder(mid)
+                .addWikitext("my new wikitext [[Category:Uploaded with OpenRefine]]")
+                .addFileName("File:My_test_file.png")
+                .addFilePath("https://my.site.com/file.png")
+                .addContributingRowId(123)
+                .build();
+        List<EntityEdit> batch = Collections.singletonList(edit);
+
+        // Plan expected edits
+        ItemDocument existingItem = ItemDocumentBuilder
+                .forItemId(TestingData.existingId)
+                .build();
+        when(fetcher.getEntityDocuments(Collections.singletonList(TestingData.existingId.getId())))
+                .thenReturn(Collections.singletonMap(TestingData.existingId.getId(), existingItem));
+
+        // mock CSRF token fetching
+        String csrfToken = "9dd28471819";
+        Map<String, String> params = new HashMap<>();
+        params.put("action", "query");
+        params.put("meta", "tokens");
+        params.put("type", "csrf");
+        when(connection.sendJsonRequest("POST", params))
+                .thenReturn(ParsingUtilities.mapper.readTree("{\"batchcomplete\":\"\",\"query\":{\"tokens\":{"
+                        + "\"csrftoken\":\"9dd28471819\"}}}"));
+        String successfulUploadResponse = "{\"upload\":{\"result\":\"Success\",\"filename\":\"My_test_file.png\",\"pageid\":12345}}";
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("action", "upload");
+        parameters.put("tags", "my-tag");
+        parameters.put("comment", summary);
+        parameters.put("filename", "File:My_test_file.png");
+        parameters.put("text", "my new wikitext [[Category:Uploaded with OpenRefine]]");
+        parameters.put("token", csrfToken);
+        parameters.put("url", "https://my.site.com/file.png");
+        when(connection.sendJsonRequest("POST", parameters, Collections.emptyMap()))
+                .thenReturn(ParsingUtilities.mapper.readTree(successfulUploadResponse));
+
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, 50, 60);
+        assertEquals(1, processor.remainingEdits());
+        assertEquals(0, processor.progress());
+        processor.performEdit();
+        assertEquals(0, processor.remainingEdits());
+        assertEquals(100, processor.progress());
+
+        verify(connection).sendJsonRequest("POST", parameters, Collections.emptyMap());
+    }
+
     private Map<String, EntityDocument> toMap(List<ItemDocument> docs) {
         return docs.stream().collect(Collectors.toMap(doc -> doc.getEntityId().getId(), doc -> doc));
     }

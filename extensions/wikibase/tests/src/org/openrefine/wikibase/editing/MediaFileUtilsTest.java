@@ -74,6 +74,17 @@ public class MediaFileUtilsTest {
             + "    }\n"
             + "}";
 
+    protected Map<String, String> makeUploadParams() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("action", "upload");
+        parameters.put("tags", "");
+        parameters.put("comment", "my summary");
+        parameters.put("filename", "My_test_file.png");
+        parameters.put("text", "my wikitext");
+        parameters.put("token", csrfToken);
+        return parameters;
+    }
+
     @Test
     public void testPurge() throws IOException, MediaWikiApiErrorException {
         ApiConnection connection = mock(ApiConnection.class);
@@ -96,13 +107,7 @@ public class MediaFileUtilsTest {
         mockCsrfCall(connection);
 
         // mock file upload request
-        Map<String, String> uploadParams = new HashMap<>();
-        uploadParams.put("action", "upload");
-        uploadParams.put("tags", "");
-        uploadParams.put("comment", "my summary");
-        uploadParams.put("filename", "My_test_file.png");
-        uploadParams.put("text", "my wikitext");
-        uploadParams.put("token", csrfToken);
+        Map<String, String> uploadParams = makeUploadParams();
         JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(
                 successfulUploadResponse);
         when(connection.sendJsonRequest(eq("POST"), eq(uploadParams), any())).thenReturn(uploadJsonResponse);
@@ -126,13 +131,7 @@ public class MediaFileUtilsTest {
         mockCsrfCall(connection);
 
         // mock file upload request
-        Map<String, String> uploadParams = new HashMap<>();
-        uploadParams.put("action", "upload");
-        uploadParams.put("tags", "");
-        uploadParams.put("comment", "my summary");
-        uploadParams.put("filename", "My_test_file.png");
-        uploadParams.put("text", "my wikitext");
-        uploadParams.put("token", csrfToken);
+        Map<String, String> uploadParams = makeUploadParams();
         uploadParams.put("url", url);
         JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(successfulUploadResponse);
         when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap())).thenReturn(uploadJsonResponse);
@@ -171,13 +170,7 @@ public class MediaFileUtilsTest {
                 .thenThrow(new TokenErrorException("wrongtoken", "looks bad"));
 
         // mock file upload request
-        Map<String, String> uploadParams = new HashMap<>();
-        uploadParams.put("action", "upload");
-        uploadParams.put("tags", "");
-        uploadParams.put("comment", "my summary");
-        uploadParams.put("filename", "My_test_file.png");
-        uploadParams.put("text", "my wikitext");
-        uploadParams.put("token", csrfToken);
+        Map<String, String> uploadParams = makeUploadParams();
         uploadParams.put("url", url);
         JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(successfulUploadResponse);
         when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap()))
@@ -205,13 +198,7 @@ public class MediaFileUtilsTest {
         mockCsrfCall(connection);
 
         // mock file upload request
-        Map<String, String> uploadParams = new HashMap<>();
-        uploadParams.put("action", "upload");
-        uploadParams.put("tags", "");
-        uploadParams.put("comment", "my summary");
-        uploadParams.put("filename", "My_test_file.png");
-        uploadParams.put("text", "my wikitext");
-        uploadParams.put("token", csrfToken);
+        Map<String, String> uploadParams = makeUploadParams();
         uploadParams.put("url", url);
         when(connection.sendJsonRequest("POST", uploadParams, Collections.emptyMap())).thenThrow(
                 new MaxlagErrorException("the server is too slow"));
@@ -499,4 +486,38 @@ public class MediaFileUtilsTest {
         verify(connection, times(2)).sendJsonRequest("POST", uploadParams);
     }
 
+    @Test
+    public void testLocalUploadNewVersionIfWarningIsAllowed() throws IOException, MediaWikiApiErrorException {
+        ApiConnection connection = mock(ApiConnection.class);
+
+        // mock CSRF token request
+        mockCsrfCall(connection);
+
+        // mock file upload request
+        Map<String, String> uploadParams = makeUploadParams();
+        Map<String, String> ignoreWarningParameters = makeUploadParams();
+        ignoreWarningParameters.put("ignorewarnings", "1");
+        String warningResponseString = "{" +
+                "\"upload\": {" +
+                "\"result\": \"Warning\"," +
+                "\"warnings\": {" +
+                "\"exists\": \"My_test_file.png\"" +
+                "}" +
+                "}" +
+                "}";
+        JsonNode warningResponse = ParsingUtilities.mapper.readTree(warningResponseString);
+        JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(
+                successfulUploadResponse);
+        when(connection.sendJsonRequest(eq("POST"), eq(uploadParams), any())).thenReturn(warningResponse);
+        when(connection.sendJsonRequest(eq("POST"), eq(ignoreWarningParameters), any())).thenReturn(uploadJsonResponse);
+
+        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+        File path = new File("/tmp/image.png");
+        MediaUploadResponse response = mediaFileUtils.uploadLocalFile(path, "My_test_file.png", "my wikitext", "my summary",
+                Collections.emptyList(), false);
+        assertEquals(response.filename, "My_test_file.png");
+        assertEquals(response.pageid, 12345L);
+        assertEquals(response.getMid(connection, Datamodel.SITE_WIKIMEDIA_COMMONS),
+                Datamodel.makeWikimediaCommonsMediaInfoIdValue("M12345"));
+    }
 }
