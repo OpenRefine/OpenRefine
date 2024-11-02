@@ -128,6 +128,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
   options = options || {
     horizontal: false
   };
+  
   var menu = MenuSystem.createMenu();
   if ("width" in options) {
     menu.width(options.width);
