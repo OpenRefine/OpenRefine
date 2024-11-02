@@ -136,7 +136,6 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
   var createMenuItem = function(item) {
     if ("label" in item) {
       var menuItem = MenuSystem.createMenuItem().appendTo(menu);
-      if (options.horizontal) menuItem.addClass("submenu-item");
       if ("submenu" in item) {
         menuItem.html(
           '<table width="100%" cellspacing="0" cellpadding="0" class="menu-item-layout"><tr>' +
@@ -146,11 +145,11 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
         );
 
         menuItem.on('mouseenter click', function () {
+        $('.menu-expanded').removeClass('menu-expanded');
         clearTimeout(MenuSystem._hoverTimeout);
         MenuSystem._hoverTimeout = setTimeout(function () {
             MenuSystem.dismissUntil(level);
             menuItem.addClass("menu-expanded");
-        
             var options = {
                 onDismiss: function() {
                     menuItem.removeClass("menu-expanded");
@@ -162,7 +161,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
                 options.width = item.width;
             }
             MenuSystem.createAndShowStandardMenu(item.submenu, menuItem, options);
-        }, 500); 
+        }, 300); 
         });
 
       } else {
@@ -179,6 +178,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
             menuItem.attr("title", item.tooltip);
           }
           menuItem.on('mouseenter click', function () {
+            $('.menu-expanded').removeClass('menu-expanded');
             clearTimeout(MenuSystem._hoverTimeout);
             MenuSystem.dismissUntil(level);
           });
