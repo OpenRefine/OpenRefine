@@ -78,7 +78,19 @@ public class MediaFileUtils {
         parameters.put("action", "purge");
         parameters.put("pageids", Long.toString(pageid));
 
-        apiConnection.sendJsonRequest("POST", parameters);
+        int retries = 3;
+        MediaWikiApiErrorException lastException = null;
+        while (retries > 0) {
+            try {
+                JsonNode response = apiConnection.sendJsonRequest("POST", parameters);
+            } catch (MediaWikiApiErrorException e) {
+                lastException = e;
+            }
+            retries--;
+        }
+        if (retries <= 0 && lastException != null) {
+            throw lastException;
+        }
     }
 
     /**
