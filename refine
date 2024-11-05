@@ -378,7 +378,7 @@ e2e_tests() {
         CYPRESS_RECORD=1
         echo "Tests will be recorded in Cypress Dashboard"
     elif [ ! -z "$CYPRESS_PROJECT_ID" ] && [ -z "$CYPRESS_RECORD_KEY" ] ; then
-        fail "Found a Cypress project id but no record key"
+        echo "Found a Cypress project id but no record key - disabling recording in the Cypress Dashboard"
     fi
 
     REFINE_DATA_DIR="${TMPDIR:=/tmp}/openrefine-tests"
