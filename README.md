@@ -52,7 +52,7 @@ This requires [JDK 11](https://adoptium.net/) or newer, [Apache Maven](https://m
 
 ## Licensing and legal issues
 
-OpenRefine is open source software and is licensed under the BSD license located in the [LICENSE.txt](LICENSE.txt). See the folder `licenses` for information on open source libraries that OpenRefine depends on.
+OpenRefine is open source software and is licensed under the BSD license located in the [LICENSE.txt](LICENSE.txt). See the folders `licenses` under `/main/webapp/` as well as within each `/extensions` for information on open source libraries that OpenRefine depends on.
 
 ## Credits
 
