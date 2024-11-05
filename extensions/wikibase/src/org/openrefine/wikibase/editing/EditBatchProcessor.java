@@ -120,8 +120,8 @@ public class EditBatchProcessor {
         // set maxlag based on preference store
         editor.setMaxLag(maxLag);
         // configure retry limit, backoff settings
-        editor.setMaxLagMaxRetries(3);
-        editor.setMaxLagFirstWaitTime(1000);
+        editor.setMaxLagMaxRetries(5);
+        editor.setMaxLagFirstWaitTime(5000);
         editor.setMaxLagBackOffFactor(2.0);
 
         this.library = library;

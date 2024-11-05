@@ -83,7 +83,7 @@ public class MediaFileUtilsTest {
         Map<String, String> params = new HashMap<>();
         params.put("action", "purge");
         params.put("pageids", "12345");
-        verify(connection, times(3)).sendJsonRequest("POST", params);
+        verify(connection, times(1)).sendJsonRequest("POST", params);
     }
 
     @Test
