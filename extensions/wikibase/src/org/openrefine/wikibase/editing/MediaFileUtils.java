@@ -86,9 +86,10 @@ public class MediaFileUtils {
                 if (!(response != null && response.has("warnings"))) {
                     return;
                 }
-            } catch (MediaWikiApiErrorException | IOException e) {}
+            } catch (MediaWikiApiErrorException | IOException e) {
+            }
             retries--;
-            if ( retries > 0 ) {
+            if (retries > 0) {
                 backofTime = retries == 4 ? maxLagWaitTime : maxLagWaitTime * backoffFactor;
                 logger.info("purgePage:API error. Attempts left - " + retries + " Waiting " + backofTime / 1000 + " secs before retry.");
                 try {
@@ -99,7 +100,7 @@ public class MediaFileUtils {
                 }
             }
         }
-        if (retries <= 0 ) {
+        if (retries <= 0) {
             throw new MediaWikiApiErrorException("page", "Purge failed");
         }
     }
@@ -282,10 +283,10 @@ public class MediaFileUtils {
                 lastException = e;
             }
             retries--;
-            if ( retries > 0 ) {
+            if (retries > 0) {
                 backofTime = retries == 4 ? maxLagWaitTime : maxLagWaitTime * backoffFactor;
                 try {
-                    logger.info("editPage:API error. Attempts left - " + retries + " Waiting " + backofTime/1000 + " secs before retry.");
+                    logger.info("editPage:API error. Attempts left - " + retries + " Waiting " + backofTime / 1000 + " secs before retry.");
                     Thread.sleep(backofTime);
                 } catch (InterruptedException e1) {
                     Thread.currentThread().interrupt();
