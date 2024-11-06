@@ -49,7 +49,8 @@ public class MediaFileUtils {
     protected String csrfToken = null;
     protected int maxLagWaitTime = 5000; // ms
     protected String filePrefix = "File:"; // configurable?
-    protected int backoffFactor = 2;
+    protected double backoffFactor = 1.5;
+    protected int maxRetries = 14;
 
     public MediaFileUtils(ApiConnection wdtkConnection) {
         apiConnection = wdtkConnection;
@@ -78,7 +79,7 @@ public class MediaFileUtils {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("action", "purge");
         parameters.put("pageids", Long.toString(pageid));
-        int retries = 5;
+        int retries = maxRetries;
         int backofTime = maxLagWaitTime;
         while (retries > 0) {
             try {
@@ -90,14 +91,15 @@ public class MediaFileUtils {
             }
             retries--;
             if (retries > 0) {
-                backofTime = retries == 4 ? maxLagWaitTime : maxLagWaitTime * backoffFactor;
-                logger.info("purgePage:API error. Attempts left - " + retries + " Waiting " + backofTime / 1000 + " secs before retry.");
+                logger.info(String.format("-- purgePage:API error. Attempts left %d. Pausing %d secs before retry.", retries,
+                        backofTime / 1000));
                 try {
                     Thread.sleep(backofTime);
                 } catch (InterruptedException e1) {
                     Thread.currentThread().interrupt();
                     retries = 0;
                 }
+                backofTime *= backoffFactor;
             }
         }
         if (retries <= 0) {
@@ -268,7 +270,7 @@ public class MediaFileUtils {
         parameters.put("bot", "true");
         parameters.put("token", getCsrfToken());
 
-        int retries = 5;
+        int retries = maxRetries;
         int backofTime = maxLagWaitTime;
         MediaWikiApiErrorException lastException = null;
         while (retries > 0) {
@@ -284,14 +286,15 @@ public class MediaFileUtils {
             }
             retries--;
             if (retries > 0) {
-                backofTime = retries == 4 ? maxLagWaitTime : maxLagWaitTime * backoffFactor;
                 try {
-                    logger.info("editPage:API error. Attempts left - " + retries + " Waiting " + backofTime / 1000 + " secs before retry.");
+                    logger.info(String.format("-- editPage:API error. Attempts left %d. Pausing %d secs before retry.", retries,
+                            backofTime / 1000));
                     Thread.sleep(backofTime);
                 } catch (InterruptedException e1) {
                     Thread.currentThread().interrupt();
                     retries = 0;
                 }
+                backofTime *= backoffFactor;
             }
         }
         throw lastException;
@@ -327,6 +330,7 @@ public class MediaFileUtils {
     protected MediaUploadResponse uploadFile(Map<String, String> parameters, Map<String, ImmutablePair<String, java.io.File>> files)
             throws IOException, MediaWikiApiErrorException {
         int retries = 3;
+        int backofTime = maxLagWaitTime;
         MediaWikiApiErrorException lastException = null;
         while (retries > 0) {
             try {
@@ -346,11 +350,12 @@ public class MediaFileUtils {
             } catch (MaxlagErrorException e) { // wait for 5 seconds
                 lastException = e;
                 try {
-                    Thread.sleep(maxLagWaitTime);
+                    Thread.sleep(backofTime);
                 } catch (InterruptedException e1) {
                     Thread.currentThread().interrupt();
                     retries = 0;
                 }
+                backofTime *= backoffFactor;
             }
             retries--;
         }

@@ -119,10 +119,6 @@ public class EditBatchProcessor {
         editor.setAverageTimePerEdit(maxEditsPerMinute <= 0 ? 0 : (int) (1000 * (maxEditsPerMinute / 60.)));
         // set maxlag based on preference store
         editor.setMaxLag(maxLag);
-        // configure retry limit, backoff settings
-        editor.setMaxLagMaxRetries(5);
-        editor.setMaxLagFirstWaitTime(5000);
-        editor.setMaxLagBackOffFactor(2.0);
 
         this.library = library;
         this.summary = summary;
