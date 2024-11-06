@@ -303,10 +303,6 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
      *            the edit summary
      * @param tags
      *            the tags to apply to both edits
-     * @param filePageWaitTime
-     *            initial time to wait between checking if the page exists
-     * @param filePageMaxWaitTime
-     *            maximum time to wait between checking if the page exists
      * @return the id of the created entity
      * @throws MediaWikiApiErrorException
      * @throws IOException
