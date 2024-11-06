@@ -99,7 +99,7 @@ public class MediaFileUtils {
                     Thread.currentThread().interrupt();
                     retries = 0;
                 }
-                backofTime *= backoffFactor;
+                backofTime *= (long) backoffFactor;
             }
         }
         if (retries <= 0) {
@@ -294,7 +294,7 @@ public class MediaFileUtils {
                     Thread.currentThread().interrupt();
                     retries = 0;
                 }
-                backofTime *= backoffFactor;
+                backofTime *= (long) backoffFactor;
             }
         }
         throw lastException;
@@ -355,7 +355,7 @@ public class MediaFileUtils {
                     Thread.currentThread().interrupt();
                     retries = 0;
                 }
-                backofTime *= backoffFactor;
+                backofTime *= (long) backoffFactor;
             }
             retries--;
         }
