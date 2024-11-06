@@ -80,7 +80,7 @@ public class MediaFileUtils {
         parameters.put("action", "purge");
         parameters.put("pageids", Long.toString(pageid));
         int retries = maxRetries;
-        int backofTime = maxLagWaitTime;
+        long backofTime = maxLagWaitTime;
         while (retries > 0) {
             try {
                 JsonNode response = apiConnection.sendJsonRequest("POST", parameters);
@@ -271,7 +271,7 @@ public class MediaFileUtils {
         parameters.put("token", getCsrfToken());
 
         int retries = maxRetries;
-        int backofTime = maxLagWaitTime;
+        long backofTime = maxLagWaitTime;
         MediaWikiApiErrorException lastException = null;
         while (retries > 0) {
             try {
@@ -330,7 +330,7 @@ public class MediaFileUtils {
     protected MediaUploadResponse uploadFile(Map<String, String> parameters, Map<String, ImmutablePair<String, java.io.File>> files)
             throws IOException, MediaWikiApiErrorException {
         int retries = 3;
-        int backofTime = maxLagWaitTime;
+        long backofTime = maxLagWaitTime;
         MediaWikiApiErrorException lastException = null;
         while (retries > 0) {
             try {
