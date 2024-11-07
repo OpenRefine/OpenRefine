@@ -108,7 +108,7 @@ public class SQLiteDatabaseService extends DatabaseService {
                 return dbInfo;
             }
         } catch (SQLException e) {
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
         return null;
     }
@@ -145,7 +145,7 @@ public class SQLiteDatabaseService extends DatabaseService {
             dbInfo.setRows(rows);
             return dbInfo;
         } catch (SQLException e) {
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
     }
 
@@ -156,7 +156,7 @@ public class SQLiteDatabaseService extends DatabaseService {
                 ResultSet queryResult = statement.executeQuery(query)) {
             return new DatabaseInfo();
         } catch (SQLException e) {
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
     }
 
@@ -177,7 +177,7 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return columns;
         } catch (SQLException e) {
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
     }
 
@@ -203,7 +203,7 @@ public class SQLiteDatabaseService extends DatabaseService {
             }
             return rows;
         } catch (SQLException e) {
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
     }
 }

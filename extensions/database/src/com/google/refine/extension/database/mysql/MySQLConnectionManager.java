@@ -105,7 +105,7 @@ public class MySQLConnectionManager {
 
         } catch (SQLException e) {
             logger.error("Test connection Failed!", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
 
     }
@@ -150,7 +150,7 @@ public class MySQLConnectionManager {
             throw new DatabaseServiceException(e.getMessage());
         } catch (SQLException e) {
             logger.error("SQLException::Couldn't get a Connection!", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
     }
 
