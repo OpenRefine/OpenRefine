@@ -91,7 +91,7 @@ public class MediaFileUtils {
             }
             retries--;
             if (retries > 0) {
-                logger.info(String.format("-- purgePage:API error. Attempts left %d. Pausing %d secs before retry.", retries,
+                logger.info(String.format("-- purgePage:API error. %d attempts left. Pausing %d secs before retry.", retries,
                         backofTime / 1000));
                 try {
                     Thread.sleep(backofTime);
