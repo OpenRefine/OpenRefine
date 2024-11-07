@@ -287,7 +287,7 @@ public class MediaFileUtils {
             retries--;
             if (retries > 0) {
                 try {
-                    logger.info(String.format("-- editPage:API error. Attempts left %d. Pausing %d secs before retry.", retries,
+                    logger.info(String.format("-- editPage:API error. %d attempts left. Pausing %d secs before retry.", retries,
                             backofTime / 1000));
                     Thread.sleep(backofTime);
                 } catch (InterruptedException e1) {
