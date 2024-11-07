@@ -434,6 +434,7 @@ public class MediaFileUtilsTest {
     public void testPurgeRateLimitHandling() throws IOException, MediaWikiApiErrorException {
         ApiConnection connection = mock(ApiConnection.class);
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+        mediaFileUtils.setMaxLagWaitTime(100);
 
         JsonNode rateLimitExceededResponse = ParsingUtilities.mapper.readTree(
                 "{\"batchcomplete\":\"\",\"warnings\":{\"purge\":{\"*\":\"You've exceeded your rate limit. Please wait some time and try again.\"}},\"purge\":[{\"ns\":6,\"title\":\"File:Colonia test 3 - 4.jpg\"}]}");
@@ -457,6 +458,7 @@ public class MediaFileUtilsTest {
     public void testEditPageRateLimitHandling() throws IOException, MediaWikiApiErrorException {
         ApiConnection connection = mock(ApiConnection.class);
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+        mediaFileUtils.setMaxLagWaitTime(100);
 
         JsonNode successResponse = ParsingUtilities.mapper.readTree(successfulEditResponse);
         JsonNode tokenJsonResponse = ParsingUtilities.mapper.readTree(csrfResponse);
