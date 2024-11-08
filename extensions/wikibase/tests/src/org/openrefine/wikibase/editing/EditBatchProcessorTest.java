@@ -526,7 +526,6 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         when(connection.sendJsonRequest("POST", params))
                 .thenReturn(ParsingUtilities.mapper.readTree("{\"batchcomplete\":\"\",\"query\":{\"tokens\":{"
                         + "\"csrftoken\":\"9dd28471819\"}}}"));
-        String successfulUploadResponse = "{\"upload\":{\"result\":\"Success\",\"filename\":\"My_test_file.png\",\"pageid\":12345}}";
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("action", "upload");
@@ -535,8 +534,21 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         parameters.put("filename", "File:My_test_file.png");
         parameters.put("text", "my new wikitext [[Category:Uploaded with OpenRefine]]");
         parameters.put("token", csrfToken);
-        parameters.put("url", "https://my.site.com/file.png");
-        when(connection.sendJsonRequest("POST", parameters, Collections.emptyMap()))
+        
+        Map<String, String> uploadParameters = new HashMap<>();
+        uploadParameters.putAll(parameters);
+        uploadParameters.put("url", "https://my.site.com/file.png");
+        String warningResponse = "{\"upload\":{\"result\":\"Warning\",\"warnings\":{\"exists\":\"My_test_file.png\"},\"filekey\": \"file.key.1.png\"}}";
+
+        when(connection.sendJsonRequest("POST", uploadParameters, Collections.emptyMap()))
+                .thenReturn(ParsingUtilities.mapper.readTree(warningResponse));
+
+        Map<String, String> ignoreWarningParameters = new HashMap<>();
+        ignoreWarningParameters.putAll(parameters);
+        ignoreWarningParameters.put("ignorewarnings", "1");
+        ignoreWarningParameters.put("filekey", "file.key.1.png");
+        String successfulUploadResponse = "{\"upload\":{\"result\":\"Success\",\"filename\":\"My_test_file.png\",\"pageid\":12345}}";
+        when(connection.sendJsonRequest("POST", ignoreWarningParameters, null))
                 .thenReturn(ParsingUtilities.mapper.readTree(successfulUploadResponse));
 
         EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, 50, 60);
@@ -546,7 +558,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         assertEquals(0, processor.remainingEdits());
         assertEquals(100, processor.progress());
 
-        verify(connection).sendJsonRequest("POST", parameters, Collections.emptyMap());
+        verify(connection).sendJsonRequest("POST", ignoreWarningParameters, null);
     }
 
     private Map<String, EntityDocument> toMap(List<ItemDocument> docs) {

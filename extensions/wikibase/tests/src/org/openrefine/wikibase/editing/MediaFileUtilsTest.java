@@ -487,7 +487,7 @@ public class MediaFileUtilsTest {
     }
 
     @Test
-    public void testLocalUploadNewVersionIfWarningIsAllowed() throws IOException, MediaWikiApiErrorException {
+    public void testRemoteUploadNewVersionIfWarningIsAllowed() throws IOException, MediaWikiApiErrorException {
         ApiConnection connection = mock(ApiConnection.class);
 
         // mock CSRF token request
@@ -495,26 +495,28 @@ public class MediaFileUtilsTest {
 
         // mock file upload request
         Map<String, String> uploadParams = makeUploadParams();
-        Map<String, String> ignoreWarningParameters = makeUploadParams();
-        ignoreWarningParameters.put("ignorewarnings", "1");
+        uploadParams.put("url", "https://foo.com/file.png");
         String warningResponseString = "{" +
-                "\"upload\": {" +
-                "\"result\": \"Warning\"," +
-                "\"warnings\": {" +
-                "\"exists\": \"My_test_file.png\"" +
-                "}" +
-                "}" +
+                "  \"upload\": {" +
+                "    \"result\": \"Warning\"," +
+                "    \"warnings\": {" +
+                "      \"exists\": \"My_test_file.png\"" +
+                "    }," +
+                "    \"filekey\": \"file.key.1.png\""+
+                "  }" +
                 "}";
         JsonNode warningResponse = ParsingUtilities.mapper.readTree(warningResponseString);
+        when(connection.sendJsonRequest(eq("POST"), eq(uploadParams), any())).thenReturn(warningResponse);
+        Map<String, String> ignoreWarningParameters = makeUploadParams();
+        ignoreWarningParameters.put("ignorewarnings", "1");
+        ignoreWarningParameters.put("filekey", "file.key.1.png");
         JsonNode uploadJsonResponse = ParsingUtilities.mapper.readTree(
                 successfulUploadResponse);
-        when(connection.sendJsonRequest(eq("POST"), eq(uploadParams), any())).thenReturn(warningResponse);
-        when(connection.sendJsonRequest(eq("POST"), eq(ignoreWarningParameters), any())).thenReturn(uploadJsonResponse);
+        when(connection.sendJsonRequest("POST", ignoreWarningParameters, null)).thenReturn(uploadJsonResponse);
 
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
-        File path = new File("/tmp/image.png");
-        MediaUploadResponse response = mediaFileUtils.uploadLocalFile(path, "My_test_file.png", "my wikitext", "my summary",
-                Collections.emptyList(), false);
+        MediaUploadResponse response = mediaFileUtils.uploadRemoteFile(new URL("https://foo.com/file.png"), "My_test_file.png", "my wikitext", "my summary",
+                Collections.emptyList());
         assertEquals(response.filename, "My_test_file.png");
         assertEquals(response.pageid, 12345L);
         assertEquals(response.getMid(connection, Datamodel.SITE_WIKIMEDIA_COMMONS),

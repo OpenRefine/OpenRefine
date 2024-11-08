@@ -346,10 +346,12 @@ public class MediaFileUtils {
                 MediaUploadResponse response = ParsingUtilities.mapper.treeToValue(uploadNode, MediaUploadResponse.class);
                 if (response.hasAllowedWarnings()) {
                     logger.info("Ignoring warnings: " + response.warnings);
-                    Map<String, String> ignoreWarningParameters = new HashMap<>();
-                    ignoreWarningParameters.putAll(parameters);
-                    ignoreWarningParameters.put("ignorewarnings", "1");
-                    return uploadFile(ignoreWarningParameters, files);
+                    Map<String, String> ignoreWarningsParameters = new HashMap<>();
+                    ignoreWarningsParameters.putAll(parameters);
+                    ignoreWarningsParameters.put("ignorewarnings", "1");
+                    ignoreWarningsParameters.remove("url");
+                    ignoreWarningsParameters.put("filekey", response.filekey);
+                    return uploadFile(ignoreWarningsParameters, null);
                 }
 
                 // todo check for errors which should be retried
