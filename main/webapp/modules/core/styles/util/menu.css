@@ -66,7 +66,7 @@ a.menu-item {
   color: var(--text-primary);
 }
 
-a.menu-item:hover, a.menu-item.menu-expanded {
+a.menu-item:hover {
   background: #dbe8f8;
 }
 

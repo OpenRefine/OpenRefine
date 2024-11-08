@@ -146,15 +146,10 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
         );
 
         menuItem.on('mouseenter click', function () {
-        $('.menu-expanded').removeClass('menu-expanded');
         clearTimeout(MenuSystem._hoverTimeout);
         MenuSystem._hoverTimeout = setTimeout(function () {
             MenuSystem.dismissUntil(level);
-            menuItem.addClass("menu-expanded");
             var options = {
-                onDismiss: function() {
-                    menuItem.removeClass("menu-expanded");
-                },
                 horizontal: true
             };
 
@@ -179,9 +174,10 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
             menuItem.attr("title", item.tooltip);
           }
           menuItem.on('mouseenter click', function () {
-            $('.menu-expanded').removeClass('menu-expanded');
             clearTimeout(MenuSystem._hoverTimeout);
+            MenuSystem._hoverTimeout = setTimeout(function () {
             MenuSystem.dismissUntil(level);
+            }, 300);
           });
         }
       }
