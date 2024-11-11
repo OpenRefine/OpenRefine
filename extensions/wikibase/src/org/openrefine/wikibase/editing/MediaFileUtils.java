@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -79,12 +80,15 @@ public class MediaFileUtils {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("action", "purge");
         parameters.put("pageids", Long.toString(pageid));
+        parameters.put("errorformat", "raw");
         int retries = maxRetries;
         long backOffTime = maxLagWaitTime;
         while (retries > 0) {
             try {
                 JsonNode response = apiConnection.sendJsonRequest("POST", parameters);
-                if (!(response != null && response.has("warnings"))) {
+                boolean rateLimitError = response != null && StreamSupport.stream(response.path("warnings").spliterator(), false)
+                        .anyMatch(warning -> warning.has("code") && "ratelimited".equals(warning.get("code").asText()));
+                if (!rateLimitError) {
                     return;
                 }
             } catch (MediaWikiApiErrorException | IOException e) {

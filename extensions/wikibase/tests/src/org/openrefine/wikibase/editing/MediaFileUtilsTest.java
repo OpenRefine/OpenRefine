@@ -84,6 +84,7 @@ public class MediaFileUtilsTest {
         Map<String, String> params = new HashMap<>();
         params.put("action", "purge");
         params.put("pageids", "12345");
+        params.put("errorformat", "raw");
         verify(connection, times(1)).sendJsonRequest("POST", params);
     }
 
@@ -437,7 +438,14 @@ public class MediaFileUtilsTest {
         mediaFileUtils.setMaxLagWaitTime(100);
 
         JsonNode rateLimitExceededResponse = ParsingUtilities.mapper.readTree(
-                "{\"batchcomplete\":\"\",\"warnings\":{\"purge\":{\"*\":\"You've exceeded your rate limit. Please wait some time and try again.\"}},\"purge\":[{\"ns\":6,\"title\":\"File:Colonia test 3 - 4.jpg\"}]}");
+                "{\"batchcomplete\":\"\",\"warnings\": [\n" +
+                        "    {\n" +
+                        "      \"code\": \"ratelimited\",\n" +
+                        "      \"key\": \"apierror-ratelimited\",\n" +
+                        "      \"params\": [],\n" +
+                        "      \"module\": \"purge\"\n" +
+                        "    }\n" +
+                        "  ],\"purge\":[{\"ns\":6,\"title\":\"File:Colonia test 3 - 4.jpg\"}]}");
         JsonNode successResponse = ParsingUtilities.mapper.readTree(
                 "{\"batchcomplete\": \"\",\"purge\": [{\"ns\": 0,\"title\": \"NonexistentArticle\",\"missing\": \"\"}],\"normalized\": []}");
 
@@ -450,7 +458,7 @@ public class MediaFileUtilsTest {
         Map<String, String> params = new HashMap<>();
         params.put("action", "purge");
         params.put("pageids", "12345");
-
+        params.put("errorformat", "raw");
         verify(connection, times(2)).sendJsonRequest("POST", params);
     }
 
