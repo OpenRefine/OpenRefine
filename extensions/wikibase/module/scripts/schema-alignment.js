@@ -31,6 +31,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+function serviceLogoFromReconConfig(reconConfig) {
+  var serviceUrl = null;
+  var service = null;
+  var serviceLogo = null;
+  if (reconConfig) {
+    serviceUrl = reconConfig.service;
+  }
+  if (serviceUrl) {
+    service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+  }
+  if (service) {
+    serviceLogo = service.logo;
+  }
+  try {
+    return new URL(serviceLogo);  
+  } catch {
+    console.warn("Invalid logo URL supplied by service "+serviceUrl)
+  }
+};
+
 var SchemaAlignment = {
   _isSetUp: false
 };
@@ -246,7 +266,7 @@ SchemaAlignment.updateColumns = function() {
      // TODO we could potentially ignore any reconciliation to a siteIRI not
      // mentioned in the manifest…
      var cell = SchemaAlignment._createDraggableColumn(column.name,
-        reconConfig && column.reconStats ? reconConfig.identifierSpace : null);
+        reconConfig && column.reconStats ? reconConfig.identifierSpace : null, reconConfig);
      this._columnArea.append(cell);
   }
 
@@ -433,8 +453,16 @@ SchemaAlignment._changesCleared = function() {
         .addClass('disabled');
 };
 
-SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI) {
+SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI, reconConfig) {
+  var logo = serviceLogoFromReconConfig(reconConfig);
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
+  if (logo) {
+    var img =$("<img>");
+    img.attr("src", logo);
+    img.attr("title", reconConfig.name);
+    img.addClass("serviceLogo-for-schema")
+    cell.append(img);
+  }
   cell.data({
         'columnName': name,
         'reconciledSiteIRI': reconciledSiteIRI
@@ -1467,13 +1495,24 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
   }
 
   var acceptDraggableColumn = function(column) {
+    var logo = serviceLogoFromReconConfig(reconConfig);
+    var img = $("<img>");
+    if (logo) {
+      var imageUrl = logo;
+      img.attr("src", imageUrl);
+      img.attr("title", reconConfig.name);
+      img.addClass("serviceLogo-for-schema")
+    };
+
     input.hide();
     input.val("");
     var columnDiv = $('<div></div>').appendTo(inputContainer);
     column.appendTo(columnDiv);
+
     var origText = column.text();
     column.text("");
-    column.append($('<div></div>').addClass('wbs-restricted-column-name').text(origText));
+    column.append($('<div></div>').addClass('wbs-restricted-column-name').text(origText).append(img));
+   
     var deleteButton = SchemaAlignment._makeDeleteButton(true).appendTo(column);
     deleteButton.attr('alt', $.i18n('wikibase-schema/remove-column'));
     deleteButton.on('click',function (e) {
@@ -1538,13 +1577,20 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
 
   // Init with the provided initial value.
   if (initialValue) {
+    var columns = theProject.columnModel.columns;
+    var reconConfig=null;
+    for (var i = 0; i < columns.length; i++) {
+       if(columns[i].name===initialValue.columnName){
+        reconConfig = columns[i].reconConfig;
+       }
+    }
      if (initialValue.type === "wbentityidvalueconstant" ||
         /* item for backwards-compatibility purposes */
         initialValue.type === "wbitemconstant" || initialValue.type === "wbpropconstant") {
         input.val(initialValue.label);
         input.addClass("wbs-validated-input");
      } else if (initialValue.type == "wbentityvariable") {
-        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, true);
+        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, true, reconConfig);
         acceptDraggableColumn(cell);
      } else if (initialValue.type === "wbstringconstant" ||
                 initialValue.type === "wbdateconstant" ||
@@ -1557,7 +1603,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
                 initialValue.type === "wbdatevariable" ||
                 initialValue.type === "wblocationvariable" ||
                 initialValue.type === "wblanguagevariable") {
-        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, false);
+        var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, false, reconConfig );
         acceptDraggableColumn(cell);
      }
      inputContainer.data("jsonValue", initialValue);
