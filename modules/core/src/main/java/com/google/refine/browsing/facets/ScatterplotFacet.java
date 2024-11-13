@@ -42,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -70,6 +71,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+import com.google.refine.util.NotImplementedException;
 
 public class ScatterplotFacet implements Facet {
 
@@ -200,6 +202,45 @@ public class ScatterplotFacet implements Facet {
             } catch (ParsingException e) {
                 return Optional.of(Collections.emptySet());
             }
+        }
+
+        @Override
+        public FacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+            String newExpressionX;
+            try {
+                Evaluable evaluableX = MetaParser.parse(expression_x);
+                Evaluable translatedX = evaluableX.renameColumnDependencies(substitutions);
+                newExpressionX = translatedX.getFullSource();
+            } catch (ParsingException | NotImplementedException e) {
+                return this;
+            }
+            String newExpressionY;
+            try {
+                Evaluable evaluableY = MetaParser.parse(expression_y);
+                Evaluable translatedY = evaluableY.renameColumnDependencies(substitutions);
+                newExpressionY = translatedY.getFullSource();
+            } catch (ParsingException e) {
+                return this;
+            }
+            var newConfig = new ScatterplotFacetConfig();
+            newConfig.name = name;
+            newConfig.expression_x = newExpressionX;
+            newConfig.expression_y = newExpressionY;
+            newConfig.columnName_x = substitutions.getOrDefault(columnName_x, columnName_x);
+            newConfig.columnName_y = substitutions.getOrDefault(columnName_y, columnName_y);
+            newConfig.size = size;
+            newConfig.dim_x = dim_x;
+            newConfig.dim_y = dim_y;
+            newConfig.rotation_str = rotation_str;
+            newConfig.rotation = rotation;
+            newConfig.l = l;
+            newConfig.dot = dot;
+            newConfig.color_str = color_str;
+            newConfig.from_x = from_x;
+            newConfig.from_y = from_y;
+            newConfig.to_x = to_x;
+            newConfig.to_y = to_y;
+            return newConfig;
         }
     }
 

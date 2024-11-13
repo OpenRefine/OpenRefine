@@ -31,8 +31,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -104,6 +106,23 @@ public class EngineConfig {
             }
         }
         return Optional.of(result);
+    }
+
+    /**
+     * Translates this engine config by simultaneously substituting column names, as specified by the supplied map. This
+     * is a best effort transformation: some facets might not be fully updated to reflect the new column names, for
+     * instance if the column dependencies of the expressions they rely on cannot be isolated.
+     *
+     * @param substitutions
+     *            a map specifying new names for some columns. Keys of the map are old column names, values are the new
+     *            names for those columns. If a column name is not present in the map, the column is not renamed.
+     * @return a new engine config with updated column names.
+     */
+    public EngineConfig renameColumnDependencies(Map<String, String> substitutions) {
+        List<FacetConfig> newFacets = _facets.stream()
+                .map(facetConfig -> facetConfig.renameColumnDependencies(substitutions))
+                .collect(Collectors.toList());
+        return new EngineConfig(newFacets, _mode);
     }
 
     /**

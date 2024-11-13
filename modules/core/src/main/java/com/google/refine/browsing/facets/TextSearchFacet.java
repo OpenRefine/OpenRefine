@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.browsing.facets;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -101,6 +103,22 @@ public class TextSearchFacet implements Facet {
         @Override
         public Optional<Set<String>> getColumnDependencies() {
             return Optional.of(Collections.singleton(_columnName));
+        }
+
+        @Override
+        public FacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+            TextSearchFacetConfig newConfig = new TextSearchFacetConfig();
+            newConfig._columnName = substitutions.getOrDefault(_columnName, _columnName);
+            if (Objects.equals(_name, _columnName)) {
+                newConfig._name = newConfig._columnName;
+            } else {
+                newConfig._name = _name;
+            }
+            newConfig._query = _query;
+            newConfig._mode = _mode;
+            newConfig._caseSensitive = _caseSensitive;
+            newConfig._invert = _invert;
+            return newConfig;
         }
     }
 

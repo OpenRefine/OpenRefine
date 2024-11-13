@@ -29,6 +29,7 @@ package com.google.refine.browsing;
 
 import static org.testng.Assert.assertThrows;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -51,6 +52,21 @@ public class EngineConfigTests {
             + "          \"name\": \"reference\",\n"
             + "          \"type\": \"text\",\n"
             + "          \"columnName\": \"reference\"\n"
+            + "        }\n"
+            + "      ]\n"
+            + "    }";
+
+    public static String engineConfigJsonRenamed = "{\n"
+            + "      \"mode\": \"row-based\",\n"
+            + "      \"facets\": [\n"
+            + "        {\n"
+            + "          \"mode\": \"text\",\n"
+            + "          \"invert\": false,\n"
+            + "          \"caseSensitive\": false,\n"
+            + "          \"query\": \"www\",\n"
+            + "          \"name\": \"website\",\n"
+            + "          \"type\": \"text\",\n"
+            + "          \"columnName\": \"website\"\n"
             + "        }\n"
             + "      ]\n"
             + "    }";
@@ -78,6 +94,13 @@ public class EngineConfigTests {
     public void columnDependencies() {
         EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
         Assert.assertEquals(ec.getColumnDependencies(), Optional.of(Set.of("reference")));
+    }
+
+    @Test
+    public void renameColumnDependencies() {
+        EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
+        EngineConfig renamed = ec.renameColumnDependencies(Map.of("reference", "website"));
+        TestUtils.isSerializedTo(renamed, engineConfigJsonRenamed);
     }
 
     @Test
