@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 
+@Deprecated
 public class Controller {
 
     private static final ExecutorService WATCH = Executors.newSingleThreadExecutor(r -> {
@@ -23,7 +24,6 @@ public class Controller {
     });
     private static SimpleBooleanProperty running = new SimpleBooleanProperty();
     private Process process;
-    private boolean bufferError;
     private Button btStart;
     private Label msgStop;
     private Label msgLog;
@@ -54,85 +54,76 @@ public class Controller {
             // String jrePath = refinePath + "/server/target/jre";
             String classPath = refinePath + "/server/target/lib/*";
             String mainClass = "com.google.refine.Refine";
-            // String javaAppPathClass = refinePath +
-            // "/server/target/lib/openrefine-3.8.2-server.jar " + mainClass;
-            // String javaOptions = "-Djava.library.path=" + refinePath +
-            // "/server/target/lib/native/windows";
+            // String javaAppPathClass = refinePath + "/server/target/lib/openrefine-3.8.2-server.jar " + mainClass;
+            // String javaOptions = "-Djava.library.path=" + refinePath + "/server/target/lib/native/windows";
 
             ProcessBuilder processBuilder = new ProcessBuilder("java", "-cp", classPath, mainClass);
             // redirect errors from process to the standard output stream of the process.
             processBuilder.redirectErrorStream(true);
-            bufferError = false;
+
             try {
+                Boolean error = false;
                 process = processBuilder.start();
-            } catch (Exception e) {
-                runLater(() -> {
-                    outputArea.appendText("Failed to start process:\n" + e.getMessage() + "\n");
-                });
-            }
 
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()));) {
-                String ebuffer;
-                while ((ebuffer = br.readLine()) != null) {
-                    final String ebufferLine = ebuffer + "\n";
-                    runLater(() -> {
-                        refineOut.appendText(ebufferLine);
-                        // Parse and check if we had an error during start
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()));) {
+                    String ebuffer;
+                    while ((ebuffer = br.readLine()) != null) {
+                        final String ebufferLine = ebuffer + "\n";
+                        runLater(() -> refineOut.appendText(ebufferLine));
+                        // Check if we had an error during start
                         if (ebufferLine.contains("Exception")) {
-                            bufferError = true;
+                            error = true;
                         }
-                        if (bufferError) {
-                            outputArea.appendText("ERROR OCCURRED WHILE STARTING.\nCheck the logs.");
-                        }
-                        running.set(false);
-                    });
+                    }
+                    if (error) {
+                        runLater(() -> outputArea.appendText("ERROR OCCURRED WHILE STARTING.\nCheck the logs."));
+                    }
+                    runLater(() -> running.set(false));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                runLater(() -> outputArea.appendText("Failed to read OpenRefine log stream:\n" + e.getMessage() + "\n"));
-            }
 
-            // We handle the process's input/output streams here
-            WATCH.submit(() -> {
-                runLater(() -> {
-                    refineOut.clear();
+                // We handle the process's input/output streams here
+                WATCH.submit(() -> {
+                    runLater(() -> refineOut.clear());
 
-                    try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
                         String buffer;
                         while ((buffer = br.readLine()) != null) {
                             final String bufferLine = buffer + "\n";
-                            refineOut.appendText(bufferLine);
+                            runLater(() -> refineOut.appendText(bufferLine));
                         }
                     } catch (Exception e) {
-                        outputArea.appendText("Error reading process output:\n" + e.getMessage() + "\n");
+                        e.printStackTrace();
                     }
-                });
-            });
 
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        runLater(() -> running.set(true));
     }
 
     @FXML
     public void onStopButtonClick() {
-        if (process != null) {
+        if (!(process == null)) {
             if (process.isAlive()) {
+                runLater(() -> outputArea.setText("OpenRefine is stopping...\n"));
 
-                runLater(() -> {
-                    outputArea.setText("OpenRefine is stopping...\n");
-                    try {
-                        process.destroy();
-                        outputArea.appendText("OpenRefine STOPPED.\n");
-                    } catch (Exception e) {
-                        outputArea.appendText("Failed to stop process:\n" + e.getMessage() + "\n");
-                    }
-                });
-            }
+                try {
+                    runLater(() -> process.destroy());
+                    runLater(() -> outputArea.appendText("OpenRefine STOPPED.\n"));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
 
-        } else
-            runLater(() -> outputArea.setText(
-                    "No running OpenRefine process found.\nThere might have been an error.\nCheck Linux `ps` or Windows Task Manager for `OpenJDK openrefine` and kill the PID manually.\n"));
+            } else
+                runLater(() -> outputArea.setText(
+                        "No running OpenRefine process found.\nThere might have been an error.\nCheck Linux `ps` or Windows Task Manager for `OpenJDK openrefine` and kill the PID manually.\n"));
+        }
     }
 
-    
     void runLater(Runnable r) {
         Platform.runLater(r::run);
     }

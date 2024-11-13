@@ -18,19 +18,23 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class App extends Application {
+public class Launcher extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
         Locale userLocale = Locale.getDefault();
         ResourceBundle bundle = ResourceBundle.getBundle("messages", userLocale);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Launcher.class.getResource("main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 640, 480);
         Label titleLabel = new Label(bundle.getString("title"));
         StackPane root = new StackPane(titleLabel);
         stage.setTitle(bundle.getString("title"));
         stage.setScene(scene);
+
+        // Button to launch the standalone Java class
+        Button button = new Button("Start OpenRefine!");
+        button.setOnAction(e -> startOpenRefine());
 
         // FINALLY REALLY START THE APP
         stage.show();
@@ -61,16 +65,22 @@ public class App extends Application {
                 // and close the application if the user confirms
                 ButtonBar.ButtonData confirmBtn = btnType.getButtonData();
                 if (!confirmBtn.isCancelButton()) {
-                    final Runnable runnable = () -> new Controller().onStopButtonClick();
+//                    final Runnable runnable = () -> new Controller().onStopButtonClick();
                     stage.close();
                 }
-
             });
-
         });
     }
 
+    private void startOpenRefine() {
+        try {
+            com.google.refine.Refine.main(new String[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        launch(args);
+        Application.launch(args);
     }
 }

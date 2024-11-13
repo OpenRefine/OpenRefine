@@ -82,6 +82,12 @@
             <artifactId>bootstrapfx-core</artifactId>
             <version>0.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.openrefine</groupId>
+            <artifactId>server</artifactId>
+            <version>3.8.5</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
