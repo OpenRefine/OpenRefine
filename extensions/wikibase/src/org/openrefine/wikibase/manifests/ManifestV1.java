@@ -25,12 +25,23 @@ public class ManifestV1 implements Manifest {
 
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
 
+    private Map<String, String> mediaConstraintsMap = new HashMap<>();
+
     public ManifestV1(JsonNode manifest) {
         version = manifest.path("version").textValue();
 
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
+
+        JsonNode mediaConstraints = mediawiki.path("constraints");
+        Iterator<Map.Entry<String, JsonNode>> mediaFields = mediaConstraints.fields();
+        while (mediaFields.hasNext()) {
+            Map.Entry<String, JsonNode> entry = mediaFields.next();
+            String name = entry.getKey();
+            String value = entry.getValue().textValue();
+            mediaConstraintsMap.put(name, value);
+        }
 
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
@@ -147,6 +158,11 @@ public class ManifestV1 implements Manifest {
     @Override
     public int getMaxEditsPerMinute() {
         return maxEditsPerMinute;
+    }
+
+    @Override
+    public String getMediaConstraintsRelatedId(String name) {
+        return mediaConstraintsMap.get(name);
     }
 
 }

@@ -130,7 +130,8 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
         assertWarningsRaised(NewEntityScrutinizer.newMediaType,
                 NewEntityScrutinizer.newMediaWithoutFileNameType,
                 NewEntityScrutinizer.newMediaWithoutFilePathType,
-                NewEntityScrutinizer.newMediaWithoutWikitextType);
+                NewEntityScrutinizer.newMediaWithoutWikitextType,
+                NewEntityScrutinizer.newMediaMissingProperty);
     }
 
     @Test
@@ -143,7 +144,8 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .build();
         scrutinizer.setEnableSlowChecks(true);
         scrutinize(update);
-        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.invalidFilePathType);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.invalidFilePathType,
+                NewEntityScrutinizer.newMediaMissingProperty, NewEntityScrutinizer.newMediaWithoutWikitextType);
     }
 
     @Test
@@ -156,7 +158,8 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .build();
         scrutinizer.setEnableSlowChecks(true);
         scrutinize(update);
-        assertWarningsRaised(NewEntityScrutinizer.newMediaType);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaMissingProperty,
+                NewEntityScrutinizer.newMediaWithoutWikitextType);
     }
 
     @Test
@@ -169,7 +172,8 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .build();
         scrutinizer.setEnableSlowChecks(false);
         scrutinize(update);
-        assertWarningsRaised(NewEntityScrutinizer.newMediaType);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaMissingProperty,
+                NewEntityScrutinizer.newMediaWithoutWikitextType);
     }
 
     @Test
@@ -183,6 +187,29 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
         when(update.getWikitext()).thenReturn("description");
         scrutinizer.setEnableSlowChecks(true);
         scrutinize(update);
-        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaChunkedUpload);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaChunkedUpload,
+                NewEntityScrutinizer.newMediaMissingProperty, NewEntityScrutinizer.newMediaWithoutWikitextType);
+    }
+
+    @Test
+    public void testWikiTextWarning() {
+        MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
+                .addFilePath("/this/path/does/not/exist.jpg")
+                .addFileName("my_file.jpg")
+                .addWikitext("=={{int:filedesc}}==\n" +
+                        "{{Information\n" +
+                        "|description={{en|1=Tarrafal Beach}}{{Wiki Loves Africa 2023 country|CV}}\n" +
+                        "|date=2020-04-06 14:31:26\n" +
+                        "|source={{own}}\n" +
+                        "|author=[[User:Zico costa|Zico costa]]\n" +
+                        "|permission=\n" +
+                        "|other versions=\n" +
+                        "}}")
+                .addContributingRowId(123)
+                .build();
+        scrutinizer.setEnableSlowChecks(true);
+        scrutinize(update);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.invalidFilePathType,
+                NewEntityScrutinizer.newMediaMissingProperty);
     }
 }

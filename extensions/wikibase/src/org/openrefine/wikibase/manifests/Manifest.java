@@ -124,4 +124,14 @@ public interface Manifest {
      * Returns the template that should be inserted in edit summaries for edits to be tracked by EditGroups.
      */
     String getEditGroupsUrlSchema();
+
+    /**
+     * Returns an entity or property id used in the CommonsQualityConstraints extension.
+     *
+     * @param name
+     *            our internal identifier for the entity id
+     * @return the entity id
+     */
+    String getMediaConstraintsRelatedId(String name);
+
 }

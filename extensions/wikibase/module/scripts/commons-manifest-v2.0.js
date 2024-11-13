@@ -4,7 +4,11 @@ const CommonsManifestV2_0 = {
     "name": "Wikimedia Commons",
     "root": "https://commons.wikimedia.org/wiki/",
     "main_page": "https://commons.wikimedia.org/wiki/Main_Page",
-    "api": "https://commons.wikimedia.org/w/api.php"
+    "api": "https://commons.wikimedia.org/w/api.php",
+    "constraints": {
+       "required_properties": "P7482, P571, P170, P6216, P275",
+       "wikitext_requires_anyone_infobox_template" : "Information, Artwork, Photography, Art photo, Book, Map, Musical work"
+    }
   },
   "wikibase": {
     "site_iri": "https://commons.wikimedia.org/entity/",
