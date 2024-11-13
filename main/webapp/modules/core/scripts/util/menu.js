@@ -33,7 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 MenuSystem = {
   _layers: [],
-  _overlay: null
+  _overlay: null,
+  _hoverTimeout: null
 };
 
 MenuSystem.showMenu = function(elmt, onDismiss) {
@@ -127,7 +128,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
   options = options || {
     horizontal: false
   };
-
+  
   var menu = MenuSystem.createMenu();
   if ("width" in options) {
     menu.width(options.width);
@@ -143,23 +144,22 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           '<td width="1%"><img src="images/right-arrow.png" /></td>' +
           '</tr></table>'
         );
+
         menuItem.on('mouseenter click', function () {
-          MenuSystem.dismissUntil(level);
+        clearTimeout(MenuSystem._hoverTimeout);
+        MenuSystem._hoverTimeout = setTimeout(function () {
+            MenuSystem.dismissUntil(level);
+            var options = {
+                horizontal: true
+            };
 
-          menuItem.addClass("menu-expanded");
-
-          var options = {
-            horizontal: true,
-            onDismiss: function() {
-              menuItem.removeClass("menu-expanded");
+            if ("width" in item) {
+                options.width = item.width;
             }
-          };
-          if ("width" in item) {
-            options.width = item.width;
-          }
-
-          MenuSystem.createAndShowStandardMenu(item.submenu, this, options);
+            MenuSystem.createAndShowStandardMenu(item.submenu, menuItem, options);
+        }, 300); 
         });
+
       } else {
         if ("download" in item) {
           menuItem.html(item.label);
@@ -174,7 +174,10 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
             menuItem.attr("title", item.tooltip);
           }
           menuItem.on('mouseenter click', function () {
+            clearTimeout(MenuSystem._hoverTimeout);
+            MenuSystem._hoverTimeout = setTimeout(function () {
             MenuSystem.dismissUntil(level);
+            }, 300);
           });
         }
       }
