@@ -40,6 +40,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -176,6 +180,25 @@ public class ScatterplotFacet implements Facet {
                 MetaParser.parse(expression_y);
             } catch (ParsingException e) {
                 throw new IllegalArgumentException(e);
+            }
+        }
+
+        @Override
+        public Optional<Set<String>> getColumnDependencies() {
+            try {
+                Optional<Set<String>> depsX = MetaParser.parse(expression_x)
+                        .getColumnDependencies(Optional.of(columnName_x));
+                Optional<Set<String>> depsY = MetaParser.parse(expression_y)
+                        .getColumnDependencies(Optional.of(columnName_y));
+                if (depsX.isPresent() && depsY.isPresent()) {
+                    Set<String> union = new HashSet<>(depsX.get());
+                    union.addAll(depsY.get());
+                    return Optional.of(union);
+                } else {
+                    return Optional.empty();
+                }
+            } catch (ParsingException e) {
+                return Optional.of(Collections.emptySet());
             }
         }
     }

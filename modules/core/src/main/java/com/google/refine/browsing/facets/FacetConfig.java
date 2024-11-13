@@ -27,6 +27,9 @@
 
 package com.google.refine.browsing.facets;
 
+import java.util.Optional;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
@@ -75,4 +78,17 @@ public interface FacetConfig {
     public default void validate() {
     }
 
+    /**
+     * Returns an approximation of the names of the columns this facet depends on. This approximation is designed to be
+     * safe: if a set of column names is returned, then the expression does not read any other column than the ones
+     * mentioned, regardless of the data it is executed on.
+     *
+     * @return {@link Optional#empty()} if the columns could not be isolated: in this case, the facet might depend on
+     *         all columns in the project. Note that this is different from returning an empty set, which means that the
+     *         facet's evaluation does not depend on any column.
+     */
+    @JsonIgnore
+    public default Optional<Set<String>> getColumnDependencies() {
+        return Optional.empty();
+    }
 }
