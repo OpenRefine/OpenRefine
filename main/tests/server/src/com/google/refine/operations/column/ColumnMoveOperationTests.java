@@ -27,9 +27,11 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
@@ -38,6 +40,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
@@ -86,6 +89,8 @@ public class ColumnMoveOperationTests extends RefineTest {
     @Test
     public void testForward() throws Exception {
         ColumnMoveOperation operation = new ColumnMoveOperation("foo", 1);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("foo"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.empty());
 
         runOperation(operation, project);
 
@@ -105,6 +110,8 @@ public class ColumnMoveOperationTests extends RefineTest {
     @Test
     public void testSamePosition() throws Exception {
         ColumnMoveOperation SUT = new ColumnMoveOperation("bar", 1);
+        assertEquals(SUT.getColumnDependencies().get(), Set.of("bar"));
+        assertEquals(SUT.getColumnsDiff().get(), ColumnsDiff.empty());
 
         runOperation(SUT, project);
 
@@ -124,6 +131,8 @@ public class ColumnMoveOperationTests extends RefineTest {
     @Test
     public void testBackward() throws Exception {
         ColumnMoveOperation SUT = new ColumnMoveOperation("hello", 1);
+        assertEquals(SUT.getColumnDependencies().get(), Set.of("hello"));
+        assertEquals(SUT.getColumnsDiff().get(), ColumnsDiff.empty());
 
         runOperation(SUT, project);
 

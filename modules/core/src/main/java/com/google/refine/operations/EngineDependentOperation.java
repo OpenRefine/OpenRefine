@@ -33,6 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -62,5 +67,29 @@ abstract public class EngineDependentOperation extends AbstractOperation {
     @JsonProperty("engineConfig")
     protected EngineConfig getEngineConfig() {
         return _engineConfig;
+    }
+
+    /**
+     * Method to be overridden by subclasses to expose their column dependencies. They are then merged with dependencies
+     * from the engine in {@link #getColumnDependencies()}.
+     */
+    @JsonIgnore
+    protected Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        return Optional.empty();
+    }
+
+    @Override
+    public final Optional<Set<String>> getColumnDependencies() {
+        Optional<Set<String>> engineDependencies = _engineConfig.getColumnDependencies();
+        if (engineDependencies.isEmpty()) {
+            return Optional.empty();
+        }
+        Optional<Set<String>> ownDependencies = getColumnDependenciesWithoutEngine();
+        if (ownDependencies.isEmpty()) {
+            return Optional.empty();
+        }
+        Set<String> merged = new HashSet<>(ownDependencies.get());
+        merged.addAll(engineDependencies.get());
+        return Optional.of(merged);
     }
 }
