@@ -48,7 +48,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -73,6 +75,7 @@ import com.google.refine.messages.OpenRefineMessage;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -397,6 +400,10 @@ public class RefineTest {
     protected long runOperation(AbstractOperation operation, Project project, long timeout) throws Exception {
         long start = System.currentTimeMillis();
         operation.validate();
+        Optional<ColumnsDiff> columnsDiff = operation.getColumnsDiff();
+        Set<String> columnNamesBefore = project.columnModel.columns.stream()
+                .map(column -> column.getName())
+                .collect(Collectors.toSet());
         Process process = operation.createProcess(project, new Properties());
         if (process.isImmediate()) {
             process.performImmediate();
@@ -404,6 +411,23 @@ public class RefineTest {
             runAndWait(project.getProcessManager(), process, (int) timeout);
         }
         long end = System.currentTimeMillis();
+
+        if (columnsDiff.isPresent()) {
+            // check that the contract announced by the columns diff is respected
+            List<String> addedColumns = project.columnModel.columns.stream()
+                    .map(column -> column.getName())
+                    .filter(name -> !columnNamesBefore.contains(name))
+                    .collect(Collectors.toList());
+            Set<String> deletedColumns = columnNamesBefore.stream()
+                    .filter(name -> project.columnModel.getColumnByName(name) == null)
+                    .collect(Collectors.toSet());
+
+            assertEquals(columnsDiff.get().getAddedColumnNames(),
+                    addedColumns, "incorrect added columns announced by the operation:");
+            assertEquals(columnsDiff.get().getDeletedColumns(),
+                    deletedColumns, "incorrect deleted columns announced by the operation:");
+
+        }
         return end - start;
     }
 

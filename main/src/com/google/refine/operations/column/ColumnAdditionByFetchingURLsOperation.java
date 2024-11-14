@@ -39,7 +39,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -58,10 +60,12 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellAtRow;
@@ -190,6 +194,21 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
         return OperationDescription.column_addition_by_fetching_urls_desc(_newColumnName, cellsAtRows.size(), column.getName(),
                 _urlExpression);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        try {
+            Evaluable evaluable = MetaParser.parse(_urlExpression);
+            return evaluable.getColumnDependencies(Optional.of(_baseColumnName));
+        } catch (ParsingException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.builder().addColumn(_newColumnName, _baseColumnName).build());
     }
 
     @Override
