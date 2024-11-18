@@ -80,6 +80,19 @@ public class TextSearchFacet implements Facet {
         public String getJsonType() {
             return "text";
         }
+
+        @Override
+        public void validate() {
+            if ("regex".equals(_mode)) {
+                try {
+                    Pattern.compile(
+                            _query,
+                            _caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+                } catch (java.util.regex.PatternSyntaxException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        }
     }
 
     TextSearchFacetConfig _config = new TextSearchFacetConfig();

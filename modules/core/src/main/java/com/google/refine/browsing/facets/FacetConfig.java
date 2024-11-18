@@ -63,4 +63,16 @@ public interface FacetConfig {
      */
     @JsonIgnore // already included by @JsonTypeInfo
     public String getJsonType();
+
+    /**
+     * Checks that this facet is correctly configured (such as that expressions are syntactically correct and that
+     * options are not contradictory). This should not be done in the constructor, as it would endanger the
+     * deserialization.
+     * 
+     * @throws IllegalArgumentException
+     *             if any parameter is missing or inconsistent
+     */
+    public default void validate() {
+    }
+
 }
