@@ -2,6 +2,8 @@
 # Leave .idea settings ignored and force users to use `git add -f` to update
 #!*/
 #!.idea/codeStyles/
+.vscode/
+# Leave .vscode settings ignored and force users to use `git add -f` to update
 *.iml
 *.log
 logs
@@ -25,8 +27,8 @@ tmp/
 test-out/
 /bin
 open-refine.log
-.vscode
 .metadata # Eclipse plugins specific
+
 
 # Locally stored "Eclipse launch configurations"
 *.launch
