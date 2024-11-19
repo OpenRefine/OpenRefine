@@ -36,9 +36,12 @@ package com.google.refine.operations.cell;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -52,6 +55,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
@@ -133,6 +137,28 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     @JsonProperty("edits")
     public List<Edit> getEdits() {
         return _edits;
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        try {
+            Evaluable parsed = MetaParser.parse(_expression);
+            Optional<Set<String>> deps = parsed.getColumnDependencies(Optional.of(_columnName));
+            if (deps.isPresent()) {
+                Set<String> withBaseColumn = new HashSet<>(deps.get());
+                withBaseColumn.add(_columnName);
+                return Optional.of(withBaseColumn);
+            } else {
+                return deps;
+            }
+        } catch (ParsingException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
     }
 
     @Override

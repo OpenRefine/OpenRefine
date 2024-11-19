@@ -33,11 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
@@ -124,6 +127,17 @@ public class KeyValueColumnizeTests extends RefineTest {
     public void testValidate() {
         assertThrows(IllegalArgumentException.class, () -> new KeyValueColumnizeOperation(null, "foo", "bar").validate());
         assertThrows(IllegalArgumentException.class, () -> new KeyValueColumnizeOperation("foo", null, "bar").validate());
+    }
+
+    @Test
+    public void testColumnsDiff() {
+        assertEquals(new KeyValueColumnizeOperation("foo", "baz", "bar").getColumnsDiff(), Optional.empty());
+    }
+
+    @Test
+    public void testColumnsDependencies() {
+        assertEquals(new KeyValueColumnizeOperation("foo", "baz", "bar").getColumnDependencies().get(), Set.of("foo", "baz", "bar"));
+        assertEquals(new KeyValueColumnizeOperation("foo", "baz", null).getColumnDependencies().get(), Set.of("foo", "baz"));
     }
 
     /**
