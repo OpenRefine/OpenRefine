@@ -32,10 +32,10 @@ public class FetchManifestCommand extends Command {
             OkHttpClient client = new OkHttpClient();
             Request req = new Request.Builder().url(url).build();
             Response res = client.newCall(req).execute();
-            response.getWriter().write(res.body().string());
-            response.setContentType("application/json");
-            response.setStatus(200);
             response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
+            response.getWriter().write(res.body().string());
+            response.setStatus(200);
         } catch (Exception e) {
             respondException(response, e);
         }
