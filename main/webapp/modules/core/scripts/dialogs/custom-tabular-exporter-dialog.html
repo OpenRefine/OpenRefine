@@ -9,16 +9,16 @@
         <li><a href="#custom-tabular-exporter-tabs-code" bind="or_dialog_optCode"></a></li>
       </ul>
       
-      <div id="custom-tabular-exporter-tabs-content"><div class="grid-layout grid-layout-for-ui layout-normal layout-full"><table>
+      <div id="custom-tabular-exporter-tabs-content"><div class="grid-layout grid-layout-for-ui layout-normal layout-full"><table role="presentation">
         <tr>
           <td bind="or_dialog_selAndOrd"></td>
           <td><span bind="or_dialog_optFor"></span><span bind="columnNameSpan" class="custom-tabular-exporter-selected-column"></span></td>
         </tr>
         <tr>
           <td width="40%"><div bind="columnList" class="custom-tabular-exporter-columns"></div></td>
-          <td><div bind="columnOptionPane" class="custom-tabular-exporter-column-options"><div class="grid-layout layout-normal"><table>
+          <td><div bind="columnOptionPane" class="custom-tabular-exporter-column-options"><div class="grid-layout layout-normal"><table role="presentation">
             <tr><td colspan="2" bind="or_dialog_forReconCell"></td></tr>
-            <tr><td><div class="grid-layout layout-tightest" ><table>
+            <tr><td><div class="grid-layout layout-tightest" ><table role="presentation">
               <tr>
                 <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="entity-name" id="$custom-exporter-recon-entity-name" /></td>
                 <td><label for="$custom-exporter-recon-entity-name" bind="or_dialog_matchedName"></label></td>
@@ -38,7 +38,7 @@
             </table></div></td></tr>
             
             <tr><td colspan="2" bind="or_dialog_dateFormat"></td></tr>
-            <tr><td><div class="grid-layout layout-tightest"><table>
+            <tr><td><div class="grid-layout layout-tightest"><table role="presentation">
               <tr>
                 <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="iso-8601" id="$custom-exporter-date-iso" /></td>
                 <td colspan="3"><label for="$custom-exporter-date-iso" bind="or_dialog_dateIso"></label></td>
@@ -78,7 +78,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table>
+          <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table role="presentation">
             <tr>
               <td width="1%"><input type="checkbox" bind="outputColumnHeadersCheckbox" checked id="$custom-exporter-output-column-headers" /></td>
               <td width="25%"><label for="$custom-exporter-output-column-headers" bind="or_dialog_outColHeader"></label></td>
@@ -92,13 +92,13 @@
       </table></div></div>
       
       
-      <div id="custom-tabular-exporter-tabs-download" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
+      <div id="custom-tabular-exporter-tabs-download" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table role="presentation">
         <tr>
           <th bind="or_dialog_lineFormat"></th>
           <th bind="or_dialog_otherFormat"></th>
         </tr>
         <tr>
-          <td width="60%"><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+          <td width="60%"><div class="grid-layout grid-layout-for-text layout-tightest"><table role="presentation">
             <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="tsv" checked id="$custom-exporter-download-tsv" /></td>
               <td><label for="$custom-exporter-download-tsv" bind="or_dialog_tsv"></label></td></tr>
             <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="csv" id="$custom-exporter-download-csv" /></td>
@@ -108,7 +108,7 @@
                 <input spellcheck="false" type="text" class="lightweight" size="5" bind="separatorInput" /></td></tr>
           </table></div></td>
           
-          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table role="presentation">
             <tr>
               <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="xls" id="$custom-exporter-download-xls" /></td>
               <td><label for="$custom-exporter-download-xls" bind="or_dialog_excel"></label></td>
@@ -125,7 +125,7 @@
         </tr>
         
         <tr>
-          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table role="presentation">
             <tr><td bind="or_dialog_lineSep"></td><td><input spellcheck="false" type="text" size="5" class="lightweight" bind="lineSeparatorInput" /></td></tr>
             <tr><td bind="or_dialog_charEnc"></td><td><input spellcheck="false" type="text" size="10" class="lightweight" bind="encodingInput" /></td></tr>
             <tr><td><label bind="or_dialog_quoteAll" for="$quote-all-checkbox"></label></td><td><input type="checkbox" id="$quote-all-checkbox" bind="quoteAllCheckbox" /></td></tr>
@@ -133,7 +133,7 @@
         </tr>
         
         <tr>
-          <td colspan="2"><div class="grid-layout grid-layout-for-text layout-tightest layout-full"><table><tr>
+          <td colspan="2"><div class="grid-layout grid-layout-for-text layout-tightest layout-full"><table role="presentation"><tr>
             <td width="100%"> </td>
             <td width="1%"><button class="button" bind="downloadPreviewButton"></button></td>
             <td width="1%"><button class="button button-primary" bind="downloadButton"></button></td>
@@ -142,12 +142,12 @@
       </table></div></div>
       
       
-      <div bind="uploadTabBody" id="custom-tabular-exporter-tabs-upload" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
+      <div bind="uploadTabBody" id="custom-tabular-exporter-tabs-upload" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table role="presentation">
         <tr>
           <th ><span bind="or_dialog_uploadTo"></span></th>
         </tr>
         <tr>
-          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table bind="uploadTargetTable"></table></div></td>
+          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table role="presentation" bind="uploadTargetTable"></table></div></td>
         </tr>
         <tr>
           <td><button class="button button-primary" bind="uploadButton"></button></td>
@@ -155,7 +155,7 @@
       </table></div></div>
       
       
-      <div id="custom-tabular-exporter-tabs-code" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
+      <div id="custom-tabular-exporter-tabs-code" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table role="presentation">
         <tr>
           <td bind="or_dialog_jsonText"></td>
           <td width="30%" style="text-align: right;"><button class="button" bind="applyOptionCodeButton"></button></td>

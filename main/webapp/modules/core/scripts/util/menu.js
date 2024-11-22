@@ -138,7 +138,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
       var menuItem = MenuSystem.createMenuItem().appendTo(menu);
       if ("submenu" in item) {
         menuItem.html(
-          '<table width="100%" cellspacing="0" cellpadding="0" class="menu-item-layout"><tr>' +
+          '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" class="menu-item-layout"><tr>' +
           '<td>' + item.label + '</td>' +
           '<td width="1%"><img src="images/right-arrow.png" /></td>' +
           '</tr></table>'

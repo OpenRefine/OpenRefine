@@ -8,7 +8,7 @@
             </ul>
 
             <div id="sql-exporter-tabs-content" class="sql-exporter-tabs-content-main">
-                <div class="grid-layout grid-layout-for-ui layout-normal layout-full"><table>
+                <div class="grid-layout grid-layout-for-ui layout-normal layout-full"><table role="presentation">
                     <!-- <tr>
                       <td bind="or_dialog_selAndOrd"></td>
                       <td><span bind="or_dialog_optFor"></span><span bind="columnNameSpan" class="sql-exporter-selected-column"></span></td>
@@ -45,7 +45,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table>
+                        <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table role="presentation">
                             <tr>
 
                                 <td width="1%"><input type="checkbox" bind="sqlExportOutputEmptyRowsCheckbox" id="sqlExportOutputEmptyRowsCheckboxId" /></td>
@@ -66,7 +66,7 @@
             <div id="sql-exporter-tabs-download" style="display: none;">
 
                 <div>
-                    <table>
+                    <table role="presentation">
                         <tr>
                             <td><label for="tableNameTextBoxId" bind="tableNameLabel"></label></td>
                             <td width="90%"><input spellcheck="false" type="text" bind="tableNameTextBox" id="tableNameTextBoxId" size="50%"/></td>
@@ -79,7 +79,7 @@
                 </div>
 
                 <div class="grid-layout grid-layout-for-text layout-tightest">
-                    <table width="100%">
+                    <table role="presentation" width="100%">
                         <tr>
                             <td><span style="margin:2px; padding:2px;"></span></td>
                         </tr>

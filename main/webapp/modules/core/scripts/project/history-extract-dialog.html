@@ -2,14 +2,14 @@
   <div class="dialog-border">
     <div class="dialog-header" bind="dialogHeader"></div>
     <div class="dialog-body" bind="dialogBody">
-      <div class="grid-layout layout-normal layout-full"><table>
+      <div class="grid-layout layout-normal layout-full"><table role="presentation">
         <tr>
           <td colspan="2" bind="or_proj_extractSave">
             
           </td>
         </tr>
         <tr>
-          <td width="50%" style="vertical-align: top"><div class="history-extract-dialog-panel"><table class="history-extract-dialog-entries" bind="entryTable"></table></div></td>
+          <td width="50%" style="vertical-align: top"><div class="history-extract-dialog-panel"><table role="presentation" class="history-extract-dialog-entries" bind="entryTable"></table></div></td>
           <td width="50%" rowspan="2" style="vertical-align: top">
               <div class="input-container"><textarea aria-label="" spellcheck="false" wrap="off" class="history-operation-json" bind="textarea"></textarea></div>
           </td>

@@ -1,7 +1,7 @@
-<div class="grid-layout layout-loose layout-full"><table>
+<div class="grid-layout layout-loose layout-full"><table role="presentation">
   <tr>
     <td colspan="2"></td>
-    <td><div class="grid-layout layout-tighter layout-full"><table>
+    <td><div class="grid-layout layout-tighter layout-full"><table role="presentation">
       <tr>
         <td style="text-align: right;">&nbsp;</td>
         <td width="1%"><button class="button" bind="previewButton"></button></td>
@@ -14,13 +14,13 @@
     </table></div></td>
   </tr>
   <tr>
-    <td><div class="grid-layout layout-tightest"><table bind="sheetRecordContainer">
+    <td><div class="grid-layout layout-tightest"><table role="presentation" bind="sheetRecordContainer">
       <tr><td colspan="3" id="or-import-worksheet"></td></tr>
       <tr><td colspan="1"><button class="button" bind="selectAllButton"></button></td>
           <td colspan="1"><button class="button" bind="deselectAllButton"></button></td></tr>
     </table></div></td>
     
-    <td><div class="grid-layout layout-tightest"><table>
+    <td><div class="grid-layout layout-tightest"><table role="presentation">
       <tr>
         <td width="1%"><input type="checkbox" bind="ignoreCheckbox" id="$ignore" /></td>
         <td><label for="$ignore" id="or-import-ignore"></label></td>
@@ -40,7 +40,7 @@
           <label for="$limit" id="or-import-rows2"></label></td></tr>
     </table></div></td>
 
-    <td><div class="grid-layout layout-tightest"><table>
+    <td><div class="grid-layout layout-tightest"><table role="presentation">
       <tr><td width="1%"><input type="checkbox" bind="storeBlankRowsCheckbox" id="$store-blank-rows" /></td>
         <td colspan="2"><label for="$store-blank-rows" id="or-import-blank"></label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="storeBlankColumnsCheckbox" id="$store-blank-columns" /></td>
