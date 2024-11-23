@@ -1,3 +1,4 @@
+
 package org.openrefine.wikibase.commands;
 
 import javax.servlet.ServletException;
@@ -17,10 +18,10 @@ import java.io.IOException;
  * Proxies Wikibase manifests to allow the client to bypass CORS restrictions.
  */
 public class FetchManifestCommand extends Command {
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
         String url = request.getParameter("url");
         try {
             if (url == null) {
