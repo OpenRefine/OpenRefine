@@ -48,6 +48,7 @@ function init() {
     RefineServlet.registerCommand(module, "perform-wikibase-edits", new PerformWikibaseEditsCommand());
     RefineServlet.registerCommand(module, "parse-wikibase-schema", new ParseWikibaseSchemaCommand());
     RefineServlet.registerCommand(module, "login", new LoginCommand());
+    RefineServlet.registerCommand(module, "fetch-manifest", new FetchManifestCommand());
 
     /*
      * GREL functions
