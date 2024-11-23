@@ -1,18 +1,19 @@
 
 package org.openrefine.wikibase.commands;
 
+import static org.openrefine.wikibase.commands.CommandUtilities.respondError;
+
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.refine.commands.Command;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static org.openrefine.wikibase.commands.CommandUtilities.respondError;
-
-import java.io.IOException;
+import com.google.refine.commands.Command;
 
 /**
  * Proxies Wikibase manifests to allow the client to bypass CORS restrictions.
