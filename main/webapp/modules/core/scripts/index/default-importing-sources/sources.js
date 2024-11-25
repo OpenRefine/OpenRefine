@@ -158,3 +158,42 @@ ClipboardImportingSourceUI.prototype.focus = function() {
   this._elmts.textInput.trigger('focus');
 };
 
+function DirImportingSourceUI(controller) {
+  this._controller = controller;
+}
+Refine.DefaultImportingController.sources.push({
+  "label": $.i18n('core-index-import/directory'),
+  "id": "directory",
+  "uiClass": DirImportingSourceUI
+});
+
+DirImportingSourceUI.prototype.attachUI = function(bodyDiv) {
+  var self = this;
+
+  bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-local-dir-form.html"));
+
+  this._elmts = DOM.bind(bodyDiv);
+
+  $('#or-import-enterdir').text($.i18n('core-index-import/enter-dir'));
+  this._elmts.nextButton.html($.i18n('core-buttons/next'));
+
+  this._elmts.form.on('submit',function(evt) {
+    evt.preventDefault();
+    let errorString = '';
+    $(self._elmts.form).find('input:text').each(function () {
+      let dir = this.value.trim();
+      if (dir.length === 0) {
+        errorString += $.i18n('core-index-import/empty-dir')+'\n';
+      }
+    });
+    if (errorString) {
+      window.alert($.i18n('core-index-import/warning-dir-path')+"\n"+errorString);
+    } else {
+      self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/scanning-dir'));
+    }
+  });
+};
+
+DirImportingSourceUI.prototype.focus = function() {
+  this._elmts.dirInput.trigger('focus');
+};
