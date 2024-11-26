@@ -3,6 +3,7 @@ package org.openrefine.wikibase.editing;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -83,6 +84,7 @@ public class MediaFileUtilsTest {
         Map<String, String> params = new HashMap<>();
         params.put("action", "purge");
         params.put("pageids", "12345");
+        params.put("errorformat", "raw");
         verify(connection, times(1)).sendJsonRequest("POST", params);
     }
 
@@ -428,4 +430,73 @@ public class MediaFileUtilsTest {
         assertEquals(response.getMid(connection, Datamodel.SITE_WIKIMEDIA_COMMONS),
                 Datamodel.makeWikimediaCommonsMediaInfoIdValue("M12345"));
     }
-};;
+
+    @Test
+    public void testPurgeRateLimitHandling() throws IOException, MediaWikiApiErrorException {
+        ApiConnection connection = mock(ApiConnection.class);
+        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+        mediaFileUtils.setMaxLagWaitTime(100);
+
+        JsonNode rateLimitExceededResponse = ParsingUtilities.mapper.readTree(
+                "{\"batchcomplete\":\"\",\"warnings\": [\n" +
+                        "    {\n" +
+                        "      \"code\": \"ratelimited\",\n" +
+                        "      \"key\": \"apierror-ratelimited\",\n" +
+                        "      \"params\": [],\n" +
+                        "      \"module\": \"purge\"\n" +
+                        "    }\n" +
+                        "  ],\"purge\":[{\"ns\":6,\"title\":\"File:Colonia test 3 - 4.jpg\"}]}");
+        JsonNode successResponse = ParsingUtilities.mapper.readTree(
+                "{\"batchcomplete\": \"\",\"purge\": [{\"ns\": 0,\"title\": \"NonexistentArticle\",\"missing\": \"\"}],\"normalized\": []}");
+
+        when(connection.sendJsonRequest(eq("POST"), anyMap()))
+                .thenReturn(rateLimitExceededResponse)
+                .thenReturn(successResponse);
+
+        mediaFileUtils.purgePage(12345L); // This should trigger the first call and handle the error
+
+        Map<String, String> params = new HashMap<>();
+        params.put("action", "purge");
+        params.put("pageids", "12345");
+        params.put("errorformat", "raw");
+        verify(connection, times(2)).sendJsonRequest("POST", params);
+    }
+
+    @Test
+    public void testEditPageRateLimitHandling() throws IOException, MediaWikiApiErrorException {
+        ApiConnection connection = mock(ApiConnection.class);
+        MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
+        mediaFileUtils.setMaxLagWaitTime(100);
+
+        JsonNode successResponse = ParsingUtilities.mapper.readTree(successfulEditResponse);
+        JsonNode tokenJsonResponse = ParsingUtilities.mapper.readTree(csrfResponse);
+
+        when(connection.sendJsonRequest(eq("POST"), anyMap()))
+                .thenReturn(tokenJsonResponse)
+                .thenThrow(new MaxlagErrorException("Rate limit exceeded"))
+                .thenReturn(successResponse);
+
+        // mock CSRF token request
+        mockCsrfCall(connection);
+
+        // mock wikitext edit call
+        Map<String, String> uploadParams = new HashMap<>();
+        uploadParams.put("action", "edit");
+        uploadParams.put("tags", "");
+        uploadParams.put("summary", "my summary");
+        uploadParams.put("pageid", "12345");
+        uploadParams.put("text", "my new wikitext");
+        uploadParams.put("token", csrfToken);
+        uploadParams.put("bot", "true");
+
+        // For this test, assume the CSRF token has already been fetched
+        mediaFileUtils.fetchCsrfToken();
+
+        try {
+            long revisionId = mediaFileUtils.editPage(12345L, "my new wikitext", "my summary", Collections.emptyList());
+        } catch (MediaWikiApiErrorException e) {
+        }
+        verify(connection, times(2)).sendJsonRequest("POST", uploadParams);
+    }
+
+}

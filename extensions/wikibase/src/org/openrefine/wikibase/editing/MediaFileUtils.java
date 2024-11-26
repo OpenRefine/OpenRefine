@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -49,6 +50,8 @@ public class MediaFileUtils {
     protected String csrfToken = null;
     protected int maxLagWaitTime = 5000; // ms
     protected String filePrefix = "File:"; // configurable?
+    protected double backoffFactor = 1.5;
+    protected int maxRetries = 14;
 
     public MediaFileUtils(ApiConnection wdtkConnection) {
         apiConnection = wdtkConnection;
@@ -77,8 +80,35 @@ public class MediaFileUtils {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("action", "purge");
         parameters.put("pageids", Long.toString(pageid));
-
-        apiConnection.sendJsonRequest("POST", parameters);
+        parameters.put("errorformat", "raw");
+        int retries = maxRetries;
+        long backOffTime = maxLagWaitTime;
+        while (retries > 0) {
+            try {
+                JsonNode response = apiConnection.sendJsonRequest("POST", parameters);
+                boolean rateLimitError = response != null && StreamSupport.stream(response.path("warnings").spliterator(), false)
+                        .anyMatch(warning -> warning.has("code") && "ratelimited".equals(warning.get("code").asText()));
+                if (!rateLimitError) {
+                    return;
+                }
+            } catch (MediaWikiApiErrorException | IOException e) {
+            }
+            retries--;
+            if (retries > 0) {
+                logger.info(String.format("-- purgePage:API error. %d attempts left. Pausing %d secs before retry.", retries,
+                        backOffTime / 1000));
+                try {
+                    Thread.sleep(backOffTime);
+                } catch (InterruptedException e1) {
+                    Thread.currentThread().interrupt();
+                    retries = 0;
+                }
+                backOffTime *= (long) backoffFactor;
+            }
+        }
+        if (retries <= 0) {
+            throw new MediaWikiApiErrorException("page", "Purge failed");
+        }
     }
 
     /**
@@ -244,7 +274,8 @@ public class MediaFileUtils {
         parameters.put("bot", "true");
         parameters.put("token", getCsrfToken());
 
-        int retries = 3;
+        int retries = maxRetries;
+        long backOffTime = maxLagWaitTime;
         MediaWikiApiErrorException lastException = null;
         while (retries > 0) {
             try {
@@ -258,6 +289,17 @@ public class MediaFileUtils {
                 lastException = e;
             }
             retries--;
+            if (retries > 0) {
+                try {
+                    logger.info(String.format("-- editPage:API error. %d attempts left. Pausing %d secs before retry.", retries,
+                            backOffTime / 1000));
+                    Thread.sleep(backOffTime);
+                } catch (InterruptedException e1) {
+                    Thread.currentThread().interrupt();
+                    retries = 0;
+                }
+                backOffTime *= (long) backoffFactor;
+            }
         }
         throw lastException;
     }
@@ -292,6 +334,7 @@ public class MediaFileUtils {
     protected MediaUploadResponse uploadFile(Map<String, String> parameters, Map<String, ImmutablePair<String, java.io.File>> files)
             throws IOException, MediaWikiApiErrorException {
         int retries = 3;
+        long backOffTime = maxLagWaitTime;
         MediaWikiApiErrorException lastException = null;
         while (retries > 0) {
             try {
@@ -311,11 +354,12 @@ public class MediaFileUtils {
             } catch (MaxlagErrorException e) { // wait for 5 seconds
                 lastException = e;
                 try {
-                    Thread.sleep(maxLagWaitTime);
+                    Thread.sleep(backOffTime);
                 } catch (InterruptedException e1) {
                     Thread.currentThread().interrupt();
                     retries = 0;
                 }
+                backOffTime *= (long) backoffFactor;
             }
             retries--;
         }
