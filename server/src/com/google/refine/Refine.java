@@ -350,7 +350,6 @@ class RefineServer extends Server {
         }
 
         File dataDir = null;
-        File extensionsDir = null;
         File grefineDir = null;
         File gridworksDir = null;
 
@@ -402,7 +401,6 @@ class RefineServer extends Server {
             }
 
             dataDir = new File(data_home + "/openrefine");
-            extensionsDir = new File(data_home + "/openrefine/extensions");
             grefineDir = new File(data_home + "/google/refine");
             gridworksDir = new File(data_home + "/gridworks");
         }
@@ -439,12 +437,6 @@ class RefineServer extends Server {
             logger.info("Creating new workspace directory " + dataDir);
             if (!dataDir.mkdirs()) {
                 logger.error("FAILED to create new workspace directory " + dataDir);
-            }
-        }
-
-        if (!extensionsDir.exists()) {
-            if (!extensionsDir.mkdirs()) {
-                logger.error("FAILED to create new extensions directory " + extensionsDir);
             }
         }
 
