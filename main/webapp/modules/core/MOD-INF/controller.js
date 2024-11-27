@@ -147,7 +147,6 @@ function registerCommands() {
   RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
-  RS.registerCommand(module, "open-extensions-dir", new Packages.com.google.refine.commands.OpenExtensionsDirCommand());
   
 }
 
@@ -417,7 +416,6 @@ function init() {
       "scripts/index/open-project-ui.js",
       "scripts/index/import-project-ui.js",
       "scripts/index/lang-settings-ui.js",
-      "scripts/index/manage-extensions-ui.js",
 
       "scripts/index/default-importing-controller/controller.js",
       "scripts/index/default-importing-controller/file-selection-panel.js",
