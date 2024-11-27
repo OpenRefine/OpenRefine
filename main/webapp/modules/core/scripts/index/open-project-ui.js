@@ -38,20 +38,24 @@ Refine.OpenProjectUI = function(elmt) {
 
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);
-
-  $('#projects-workspace-open').text($.i18n('core-index-open/browse'));
-  $('#projects-workspace-open').on('click',function() {
-    Refine.postCSRF(
-      "command/core/open-workspace-dir",
-      {},
-      function (data) {
-        if (data.code != "ok" && "message" in data) {
-          alert(data.message);
-        }
-      },
-      "json"
-    );
-  });
+  
+  if (Host.isLocalhost()) {
+    $('#projects-workspace-open').text($.i18n('core-index-open/browse'));
+    $('#projects-workspace-open').on('click',function() {
+      Refine.postCSRF(
+        "command/core/open-workspace-dir",
+        {},
+        function (data) {
+          if (data.code != "ok" && "message" in data) {
+            alert(data.message);
+          }
+        },
+        "json"
+      );
+    });
+  } else {
+    $('#projects-workspace-open').hide();
+  }
   Refine.TagsManager.allProjectTags = [];
   this._buildTagsAndFetchProjects();
 };

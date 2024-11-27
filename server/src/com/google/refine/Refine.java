@@ -350,6 +350,7 @@ class RefineServer extends Server {
         }
 
         File dataDir = null;
+        File extensionsDir = null;
         File grefineDir = null;
         File gridworksDir = null;
 
@@ -374,6 +375,7 @@ class RefineServer extends Server {
             }
 
             dataDir = new File(parentDir, "OpenRefine");
+            extensionsDir = new File(dataDir, "extensions");
             grefineDir = new File(new File(parentDir, "Google"), "Refine");
             gridworksDir = new File(parentDir, "Gridworks");
         } else if (os.contains("os x")) {
@@ -388,6 +390,10 @@ class RefineServer extends Server {
 
             String gridworks_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks";
             gridworksDir = new File(gridworks_home);
+
+            String extensions_home = (home != null) ? home + "/Library/Application Support/OpenRefine/extensions"
+                    : ".openrefine/extensions";
+            extensionsDir = new File(extensions_home);
         } else { // most likely a UNIX flavor
             // start with the XDG environment
             // see http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
@@ -401,6 +407,7 @@ class RefineServer extends Server {
             }
 
             dataDir = new File(data_home + "/openrefine");
+            extensionsDir = new File(data_home + "/openrefine/extensions");
             grefineDir = new File(data_home + "/google/refine");
             gridworksDir = new File(data_home + "/gridworks");
         }
@@ -437,6 +444,12 @@ class RefineServer extends Server {
             logger.info("Creating new workspace directory " + dataDir);
             if (!dataDir.mkdirs()) {
                 logger.error("FAILED to create new workspace directory " + dataDir);
+            }
+        }
+
+        if (!extensionsDir.exists()) {
+            if (!extensionsDir.mkdirs()) {
+                logger.error("FAILED to create new extensions directory " + extensionsDir);
             }
         }
 

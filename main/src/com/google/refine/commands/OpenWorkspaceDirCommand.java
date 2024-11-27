@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
@@ -43,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.io.FileProjectManager;
+import com.google.refine.util.OpenDirectoryUtilities;
 
 public class OpenWorkspaceDirCommand extends Command {
 
@@ -62,15 +62,7 @@ public class OpenWorkspaceDirCommand extends Command {
         } else if (ProjectManager.singleton instanceof FileProjectManager) {
             File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
 
-            if (Desktop.isDesktopSupported()) {
-                Desktop desktop = Desktop.getDesktop();
-                desktop.open(dir);
-            } else /* if Mac */ {
-                Runtime.getRuntime().exec(
-                        "open .",
-                        new String[] {},
-                        dir);
-            }
+            OpenDirectoryUtilities.OpenDirectory(dir);
 
             respond(response, "{ \"code\" : \"ok\" }");
         } else {
