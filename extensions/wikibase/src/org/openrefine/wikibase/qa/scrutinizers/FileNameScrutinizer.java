@@ -76,7 +76,6 @@ public class FileNameScrutinizer extends EditScrutinizer {
             QAWarning issue = new QAWarning(uploadNewFileVersionType, null,
                     QAWarning.Severity.INFO, matchedFileNames.size());
             issue.setProperty("example_filename", matchedFileNames.stream().findFirst().get());
-            issue.setFacetable(false);
             addIssue(issue);
         }
 
