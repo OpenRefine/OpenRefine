@@ -33,6 +33,8 @@ import static org.testng.Assert.assertNull;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,7 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
@@ -120,6 +123,18 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 + "\"shareNewTopics\":false"
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        AbstractOperation op = new ReconJudgeSimilarCellsOperation(
+                ENGINE_CONFIG,
+                "A",
+                "foo",
+                Recon.Judgment.New,
+                null, true);
+        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("A")));
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of("A")));
     }
 
     @Test

@@ -27,8 +27,12 @@
 
 package com.google.refine.operations.recon;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
@@ -40,6 +44,7 @@ import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
@@ -92,6 +97,17 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                 "    \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\"\n" +
                 "  }";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        ReconItem reconItem = new ReconItem("hello", "world", new String[] { "human" });
+        AbstractOperation operation = new ReconMatchSpecificTopicOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased),
+                "bar", reconItem,
+                "http://identifier.space", "http://schema.space");
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("bar")));
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("bar")));
     }
 
     @Test

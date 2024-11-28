@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -51,6 +52,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconType;
@@ -115,6 +117,19 @@ public class ExtendDataOperation extends EngineDependentOperation {
                 project,
                 getEngineConfig(),
                 getBriefDescription(null));
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        return Optional.of(Set.of(_baseColumnName));
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        // Sadly, although the names of the properties fetched are present in the extension metadata,
+        // the names of the column created can differ from those, if there already are columns with any of those names.
+        // So we can't predict the name of the created columns in this context.
+        return Optional.empty();
     }
 
     public class ExtendDataProcess extends LongRunningProcess implements Runnable {

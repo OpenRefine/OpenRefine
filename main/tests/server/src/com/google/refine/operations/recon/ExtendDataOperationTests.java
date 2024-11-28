@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.recon;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -46,6 +47,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -255,6 +257,22 @@ public class ExtendDataOperationTests extends RefineTest {
     @AfterMethod
     public void cleanupHttpMocks() {
         mockedResponses.clear();
+    }
+
+    @Test
+    public void testColumnDependencies() throws IOException {
+        DataExtensionConfig extension = DataExtensionConfig
+                .reconstruct("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
+        EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                "country",
+                "https://foo.com/bar",
+                RECON_IDENTIFIER_SPACE,
+                RECON_SCHEMA_SPACE,
+                extension,
+                1);
+
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of("country")));
+        assertEquals(op.getColumnsDiff(), Optional.empty());
     }
 
     @Test

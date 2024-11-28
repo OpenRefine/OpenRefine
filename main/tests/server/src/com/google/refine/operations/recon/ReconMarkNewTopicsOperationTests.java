@@ -31,12 +31,16 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.recon.StandardReconConfig;
@@ -82,6 +86,13 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
     @Test
     public void serializeReconMarkNewTopicsOperationWithService() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonWithService, ReconMarkNewTopicsOperation.class), jsonWithService);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        AbstractOperation op = ParsingUtilities.mapper.readValue(jsonWithoutService, ReconMarkNewTopicsOperation.class);
+        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("my column")));
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of("my column")));
     }
 
     @Test

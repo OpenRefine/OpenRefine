@@ -27,8 +27,12 @@
 
 package com.google.refine.operations.recon;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
@@ -40,6 +44,7 @@ import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.operations.OperationDescription;
@@ -49,6 +54,14 @@ import com.google.refine.util.TestUtils;
 
 public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
 
+    String json = "{\"op\":\"core/recon-copy-across-columns\","
+            + "\"description\":"
+            + new TextNode(OperationDescription.recon_copy_across_columns_brief("source column", "first, second")).toString() + ","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+            + "\"fromColumnName\":\"source column\","
+            + "\"toColumnNames\":[\"first\",\"second\"],"
+            + "\"judgments\":[\"matched\",\"new\"],"
+            + "\"applyToJudgedCells\":true}";
     Project project;
 
     @BeforeSuite
@@ -69,15 +82,14 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
 
     @Test
     public void serializeReconCopyAcrossColumnsOperation() throws Exception {
-        String json = "{\"op\":\"core/recon-copy-across-columns\","
-                + "\"description\":"
-                + new TextNode(OperationDescription.recon_copy_across_columns_brief("source column", "first, second")).toString() + ","
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
-                + "\"fromColumnName\":\"source column\","
-                + "\"toColumnNames\":[\"first\",\"second\"],"
-                + "\"judgments\":[\"matched\",\"new\"],"
-                + "\"applyToJudgedCells\":true}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        AbstractOperation op = ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class);
+        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.builder().modifyColumn("first").modifyColumn("second").build()));
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of("source column", "first", "second")));
     }
 
     @Test
