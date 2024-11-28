@@ -23,6 +23,9 @@ describe(__filename, function () {
       cy.visit(
         Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
     });
+    cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
+    cy.getFacetContainer('Shrt_Desc').should('exist');
+
     cy.columnActionClick('Shrt_Desc', ['Edit column', 'Rename this column']);
     cy.waitForDialogPanel();
     cy.get('.dialog-container .dialog-body input').clear();
@@ -30,6 +33,9 @@ describe(__filename, function () {
     cy.get('.dialog-container .dialog-footer button').contains('OK').click();
 
     cy.assertNotificationContainingText('Rename column Shrt_Desc');
+    cy.getFacetContainer('test_rename_butter')
+        .find('.facet-choice')
+        .should('have.length', 2);
 
     cy.assertCellEquals(0, 'test_rename_butter', 'BUTTER,WITH SALT');
     cy.assertCellEquals(1, 'test_rename_butter', 'BUTTER,WHIPPED,WITH SALT');
