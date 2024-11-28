@@ -240,9 +240,20 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
               newColumnName: newColumnName
             },
             null,
-            {modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true},
             {
-              onDone: function () {
+                modelsChanged: true,
+                rowIdsPreserved: true,
+                recordIdsPreserved: true,
+                engineConfig: ui.browsingEngine.getJSON(true), 
+            },
+            {
+              onDone: function (response) {
+                if (response.newEngineConfig !== undefined) {
+                  // updateLater is set to true as the update process for the operation
+                  // will also take care of updating the facets, so there is no need to
+                  // do it twice.
+                  ui.browsingEngine.setJSON(response.newEngineConfig, true);
+                }
                 dismiss();
               }
             }
