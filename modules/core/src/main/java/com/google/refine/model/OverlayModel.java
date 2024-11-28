@@ -33,11 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import com.google.refine.annotations.ExtensionAPI;
+
 /**
  * Overlay models must be serializable and deserializable with Jackson. It is possible to have access to the project at
  * deserialization time by adding the corresponding parameter to the JSON creator with @JacksonInject("project").
  *
  */
+@ExtensionAPI
 public interface OverlayModel {
 
     public void onBeforeSave(Project project);

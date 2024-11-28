@@ -44,8 +44,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.expr.ExpressionUtils;
 
+@ExtensionAPI
 public class RecordModel {
 
     final static Logger logger = LoggerFactory.getLogger("RecordModel");

@@ -42,6 +42,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.google.refine.annotations.ExtensionAPI;
+
+@ExtensionAPI
 public class TopList implements Iterable<String>, PreferenceValue {
 
     @JsonProperty("top")

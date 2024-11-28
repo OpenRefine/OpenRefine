@@ -43,9 +43,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryProcess;
 
+@ExtensionAPI
 public class ProcessManager {
 
     @JsonProperty("processes")

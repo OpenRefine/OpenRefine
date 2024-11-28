@@ -45,6 +45,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.google.common.base.CharMatcher;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
@@ -54,6 +55,7 @@ import com.google.refine.util.Pool;
  * Class representing a single Row which contains a list of {@link Cell}s. There may be multiple rows in a
  * {@link Record}.
  */
+@ExtensionAPI
 public class Row implements HasFields {
 
     public boolean flagged;

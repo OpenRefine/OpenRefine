@@ -44,9 +44,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
+@ExtensionAPI
 public class ColumnGroup {
 
     final public int startColumnIndex;

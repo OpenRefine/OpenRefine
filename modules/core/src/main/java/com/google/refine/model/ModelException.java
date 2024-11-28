@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import com.google.refine.annotations.ExtensionAPI;
+
+@ExtensionAPI
 public class ModelException extends Exception {
 
     private static final long serialVersionUID = -168448967638065467L;

@@ -53,6 +53,7 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
@@ -60,6 +61,7 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 import com.google.refine.util.StringUtils;
 
+@ExtensionAPI
 public class Cell implements HasFields, Serializable {
 
     private static final long serialVersionUID = 7456683757764146620L;

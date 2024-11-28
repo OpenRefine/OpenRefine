@@ -45,9 +45,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
 
+@ExtensionAPI
 public class ReconCandidate implements HasFields {
 
     @JsonProperty("id")

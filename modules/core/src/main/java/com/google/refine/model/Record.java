@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import com.google.refine.annotations.ExtensionAPI;
+
+@ExtensionAPI
 public class Record {
 
     final public int fromRowIndex;

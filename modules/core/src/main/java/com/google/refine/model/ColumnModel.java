@@ -50,6 +50,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.google.refine.annotations.ExtensionAPI;
+
+@ExtensionAPI
 public class ColumnModel {
 
     @JsonProperty("columns")

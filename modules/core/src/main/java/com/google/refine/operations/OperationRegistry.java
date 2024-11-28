@@ -40,8 +40,10 @@ import java.util.Map;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
+import com.google.refine.annotations.ExtensionAPI;
 import com.google.refine.model.AbstractOperation;
 
+@ExtensionAPI
 public abstract class OperationRegistry {
 
     static final public Map<String, List<Class<? extends AbstractOperation>>> s_opNameToClass = new HashMap<String, List<Class<? extends AbstractOperation>>>();
