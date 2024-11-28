@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -49,10 +51,30 @@ public class ControlCallExpr extends GrelExpr {
 
     final protected Evaluable[] _args;
     final protected Control _control;
+    final protected String _controlName;
 
+    /**
+     * @deprecated use the version that supplies the name under which the control was invoked
+     */
+    @Deprecated
     public ControlCallExpr(Evaluable[] args, Control c) {
         _args = args;
         _control = c;
+        _controlName = _control.getClass().getSimpleName();
+    }
+
+    /**
+     * @param args
+     *            the arguments of the control
+     * @param c
+     *            the control itself
+     * @param controlName
+     *            the name with which the control was referred to
+     */
+    public ControlCallExpr(Evaluable[] args, Control c, String controlName) {
+        _args = args;
+        _control = c;
+        _controlName = controlName;
     }
 
     @Override
@@ -88,7 +110,29 @@ public class ControlCallExpr extends GrelExpr {
             sb.append(ev.toString());
         }
 
-        return _control.getClass().getSimpleName() + "(" + sb.toString() + ")";
+        return _controlName + "(" + sb.toString() + ")";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(_args);
+        result = prime * result + Objects.hash(_control, _controlName);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ControlCallExpr other = (ControlCallExpr) obj;
+        return Arrays.equals(_args, other._args) && Objects.equals(_control, other._control)
+                && Objects.equals(_controlName, other._controlName);
     }
 
 }

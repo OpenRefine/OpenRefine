@@ -33,11 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+
+import org.apache.commons.lang3.Validate;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
@@ -54,10 +58,38 @@ public class FunctionCallExpr extends GrelExpr {
 
     final protected Evaluable[] _args;
     final protected Function _function;
+    final protected String _functionName;
+    final protected boolean _fluentStyle;
 
+    /**
+     * @deprecated use the other constructor supplying the name under which the function was invoked
+     */
+    @Deprecated
     public FunctionCallExpr(Evaluable[] args, Function f) {
         _args = args;
         _function = f;
+        _functionName = _function.getClass().getSimpleName();
+        _fluentStyle = false;
+    }
+
+    /**
+     * @param args
+     *            the arguments of the function
+     * @param f
+     *            the function itself
+     * @param functionName
+     *            the name with which the function was referred to
+     * @param fluentStyle
+     *            true when the function call is formulated as "firstArgument.function(otherArguments)" instead of
+     *            "function(firstArgument, otherArguments)"
+     */
+
+    public FunctionCallExpr(Evaluable[] args, Function f, String functionName, boolean fluentStyle) {
+        _args = args;
+        _function = f;
+        _functionName = functionName;
+        _fluentStyle = fluentStyle;
+        Validate.isTrue(!fluentStyle || _args.length > 0);
     }
 
     @Override
@@ -101,15 +133,51 @@ public class FunctionCallExpr extends GrelExpr {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-
-        for (Evaluable ev : _args) {
-            if (sb.length() > 0) {
-                sb.append(", ");
+        if (_fluentStyle) {
+            sb.append(_args[0].toString()); // we know there is at least one argument per constructor check
+            sb.append('.');
+            sb.append(_functionName);
+            sb.append('(');
+            for (int i = 1; i != _args.length; i++) {
+                if (i > 1) {
+                    sb.append(", ");
+                }
+                sb.append(_args[i].toString());
             }
-            sb.append(ev.toString());
+            sb.append(')');
+        } else {
+            sb.append(_functionName);
+            sb.append('(');
+            for (int i = 0; i != _args.length; i++) {
+                if (i > 0) {
+                    sb.append(", ");
+                }
+                sb.append(_args[i].toString());
+            }
+            sb.append(')');
         }
-
-        return _function.getClass().getSimpleName() + "(" + sb.toString() + ")";
+        return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(_args);
+        result = prime * result + Objects.hash(_function, _functionName);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FunctionCallExpr other = (FunctionCallExpr) obj;
+        return Arrays.equals(_args, other._args) && Objects.equals(_function, other._function)
+                && Objects.equals(_functionName, other._functionName) && _fluentStyle == other._fluentStyle;
+    }
 }

@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -96,6 +97,23 @@ public class FieldAccessorExpr extends GrelExpr {
     @Override
     public String toString() {
         return _inner.toString() + "." + _fieldName;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_fieldName, _inner);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FieldAccessorExpr other = (FieldAccessorExpr) obj;
+        return Objects.equals(_fieldName, other._fieldName) && Objects.equals(_inner, other._inner);
     }
 
 }
