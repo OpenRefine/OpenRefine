@@ -50,7 +50,7 @@ WikibaseExporterMenuBar.exportTo = function (format) {
       .appendTo(form);
 
   Refine.wrapCSRF(function(csrfToken) {
-    $(form).attr("action", "command/core/export-rows/" + targetUrl + "?" + $.attr({csrf_token: csrfToken}))
+    $(form).attr("action", "command/core/export-rows/" + targetUrl + "?" + $.param({csrf_token: csrfToken}))
     document.body.appendChild(form);
 
     window.open("about:blank", "openrefine-export");
