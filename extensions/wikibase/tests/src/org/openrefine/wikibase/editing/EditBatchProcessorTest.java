@@ -534,7 +534,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         parameters.put("filename", "File:My_test_file.png");
         parameters.put("text", "my new wikitext [[Category:Uploaded with OpenRefine]]");
         parameters.put("token", csrfToken);
-        
+
         Map<String, String> uploadParameters = new HashMap<>();
         uploadParameters.putAll(parameters);
         uploadParameters.put("url", "https://my.site.com/file.png");

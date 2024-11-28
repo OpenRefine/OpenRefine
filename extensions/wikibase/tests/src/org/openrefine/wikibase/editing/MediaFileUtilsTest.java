@@ -502,7 +502,7 @@ public class MediaFileUtilsTest {
                 "    \"warnings\": {" +
                 "      \"exists\": \"My_test_file.png\"" +
                 "    }," +
-                "    \"filekey\": \"file.key.1.png\""+
+                "    \"filekey\": \"file.key.1.png\"" +
                 "  }" +
                 "}";
         JsonNode warningResponse = ParsingUtilities.mapper.readTree(warningResponseString);
@@ -515,7 +515,8 @@ public class MediaFileUtilsTest {
         when(connection.sendJsonRequest("POST", ignoreWarningParameters, null)).thenReturn(uploadJsonResponse);
 
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
-        MediaUploadResponse response = mediaFileUtils.uploadRemoteFile(new URL("https://foo.com/file.png"), "My_test_file.png", "my wikitext", "my summary",
+        MediaUploadResponse response = mediaFileUtils.uploadRemoteFile(new URL("https://foo.com/file.png"), "My_test_file.png",
+                "my wikitext", "my summary",
                 Collections.emptyList());
         assertEquals(response.filename, "My_test_file.png");
         assertEquals(response.pageid, 12345L);
