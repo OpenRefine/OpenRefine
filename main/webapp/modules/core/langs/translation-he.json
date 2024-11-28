@@ -31,7 +31,7 @@
     "core-index-create/formats": "TSV,‏ CSV,‏ ‎*SV,‏ Excel (‎.xls ו־‎.xlsx), JSON,‏ XML,‏ RDF בתור XML ויש גם תמיכה במסמכי Google. ניתן להוסיף תמיכה בתצורות אחרות עם הרחבות של OpenRefine.",
     "core-index-create/from": "קליטת נתונים מתוך",
     "core-index-import/import-proj": "ייבוא מיזם",
-    "core-index-import/locate": "איתור קובץ מיזם Refine קיים (‎.tar או ‎.tar.gz):",
+    "core-index-import/locate": "איתור קובץ מיזם Refine קיים (‎.tar או ‎.tar.gz) או להשתמש בכתובת:",
     "core-index-import/file": "קובץ מיזם",
     "core-index-import/rename": "שינוי שם המיזם (רשות)",
     "core-index-import/inspecting": "הקבצים הנבחרים נבדקים…",
@@ -740,5 +740,11 @@
     "core-dialogs/unstar-expression": "להוריד כוכב מביטוי?",
     "core-dialogs/select-columns-dialog": "בחירת עמודות",
     "core-dialogs/sql-exporter": "מייצא SQL",
-    "core-dialogs/help/grelreference": "לפרטים נוספים, נא לעיין בסימוכי ה־GREL במדריך המשתמש של OpenRefine"
+    "core-dialogs/help/grelreference": "לפרטים נוספים, נא לעיין בסימוכי ה־GREL במדריך המשתמש של OpenRefine",
+    "core-buttons/discover-services": "חשיפת שירותים…",
+    "core-buttons/edit": "עריכה",
+    "core-buttons/remove": "הסרה",
+    "core-buttons/yes": "כן",
+    "core-buttons/manage-clustering": "ניהול פונקציות צבירים",
+    "core-buttons/no": "לא"
 }
