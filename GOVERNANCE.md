@@ -50,7 +50,6 @@ Committers have earned enough trust from the community to
 **Current list of Committers**: The list is available here: https://github.com/orgs/OpenRefine/people.
 
 ### Core Developer Group
-
 Also referred to as Core Dev. The Core Developer Group are trusted developers who
 - Merge pull requests
 - Publish releases
@@ -70,7 +69,7 @@ The Release Manager is responsible to
 * Coordinate with the community to select which issues and pull requests are part of new releases
 * Prepare and coordinate publishing new releases
 
-The current Release Manager is Tom Morris [@tfmorris](https://github.com/tfmorris) and on the [forum](https://forum.openrefine.org/u/ainali/summary).
+The current Release Manager is Tom Morris [@tfmorris](https://github.com/tfmorris) and on the [forum](https://forum.openrefine.org/u/tfmorris/summary).
 
 ### Code of Conduct Committee
 The code of conduct committee is responsible to
