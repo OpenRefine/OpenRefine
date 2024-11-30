@@ -88,7 +88,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
 
       var img = $("<img>");
       if (serviceLogo) {
-        var imageUrl = serviceLogo;
+        var imageUrl = new URL(serviceLogo).toString(); // throws an exception if the format is invalid
         img.attr("src", imageUrl);
         img.attr("title", service.name);
         img.addClass("serviceLogo")
