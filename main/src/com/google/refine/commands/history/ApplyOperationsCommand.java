@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
@@ -66,8 +67,18 @@ public class ApplyOperationsCommand extends Command {
             List<AbstractOperation> operations = ParsingUtilities.mapper.readValue(jsonString,
                     new TypeReference<List<AbstractOperation>>() {
                     });
+
+            // Validate all operations first
             for (AbstractOperation operation : operations) {
-                runOperation(project, operation);
+                Validate.notNull(operation);
+                Validate.isTrue(!(operation instanceof UnknownOperation), "Unknown operation type: " + operation.getOperationId());
+                operation.validate();
+            }
+
+            // Run all operations in sequence
+            for (AbstractOperation operation : operations) {
+                Process process = operation.createProcess(project, new Properties());
+                project.processManager.queueProcess(process);
             }
 
             if (project.processManager.hasPending()) {
@@ -77,15 +88,6 @@ public class ApplyOperationsCommand extends Command {
             }
         } catch (Exception e) {
             respondException(response, e);
-        }
-    }
-
-    protected void runOperation(Project project, AbstractOperation operation) throws Exception {
-        if (operation != null && !(operation instanceof UnknownOperation)) {
-            operation.validate();
-            Process process = operation.createProcess(project, new Properties());
-
-            project.processManager.queueProcess(process);
         }
     }
 }
