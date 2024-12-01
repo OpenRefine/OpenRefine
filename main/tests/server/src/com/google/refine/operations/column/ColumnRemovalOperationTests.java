@@ -27,6 +27,8 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 
 import org.testng.annotations.BeforeMethod;
@@ -68,6 +70,12 @@ public class ColumnRemovalOperationTests extends RefineTest {
                 + "\"description\":\"Remove column my column\","
                 + "\"columnName\":\"my column\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        ColumnRemovalOperation SUT = new ColumnRemovalOperation(null);
+        assertThrows(IllegalArgumentException.class, () -> SUT.validate());
     }
 
     @Test
