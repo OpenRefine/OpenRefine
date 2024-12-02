@@ -62,7 +62,7 @@ public class OpenWorkspaceDirCommand extends Command {
         } else if (ProjectManager.singleton instanceof FileProjectManager) {
             File dir = ((FileProjectManager) ProjectManager.singleton).getWorkspaceDir();
 
-            OpenDirectoryUtilities.OpenDirectory(dir);
+            OpenDirectoryUtilities.openDirectory(dir);
 
             respond(response, "{ \"code\" : \"ok\" }");
         } else {
