@@ -24,6 +24,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import org.openrefine.wikibase.editing.MediaFileUtils;
+import org.openrefine.wikibase.editing.MediaFileUtils.MediaUploadResponse;
 import org.openrefine.wikibase.editing.NewEntityLibrary;
 import org.openrefine.wikibase.editing.ReconEntityRewriter;
 import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
@@ -63,6 +64,8 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
      *            the wikitext to associate to the file (depending on overriding settings)
      * @param overrideWikitext
      *            whether the supplied wikitext should override any existing one
+     * @param contributingRowIds
+     *            the rowIds of the rows that contributed to generating this edit
      */
     public MediaInfoEdit(
             EntityIdValue id,
@@ -221,12 +224,18 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
      *            the edit summary
      * @param tags
      *            the tags to apply to both edits
+     * @param filePageWaitTime
+     *            initial time to wait between checking if the page exists
+     * @param filePageMaxWaitTime
+     *            maximum time to wait between checking if the page exists
      * @return the id of the created entity
      * @throws MediaWikiApiErrorException
      * @throws IOException
+     * @throws InterruptedException
      */
-    public MediaInfoIdValue uploadNewFile(WikibaseDataEditor editor, MediaFileUtils mediaFileUtils, String summary, List<String> tags)
-            throws MediaWikiApiErrorException, IOException {
+    public MediaInfoIdValue uploadNewFile(WikibaseDataEditor editor, MediaFileUtils mediaFileUtils, String summary, List<String> tags,
+            int filePageWaitTime, int filePageMaxWaitTime)
+            throws MediaWikiApiErrorException, IOException, InterruptedException {
         Validate.isTrue(isNew());
         // Temporary addition of the category (should be configurable)
         String wikitext = this.wikitext;
@@ -238,7 +247,7 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         MediaFileUtils.MediaUploadResponse response;
         File path = new File(filePath);
         if (path.exists()) {
-            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags);
+            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags, shouldUploadInChunks());
         } else {
             URL url = new URL(filePath);
             response = mediaFileUtils.uploadRemoteFile(url, fileName, wikitext, summary, tags);
@@ -246,7 +255,17 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
 
         response.checkForErrors();
 
+        List<String> filenames = Collections.singletonList(fileName);
+        logger.info("Checking if file page has been created.");
+        int waitTime = filePageWaitTime;
+        while (mediaFileUtils.checkIfPageNamesExist(filenames).isEmpty()) {
+            logger.debug("No file page yet, waiting " + waitTime / 1000.0 + " s to check again");
+            Thread.sleep(waitTime);
+            waitTime = Math.min(waitTime + filePageWaitTime, filePageMaxWaitTime);
+        }
+
         // Upload the structured data
+        logger.info("Uploading SDC.");
         ReconEntityIdValue reconEntityIdValue = (ReconEntityIdValue) id;
         MediaInfoIdValue mid = response.getMid(mediaFileUtils.getApiConnection(), reconEntityIdValue.getRecon().identifierSpace);
         NewEntityLibrary library = new NewEntityLibrary();
@@ -293,6 +312,11 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         return !isNew() && !(statements.isEmpty() &&
                 labels.isEmpty() &&
                 labelsIfNew.isEmpty());
+    }
+
+    public boolean shouldUploadInChunks() {
+        File file = new File(filePath);
+        return file.length() > 100000000; // 100 MB
     }
 
     @Override

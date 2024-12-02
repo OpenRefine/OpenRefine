@@ -31,28 +31,38 @@ describe(__filename, function () {
     cy.get('.dialog-footer button').contains('OK').click();
     cy.get('#refine-tabs-facets').should('exist');
 
-    cy.waitForOrOperation();
+    // Wait for numeric facet to be populated before trying to manipulate it
+    cy.get('.facet-range-status').contains('0 — 94')
 
     //sliding the right slider
     cy.get('.slider-widget-bracket').eq(1)
     .trigger('mousedown',{ force: true })
     .trigger('mousemove',-130,0,{ force: true })
-    .trigger('mouseup',{ force: true })
+    .trigger('mouseup',{ force: true });
+    cy.get('.facet-range-status').contains('0 — 45');
     cy.get('#summary-bar').contains('72 matching rows');
 
-    //sliding the middle portion in numeric facet
+    // wait for the numeric facet to be refreshed before next mouse events
+    cy.get('.browsing-panel-indicator').should("not.be.visible");
+
+    // sliding entire selection by the body (middle)
     cy.get('.slider-widget-draggable').eq(0)
-    .trigger('mousedown',{ force: true }).waitForOrOperation()
+    .trigger('mousedown',{ force: true })
     .trigger('mousemove',130,0,{ force: true })
-    .trigger('mouseup',{ force: true }).waitForOrOperation();
-    cy.get('#summary-bar').contains('70 matching rows');
+    .trigger('mouseup',{ force: true });
+    cy.get('.facet-range-status').contains('23 — 68');
+    cy.get('#summary-bar').contains('74 matching rows');
+
+    // wait for the numeric facet to be refreshed before next mouse events
+    cy.get('.browsing-panel-indicator').should("not.be.visible");
 
     //sliding the left slider
     cy.get('.slider-widget-bracket').eq(0)
     .trigger('mousedown',{ force: true })
     .trigger('mousemove',130,0,{ force: true })
-    .trigger('mouseup',{ force: true })
-    cy.get('#summary-bar').contains('4 matching rows');
+    .trigger('mouseup',{ force: true });
+    cy.get('.facet-range-status').contains('66 — 68');
+    cy.get('#summary-bar').contains('3 matching rows');
   });
 
   it('Test for checkboxes and reset button', function () {

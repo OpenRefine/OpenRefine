@@ -112,19 +112,21 @@ ExporterManager.stripNonFileChars = function(name) {
 };
 
 ExporterManager.handlers.exportRows = function(format, ext) {
-  let form = ExporterManager.prepareExportRowsForm(format, true, ext);
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
+  Refine.wrapCSRF(function(csrfToken) {
+    let form = ExporterManager.prepareExportRowsForm(format, true, ext, csrfToken);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  });
 };
 
-ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
+ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext, csrfToken) {
   let name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
   let form = document.createElement("form");
   $(form)
-  .css("display", "none")
-  .attr("method", "post")
-  .attr("action", "command/core/export-rows/" + name + ((ext) ? ("." + ext) : ""));
+   .css("display", "none")
+   .attr("method", "post")
+   .attr("action", "command/core/export-rows/" + name + ((ext) ? ("." + ext) : "") + "?" + $.param({csrf_token: csrfToken}));
 
   $('<input />')
   .attr("name", "project")

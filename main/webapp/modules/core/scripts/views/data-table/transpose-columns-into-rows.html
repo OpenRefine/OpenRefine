@@ -2,7 +2,7 @@
   <div class="dialog-border">
     <div class="dialog-header" bind="dialogHeader"></div>
     <div class="dialog-body" bind="dialogBody">
-      <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
+      <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table role="presentation">
         <tr>
           <td><label for="fromColumnSelectId" bind="or_views_fromCol"></label></td>
           <td><label for="toColumnSelectId" bind="or_views_toCol"></label></td>
@@ -11,14 +11,14 @@
         <tr>
           <td><select bind="fromColumnSelect" id="fromColumnSelectId" size="20" style="width: 100%;"></select></td>
           <td><select bind="toColumnSelect" id="toColumnSelectId" size="20" style="width: 100%;"></select></td>
-          <td><div class="grid-layout layout-tight"><table>
+          <td><div class="grid-layout layout-tight"><table role="presentation">
             <tr>
               <td><input type="radio" id="$transpose-dialog-two-columns" name="transpose-dialog-column-choices" value="2" checked /></td>
               <td><label for="$transpose-dialog-two-columns"><span bind="or_views_twoCol"></span></label></td>
             </tr>
             <tr>
               <td>&nbsp;</td>
-              <td><div class="grid-layout layout-tightest"><table>
+              <td><div class="grid-layout layout-tightest"><table role="presentation">
                 <tr>
                   <td><label for="keyColumnNameInputId" bind="or_views_keyCol"></label></td>
                   <td><input bind="keyColumnNameInput" id="keyColumnNameInputId" size="15"> <span bind="or_views_containNames"></span></td>
@@ -35,7 +35,7 @@
             </tr>
             <tr>
               <td>&nbsp;</td>
-              <td><div class="grid-layout layout-tightest"><table>
+              <td><div class="grid-layout layout-tightest"><table role="presentation">
                 <tr>
                   <td><input aria-describedby="or_views_followById separatorInputId or_views_beforeValId" type="checkbox" bind="prependColumnNameCheckbox" id="$transpose-dialog-prepend" /></td>
                   <td><label for="$transpose-dialog-prepend"><span bind="or_views_prependName"></span></label></td>

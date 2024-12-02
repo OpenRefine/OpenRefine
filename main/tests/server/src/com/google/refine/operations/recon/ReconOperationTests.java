@@ -87,7 +87,6 @@ public class ReconOperationTests extends RefineTest {
             + "   \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
             + "   \"type\":{\"id\":\"Q5\",\"name\":\"human\"},"
             + "   \"autoMatch\":true,"
-            + "   \"batchSize\":10,"
             + "   \"columnDetails\":[],"
             + "   \"limit\":0"
             + "},"
@@ -174,6 +173,7 @@ public class ReconOperationTests extends RefineTest {
         recon3.judgment = Judgment.Matched;
 
         reconConfig = mock(StandardReconConfig.class, withSettings().serializable());
+        doReturn(2).when(reconConfig).getBatchSize();
         doReturn(2).when(reconConfig).getBatchSize(anyInt());
         // mock identifierSpace, service and schemaSpace
         when(reconConfig.batchRecon(eq(Arrays.asList(job1, job2)), anyLong())).thenReturn(Arrays.asList(recon1, recon2));
@@ -236,6 +236,7 @@ public class ReconOperationTests extends RefineTest {
         List<Recon> reconList = Arrays.asList((Recon) null, (Recon) null, (Recon) null);
         ReconJob reconJob = mock(ReconJob.class);
         when(reconConfig.batchRecon(Mockito.any(), Mockito.anyLong())).thenReturn(reconList);
+        when(reconConfig.getBatchSize()).thenReturn(10);
         when(reconConfig.getBatchSize(project.rows.size())).thenReturn(10);
         when(reconConfig.createJob(Mockito.eq(project), Mockito.anyInt(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(reconJob);
@@ -302,11 +303,7 @@ public class ReconOperationTests extends RefineTest {
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
+            Thread.sleep(1000);
             Assert.assertFalse(process.isRunning());
 
             RecordedRequest request1 = server.takeRequest(5, TimeUnit.SECONDS);
@@ -412,11 +409,7 @@ public class ReconOperationTests extends RefineTest {
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
+            Thread.sleep(1500);
             Assert.assertFalse(process.isRunning());
 
             server.takeRequest(5, TimeUnit.SECONDS); // ignore the first request which was a 503 error

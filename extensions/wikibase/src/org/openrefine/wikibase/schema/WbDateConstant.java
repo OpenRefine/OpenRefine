@@ -25,10 +25,12 @@
 package org.openrefine.wikibase.schema;
 
 import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalQuery;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -55,16 +57,16 @@ public class WbDateConstant implements WbExpression<TimeValue> {
      * Map of formats accepted by the parser. Each format is associated to the time precision it induces (an integer
      * according to Wikibase's data model).
      */
-    public static Map<SimpleDateFormat, Integer> acceptedFormats = ImmutableMap.<SimpleDateFormat, Integer> builder()
-            .put(new SimpleDateFormat("yyyy'M'"), 6)
-            .put(new SimpleDateFormat("yyyy'C'"), 7)
-            .put(new SimpleDateFormat("yyyy'D'"), 8)
-            .put(new SimpleDateFormat("yyyy"), 9)
-            .put(new SimpleDateFormat("yyyy-MM"), 10)
-            .put(new SimpleDateFormat("yyyy-MM-dd"), 11)
+    public static Map<DateTimeFormatter, Integer> acceptedFormats = ImmutableMap.<DateTimeFormatter, Integer> builder()
+            .put(DateTimeFormatter.ofPattern("yyyy'M'"), 6)
+            .put(DateTimeFormatter.ofPattern("yyyy'C'"), 7)
+            .put(DateTimeFormatter.ofPattern("yyyy'D'"), 8)
+            .put(DateTimeFormatter.ofPattern("yyyy"), 9)
+            .put(DateTimeFormatter.ofPattern("yyyy-MM"), 10)
+            .put(DateTimeFormatter.ofPattern("yyyy-MM-dd['T'HH:mm[:ss]['Z']]"), 11)
             .build();
 
-    public static Pattern calendarSuffixPattern = Pattern.compile("_(Q[1-9][0-9]*)$");
+    public static Pattern calendarSuffixPattern = Pattern.compile("(.*)_(Q[1-9][0-9]*)$");
 
     private TimeValue parsed;
     private final String origDatestamp;
@@ -112,9 +114,8 @@ public class WbDateConstant implements WbExpression<TimeValue> {
      */
     public static TimeValue parse(String datestamp)
             throws ParseException {
-        Date bestDate = null;
+        TimeValue bestDate = null;
         int precision = 0; // default precision (will be overridden if successfully parsed)
-        int maxLength = 0; // the maximum length parsed
         boolean bceFlag = false; // judge whether this is a BCE year
         String calendarIri = TimeValue.CM_GREGORIAN_PRO; // Gregorian calendar is assumed by default
 
@@ -135,52 +136,50 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             bceFlag = true;
         }
 
-        for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
-            ParsePosition position = new ParsePosition(0);
-            Date date = entry.getKey().parse(trimmedDatestamp, position);
+        Matcher matcher = calendarSuffixPattern.matcher(trimmedDatestamp);
+        if (matcher.find()) {
+            String calendarQid = matcher.group(2);
+            calendarIri = Datamodel.SITE_WIKIDATA + calendarQid;
+            trimmedDatestamp = matcher.group(1);
+        }
 
-            if (date == null) {
+        for (Entry<DateTimeFormatter, Integer> entry : acceptedFormats.entrySet()) {
+            TemporalQuery<TimeValue> temporalQuery = getTemporalQuery(entry.getValue(), bceFlag, calendarIri);
+            TimeValue date;
+            try {
+                date = entry.getKey().parse(trimmedDatestamp, temporalQuery);
+            } catch (DateTimeParseException e) {
                 continue;
             }
 
-            // Potentially parse the calendar Qid after the date
-            int consumedUntil = position.getIndex();
-            if (consumedUntil < trimmedDatestamp.length()) {
-                Matcher matcher = calendarSuffixPattern.matcher(
-                        trimmedDatestamp.subSequence(position.getIndex(), trimmedDatestamp.length()));
-                if (matcher.find()) {
-                    String calendarQid = matcher.group(1);
-                    calendarIri = Datamodel.SITE_WIKIDATA + calendarQid;
-                    consumedUntil = trimmedDatestamp.length();
-                }
-            }
-
             // Ignore parses which failed or do not consume all the input
-            if (date != null && position.getIndex() > maxLength
-            // only allow to partially consume the input if the precision is day and followed by a T (as in ISO)
-                    && (consumedUntil == trimmedDatestamp.length()
-                            || (entry.getValue() == 11 && trimmedDatestamp.charAt(consumedUntil) == 'T'))) {
-                precision = entry.getValue();
-                bestDate = date;
-                maxLength = position.getIndex();
-            }
+            precision = entry.getValue();
+            bestDate = date;
         }
         if (bestDate == null || precision == 0) {
             throw new ParseException("Invalid date.", 0);
         } else {
-            Calendar calendar = Calendar.getInstance();
-            calendar = Calendar.getInstance();
-            calendar.setTime(bestDate);
-            long year = calendar.get(Calendar.YEAR);
-            int month = precision < 10 ? 0 : calendar.get(Calendar.MONTH) + 1;
-            int day_of_month = precision < 11 ? 0 : calendar.get(Calendar.DAY_OF_MONTH);
-            if (bceFlag)
-                year = -1 * year;
-            return Datamodel.makeTimeValue(year, (byte) month,
-                    (byte) day_of_month, (byte) calendar.get(Calendar.HOUR_OF_DAY),
-                    (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 0,
-                    0, calendarIri);
+            return bestDate;
         }
+    }
+
+    protected static TemporalQuery<TimeValue> getTemporalQuery(int precision, boolean bceFlag, String calendarIri) {
+        return new TemporalQuery<>() {
+
+            @Override
+            public TimeValue queryFrom(TemporalAccessor temporal) {
+                long year = temporal.get(ChronoField.YEAR);
+                int month = precision < 10 ? 0 : temporal.get(ChronoField.MONTH_OF_YEAR);
+                int day_of_month = precision < 11 ? 0 : temporal.get(ChronoField.DAY_OF_MONTH);
+                if (bceFlag)
+                    year = -1 * year;
+                return Datamodel.makeTimeValue(year, (byte) month,
+                        (byte) day_of_month, (byte) 0,
+                        (byte) 0, (byte) 0, (byte) precision, 0, 0,
+                        0, calendarIri);
+            }
+
+        };
     }
 
     /**

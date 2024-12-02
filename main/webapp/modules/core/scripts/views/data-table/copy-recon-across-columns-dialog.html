@@ -2,14 +2,14 @@
   <div class="dialog-border">
     <div class="dialog-header" bind="dialogHeader"></div>
     <div class="dialog-body" bind="dialogBody">
-      <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
+      <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table role="presentation">
         <tr>
           <td><label for="toColumnSelectId" bind="or_views_copyToCol"></label></td>
           <td bind="or_views_copyOpt"></td>
         </tr>
         <tr>
           <td><select bind="toColumnSelect" id="toColumnSelectId" multiple size="20" style="width: 100%;"></select></td>
-          <td><div class="grid-layout layout-normal"><table>
+          <td><div class="grid-layout layout-normal"><table role="presentation">
             <tr>
               <td>
                 <input type="checkbox" bind="applyToJudgedCellsCheckbox" id="applyToJudgedCellsCheckboxId" checked />

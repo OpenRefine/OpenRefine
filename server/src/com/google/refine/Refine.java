@@ -176,7 +176,7 @@ class RefineServer extends Server {
         logger.info("Java runtime version {} from java.home: {}", Runtime.version().toString(), System.getProperty("java.home", ""));
         logger.info("Java VM: {} {} {} {}", System.getProperty("java.vm.vendor", ""), System.getProperty("java.vm.name", ""),
                 System.getProperty("java.vm.version", ""), System.getProperty("java.vm.info", ""));
-        logger.info("Starting Server bound to '{}:{}'", iface, port);
+        logger.info("Starting Server bound to http://{}:{}", iface, port);
         logger.info("refine.memory size: {} JVM Max heap: {} MBytes", Configurations.get("refine.memory", "<default>"),
                 Runtime.getRuntime().maxMemory() / 1024 / 1024.0);
 

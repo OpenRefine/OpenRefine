@@ -71,7 +71,7 @@ Refine.DefaultImportingController.prototype._startOver = function() {
   this._createProjectUI.showSourceSelectionPanel();
 };
 
-Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, callback) {
+Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, sortCriteria, sortOrder, callback) {
     var self = this;
 
     Refine.wrapCSRF(function(token) {
@@ -287,7 +287,7 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
             result.rowModel = data;
             callback(result);
         },
-        "jsonp"
+        "json"
          ).fail(() => {
            DialogSystem.alert($.i18n('core-index/rows-loading-failed'));
          });

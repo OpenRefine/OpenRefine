@@ -35,6 +35,7 @@ package com.google.refine.importers;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -62,7 +64,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -75,7 +76,6 @@ public class ExcelImporterTests extends ImporterTest {
 
     private static final int SHEETS = 3;
     private static final int ROWS = 4;
-
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String LEADING_ZERO_FORMAT = "0000";
@@ -138,11 +138,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsFile);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3), numberedColumn(4), numberedColumn(5),
@@ -183,11 +179,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFile);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3), numberedColumn(4), numberedColumn(5),
@@ -229,11 +221,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFile);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
         decimalFormat.applyPattern("0.00");
@@ -270,12 +258,8 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = ClassLoader.getSystemResourceAsStream("excel95.xls");
 
-        try {
-            // We don't support Excel 95, but make sure we get an exception back
-            Assert.assertEquals(parseOneFileAndReturnExceptions(SUT, stream).size(), 1);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        // We don't support Excel 95, but make sure we get an exception back
+        assertEquals(parseOneFileAndReturnExceptions(SUT, stream).size(), 1);
     }
 
     @Test
@@ -331,11 +315,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsFileWithMultiSheets);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3), numberedColumn(4), numberedColumn(5),
@@ -397,11 +377,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         InputStream stream = new FileInputStream(xlsxFileWithMultiSheets);
 
-        try {
-            parseOneFile(SUT, stream);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        parseOneFile(SUT, stream);
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3), numberedColumn(4), numberedColumn(5),
@@ -441,6 +417,40 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("skipDataLines");
         verify(options, times(SHEETS)).get("limit");
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
+    }
+
+    @Test
+    public void testDeleteEmptyColumns() throws Exception {
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+
+        whenGetArrayOption("sheets", options, sheets);
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 1);
+        whenGetIntegerOption("limit", options, -1);
+
+        // This will mock the situation of deleting empty columns(col6)
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, false);
+        whenGetBooleanOption("storeBlankColumns", options, false);
+
+        InputStream stream = new FileInputStream(xlsxFile);
+        parseOneFile(SUT, stream);
+
+        // We should have one less than the start due to empty column being skipped
+        assertEquals(project.columnModel.columns.size(), 12);
+        // NOTE: we need to redirect through the column model because the rows will still have empty cells
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(1).getCellIndex()), true);
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(2).getCellIndex()), EXPECTED_DATE_TIME);
+
+        verify(options, times(1)).get("ignoreLines");
+        verify(options, times(1)).get("headerLines");
+        verify(options, times(1)).get("skipDataLines");
+        verify(options, times(1)).get("limit");
+        verify(options, times(1)).get("storeBlankCellsAsNulls");
+        verify(options, times(1)).get("storeBlankColumns");
+
     }
 
     private static File createSpreadsheet(boolean xml, LocalDateTime date) {
@@ -486,7 +496,7 @@ public class ExcelImporterTests extends ImporterTest {
             outputStream.close();
             wb.close();
         } catch (IOException e) {
-            return null;
+            throw new UncheckedIOException(e);
         }
         return file;
     }
@@ -534,7 +544,7 @@ public class ExcelImporterTests extends ImporterTest {
             outputStream.close();
             wb.close();
         } catch (IOException e) {
-            return null;
+            throw new UncheckedIOException(e);
         }
         return file;
     }

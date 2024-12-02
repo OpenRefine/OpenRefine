@@ -61,7 +61,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
         maxEditsPerMinute: WikibaseManager.getSelectedWikibaseMaxEditsPerMinute(),
         resultsColumnName: $.i18n('perform-wikibase-edits/wikibase-editing-results')
       },
-      { includeEngine: true, modelsChanged: true, cellsChanged: true, columnStatsChanged: true },
+      { includeEngine: true, modelsChanged: true, cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
       { onDone: function() { dismiss(); } }
     );
   };

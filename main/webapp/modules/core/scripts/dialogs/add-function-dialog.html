@@ -1,0 +1,25 @@
+<div class="dialog-frame" style="min-width: 700px;">
+    <div class="dialog-border">
+        <div class="dialog-header" bind="dialogHeader"></div>
+        <form bind="form">
+            <div class="dialog-body" bind="dialogBody">
+                <div class="grid-layout layout-normal layout-full">
+                    <table cols="2" style="width: 700px" role="presentation">
+                        <tr>
+                            <td width="1%" style="white-space: pre;"><label for="functionNameInputId"
+                                    bind="newFunctionName"></label></td>
+                            <td><input bind="functionNameInput" id="functionNameInputId" size="40" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">$EXPRESSION_PREVIEW_WIDGET$</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="dialog-footer" bind="dialogFooter">
+                <button class="button button-primary" type="submit" bind="okButton"></button>
+                <button class="button" bind="cancelButton"></button>
+            </div>
+        </form>
+    </div>
+</div>

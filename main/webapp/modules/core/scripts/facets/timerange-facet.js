@@ -124,7 +124,7 @@ class TimeRangeFacet extends Facet{
     .show()
     .html(
       '<div class="facet-title" bind="headerDiv">' +
-        '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+        '<div class="grid-layout layout-tightest layout-full"><table role="presentation"><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +
@@ -276,6 +276,14 @@ class TimeRangeFacet extends Facet{
       this._elmts.statusDiv.html("<b>" + fromDate.toString(dayOfYearFormat) + "</b>  " + fromDate.toString(timeOfDayformat) + " &mdash; "  + "<b>" + toDate.toString(dayOfYearFormat) + "</b>  " + toDate.toString(timeOfDayformat) );
     }
   };
+
+  uniquenessCriterion() {
+    return JSON.stringify([
+      'timerange',
+      this._config.expression,
+      this._config.columnName,
+    ]);
+  }
 
   updateState(data) {
     if ("min" in data && "max" in data) {

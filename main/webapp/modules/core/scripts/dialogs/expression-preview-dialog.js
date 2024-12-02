@@ -82,7 +82,8 @@ ExpressionPreviewDialog.Widget = function(
     cellIndex,
     rowIndices,
     values,
-    expression
+    expression,
+    columnName
 ) {
     var language = "grel";
     if (!(expression)) {
@@ -112,7 +113,8 @@ ExpressionPreviewDialog.Widget = function(
     this._cellIndex = cellIndex;
     this._rowIndices = rowIndices;
     this._values = values;
-    
+    this._columnName = columnName;
+
     this._results = null;
     this._timerID = null;
     
@@ -139,7 +141,30 @@ ExpressionPreviewDialog.Widget = function(
     this._elmts.or_dialog_history.html($.i18n('core-dialogs/history'));
     this._elmts.or_dialog_starred.html($.i18n('core-dialogs/starred'));
     this._elmts.or_dialog_help.html($.i18n('core-dialogs/help'));
-    
+
+    if(this._columnName != null){
+        this._elmts.or_dialog_preview.html($.i18n('core-dialogs/expression-preview'));
+        this._elmts.or_dialog_clusters.html($.i18n('core-dialogs/clusters-preview'));
+        this._elmts.or_dialog_clusters.closest('li').show();
+    }
+
+    var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
+    if(activeTabName === "Distance"){
+        $(".distance-clustering-parameters").show();
+
+        let radius = document.getElementById('radius');
+        radius.value = 1;
+        radius.addEventListener('input', function(){
+            self._scheduleUpdate();
+        });
+
+        let blockingChars = document.getElementById('blockingChars');
+        blockingChars.value = 6;
+        blockingChars.addEventListener('input', function(){
+            self._scheduleUpdate();
+        });
+    }
+
     this.update();
     this._renderExpressionHistoryTab();
     this._renderStarredExpressionsTab();
@@ -409,28 +434,71 @@ ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
 ExpressionPreviewDialog.Widget.prototype.update = function() {
     var self = this;
     var expression = this.expression = jQueryTrim(this._elmts.expressionPreviewTextarea[0].value);
+    var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
     var params = {
         project: theProject.id,
         cellIndex: this._cellIndex
     };
     this._prepareUpdate(params);
     
-    $.post(
-        "command/core/preview-expression?" + $.param(params), 
-        {
-        	expression: this._getLanguage() + ":" + expression,
-            rowIndices: JSON.stringify(this._rowIndices) 
-        },
-        function(data) {
-            if (data.code != "error") {
-                self._results = data.results;
-            } else {
-                self._results = null;
-            }
-            self._renderPreview(expression, data);
-        },
-        "json"
-    );
+    if(activeTabName === "Distance"){
+        self._renderDistancePreview(this._values[0]);
+    } else {
+        Refine.postCSRF(
+            "command/core/preview-expression?" + $.param(params), 
+            {
+                expression: this._getLanguage() + ":" + expression,
+                rowIndices: JSON.stringify(this._rowIndices) 
+            },
+            function(data) {
+                if (data.code != "error") {
+                    self._results = data.results;
+                } else {
+                    self._results = null;
+                }
+                self._renderPreview(expression, data);
+            },
+            "json"
+        );
+    }
+
+    if(self._columnName != null){
+        self._elmts.expressionPreviewClustersContainer.html(
+            '<div style="margin: 1em; font-size: 130%; color: #888;">'+$.i18n('core-dialogs/clustering')+'<img src="images/small-spinner.gif"></div>'
+        );
+
+        self._params = {
+            "expression" : expression,
+            "radius" : Number(document.getElementById('radius').value),
+            "blocking-ngram-size" : Number(document.getElementById('blockingChars').value)
+        };
+
+        $.post(
+            "command/core/compute-clusters?" + $.param({ project: theProject.id }),
+            {
+                engine: JSON.stringify(ui.browsingEngine.getJSON()),
+                clusterer: JSON.stringify({
+                    'type' : activeTabName === "Keying" ? "binning" : "knn",
+                    'function' : activeTabName === "Keying" ? "UserDefinedKeyer" : "UserDefinedDistance",
+                    'column' : self._columnName,
+                    'params' : self._params
+                })
+            },
+            function(data) {
+                var clusters = [];
+                if (data.code != "error") {
+                    $.each(data, function() {
+                        var cluster = {
+                            choices: this,
+                        };
+                        clusters.push(cluster);
+                    });
+                }
+                self._renderClusters(clusters);
+            },
+            "json"
+        );
+    }
 };
 
 ExpressionPreviewDialog.Widget.prototype._prepareUpdate = function(params) {
@@ -480,5 +548,155 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
             var v = this._results[i];
             renderValue(tdValue, v);
         }
+    }
+};
+
+ExpressionPreviewDialog.Widget.prototype._renderClusters = function(clusters) {
+    var container = this._elmts.expressionPreviewClustersContainer.empty();
+    
+    if (clusters.length > 0) {
+        var table = $('<table></table>')
+            .addClass("clustering-dialog-preview-table")
+            .appendTo($('<div>').addClass("clusters-preview-table-wrapper").appendTo(container))[0];
+
+        var trHead = table.insertRow(table.rows.length);
+        trHead.className = "header";
+        $(trHead.insertCell(0)).text("Number");
+        $(trHead.insertCell(1)).text("Clusters");
+        $(trHead.insertCell(2)).text(theProject.metadata.rowCount + " rows, " + clusters.length + (clusters.length === 1 ? " cluster" : " clusters"));
+
+        var entryTemplate = document.createElement('a');
+
+        var renderCluster = function(cluster, index) {
+            var tr = table.insertRow();
+            tr.className = index % 2 === 0 ? "odd" : "even"; // TODO: Unused?
+
+            var ul = document.createElement('ul');
+            ul.style.listStyleType = 'none';
+            var choices = cluster.choices;
+            for (let c = 0; c < choices.length; c++) {
+                let choice = choices[c];
+                var li = document.createElement('li');
+
+                var entry = entryTemplate.cloneNode();
+                entry.textContent = choice.v.toString().replaceAll(' ', '\xa0');
+                li.append(entry);
+
+                if (choice.c > 1) { 
+                  $('<span></span>').text($.i18n("core-dialogs/cluster-rows", choice.c)).addClass("clustering-dialog-preview-count").appendTo(li);
+                }
+                ul.append(li);
+            }
+
+            $('<span>' + (index+1) +'.</span>').appendTo(tr.insertCell(0));
+
+            $(tr.insertCell(1))
+                .append(ul);
+
+            tr.insertCell(2);
+
+            return choices.length;
+        };
+
+        var maxRenderRows = parseInt(
+            Refine.getPreference("ui.clustering.choices.limit", 5000)
+        );
+        maxRenderRows = isNaN(maxRenderRows) || maxRenderRows <= 0 ? 5000 : maxRenderRows;
+        var totalRows = 0;
+        for (var clusterIndex = 0; clusterIndex < clusters.length && totalRows < maxRenderRows; clusterIndex++) {
+            totalRows += renderCluster(clusters[clusterIndex], clusterIndex);
+        }
+    } else {
+        container.html(
+            '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">'+$.i18n('core-dialogs/no-cluster-found')+'</div><div style="padding-top: 1em; font-size: 110%; color: #888;">'+$.i18n('core-dialogs/try-another-method')+'</div></div>'
+        );
+    }
+};
+
+ExpressionPreviewDialog.Widget.prototype._renderDistancePreview = function(firstValue) {
+    var self = this;
+    var value1 = document.getElementById('value1') === null ? firstValue : document.getElementById('value1').value;
+    var value2 = document.getElementById('value2') === null ? firstValue : document.getElementById('value2').value;
+    var container = this._elmts.expressionPreviewPreviewContainer.empty();    
+    var expression = this.expression = jQueryTrim(this._elmts.expressionPreviewTextarea[0].value);
+    var params = {
+        project: theProject.id,
+        cellIndex: this._cellIndex
+    };
+
+    var table = $('<table></table>')
+        .addClass("clustering-dialog-preview-table")
+        .appendTo(container)[0];
+
+    var truncExpression = expression.length > 30 ? expression.substring(0, 30) + ' ...' : expression; 
+
+    var tr = table.insertRow(0);
+    $(tr.insertCell(0)).addClass("expression-preview-heading").text("value1");
+    $(tr.insertCell(1)).addClass("expression-preview-heading").text("value2");
+    $(tr.insertCell(2)).addClass("expression-preview-heading").text(truncExpression);
+    
+    tr = table.insertRow(1);
+
+    function addTextBox(value, id){
+        var ul = document.createElement('ul');
+        ul.style.listStyleType = 'none';
+        var li = document.createElement('li');
+    
+        var input = document.createElement('input');
+        input.value = value.toString().replaceAll(' ', '\xa0');
+        input.id = id;
+        input.addEventListener('input', renderExpressionResult);
+        li.append(input);
+        
+        ul.append(li);
+        return ul;
+    }
+
+    $(tr.insertCell(0)).append(addTextBox(value1, "value1"));
+    $(tr.insertCell(1)).append(addTextBox(value2, "value2"));
+    tr.insertCell(2);
+
+    renderExpressionResult();
+
+    function renderExpressionResult(){
+        value1 = document.getElementById('value1').value;
+        value2 = document.getElementById('value2').value;
+        let newExpression = expression.replace(/value1/g, '"' + value1.toString().replaceAll(' ', '\xa0') + '"')
+                                .replace(/value2/g, '"' + value2.toString().replaceAll(' ', '\xa0') + '"')
+                                .replace(/value/g,"");
+        $.post(
+            "command/core/preview-expression?" + $.param(params), 
+            {
+                expression: self._getLanguage() + ":" + newExpression,
+                rowIndices: JSON.stringify(self._rowIndices) 
+            },
+            function(data) {
+                let result;
+                if (data.code != "error") {
+                    result = data.results[0];
+                    self._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text($.i18n('core-dialogs/no-syntax-err')+".");
+                } else {
+                    result = null;
+                    var message = (data.type == "parser") ? data.message : $.i18n('core-dialogs/internal-err');
+                    self._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
+                }
+                
+                tr.deleteCell(-1);
+
+                if (result !== null && result !== undefined) {
+                    if ($.isPlainObject(result)) {
+                        $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + result.message).appendTo(tr.insertCell(2));
+                    } else if(isNaN(result)) {
+                        let message = $.i18n('core-dialogs/should-return-number');
+                        $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + message).appendTo(tr.insertCell(2));
+                    } else {
+                        $('<span>' + result + '</span>').appendTo(tr.insertCell(2));
+                    }
+                } else {
+                    $('<span>' + result + '</span>').addClass("expression-preview-special-value").appendTo(tr.insertCell(2));
+                }
+            },
+            "json"
+        ); 
     }
 };

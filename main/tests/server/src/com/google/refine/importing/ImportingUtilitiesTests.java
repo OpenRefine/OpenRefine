@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,6 +68,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileSystem;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.entity.mime.FileBody;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.entity.mime.StringBody;
 import org.apache.hc.core5.http.ContentType;
@@ -80,7 +80,9 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterTest;
 import com.google.refine.importers.ImportingParserBase;
+import com.google.refine.importers.LineBasedFormatGuesser;
 import com.google.refine.importers.SeparatorBasedImporter;
+import com.google.refine.importers.TextFormatGuesser;
 import com.google.refine.importing.ImportingUtilities.Progress;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
@@ -92,6 +94,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
+        importFlowSettings();
     }
 
     @Test
@@ -557,6 +560,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
                     return false;
                 }
             };
+
             try {
                 ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
                 fail("No Exception was thrown");
@@ -574,5 +578,157 @@ public class ImportingUtilitiesTests extends ImporterTest {
         JSONUtilities.safePut(fileRecord, "fileName", fileName);
 
         assertEquals(fileName, ImportingUtilities.getFileName(fileRecord));
+    }
+
+    @Test
+    public void testFormatForMultipleCSVFiles() throws IOException, FileUploadException {
+        testMultipleFiles("birds", "food.small", ".csv", ContentType.create("text/csv"), "text/line-based/*sv");
+    }
+
+    @Test
+    public void testFormatForMultipleTSVFiles() throws IOException, FileUploadException {
+        testMultipleFiles("movies", "presidents", ".tsv", ContentType.create("text/tsv"), "text/line-based/*sv");
+    }
+
+    @Test
+    public void testFormatForMultipleExcelFiles() throws IOException, FileUploadException {
+        testMultipleFiles("dates", "excel95", ".xls",
+                ContentType.create("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "binary/text/xml/xls/xlsx");
+    }
+
+    @Test
+    public void testFormatForMultipleJSONFiles() throws IOException, FileUploadException {
+        testMultipleFiles("grid_small", "grid_small", ".json", ContentType.create("text/json"), "text/json");
+    }
+
+    @Test
+    public void testFormatForMultipleODSFiles() throws IOException, FileUploadException {
+        testMultipleFiles("films", "films", ".ods", ContentType.create("application/vnd.oasis.opendocument.spreadsheet"), "text/xml/ods");
+    }
+
+    private void testMultipleFiles(String file1, String file2, String fileSuffix, ContentType contentType, String expectedFormat)
+            throws IOException, FileUploadException {
+
+        String filepath1 = ClassLoader.getSystemResource(file1 + fileSuffix).getPath();
+        String filepath2 = ClassLoader.getSystemResource(file2 + fileSuffix).getPath();
+
+        File tmp1 = File.createTempFile("openrefine-test-" + file1, fileSuffix, job.getRawDataDir());
+        tmp1.deleteOnExit();
+
+        FileUtils.copyFile(new File(filepath1), tmp1);
+
+        File tmp2 = File.createTempFile("openrefine-test-" + file2, fileSuffix, job.getRawDataDir());
+        tmp2.deleteOnExit();
+
+        FileUtils.copyFile(new File(filepath2), tmp2);
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        FileBody fileBody1 = new FileBody(tmp1, contentType);
+        FileBody fileBody2 = new FileBody(tmp2, contentType);
+        builder = builder.addPart("upload", fileBody1);
+        builder = builder.addPart("upload", fileBody2);
+
+        HttpEntity entity = builder.build();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        entity.writeTo(os);
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getContentType()).thenReturn(entity.getContentType());
+        when(req.getMethod()).thenReturn("POST");
+        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+
+        ImportingJob job = ImportingManager.createJob();
+        Map<String, String> parameters = ParsingUtilities.parseParameters(req);
+        ObjectNode config = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(config, "retrievalRecord", retrievalRecord);
+        JSONUtilities.safePut(config, "state", "loading-raw-data");
+
+        final ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(config, "progress", progress);
+
+        ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                new ImportingUtilities.Progress() {
+
+                    @Override
+                    public void setProgress(String message, int percent) {
+                        if (message != null) {
+                            JSONUtilities.safePut(progress, "message", message);
+                        }
+                        JSONUtilities.safePut(progress, "percent", percent);
+                    }
+
+                    @Override
+                    public boolean isCanceled() {
+                        return job.canceled;
+                    }
+                });
+
+        assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(0).get("format").asText());
+        assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(1).get("format").asText());
+    }
+
+    private void importFlowSettings() {
+        // Register Format guessers
+        ImportingManager.registerFormatGuesser("text", new TextFormatGuesser());
+        ImportingManager.registerFormatGuesser("text/line-based", new LineBasedFormatGuesser());
+
+        // Extension to format mappings
+        ImportingManager.registerExtension(".txt", "text");
+        ImportingManager.registerExtension(".csv", "text/line-based/*sv");
+        ImportingManager.registerExtension(".tsv", "text/line-based/*sv");
+        ImportingManager.registerExtension(".xml", "text/xml");
+        ImportingManager.registerExtension(".atom", "text/xml");
+        ImportingManager.registerExtension(".json", "text/json");
+        ImportingManager.registerExtension(".js", "text/json");
+        ImportingManager.registerExtension(".xls", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerExtension(".ods", "text/xml/ods");
+        ImportingManager.registerExtension(".nt", "text/rdf/nt");
+        ImportingManager.registerExtension(".ntriples", "text/rdf/nt");
+        ImportingManager.registerExtension(".n3", "text/rdf/n3");
+        ImportingManager.registerExtension(".ttl", "text/rdf/ttl");
+        ImportingManager.registerExtension(".jsonld", "text/rdf/ld+json");
+        ImportingManager.registerExtension(".rdf", "text/rdf/xml");
+        ImportingManager.registerExtension(".marc", "text/marc");
+        ImportingManager.registerExtension(".mrc", "text/marc");
+        ImportingManager.registerExtension(".wiki", "text/wiki");
+
+        // Mime type to format mappings
+        ImportingManager.registerMimeType("text/plain", "text");
+        ImportingManager.registerMimeType("text/csv", "text/line-based/*sv");
+        ImportingManager.registerMimeType("text/x-csv", "text/line-based/*sv");
+        ImportingManager.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
+        ImportingManager.registerMimeType("text/tab-separated-values", "text/line-based/*sv");
+        ImportingManager.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
+        ImportingManager.registerMimeType("application/n-triples", "text/rdf/nt");
+        ImportingManager.registerMimeType("text/n3", "text/rdf/n3");
+        ImportingManager.registerMimeType("text/rdf+n3", "text/rdf/n3");
+        ImportingManager.registerMimeType("text/turtle", "text/rdf/ttl");
+        ImportingManager.registerMimeType("application/xml", "text/xml");
+        ImportingManager.registerMimeType("text/xml", "text/xml");
+        ImportingManager.registerMimeType("+xml", "text/xml"); // suffix will be tried only as fallback
+        ImportingManager.registerMimeType("application/rdf+xml", "text/rdf/xml");
+        ImportingManager.registerMimeType("application/ld+json", "text/rdf/ld+json");
+        ImportingManager.registerMimeType("application/atom+xml", "text/xml");
+        ImportingManager.registerMimeType("application/msexcel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/x-msexcel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/x-ms-excel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/vnd.ms-excel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.template",
+                "binary/text/xml/xls/xlsx");
+        ImportingManager.registerMimeType("application/vnd.oasis.opendocument.spreadsheet", "text/xml/ods");
+        ImportingManager.registerMimeType("application/json", "text/json");
+        ImportingManager.registerMimeType("application/javascript", "text/json");
+        ImportingManager.registerMimeType("text/json", "text/json");
+        ImportingManager.registerMimeType("+json", "text/json"); // suffix will be tried only as fallback
+        ImportingManager.registerMimeType("application/marc", "text/marc");
     }
 }

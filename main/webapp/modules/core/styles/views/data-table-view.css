@@ -108,6 +108,7 @@ div.viewpanel-pagesize span:first-of-type {
   padding: 0;
   font-size: 1.05em;
   border-collapse: separate;
+  width: max-content;
 }
 
 .data-table td, .data-table-header td, .data-table-header th {
@@ -117,6 +118,8 @@ div.viewpanel-pagesize span:first-of-type {
 .data-table td {
   border-bottom: 0.02rem dotted #ddd;
   border-right: 0.02rem solid #ddd;
+  position: relative;
+  max-width: 300px;
 }
 
 .data-table-header td, .data-table-header th {
@@ -132,11 +135,38 @@ th.column-header {
   position: sticky;
   top: 0;
   z-index: 1;
-  will-change: transform;
+}
+
+th.column-group-header {
+  position: relative;
 }
 
 th {
   text-align: left;
+}
+
+.column-header-title {
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+th .column-header-resizer-left, th .column-header-resizer-right {
+  display: block;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: col-resize;
+  width: 6px;
+}
+
+th .column-header-resizer-left {
+  right: 0;
+}
+
+th .column-header-resizer-right {
+  left: 0;
 }
 
 table.data-header-table>tbody>tr>td {
@@ -171,14 +201,13 @@ table.data-table td.column-header, table.data-table th.column-header {
 }
 
 .column-header-name {
-  margin: 0 0 0 21px;
   padding: 4px 0 0 0;
-  display: block;
+  display: inline-block;
+  position: absolute;
 }
 
 .column-header-menu {
-  float: left;
-  display: block;
+  display: inline-block;
   margin: 0 4px 0 0;
   width: 17px;
   height: 19px;
@@ -198,13 +227,24 @@ table.data-table td.column-header, table.data-table th.column-header {
   background-position: -17px 0px;
 }
 
+.container-of-logo-and-statsbar {
+  display: grid;
+  grid-template-columns: max-content auto;
+  width:100%;
+ }
+ 
 .column-header-recon-stats-bar {
-  margin-top: 10px;
-  height: 4px;
+  margin-top:4px;
+  height: 6px;
   background: #ddd;
   border: 1px solid #ccc;
   position: relative;
   width: 100%;
+}
+    
+.serviceLogo {
+  width: 19px;
+  height: 21px;
 }
 
 .column-header-recon-stats-matched {
@@ -222,8 +262,8 @@ table.data-table td.column-header, table.data-table th.column-header {
 div.data-table-cell-content {
   line-height: 1.2;
   color: #222;
-  position: relative;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 div.data-table-cell-content-numeric {
@@ -266,7 +306,7 @@ div.data-table-cell-content-numeric>a.data-table-cell-edit {
 }
 
 .data-table-error {
-  color: red;
+  color: var(--error-red);
 }
 
 div.data-table-recon-candidates {

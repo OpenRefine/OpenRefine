@@ -42,11 +42,6 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-      - name: Set up secrets
-        run: |
-          echo "CYPRESS_RECORD_KEY=$(echo YzE3ZDU4OGItZTBkOC00ZjJmLTg4NjYtNzJmNmFmYmRhNGQxCg== | base64 -d)" >> $GITHUB_ENV
-          echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
-
       - name: Set up Java 11
         uses: actions/setup-java@v4
         with:
@@ -87,8 +82,8 @@ jobs:
           ./refine e2e_tests
         env:
           CYPRESS_BROWSER: ${{ matrix.browser }}
-          CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
-          CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ vars.CYPRESS_PROJECT_ID }}
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs.paths }}
           CYPRESS_GROUP: ${{ matrix.specs.group }}
@@ -183,7 +178,7 @@ jobs:
 
   mac_test_and_deploy:
     if: github.repository == 'OpenRefine/OpenRefine'
-    runs-on: macos-12
+    runs-on: macos-13
 
     outputs: 
       version_number_string: ${{ steps.version_string_variable.outputs.output_value }}
@@ -218,12 +213,6 @@ jobs:
         .github/workflows/release/add_apple_keys.sh
       env:
         P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
-
-    - name: Apply patch to insert Google API credentials
-      run: |
-        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/gdata.patch --decrypt .github/workflows/release/gdata.patch.asc
-        git am .github/workflows/release/gdata.patch
-        git reset HEAD^
 
     - name: Install webapp dependencies
       run: cd main/webapp && npm install
@@ -263,7 +252,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.7.5
+      uses: shogo82148/actions-upload-release-asset@v1.7.8
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip
@@ -291,7 +280,7 @@ jobs:
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.7.5
+      uses: shogo82148/actions-upload-release-asset@v1.7.8
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}.tar.gz
@@ -308,7 +297,7 @@ jobs:
     - name: Upload Release Asset Mac
       id: upload-release-asset-mac
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.7.5
+      uses: shogo82148/actions-upload-release-asset@v1.7.8
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}.dmg
@@ -396,7 +385,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java-installer
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.7.5
+      uses: shogo82148/actions-upload-release-asset@v1.7.8
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}.exe

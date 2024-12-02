@@ -32,7 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
-  var doTextTransform = function(expression, onError, repeat, repeatCount) {
+  var doTextTransform = function(expression, onError, repeat, repeatCount, onDone) {
     Refine.postCoreProcess(
       "text-transform",
       {
@@ -42,7 +42,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         repeatCount: repeatCount
       },
       { expression: expression },
-      { cellsChanged: true }
+      { cellsChanged: true },
+      { onDone },
     );
   };
 
@@ -72,9 +73,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         previewWidget.getExpression(true),
         $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
         elmts.repeatCheckbox[0].checked,
-        elmts.repeatCountInput[0].value
+        elmts.repeatCountInput[0].value,
+        dismiss
       );
-      dismiss();
     });
 
     var o = DataTableView.sampleVisibleRows(column);
@@ -101,7 +102,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         columnName: column.name
       },
       null,
-      { modelsChanged: true }
+      { modelsChanged: true, rowIdsPreserved: true }
     );
   };
 
@@ -112,7 +113,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         columnName: column.name
       },
       null,
-      { modelsChanged: true }
+      { modelsChanged: true, rowIdsPreserved: true }
     );
   };
 
@@ -285,8 +286,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         text_to_find = '"'+text_to_find+'"';
       }
       expression = 'value.replace('+text_to_find+',"'+replacement_text+'")';
-      doTextTransform(expression, "keep-original", false, "");
-      dismiss();
+      doTextTransform(expression, "keep-original", false, "", dismiss);
     });
   };
 
@@ -383,10 +383,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         "split-multi-value-cells",
         config,
         null,
-        { rowsChanged: true }
+        { rowsChanged: true },
+        { onDone: dismiss }
       );
-
-      dismiss();
     });
   };
 
@@ -506,7 +505,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/cluster",
       label: $.i18n('core-views/cluster-edit'),
-      click: function() { new ClusteringDialog(column.name, "value"); }
+      click: function() { new ClusteringDialog(column, "value"); }
     },
     {},
     {
@@ -701,9 +700,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         "key-value-columnize",
         config,
         null,
-        { modelsChanged: true }
+        { modelsChanged: true },
+        { onDone: dismiss }
       );
-      dismiss();
     });
 
     var valueColumnIndex = -1;

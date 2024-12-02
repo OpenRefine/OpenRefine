@@ -32,7 +32,7 @@
     "wikibase-schema/description": "Description",
     "wikibase-schema/description-if-new": "Description (sans écraser)",
     "wikibase-schema/description-override": "Description (écrase si déjà présent)",
-    "wikibase-schema/override-term": "écrase si déjà présent",
+    "wikibase-schema/override-term": "écraser si déjà présent",
     "wikibase-schema/alias": "Alias",
     "wikibase-schema/amount": "quantité",
     "wikibase-schema/unit": "unité",
@@ -242,5 +242,15 @@
     "wikibase-statement-settings/lax-value-matching": "Comparaison de valeurs laxiste (ignorer les différences mineures entre les valeurs, comme des espaces supplémentaires aux extrémités ou des différences d'arrondi)",
     "wikibase-statement-settings/discriminating-qualifiers-label": "Qualificateurs discriminants : ",
     "wikibase-statement-settings/discriminating-qualifiers-description": "Liste d'identifiants de propriétés séparés par des virgules des qualificateurs à prendre en compte lors de la comparaison des déclarations. Les différences pour d'autres qualificateurs seront ignorées. Si la liste est vide, tous les qualificateurs sont pris en compte.",
-    "wikibase-statement-settings/strategy-options/qualifiers/description": "Comparer les déclarations selon leur propriété, valeur principale et qualificateurs"
+    "wikibase-statement-settings/strategy-options/qualifiers/description": "Comparer les déclarations selon leur propriété, valeur principale et qualificateurs",
+    "wikibase-schema/mediainfo-wikitext": "Wikicode :",
+    "wikibase-schema/add-caption": "ajouter une légende",
+    "wikibase-schema/add-mediainfo-button": "Ajouter des médias",
+    "wikibase-schema/mediainfo-file-path": "Chemin d'accès au fichier :",
+    "wikibase-schema/mediainfo-file-name": "Nom de fichier :",
+    "wikibase-schema/start-from-an-existing-schema": "Sélectionner un schéma prédéfini :",
+    "wikibase-schema/captions-header": "Légendes",
+    "wikibase-schema/target-wikibase-instance": "Sélectionner une instance de Wikibase :",
+    "wikibase-schema/save-new-schema": "Créer un nouveau schéma",
+    "wikibase-schema/override-wikitext": "écraser le wikitext existant"
 }

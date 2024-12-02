@@ -44,6 +44,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -92,7 +93,7 @@ public class JsonImporter extends TreeImportingParserBase {
                 ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
                 JsonFactory factory = JsonFactory.builder().enable(JsonReadFeature.ALLOW_JAVA_COMMENTS)
-                        .enable(JsonReadFeature.ALLOW_YAML_COMMENTS).build();
+                        .enable(JsonReadFeature.ALLOW_YAML_COMMENTS).enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION).build();
                 JsonParser parser = factory.createParser(file);
                 parser.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
 
@@ -103,6 +104,7 @@ public class JsonImporter extends TreeImportingParserBase {
                 }
             } catch (IOException e) {
                 logger.error("Error generating parser UI initialization data for JSON file", e);
+                JSONUtilities.safePut(options, "error", e.toString());
             }
         }
 
@@ -141,63 +143,51 @@ public class JsonImporter extends TreeImportingParserBase {
         return null;
     }
 
-    final static private JsonNode parseForPreview(JsonParser parser, PreviewParsingState state) {
-        try {
-            JsonToken token = parser.nextToken();
-            state.tokenCount++;
-            return parseForPreview(parser, state, token);
-        } catch (IOException e) {
-            return null;
-        }
+    final static private JsonNode parseForPreview(JsonParser parser, PreviewParsingState state) throws IOException {
+        JsonToken token = parser.nextToken();
+        state.tokenCount++;
+        return parseForPreview(parser, state, token);
     }
 
-    final static private ObjectNode parseObjectForPreview(JsonParser parser, PreviewParsingState state) {
+    final static private ObjectNode parseObjectForPreview(JsonParser parser, PreviewParsingState state) throws IOException {
         ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         loop: while (state.tokenCount < PREVIEW_PARSING_LIMIT) {
-            try {
-                JsonToken token = parser.nextToken();
-                if (token == null) {
-                    break;
-                }
-                state.tokenCount++;
-
-                switch (token) {
-                    case FIELD_NAME:
-                        String fieldName = parser.getText();
-                        JsonNode fieldValue = parseForPreview(parser, state);
-                        JSONUtilities.safePut(result, fieldName, fieldValue);
-                        break;
-                    case END_OBJECT:
-                        break loop;
-                    default:
-                        break loop;
-                }
-            } catch (IOException e) {
+            JsonToken token = parser.nextToken();
+            if (token == null) {
                 break;
+            }
+            state.tokenCount++;
+
+            switch (token) {
+                case FIELD_NAME:
+                    String fieldName = parser.getText();
+                    JsonNode fieldValue = parseForPreview(parser, state);
+                    JSONUtilities.safePut(result, fieldName, fieldValue);
+                    break;
+                case END_OBJECT:
+                    break loop;
+                default:
+                    break loop;
             }
         }
         return result;
     }
 
-    final static private ArrayNode parseArrayForPreview(JsonParser parser, PreviewParsingState state) {
+    final static private ArrayNode parseArrayForPreview(JsonParser parser, PreviewParsingState state) throws IOException {
         ArrayNode result = ParsingUtilities.mapper.createArrayNode();
         loop: while (state.tokenCount < PREVIEW_PARSING_LIMIT) {
-            try {
-                JsonToken token = parser.nextToken();
-                if (token == null) {
-                    break;
-                }
-                state.tokenCount++;
-
-                switch (token) {
-                    case END_ARRAY:
-                        break loop;
-                    default:
-                        JsonNode element = parseForPreview(parser, state, token);
-                        result.add(element);
-                }
-            } catch (IOException e) {
+            JsonToken token = parser.nextToken();
+            if (token == null) {
                 break;
+            }
+            state.tokenCount++;
+
+            switch (token) {
+                case END_ARRAY:
+                    break loop;
+                default:
+                    JsonNode element = parseForPreview(parser, state, token);
+                    result.add(element);
             }
         }
         return result;

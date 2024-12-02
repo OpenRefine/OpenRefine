@@ -13,7 +13,7 @@ import org.openrefine.wikibase.updates.LabeledStatementEntityEdit;
  */
 public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
 
-    public static final String descTooLongType = "description-too-long";
+    public static final String descTooLongType = "item-description-too-long";
     public static final String descIdenticalWithLabel = "description-identical-with-label";
 
     @Override

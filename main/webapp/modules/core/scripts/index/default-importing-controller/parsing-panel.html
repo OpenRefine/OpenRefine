@@ -1,6 +1,6 @@
 <div bind="wizardHeader" class="default-importing-wizard-header">
  <div class="grid-layout layout-tightest layout-full">
-  <table>
+  <table role="presentation">
   <tr>
   <td width="1px"><button bind="startOverButton" class="button"></button></td>
   <td width="1px"><button bind="previousButton" class="button"></button></td>
@@ -27,7 +27,7 @@
     <img src="images/large-spinner.gif" /> <span id="or-import-updating"></span>
 </div>
 
-<div bind="controlPanel" class="default-importing-parsing-control-panel"><table><tr>
+<div bind="controlPanel" class="default-importing-parsing-control-panel"><table role="presentation"><tr>
   <td class="default-importing-parsing-control-panel-formats">
     <div class="default-importing-parsing-control-panel-formats-message" id="or-import-parseas"></div>
     <div bind="formatsContainer"></div>

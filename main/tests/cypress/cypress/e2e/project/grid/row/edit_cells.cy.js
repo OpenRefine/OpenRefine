@@ -117,4 +117,21 @@ describe(__filename, function () {
     cy.assertCellEquals(0, 'Water', '42');
     cy.assertCellEquals(1, 'Water', '42');
   });
+
+  it('Test edit a cell to change String to Date data type', function () {
+    cy.loadAndVisitProject('food.mini');
+    cy.getCell(1, 'Water')
+      .trigger('mouseover')
+      .find('.data-table-cell-edit')
+      .click();
+    cy.get('.menu-container.data-table-cell-editor #typeSelectId').select('date');
+    cy.get('.menu-container.data-table-cell-editor').should('exist');
+    cy.get('.menu-container.data-table-cell-editor textarea').type(
+      '2024-12-12'
+    );
+    cy.get('.menu-container button[bind="okButton"]').click();
+    // ensure value has been changed in the grid
+    cy.get('.menu-container.data-table-cell-editor').should('not.exist');
+    cy.assertCellEquals(1, 'Water', '2024-12-12T00:00:00Z');
+  });
 });

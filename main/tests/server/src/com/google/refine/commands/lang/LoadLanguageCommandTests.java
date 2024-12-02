@@ -101,6 +101,18 @@ public class LoadLanguageCommandTests extends CommandTestBase {
     }
 
     @Test
+    public void testLoadLanguageWithDirectorySlip() throws JsonParseException, JsonMappingException, IOException, ServletException {
+        when(request.getParameter("module")).thenReturn("core");
+        when(request.getParameterValues("lang")).thenReturn(new String[] { "../../../secrets" });
+
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertTrue(response.has("dictionary"));
+        assertEquals(response.get("lang").asText(), "en");
+    }
+
+    @Test
     public void testLanguageFallback() throws JsonParseException, JsonMappingException, IOException {
         String fallbackJson = "{"
                 + "\"foo\":\"hello\","

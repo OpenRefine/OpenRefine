@@ -49,6 +49,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.messages.OpenRefineMessage;
+import com.google.refine.model.*;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -177,5 +178,38 @@ public class ImporterUtilitiesTests extends RefineTest {
         Assert.assertEquals(c0.getName(), OpenRefineMessage.importer_utilities_column() + " 1");
         Assert.assertEquals(c1.getName(), OpenRefineMessage.importer_utilities_column() + " 2");
         Assert.assertEquals(newColumnNames.size(), 2);
+    }
+
+    @Test
+    public void testDeleteEmptyColumns() throws ModelException {
+        Project project = new Project();
+        // Set up column names in project
+        List<String> columnNames = new ArrayList<>();
+        List<Boolean> columnsHasData = new ArrayList<>();
+        columnNames.add("Column 1");
+        columnsHasData.add(true);
+
+        columnNames.add("Column 2");
+        columnsHasData.add(false);
+
+        columnNames.add("Column 3");
+        columnsHasData.add(true);
+
+        columnNames.add("Column 4");
+        columnsHasData.add(false);
+
+        columnNames.add("Column 5");
+        columnsHasData.add(true);
+
+        ImporterUtilities.setupColumns(project, columnNames);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 3");
+
+        // This will mock the situation of deleting empty columns(col2&col4)
+        TabularImportingParserBase.deleteEmptyColumns(columnsHasData, project);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 3");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 5");
     }
 }

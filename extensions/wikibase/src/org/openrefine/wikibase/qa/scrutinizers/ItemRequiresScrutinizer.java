@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
@@ -26,6 +27,9 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
     public static final String newItemRequirePropertyType = "new-item-requires-certain-other-statement";
     public static final String existingItemRequireValuesType = "existing-item-requires-property-to-have-certain-values";
     public static final String existingItemRequirePropertyType = "existing-item-requires-certain-other-statement";
+    public static final String newItemRequireValueswithSuggestedValueType = "new-item-requires-property-to-have-certain-values-with-suggested-value";
+    public static final String existingItemRequireValueswithSuggestedValueType = "existing-item-requires-property-to-have-certain-values-with-suggested-value";
+
     public String itemRequiresConstraintQid;
     public String itemRequiresPropertyPid;
     public String itemOfPropertyConstraintPid;
@@ -100,20 +104,32 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
                 PropertyIdValue itemRequiresPid = constraint.itemRequiresPid;
                 List<Value> itemList = constraint.itemList;
                 if (!propertyIdValueValueMap.containsKey(itemRequiresPid)) {
-                    QAWarning issue = new QAWarning(update.isNew() ? newItemRequirePropertyType : existingItemRequirePropertyType,
+                    QAWarning issue = new QAWarning(update.isNew()
+                            ? (constraint.itemList.size() == 1 ? newItemRequireValueswithSuggestedValueType : newItemRequirePropertyType)
+                            : (constraint.itemList.size() == 1 ? existingItemRequireValueswithSuggestedValueType
+                                    : existingItemRequirePropertyType),
                             propertyId.getId() + itemRequiresPid.getId(),
                             update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
                     issue.setProperty("example_entity", update.getEntityId());
+                    if (constraint.itemList.size() == 1) {
+                        issue.setProperty("item_entity", (ItemIdValue) constraint.itemList.get(0));
+                    }
                     addIssue(issue);
                 } else if (raiseWarning(propertyIdValueValueMap, itemRequiresPid, itemList)) {
-                    QAWarning issue = new QAWarning(update.isNew() ? newItemRequireValuesType : existingItemRequireValuesType,
+                    QAWarning issue = new QAWarning(update.isNew()
+                            ? (constraint.itemList.size() == 1 ? newItemRequireValueswithSuggestedValueType : newItemRequireValuesType)
+                            : (constraint.itemList.size() == 1 ? existingItemRequireValueswithSuggestedValueType
+                                    : existingItemRequireValuesType),
                             propertyId.getId() + itemRequiresPid.getId(),
                             update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
                     issue.setProperty("example_entity", update.getEntityId());
+                    if (constraint.itemList.size() == 1) {
+                        issue.setProperty("item_entity", (ItemIdValue) constraint.itemList.get(0));
+                    }
                     addIssue(issue);
                 }
             }

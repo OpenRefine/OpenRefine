@@ -11,8 +11,8 @@ import org.openrefine.wikibase.testing.TestingData;
 
 public class EditInspectorTest {
 
-    private static final int scrutinizerCount = 23;
-    private static final int scrutinizerNotDependingOnPropertyConstraintCount = 8;
+    private static final int scrutinizerCount = 24;
+    private static final int scrutinizerNotDependingOnPropertyConstraintCount = 9;
 
     @Test
     public void testNoScrutinizerSkipped() throws Exception {

@@ -35,7 +35,7 @@ public class LineBasedFormatGuesser implements FormatGuesser {
 
     @Override
     public String guess(File file, String encoding, String seedFormat) {
-        SeparatorBasedImporter.Separator sep = SeparatorBasedImporter.guessSeparator(file, encoding);
+        SeparatorBasedImporter.Separator sep = SeparatorBasedImporter.guessSeparator(file, encoding, true);
         if (sep != null) {
             return "text/line-based/*sv";
         }

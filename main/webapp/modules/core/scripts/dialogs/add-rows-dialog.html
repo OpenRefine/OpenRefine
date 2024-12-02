@@ -1,0 +1,51 @@
+<div class="dialog-frame"
+     data-cy="add-rows-dialog">
+    <form bind="dialogForm"
+          data-cy="add-rows-form">
+        <div class="dialog-header"
+             bind="dialogHeader"></div>
+        <div class="dialog-body"
+             bind="dialogBody">
+            <div style="display:flex;flex-direction:column;">
+                <div style="display:flex;margin-bottom:15px;">
+                    <label for="add-rows-count"
+                           bind="addRowsCountLabel"
+                           style="flex:1"></label>
+                    <input type="number"
+                           name="add-rows-count"
+                           id="add-rows-count"
+                           data-cy="row-count"
+                           value="1"
+                           step="1"
+                           min="1"
+                           style="flex:2;max-width:73px;margin-left:10px;">
+                </div>
+                <div style="display:flex;">
+                    <label for="add-rows-position"
+                           bind="addRowsPositionLabel"
+                           style="flex:1"></label>
+                    <select name="add-rows-position"
+                            id="add-rows-position"
+                            data-cy="insert-position"
+                            style="flex:2;max-width:83px;">
+                        <option bind="optionBeginning"
+                                value=""></option>
+                        <option bind="optionEnd"
+                                value=""></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="dialog-footer"
+             bind="dialogFooter">
+            <button type="submit"
+                   class="button button-primary"
+                   bind="okButton"
+                   data-cy="submit-button"></button>
+            <button type="button"
+                    class="button"
+                    bind="cancelButton"
+                    data-cy="cancel-button"></button>
+        </div>
+    </form>
+</div>

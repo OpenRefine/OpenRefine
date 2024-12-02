@@ -58,13 +58,14 @@ public class ComputeClustersCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("compute-clusters_command");
 
-    /**
-     * This command uses POST (probably to allow for larger parameters) but does not actually modify any state so we do
-     * not add CSRF protection to it.
-     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // This command triggers evaluation expression and therefore requires CSRF-protection
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             long start = System.currentTimeMillis();
@@ -77,7 +78,7 @@ public class ComputeClustersCommand extends Command {
 
             if (params.has("expression")) {
                 String expression = params.getString("expression");
-                if (jsonObject.getString("function") == "UserDefinedKeyer") {
+                if ("UserDefinedKeyer".equals(jsonObject.getString("function"))) {
                     KeyerFactory.put("userdefinedkeyer", new UserDefinedKeyer(expression));
                 } else {
                     DistanceFactory.put("userdefineddistance", new UserDefinedDistance(expression));
@@ -89,6 +90,9 @@ public class ComputeClustersCommand extends Command {
             Clusterer clusterer = clustererConfig.apply(project);
 
             clusterer.computeClusters(engine);
+
+            KeyerFactory.remove("userdefinedkeyer");
+            DistanceFactory.remove("userdefineddistance");
 
             respondJSON(response, clusterer);
             logger.info("computed clusters [{}] in {}ms",

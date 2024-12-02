@@ -15,7 +15,7 @@
   </parent>
 
   <properties>
-    <wdtk.version>0.15.3</wdtk.version>
+    <wdtk.version>0.16.0</wdtk.version>
   </properties>
 
   <build>
@@ -126,7 +126,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>main</artifactId>
+      <artifactId>core</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
       <type>test-jar</type>
@@ -163,7 +163,12 @@
       <scope>test</scope>
     </dependency>
 
+  
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
   </dependencies>
 
 </project>
-

@@ -168,7 +168,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           id: "core/duplicates-facet",
           label: $.i18n('core-views/duplicates-facet'),
           click: function() {
-            let columnName = column.name.replace(/'/g, "\\'");
+            let columnName = column.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
             ui.browsingEngine.addFacet(
                 "list",
                 {

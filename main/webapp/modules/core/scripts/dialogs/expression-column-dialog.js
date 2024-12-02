@@ -1,5 +1,5 @@
 
-var doTextTransform = function(columnName, expression, onError, repeat, repeatCount) {
+var doTextTransform = function(columnName, expression, onError, repeat, repeatCount, onDone) {
     Refine.postCoreProcess(
       "text-transform",
       {
@@ -10,7 +10,8 @@ var doTextTransform = function(columnName, expression, onError, repeat, repeatCo
         repeatCount: repeatCount
       },
       null,
-      { cellsChanged: true }
+      { cellsChanged: true, rowIdsPreserved: true },
+      { onDone }
     );
 };
 
@@ -87,7 +88,6 @@ ExpressionColumnDialog.prototype._dismiss = function() {
 
 ExpressionColumnDialog.prototype._transform = function() {
   this._postSelect();
-  this._dismiss();
 };
 
 ExpressionColumnDialog.prototype._postSelect = function() {
@@ -96,7 +96,7 @@ ExpressionColumnDialog.prototype._postSelect = function() {
     if ($(this).find('input[type="checkbox"]')[0].checked) {
       var name = this.getAttribute('column');
       // alert("doTextTransform on: " + name + "; expression: " + self._expression);
-	  doTextTransform(name, self._expression, self._onError, self._repeat, self._repeatCount)
+	  doTextTransform(name, self._expression, self._onError, self._repeat, self._repeatCount, self._dismiss)
     }
   });
   

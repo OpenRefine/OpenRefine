@@ -63,6 +63,7 @@ function BrowsingEngine(div, facetConfigs) {
       }
 
       this._facets.push({ elmt: elmt, facet: facet });
+      facet.prepareUI();
     }
   }
 }
@@ -168,7 +169,7 @@ BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
   return a;
 };
 
-BrowsingEngine.prototype.addFacet = function(type, config, options) {
+BrowsingEngine.prototype.addFacet = function(type, config, options, avoidDuplicates) {
   var elmt = this._createFacetContainer();
   var facet;
   switch (type) {
@@ -188,7 +189,16 @@ BrowsingEngine.prototype.addFacet = function(type, config, options) {
     facet = new ListFacet(elmt, config, options);
   }
 
+  if (avoidDuplicates) {
+    let criterion = facet.uniquenessCriterion();
+    if (this._facets.findIndex(existingFacet => existingFacet.facet.uniquenessCriterion() == criterion) != -1) {
+      // skip addition of the facet because it already exists
+      return;
+    }
+  }
+
   this._facets.push({ elmt: elmt, facet: facet });
+  facet.prepareUI();
 
   ui.leftPanelTabs.tabs();
   ui.leftPanelTabs.on( "tabsactivate", ( event, ui ) =>  {
@@ -255,7 +265,7 @@ BrowsingEngine.prototype.update = function(onDone) {
   this._elmts.controls.css("display", "none");
   this._elmts.indicator.css("display", "block");
 
-  $.post(
+  Refine.postCSRF(
     "command/core/compute-facets?" + $.param({ project: theProject.id }),
     { engine: JSON.stringify(this.getJSON(true)) },
     function(data) {
@@ -273,7 +283,8 @@ BrowsingEngine.prototype.update = function(onDone) {
       var facetData = data.facets;
 
       for (var i = 0; i < facetData.length; i++) {
-        self._facets[i].facet.updateState(facetData[i]);
+        const column = theProject.columnModel.columns.find(col => col.name === facetData[i].columnName);
+        self._facets[i].facet.updateState(facetData[i], column);
       }
 
       self._elmts.indicator.css("display", "none");

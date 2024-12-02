@@ -106,29 +106,32 @@ commonTransformDialog.prototype._dismiss = function() {
 
 
 commonTransformDialog.prototype._commit = function(expression) {
-      var doTextTransform = function(columnName, expression, onError, repeat, repeatCount) {
+  var self = this;
+  var columnNames = [];
+  this._elmts.columnContainer.find('div').each(function() {
+    if ($(this).find('input[type="checkbox"]')[0].checked) {
+      var name = this.getAttribute('column');
+      columnNames.push(name);
+    }
+  });
+  var doTextTransform = function(index, expression, onError, repeat, repeatCount) {
+    if (index < columnNames.length) {
       Refine.postCoreProcess(
         "text-transform",
         {
-          columnName: columnName, 
+          columnName: columnNames[index], 
           expression: expression, 
           onError: onError,
           repeat: repeat,
           repeatCount: repeatCount
         },
         null,
-        { cellsChanged: true }
+        { cellsChanged: true, rowIdsPreserved: true },
+        { onDone: function() { doTextTransform(index + 1, expression, onError, repeat, repeatCount) } }
       );
-  };
-
-	this._elmts.columnContainer.find('div').each(function() {
-    if ($(this).find('input[type="checkbox"]')[0].checked) {
-      var name = this.getAttribute('column');
-	    doTextTransform(name,expression, "keep-original", false, "");
+    } else {
+      self._dismiss();
     }
-  });
-  
-    
-    this._dismiss();
-    
+  };
+  doTextTransform(0, expression, "keep-original", false, "");
 };

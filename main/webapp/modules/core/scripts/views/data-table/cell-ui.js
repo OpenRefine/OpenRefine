@@ -172,7 +172,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         alert($.i18n('core-views/not-valid-date'));
         return;
       }
-      value = value.toString("yyyy-MM-ddTHH:mm:ssZ");
+      value = new Date(value).toISOString();
     }
 
     self._focusBeforeEdit.focus();

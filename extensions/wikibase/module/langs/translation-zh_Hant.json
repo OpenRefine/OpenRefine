@@ -1,1 +1,6 @@
-{}
+{
+    "wikibase-extension/menu-label": "維基百科",
+    "wikibase-extension/select-wikibase-instance": "管理維基百科實例…",
+    "wikibase-extension/import-wikibase-schema": "匯入模式…",
+    "wikibase-extension/edit-wikibase-schema": "編輯 Wikibase 模式"
+}

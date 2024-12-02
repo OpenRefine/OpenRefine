@@ -774,7 +774,6 @@
     "core-views/by-number": "per trasformazione da numeri a lettere",
     "core-views/by-rev": "Inverti l'ordine di divisione",
     "core-views/by-case-example": "[11Abc, Def22]",
-    "core-views/goto-page": "$1 di $2 {{plural:$2|pagina|pagine}}",
     "core-import-formats/text/line-based": "File di linee di testo",
     "core-views/by-case": "per trasformazione da minuscola a maiuscola",
     "core-import-formats/binary": "File binari",

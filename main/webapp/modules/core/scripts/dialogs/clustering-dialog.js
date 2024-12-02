@@ -31,8 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-function ClusteringDialog(columnName, expression) {
-    this._columnName = columnName;
+function ClusteringDialog(column, expression) {
+    this._column = column;
+    this._columnName = column.name;
     this._expression = expression;
     this._method = "binning";
     this._function = "fingerprint";
@@ -56,6 +57,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts = DOM.bind(dialog);
     this._elmts.dialogHeader.text($.i18n('core-dialogs/cluster-edit')+' "' + this._columnName + '"');
 
+    this._elmts.manageFunctionsBtn.html($.i18n('core-buttons/manage-clustering'));
     this._elmts.or_dialog_descr.html($.i18n('core-dialogs/cluster-descr'));
     this._elmts.or_dialog_findMore.html($.i18n('core-dialogs/find-more'));
     this._elmts.or_dialog_method.html($.i18n('core-dialogs/method'));
@@ -117,6 +119,13 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.keyingFunctionSelector.on('change',changer);
     this._elmts.distanceFunctionSelector.on('change',changer);
 
+    this._elmts.manageFunctionsBtn.on('click', openClusteringFunctionsDialog);
+
+    function openClusteringFunctionsDialog() {
+        var title = $.i18n('core-dialogs/manage-clustering-functions');
+        new ClusteringFunctionsDialog(title, self);
+    }
+
     var params_changer = function() {
         self._params = {};
         $(".dialog-body input.param:visible").each(function() {
@@ -131,6 +140,11 @@ ClusteringDialog.prototype._createDialog = function() {
             }
             self._params[name] = value;
         });
+        if(self._function === "UserDefinedKeyer"){
+            self._params["expression"] = $('#keyingFunctionSelectorId').find("option:selected").data("expression");
+        } else if(self._function === "UserDefinedDistance") {
+            self._params["expression"] = $('#distanceFunctionSelectorId').find("option:selected").data("expression");
+        }
         self._elmts.resultSummary.empty();
         if (document.getElementById("autoId").checked) {
             self._cluster();
@@ -162,7 +176,14 @@ ClusteringDialog.prototype._createDialog = function() {
     self._level = DialogSystem.showDialog(dialog);
     var checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
     document.getElementById("autoId").checked = checkedValue;
+    
+    self._renderClusteringFunctions();
+};
 
+ClusteringDialog.prototype._renderClusteringFunctions = function() {
+    var self = this;
+    self._elmts.keyingFunctionSelector.empty();
+    self._elmts.distanceFunctionSelector.empty();
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
     .done(function(data) {
@@ -195,6 +216,39 @@ ClusteringDialog.prototype._createDialog = function() {
              option.prop('selected', 'true');
           }
        }
+        $.ajax({
+            url: "command/core/get-preference?" + $.param({
+                name: "ui.clustering.customKeyingFunctions"
+            }),
+            success: function (data) {
+                var functions = data.value == null ? [] : JSON.parse(data.value);
+                for(var i = 0; i < functions.length; i++){
+                    var option = $('<option></option>')
+                        .val("UserDefinedKeyer")
+                        .text(functions[i].name)
+                        .data('expression', functions[i].expression)
+                        .appendTo(self._elmts.keyingFunctionSelector);
+
+                }
+            },
+            dataType: "json",
+        });
+        $.ajax({
+            url: "command/core/get-preference?" + $.param({
+                name: "ui.clustering.customDistanceFunctions"
+            }),
+            success: function (data) {
+                var functions = data.value == null ? [] : JSON.parse(data.value);
+                for(var i = 0; i < functions.length; i++){
+                    var option = $('<option></option>')
+                        .val("UserDefinedDistance")
+                        .text(functions[i].name)
+                        .data('expression', functions[i].expression)
+                        .appendTo(self._elmts.distanceFunctionSelector);
+                }
+            },
+            dataType: "json",
+        });
     })
     .fail(function(error) {
             alert($.i18n('core-dialogs/no-clustering-functions-and-distances'));
@@ -390,7 +444,7 @@ ClusteringDialog.prototype._cluster = function() {
 
     this._elmts.resultSummary.empty();
 
-    $.post(
+    Refine.postCSRF(
         "command/core/compute-clusters?" + $.param({ project: theProject.id }),
         {
             engine: JSON.stringify(ui.browsingEngine.getJSON()),
@@ -502,7 +556,7 @@ ClusteringDialog.prototype._apply = function(onDone) {
                 expression: this._expression,
                 edits: JSON.stringify(edits)
             },
-            { cellsChanged: true },
+            { cellsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
             {
                 onError: function(o) {
                     alert("Error: " + o.message);

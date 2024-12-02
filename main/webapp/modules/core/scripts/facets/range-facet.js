@@ -126,7 +126,7 @@ class RangeFacet extends Facet {
     .show()
     .html(
       '<div class="facet-title" bind="headerDiv">' +
-        '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+        '<div class="grid-layout layout-tightest layout-full"><table role="presentation"><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +
@@ -265,6 +265,14 @@ class RangeFacet extends Facet {
   _setRangeIndicators() {
     this._elmts.statusDiv.html($.i18n('core-facets/value-range', this._formatter.format(this._from), this._formatter.format(this._to)));
   };
+
+  uniquenessCriterion() {
+    return JSON.stringify([
+      'range',
+      this._config.expression,
+      this._config.columnName
+    ]);
+  }
 
   updateState(data) {
     if ("min" in data && "max" in data) {

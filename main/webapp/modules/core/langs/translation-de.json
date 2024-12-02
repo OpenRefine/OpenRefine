@@ -759,7 +759,6 @@
     "core-buttons/previous": "zurück",
     "core-views/blank-records": "leere Datensätze pro Spalte",
     "core-views/blank-values": "leere Werte pro Spalte",
-    "core-views/goto-page": "$1 von $2 {{plural:$2|Seite|Seiten}}",
     "core-views/by-number": "von Zahlen zu Buchstaben",
     "core-views/by-case": "von Klein- nach Großschreibung",
     "core-views/recon-stats": "$1% gefunden, $2% neue, $3% abzugleichen",
