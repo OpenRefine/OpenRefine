@@ -1,15 +1,40 @@
 <form bind="form">
-  <div class="grid-layout layout-normal">
-    <table role="presentation" style="width:80%;">
-      <tr>
-        <td colspan="2" id="or-import-enterdir"></td>
-      </tr>
-      <tr bind="urlRow">
-        <td colspan="2" style="white-space: nowrap"><input bind="dirInput" name="directory" type="text" class="default-importing-web-url" /></td>
-      </tr>
-      <tr bind="buttons">
-        <td><button type="submit" bind="nextButton" class="button button-primary" type="button"></button></td>
-      </tr>
-    </table>
-  </div>
+    <div class="grid-layout layout-normal" style="margin-top:2px;">
+        <div class="sources-frame sources-border">
+            <span class="panel-heading" id="fileSourceLabel">File source</span>
+            <ul bind="fileSources" id="fileSources"></ul>
+        </div>
+        <div>
+            <div id="localDirectory">
+                <table role="presentation" style="width:40%;">
+                    <tr>
+                        <td colspan="2" id="or-import-enterdir"></td>
+                    </tr>
+                    <tr bind="urlRow">
+                        <td colspan="2" style="white-space: nowrap"><input bind="dirInput" name="directory" type="text"
+                                                                           class="default-importing-web-url"/></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="googleDrive">
+                <table role="presentation" style="width:40%;">
+                    <tr>
+                        <td colspan="2" id="or-import-googleDrive"></td>
+                    </tr>
+                    <tr bind="urlRow">
+                        <td colspan="2" style="white-space: nowrap"><input bind="googleDrive" name="googleDrive"
+                                                                           type="url"
+                                                                           class="default-importing-web-url"/></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="navOptions">
+                <tr bind="buttons">
+                    <td>
+                        <button type="submit" bind="nextButton" class="button button-primary" type="button"></button>
+                    </td>
+                </tr>
+            </div>
+        </div>
+    </div>
 </form>

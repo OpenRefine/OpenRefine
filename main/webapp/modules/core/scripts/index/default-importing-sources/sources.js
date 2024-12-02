@@ -162,17 +162,54 @@ function DirImportingSourceUI(controller) {
   this._controller = controller;
 }
 Refine.DefaultImportingController.sources.push({
-  "label": $.i18n('core-index-import/directory'),
+  "label": $.i18n('core-index-import/file-list'),
   "id": "directory",
   "uiClass": DirImportingSourceUI
 });
 
 DirImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   var self = this;
+  var fileSourceOptions = [];
+  let previousSelection = "localDirectory";
 
+  fileSourceOptions.push({ id: "localDirectory", name: $.i18n('core-index-import/directory')});
+  fileSourceOptions.push({id: "googleDrive", name: $.i18n('core-index-import/googleDrive')});
+  fileSourceOptions.push({id: "flickr", name: $.i18n('core-index-import/flickr')});
   bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-local-dir-form.html"));
 
   this._elmts = DOM.bind(bodyDiv);
+   $('#localDirectory').show();  // hide previously selected
+   $('#googleDrive').hide(); // show current selected
+
+$('#fileSourceLabel').text($.i18n('core-index-import/file-sources'));
+    this._elmts.fileSources.empty();
+    var items = [];
+    $.each(fileSourceOptions, function(index, fileSourceOption) {
+        items.push(
+            '<ul>' +
+            '  <label>' +
+            '    <input type="radio" name="file-source-selection" value="' + fileSourceOption.id + '" class="file-source-radio" ' +
+            (index === 0 ? 'checked' : '') + // Add 'checked' attribute to the first option
+            ' />' +
+            '    <span class="context-menu-text">' + fileSourceOption.name + '</span>' +
+            '  </label>' +
+            '</ul>'
+        );
+    });
+
+
+   self._elmts.fileSources.append(items.join(''));
+
+   // Attach the onchange event handler
+   $(document).on('change', 'input[name="file-source-selection"]', function () {
+       var selectedValue = $(this).val(); // Get the selected radio button's value
+       // Hide previous selection div
+       $('#' + previousSelection).hide();
+
+       // Show only the div with the ID matching the selectedValue
+       $('#' + selectedValue).show();
+       previousSelection = selectedValue;
+   });
 
   $('#or-import-enterdir').text($.i18n('core-index-import/enter-dir'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));

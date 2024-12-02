@@ -489,3 +489,25 @@ p.body-text {
   height: 100%;
   overflow: hidden;
 }
+
+.sources-frame {
+  height: 300px;
+  width: 240px;
+  float: left;
+  box-sizing: border-box;
+  margin-right: 10px;
+  margin-left: 5px;
+}
+
+.sources-border {
+  border: 1px solid #bcf;
+  border-radius: 4px;
+  max-height: calc(100% - 20px);
+  overflow-y: auto;
+}
+
+.panel-heading {
+  font-weight: bold;
+  padding: 1em;
+  line-height: 2em;
+}
