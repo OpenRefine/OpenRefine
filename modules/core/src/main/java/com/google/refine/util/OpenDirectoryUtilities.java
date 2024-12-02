@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class OpenDirectoryUtilities {
 
-    public static void OpenDirectory(File dir) throws IOException {
+    public static void openDirectory(File dir) throws IOException {
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
             desktop.open(dir);
