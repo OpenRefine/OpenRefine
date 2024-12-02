@@ -45,7 +45,7 @@ Committers have earned enough trust from the community to
 - Run the CI pipeline on your PRs automatically
 - Are part of the OpenRefine organization and have the OpenRefine badge on their GitHub profile
 
-**How to become a Committer?**: Committers are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the New Member Election section below for more details.
+**How to become a Committer?**: Committers are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the Member Election section below for more details.
 
 **Current list of Committers**: The list is available here: https://github.com/orgs/OpenRefine/people.
 
@@ -58,7 +58,7 @@ Also referred to as Core Dev. The Core Developer Group are trusted developers wh
 - Are responsible for the technical direction of the project
 - Are part of the Admin team for the project on GitHub
 
-**How to join the Core Dev Group?**. To be eligible to serve on the Core Developers, individuals must first be Committers of the project. Core Dev Group members are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the New Member Election section below for more details.
+**How to join the Core Dev Group?**. To be eligible to serve on the Core Developers, individuals must first be Committers of the project. Core Dev Group members are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the Member Election section below for more details.
 
 **Current list of Core Developers:**
 - Tom Morris [@tfmorris](https://github.com/tfmorris) and on the [forum](https://forum.openrefine.org/u/tfmorris/summary)
@@ -76,7 +76,7 @@ The code of conduct committee is responsible to
 - Respond to [code of conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md) report
 - Provide at least a quarterly report on the forum [day-to-day operations](https://forum.openrefine.org/c/community/operations/10)
 
-**How to join the Code of Conduct Committee?**. Committers are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the New Member Election section below for more details.
+**How to join the Code of Conduct Committee?**. Committers are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the Member Election section below for more details.
 
 ### Advisory Committee
 The Advisory Committee runs the administrative aspect of the project on a daily basis with the support of Code for Science and Society (CS&S). Its members are bound by the fiscal sponsorship agreement with Code for Science and Society. They meet once per month with Code for Science and Society.
