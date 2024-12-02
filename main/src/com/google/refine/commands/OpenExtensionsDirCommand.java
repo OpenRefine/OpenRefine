@@ -30,7 +30,7 @@ public class OpenExtensionsDirCommand extends Command {
         } else if (ProjectManager.singleton instanceof FileProjectManager) {
             File dir = new File(((FileProjectManager) ProjectManager.singleton).getWorkspaceDir(), "extensions");
 
-            OpenDirectoryUtilities.OpenDirectory(dir);
+            OpenDirectoryUtilities.openDirectory(dir);
 
             respond(response, "{ \"code\" : \"ok\" }");
         } else {
