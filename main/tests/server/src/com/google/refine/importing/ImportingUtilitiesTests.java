@@ -731,4 +731,71 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ImportingManager.registerMimeType("+json", "text/json"); // suffix will be tried only as fallback
         ImportingManager.registerMimeType("application/marc", "text/marc");
     }
+
+    @Test
+    public void testDirectoryImport() throws IOException, FileUploadException {
+        // Setup temp directory and add files
+        File tempDir = TestUtils.createTempDirectory("openrefine-dir-test");
+
+        String filepath1 = ClassLoader.getSystemResource("birds.csv").getPath();
+        String filepath2 = ClassLoader.getSystemResource("movies.tsv").getPath();
+
+        File tmp1 = File.createTempFile("birds", ".csv", tempDir);
+        tmp1.deleteOnExit();
+        FileUtils.copyFile(new File(filepath1), tmp1);
+
+        File tmp2 = File.createTempFile("movies", ".tsv", tempDir);
+        tmp2.deleteOnExit();
+        FileUtils.copyFile(new File(filepath2), tmp2);
+
+        String testDirPath = tempDir.getPath();
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        StringBody stringBody = new StringBody(testDirPath, ContentType.MULTIPART_FORM_DATA);
+        builder = builder.addPart("directory", stringBody);
+        HttpEntity entity = builder.build();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        entity.writeTo(os);
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getContentType()).thenReturn(entity.getContentType());
+        when(req.getMethod()).thenReturn("POST");
+        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+
+        ImportingJob job = ImportingManager.createJob();
+        Map<String, String> parameters = ParsingUtilities.parseParameters(req);
+        ObjectNode config = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(config, "retrievalRecord", retrievalRecord);
+        JSONUtilities.safePut(config, "state", "loading-raw-data");
+
+        final ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(config, "progress", progress);
+
+        ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                new ImportingUtilities.Progress() {
+
+                    @Override
+                    public void setProgress(String message, int percent) {
+                        if (message != null) {
+                            JSONUtilities.safePut(progress, "message", message);
+                        }
+                        JSONUtilities.safePut(progress, "percent", percent);
+                    }
+
+                    @Override
+                    public boolean isCanceled() {
+                        return job.canceled;
+                    }
+                });
+
+        assertEquals("filesList.txt", JSONUtilities.getArray(retrievalRecord, "files").get(0).get("location").asText());
+        assertEquals("text/line-based/*sv", JSONUtilities.getArray(retrievalRecord, "files").get(0).get("format").asText());
+        assertTrue(JSONUtilities.getArray(retrievalRecord, "files").get(0).get("size").asInt() > 367);
+        int dirCount = JSONUtilities.getInt(retrievalRecord, "directoryCount", 0);
+        assertTrue(dirCount == 1);
+    }
 }

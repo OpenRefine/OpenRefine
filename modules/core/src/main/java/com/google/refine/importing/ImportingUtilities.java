@@ -48,12 +48,20 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,6 +243,7 @@ public class ImportingUtilities {
         int uploadCount = 0;
         int downloadCount = 0;
         int archiveCount = 0;
+        int directoryCount = 0;
 
         // This tracks the total progress, which involves uploading data from the client
         // as well as downloading data from URLs.
@@ -413,6 +422,35 @@ public class ImportingUtilities {
                             stream2.close();
                         }
                     }
+                } else if (name.equals("directory")) {
+                    String encoding = request.getCharacterEncoding();
+                    String dirPath = Streams.asString(stream).trim();
+                    if (encoding == null) {
+                        encoding = "UTF-8";
+                    }
+                    int sepIndex = dirPath.lastIndexOf(File.separatorChar);
+                    String projectName = "";
+                    if (sepIndex > 0 && sepIndex < dirPath.length() - 1) {
+                        projectName = dirPath.substring(sepIndex + 1);
+                    }
+
+                    File file = allocateFile(rawDataDir, "filesList.txt");
+
+                    ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+                    JSONUtilities.safePut(fileRecord, "origin", "directoryScan");
+                    JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
+                    JSONUtilities.safePut(fileRecord, "declaredMimeType", (String) null);
+                    JSONUtilities.safePut(fileRecord, "fileName", projectName);
+                    JSONUtilities.safePut(fileRecord, "location", getRelativePath(file, rawDataDir));
+
+                    progress.setProgress("Scanning directory and creating file list",
+                            calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+
+                    JSONUtilities.safePut(fileRecord, "size", generateDirectoryFileList(dirPath, file, null));
+                    JSONUtilities.safePut(fileRecord, "format", guessBetterFormat(file, fileRecord));
+                    JSONUtilities.append(fileRecords, fileRecord);
+
+                    directoryCount++;
                 } else {
                     String value = Streams.asString(stream);
                     parameters.put(name, value);
@@ -460,6 +498,7 @@ public class ImportingUtilities {
         JSONUtilities.safePut(retrievalRecord, "downloadCount", downloadCount);
         JSONUtilities.safePut(retrievalRecord, "clipboardCount", clipboardCount);
         JSONUtilities.safePut(retrievalRecord, "archiveCount", archiveCount);
+        JSONUtilities.safePut(retrievalRecord, "directoryCount", directoryCount);
     }
 
     private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,
@@ -645,6 +684,60 @@ public class ImportingUtilities {
             return length;
         } catch (ZipException e) {
             throw new IOException("Compression format not supported, " + e.getMessage());
+        } finally {
+            fos.close();
+        }
+    }
+
+    static private long generateDirectoryFileList(String directoryPath, File file, SavingUpdate update) throws IOException {
+        final long[] length = { 0 };
+        int depth = 1;
+        FileOutputStream fos = new FileOutputStream(file);
+        try {
+            Path rootPath = Paths.get(directoryPath);
+            String fileHeader = "fileName,fileSize(KB),fileExtension,lastModifiedTime,creationTime,author,filePath\n";
+            length[0] += fileHeader.length();
+            fos.write(fileHeader.getBytes(UTF_8), 0, fileHeader.length());
+            Files.walkFileTree(rootPath, EnumSet.noneOf(FileVisitOption.class), depth, new SimpleFileVisitor<Path>() {
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    String fileRecord = "";
+                    try {
+                        if (!attrs.isDirectory()) {
+                            String fileName = file.getFileName().toString();
+                            String filePath = file.toAbsolutePath().toString();
+                            String author = "";
+                            try {
+                                author = Files.getOwner(file).getName(); // File owner (may not always be available)
+                            } catch (Exception e) {
+                                // ignore
+                            }
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                            String dateCreated = sdf.format(attrs.creationTime().toMillis());
+                            String dateModified = sdf.format(attrs.lastModifiedTime().toMillis());
+                            long fileSize = (long) Math.ceil(attrs.size() / 1024.0);
+                            int dotIndex = fileName.lastIndexOf('.');
+                            String fileExt = "";
+                            if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+                                fileExt = fileName.substring(dotIndex + 1);
+                            }
+
+                            fileRecord = String.format("%s,%d,%s,%s,%s,%s,%s\n",
+                                    fileName, fileSize, fileExt, dateModified, dateCreated, author, filePath);
+                            fos.write(fileRecord.getBytes(UTF_8), 0, fileRecord.length());
+                            length[0] += fileRecord.length();
+                        }
+                    } catch (Exception e) {
+                        logger.info("--- importDirectory. Error processing file: " + file + " - " + e.getMessage());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+            return length[0];
+        } catch (Exception e) {
+            logger.info("--- importDirectory. Error reading directory: " + e.getMessage());
+            throw e;
         } finally {
             fos.close();
         }
