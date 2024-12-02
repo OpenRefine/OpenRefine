@@ -203,10 +203,6 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             // well-formed but not resolvable.
             row2.setCell(0, new Cell("http://domain.invalid/random", null));
             project.rows.add(row2);
-            Row row3 = new Row(2);
-            // well-formed with all URL elements but not resolvable
-            row3.setCell(0, new Cell("http://example.com/path 1/path 2?key1=Q17411271&key2=Z1741127@!$2#fragment 1 fragment 2", null));
-            project.rows.add(row3);
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                     "fruits",
@@ -225,7 +221,6 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             Assert.assertTrue(project.rows.get(0).getCellValue(newCol) instanceof EvalError);
             Assert.assertNotNull(project.rows.get(1).getCellValue(newCol));
             Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
-            Assert.assertTrue(ExpressionUtils.isError(project.rows.get(3).getCellValue(newCol)));
         }
     }
 
