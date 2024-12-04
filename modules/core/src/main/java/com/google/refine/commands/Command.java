@@ -126,7 +126,14 @@ public abstract class Command {
         }
 
         String json = request.getParameter("engine");
-        return (json == null) ? null : EngineConfig.reconstruct(json);
+        if (json == null) {
+            return null; // TODO returning a default value or throwing an exception would be better
+        }
+        try {
+            return EngineConfig.deserialize(json);
+        } catch (IllegalArgumentException e) {
+            return null; // TODO throwing an exception would be better
+        }
     }
 
     /**
