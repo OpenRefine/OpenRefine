@@ -4,8 +4,6 @@ package com.google.refine.grel.ast;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Optional;
-
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.Evaluable;
@@ -27,6 +25,6 @@ public class ArrayExprTest extends ExprTestBase {
         Evaluable ev = new ArrayExpr(new Evaluable[] { constant, currentColumn, twoColumns });
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn", "a", "b"));
         assertEquals(ev.renameColumnDependencies(sampleRename),
-                Optional.of(new ArrayExpr(new Evaluable[] { constant, currentColumnRenamed, twoColumnsRenamed })));
+                new ArrayExpr(new Evaluable[] { constant, currentColumnRenamed, twoColumnsRenamed }));
     }
 }

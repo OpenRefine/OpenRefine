@@ -91,16 +91,19 @@ public interface Evaluable {
     }
 
     /**
-     * Translates this expression by simultaneously substituting column names, as specified by the supplied map.
+     * Translates this expression by simultaneously substituting column names, as specified by the supplied map. This
+     * transformation is done on a best-effort basis. For instance, in cases where column dependencies cannot be
+     * isolated, the resulting expression could still rely on columns via their old names. The goal of this method is to
+     * rename as many references as possible. As such, it is always appropriate to return the original expression as a
+     * fall-back.
      *
      * @param substitutions
      *            a map specifying new names for some columns. Keys of the map are old column names, values are the new
      *            names for those columns. If a column name is not present in the map, the column is not renamed.
-     * @return a new expression with updated column names. If this renaming isn't supported, {@link Optional#empty()}
-     *         should be returned.
+     * @return a new expression with updated column names
      */
-    public default Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
-        return Optional.empty();
+    public default Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        return this;
     }
 
 }

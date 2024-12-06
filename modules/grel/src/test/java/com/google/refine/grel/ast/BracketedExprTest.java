@@ -26,8 +26,8 @@ public class BracketedExprTest extends ExprTestBase {
     @Test
     public void testRenameColumnDependencies() {
         GrelExpr bracketedConstant = new BracketedExpr(constant);
-        assertEquals(bracketedConstant.renameColumnDependencies(sampleRename), Optional.of(bracketedConstant));
+        assertEquals(bracketedConstant.renameColumnDependencies(sampleRename), bracketedConstant);
         GrelExpr bracketedVariable = new BracketedExpr(currentColumn);
-        assertEquals(bracketedVariable.renameColumnDependencies(sampleRename), Optional.of(new BracketedExpr(currentColumnRenamed)));
+        assertEquals(bracketedVariable.renameColumnDependencies(sampleRename), new BracketedExpr(currentColumnRenamed));
     }
 }

@@ -101,17 +101,12 @@ public class ControlCallExpr extends GrelExpr {
     }
 
     @Override
-    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
         Evaluable[] translatedArgs = new Evaluable[_args.length];
         for (int i = 0; i != _args.length; i++) {
-            Optional<Evaluable> translatedArg = _args[i].renameColumnDependencies(substitutions);
-            if (translatedArg.isEmpty()) {
-                return Optional.empty();
-            } else {
-                translatedArgs[i] = translatedArg.get();
-            }
+            translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
         }
-        return Optional.of(new ControlCallExpr(translatedArgs, _control, _controlName));
+        return new ControlCallExpr(translatedArgs, _control, _controlName);
     }
 
     @Override

@@ -57,8 +57,8 @@ public class OperatorCallExprTest extends ExprTestBase {
     public void testUnion() {
         Evaluable ev = new OperatorCallExpr(new Evaluable[] { constant, currentColumn, twoColumns }, "+");
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn", "a", "b"));
-        assertEquals(ev.renameColumnDependencies(sampleRename), Optional.of(
-                new OperatorCallExpr(new Evaluable[] { constant, currentColumnRenamed, twoColumnsRenamed }, "+")));
+        assertEquals(ev.renameColumnDependencies(sampleRename),
+                new OperatorCallExpr(new Evaluable[] { constant, currentColumnRenamed, twoColumnsRenamed }, "+"));
     }
 
     @Test

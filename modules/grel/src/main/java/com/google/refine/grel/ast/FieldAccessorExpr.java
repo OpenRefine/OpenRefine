@@ -96,19 +96,14 @@ public class FieldAccessorExpr extends GrelExpr {
     }
 
     @Override
-    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
-        Optional<Evaluable> innerTranslated = _inner.renameColumnDependencies(substitutions);
-        if (innerTranslated.isPresent()) {
-            return Optional.of(new FieldAccessorExpr(innerTranslated.get(), _fieldName));
-        } else {
-            String innerStr = _inner.toString();
-            if ("cells".equals(innerStr) || "row.cells".equals(innerStr)) {
-                String newColumnName = substitutions.getOrDefault(_fieldName, _fieldName);
-                return Optional.of(new FieldAccessorExpr(_inner, newColumnName));
-            }
-            // TODO add support for starred, flagged, rowIndex
-            return Optional.empty();
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        String innerStr = _inner.toString();
+        if ("cells".equals(innerStr) || "row.cells".equals(innerStr)) {
+            String newColumnName = substitutions.getOrDefault(_fieldName, _fieldName);
+            return new FieldAccessorExpr(_inner, newColumnName);
         }
+        // TODO add support for starred, flagged, rowIndex
+        return new FieldAccessorExpr(_inner.renameColumnDependencies(substitutions), _fieldName);
     }
 
     @Override

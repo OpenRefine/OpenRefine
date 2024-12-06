@@ -70,8 +70,8 @@ public class LiteralExpr extends GrelExpr {
     }
 
     @Override
-    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
-        return Optional.of(this);
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        return this;
     }
 
     @Override

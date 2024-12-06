@@ -36,8 +36,8 @@ public class BracketedExpr extends GrelExpr {
     }
 
     @Override
-    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
-        return inner.renameColumnDependencies(substitutions).map(renamed -> new BracketedExpr(renamed));
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        return new BracketedExpr(inner.renameColumnDependencies(substitutions));
     }
 
     @Override

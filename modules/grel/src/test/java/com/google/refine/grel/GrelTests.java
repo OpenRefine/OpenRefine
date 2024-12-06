@@ -305,13 +305,16 @@ public class GrelTests extends GrelTestBase {
                 { "value + ' ' + cells.foo.value", "value + ' ' + cells.bar.value" },
                 { "cells[\"foo\"].value+'_'+value", "cells[\"bar\"].value+'_'+value" },
                 { "parseHtml(value.trim())", "parseHtml(value.trim())" },
-                { "cells", null },
+                // when the dependencies cannot be isolated, we just return the original
+                { "cells", "cells" },
                 // this could be analyzed too, but we will never reach completeness anyway!
-                { "get(cells, 'foo'+'bar')", null },
+                { "get(cells, 'f'+'oo')", "get(cells, 'f'+'oo')" },
+                // When parts of the expression can be analyzed, those get renamed accordingly
+                { "get(cells, 'f'+'oo') + cells.foo", "get(cells, 'f'+'oo') + cells.bar" },
         };
         for (String[] test : tests) {
             Evaluable eval = MetaParser.parse("grel:" + test[0]);
-            Optional<Evaluable> expected = test[1] == null ? Optional.empty() : Optional.of(MetaParser.parse("grel:" + test[1]));
+            Evaluable expected = MetaParser.parse("grel:" + test[1]);
             Assert.assertEquals(eval.renameColumnDependencies(rename), expected, "for expression: " + test[0]);
         }
     }

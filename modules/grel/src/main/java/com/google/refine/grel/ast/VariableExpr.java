@@ -72,12 +72,8 @@ public class VariableExpr extends GrelExpr {
     }
 
     @Override
-    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
-        if ("cells".equals(_name) || "row".equals(_name) || "record".equals(_name)) {
-            return Optional.empty();
-        } else {
-            return Optional.of(this);
-        }
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        return this;
     }
 
     @Override

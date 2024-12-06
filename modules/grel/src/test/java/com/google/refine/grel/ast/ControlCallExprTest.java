@@ -31,7 +31,7 @@ public class ControlCallExprTest extends ExprTestBase {
     public void testConstant() {
         Evaluable c = new ControlCallExpr(new Evaluable[] { constant }, control, "myControl");
         assertEquals(c.getColumnDependencies(baseColumn), set());
-        assertEquals(c.renameColumnDependencies(sampleRename), Optional.of(c));
+        assertEquals(c.renameColumnDependencies(sampleRename), c);
     }
 
     @Test
@@ -39,13 +39,14 @@ public class ControlCallExprTest extends ExprTestBase {
         Evaluable c = new ControlCallExpr(new Evaluable[] { twoColumns, currentColumn }, control, "myControl");
         assertEquals(c.getColumnDependencies(baseColumn), set("a", "b", "baseColumn"));
         assertEquals(c.renameColumnDependencies(sampleRename),
-                Optional.of(new ControlCallExpr(new Evaluable[] { twoColumnsRenamed, currentColumnRenamed }, control, "myControl")));
+                new ControlCallExpr(new Evaluable[] { twoColumnsRenamed, currentColumnRenamed }, control, "myControl"));
     }
 
     @Test
     public void testUnanalyzable() {
         Evaluable c = new ControlCallExpr(new Evaluable[] { twoColumns, unanalyzable }, control, "myControl");
         assertEquals(c.getColumnDependencies(baseColumn), Optional.empty());
-        assertEquals(c.renameColumnDependencies(sampleRename), Optional.empty());
+        assertEquals(c.renameColumnDependencies(sampleRename),
+                new ControlCallExpr(new Evaluable[] { twoColumnsRenamed, unanalyzable }, control, "myControl"));
     }
 }

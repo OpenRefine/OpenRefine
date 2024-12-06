@@ -162,26 +162,21 @@ public class FunctionCallExpr extends GrelExpr {
     }
 
     @Override
-    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
         if (_function instanceof Get && _args.length == 2 && (new VariableExpr("cells")).equals(_args[0]) &&
                 _args[1] != null && _args[1] instanceof LiteralExpr) {
             String columnName = Objects.toString(((LiteralExpr) _args[1]).getValue());
             String newColumnName = substitutions.getOrDefault(columnName, columnName);
-            return Optional.of(new FunctionCallExpr(new Evaluable[] {
+            return new FunctionCallExpr(new Evaluable[] {
                     _args[0],
                     new LiteralExpr(newColumnName)
-            }, _function, _functionName, _fluentStyle));
+            }, _function, _functionName, _fluentStyle);
         } else {
             Evaluable[] translatedArgs = new Evaluable[_args.length];
             for (int i = 0; i != _args.length; i++) {
-                Optional<Evaluable> translatedArg = _args[i].renameColumnDependencies(substitutions);
-                if (translatedArg.isEmpty()) {
-                    return Optional.empty();
-                } else {
-                    translatedArgs[i] = translatedArg.get();
-                }
+                translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
             }
-            return Optional.of(new FunctionCallExpr(translatedArgs, _function, _functionName, _fluentStyle));
+            return new FunctionCallExpr(translatedArgs, _function, _functionName, _fluentStyle);
         }
     }
 

@@ -17,15 +17,15 @@ public class FieldAccessorExprTest extends ExprTestBase {
     public void testInnerAnalyzable() {
         Evaluable ev = new FieldAccessorExpr(constant, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set());
-        assertEquals(ev.renameColumnDependencies(sampleRename), Optional.of(ev));
+        assertEquals(ev.renameColumnDependencies(sampleRename), ev);
 
         ev = new FieldAccessorExpr(currentColumn, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn"));
-        assertEquals(ev.renameColumnDependencies(sampleRename), Optional.of(new FieldAccessorExpr(currentColumnRenamed, "foo")));
+        assertEquals(ev.renameColumnDependencies(sampleRename), new FieldAccessorExpr(currentColumnRenamed, "foo"));
 
         ev = new FieldAccessorExpr(twoColumns, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set("a", "b"));
-        assertEquals(ev.renameColumnDependencies(sampleRename), Optional.of(new FieldAccessorExpr(twoColumnsRenamed, "foo")));
+        assertEquals(ev.renameColumnDependencies(sampleRename), new FieldAccessorExpr(twoColumnsRenamed, "foo"));
     }
 
     @Test
@@ -33,7 +33,7 @@ public class FieldAccessorExprTest extends ExprTestBase {
         when(unanalyzable.toString()).thenReturn("bar");
         Evaluable ev = new FieldAccessorExpr(unanalyzable, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), Optional.empty());
-        assertEquals(ev.renameColumnDependencies(sampleRename), Optional.empty());
+        assertEquals(ev.renameColumnDependencies(sampleRename), ev);
     }
 
     @Test
@@ -41,6 +41,6 @@ public class FieldAccessorExprTest extends ExprTestBase {
         when(unanalyzable.toString()).thenReturn("cells");
         Evaluable ev = new FieldAccessorExpr(unanalyzable, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set("foo"));
-        assertEquals(ev.renameColumnDependencies(Map.of("foo", "bar")), Optional.of(new FieldAccessorExpr(unanalyzable, "bar")));
+        assertEquals(ev.renameColumnDependencies(Map.of("foo", "bar")), new FieldAccessorExpr(unanalyzable, "bar"));
     }
 }

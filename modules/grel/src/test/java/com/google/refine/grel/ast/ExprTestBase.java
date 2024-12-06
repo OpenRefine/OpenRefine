@@ -45,22 +45,22 @@ public class ExprTestBase {
         when(currentColumn.getColumnDependencies(baseColumn))
                 .thenReturn(set("baseColumn"));
         when(currentColumn.renameColumnDependencies(sampleRename))
-                .thenReturn(Optional.of(currentColumnRenamed));
+                .thenReturn(currentColumnRenamed);
 
         when(unanalyzable.getColumnDependencies(baseColumn))
                 .thenReturn(Optional.empty());
         when(unanalyzable.renameColumnDependencies(any()))
-                .thenReturn(Optional.empty());
+                .thenReturn(unanalyzable);
 
         when(twoColumns.getColumnDependencies(baseColumn))
                 .thenReturn(set("a", "b"));
         when(twoColumns.renameColumnDependencies(sampleRename))
-                .thenReturn(Optional.of(twoColumnsRenamed));
+                .thenReturn(twoColumnsRenamed);
 
         when(constant.getColumnDependencies(baseColumn))
                 .thenReturn(set());
         when(constant.renameColumnDependencies(any()))
-                .thenReturn(Optional.of(constant));
+                .thenReturn(constant);
     }
 
     protected Optional<Set<String>> set(String... strings) {
