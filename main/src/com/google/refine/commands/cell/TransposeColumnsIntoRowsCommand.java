@@ -82,7 +82,7 @@ public class TransposeColumnsIntoRowsCommand extends Command {
                         ignoreBlankCells, fillDown,
                         keyColumnName, valueColumnName);
             }
-
+            op.validate();
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);
