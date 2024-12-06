@@ -36,12 +36,15 @@ package com.google.refine.commands.history;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -85,8 +88,18 @@ public class ApplyOperationsCommand extends Command {
             Project project = getProject(request);
             String jsonString = request.getParameter("operations");
 
+            Map<String, String> renames = Map.of();
+            String renamesJson = request.getParameter("renames");
+            if (renamesJson != null) {
+                renames = ParsingUtilities.mapper.readValue(renamesJson, new TypeReference<Map<String, String>>() {
+                });
+            }
+
             Recipe recipe = ParsingUtilities.mapper.readValue(jsonString, Recipe.class);
             recipe.validate();
+            if (!renames.isEmpty()) {
+                recipe = recipe.renameColumns(renames);
+            }
 
             // check all required columns are present
             Set<String> requiredColumns = recipe.getRequiredColumns();
