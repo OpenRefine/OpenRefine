@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -130,6 +131,22 @@ public class ExtendDataOperation extends EngineDependentOperation {
         // the names of the column created can differ from those, if there already are columns with any of those names.
         // So we can't predict the name of the created columns in this context.
         return Optional.empty();
+    }
+
+    @Override
+    public ExtendDataOperation renameColumns(Map<String, String> newColumnNames) {
+        String newBaseColumn = newColumnNames.getOrDefault(_baseColumnName, _baseColumnName);
+        List<String> newResultColumns = getCreatedColumnNames().stream().map(name -> newColumnNames.getOrDefault(name, name))
+                .collect(Collectors.toList());
+        return new ExtendDataOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newBaseColumn,
+                _endpoint,
+                _identifierSpace,
+                _schemaSpace,
+                _extension,
+                _columnInsertIndex,
+                newResultColumns);
     }
 
     public class ExtendDataProcess extends LongRunningProcess implements Runnable {
