@@ -410,7 +410,6 @@ public abstract class Command {
             throws IOException, ServletException {
 
         logger.warn("Exception caught", e);
-        e.printStackTrace();
 
         if (response == null) {
             throw new ServletException("Response object can't be null");
