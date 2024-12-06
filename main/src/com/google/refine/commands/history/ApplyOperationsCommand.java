@@ -65,7 +65,7 @@ public class ApplyOperationsCommand extends Command {
             recipe.validate();
 
             // check all required columns are present
-            Set<String> requiredColumns = recipe.computeRequiredColumns();
+            Set<String> requiredColumns = recipe.getRequiredColumns();
             for (String columnName : requiredColumns) {
                 if (project.columnModel.getColumnByName(columnName) == null) {
                     // TODO: present the user with a dialog to match all missing columns to ones that are present
