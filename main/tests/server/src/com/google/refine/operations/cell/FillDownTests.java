@@ -34,6 +34,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -136,6 +137,18 @@ public class FillDownTests extends RefineTest {
     public void testColumnsDependencies() {
         assertEquals(new FillDownOperation(defaultEngineConfig, "bar").getColumnDependencies().get(), Set.of("bar"));
         assertEquals(new FillDownOperation(engineConfigWithColumnDeps, "bar").getColumnDependencies().get(), Set.of("bar", "facet_1"));
+    }
+
+    @Test
+    public void testRenameColumns() {
+        String renamedJson = "{\"op\":\"core/fill-down\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_fill_down_brief("bar")).toString() + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"bar\"}";
+
+        var SUT = new FillDownOperation(defaultEngineConfig, "foo");
+        AbstractOperation renamed = SUT.renameColumns(Map.of("foo", "bar"));
+        TestUtils.isSerializedTo(renamed, renamedJson);
     }
 
     @Test

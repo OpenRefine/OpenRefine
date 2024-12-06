@@ -36,6 +36,7 @@ package com.google.refine.operations.column;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -55,6 +56,7 @@ import com.google.refine.expr.ParsingException;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnsDiff;
@@ -155,6 +157,25 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.builder().addColumn(_newColumnName, _baseColumnName).build());
+    }
+
+    @Override
+    public AbstractOperation renameColumns(Map<String, String> newColumnNames) {
+        String renamedExpression;
+        try {
+            Evaluable evaluable = MetaParser.parse(_expression);
+            Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
+            renamedExpression = renamedEvaluable.getFullSource();
+        } catch (ParsingException e) {
+            return this;
+        }
+        return new ColumnAdditionOperation(
+                getEngineConfig().renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_baseColumnName, _baseColumnName),
+                renamedExpression,
+                _onError,
+                newColumnNames.getOrDefault(_newColumnName, _newColumnName),
+                _columnInsertIndex);
     }
 
     @Override

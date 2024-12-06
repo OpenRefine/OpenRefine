@@ -34,6 +34,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -52,6 +53,7 @@ import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationDescription;
@@ -197,6 +199,35 @@ public class MassOperationTests extends RefineTest {
     public void testColumnsDependencies() {
         assertEquals(new MassEditOperation(engineConfigWithColumnDeps, "foo", "grel:cells['bar'].value", editsWithFromBlank)
                 .getColumnDependencies().get(), Set.of("foo", "bar", "facet_1"));
+    }
+
+    @Test
+    public void testRename() {
+        var SUT = new MassEditOperation(defaultEngineConfig, "foo", "grel:cells['bar'].value", editsWithFromBlank);
+        AbstractOperation renamed = SUT.renameColumns(Map.of("bar", "bar2", "unrelated", "unrelated2"));
+
+        String expectedJSON = "{\n"
+                + "  \"columnName\" : \"foo\",\n"
+                + "  \"description\" : " + new TextNode(OperationDescription.cell_mass_edit_brief("foo")).toString() + ",\n"
+                + "  \"edits\" : [ {\n"
+                + "    \"from\" : [ \"v1\" ],\n"
+                + "    \"fromBlank\" : false,\n"
+                + "    \"fromError\" : false,\n"
+                + "    \"to\" : \"v2\"\n"
+                + "  }, {\n"
+                + "    \"from\" : [ ],\n"
+                + "    \"fromBlank\" : true,\n"
+                + "    \"fromError\" : false,\n"
+                + "    \"to\" : \"hey\"\n"
+                + "  } ],\n"
+                + "  \"engineConfig\" : {\n"
+                + "    \"facets\" : [ ],\n"
+                + "    \"mode\" : \"row-based\"\n"
+                + "  },\n"
+                + "  \"expression\" : \"grel:cells.get(\\\"bar2\\\").value\",\n"
+                + "  \"op\": \"core/mass-edit\""
+                + "}";
+        TestUtils.isSerializedTo(renamed, expectedJSON);
     }
 
     // Not yet testing for mass edit from OR Error

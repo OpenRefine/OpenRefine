@@ -3,9 +3,11 @@ package com.google.refine.operations;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -117,6 +119,21 @@ public class Recipe {
             }
         }
         return requiredColumnNames;
+    }
+
+    /**
+     * Compute a new version of this recipe, where the column dependencies have been renamed according to the map
+     * supplied.
+     * 
+     * @param newColumnNames
+     *            the map from old column names to the new ones
+     * @return a new recipe, only if all the operations involved could be successfully renamed
+     */
+    public Recipe renameColumns(Map<String, String> newColumnNames) {
+        List<AbstractOperation> result = operations.stream()
+                .map(op -> op.renameColumns(newColumnNames))
+                .collect(Collectors.toList());
+        return new Recipe(result);
     }
 
     @Override
