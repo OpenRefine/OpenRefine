@@ -102,6 +102,15 @@ public class TimeRangeFacet implements Facet {
         public String getJsonType() {
             return "timerange";
         }
+
+        @Override
+        public void validate() {
+            try {
+                MetaParser.parse(_expression);
+            } catch (ParsingException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
     }
 
     protected TimeRangeFacetConfig _config;

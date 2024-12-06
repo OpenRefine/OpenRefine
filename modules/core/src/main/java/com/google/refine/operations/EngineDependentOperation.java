@@ -48,6 +48,11 @@ abstract public class EngineDependentOperation extends AbstractOperation {
         _engineConfig = engineConfig;
     }
 
+    @Override
+    public void validate() {
+        _engineConfig.validate();
+    }
+
     protected Engine createEngine(Project project) throws Exception {
         Engine engine = new Engine(project);
         engine.initializeFromConfig(getEngineConfig());

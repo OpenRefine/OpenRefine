@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
@@ -76,6 +78,11 @@ public class TransposeRowsIntoColumnsOperationTests extends RefineTest {
                 + "\"columnName\":\"start column\","
                 + "\"rowCount\":3}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new TransposeRowsIntoColumnsOperation(null, 2).validate());
     }
 
     @Test

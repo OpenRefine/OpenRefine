@@ -1,6 +1,8 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 
 import org.testng.annotations.AfterMethod;
@@ -64,6 +66,28 @@ public class TextTransformOperationTests extends RefineTest {
                 + "   \"repeatCount\": 0"
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TextTransformOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new TextTransformOperation(
+                invalidEngineConfig,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                false, 0).validate());
+        assertThrows(IllegalArgumentException.class, () -> new TextTransformOperation(
+                defaultEngineConfig,
+                null,
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                false, 0).validate());
+        assertThrows(IllegalArgumentException.class, () -> new TextTransformOperation(
+                defaultEngineConfig,
+                "bar",
+                "grel:foo(",
+                OnError.SetToBlank,
+                false, 0).validate());
     }
 
     @Test

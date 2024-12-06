@@ -27,6 +27,8 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,6 +114,12 @@ public class FillDownTests extends RefineTest {
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my key\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, FillDownOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new FillDownOperation(invalidEngineConfig, "bar").validate());
+        assertThrows(IllegalArgumentException.class, () -> new FillDownOperation(defaultEngineConfig, null).validate());
     }
 
     @Test

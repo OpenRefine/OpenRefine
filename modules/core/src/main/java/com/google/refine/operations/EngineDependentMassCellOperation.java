@@ -38,6 +38,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -62,6 +63,12 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
         super(engineConfig);
         _columnName = columnName;
         _updateRowContextDependencies = updateRowContextDependencies;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        Validate.notNull(_columnName, "Missing column name");
     }
 
     @Override

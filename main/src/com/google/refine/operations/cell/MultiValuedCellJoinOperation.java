@@ -38,6 +38,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.HistoryEntry;
@@ -63,6 +64,13 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         _columnName = columnName;
         _keyColumnName = keyColumnName;
         _separator = separator;
+    }
+
+    @Override
+    public void validate() {
+        Validate.notNull(_columnName, "Missing column name");
+        Validate.notNull(_keyColumnName, "Missing key column name");
+        Validate.notNull(_separator, "Missing separator");
     }
 
     @JsonProperty("columnName")

@@ -41,6 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.HistoryEntry;
@@ -154,6 +155,15 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
 
         _keyColumnName = keyColumnName;
         _valueColumnName = valueColumnName;
+    }
+
+    @Override
+    public void validate() {
+        Validate.notNull(_startColumnName, "Missing name of the start column");
+        if (_combinedColumnName == null) {
+            Validate.notNull(_keyColumnName, "Missing name of the key column");
+            Validate.notNull(_valueColumnName, "Missing name of the value column");
+        }
     }
 
     @Override

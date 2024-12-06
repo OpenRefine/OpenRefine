@@ -125,6 +125,15 @@ public class RangeFacet implements Facet {
         public String getJsonType() {
             return "range";
         }
+
+        @Override
+        public void validate() {
+            try {
+                MetaParser.parse(_expression);
+            } catch (ParsingException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
     }
 
     RangeFacetConfig _config = null;

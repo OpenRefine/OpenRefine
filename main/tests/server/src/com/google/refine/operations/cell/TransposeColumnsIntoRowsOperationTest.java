@@ -1,6 +1,8 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 
 import org.testng.annotations.BeforeSuite;
@@ -36,6 +38,16 @@ public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
                 "}";
         TestUtils.isSerializedTo(new TransposeColumnsIntoRowsOperation(
                 "b 1", 2, true, false, "b", false, null), json);
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new TransposeColumnsIntoRowsOperation(null, -1, true, false, "a", true, ":").validate());
+        assertThrows(IllegalArgumentException.class, () -> new TransposeColumnsIntoRowsOperation(
+                "b 1", 2, true, false, null, "value").validate());
+        assertThrows(IllegalArgumentException.class, () -> new TransposeColumnsIntoRowsOperation(
+                "b 1", 2, true, false, "key", null).validate());
     }
 
     @Test

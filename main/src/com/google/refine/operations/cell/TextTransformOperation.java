@@ -45,6 +45,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
@@ -99,6 +100,16 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         _onError = onError;
         _repeat = repeat;
         _repeatCount = repeatCount;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        try {
+            MetaParser.parse(_expression);
+        } catch (ParsingException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
