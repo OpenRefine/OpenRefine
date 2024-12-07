@@ -109,7 +109,7 @@ public class RowRemovalOperationTests extends RefineTest {
                 });
 
         engine = new Engine(projectIssue567);
-        engine_config = EngineConfig.reconstruct(ENGINE_JSON_DUPLICATES);
+        engine_config = EngineConfig.deserialize(ENGINE_JSON_DUPLICATES);
         engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
 
