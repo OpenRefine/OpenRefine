@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -68,6 +69,15 @@ public class VariableExpr implements Evaluable {
             return Optional.empty();
         }
         return Optional.of(Collections.emptySet());
+    }
+
+    @Override
+    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
+        if ("cells".equals(_name) || "row".equals(_name) || "record".equals(_name)) {
+            return Optional.empty();
+        } else {
+            return Optional.of(this);
+        }
     }
 
     @Override
