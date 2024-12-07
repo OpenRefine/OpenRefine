@@ -78,4 +78,14 @@ class MockEvaluable implements Evaluable {
     public Object evaluate(Properties bindings) {
         return value;
     }
+
+    @Override
+    public String getSource() {
+        return "src";
+    }
+
+    @Override
+    public String getLanguagePrefix() {
+        return "mock";
+    }
 }
