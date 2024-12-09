@@ -1,0 +1,27 @@
+.column-mapping-panel-container {
+    display: flex;
+    max-height: 600px;
+}
+
+.column-mapping-panel {
+    flex: 1;
+}
+
+.column-mapping-panel {
+    padding: 10px;
+    margin: 10px;
+
+    p {
+        font-weight: bold;
+    }
+}
+
+.column-mapping-form {
+    max-height: 100%;
+    overflow: auto;
+
+    div.grid-layout.layout-normal {
+        margin: 0;
+    }
+}
+
