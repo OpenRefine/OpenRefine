@@ -130,6 +130,15 @@ public class ListFacet implements Facet {
         public String getJsonType() {
             return "list";
         }
+
+        @Override
+        public void validate() {
+            try {
+                MetaParser.parse(expression);
+            } catch (ParsingException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
     }
 
     /**

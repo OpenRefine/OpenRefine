@@ -27,6 +27,8 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -125,6 +127,12 @@ public class BlankDownTests extends RefineTest {
                 + "\"columnName\":\"my column\"}";
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, BlankDownOperation.class);
         TestUtils.isSerializedTo(op, json);
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new BlankDownOperation(invalidEngineConfig, "bar").validate());
+        assertThrows(IllegalArgumentException.class, () -> new BlankDownOperation(defaultEngineConfig, null).validate());
     }
 
     @Test

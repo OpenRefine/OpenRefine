@@ -164,6 +164,20 @@ public class ScatterplotFacet implements Facet {
         public String getJsonType() {
             return "scatterplot";
         }
+
+        @Override
+        public void validate() {
+            try {
+                MetaParser.parse(expression_x);
+            } catch (ParsingException e) {
+                throw new IllegalArgumentException(e);
+            }
+            try {
+                MetaParser.parse(expression_y);
+            } catch (ParsingException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
     }
 
     ScatterplotFacetConfig config;
