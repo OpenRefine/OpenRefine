@@ -115,7 +115,7 @@ public class MediaFileUtilsTest {
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
         File path = new File("/tmp/image.png");
         MediaUploadResponse response = mediaFileUtils.uploadLocalFile(path, "My_test_file.png", "my wikitext", "my summary",
-                Collections.emptyList(), false);
+                Collections.emptyList(), false, false);
         assertEquals(response.filename, "My_test_file.png");
         assertEquals(response.pageid, 12345L);
         assertEquals(response.getMid(connection, Datamodel.SITE_WIKIMEDIA_COMMONS),
@@ -141,7 +141,7 @@ public class MediaFileUtilsTest {
         mediaFileUtils.fetchCsrfToken();
 
         MediaUploadResponse response = mediaFileUtils.uploadRemoteFile(new URL(url), "My_test_file.png", "my wikitext", "my summary",
-                Collections.emptyList());
+                Collections.emptyList(), false);
 
         assertEquals(response.filename, "My_test_file.png");
         assertEquals(response.pageid, 12345L);
@@ -180,7 +180,7 @@ public class MediaFileUtilsTest {
         mediaFileUtils.csrfToken = "invalid_token";
 
         MediaUploadResponse response = mediaFileUtils.uploadRemoteFile(new URL(url), "My_test_file.png", "my wikitext", "my summary",
-                Collections.emptyList());
+                Collections.emptyList(), false);
 
         // the request still succeeds because we retry with a fresh CSRF
         assertEquals(response.filename, "My_test_file.png");
@@ -206,7 +206,7 @@ public class MediaFileUtilsTest {
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
         mediaFileUtils.setMaxLagWaitTime(10);
 
-        mediaFileUtils.uploadRemoteFile(new URL(url), "My_test_file.png", "my wikitext", "my summary", Collections.emptyList());
+        mediaFileUtils.uploadRemoteFile(new URL(url), "My_test_file.png", "my wikitext", "my summary", Collections.emptyList(), false);
     }
 
     @Test
@@ -405,7 +405,7 @@ public class MediaFileUtilsTest {
 
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
         MediaUploadResponse response = mediaFileUtils.uploadLocalFileChunked(chunkedFile, "My_test_file.png", "my wikitext", "my summary",
-                Collections.emptyList());
+                Collections.emptyList(), false);
 
         InOrder inOrder = inOrder(connection);
         inOrder.verify(connection).sendJsonRequest(eq("POST"), eq(firstParams), eq(firstFiles));
@@ -517,7 +517,7 @@ public class MediaFileUtilsTest {
         MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
         MediaUploadResponse response = mediaFileUtils.uploadRemoteFile(new URL("https://foo.com/file.png"), "My_test_file.png",
                 "my wikitext", "my summary",
-                Collections.emptyList());
+                Collections.emptyList(), true);
         assertEquals(response.filename, "My_test_file.png");
         assertEquals(response.pageid, 12345L);
         assertEquals(response.getMid(connection, Datamodel.SITE_WIKIMEDIA_COMMONS),
