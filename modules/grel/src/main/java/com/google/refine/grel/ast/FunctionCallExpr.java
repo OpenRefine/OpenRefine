@@ -33,8 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -99,6 +102,30 @@ public class FunctionCallExpr implements Evaluable {
     }
 
     @Override
+    public Optional<Evaluable> renameColumnDependencies(Map<String, String> substitutions) {
+        if (_function instanceof Get && _args.length == 2 && (new VariableExpr("cells")).equals(_args[0]) &&
+                _args[1] != null && _args[1] instanceof LiteralExpr) {
+            String columnName = Objects.toString(((LiteralExpr) _args[1]).getValue());
+            String newColumnName = substitutions.getOrDefault(columnName, columnName);
+            return Optional.of(new FunctionCallExpr(new Evaluable[] {
+                    _args[0],
+                    new LiteralExpr(newColumnName)
+            }, _function));
+        } else {
+            Evaluable[] translatedArgs = new Evaluable[_args.length];
+            for (int i = 0; i != _args.length; i++) {
+                Optional<Evaluable> translatedArg = _args[i].renameColumnDependencies(substitutions);
+                if (translatedArg.isEmpty()) {
+                    return Optional.empty();
+                } else {
+                    translatedArgs[i] = translatedArg.get();
+                }
+            }
+            return Optional.of(new FunctionCallExpr(translatedArgs, _function));
+        }
+    }
+
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
@@ -111,4 +138,26 @@ public class FunctionCallExpr implements Evaluable {
 
         return _function.getClass().getSimpleName() + "(" + sb.toString() + ")";
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(_args);
+        result = prime * result + Objects.hash(_function);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FunctionCallExpr other = (FunctionCallExpr) obj;
+        return Arrays.equals(_args, other._args) && Objects.equals(_function, other._function);
+    }
+
 }
