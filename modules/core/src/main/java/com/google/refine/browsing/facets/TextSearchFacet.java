@@ -45,6 +45,7 @@ import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.filters.AnyRowRecordFilter;
 import com.google.refine.browsing.filters.ExpressionStringComparisonRowFilter;
 import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.MetaParser;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.util.PatternSyntaxExceptionParser;
@@ -161,6 +162,16 @@ public class TextSearchFacet implements Facet {
             @Override
             public Object evaluate(Properties bindings) {
                 return bindings.get("value");
+            }
+
+            @Override
+            public String getSource() {
+                return "value";
+            }
+
+            @Override
+            public String getLanguagePrefix() {
+                return MetaParser.GREL_LANGUAGE_CODE;
             }
 
         };

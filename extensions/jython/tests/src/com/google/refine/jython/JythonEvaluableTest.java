@@ -1,6 +1,8 @@
 
 package com.google.refine.jython;
 
+import static org.testng.Assert.assertEquals;
+
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Properties;
@@ -132,5 +134,13 @@ public class JythonEvaluableTest {
         result = evaluable.evaluate(bindings);
         Assert.assertEquals(result, "foo");
 
+    }
+
+    @Test
+    public void testGetters() {
+        Evaluable evaluable = new JythonEvaluable("return (1,2)");
+
+        assertEquals(evaluable.getSource(), "return (1,2)");
+        assertEquals(evaluable.getLanguagePrefix(), "jython");
     }
 }
