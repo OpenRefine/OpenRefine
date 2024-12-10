@@ -43,12 +43,19 @@ public class DatabaseServiceException extends Exception {
         super(exception);
     }
 
+    public DatabaseServiceException(SQLException e) {
+        super(e);
+        this.sqlException = true;
+        this.sqlState = e.getSQLState();
+        this.sqlCode = e.getErrorCode();
+    }
+
+    @Deprecated(since = "3.9")
     public DatabaseServiceException(boolean sqlException, String sqlState, int sqlCode, String message) {
         super(message);
         this.sqlException = sqlException;
         this.sqlState = sqlState;
         this.sqlCode = sqlCode;
-
     }
 
     public boolean isSqlException() {

@@ -116,7 +116,7 @@ public class PgSQLDatabaseService extends DatabaseService {
             return dbInfo;
         } catch (SQLException e) {
             logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         } finally {
             PgSQLConnectionManager.getInstance().shutdown();
         }
@@ -145,7 +145,7 @@ public class PgSQLDatabaseService extends DatabaseService {
             }
         } catch (SQLException e) {
             logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
         return null;
     }
@@ -166,7 +166,7 @@ public class PgSQLDatabaseService extends DatabaseService {
             return columns;
         } catch (SQLException e) {
             logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
     }
 
@@ -198,7 +198,7 @@ public class PgSQLDatabaseService extends DatabaseService {
             return rows;
         } catch (SQLException e) {
             logger.error("SQLException::{}::{}", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         } finally {
             try {
                 if (queryResult != null) {
@@ -240,7 +240,7 @@ public class PgSQLDatabaseService extends DatabaseService {
             return dbInfo;
         } catch (SQLException e) {
             logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         } finally {
             try {
                 if (queryResult != null) {
