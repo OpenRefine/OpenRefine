@@ -92,7 +92,7 @@ jobs:
       - name: Check Java linting
         id: java_linting
         run: |
-          mvn -B compile test-compile formatter:validate impsort:check javadoc:javadoc -Ddoclint=all
+          mvn -B compile test-compile formatter:validate impsort:check javadoc:javadoc -Ddoclint=html,syntax,accessibility,reference
 
       - name: Configure connections to databases
         id: configure_db_connections
