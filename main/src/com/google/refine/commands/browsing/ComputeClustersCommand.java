@@ -39,7 +39,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,12 +73,12 @@ public class ComputeClustersCommand extends Command {
             Engine engine = getEngine(request, project);
             String clusterer_conf = request.getParameter("clusterer");
 
-            JSONObject jsonObject = new JSONObject(clusterer_conf);
-            JSONObject params = jsonObject.getJSONObject("params");
+            JsonNode jsonObject = ParsingUtilities.mapper.readTree(clusterer_conf);
+            JsonNode params = jsonObject.get("params");
 
-            if (params.has("expression")) {
-                String expression = params.getString("expression");
-                if ("UserDefinedKeyer".equals(jsonObject.getString("function"))) {
+            if (params != null && params.has("expression")) {
+                String expression = params.get("expression").asText();
+                if (jsonObject.has("function") && "UserDefinedKeyer".equals(jsonObject.get("function").asText())) {
                     KeyerFactory.put("userdefinedkeyer", new UserDefinedKeyer(expression));
                 } else {
                     DistanceFactory.put("userdefineddistance", new UserDefinedDistance(expression));
