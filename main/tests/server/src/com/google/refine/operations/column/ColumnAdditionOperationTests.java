@@ -95,7 +95,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     @Test
     public void testAddColumnRowsMode() throws Exception {
         ColumnAdditionOperation operation = new ColumnAdditionOperation(
-                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "bar",
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
@@ -151,7 +151,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     @Test
     public void testAddColumnRecordsMode() throws Exception {
         ColumnAdditionOperation operation = new ColumnAdditionOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "bar",
                 "grel:length(row.record.cells['hello'])",
                 OnError.SetToBlank,

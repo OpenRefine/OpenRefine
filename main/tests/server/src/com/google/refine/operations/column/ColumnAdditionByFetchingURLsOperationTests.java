@@ -123,7 +123,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     // dependencies
     private Project project;
-    private EngineConfig engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
+    private EngineConfig engine_config = EngineConfig.deserialize(ENGINE_JSON_URLS);
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
