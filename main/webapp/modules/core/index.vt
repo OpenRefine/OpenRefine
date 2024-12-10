@@ -56,7 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <div id="project-links">
       <div id="logo-container">
         <img alt="OpenRefine" src="images/logo-gem-126.svg" height="65" />
-        <div id="openrefine-version"></div>
+        <div id="openrefine-version" role="button" tabindex="0" title=""></div>
       </div>
       <ul>
         <li><a href="preferences" id="or-index-pref"></a></li>
