@@ -43,6 +43,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 
+import com.google.refine.annotations.Internal;
 import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.model.Cell;
@@ -50,6 +51,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
+@Internal(since = "3.9")
 public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
 
     int col_x;

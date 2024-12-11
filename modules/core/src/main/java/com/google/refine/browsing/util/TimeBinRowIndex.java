@@ -36,10 +36,12 @@ package com.google.refine.browsing.util;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.refine.annotations.Internal;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
+@Internal(since = "3.9")
 public class TimeBinRowIndex extends TimeBinIndex {
 
     public TimeBinRowIndex(Project project, RowEvaluable rowEvaluable) {

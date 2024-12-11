@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.refine.annotations.Internal;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -51,6 +52,7 @@ import com.google.refine.model.Row;
  * This class processes all rows rather than just the filtered rows because it needs to compute the base bins of a
  * temporal range facet, which remain unchanged as the user interacts with the facet.
  */
+@Internal(since = "3.9")
 abstract public class TimeBinIndex {
 
     protected int _totalValueCount;
