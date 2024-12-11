@@ -359,11 +359,13 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
               // Something might have already been done and so it's good to update
               Refine.update({ everythingChanged: true });
             }
-          }
+            DialogSystem.dismissUntil(level - 1);
+          },
+          onError: function(e) {
+             elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));   
+          },
         }
     );
-
-    DialogSystem.dismissUntil(level - 1);
   });
 
   elmts.cancelButton.on('click',function() {

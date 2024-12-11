@@ -288,6 +288,8 @@
     "warnings-messages/duplicate-file-names-in-batch/body": "The file names provided for the new media files should all be distinct. Some file names, such as <span class=\"wb-issue-preformat\">{example_filename}</span>, are used for more than one file.",
     "warnings-messages/file-names-already-exist-on-wiki/title": "Naming conflict between new and existing files on the wiki",
     "warnings-messages/file-names-already-exist-on-wiki/body": "The file names provided for the new media files should be distinct from any existing file names on the wiki. This is not the case for <span class=\"wb-issue-preformat\">{example_filename}</span>.",
+    "warnings-messages/upload-new-file-version/title": "Uploading new file version",
+    "warnings-messages/upload-new-file-version/body": "Some files, such as <span class=\"wb-issue-preformat\">{example_filename}</span>, have been matched to existing files. This will upload new versions of those files.",
     "warnings-messages/invalid-characters-in-file-name/title": "Invalid characters in file names",
     "warnings-messages/invalid-characters-in-file-name/body": "Filenames such as <span class=\"wb-issue-preformat\">{example_filename}</span> contain the character <span class=\"wb-issue-preformat\">{invalid_character}</span> which cannot be part of file names in a wiki.",
     "warnings-messages/file-name-too-long/title": "File names exceeding the maximum length",

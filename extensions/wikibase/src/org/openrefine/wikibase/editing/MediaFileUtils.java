@@ -344,6 +344,16 @@ public class MediaFileUtils {
                     throw new IOException("The server did not return an 'upload' field in the JSON response.");
                 }
                 MediaUploadResponse response = ParsingUtilities.mapper.treeToValue(uploadNode, MediaUploadResponse.class);
+                if (response.hasAllowedWarnings()) {
+                    logger.info("Ignoring warnings: " + response.warnings);
+                    Map<String, String> ignoreWarningsParameters = new HashMap<>();
+                    ignoreWarningsParameters.putAll(parameters);
+                    ignoreWarningsParameters.put("ignorewarnings", "1");
+                    ignoreWarningsParameters.remove("url");
+                    ignoreWarningsParameters.put("filekey", response.filekey);
+                    return uploadFile(ignoreWarningsParameters, null);
+                }
+
                 // todo check for errors which should be retried
                 return response;
             } catch (TokenErrorException e) {
@@ -444,6 +454,27 @@ public class MediaFileUtils {
                 }
             }
             return mid;
+        }
+
+        /**
+         * Checks if warnings are allowed for the purpose of uploading a new version of the file. If there are any
+         * warnings they must all be allowed.
+         *
+         * @return
+         */
+        public boolean hasAllowedWarnings() {
+
+            if ("Success".equals(result)) {
+                return false;
+            }
+
+            if (warnings == null) {
+                return false;
+            }
+
+            Set<String> warningCodes = warnings.keySet();
+            Set<String> allowedWarnings = Set.of("exists", "duplicateversions");
+            return allowedWarnings.containsAll(warningCodes);
         }
     }
 

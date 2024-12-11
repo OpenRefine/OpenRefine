@@ -254,4 +254,5 @@ textarea.history-operation-json {
 
 .history-operation-json-error {
   color: var(--error-red);
+  max-width: calc(800px - var(--padding-looser));
 }

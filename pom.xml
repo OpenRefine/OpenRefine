@@ -77,7 +77,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- dependency versions -->
-    <jackson.version>2.18.1</jackson.version>
+    <jackson.version>2.18.2</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.6</butterfly.version>
     <slf4j.version>2.0.16</slf4j.version>
@@ -97,7 +97,7 @@
     <commons-compress.version>1.27.1</commons-compress.version>
     <velocity.version>2.4.1</velocity.version>
     <marc4j.version>2.9.6</marc4j.version>
-    <jsoup.version>1.18.1</jsoup.version>
+    <jsoup.version>1.18.3</jsoup.version>
     <odfdom-java.version>0.12.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2.1</vicino.version>
     <clojure.version>1.12.0</clojure.version>
@@ -127,7 +127,7 @@
     <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
-    <license-plugin.version>2.4.0</license-plugin.version>
+    <license-plugin.version>2.5.0</license-plugin.version>
     <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
   </properties>
 
@@ -255,7 +255,7 @@
         <!-- Plugin for creating Javadocs; goal for preparing docs for upload to github: javadoc:aggregate -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.11.1</version>
+        <version>3.11.2</version>
         <configuration>
             <bottom>
                     <![CDATA[Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. Generated from source code published under the BSD Clause-3 license. For more information, see the <a href="https://openrefine.org">OpenRefine website</a>]]></bottom>

@@ -72,29 +72,31 @@ DataTableColumnHeaderUI.prototype._render = function() {
   });
 
   var serviceUrl = null;
-  var service = null;
-  var serviceLogo = null;
   if (this._column.reconConfig) {
    serviceUrl = this._column.reconConfig.service;
   }
-  try {
-    if (new URL(serviceUrl)) {
-      service = ReconciliationManager.getServiceFromUrl(serviceUrl);
-    }
-    if (service) {
-      serviceLogo=service.logo;
-   }
+  if (serviceUrl) {
+    try {
+      var service = null;
+      var serviceLogo = null;
+      if (new URL(serviceUrl)) {
+        service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+      }
+      if (service) {
+        serviceLogo = service.logo;
+      }
 
-    var img = $("<img>");
-    if (serviceLogo) {
-      var imageUrl = serviceLogo;
-      img.attr("src", imageUrl);
-      img.attr("title", service.name);
-      img.addClass("serviceLogo")
-      img.appendTo(elmts.serviceLogoContainer.show());
+      var img = $("<img>");
+      if (serviceLogo) {
+        var imageUrl = new URL(serviceLogo).toString(); // throws an exception if the format is invalid
+        img.attr("src", imageUrl);
+        img.attr("title", service.name);
+        img.addClass("serviceLogo")
+        img.appendTo(elmts.serviceLogoContainer.show());
+      }
+    } catch {
+      console.log("Invalid logo URL supplied by service "+serviceUrl);
     }
-  } catch {
-    console.log("Invalid logo URL supplied by service "+serviceUrl);
   }
 
   if ("reconStats" in this._column) {
