@@ -1,34 +1,7 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2024 OpenRefine
 All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-    * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-    * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 */
 
 package com.google.refine.operations.row;
@@ -80,7 +53,6 @@ public class RowDuplicatesRemovalOperation extends AbstractOperation {
         List<Integer> rowIndices = new ArrayList<Integer>();
         final List<Column> criteriaColumns = new ArrayList<Column>(_criteria.size());
         for (String c : _criteria) {
-            System.out.println("criteria col - " + c);
             Column toColumn = project.columnModel.getColumnByName(c);
             if (toColumn != null) {
                 criteriaColumns.add(toColumn);
@@ -92,7 +64,7 @@ public class RowDuplicatesRemovalOperation extends AbstractOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                "Duplicate rows removal completed. "+ rowIndices.size() + " rows removed." ,
+                "Duplicate rows removal completed. " + rowIndices.size() + " rows removed.",
                 this,
                 new RowRemovalChange(rowIndices));
     }
@@ -103,14 +75,11 @@ public class RowDuplicatesRemovalOperation extends AbstractOperation {
         int c = project.recordModel.getRecordCount();
         for (int r = 0; r < c; r++) {
             Row row = project.rows.get(r);
-
-            // Generate a unique key based on normalized values of the specified columns
-           String key = criteriaColumns.stream()
+            String key = criteriaColumns.stream()
                     .map(col -> normalizeValue(row.getCell(col.getCellIndex())))
                     .collect(Collectors.joining("|"));
 
             if (!uniqueKeys.add(key)) {
-                System.out.println("duplicate found - index : " + c + " key - " + key );
                 rowIndices.add(r);
             }
         }
@@ -121,19 +90,19 @@ public class RowDuplicatesRemovalOperation extends AbstractOperation {
         if (value == null) {
             return "";
         } else if (value instanceof Date) {
-            return dateFormat.format((Date) value); // Format Date/DateTime
+            return dateFormat.format((Date) value);
         } else if (value instanceof String && ((String) value).trim().startsWith("{")) {
-            return normalizeJson((String) value); // Normalize JSON
+            return normalizeJson((String) value);
         }
-        return value.toString(); // Default: use string representation
+        return value.toString();
     }
 
     private static String normalizeJson(String json) {
         try {
             Map<String, Object> jsonMap = new ObjectMapper().readValue(json, Map.class);
-            return new ObjectMapper().writeValueAsString(jsonMap); // Sorts and formats JSON
+            return new ObjectMapper().writeValueAsString(jsonMap);
         } catch (Exception e) {
-            return json; // Fallback: return original if parsing fails
+            return json;
         }
     }
 }

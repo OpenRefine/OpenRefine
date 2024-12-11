@@ -1,3 +1,4 @@
+
 package com.google.refine.commands.row;
 
 import java.io.IOException;
@@ -19,15 +20,6 @@ import com.google.refine.util.ParsingUtilities;
 
 public class RemoveDuplicateRowsCommand extends Command {
 
-/*    @Override
-    protected AbstractOperation createOperation(Project project,
-                                                HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-
-        String duplicateCriteria = request.getParameter("criteria");
-        return new RowDuplicatesRemovalOperation(ParsingUtilities.mapper.readValue(duplicateCriteria, new TypeReference<List<String>>() {
-        }), engineConfig);
-    }*/
-
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,8 +32,9 @@ public class RemoveDuplicateRowsCommand extends Command {
             Project project = getProject(request);
             String duplicateCriteria = request.getParameter("criteria");
 
-            AbstractOperation op = new RowDuplicatesRemovalOperation(ParsingUtilities.mapper.readValue(duplicateCriteria, new TypeReference<List<String>>() {
-            }));
+            AbstractOperation op = new RowDuplicatesRemovalOperation(
+                    ParsingUtilities.mapper.readValue(duplicateCriteria, new TypeReference<List<String>>() {
+                    }));
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);
