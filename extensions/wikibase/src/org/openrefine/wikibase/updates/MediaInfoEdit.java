@@ -282,10 +282,10 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         MediaFileUtils.MediaUploadResponse response;
         File path = new File(filePath);
         if (path.exists()) {
-            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags, shouldUploadInChunks());
+            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags, shouldUploadInChunks(), !isNew());
         } else {
             URL url = new URL(filePath);
-            response = mediaFileUtils.uploadRemoteFile(url, fileName, wikitext, summary, tags);
+            response = mediaFileUtils.uploadRemoteFile(url, fileName, wikitext, summary, tags, !isNew());
         }
 
         response.checkForErrors();
