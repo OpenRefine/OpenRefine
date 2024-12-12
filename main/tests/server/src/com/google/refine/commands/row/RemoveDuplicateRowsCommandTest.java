@@ -220,7 +220,7 @@ public class RemoveDuplicateRowsCommandTest extends CommandTestBase {
         assertNotNull(node.get("historyEntry"));
         assertNotNull(node.get("historyEntry").get("id"));
         assertNotNull(node.get("historyEntry").get("description"));
-        assertEquals(node.get("historyEntry").get("description").asText(), "Duplicate rows removal completed. 1 rows removed.");
+        assertEquals(node.get("historyEntry").get("description").asText(), "Remove 1 rows");
         assertNotNull(node.get("historyEntry").get("time"));
     }
 }

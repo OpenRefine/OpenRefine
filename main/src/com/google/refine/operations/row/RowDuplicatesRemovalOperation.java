@@ -64,7 +64,7 @@ public class RowDuplicatesRemovalOperation extends AbstractOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                "Duplicate rows removal completed. " + rowIndices.size() + " rows removed.",
+                "Remove " + rowIndices.size() + " rows",
                 this,
                 new RowRemovalChange(rowIndices));
     }
