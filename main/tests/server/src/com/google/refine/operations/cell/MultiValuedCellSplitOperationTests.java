@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
@@ -100,6 +102,13 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
                 + "\"mode\":\"lengths\","
                 + "\"fieldLengths\":[1,1]}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellSplitOperation(null, "key", "sep", false).validate());
+        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellSplitOperation("value", null, "sep", false).validate());
+        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellSplitOperation("value", "key", null, false).validate());
     }
 
     /**

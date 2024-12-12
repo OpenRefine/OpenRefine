@@ -27,6 +27,8 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -166,6 +168,18 @@ public class MassOperationTests extends RefineTest {
         Assert.assertTrue(editList.get(0).fromBlank);
         Assert.assertFalse(editList.get(0).fromError);
 
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new MassEditOperation(invalidEngineConfig, "foo", "grel:value", editsWithFromBlank).validate());
+        assertThrows(IllegalArgumentException.class,
+                () -> new MassEditOperation(defaultEngineConfig, null, "grel:value", editsWithFromBlank).validate());
+        assertThrows(IllegalArgumentException.class,
+                () -> new MassEditOperation(defaultEngineConfig, "foo", "grel:invalid(", editsWithFromBlank).validate());
+        assertThrows(IllegalArgumentException.class,
+                () -> new MassEditOperation(defaultEngineConfig, "foo", "grel:value", null).validate());
     }
 
     // Not yet testing for mass edit from OR Error

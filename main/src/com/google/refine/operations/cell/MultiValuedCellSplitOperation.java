@@ -41,6 +41,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.history.HistoryEntry;
@@ -123,6 +124,17 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             }
         }
         _fieldLengths = fieldLengths;
+    }
+
+    @Override
+    public void validate() {
+        Validate.notNull(_columnName, "Missing column name");
+        Validate.notNull(_keyColumnName, "Missing key column name");
+        if ("separator".equals(_mode)) {
+            Validate.notNull(_separator, "Missing separator");
+            // pattern already compiled in the constructor
+        }
+        // field lengths already validated in the constructor
     }
 
     @JsonProperty("columnName")

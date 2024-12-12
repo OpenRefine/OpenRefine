@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -110,6 +112,12 @@ public class KeyValueColumnizeTests extends RefineTest {
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":\"note column\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonFull, KeyValueColumnizeOperation.class), jsonFull);
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new KeyValueColumnizeOperation(null, "foo", "bar").validate());
+        assertThrows(IllegalArgumentException.class, () -> new KeyValueColumnizeOperation("foo", null, "bar").validate());
     }
 
     /**
