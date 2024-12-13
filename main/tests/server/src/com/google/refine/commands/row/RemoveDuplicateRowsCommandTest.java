@@ -24,23 +24,7 @@ public class RemoveDuplicateRowsCommandTest extends CommandTestBase {
     private final List<String> duplicateRowCriteria = List.of(
             new String[] { "SITE_ID", "SITE_NUM", "SITE_NAME", "ACTIVE", "INACTIVE", "AGENCY", "STATE", "COUNTY", "TIME_ZONE", "LATITUDE",
                     "LONGITUDE", "ELEVATION", "MAPID", "LAND_USE", "TERRAIN", "JSONDATA", "NADP_ID", "NADP_DISTANCE", "UPDATE_DATE" });
-    private final String _engineConfig = "{\n" +
-            "    \"facets\": [\n" +
-            "        {\n" +
-            "            \"type\": \"list\",\n" +
-            "            \"name\": \"SITE_ID\",\n" +
-            "            \"columnName\": \"SITE_ID\",\n" +
-            "            \"expression\": \"value\",\n" +
-            "            \"omitBlank\": false,\n" +
-            "            \"omitError\": false,\n" +
-            "            \"selection\": [],\n" +
-            "            \"selectBlank\": false,\n" +
-            "            \"selectError\": false,\n" +
-            "            \"invert\": false\n" +
-            "        }\n" +
-            "    ],\n" +
-            "        \"mode\": \"row-based\"\n" +
-            "}";
+    private final String _engineConfig = "{\"facets\":[{\"type\":\"list\",\"name\":\"SITE_ID\",\"columnName\":\"SITE_ID\",\"expression\":\"value\",\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"ABT147\",\"l\":\"ABT147\"}}],\"selectBlank\":false,\"selectError\":false,\"invert\":false}],\"mode\":\"row-based\"}";
 
     protected RemoveDuplicateRowsCommand command;
 
