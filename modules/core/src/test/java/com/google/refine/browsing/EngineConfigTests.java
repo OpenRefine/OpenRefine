@@ -27,6 +27,8 @@
 
 package com.google.refine.browsing;
 
+import static org.testng.Assert.assertThrows;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -59,13 +61,13 @@ public class EngineConfigTests {
 
     @Test
     public void serializeEngineConfig() {
-        EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
+        EngineConfig ec = EngineConfig.deserialize(engineConfigJson);
         TestUtils.isSerializedTo(ec, engineConfigJson);
     }
 
     @Test
     public void serializeEngineConfigRecordMode() {
-        EngineConfig ec = EngineConfig.reconstruct(engineConfigRecordModeJson);
+        EngineConfig ec = EngineConfig.deserialize(engineConfigRecordModeJson);
         TestUtils.isSerializedTo(ec, engineConfigRecordModeJson);
     }
 
@@ -79,6 +81,25 @@ public class EngineConfigTests {
     @Test
     public void reconstructNoFacetsProvided() {
         EngineConfig ec = EngineConfig.reconstruct(noFacetProvided);
+        Assert.assertEquals(ec.getMode(), Mode.RowBased);
+        Assert.assertTrue(ec.getFacetConfigs().isEmpty());
+    }
+
+    @Test
+    public void deserializeNullEngineConfig() {
+        assertThrows(IllegalArgumentException.class, () -> EngineConfig.deserialize(null));
+    }
+
+    @Test
+    public void deserializeNoFacetsProvided() {
+        EngineConfig ec = EngineConfig.deserialize(noFacetProvided);
+        Assert.assertEquals(ec.getMode(), Mode.RowBased);
+        Assert.assertTrue(ec.getFacetConfigs().isEmpty());
+    }
+
+    @Test
+    public void defaultRowBased() {
+        EngineConfig ec = EngineConfig.defaultRowBased();
         Assert.assertEquals(ec.getMode(), Mode.RowBased);
         Assert.assertTrue(ec.getFacetConfigs().isEmpty());
     }

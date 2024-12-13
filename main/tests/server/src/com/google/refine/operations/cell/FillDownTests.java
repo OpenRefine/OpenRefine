@@ -125,7 +125,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRecordKey() throws Exception {
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "key");
 
         runOperation(op, project);
@@ -145,7 +145,7 @@ public class FillDownTests extends RefineTest {
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
     public void testFillDownRecordsNoFacets() throws Exception {
-        FillDownOperation operation = new FillDownOperation(EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
+        FillDownOperation operation = new FillDownOperation(EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
 
         runOperation(operation, toFillDown);
 
@@ -165,7 +165,7 @@ public class FillDownTests extends RefineTest {
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
     public void testFillDownRowsNoFacets() throws Exception {
-        FillDownOperation operation = new FillDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "bar");
+        FillDownOperation operation = new FillDownOperation(EngineConfig.defaultRowBased(), "bar");
 
         runOperation(operation, toFillDown);
 
@@ -196,7 +196,7 @@ public class FillDownTests extends RefineTest {
         project.columnModel.update();
 
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
 
         runOperation(op, project);
@@ -257,7 +257,7 @@ public class FillDownTests extends RefineTest {
 
     @Test
     public void testFillDownRowsKeyColumn() throws Exception {
-        FillDownOperation operation = new FillDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "foo");
+        FillDownOperation operation = new FillDownOperation(EngineConfig.defaultRowBased(), "foo");
 
         runOperation(operation, toFillDown);
 

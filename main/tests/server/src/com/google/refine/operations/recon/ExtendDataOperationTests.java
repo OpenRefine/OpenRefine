@@ -163,7 +163,7 @@ public class ExtendDataOperationTests extends RefineTest {
 
         options = mock(Properties.class);
         engine = new Engine(project);
-        engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
+        engine_config = EngineConfig.deserialize(ENGINE_JSON_URLS);
         engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
 

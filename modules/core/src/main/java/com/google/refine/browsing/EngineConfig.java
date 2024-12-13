@@ -33,6 +33,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.facets.FacetConfig;
@@ -43,12 +44,18 @@ public class EngineConfig {
     protected final List<FacetConfig> _facets;
     protected final Mode _mode;
 
+    private static final EngineConfig _default = new EngineConfig(List.of(), Mode.RowBased);
+
     @JsonCreator
     public EngineConfig(
             @JsonProperty("facets") List<FacetConfig> facets,
             @JsonProperty("mode") Mode mode) {
         _facets = facets == null ? Collections.emptyList() : facets;
         _mode = mode == null ? Mode.RowBased : mode;
+    }
+
+    public static EngineConfig defaultRowBased() {
+        return _default;
     }
 
     @JsonProperty("mode")
@@ -72,6 +79,11 @@ public class EngineConfig {
         _facets.stream().forEach(facetConfig -> facetConfig.validate());
     }
 
+    /**
+     * @deprecated This method returns null when its argument is invalid, which is bad practice. Use
+     *             {@link EngineConfig#deserialize(String)} instead.
+     */
+    @Deprecated(since = "3.9")
     public static EngineConfig reconstruct(String json) {
         if (json == null) {
             return new EngineConfig(Collections.emptyList(), Mode.RowBased);
@@ -81,6 +93,20 @@ public class EngineConfig {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * Deserialize an engine config from its JSON representation (non-null)
+     * 
+     * @throws IllegalArgumentException
+     *             if the JSON format is invalid.
+     */
+    public static EngineConfig deserialize(String json) {
+        try {
+            return ParsingUtilities.mapper.readValue(json, EngineConfig.class);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 }

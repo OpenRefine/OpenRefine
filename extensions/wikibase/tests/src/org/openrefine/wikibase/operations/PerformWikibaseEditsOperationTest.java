@@ -62,13 +62,13 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructor() {
-        new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "", 5, "", 60, "tag", "editing results");
+        new PerformWikibaseEditsOperation(EngineConfig.defaultRowBased(), "", 5, "", 60, "tag", "editing results");
     }
 
     @Test
     public void testGetTagCandidates() {
         PerformWikibaseEditsOperation operation = new PerformWikibaseEditsOperation(
-                EngineConfig.reconstruct("{}"), "my summary", 5, "", 60, "openrefine-${version}", null);
+                EngineConfig.defaultRowBased(), "my summary", 5, "", 60, "openrefine-${version}", null);
         List<String> candidates = operation.getTagCandidates("3.4");
 
         assertEquals(candidates, Arrays.asList("openrefine-3.4", "openrefine"));

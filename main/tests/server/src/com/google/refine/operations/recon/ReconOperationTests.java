@@ -207,7 +207,7 @@ public class ReconOperationTests extends RefineTest {
 
     @Test
     public void testWorkingRecon() throws Exception {
-        ReconOperation operation = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
+        ReconOperation operation = new ReconOperation(EngineConfig.defaultRowBased(), "column", reconConfig);
 
         runOperation(operation, project);
 
@@ -241,7 +241,7 @@ public class ReconOperationTests extends RefineTest {
         when(reconConfig.createJob(Mockito.eq(project), Mockito.anyInt(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(reconJob);
 
-        ReconOperation op = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
+        ReconOperation op = new ReconOperation(EngineConfig.defaultRowBased(), "column", reconConfig);
 
         runOperation(op, project, 1000);
 
@@ -298,7 +298,7 @@ public class ReconOperationTests extends RefineTest {
                     "           }\n" +
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
-            ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
+            ReconOperation op = new ReconOperation(EngineConfig.defaultRowBased(), "director", config);
             Process process = op.createProcess(project, new Properties());
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
@@ -404,7 +404,7 @@ public class ReconOperationTests extends RefineTest {
                     "           }\n" +
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
-            ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
+            ReconOperation op = new ReconOperation(EngineConfig.defaultRowBased(), "director", config);
             Process process = op.createProcess(project, new Properties());
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
