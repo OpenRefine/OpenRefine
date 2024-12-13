@@ -3,26 +3,44 @@ package com.google.refine.commands.row;
 
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.commands.Command;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.CommandTestBase;
 import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
+import com.google.refine.operations.row.RowDuplicatesRemovalOperation;
 
 public class RemoveDuplicateRowsCommandTest extends CommandTestBase {
 
     private Project project = null;
-    private final String duplicateRowCriteria = "[\"SITE_ID\",\"SITE_NUM\",\"SITE_NAME\",\"ACTIVE\",\"INACTIVE\",\"AGENCY\",\"STATE\",\"COUNTY\",\"TIME_ZONE\",\"LATITUDE\",\"LONGITUDE\",\"ELEVATION\",\"MAPID\",\"LAND_USE\",\"TERRAIN\",\"JSONDATA\",\"NADP_ID\",\"NADP_DISTANCE\",\"UPDATE_DATE\"]";
+    private final List<String> duplicateRowCriteria = List.of(
+            new String[] { "SITE_ID", "SITE_NUM", "SITE_NAME", "ACTIVE", "INACTIVE", "AGENCY", "STATE", "COUNTY", "TIME_ZONE", "LATITUDE",
+                    "LONGITUDE", "ELEVATION", "MAPID", "LAND_USE", "TERRAIN", "JSONDATA", "NADP_ID", "NADP_DISTANCE", "UPDATE_DATE" });
+    private final String _engineConfig = "{\n" +
+            "    \"facets\": [\n" +
+            "        {\n" +
+            "            \"type\": \"list\",\n" +
+            "            \"name\": \"SITE_ID\",\n" +
+            "            \"columnName\": \"SITE_ID\",\n" +
+            "            \"expression\": \"value\",\n" +
+            "            \"omitBlank\": false,\n" +
+            "            \"omitError\": false,\n" +
+            "            \"selection\": [],\n" +
+            "            \"selectBlank\": false,\n" +
+            "            \"selectError\": false,\n" +
+            "            \"invert\": false\n" +
+            "        }\n" +
+            "    ],\n" +
+            "        \"mode\": \"row-based\"\n" +
+            "}";
 
     protected RemoveDuplicateRowsCommand command;
 
@@ -207,20 +225,11 @@ public class RemoveDuplicateRowsCommandTest extends CommandTestBase {
     }
 
     @Test
-    // If successful request, responses contains
-    public void testDuplicateRowRemoval() throws ServletException, IOException {
-        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(request.getParameter("criteria")).thenReturn(duplicateRowCriteria);
-
-        command.doPost(request, response);
-
-        JsonNode node = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
-        assertNotNull(node.get("code"));
-        assertEquals(node.get("code").toString(), "\"ok\"");
-        assertNotNull(node.get("historyEntry"));
-        assertNotNull(node.get("historyEntry").get("id"));
-        assertNotNull(node.get("historyEntry").get("description"));
-        assertEquals(node.get("historyEntry").get("description").asText(), "Remove 1 rows");
-        assertNotNull(node.get("historyEntry").get("time"));
+    public void testRemoveDuplicateRows() throws Exception {
+        EngineConfig engineConfig = EngineConfig.reconstruct(_engineConfig);
+        RowDuplicatesRemovalOperation operation = new RowDuplicatesRemovalOperation(engineConfig, duplicateRowCriteria);
+        runOperation(operation, project);
+        assertEquals(project.rows.size(), 3);
+        assertEquals(project.history.getLastPastEntries(1).get(0).description, "Remove 1 rows");
     }
 }

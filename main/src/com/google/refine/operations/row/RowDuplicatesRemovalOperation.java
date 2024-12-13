@@ -11,29 +11,34 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.FilteredRows;
+import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowRemovalChange;
+import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationDescription;
 
-public class RowDuplicatesRemovalOperation extends AbstractOperation {
+public class RowDuplicatesRemovalOperation extends EngineDependentOperation {
 
     final protected List<String> _criteria;
+    final List<Column> criteriaColumns = new ArrayList<Column>();
+    HashSet<Object> rowUniqueKeys = new HashSet<>();
 
     @JsonCreator
     public RowDuplicatesRemovalOperation(
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("criteria") List<String> criteria) {
+        super(engineConfig);
         _criteria = criteria;
     }
 
@@ -49,9 +54,9 @@ public class RowDuplicatesRemovalOperation extends AbstractOperation {
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+        Engine engine = createEngine(project);
 
         List<Integer> rowIndices = new ArrayList<Integer>();
-        final List<Column> criteriaColumns = new ArrayList<Column>(_criteria.size());
         for (String c : _criteria) {
             Column toColumn = project.columnModel.getColumnByName(c);
             if (toColumn != null) {
@@ -59,7 +64,8 @@ public class RowDuplicatesRemovalOperation extends AbstractOperation {
             }
         }
 
-        findDuplicateRows(project, criteriaColumns, rowIndices);
+        FilteredRows filteredRows = engine.getAllFilteredRows();
+        filteredRows.accept(project, createRowVisitor(project, rowIndices));
 
         return new HistoryEntry(
                 historyEntryID,
@@ -69,20 +75,46 @@ public class RowDuplicatesRemovalOperation extends AbstractOperation {
                 new RowRemovalChange(rowIndices));
     }
 
-    private void findDuplicateRows(Project project, List<Column> criteriaColumns, List<Integer> rowIndices) {
-        Set<String> uniqueKeys = new HashSet<>();
+    protected RowVisitor createRowVisitor(Project project, List<Integer> rowIndices) throws Exception {
+        return new RowVisitor() {
 
-        int c = project.recordModel.getRecordCount();
-        for (int r = 0; r < c; r++) {
-            Row row = project.rows.get(r);
-            String key = criteriaColumns.stream()
-                    .map(col -> normalizeValue(row.getCell(col.getCellIndex())))
-                    .collect(Collectors.joining("|"));
+            List<Integer> rowIndices;
 
-            if (!uniqueKeys.add(key)) {
-                rowIndices.add(r);
+            public RowVisitor init(List<Integer> rowIndices) {
+                this.rowIndices = rowIndices;
+                return this;
             }
+
+            @Override
+            public void start(Project project) {
+                // nothing to do
+            }
+
+            @Override
+            public void end(Project project) {
+                // nothing to do
+            }
+
+            @Override
+            public boolean visit(Project project, int rowIndex, Row row) {
+                if (isDuplicate(row)) {
+                    rowIndices.add(rowIndex);
+                }
+                return false;
+            }
+        }.init(rowIndices);
+    }
+
+    private boolean isDuplicate(Row row) {
+        List<String> key = criteriaColumns.stream()
+                .map(col -> normalizeValue(row.getCell(col.getCellIndex())))
+                .collect(Collectors.toList());
+        int keyHash = key.hashCode();
+
+        if (!rowUniqueKeys.add(keyHash)) {
+            return true;
         }
+        return false;
     }
 
     private static String normalizeValue(Object value) {
@@ -91,18 +123,8 @@ public class RowDuplicatesRemovalOperation extends AbstractOperation {
             return "";
         } else if (value instanceof Date) {
             return dateFormat.format((Date) value);
-        } else if (value instanceof String && ((String) value).trim().startsWith("{")) {
-            return normalizeJson((String) value);
         }
         return value.toString();
     }
 
-    private static String normalizeJson(String json) {
-        try {
-            Map<String, Object> jsonMap = new ObjectMapper().readValue(json, Map.class);
-            return new ObjectMapper().writeValueAsString(jsonMap);
-        } catch (Exception e) {
-            return json;
-        }
-    }
 }
