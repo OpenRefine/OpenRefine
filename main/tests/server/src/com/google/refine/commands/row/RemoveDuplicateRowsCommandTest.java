@@ -15,6 +15,8 @@ import org.testng.annotations.Test;
 
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.CommandTestBase;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
 import com.google.refine.operations.row.RowDuplicatesRemovalOperation;
 
@@ -30,6 +32,7 @@ public class RemoveDuplicateRowsCommandTest extends CommandTestBase {
 
     @BeforeMethod
     public void setUpCommand() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
         command = new RemoveDuplicateRowsCommand();
         project = createProject(
                 new String[] { "SITE_ID",
