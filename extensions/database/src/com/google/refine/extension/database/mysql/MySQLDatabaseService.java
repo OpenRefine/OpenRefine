@@ -119,7 +119,7 @@ public class MySQLDatabaseService extends DatabaseService {
             return dbInfo;
         } catch (SQLException e) {
             logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         } finally {
             MySQLConnectionManager.getInstance().shutdown();
         }
@@ -149,7 +149,7 @@ public class MySQLDatabaseService extends DatabaseService {
             }
         } catch (SQLException e) {
             logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
         return null;
     }
@@ -170,7 +170,7 @@ public class MySQLDatabaseService extends DatabaseService {
             return columns;
         } catch (SQLException e) {
             logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         }
     }
 
@@ -202,7 +202,7 @@ public class MySQLDatabaseService extends DatabaseService {
             return rows;
         } catch (SQLException e) {
             logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         } finally {
             try {
                 if (queryResult != null) {
@@ -245,7 +245,7 @@ public class MySQLDatabaseService extends DatabaseService {
             return dbInfo;
         } catch (SQLException e) {
             logger.error("SQLException::", e);
-            throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
+            throw new DatabaseServiceException(e);
         } finally {
             try {
                 if (queryResult != null) {

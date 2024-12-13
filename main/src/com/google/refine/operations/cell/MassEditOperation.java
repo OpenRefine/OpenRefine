@@ -42,12 +42,14 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -110,6 +112,17 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         super(engineConfig, columnName, true);
         _expression = expression;
         _edits = edits;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        try {
+            MetaParser.parse(_expression);
+        } catch (ParsingException e) {
+            throw new IllegalArgumentException(e);
+        }
+        Validate.notNull(_edits, "Missing edits");
     }
 
     @JsonProperty("expression")

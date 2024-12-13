@@ -160,6 +160,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             CsvFormat format = settings.getFormat();
             format.setDelimiter(sep);
             format.setQuote(quote);
+            settings.setMaxColumns(MAX_COLUMNS);
             settings.setLineSeparatorDetectionEnabled(true);
             settings.setIgnoreLeadingWhitespaces(false);
             settings.setIgnoreTrailingWhitespaces(false);

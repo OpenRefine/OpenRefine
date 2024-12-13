@@ -61,6 +61,17 @@ public class EngineConfig {
         return _facets;
     }
 
+    /**
+     * Checks that all facets in this engine config are valid (rely on syntactically correct expressions, don't contain
+     * contradictory options).
+     * 
+     * @throws IllegalArgumentException
+     *             if not
+     */
+    public void validate() {
+        _facets.stream().forEach(facetConfig -> facetConfig.validate());
+    }
+
     public static EngineConfig reconstruct(String json) {
         if (json == null) {
             return new EngineConfig(Collections.emptyList(), Mode.RowBased);

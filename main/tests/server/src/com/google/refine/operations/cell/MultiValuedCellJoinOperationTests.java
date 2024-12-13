@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
@@ -93,6 +95,13 @@ public class MultiValuedCellJoinOperationTests extends RefineTest {
                 + "\"keyColumnName\":\"key column\","
                 + "\"separator\":\",\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellJoinOperation(null, "key", "sep").validate());
+        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellJoinOperation("value", null, "sep").validate());
+        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellJoinOperation("value", "key", null).validate());
     }
 
     /*

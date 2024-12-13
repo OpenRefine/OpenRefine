@@ -40,6 +40,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.HistoryEntry;
@@ -65,6 +66,13 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         _keyColumnName = keyColumnName;
         _valueColumnName = valueColumnName;
         _noteColumnName = noteColumnName;
+    }
+
+    @Override
+    public void validate() {
+        Validate.notNull(_keyColumnName, "Missing key column name");
+        Validate.notNull(_valueColumnName, "Missing value column name");
+        // _noteColumnName can be null
     }
 
     @JsonProperty("keyColumnName")
