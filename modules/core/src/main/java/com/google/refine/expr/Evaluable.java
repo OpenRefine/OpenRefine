@@ -37,6 +37,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
+import com.google.refine.util.NotImplementedException;
+
 /**
  * Interface for evaluable expressions in any arbitrary language.
  */
@@ -45,13 +47,23 @@ public interface Evaluable {
     /**
      * The source string which generated this expression. This does not include the language prefix, which can be
      * obtained by {@link #getLanguagePrefix()}.
+     * 
+     * @throws NotImplementedException
+     *             by default (for compatibility with older extensions)
      */
-    public String getSource();
+    public default String getSource() {
+        throw new NotImplementedException();
+    }
 
     /**
      * The language prefix used to generate this evaluable (without final colon).
+     * 
+     * @throws NotImplementedException
+     *             by default (for compatibility with older extensions)
      */
-    public String getLanguagePrefix();
+    public default String getLanguagePrefix() {
+        throw new NotImplementedException();
+    }
 
     /**
      * Evaluate this expression in the given environment (bindings).
