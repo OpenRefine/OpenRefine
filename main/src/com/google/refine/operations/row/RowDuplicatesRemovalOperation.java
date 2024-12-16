@@ -32,7 +32,6 @@ public class RowDuplicatesRemovalOperation extends EngineDependentOperation {
 
     final protected List<String> _criteria;
     final List<Column> criteriaColumns = new ArrayList<Column>();
-    HashSet<Object> rowUniqueKeys = new HashSet<>();
 
     @JsonCreator
     public RowDuplicatesRemovalOperation(
@@ -79,6 +78,7 @@ public class RowDuplicatesRemovalOperation extends EngineDependentOperation {
         return new RowVisitor() {
 
             List<Integer> rowIndices;
+            HashSet<Object> rowUniqueKeys = new HashSet<>();
 
             public RowVisitor init(List<Integer> rowIndices) {
                 this.rowIndices = rowIndices;
@@ -97,7 +97,7 @@ public class RowDuplicatesRemovalOperation extends EngineDependentOperation {
 
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
-                if (isDuplicate(row)) {
+                if (isDuplicate(row, rowUniqueKeys)) {
                     rowIndices.add(rowIndex);
                 }
                 return false;
@@ -105,7 +105,7 @@ public class RowDuplicatesRemovalOperation extends EngineDependentOperation {
         }.init(rowIndices);
     }
 
-    private boolean isDuplicate(Row row) {
+    private boolean isDuplicate(Row row, HashSet<Object> rowUniqueKeys) {
         List<String> key = criteriaColumns.stream()
                 .map(col -> normalizeValue(row.getCell(col.getCellIndex())))
                 .collect(Collectors.toList());

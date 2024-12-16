@@ -58,11 +58,21 @@ RemoveDuplicateRowsDialog.prototype._createDialog = function() {
     for (var i = 0; i < theProject.columnModel.columns.length; i++) {
         var column = theProject.columnModel.columns[i];
         var name = column.name;
-        var columnCheckbox = $('<div><input type="checkbox" class="column-checkbox" id="column-' + i + '" value="' + name + '" checked=true /> <label for="column-' + i + '">' + name + '</label></div>');
+        var columnCheckbox = $('<div></div>');
+        var checkbox = $('<input>', {
+            type: 'checkbox',
+            class: 'column-checkbox',
+            id: 'column-' + i,
+            value: name,
+            checked: true
+        });
+        var label = $('<label>', {
+            for: 'column-' + i,
+        }).text(name);
+        columnCheckbox.append(checkbox).append(label);
         columnList.append(columnCheckbox);
     }
 
-    // Event handling for "Select All" functionality
     $('#select-all').on('change', function () {
         var isChecked = $(this).is(':checked');
         $('.column-checkbox').prop('checked', isChecked);

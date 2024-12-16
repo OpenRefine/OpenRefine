@@ -40,14 +40,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin-bottom: 3px;
 }
 
-.column-reordering-dialog-column {
-  border: 1px solid #aaa;
-  background: #eee;
-  padding: 3px;
-  margin: 2px;
-  cursor: move;
-}
-
 .remove-duplicate-rows-dialog-column-container {
   height: 375px;
   border: 1px solid #eee;
