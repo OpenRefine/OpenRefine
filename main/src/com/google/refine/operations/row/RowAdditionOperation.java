@@ -28,12 +28,16 @@
 package com.google.refine.operations.row;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowAdditionChange;
@@ -65,6 +69,16 @@ public class RowAdditionOperation extends AbstractOperation {
     @Override
     protected String getBriefDescription(Project project) {
         return OperationDescription.row_addition_brief();
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(Set.of());
+    }
+
+    @JsonIgnore
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.empty());
     }
 
     @Override
