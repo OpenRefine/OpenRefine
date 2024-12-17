@@ -68,13 +68,16 @@ public class JythonEvaluable implements Evaluable {
         return new LanguageSpecificParser() {
 
             @Override
-            public Evaluable parse(String s) throws ParsingException {
-                return new JythonEvaluable(s);
+            public Evaluable parse(String source, String languagePrefix) throws ParsingException {
+                return new JythonEvaluable(source, languagePrefix);
             }
+
         };
     }
 
     private final String s_functionName;
+    private final String s_originalSource;
+    private final String s_languagePrefix;
 
     private static PythonInterpreter _engine;
 
@@ -103,17 +106,24 @@ public class JythonEvaluable implements Evaluable {
         logger.debug("Done with static block in Jython initialization");
     }
 
-    public JythonEvaluable(String s) {
+    // Convenience constructor for tests
+    protected JythonEvaluable(String source) {
+        this(source, "jython");
+    }
+
+    public JythonEvaluable(String source, String languagePrefix) {
+        s_originalSource = source;
+        s_languagePrefix = languagePrefix;
         if (_engine == null) {
             // TODO: This could potentially be done in the background, after startup, but before the user needs it
             logger.debug("Invoking constructor for PythonInterpreter()");
             _engine = new PythonInterpreter();
             logger.debug("Done constructor for PythonInterpreter()");
         }
-        this.s_functionName = String.format("__temp_%d__", Math.abs(s.hashCode()));
+        this.s_functionName = String.format("__temp_%d__", Math.abs(source.hashCode()));
 
         // indent and create a function out of the code
-        String[] lines = s.split("\r\n|\r|\n");
+        String[] lines = source.split("\r\n|\r|\n");
 
         StringBuffer sb = new StringBuffer(1024);
         sb.append("def ");
@@ -201,5 +211,15 @@ public class JythonEvaluable implements Evaluable {
         } else {
             return po;
         }
+    }
+
+    @Override
+    public String getSource() {
+        return s_originalSource;
+    }
+
+    @Override
+    public String getLanguagePrefix() {
+        return s_languagePrefix;
     }
 }
