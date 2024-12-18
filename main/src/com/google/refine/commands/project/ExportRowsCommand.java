@@ -106,9 +106,11 @@ public class ExportRowsCommand extends Command {
                 exporter = new CsvExporter('\t');
             }
 
-            response.setHeader("Content-Type", exporter.getContentType());
-            // in case the content-type is text/html, to avoid XSS attacks
-            response.setHeader("Content-Security-Policy", "script-src 'none'; connect-src 'none'");
+            String contentType = params.get("contentType");
+            if (contentType == null) {
+                contentType = exporter.getContentType();
+            }
+            response.setHeader("Content-Type", contentType);
 
             String preview = params.get("preview");
             if (!"true".equals(preview)) {
