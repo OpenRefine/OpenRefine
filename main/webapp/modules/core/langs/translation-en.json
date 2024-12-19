@@ -372,7 +372,7 @@
     "core-dialogs/action": "Action",
     "core-dialogs/should-return-number": "your expression should return a number",
     "core-dialogs/remove-duplicate-rows": "Remove duplicate rows",
-    "core-dialogs/remove-duplicate-rows-col-select": "Select columns to identify duplicates",
+    "core-dialogs/remove-duplicate-rows-col-select": "Select columns used to identify duplicate rows",
     "core-buttons/no-criteria-selected": "At least one column needs to be selected to identify duplicates.",
     "core-facets/remove-facet": "Remove this facet",
     "core-facets/minimize-facet": "Toggle between the minimization and maximization of this facet",
