@@ -862,7 +862,7 @@
     "core-dialogs/click-cluster": "Cliquer sur « Groupe » pour trouver des groupes dans la colonne « $1 » en utilisant les paramètres ci-dessus.",
     "core-views/add-rows/label": "Ajouter des lignes supplémentaires",
     "core-project/applying-change-erases-entries": "Cette modification remplacera {{pluriel:1$|l'entrée suivante|les 1$ entrées suivantes}} de l'historique :",
-    "core-views/use-values-as-identifiers-note": "Les identifiants de réconciliation ne seront pas validés.",
+    "core-views/use-values-as-identifiers-note": "Les identifiants de la réconciliation ne seront pas validés.",
     "core-index-import/sort-files-header": "Trier les fichiers",
     "core-views/see-more": "Voir plus",
     "core-dialogs/action": "Action",
@@ -912,5 +912,6 @@
     "core-index-import/delete-import-file": "Enlever le fichier",
     "core-views/add-column-with-URLs-of-matched-entities-tooltip": "Ajouter une colonne avec les URL des valeurs réconciliées pour toutes les lignes actuellement filtrées",
     "core-buttons/no": "Non",
-    "core-index-import/drag-files": "Déplacer les fichiers ici"
+    "core-index-import/drag-files": "Déplacer les fichiers ici",
+    "core-dialogs/new-function-name": "Nouveau nom de fonction"
 }
