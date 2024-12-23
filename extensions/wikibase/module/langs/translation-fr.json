@@ -349,5 +349,13 @@
     "warnings-messages/duplicate-file-names-in-batch/body": "Les noms de fichiers pour les nouveaux fichiers doivent être distincts. Certains noms de fichiers, tels que <span class=\"wb-issue-preformat\">{example_filename}</span>, sont utilisés pour plus d'un fichier.",
     "wikibase-schema/wikitext-placeholder": "Wikicode associé au fichier",
     "wikibase-schema/input-placeholder-for-wikibase-sense": "Indiquer un sens ou déplacer la colonne réconciliée",
-    "wikibase-schema/input-placeholder-for-wikibase-form": "Indiquer une forme ou déplacer une colonne réconciliée"
+    "wikibase-schema/input-placeholder-for-wikibase-form": "Indiquer une forme ou déplacer une colonne réconciliée",
+    "warnings-messages/invalid-entity-id-format/title": "Identifiants d'élément non valides",
+    "warnings-messages/new-media-without-file-path/body": "Télécharger de nouveaux fichiers nécessite de fournir un chemin (ou d'une URL) vers le fichier à télécharger. Aucun chemin n'a été fourni pour {exemple_entity}, par exemple.",
+    "warnings-messages/invalid-mediainfo-subject/title": "Identifiants sujet non valides pour la modification d'un fichier",
+    "warnings-messages/invalid-item-subject/body": "Les identifiants des éléments tels que <span class=\"wb-issue-preformat\">{example}</span> ne peuvent pas être utilisés comme sujet pour la modification d'un élément. Le sujet doit être un Qid.",
+    "warnings-messages/existing-item-requires-property-to-have-certain-values-with-suggested-value/body": "Sur des entités telles que {example_entity}, la propriété {added_property_entity} doit avoir une valeur définie sur {item_entity}. Si l'entité a déjà des déclarations avec la propriété {added_property_entity} et avec les valeurs appropriées dans {wikibase_name}, alors cet avertissement peut être ignoré.",
+    "warnings-messages/invalid-mediainfo-subject/body": "Les identificateurs d'éléments tels que <span class=\"wb-issue-preformat\">{exemple}</span> ne peuvent pas être utilisés comme sujet pour une modification d'un fichier. Le sujet doit être un Mid.",
+    "warnings-messages/invalid-entity-id-format/body": "Les colonnes réconciliées contiennent des identifiants d'entité non valides, tels que <span class=\"wb-issue-preformat\">{exemple}</span>.",
+    "warnings-messages/invalid-item-id-format/body": "Les colonnes réconciliées contiennent des identifiants d'articles non valides, tels que <span class=\"wb-issue-preformat\">{exemple}</span>. Les identifiants d'éléments doivent être des Qids."
 }
