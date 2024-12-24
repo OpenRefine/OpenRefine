@@ -72,6 +72,16 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
             return bindings.get("value");
         }
 
+        @Override
+        public String getSource() {
+            return "value";
+        }
+
+        @Override
+        public String getLanguagePrefix() {
+            return "grel";
+        }
+
     };
     private static final int cellIndex = 0;
     private static final String columnName = "Col1";

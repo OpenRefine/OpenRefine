@@ -58,6 +58,7 @@ abstract public class MetaParser {
         }
     }
 
+    static final public String GREL_LANGUAGE_CODE = "grel";
     static final protected Map<String, LanguageInfo> s_languages = new HashMap<String, LanguageInfo>();
 
     /**
@@ -106,23 +107,24 @@ abstract public class MetaParser {
         if (colon >= 0) {
             language = s.substring(0, colon).toLowerCase();
             if ("gel".equals(language)) {
-                language = "grel";
+                language = GREL_LANGUAGE_CODE;
             }
         }
 
-        LanguageInfo info = s_languages.get(language.toLowerCase());
+        language = language.toLowerCase();
+        LanguageInfo info = s_languages.get(language);
         if (info != null) {
-            return info.parser.parse(s.substring(colon + 1));
+            return info.parser.parse(s.substring(colon + 1), language);
         } else {
             return parseGREL(s);
         }
     }
 
     static protected Evaluable parseGREL(String s) throws ParsingException {
-        LanguageInfo info = s_languages.get("grel");
+        LanguageInfo info = s_languages.get(GREL_LANGUAGE_CODE);
         if (info == null) {
             throw new ParsingException("Default language GREL is not available");
         }
-        return info.parser.parse(s);
+        return info.parser.parse(s, GREL_LANGUAGE_CODE);
     }
 }
