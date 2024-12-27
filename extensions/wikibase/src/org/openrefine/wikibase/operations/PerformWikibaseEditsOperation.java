@@ -79,6 +79,9 @@ import org.openrefine.wikibase.editing.EditBatchProcessor.EditResult;
 import org.openrefine.wikibase.editing.EditResultsFormatter;
 import org.openrefine.wikibase.editing.NewEntityLibrary;
 import org.openrefine.wikibase.manifests.Manifest;
+import org.openrefine.wikibase.schema.WbExpression;
+import org.openrefine.wikibase.schema.WbMediaInfoEditExpr;
+import org.openrefine.wikibase.schema.WbStringVariable;
 import org.openrefine.wikibase.schema.WikibaseSchema;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 import org.openrefine.wikibase.updates.EntityEdit;
@@ -243,6 +246,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         protected String _summary;
         protected final long _historyEntryID;
         protected final List<JsonNode> onDone = new ArrayList<>();
+        protected String _fileNameColumn;
 
         protected PerformEditsProcess(Project project, Engine engine, String description, String editGroupsUrlSchema, String summary) {
             super(description);
@@ -286,6 +290,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 }
                 onDone.add(createFacetAction);
 
+            }
+
+            for (WbExpression<? extends EntityEdit> entityDocumentExpr : this._schema.getEntityDocumentExpressions()) {
+                 if (entityDocumentExpr instanceof WbMediaInfoEditExpr) {
+                    this._fileNameColumn = ((WbStringVariable)((WbMediaInfoEditExpr) entityDocumentExpr).getFileName()).getColumnName();
+                    break;
+                 }
             }
         }
 
@@ -369,6 +380,29 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
 
             if (!_canceled) {
+                // Get the filename column
+                Change fileNameChange = null;
+                if ( this._fileNameColumn != null ) {
+                    Column fileColumn = _project.columnModel.getColumnByName(this._fileNameColumn);
+                    int resultsCellIndex = fileColumn != null ? fileColumn.getCellIndex() : -1;
+
+                    if (resultsCellIndex != -1) {
+                        List<CellAtRow> cells = resultsFormatter.toCells();
+                        List<CellChange> cellChanges = new ArrayList<>();
+                        for (CellAtRow fileCell : cells) {
+                            int rowId = fileCell.row;
+                            Cell oldCell = _project.rows.get(rowId).getCell(resultsCellIndex);
+                            if ( ! oldCell.getValue().toString().startsWith("File:")) {
+                                Cell newCell = new Cell("File:".concat(oldCell.getValue().toString()), oldCell.recon);
+                                cellChanges.add(new CellChange(rowId, resultsCellIndex,
+                                        oldCell, newCell));
+                            }
+                        }
+                        if ( cellChanges.size() > 0 ) {
+                            fileNameChange = new MassCellChange(cellChanges, this._fileNameColumn, false);
+                        }
+                    }
+                }
                 Change reconUpdateChange = new PerformWikibaseEditsChange(newEntityLibrary);
                 Change fullChange = errorReportingChange == null ? reconUpdateChange
                         : new MassChange(Arrays.asList(reconUpdateChange, errorReportingChange), false);
@@ -377,6 +411,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                         PerformWikibaseEditsOperation.this, fullChange);
 
                 _project.history.addEntry(historyEntry);
+
+                if ( fileNameChange != null ) {
+                    HistoryEntry fileNamehistoryEntry = new HistoryEntry(_historyEntryID, _project, _description,
+                            PerformWikibaseEditsOperation.this, fileNameChange);
+                    _project.history.addEntry(fileNamehistoryEntry);
+                }
+
                 _project.processManager.onDoneProcess(this);
             }
         }
