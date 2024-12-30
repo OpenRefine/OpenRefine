@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.OptionalLong;
 import java.util.Set;
@@ -39,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
+import org.wikidata.wdtk.datamodel.interfaces.LabeledDocument;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.EditingResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
@@ -183,14 +185,22 @@ public class EditBatchProcessor {
                 // New entities
                 ReconEntityIdValue newCell = (ReconEntityIdValue) update.getEntityId();
                 EntityIdValue createdDocId;
+                String label = "";
                 if (update instanceof MediaInfoEdit) {
                     MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
                     createdDocId = ((MediaInfoEdit) update).uploadNewFile(editor, mediaFileUtils, summary, tags, filePageWaitTime,
                             filePageMaxWaitTime);
+                    label = "File:".concat(((MediaInfoEdit) update).getFileName());
                 } else {
-                    createdDocId = editor.createEntityDocument(update.toNewEntity(), summary, tags).getEntityId();
+                    LabeledDocument labeledDocument = (LabeledDocument) editor.createEntityDocument(update.toNewEntity(), summary, tags);
+                    createdDocId = labeledDocument.getEntityId();
+                    if (labeledDocument != null && labeledDocument.getLabels() != null) {
+                        label = labeledDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
+                                ? labeledDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
+                                : "";
+                    }
                 }
-                library.setId(newCell.getReconInternalId(), createdDocId.getId());
+                library.setId(newCell.getReconInternalId(), createdDocId.getId(), label);
                 newEntityUrl = createdDocId.getSiteIri() + createdDocId.getId();
             } else {
                 // Existing entities

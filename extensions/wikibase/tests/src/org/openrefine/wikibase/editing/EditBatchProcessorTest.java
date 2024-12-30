@@ -142,7 +142,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         assertEquals(100, processor.progress());
 
         NewEntityLibrary expectedLibrary = new NewEntityLibrary();
-        expectedLibrary.setId(1234L, "Q1234");
+        expectedLibrary.setId(1234L, "Q1234", "better label");
         assertEquals(expectedLibrary, library);
     }
 

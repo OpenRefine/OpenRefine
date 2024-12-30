@@ -60,7 +60,7 @@ public class ReconEntityRewriterTest {
     @Test
     public void testSuccessfulRewrite() {
         rewriter = new ReconEntityRewriter(library, TestingData.newIdA);
-        library.setId(4567L, "Q1234");
+        library.setId(4567L, "Q1234", "Q1234");
         assertEquals(newlyCreated, rewriter.copy(TestingData.newIdB));
     }
 
@@ -74,7 +74,7 @@ public class ReconEntityRewriterTest {
     @Test
     public void testSubjectRewritten() {
         ItemIdValue subject = TestingData.newIdB;
-        library.setId(4567L, "Q1234");
+        library.setId(4567L, "Q1234", "Q1234");
         rewriter = new ReconEntityRewriter(library, subject);
         assertEquals(newlyCreated, rewriter.copy(subject));
     }
@@ -89,7 +89,7 @@ public class ReconEntityRewriterTest {
     public void testRewriteCreate() throws NewEntityNotCreatedYetException {
         ItemIdValue subject = TestingData.newIdA;
         rewriter = new ReconEntityRewriter(library, subject);
-        library.setId(4567L, "Q1234");
+        library.setId(4567L, "Q1234", "label");
         TermedStatementEntityEdit update = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, TestingData.newIdB))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
@@ -114,7 +114,7 @@ public class ReconEntityRewriterTest {
     public void testRewriteUpdateOnPreviouslyCreatedEntity() throws NewEntityNotCreatedYetException {
         ItemIdValue subject = TestingData.newIdA;
         rewriter = new ReconEntityRewriter(library, subject);
-        library.setId(4567L, "Q1234");
+        library.setId(4567L, "Q1234", "Q1234");
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdB)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de"))
@@ -133,7 +133,7 @@ public class ReconEntityRewriterTest {
     public void testRewriteUpdateOnExistingEntity() throws NewEntityNotCreatedYetException {
         ItemIdValue subject = TestingData.matchedId;
         rewriter = new ReconEntityRewriter(library, subject);
-        library.setId(4567L, "Q1234");
+        library.setId(4567L, "Q1234", "label");
         TermedStatementEntityEdit update = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, TestingData.newIdB))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingId))
@@ -158,7 +158,7 @@ public class ReconEntityRewriterTest {
     public void testRewritePropertyUpdateOnExistingEntity() throws NewEntityNotCreatedYetException {
         ItemIdValue subject = TestingData.existingId;
         rewriter = new ReconEntityRewriter(library, subject);
-        library.setId(7654L, "P1234");
+        library.setId(7654L, "P1234", "label");
         TermedStatementEntityEdit update = new ItemEditBuilder(subject)
                 .addStatement(TestingData.generateStatementAddition(subject, TestingData.newPropertyIdB))
                 .addStatement(TestingData.generateStatementDeletion(subject, TestingData.existingPropertyId))

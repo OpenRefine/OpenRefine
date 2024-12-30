@@ -77,7 +77,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     @Test
     public void testLoadChange()
             throws Exception {
-        String changeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"}}\n" + "/ec/\n";
+        String changeString = "newItems={\"qidMap\":{\"1234\":{\"returnedId\":\"Q789\",\"label\":\"Q789\"}}}\n" + "/ec/\n";
         LineNumberReader reader = makeReader(changeString);
         Change change = PerformWikibaseEditsOperation.PerformWikibaseEditsChange.load(reader, pool);
 

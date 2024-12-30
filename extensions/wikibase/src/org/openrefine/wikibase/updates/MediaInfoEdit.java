@@ -314,7 +314,8 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         ReconEntityIdValue reconEntityIdValue = (ReconEntityIdValue) id;
         MediaInfoIdValue mid = response.getMid(mediaFileUtils.getApiConnection(), reconEntityIdValue.getRecon().identifierSpace);
         NewEntityLibrary library = new NewEntityLibrary();
-        library.setId(reconEntityIdValue.getReconInternalId(), mid.getId());
+        String label = this.fileName.startsWith("File:") ? this.fileName : "File:".concat(this.fileName);
+        library.setId(reconEntityIdValue.getReconInternalId(), mid.getId(), label);
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, id);
         try {
             MediaInfoEdit rewritten = (MediaInfoEdit) rewriter.rewrite(this);

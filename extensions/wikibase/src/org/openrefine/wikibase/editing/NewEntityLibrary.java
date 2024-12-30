@@ -50,14 +50,14 @@ import com.google.refine.model.recon.StandardReconConfig;
  */
 public class NewEntityLibrary {
 
-    private Map<Long, String> map;
+    private Map<Long, HashMap> map;
 
     public NewEntityLibrary() {
         map = new HashMap<>();
     }
 
     @JsonCreator
-    public NewEntityLibrary(@JsonProperty("qidMap") Map<Long, String> map) {
+    public NewEntityLibrary(@JsonProperty("qidMap") Map<Long, HashMap> map) {
         this.map = map;
     }
 
@@ -69,7 +69,17 @@ public class NewEntityLibrary {
      * @return the id (or null if unallocated yet)
      */
     public String getId(long id) {
-        return map.get(id);
+        if (map.get(id) != null) {
+            return map.get(id).get("returnedId").toString();
+        }
+        return null;
+    }
+
+    public String getLabel(long id) {
+        if (map.get(id) != null) {
+            return map.get(id).get("label").toString();
+        }
+        return null;
     }
 
     /**
@@ -80,8 +90,12 @@ public class NewEntityLibrary {
      * @param returnedId
      *            : the associated id returned by Wikibase
      */
-    public void setId(long id, String returnedId) {
-        map.put(id, returnedId);
+    public void setId(long id, String returnedId, String label) {
+        if (!map.containsKey(id)) {
+            map.put(id, new HashMap<>());
+        }
+        map.get(id).put("label", label);
+        map.get(id).put("returnedId", returnedId);
     }
 
     /**
@@ -112,7 +126,8 @@ public class NewEntityLibrary {
                 if (Recon.Judgment.New.equals(recon.judgment) && !reset
                         && map.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.Matched;
-                    recon.match = new ReconCandidate(map.get(recon.id), cell.value.toString(),
+                    recon.match = new ReconCandidate(map.get(recon.id).get("returnedId").toString(),
+                            map.get(recon.id).get("label").toString(),
                             new String[0], 100);
                     recon.addCandidate(recon.match);
                     changed = true;
@@ -154,7 +169,7 @@ public class NewEntityLibrary {
      * @return the underlying map
      */
     @JsonProperty("qidMap")
-    public Map<Long, String> getIdMap() {
+    public Map<Long, HashMap> getIdMap() {
         return map;
     }
 
