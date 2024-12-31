@@ -267,7 +267,7 @@
     "core-index-import/mime-type": "Typ média",
     "core-index-create/starting": "Začínám",
     "core-index/importOptionMetadata": "Importovat metadata k volbám (JSON)",
-    "core-index/slogan": "Zdatný pomocník pro práci s neuspořádanými daty",
+    "core-index/slogan": "Mocný nástroj pro práci se špinavými daty",
     "core-facets/facet-by-count": "Faseta podle počtu voleb",
     "core-facets/set-choice-count": "Nastavit limit pro počet voleb",
     "core-facets/too-many-choices": "$1 voleb celkem, příliš pro zobrazení",
@@ -925,5 +925,9 @@
     "core-views/replacement-info": "Pokud je zaškrtnuta volba \"regulární výraz\" a vzor obsahuje skupiny ohraničené závorkami, vrátí $0 celý řetězec odpovídající vzoru a $1, $2... 1., 2... skupinu.",
     "core-buttons/ok": "&nbsp;&nbsp;OK&nbsp;&nbsp;",
     "core-import-formats/text/rdf/ttl": "Soubory RDF/Turtle",
-    "core-views/add-rows/prepend-blank": "Předřadit jeden řádek"
+    "core-views/add-rows/prepend-blank": "Předřadit jeden řádek",
+    "core-dialogs/remove-duplicate-rows": "Odstranit duplicitní řádky",
+    "core-dialogs/remove-duplicate-rows-col-select": "Vyberte sloupce používané k identifikaci duplicitních řádků",
+    "core-buttons/no-criteria-selected": "Pro identifikaci duplicit je třeba vybrat alespoň jeden sloupec.",
+    "core-views/remove-duplicates": "Odstranit duplicitní řádky"
 }
