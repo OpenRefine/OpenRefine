@@ -503,6 +503,7 @@ function init() {
       "scripts/project/summary-bar.js",
       "scripts/project/exporters.js",
       "scripts/project/scripting.js",
+      "scripts/project/operation-icons.js",
 
       "scripts/facets/facet.js",
       "scripts/facets/list-facet.js",
