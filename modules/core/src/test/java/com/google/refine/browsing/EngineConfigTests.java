@@ -29,6 +29,9 @@ package com.google.refine.browsing;
 
 import static org.testng.Assert.assertThrows;
 
+import java.util.Optional;
+import java.util.Set;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -69,6 +72,12 @@ public class EngineConfigTests {
     public void serializeEngineConfigRecordMode() {
         EngineConfig ec = EngineConfig.deserialize(engineConfigRecordModeJson);
         TestUtils.isSerializedTo(ec, engineConfigRecordModeJson);
+    }
+
+    @Test
+    public void columnDependencies() {
+        EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
+        Assert.assertEquals(ec.getColumnDependencies(), Optional.of(Set.of("reference")));
     }
 
     @Test

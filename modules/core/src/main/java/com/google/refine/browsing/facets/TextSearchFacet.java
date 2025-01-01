@@ -33,7 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -93,6 +96,11 @@ public class TextSearchFacet implements Facet {
                     throw new IllegalArgumentException(e);
                 }
             }
+        }
+
+        @Override
+        public Optional<Set<String>> getColumnDependencies() {
+            return Optional.of(Collections.singleton(_columnName));
         }
     }
 

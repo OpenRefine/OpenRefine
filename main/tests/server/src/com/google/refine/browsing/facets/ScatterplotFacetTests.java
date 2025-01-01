@@ -27,11 +27,15 @@
 
 package com.google.refine.browsing.facets;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -63,6 +67,23 @@ public class ScatterplotFacetTests extends RefineTest {
             "          \"ex\": \"value\",\n" +
             "          \"dim_x\": \"lin\",\n" +
             "          \"ey\": \"value\",\n" +
+            "          \"cx\": \"my column\",\n" +
+            "          \"cy\": \"e\",\n" +
+            "          \"name\": \"my column (x) vs. e (y)\"\n" +
+            "        }";
+
+    public static String configJsonWithParseError = "{\n" +
+            "          \"to_x\": 1,\n" +
+            "          \"to_y\": 1,\n" +
+            "          \"dot\": 1,\n" +
+            "          \"from_x\": 0.21333333333333335,\n" +
+            "          \"l\": 150,\n" +
+            "          \"type\": \"scatterplot\",\n" +
+            "          \"from_y\": 0.26666666666666666,\n" +
+            "          \"dim_y\": \"lin\",\n" +
+            "          \"ex\": \"value\",\n" +
+            "          \"dim_x\": \"lin\",\n" +
+            "          \"ey\": \"foo(\",\n" +
             "          \"cx\": \"my column\",\n" +
             "          \"cy\": \"e\",\n" +
             "          \"name\": \"my column (x) vs. e (y)\"\n" +
@@ -124,5 +145,17 @@ public class ScatterplotFacetTests extends RefineTest {
         assertTrue(filter.filterRow(project, 0, project.rows.get(0)));
         assertFalse(filter.filterRow(project, 1, project.rows.get(1)));
         assertTrue(filter.filterRow(project, 3, project.rows.get(3)));
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        ScatterplotFacetConfig facetConfig = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
+        assertEquals(facetConfig.getColumnDependencies(), Optional.of(Set.of("my column", "e")));
+    }
+
+    @Test
+    public void testColumnDependenciesWithError() throws Exception {
+        ScatterplotFacetConfig facetConfig = ParsingUtilities.mapper.readValue(configJsonWithParseError, ScatterplotFacetConfig.class);
+        assertEquals(facetConfig.getColumnDependencies(), Optional.of(Collections.emptySet()));
     }
 }
