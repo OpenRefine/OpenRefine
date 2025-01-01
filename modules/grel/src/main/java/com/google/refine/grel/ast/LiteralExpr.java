@@ -34,18 +34,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 
-import com.google.refine.expr.Evaluable;
-
 /**
  * An abstract syntax tree node encapsulating a literal value.
  */
-public class LiteralExpr implements Evaluable {
+public class LiteralExpr extends GrelExpr {
 
     final protected Object _value;
 
@@ -66,5 +65,22 @@ public class LiteralExpr implements Evaluable {
     @Override
     public String toString() {
         return _value instanceof String ? new TextNode((String) _value).toString() : _value.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LiteralExpr other = (LiteralExpr) obj;
+        return Objects.equals(_value, other._value);
     }
 }
