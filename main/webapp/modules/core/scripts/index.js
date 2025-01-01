@@ -87,7 +87,7 @@ $(function() {
         "command/core/get-version",
         null,
         function(data) {
-          OpenRefineVersion = data;
+          var OpenRefineVersion = data;
 
           $("#openrefine-version").text($.i18n('core-index/refine-version', OpenRefineVersion.full_version));
           $("#openrefine-extensions").text($.i18n('core-index/refine-extensions', OpenRefineVersion.module_names.join(", ")));
@@ -95,6 +95,7 @@ $(function() {
           if (OpenRefineVersion.display_new_version_notice === "true") {
             showNotifications();
           }
+          buildClipBoardInformation(OpenRefineVersion);
         }
     );
   };
@@ -205,6 +206,25 @@ $(function() {
     );
   };
 
+  var buildClipBoardInformation = function(versionData) {
+    const clipboardData = `${versionData.full_version}
+${versionData.java_runtime_name} ${versionData.java_runtime_version}
+${versionData.java_vm_name} ${versionData.java_vm_version}
+Modules: ${versionData.module_names.join(", ")}
+Client user-agent: ${navigator.userAgent}`;
+
+    $("#openrefine-version").on('click', function() {
+      navigator.clipboard.writeText(clipboardData).then(function() {
+        // show notification that the text has been copied to clipboard
+        const container = $('<div id="notification-container">').appendTo(document.body);
+        $('<div id="notification">').text($.i18n('core-index/refine-version-copied')).appendTo(container);
+        setTimeout(function() {
+          container.remove();
+        }, 2000);
+      });
+    });
+  }
+
   var resize = function() {
     for (var i = 0; i < Refine.actionAreas.length; i++) {
       if (Refine.actionAreas[i].ui.resize) {
@@ -262,6 +282,7 @@ $(function() {
   $("#or-index-noProj").text($.i18n('core-index/no-proj')+".");
   $("#or-index-try").text($.i18n('core-index/try-these'));
   $("#or-index-sample").text($.i18n('core-index/sample-data'));
+  $("#openrefine-version").attr('title', $.i18n('core-index/refine-version-copy-to-clipboard'));
 
   maybeShowNotifications();
 
