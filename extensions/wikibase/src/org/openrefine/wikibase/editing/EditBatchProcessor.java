@@ -41,6 +41,7 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.LabeledDocument;
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.EditingResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
@@ -185,22 +186,19 @@ public class EditBatchProcessor {
                 // New entities
                 ReconEntityIdValue newCell = (ReconEntityIdValue) update.getEntityId();
                 EntityIdValue createdDocId;
-                String label = "";
+                String name = "";
                 if (update instanceof MediaInfoEdit) {
                     MediaFileUtils mediaFileUtils = new MediaFileUtils(connection);
                     createdDocId = ((MediaInfoEdit) update).uploadNewFile(editor, mediaFileUtils, summary, tags, filePageWaitTime,
                             filePageMaxWaitTime);
-                    label = "File:".concat(((MediaInfoEdit) update).getFileName());
+                    name = "File:".concat(((MediaInfoEdit) update).getFileName());
                 } else {
                     LabeledDocument labeledDocument = (LabeledDocument) editor.createEntityDocument(update.toNewEntity(), summary, tags);
                     createdDocId = labeledDocument.getEntityId();
-                    if (labeledDocument != null && labeledDocument.getLabels() != null) {
-                        label = labeledDocument.getLabels().get(Locale.getDefault().getLanguage()) != null
-                                ? labeledDocument.getLabels().get(Locale.getDefault().getLanguage()).getText()
-                                : "";
-                    }
+                    name = getDocumentLabel(labeledDocument.getLabels(), createdDocId.getId());
                 }
-                library.setId(newCell.getReconInternalId(), createdDocId.getId(), label);
+                library.setId(newCell.getReconInternalId(), createdDocId.getId());
+                library.setName(newCell.getReconInternalId(), name);
                 newEntityUrl = createdDocId.getSiteIri() + createdDocId.getId();
             } else {
                 // Existing entities
@@ -382,4 +380,22 @@ public class EditBatchProcessor {
         batchCursor = 0;
     }
 
+    private String getDocumentLabel(Map<String, MonolingualTextValue> labels, String defaultName) {
+        if (labels == null || labels.isEmpty()) {
+            return defaultName;
+        }
+        String docLabel = null;
+        String defaultLanguage = Locale.getDefault().getLanguage();
+        for (Map.Entry<String, MonolingualTextValue> entry : labels.entrySet()) {
+            String language = entry.getKey();
+            MonolingualTextValue labelValue = entry.getValue();
+            if (defaultLanguage.equals(language)) {
+                return labelValue.getText();
+            }
+            if (docLabel == null) {
+                docLabel = labelValue.getText();
+            }
+        }
+        return docLabel == null ? defaultName : docLabel;
+    }
 }
