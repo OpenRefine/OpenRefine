@@ -406,6 +406,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       id: "core/reconcile",
       label: $.i18n('core-views/start-recon'),
       tooltip: $.i18n('core-views/recon-text-fb'),
+      icon: 'images/operations/reconcile.svg',
       click: doReconcile
     },
     {},

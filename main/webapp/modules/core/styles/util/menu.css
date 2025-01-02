@@ -81,6 +81,13 @@ a.menu-item img {
   border: none;
 }
 
+a.menu-item .menu-icon {
+  display: inline;
+  height: 1.5em;
+  vertical-align: middle;
+  margin-left: -2px;
+}
+
 .menu-section {
   padding: 2px 7px;
   background: #aaa;

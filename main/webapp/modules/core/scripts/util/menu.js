@@ -137,7 +137,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
   var createMenuItem = function(item) {
     if ("label" in item) {
       var menuItem = MenuSystem.createMenuItem().appendTo(menu);
-      $('<div></div>').text(item.label).appendTo(menuItem);
+      let contentsDiv = $('<div></div>').text(item.label).appendTo(menuItem);
       if ("submenu" in item) {
         menuItem.addClass('submenu');
         menuItem.on('mouseenter click', function () {
@@ -166,6 +166,14 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           });
           if ("tooltip" in item) {
             menuItem.attr("title", item.tooltip);
+          }
+          if ("icon" in item) {
+            let img = $('<img />')
+             .attr('src', item.icon)
+             .addClass('menu-icon')
+             .attr('aria-hidden', 'true');
+            contentsDiv.prepend(' ');
+            contentsDiv.prepend(img);
           }
           menuItem.on('mouseenter click', function () {
             clearTimeout(MenuSystem._hoverTimeout);
