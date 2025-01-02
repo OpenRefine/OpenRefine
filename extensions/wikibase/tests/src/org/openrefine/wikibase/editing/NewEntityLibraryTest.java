@@ -49,7 +49,9 @@ public class NewEntityLibraryTest extends WikidataRefineTest {
     public void setUp() {
         library = new NewEntityLibrary();
         library.setId(1234L, "Q345");
+        library.setName(1234L, "new uni");
         library.setId(3289L, "Q384");
+        library.setName(3289L, "University of Ljubljana");
     }
 
     @Test
@@ -87,7 +89,7 @@ public class NewEntityLibraryTest extends WikidataRefineTest {
     @Test
     public void testSerialize() {
         JacksonSerializationTest.canonicalSerialization(NewEntityLibrary.class, library,
-                "{\"qidMap\":{\"1234\":\"Q345\",\"3289\":\"Q384\"}}");
+                "{\"qidMap\":{\"1234\":\"Q345\",\"3289\":\"Q384\"},\"nameMap\":{\"1234\":\"new uni\",\"3289\":\"University of Ljubljana\"}}");
     }
 
     private void isMatchedTo(String qid, Cell cell) {
