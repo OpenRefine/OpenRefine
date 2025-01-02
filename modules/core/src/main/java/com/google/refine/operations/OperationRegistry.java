@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
@@ -47,6 +48,8 @@ public abstract class OperationRegistry {
     static final public Map<String, List<Class<? extends AbstractOperation>>> s_opNameToClass = new HashMap<String, List<Class<? extends AbstractOperation>>>();
 
     static final public Map<Class<? extends AbstractOperation>, String> s_opClassToName = new HashMap<Class<? extends AbstractOperation>, String>();
+
+    static final public Map<String, String> s_opNameToIcon = new HashMap<>();
 
     static public void registerOperation(ButterflyModule module, String name, Class<? extends AbstractOperation> klass) {
         String key = module.getName() + "/" + name;
@@ -61,6 +64,19 @@ public abstract class OperationRegistry {
         classes.add(klass);
     }
 
+    /**
+     * Registers an icon for an operation designated by its name. This overrides any previously defined icon.
+     * 
+     * @param fullName
+     *            full qualified operation name (module name, slash, operation name)
+     * @param iconPath
+     *            string required to be resolvable by the frontend as is and pointing to square image, ideally in a
+     *            vector format and with a transparent background, to be rendered on a light background.
+     */
+    static public void registerOperationIcon(String fullName, String iconPath) {
+        s_opNameToIcon.put(fullName, iconPath);
+    }
+
     static public Class<? extends AbstractOperation> resolveOperationId(String op) {
         if (!op.contains("/")) {
             op = "core/" + op; // backward compatible
@@ -70,5 +86,19 @@ public abstract class OperationRegistry {
             return classes.get(classes.size() - 1);
         }
         return null;
+    }
+
+    /**
+     * @return a map from operation names (qualified by module name) to the path for their icon.
+     */
+    static public Map<String, String> getOperationIcons() {
+        return s_opNameToIcon;
+    }
+
+    /**
+     * @return the set of names of all registered operations
+     */
+    static public Set<String> getOperationNames() {
+        return s_opNameToClass.keySet();
     }
 }

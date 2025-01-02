@@ -144,6 +144,7 @@ function registerCommands() {
   RS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
   RS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
 
+  RS.registerCommand(module, "get-all-operations", new Packages.com.google.refine.commands.GetAllOperationsCommand());
   RS.registerCommand(module, "get-preference", new Packages.com.google.refine.commands.GetPreferenceCommand());
   RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
