@@ -35,6 +35,7 @@ package com.google.refine.operations.column;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
@@ -52,6 +53,11 @@ public class ColumnRemovalOperation extends AbstractOperation {
     public ColumnRemovalOperation(
             @JsonProperty("columnName") String columnName) {
         _columnName = columnName;
+    }
+
+    @Override
+    public void validate() {
+        Validate.notNull(_columnName, "Missing column name");
     }
 
     @JsonProperty("columnName")
