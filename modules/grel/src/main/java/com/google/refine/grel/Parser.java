@@ -40,11 +40,12 @@ import java.util.regex.Pattern;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.LanguageSpecificParser;
 import com.google.refine.expr.ParsingException;
-import com.google.refine.expr.functions.arrays.ArgsToArray;
 import com.google.refine.grel.Scanner.NumberToken;
 import com.google.refine.grel.Scanner.RegexToken;
 import com.google.refine.grel.Scanner.Token;
 import com.google.refine.grel.Scanner.TokenType;
+import com.google.refine.grel.ast.ArrayExpr;
+import com.google.refine.grel.ast.BracketedExpr;
 import com.google.refine.grel.ast.ControlCallExpr;
 import com.google.refine.grel.ast.FieldAccessorExpr;
 import com.google.refine.grel.ast.FunctionCallExpr;
@@ -57,7 +58,7 @@ public class Parser {
     static public LanguageSpecificParser grelParser = new LanguageSpecificParser() {
 
         @Override
-        public Evaluable parse(String source) throws ParsingException {
+        public Evaluable parse(String source, String languagePrefix) throws ParsingException {
             Parser parser = new Parser(source);
             return parser.getExpression();
         }
@@ -233,15 +234,15 @@ public class Parser {
                     if (errorMessage != null) {
                         throw makeException(errorMessage);
                     }
-                    eval = new ControlCallExpr(argsA, c);
+                    eval = new ControlCallExpr(argsA, c, text);
                 } else {
-                    eval = new FunctionCallExpr(makeArray(args), f);
+                    eval = new FunctionCallExpr(makeArray(args), f, text, false);
                 }
             }
         } else if (_token.type == TokenType.Delimiter && _token.text.equals("(")) {
             next(true);
 
-            eval = parseExpression();
+            eval = new BracketedExpr(parseExpression());
 
             if (_token != null && _token.type == TokenType.Delimiter && _token.text.equals(")")) {
                 next(false);
@@ -253,7 +254,7 @@ public class Parser {
 
             List<Evaluable> args = parseExpressionList("]");
 
-            eval = new FunctionCallExpr(makeArray(args), new ArgsToArray());
+            eval = new ArrayExpr(makeArray(args));
         } else {
             throw makeException("Missing number, string, identifier, regex, or parenthesized expression");
         }
@@ -282,7 +283,7 @@ public class Parser {
                     List<Evaluable> args = parseExpressionList(")");
                     args.add(0, eval);
 
-                    eval = new FunctionCallExpr(makeArray(args), f);
+                    eval = new FunctionCallExpr(makeArray(args), f, identifier, true);
                 } else {
                     eval = new FieldAccessorExpr(eval, identifier);
                 }
@@ -292,7 +293,7 @@ public class Parser {
                 List<Evaluable> args = parseExpressionList("]");
                 args.add(0, eval);
 
-                eval = new FunctionCallExpr(makeArray(args), ControlFunctionRegistry.getFunction("get"));
+                eval = new FunctionCallExpr(makeArray(args), ControlFunctionRegistry.getFunction("get"), "get", true);
             } else {
                 break;
             }
