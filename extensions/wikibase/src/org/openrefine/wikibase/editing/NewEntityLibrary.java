@@ -62,7 +62,7 @@ public class NewEntityLibrary {
     public NewEntityLibrary(@JsonProperty("qidMap") Map<Long, String> reconToEntityId,
             @JsonProperty("nameMap") Map<Long, String> reconToName) {
         this.reconToEntityId = reconToEntityId;
-        this.reconToName = reconToName != null ? reconToName : new HashMap<>();
+        this.reconToName = reconToName;
     }
 
     /**
@@ -125,7 +125,8 @@ public class NewEntityLibrary {
                         && reconToEntityId.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.Matched;
                     recon.match = new ReconCandidate(reconToEntityId.get(recon.id).toString(),
-                            reconToName.get(recon.id) != null ? reconToName.get(recon.id).toString() : cell.value.toString(),
+                            reconToName != null && reconToName.get(recon.id) != null ? reconToName.get(recon.id).toString()
+                                    : cell.value.toString(),
                             new String[0], 100);
                     recon.addCandidate(recon.match);
                     changed = true;
@@ -182,7 +183,7 @@ public class NewEntityLibrary {
             return false;
         }
         NewEntityLibrary otherLibrary = (NewEntityLibrary) other;
-        return reconToEntityId.equals(otherLibrary.getIdMap()) && reconToName.equals(otherLibrary.getNameMap());
+        return reconToEntityId.equals(otherLibrary.getIdMap()) && (reconToName != null && reconToName.equals(otherLibrary.getNameMap()));
     }
 
     @Override

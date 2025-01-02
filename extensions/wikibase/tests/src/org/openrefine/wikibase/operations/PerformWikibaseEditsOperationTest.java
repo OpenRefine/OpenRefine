@@ -78,7 +78,6 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     public void testLoadChange()
             throws Exception {
         String changeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"}}\n" + "/ec/\n";
-        String validateChangeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"},\"nameMap\":{}}\n" + "/ec/\n";
         LineNumberReader reader = makeReader(changeString);
         Change change = PerformWikibaseEditsOperation.PerformWikibaseEditsChange.load(reader, pool);
 
@@ -93,7 +92,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
         assertEquals(Recon.Judgment.New, project.rows.get(0).cells.get(0).recon.judgment);
 
-        assertEquals(validateChangeString, saveChange(change));
+        assertEquals(changeString, saveChange(change));
     }
 
     @Test

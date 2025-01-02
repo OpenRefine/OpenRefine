@@ -210,6 +210,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             if (newEntityLibrary != null) {
                 writer.write("newItems=");
                 ObjectMapper mapper = new ObjectMapper();
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 writer.write(mapper.writeValueAsString(newEntityLibrary) + "\n");
             }
             writer.write("/ec/\n"); // end of change
