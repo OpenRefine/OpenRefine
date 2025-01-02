@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
@@ -62,6 +63,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -169,6 +171,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     5,
                     true,
                     null);
+            assertEquals(op.getColumnDependencies().get(), Set.of("fruits"));
+            assertEquals(op.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("rand", "fruits").build());
 
             runOperation(op, project, 1500);
 

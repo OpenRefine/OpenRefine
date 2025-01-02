@@ -27,8 +27,11 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Set;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -43,6 +46,7 @@ import com.google.refine.browsing.facets.ListFacet;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationRegistry;
@@ -93,6 +97,26 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     @Test
+    public void testColumnDependenciesIncludeFacets() {
+        ListFacet.ListFacetConfig facetConfig = new ListFacet.ListFacetConfig();
+        facetConfig.name = "my facet";
+        facetConfig.expression = "grel:value";
+        facetConfig.columnName = "other_column";
+        facetConfig.selection = Collections.singletonList(new DecoratedValue("a", "a"));
+        EngineConfig engineConfig = new EngineConfig(Collections.singletonList(facetConfig), Mode.RowBased);
+
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                engineConfig,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        assertEquals(operation.getColumnDependencies().get(), Set.of("foo", "bar", "other_column"));
+    }
+
+    @Test
     public void testAddColumnRowsMode() throws Exception {
         ColumnAdditionOperation operation = new ColumnAdditionOperation(
                 EngineConfig.deserialize("{\"mode\":\"row-based\",\"facets\":[]}"),
@@ -101,6 +125,8 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("foo", "bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -132,6 +158,8 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("foo", "bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -157,6 +185,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -188,6 +217,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -213,6 +243,8 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -238,6 +270,8 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -269,6 +303,8 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 

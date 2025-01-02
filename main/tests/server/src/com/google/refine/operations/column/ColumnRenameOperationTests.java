@@ -27,7 +27,10 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.Serializable;
+import java.util.Set;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -36,6 +39,7 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
@@ -76,6 +80,8 @@ public class ColumnRenameOperationTests extends RefineTest {
     @Test
     public void testRename() throws Exception {
         ColumnRenameOperation SUT = new ColumnRenameOperation("foo", "newfoo");
+        assertEquals(SUT.getColumnDependencies().get(), Set.of("foo"));
+        assertEquals(SUT.getColumnsDiff().get(), ColumnsDiff.builder().deleteColumn("foo").addColumn("newfoo", "foo").build());
 
         runOperation(SUT, project);
 
