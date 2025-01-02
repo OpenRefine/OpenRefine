@@ -177,7 +177,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <argLine>@{surefireArgs} -Dfile.encoding=cp1252</argLine>
+          <argLine>@{surefireArgs} -Dfile.encoding=cp1252 -Duser.language=it -Duser.region=IT</argLine>
         </configuration>
       </plugin>
       <plugin>
