@@ -393,11 +393,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/text-transform",
       label: $.i18n('core-views/transform'),
+      icon: 'images/operations/transform.svg',
       click: function() { doTextTransformPrompt(); }
     },
     {
       id: "core/common-transforms",
       label: $.i18n('core-views/common-transform'),
+      icon: 'images/operations/magic-wand.svg',
       submenu: [
         {
           id: "core/trim-whitespace",
@@ -469,6 +471,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/fill-down",
       label: $.i18n('core-views/fill-down'),
+      icon: 'images/operations/fill-down.svg',
       click: function () {
         if (columnHeaderUI._dataTableView._getSortingCriteriaCount() > 0) {
            columnHeaderUI._dataTableView._createPendingSortWarningDialog(doFillDown);
@@ -481,6 +484,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/blank-down",
       label: $.i18n('core-views/blank-down'),
+      icon: 'images/operations/blank-down.svg',
       click: function () {
         if (columnHeaderUI._dataTableView._getSortingCriteriaCount() > 0) {
            columnHeaderUI._dataTableView._createPendingSortWarningDialog(doBlankDown);
@@ -494,23 +498,27 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/split-multi-valued-cells",
       label: $.i18n('core-views/split-cells'),
+      icon: 'images/operations/split-rows.svg',
       click: doSplitMultiValueCells
     },
     {
       id: "core/join-multi-valued-cells",
       label: $.i18n('core-views/join-cells'),
+      icon: 'images/operations/join-rows.svg',
       click: doJoinMultiValueCells
     },
     {},
     {
       id: "core/cluster",
       label: $.i18n('core-views/cluster-edit'),
+      icon: 'images/operations/cluster.svg',
       click: function() { new ClusteringDialog(column, "value"); }
     },
     {},
     {
       id: "core/replace",
       label: $.i18n('core-views/replace'),
+      icon: 'images/operations/replace.svg',
       click: doReplace
     }
   ]);
@@ -738,17 +746,20 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       {
         id: "core/transpose-columns-into-rows",
         label: $.i18n('core-views/transp-cell-row'),
+        icon: 'images/operations/transpose-into-rows.svg',
         click: doTransposeColumnsIntoRows
       },
       {
         id: "core/transpose-rows-into-columns",
         label: $.i18n('core-views/transp-cell-col'),
+        icon: 'images/operations/transpose-into-columns.svg',
         click: doTransposeRowsIntoColumns
       },
       {},
       {
         id: "core/key-value-columnize",
         label: $.i18n('core-views/columnize-col'),
+        icon: 'images/operations/key-value-columnize.svg',
         click: doKeyValueColumnize
       }
     ]

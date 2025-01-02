@@ -167,6 +167,14 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           if ("tooltip" in item) {
             menuItem.attr("title", item.tooltip);
           }
+          if ("icon" in item) {
+            let img = $('<img />')
+             .attr('src', item.icon)
+             .addClass('menu-icon')
+             .attr('aria-hidden', 'true');
+            menuItem.prepend(' ');
+            menuItem.prepend(img);
+          }
           menuItem.on('mouseenter click', function () {
             clearTimeout(MenuSystem._hoverTimeout);
             MenuSystem._hoverTimeout = setTimeout(function () {
