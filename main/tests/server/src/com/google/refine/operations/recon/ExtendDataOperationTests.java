@@ -50,6 +50,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -74,6 +75,7 @@ import com.google.refine.model.recon.DataExtensionReconConfig;
 import com.google.refine.model.recon.ReconciledDataExtensionJob;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
@@ -95,7 +97,7 @@ public class ExtendDataOperationTests extends RefineTest {
             + "}";
 
     private String operationJson = "{\"op\":\"core/extend-reconciled-data\","
-            + "\"description\":\"Extend data at index 3 based on column organization_name\","
+            + "\"description\":" + new TextNode(OperationDescription.recon_extend_data_brief(3, "organization_name")).toString() + ","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
             + "    {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"range\",\"columnName\":\"organization_name\"},"
             + "    {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"timerange\",\"columnName\":\"start_year\"}"
@@ -115,7 +117,8 @@ public class ExtendDataOperationTests extends RefineTest {
 
     private String processJson = ""
             + "    {\n" +
-            "       \"description\" : \"Extend data at index 3 based on column organization_name\",\n" +
+            "       \"description\" : " + new TextNode(OperationDescription.recon_extend_data_brief(3, "organization_name")).toString()
+            + ",\n" +
             "       \"id\" : %d,\n" +
             "       \"immediate\" : false,\n" +
             "       \"progress\" : 0,\n" +

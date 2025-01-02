@@ -29,6 +29,7 @@ package com.google.refine.operations.row;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -40,6 +41,7 @@ import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.util.ParsingUtilities;
@@ -146,7 +148,7 @@ public class RowReorderOperationTests extends RefineTest {
     public void serializeRowReorderOperation() throws Exception {
         String json = "  {\n" +
                 "    \"op\": \"core/row-reorder\",\n" +
-                "    \"description\": \"Reorder rows\",\n" +
+                "    \"description\": " + new TextNode(OperationDescription.row_reorder_brief()).toString() + ",\n" +
                 "    \"mode\": \"record-based\",\n" +
                 "    \"sorting\": {\n" +
                 "      \"criteria\": [\n" +
