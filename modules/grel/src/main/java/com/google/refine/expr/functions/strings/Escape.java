@@ -100,7 +100,7 @@ public class Escape implements Function {
 
     @Override
     public String getParams() {
-        return "string s, string mode ['html','xml','csv','url','javascript']";
+        return "string s, string mode ['html','xml','csv','url','javascript','urlpath','urlform','urlfragment']";
     }
 
     @Override
