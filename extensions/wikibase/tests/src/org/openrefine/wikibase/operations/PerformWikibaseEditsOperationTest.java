@@ -77,7 +77,8 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     @Test
     public void testLoadChange()
             throws Exception {
-        String changeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"},\"qnameMap\":{}}\n" + "/ec/\n";
+        String changeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"}}\n" + "/ec/\n";
+        String validateChangeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"},\"nameMap\":{}}\n" + "/ec/\n";
         LineNumberReader reader = makeReader(changeString);
         Change change = PerformWikibaseEditsOperation.PerformWikibaseEditsChange.load(reader, pool);
 
@@ -92,13 +93,13 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
         assertEquals(Recon.Judgment.New, project.rows.get(0).cells.get(0).recon.judgment);
 
-        assertEquals(changeString, saveChange(change));
+        assertEquals(validateChangeString, saveChange(change));
     }
 
     @Test
     public void testLoadChange_v2()
             throws Exception {
-        String changeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"},\"qnameMap\":{\"1234\":\"Q789\"}}\n" + "/ec/\n";
+        String changeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"},\"nameMap\":{\"1234\":\"Non-existent entity\"}}\n" + "/ec/\n";
         LineNumberReader reader = makeReader(changeString);
         Change change = PerformWikibaseEditsOperation.PerformWikibaseEditsChange.load(reader, pool);
 
@@ -108,6 +109,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
         assertEquals(Recon.Judgment.Matched, project.rows.get(0).cells.get(0).recon.judgment);
         assertEquals("Q789", project.rows.get(0).cells.get(0).recon.match.id);
+        assertEquals("Non-existent entity", project.rows.get(0).cells.get(0).recon.match.name);
 
         change.revert(project);
 

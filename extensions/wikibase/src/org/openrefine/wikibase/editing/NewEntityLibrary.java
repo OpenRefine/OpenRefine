@@ -60,7 +60,7 @@ public class NewEntityLibrary {
 
     @JsonCreator
     public NewEntityLibrary(@JsonProperty("qidMap") Map<Long, String> reconToEntityId,
-            @JsonProperty("qnameMap") Map<Long, String> reconToName) {
+            @JsonProperty("nameMap") Map<Long, String> reconToName) {
         this.reconToEntityId = reconToEntityId;
         this.reconToName = reconToName != null ? reconToName : new HashMap<>();
     }
@@ -171,7 +171,7 @@ public class NewEntityLibrary {
         return reconToEntityId;
     }
 
-    @JsonProperty("qnameMap")
+    @JsonProperty("nameMap")
     public Map<Long, String> getNameMap() {
         return reconToName;
     }
