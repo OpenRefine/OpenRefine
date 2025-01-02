@@ -30,6 +30,7 @@ package com.google.refine.operations.recon;
 import java.io.Serializable;
 import java.util.Collections;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -41,6 +42,7 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -68,7 +70,8 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
     @Test
     public void serializeReconCopyAcrossColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/recon-copy-across-columns\","
-                + "\"description\":\"Copy recon judgments from column source column to firstsecond\","
+                + "\"description\":"
+                + new TextNode(OperationDescription.recon_copy_across_columns_brief("source column", "first, second")).toString() + ","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"fromColumnName\":\"source column\","
                 + "\"toColumnNames\":[\"first\",\"second\"],"

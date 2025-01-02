@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -46,6 +47,7 @@ import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -91,7 +93,7 @@ public class RowFlagOperationTests extends RefineTest {
     public void serializeRowFlagOperation() throws Exception {
         String json = "{"
                 + "\"op\":\"core/row-flag\","
-                + "\"description\":\"Flag rows\","
+                + "\"description\":" + new TextNode(OperationDescription.row_flag_brief()).toString() + ","
                 + "\"flagged\":true,"
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowFlagOperation.class), json);

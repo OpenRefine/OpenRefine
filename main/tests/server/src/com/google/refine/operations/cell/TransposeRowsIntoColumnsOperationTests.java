@@ -37,6 +37,7 @@ import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -44,6 +45,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -74,7 +76,8 @@ public class TransposeRowsIntoColumnsOperationTests extends RefineTest {
     @Test
     public void testTransposeRowsIntoColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/transpose-rows-into-columns\","
-                + "\"description\":\"Transpose every 3 cells in column start column into separate columns\","
+                + "\"description\":"
+                + new TextNode(OperationDescription.cell_transpose_rows_into_columns_brief(3, "start column")).toString() + ","
                 + "\"columnName\":\"start column\","
                 + "\"rowCount\":3}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json);

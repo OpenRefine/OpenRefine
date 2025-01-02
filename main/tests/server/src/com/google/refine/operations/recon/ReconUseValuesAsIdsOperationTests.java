@@ -32,12 +32,14 @@ import static org.testng.Assert.assertNull;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
 import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -46,7 +48,7 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
 
     String json = "{"
             + "\"op\":\"core/recon-use-values-as-identifiers\","
-            + "\"description\":\"Use values as reconciliation identifiers in column ids\","
+            + "\"description\":" + new TextNode(OperationDescription.recon_use_values_as_identifiers_brief("ids")).toString() + ","
             + "\"columnName\":\"ids\","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"service\":\"http://localhost:8080/api\","
