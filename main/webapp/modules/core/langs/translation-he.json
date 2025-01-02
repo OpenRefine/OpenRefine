@@ -230,7 +230,7 @@
     "core-facets/reset": "אתחול",
     "core-facets/invert": "היפוך",
     "core-facets/change": "שינוי",
-    "core-facets/click-to-edit": "הקליקו לעריכת הביטוי",
+    "core-facets/click-to-edit": "לחיצה לעריכת הביטוי",
     "core-facets/sort-by": "מיון לפי",
     "core-facets/name": "שם",
     "core-facets/count": "ספירה",
@@ -746,5 +746,9 @@
     "core-buttons/remove": "הסרה",
     "core-buttons/yes": "כן",
     "core-buttons/manage-clustering": "ניהול פונקציות צבירים",
-    "core-buttons/no": "לא"
+    "core-buttons/no": "לא",
+    "core-buttons/no-criteria-selected": "יש לבחור עמודה אחת לפחות כדי לזהות כפילויות.",
+    "core-facets/auto-update": "עדכון אוטומטי",
+    "core-dialogs/remove-duplicate-rows": "הסרת שורות כפולות",
+    "core-dialogs/remove-duplicate-rows-col-select": "בחירת עמודות שמשמשות לזיהוי שורות כפולות"
 }
