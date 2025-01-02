@@ -195,7 +195,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
 
         String status = json.get("status").asText();
-        //System.out.println("json::" + json);
+        // System.out.println("json::" + json);
         Assert.assertEquals(status, "ok");
     }
 
