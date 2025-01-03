@@ -36,6 +36,7 @@ package com.google.refine.grel.ast;
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -217,6 +218,15 @@ public class OperatorCallExpr extends GrelExpr {
             dependencies.addAll(deps.get());
         }
         return Optional.of(dependencies);
+    }
+
+    @Override
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        Evaluable[] translatedArgs = new Evaluable[_args.length];
+        for (int i = 0; i != _args.length; i++) {
+            translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
+        }
+        return new OperatorCallExpr(translatedArgs, _op);
     }
 
     @Override

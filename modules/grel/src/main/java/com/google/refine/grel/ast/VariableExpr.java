@@ -34,9 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+
+import com.google.refine.expr.Evaluable;
 
 /**
  * An abstract syntax tree node encapsulating the retrieval of a variable's content.
@@ -66,6 +69,11 @@ public class VariableExpr extends GrelExpr {
             return Optional.empty();
         }
         return Optional.of(Collections.emptySet());
+    }
+
+    @Override
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        return this;
     }
 
     @Override
