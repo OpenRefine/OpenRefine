@@ -36,6 +36,7 @@ package com.google.refine.grel.ast;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -64,6 +65,7 @@ public class FunctionCallExpr extends GrelExpr {
     /**
      * @deprecated use the other constructor supplying the name under which the function was invoked
      */
+
     @Deprecated
     public FunctionCallExpr(Evaluable[] args, Function f) {
         _args = args;
@@ -160,6 +162,25 @@ public class FunctionCallExpr extends GrelExpr {
     }
 
     @Override
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        if (_function instanceof Get && _args.length == 2 && (new VariableExpr("cells")).equals(_args[0]) &&
+                _args[1] != null && _args[1] instanceof LiteralExpr) {
+            String columnName = Objects.toString(((LiteralExpr) _args[1]).getValue());
+            String newColumnName = substitutions.getOrDefault(columnName, columnName);
+            return new FunctionCallExpr(new Evaluable[] {
+                    _args[0],
+                    new LiteralExpr(newColumnName)
+            }, _function, _functionName, _fluentStyle);
+        } else {
+            Evaluable[] translatedArgs = new Evaluable[_args.length];
+            for (int i = 0; i != _args.length; i++) {
+                translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
+            }
+            return new FunctionCallExpr(translatedArgs, _function, _functionName, _fluentStyle);
+        }
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -180,4 +201,5 @@ public class FunctionCallExpr extends GrelExpr {
         return Arrays.equals(_args, other._args) && Objects.equals(_function, other._function)
                 && Objects.equals(_functionName, other._functionName) && _fluentStyle == other._fluentStyle;
     }
+
 }

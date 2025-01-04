@@ -23,4 +23,11 @@ public class BracketedExprTest extends ExprTestBase {
         assertEquals(new BracketedExpr(currentColumn).getColumnDependencies(baseColumn), Optional.of(Set.of("baseColumn")));
     }
 
+    @Test
+    public void testRenameColumnDependencies() {
+        GrelExpr bracketedConstant = new BracketedExpr(constant);
+        assertEquals(bracketedConstant.renameColumnDependencies(sampleRename), bracketedConstant);
+        GrelExpr bracketedVariable = new BracketedExpr(currentColumn);
+        assertEquals(bracketedVariable.renameColumnDependencies(sampleRename), new BracketedExpr(currentColumnRenamed));
+    }
 }

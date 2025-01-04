@@ -24,5 +24,7 @@ public class ArrayExprTest extends ExprTestBase {
     public void testColumnDependencies() {
         Evaluable ev = new ArrayExpr(new Evaluable[] { constant, currentColumn, twoColumns });
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn", "a", "b"));
+        assertEquals(ev.renameColumnDependencies(sampleRename),
+                new ArrayExpr(new Evaluable[] { constant, currentColumnRenamed, twoColumnsRenamed }));
     }
 }
