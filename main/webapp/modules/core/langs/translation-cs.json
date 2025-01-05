@@ -929,5 +929,7 @@
     "core-dialogs/remove-duplicate-rows": "Odstranit duplicitní řádky",
     "core-dialogs/remove-duplicate-rows-col-select": "Vyberte sloupce používané k identifikaci duplicitních řádků",
     "core-buttons/no-criteria-selected": "Pro identifikaci duplicit je třeba vybrat alespoň jeden sloupec.",
-    "core-views/remove-duplicates": "Odstranit duplicitní řádky"
+    "core-views/remove-duplicates": "Odstranit duplicitní řádky",
+    "core-index-open/no-results-message": "Žádné výsledky",
+    "core-index-open/search-placeholder": "Hledat"
 }
