@@ -1042,6 +1042,13 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           click: function() {
             new RemoveDuplicateRowsDialog();
           }
+        },
+        {
+          label: $.i18n('core-views/keep-only-matching'),
+          id: "core/keep-only-matching",
+          click: function() {
+            Refine.postCoreProcess("keep-matching-rows", {}, null, { rowMetadataChanged: true });
+          }
         }
       ]
     },
