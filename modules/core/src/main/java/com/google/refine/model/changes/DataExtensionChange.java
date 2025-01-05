@@ -95,7 +95,7 @@ public class DataExtensionChange implements Change {
         _schemaSpace = schemaSpace;
         _columnInsertIndex = columnInsertIndex;
 
-        _columnNames = columnNames;
+        _columnNames = new ArrayList<>(columnNames); // make sure it is modifiable because we update it later on
         _columnTypes = columnTypes;
 
         _rowIndices = rowIndices;
@@ -125,7 +125,7 @@ public class DataExtensionChange implements Change {
         _schemaSpace = schemaSpace;
         _columnInsertIndex = columnInsertIndex;
 
-        _columnNames = columnNames;
+        _columnNames = new ArrayList<>(columnNames); // make sure it is modifiable because we update it later on
         _columnTypes = columnTypes;
 
         _rowIndices = rowIndices;
