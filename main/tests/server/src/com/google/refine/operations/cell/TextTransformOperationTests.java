@@ -5,6 +5,7 @@ import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -17,6 +18,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OnError;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -55,9 +57,11 @@ public class TextTransformOperationTests extends RefineTest {
 
     @Test
     public void serializeTransformOperation() throws Exception {
+        String description = OperationDescription.cell_text_transform_brief("organization_json",
+                "grel:value.parseJson()[\"employment-summary\"].join('###')");
         String json = "{"
                 + "   \"op\":\"core/text-transform\","
-                + "   \"description\":\"Text transform on cells in column organization_json using expression grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
+                + "   \"description\":" + new TextNode(description).toString() + ","
                 + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "   \"columnName\":\"organization_json\","
                 + "   \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","

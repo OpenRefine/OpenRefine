@@ -27,10 +27,14 @@
 
 package com.google.refine.expr.functions.xml;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.GrelTestBase;
 
 public class XmlTextTests extends GrelTestBase {
@@ -41,7 +45,6 @@ public class XmlTextTests extends GrelTestBase {
         Assert.assertTrue(invoke("xmlText", "test") instanceof EvalError);
 
         EvalError evalError = (EvalError) invoke("xmlText", "test");
-        Assert.assertEquals(evalError.toString(),
-                "xmlText() cannot work with this \'string\' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+        assertEquals(evalError.toString(), EvalErrorMessage.xml_text_cannot_work_with_and_failed("xmlText", "string"));
     }
 }

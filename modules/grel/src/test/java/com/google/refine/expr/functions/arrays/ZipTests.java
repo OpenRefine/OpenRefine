@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.GrelTestBase;
 
 public class ZipTests extends GrelTestBase {
@@ -96,9 +97,11 @@ public class ZipTests extends GrelTestBase {
         List arg1 = List.of(1, 2, 3);
         List arg2 = List.of(7.89, 8.90, 9.01);
 
-        assertEquals(((EvalError) (invoke("zip", arg1, arg2, null))).message, "zip expects 2 or more arrays as arguments");
+        assertEquals(((EvalError) (invoke("zip", arg1, arg2, null))).message,
+                EvalErrorMessage.expects_at_least_two_or_more_array_args("zip"));
 
-        assertEquals(((EvalError) (invoke("zip", arg1, arg2, "test", null))).message, "zip expects 2 or more arrays as arguments");
+        assertEquals(((EvalError) (invoke("zip", arg1, arg2, "test", null))).message,
+                EvalErrorMessage.expects_at_least_two_or_more_array_args("zip"));
 
     }
 }

@@ -5,12 +5,14 @@ import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.TestUtils;
 
@@ -26,7 +28,8 @@ public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
         String json = "{" +
                 "  \"columnCount\" : 2," +
                 "  \"combinedColumnName\" : \"b\"," +
-                "  \"description\" : \"Transpose cells in 2 columns(s) starting with b 1 into rows in one new column named b\"," +
+                "  \"description\" : "
+                + new TextNode(OperationDescription.cell_transpose_columns_into_rows_combined_pos_brief(2, "b 1", "b")).toString() + "," +
                 "  \"fillDown\" : false," +
                 "  \"ignoreBlankCells\" : true," +
                 "  \"keyColumnName\" : null," +

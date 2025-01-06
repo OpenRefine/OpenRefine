@@ -43,6 +43,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -67,6 +68,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
 import com.google.refine.process.Process;
@@ -77,9 +79,12 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}";
 
+    String description = OperationDescription.column_addition_by_fetching_urls_brief("employments", 2, "orcid",
+            "grel:\"https://pub.orcid.org/\"+value+\"/employments\"");
+
     // This is only used for serialization tests. The URL is never fetched.
     private String json = "{\"op\":\"core/column-addition-by-fetching-urls\","
-            + "\"description\":\"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
+            + "\"description\":" + new TextNode(description).toString() + ","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"newColumnName\":\"employments\","
             + "\"columnInsertIndex\":2,"
@@ -96,8 +101,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     private String processJson = ""
             + "{\n" +
-            "    \"description\" : \"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\",\n"
-            +
+            "    \"description\" : " + new TextNode(description).toString() + ",\n" +
             "    \"id\" : %d,\n" +
             "    \"immediate\" : false,\n" +
             "    \"progress\" : 0,\n" +

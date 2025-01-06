@@ -37,6 +37,7 @@ import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -45,6 +46,7 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -84,7 +86,7 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
     @Test
     public void serializeMultiValuedCellSplitOperationWithSeparator() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
-                + "\"description\":\"Split multi-valued cells in column Value\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_multivalued_cell_split_brief("Value")).toString() + ","
                 + "\"columnName\":\"Value\","
                 + "\"keyColumnName\":\"Key\","
                 + "\"mode\":\"separator\","
@@ -96,7 +98,7 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
     @Test
     public void serializeMultiValuedCellSplitOperationWithLengths() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
-                + "\"description\":\"Split multi-valued cells in column Value\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_multivalued_cell_split_brief("Value")).toString() + ","
                 + "\"columnName\":\"Value\","
                 + "\"keyColumnName\":\"Key\","
                 + "\"mode\":\"lengths\","

@@ -30,6 +30,7 @@ package com.google.refine.operations.column;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -38,6 +39,7 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.TestUtils;
 
@@ -64,7 +66,7 @@ public class ColumnReorderOperationTests extends RefineTest {
     public void serializeColumnReorderOperation() {
         AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b", "c", "a"));
         TestUtils.isSerializedTo(op, "{\"op\":\"core/column-reorder\","
-                + "\"description\":\"Reorder columns\","
+                + "\"description\":" + new TextNode(OperationDescription.column_reorder_brief()).toString() + ","
                 + "\"columnNames\":[\"b\",\"c\",\"a\"]}");
     }
 
