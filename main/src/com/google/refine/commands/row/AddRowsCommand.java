@@ -64,6 +64,7 @@ public class AddRowsCommand extends Command {
             int insertionIndex = getInsertionIndex(request, project);
 
             AbstractOperation op = new RowAdditionOperation(rows, insertionIndex);
+            op.validate();
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);
