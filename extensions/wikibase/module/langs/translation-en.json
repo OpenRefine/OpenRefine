@@ -295,7 +295,7 @@
     "warnings-messages/file-name-too-long/title": "File names exceeding the maximum length",
     "warnings-messages/file-name-too-long/body": "File names cannot be longer than {max_length} characters. Some file names in this batch are too long, such as <span class=\"wb-issue-preformat\">{example_filename}</span>.",
     "warnings-messages/missing-file-name-extension/title": "File names without file extensions",
-    "warnings-messages/missing-file-name-extension/body": "The file names provided for files to be uploaded must end with a file extension, which is not the case for file names such as <span class=\"wb-issue-preformat\">{example_filename}.",
+    "warnings-messages/missing-file-name-extension/body": "The file names provided for files to be uploaded must end with a file extension, which is not the case for file names such as <span class=\"wb-issue-preformat\">{example_filename}</span>.",
     "warnings-messages/inconsistent-file-name-and-path-extension/title": "Inconsistent extensions between file paths and file names",
     "warnings-messages/inconsistent-file-name-and-path-extension/body": "Some file paths and their corresponding target file name on the wiki have different extensions, such as <span class=\"wb-issue-preformat\">{example_filepath}</span> and <span class=\"wb-issue-preformat\">{example_filename}</span>.",
     "warnings-messages/replaced-characters-in-filename/title": "Some special characters in file names will be replaced",
