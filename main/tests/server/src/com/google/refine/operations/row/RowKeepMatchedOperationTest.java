@@ -1,6 +1,8 @@
 
 package com.google.refine.operations.row;
 
+import static com.google.refine.operations.OperationDescription.row_keep_matching_brief;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -49,7 +51,6 @@ public class RowKeepMatchedOperationTest extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    // dependencies
     Project projectIssue567;
     Properties options;
     EngineConfig engine_config;
@@ -64,14 +65,11 @@ public class RowKeepMatchedOperationTest extends RefineTest {
         String json = "{"
                 + "\"op\":\"core/row-keep-matched\","
                 + "\"engineConfig\":{\"facets\":[],\"mode\":\"row-based\"},"
-                + "\"description\":\"Keep only matching rows\""
+                + "\"description\":\"" + row_keep_matching_brief() + "\""
                 + "}";
 
         RowKeepMatchedOperation operation = ParsingUtilities.mapper.readValue(json, RowKeepMatchedOperation.class);
         String serialized = ParsingUtilities.mapper.writeValueAsString(operation);
-
-//         System.out.println("Expected: " + json);
-//         System.out.println("Actual: " + serialized);
 
         TestUtils.isSerializedTo(operation, json);
     }

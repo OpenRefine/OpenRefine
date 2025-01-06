@@ -1,6 +1,8 @@
 
 package com.google.refine.operations.row;
 
+import static com.google.refine.operations.OperationDescription.row_keep_matching_brief;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +31,7 @@ public class RowKeepMatchedOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Keep only matching rows";
+        return row_keep_matching_brief();
 
     }
 
@@ -65,7 +67,7 @@ public class RowKeepMatchedOperation extends EngineDependentOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                "Keep only matching rows (" + rowsToRemove.size() + " rows removed)",
+                row_keep_matching_brief() + " (" + rowsToRemove.size() + " rows removed)",
                 this,
                 new RowRemovalChange(rowsToRemove));
     }
