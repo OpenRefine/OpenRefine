@@ -1,11 +1,11 @@
-<div bind="wizardHeader" class="default-importing-wizard-header"><div class="grid-layout layout-tightest layout-full"><table><tr>
+<div bind="wizardHeader" class="default-importing-wizard-header"><div class="grid-layout layout-tightest layout-full"><table role="presentation"><tr>
   <td width="1%"><button bind="startOverButton" class="button"></button></td>
   <td width="98%" id="or-import-select"></td>
   <td width="1%"><button bind="nextButton" class="button button-primary"></button></td>
 </tr></table></div></div>
 
 <div bind="controlPanel" class="default-importing-file-selection-control-panel">
-  <div class="grid-layout layout-full layout-tighter"><table>
+  <div class="grid-layout layout-full layout-tighter"><table role="presentation">
     <tr>
       <td colspan="3" id="or-import-singleProject"></td>
     </tr>
@@ -23,7 +23,7 @@
   <div bind="extensionContainer" class="grid-layout layout-full layout-tightest"></div>
   
   <h2><label for="regexInputId" id="or-import-regex"></label></h2>
-  <div class="grid-layout layout-full layout-tighter"><table>
+  <div class="grid-layout layout-full layout-tighter"><table role="presentation">
     <tr><td colspan="3"><input spellcheck="false" bind="regexInput" id="regexInputId" style="width: 100%;"/></td></tr>
     <tr>
       <td bind="regexSummary"></td>
@@ -33,7 +33,7 @@
   </table></div>
 
   <h2 bind="sortFiles"></h2>
-  <div class="grid-layout layout-full layout-tighter"><table>
+  <div class="grid-layout layout-full layout-tighter"><table role="presentation">
     <tr>
       <td colspan="3">
         <label for="sortCriteria" bind="sortCriteriaLabel"></label>

@@ -66,16 +66,18 @@ a.menu-item {
   color: var(--text-primary);
 }
 
-a.menu-item:hover, a.menu-item.menu-expanded {
-  background: #dbe8f8;
+a.menu-item:hover {
+  background-color: #dbe8f8;
+}
+
+.menu-item.submenu {
+  background: url('../../images/right-arrow.png') no-repeat;
+  background-position-x: right 7px;
+  background-position-y: 50%;
 }
 
 a.menu-item img {
   border: none;
-}
-
-table.menu-item-layout td {
-  vertical-align: middle;
 }
 
 .menu-section {

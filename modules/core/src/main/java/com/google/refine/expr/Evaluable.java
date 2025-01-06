@@ -33,14 +33,38 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+
+import com.google.refine.util.NotImplementedException;
 
 /**
  * Interface for evaluable expressions in any arbitrary language.
  */
 public interface Evaluable {
+
+    /**
+     * The source string which generated this expression. This does not include the language prefix, which can be
+     * obtained by {@link #getLanguagePrefix()}.
+     * 
+     * @throws NotImplementedException
+     *             by default (for compatibility with older extensions)
+     */
+    public default String getSource() {
+        throw new NotImplementedException();
+    }
+
+    /**
+     * The language prefix used to generate this evaluable (without final colon).
+     * 
+     * @throws NotImplementedException
+     *             by default (for compatibility with older extensions)
+     */
+    public default String getLanguagePrefix() {
+        throw new NotImplementedException();
+    }
 
     /**
      * Evaluate this expression in the given environment (bindings).
@@ -64,6 +88,22 @@ public interface Evaluable {
      */
     public default Optional<Set<String>> getColumnDependencies(Optional<String> baseColumn) {
         return Optional.empty();
+    }
+
+    /**
+     * Translates this expression by simultaneously substituting column names, as specified by the supplied map. This
+     * transformation is done on a best-effort basis. For instance, in cases where column dependencies cannot be
+     * isolated, the resulting expression could still rely on columns via their old names. The goal of this method is to
+     * rename as many references as possible. As such, it is always appropriate to return the original expression as a
+     * fall-back.
+     *
+     * @param substitutions
+     *            a map specifying new names for some columns. Keys of the map are old column names, values are the new
+     *            names for those columns. If a column name is not present in the map, the column is not renamed.
+     * @return a new expression with updated column names
+     */
+    public default Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        return this;
     }
 
 }

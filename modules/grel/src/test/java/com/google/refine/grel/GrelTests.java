@@ -37,6 +37,7 @@ import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -261,6 +262,63 @@ public class GrelTests extends GrelTestBase {
         }
     }
 
+    @Test
+    public void testGetSource() throws ParsingException {
+        // integration test for getSource()
+        String tests[][] = {
+                { "value", "value" },
+                { "cell.recon.match.id", "cell.recon.match.id" },
+                { "value + 'a'", "value + \"a\"" },
+                { "\"foo\"", "\"foo\"" },
+                { "'\"'", "\"\\\"\"" }, // TODO we could print the string with the original quotes to avoid the escaping
+                { "1", "1" },
+                { "4 * (5 + 6)", "4 * (5 + 6)" },
+                { "cells.foo", "cells.foo" },
+                { "value + ' ' + cells.foo.value", "value + \" \" + cells.foo.value" },
+                { "cells[\"foo\"].value", "cells.get(\"foo\").value" }, // TODO this could be more faithful
+                { "toDate( value+4 )", "toDate(value + 4)" },
+                { "(value + 4).toDate()", "(value + 4).toDate()" },
+                { "forEach([3, 4,8,7], v, mod(v,2))", "forEach([3, 4, 8, 7], v, mod(v, 2))" },
+        };
+        for (String[] test : tests) {
+            Evaluable eval = MetaParser.parse("grel:" + test[0]);
+            Assert.assertEquals(eval.getSource(), test[1], "for expression: " + test[0]);
+
+            // check that the produced source can still be parsed
+            Evaluable reparsed = MetaParser.parse(eval.getSource());
+            Assert.assertEquals(reparsed, eval);
+        }
+    }
+
+    @Test
+    public void testRenameDependencies() throws ParsingException {
+        // integration test for column dependency renaming
+
+        Map<String, String> rename = Map.of("foo", "bar");
+        String tests[][] = {
+                { "value", "value" },
+                { "cell.recon.match.id", "cell.recon.match.id" },
+                { "value + 'a'", "value + 'a'" },
+                { "\"foo\"", "\"foo\"" },
+                { "1", "1" },
+                { "cells.foo", "cells.bar" },
+                { "value + ' ' + cells.foo.value", "value + ' ' + cells.bar.value" },
+                { "cells[\"foo\"].value+'_'+value", "cells[\"bar\"].value+'_'+value" },
+                { "parseHtml(value.trim())", "parseHtml(value.trim())" },
+                // when the dependencies cannot be isolated, we just return the original
+                { "cells", "cells" },
+                // this could be analyzed too, but we will never reach completeness anyway!
+                { "get(cells, 'f'+'oo')", "get(cells, 'f'+'oo')" },
+                // When parts of the expression can be analyzed, those get renamed accordingly
+                { "get(cells, 'f'+'oo') + cells.foo", "get(cells, 'f'+'oo') + cells.bar" },
+        };
+        for (String[] test : tests) {
+            Evaluable eval = MetaParser.parse("grel:" + test[0]);
+            Evaluable expected = MetaParser.parse("grel:" + test[1]);
+            Assert.assertEquals(eval.renameColumnDependencies(rename), expected, "for expression: " + test[0]);
+        }
+    }
+
     // Test for /\ throwing Internal Error
     @Test
     public void testRegex() {
@@ -272,5 +330,13 @@ public class GrelTests extends GrelTestBase {
             Assert.assertEquals(e.getMessage(),
                     "Parsing error at offset 14: Missing number, string, identifier, regex, or parenthesized expression");
         }
+    }
+
+    @Test
+    public void testGetters() throws ParsingException {
+        Evaluable evaluable = MetaParser.parse("grel:value + \" foo\"");
+
+        Assert.assertEquals(evaluable.getSource(), "value + \" foo\"");
+        Assert.assertEquals(evaluable.getLanguagePrefix(), "grel");
     }
 }

@@ -1,4 +1,4 @@
-name: CI
+name: E2E CI
 
 on:
   pull_request:
@@ -6,7 +6,6 @@ on:
       - 'main/IDEs/**'
       - 'main/webapp/modules/core/langs/**'
       - 'extensions/database/module/langs/**'
-      - 'extensions/gdata/module/langs/**'
       - 'extensions/pc-axis/module/langs/**'
       - 'extensions/phonetic/module/langs/**'
       - 'extensions/wikidata/module/langs/**'

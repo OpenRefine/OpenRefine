@@ -94,7 +94,6 @@ In the event of any conflict of interest (a Committee Member, their family membe
 
 #### Current list of Advisory Committee members
 * Jan Ainali
-* Antonin Delpeuch
 * Julie Faure-Lacroix
 * Esther Jackson
 

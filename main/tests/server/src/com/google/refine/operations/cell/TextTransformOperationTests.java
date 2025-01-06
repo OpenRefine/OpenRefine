@@ -1,6 +1,8 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 
 import org.testng.annotations.AfterMethod;
@@ -67,9 +69,31 @@ public class TextTransformOperationTests extends RefineTest {
     }
 
     @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new TextTransformOperation(
+                invalidEngineConfig,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                false, 0).validate());
+        assertThrows(IllegalArgumentException.class, () -> new TextTransformOperation(
+                defaultEngineConfig,
+                null,
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                false, 0).validate());
+        assertThrows(IllegalArgumentException.class, () -> new TextTransformOperation(
+                defaultEngineConfig,
+                "bar",
+                "grel:foo(",
+                OnError.SetToBlank,
+                false, 0).validate());
+    }
+
+    @Test
     public void testTransformColumnInRowsMode() throws Exception {
         TextTransformOperation operation = new TextTransformOperation(
-                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
+                EngineConfig.defaultRowBased(),
                 "bar",
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
@@ -93,7 +117,7 @@ public class TextTransformOperationTests extends RefineTest {
     @Test
     public void testTransformIdentity() throws Exception {
         TextTransformOperation operation = new TextTransformOperation(
-                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
+                EngineConfig.defaultRowBased(),
                 "bar",
                 "grel:value",
                 OnError.SetToBlank,
@@ -116,7 +140,7 @@ public class TextTransformOperationTests extends RefineTest {
     @Test
     public void testTransformNull() throws Exception {
         TextTransformOperation operation = new TextTransformOperation(
-                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
+                EngineConfig.defaultRowBased(),
                 "bar",
                 "grel:null",
                 OnError.SetToBlank,
@@ -140,7 +164,7 @@ public class TextTransformOperationTests extends RefineTest {
     @Test
     public void testTransformColumnInRecordsMode() throws Exception {
         TextTransformOperation operation = new TextTransformOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "bar",
                 "grel:cells[\"foo\"].value+'_'+row.record.rowCount",
                 OnError.SetToBlank,
@@ -164,7 +188,7 @@ public class TextTransformOperationTests extends RefineTest {
     @Test
     public void testTransformColumnNonLocalOperationInRowsMode() throws Exception {
         TextTransformOperation operation = new TextTransformOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "bar",
                 "grel:value + '_' + facetCount(value, 'value', 'bar')",
                 OnError.SetToBlank,

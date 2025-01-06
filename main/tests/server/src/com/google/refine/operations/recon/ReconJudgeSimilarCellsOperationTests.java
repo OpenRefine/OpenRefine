@@ -56,7 +56,7 @@ import com.google.refine.util.TestUtils;
 
 public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
 
-    static final EngineConfig ENGINE_CONFIG = EngineConfig.reconstruct("{\"mode\":\"row-based\"}}");
+    static final EngineConfig ENGINE_CONFIG = EngineConfig.defaultRowBased();
 
     Project project;
     ReconConfig reconConfig;

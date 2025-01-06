@@ -209,7 +209,7 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         assertTrue(validation.getValidationErrors().isEmpty());
 
         Engine engine = new Engine(project);
-        EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
+        EngineConfig engineConfig = EngineConfig.deserialize("{\n"
                 + "      \"mode\": \"row-based\",\n"
                 + "      \"facets\": [\n"
                 + "        {\n"

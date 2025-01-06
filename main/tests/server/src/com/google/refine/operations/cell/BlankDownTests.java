@@ -27,6 +27,8 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,8 +130,14 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new BlankDownOperation(invalidEngineConfig, "bar").validate());
+        assertThrows(IllegalArgumentException.class, () -> new BlankDownOperation(defaultEngineConfig, null).validate());
+    }
+
+    @Test
     public void testBlankDownRecordsNoFacets() throws Exception {
-        BlankDownOperation operation = new BlankDownOperation(EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
+        BlankDownOperation operation = new BlankDownOperation(EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
 
         runOperation(operation, projectToBlankDown);
 
@@ -147,7 +155,7 @@ public class BlankDownTests extends RefineTest {
 
     @Test
     public void testBlankDownRowsNoFacets() throws Exception {
-        BlankDownOperation operation = new BlankDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "bar");
+        BlankDownOperation operation = new BlankDownOperation(EngineConfig.defaultRowBased(), "bar");
 
         runOperation(operation, projectToBlankDown);
 
@@ -178,7 +186,7 @@ public class BlankDownTests extends RefineTest {
         project.columnModel.update();
 
         AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
 
         runOperation(op, project);
@@ -240,7 +248,7 @@ public class BlankDownTests extends RefineTest {
 
     @Test
     public void testBlankDownRecordKey() throws Exception {
-        BlankDownOperation operation = new BlankDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "foo");
+        BlankDownOperation operation = new BlankDownOperation(EngineConfig.deserialize("{\"mode\":\"row-based\",\"facets\":[]}"), "foo");
 
         runOperation(operation, projectForRecordKey);
 

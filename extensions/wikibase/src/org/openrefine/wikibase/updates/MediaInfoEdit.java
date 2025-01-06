@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jsoup.helper.Validate;
 import org.slf4j.Logger;
@@ -237,6 +238,40 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
             int filePageWaitTime, int filePageMaxWaitTime)
             throws MediaWikiApiErrorException, IOException, InterruptedException {
         Validate.isTrue(isNew());
+        MediaUploadResponse response = uploadFile(mediaFileUtils, summary, tags, filePageWaitTime, filePageMaxWaitTime);
+        List<String> filenames = Collections.singletonList(fileName);
+        logger.info("Checking if file page has been created.");
+        int waitTime = filePageWaitTime;
+        while (mediaFileUtils.checkIfPageNamesExist(filenames).isEmpty()) {
+            logger.debug("No file page yet, waiting " + waitTime / 1000.0 + " s to check again");
+            Thread.sleep(waitTime);
+            waitTime = Math.min(waitTime + filePageWaitTime, filePageMaxWaitTime);
+        }
+        MediaInfoIdValue mid = uploadSdc(editor, mediaFileUtils, summary, tags, response);
+
+        return mid;
+    }
+
+    /**
+     * Upload a file.
+     * 
+     * @param mediaFileUtils
+     *            the {@link MediaFileUtils} to use
+     * @param summary
+     *            the edit summary
+     * @param tags
+     *            the tags to apply to both edits
+     * @param filePageWaitTime
+     *            initial time to wait between checking if the page exists
+     * @param filePageMaxWaitTime
+     *            maximum time to wait between checking if the page exists
+     * @return response from the upload request
+     * @throws MediaWikiApiErrorException
+     * @throws IOException
+     */
+    public MediaUploadResponse uploadFile(MediaFileUtils mediaFileUtils, String summary, List<String> tags,
+            int filePageWaitTime, int filePageMaxWaitTime)
+            throws MediaWikiApiErrorException, IOException {
         // Temporary addition of the category (should be configurable)
         String wikitext = this.wikitext;
         if (!wikitext.contains("[[Category:Uploaded with OpenRefine]]")) {
@@ -247,29 +282,41 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
         MediaFileUtils.MediaUploadResponse response;
         File path = new File(filePath);
         if (path.exists()) {
-            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags, shouldUploadInChunks());
+            response = mediaFileUtils.uploadLocalFile(path, fileName, wikitext, summary, tags, shouldUploadInChunks(), !isNew());
         } else {
             URL url = new URL(filePath);
-            response = mediaFileUtils.uploadRemoteFile(url, fileName, wikitext, summary, tags);
+            response = mediaFileUtils.uploadRemoteFile(url, fileName, wikitext, summary, tags, !isNew());
         }
 
         response.checkForErrors();
+        return response;
+    }
 
-        List<String> filenames = Collections.singletonList(fileName);
-        logger.info("Checking if file page has been created.");
-        int waitTime = filePageWaitTime;
-        while (mediaFileUtils.checkIfPageNamesExist(filenames).isEmpty()) {
-            logger.debug("No file page yet, waiting " + waitTime / 1000.0 + " s to check again");
-            Thread.sleep(waitTime);
-            waitTime = Math.min(waitTime + filePageWaitTime, filePageMaxWaitTime);
-        }
-
+    /**
+     * Upload file metadata.
+     * 
+     * @param editor
+     *            the {@link WikibaseDataEditor} to use
+     * @param mediaFileUtils
+     *            the {@link MediaFileUtils} to use
+     * @param summary
+     *            the edit summary
+     * @param tags
+     *            the tags to apply to both edits
+     * @return the id of the created entity
+     * @throws MediaWikiApiErrorException
+     * @throws IOException
+     */
+    protected MediaInfoIdValue uploadSdc(WikibaseDataEditor editor, MediaFileUtils mediaFileUtils, String summary, List<String> tags,
+            MediaUploadResponse response) throws IOException, MediaWikiApiErrorException {
         // Upload the structured data
         logger.info("Uploading SDC.");
         ReconEntityIdValue reconEntityIdValue = (ReconEntityIdValue) id;
         MediaInfoIdValue mid = response.getMid(mediaFileUtils.getApiConnection(), reconEntityIdValue.getRecon().identifierSpace);
         NewEntityLibrary library = new NewEntityLibrary();
+        String label = this.fileName.startsWith("File:") ? this.fileName : "File:".concat(this.fileName);
         library.setId(reconEntityIdValue.getReconInternalId(), mid.getId());
+        library.setName(reconEntityIdValue.getReconInternalId(), label);
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, id);
         try {
             MediaInfoEdit rewritten = (MediaInfoEdit) rewriter.rewrite(this);
@@ -317,6 +364,15 @@ public class MediaInfoEdit extends LabeledStatementEntityEdit {
     public boolean shouldUploadInChunks() {
         File file = new File(filePath);
         return file.length() > 100000000; // 100 MB
+    }
+
+    @JsonIgnore
+    public boolean isMatched() {
+        if (!(id instanceof ReconEntityIdValue)) {
+            return false;
+        }
+
+        return ((ReconEntityIdValue) id).isMatched();
     }
 
     @Override

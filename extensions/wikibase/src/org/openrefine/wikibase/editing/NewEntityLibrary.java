@@ -50,15 +50,19 @@ import com.google.refine.model.recon.StandardReconConfig;
  */
 public class NewEntityLibrary {
 
-    private Map<Long, String> map;
+    private Map<Long, String> reconToEntityId;
+    private Map<Long, String> reconToName;
 
     public NewEntityLibrary() {
-        map = new HashMap<>();
+        reconToEntityId = new HashMap<>();
+        reconToName = new HashMap<>();
     }
 
     @JsonCreator
-    public NewEntityLibrary(@JsonProperty("qidMap") Map<Long, String> map) {
-        this.map = map;
+    public NewEntityLibrary(@JsonProperty("qidMap") Map<Long, String> reconToEntityId,
+            @JsonProperty("nameMap") Map<Long, String> reconToName) {
+        this.reconToEntityId = reconToEntityId;
+        this.reconToName = reconToName;
     }
 
     /**
@@ -69,7 +73,11 @@ public class NewEntityLibrary {
      * @return the id (or null if unallocated yet)
      */
     public String getId(long id) {
-        return map.get(id);
+        return reconToEntityId.get(id);
+    }
+
+    public String getName(long id) {
+        return reconToName.get(id);
     }
 
     /**
@@ -81,7 +89,11 @@ public class NewEntityLibrary {
      *            : the associated id returned by Wikibase
      */
     public void setId(long id, String returnedId) {
-        map.put(id, returnedId);
+        reconToEntityId.put(id, returnedId);
+    }
+
+    public void setName(long id, String name) {
+        reconToName.put(id, name);
     }
 
     /**
@@ -110,15 +122,17 @@ public class NewEntityLibrary {
                 Recon recon = cell.recon;
                 boolean changed = false;
                 if (Recon.Judgment.New.equals(recon.judgment) && !reset
-                        && map.containsKey(recon.id)) {
+                        && reconToEntityId.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.Matched;
-                    recon.match = new ReconCandidate(map.get(recon.id), cell.value.toString(),
+                    recon.match = new ReconCandidate(reconToEntityId.get(recon.id).toString(),
+                            reconToName != null && reconToName.get(recon.id) != null ? reconToName.get(recon.id).toString()
+                                    : cell.value.toString(),
                             new String[0], 100);
                     recon.addCandidate(recon.match);
                     changed = true;
 
                 } else if (Recon.Judgment.Matched.equals(recon.judgment) && reset
-                        && map.containsKey(recon.id)) {
+                        && reconToEntityId.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.New;
                     if (recon.candidates != null) {
                         recon.candidates.remove(recon.candidates.size() - 1);
@@ -155,7 +169,12 @@ public class NewEntityLibrary {
      */
     @JsonProperty("qidMap")
     public Map<Long, String> getIdMap() {
-        return map;
+        return reconToEntityId;
+    }
+
+    @JsonProperty("nameMap")
+    public Map<Long, String> getNameMap() {
+        return reconToName;
     }
 
     @Override
@@ -164,16 +183,19 @@ public class NewEntityLibrary {
             return false;
         }
         NewEntityLibrary otherLibrary = (NewEntityLibrary) other;
-        return map.equals(otherLibrary.getIdMap());
+        return reconToEntityId.equals(otherLibrary.getIdMap()) && (reconToName != null && reconToName.equals(otherLibrary.getNameMap()));
     }
 
     @Override
     public int hashCode() {
-        return map.hashCode();
+        return reconToEntityId.hashCode() + (reconToName != null ? reconToName.hashCode() : 0);
     }
 
     @Override
     public String toString() {
-        return map.toString();
+        return "{" +
+                "reconToEntityId=" + reconToEntityId +
+                ", reconToName=" + reconToName +
+                '}';
     }
 }

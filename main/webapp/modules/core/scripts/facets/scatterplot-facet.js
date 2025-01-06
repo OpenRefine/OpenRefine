@@ -87,7 +87,7 @@ class ScatterplotFacet extends Facet {
 
     this._div.empty().show().html(
       '<div class="facet-title">' +
-        '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+        '<div class="grid-layout layout-tightest layout-full"><table role="presentation"><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +
@@ -102,7 +102,7 @@ class ScatterplotFacet extends Facet {
       '</div>' +
       '<div class="facet-scatterplot-body" bind="bodyDiv">' +
         '<div class="facet-scatterplot-message" bind="messageDiv">'+$.i18n('core-facets/loading')+'</div>' +
-        '<table width="100%"><tr>' + 
+        '<table role="presentation" width="100%"><tr>' + 
           '<td>' +
             '<div class="facet-scatterplot-plot-container">' +
             '<div class="facet-scatterplot-plot" bind="plotDiv">' +

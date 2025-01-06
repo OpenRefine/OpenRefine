@@ -308,7 +308,7 @@ WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError
   };
 
   // The manifest host must support CORS.
-  $.ajax(manifestURL, {
+  $.ajax("/command/wikidata/fetch-manifest?url=" + manifestURL, {
     "dataType": "json",
     "timeout": 5000
   }).done(function (data) {

@@ -36,9 +36,6 @@ WikibaseExporterMenuBar.exportTo = function (format) {
   $(form).css("display", "none")
       .attr("method", "post")
       .attr("target", "openrefine-export-" + format);
-  Refine.wrapCSRF(function(csrfToken) {
-    $(form).attr("action", "command/core/export-rows/" + targetUrl + "?" + $.attr({csrf_token: csrfToken}))
-  });
   $('<input />')
       .attr("name", "engine")
       .val(JSON.stringify(ui.browsingEngine.getJSON()))
@@ -52,12 +49,15 @@ WikibaseExporterMenuBar.exportTo = function (format) {
       .val(format)
       .appendTo(form);
 
-  document.body.appendChild(form);
+  Refine.wrapCSRF(function(csrfToken) {
+    $(form).attr("action", "command/core/export-rows/" + targetUrl + "?" + $.param({csrf_token: csrfToken}))
+    document.body.appendChild(form);
 
-  window.open("about:blank", "openrefine-export");
-  form.submit();
+    window.open("about:blank", "openrefine-export");
+    form.submit();
 
-  document.body.removeChild(form);
+    document.body.removeChild(form);
+  });
 };
 
 WikibaseExporterMenuBar.checkSchemaAndExport = function (format) {

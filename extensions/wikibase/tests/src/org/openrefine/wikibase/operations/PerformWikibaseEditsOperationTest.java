@@ -62,13 +62,13 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructor() {
-        new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "", 5, "", 60, "tag", "editing results");
+        new PerformWikibaseEditsOperation(EngineConfig.defaultRowBased(), "", 5, "", 60, "tag", "editing results");
     }
 
     @Test
     public void testGetTagCandidates() {
         PerformWikibaseEditsOperation operation = new PerformWikibaseEditsOperation(
-                EngineConfig.reconstruct("{}"), "my summary", 5, "", 60, "openrefine-${version}", null);
+                EngineConfig.defaultRowBased(), "my summary", 5, "", 60, "openrefine-${version}", null);
         List<String> candidates = operation.getTagCandidates("3.4");
 
         assertEquals(candidates, Arrays.asList("openrefine-3.4", "openrefine"));
@@ -95,4 +95,25 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
         assertEquals(changeString, saveChange(change));
     }
 
+    @Test
+    public void testLoadChange_v2()
+            throws Exception {
+        String changeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"},\"nameMap\":{\"1234\":\"Non-existent entity\"}}\n" + "/ec/\n";
+        LineNumberReader reader = makeReader(changeString);
+        Change change = PerformWikibaseEditsOperation.PerformWikibaseEditsChange.load(reader, pool);
+
+        project.rows.get(0).cells.set(0, TestingData.makeNewItemCell(1234L, "my new item"));
+
+        change.apply(project);
+
+        assertEquals(Recon.Judgment.Matched, project.rows.get(0).cells.get(0).recon.judgment);
+        assertEquals("Q789", project.rows.get(0).cells.get(0).recon.match.id);
+        assertEquals("Non-existent entity", project.rows.get(0).cells.get(0).recon.match.name);
+
+        change.revert(project);
+
+        assertEquals(Recon.Judgment.New, project.rows.get(0).cells.get(0).recon.judgment);
+
+        assertEquals(changeString, saveChange(change));
+    }
 }

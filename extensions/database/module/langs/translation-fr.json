@@ -39,7 +39,7 @@
     "database-source/new-connection-legend": "Éditeur de nouvelle connexion",
     "database-source/savedConnectionSpan": "Connexions enregistrées",
     "database-parsing/start-over": "&laquo; Recommencer",
-    "database-parsing/conf-pars": "Configurer les options d'analyse syntaxique (parsing)",
+    "database-parsing/conf-pars": "Configurer les options d'analyse syntaxique",
     "database-parsing/proj-name": "Nom&nbsp;du&nbsp;projet",
     "database-parsing/create-proj": "Créer un projet &raquo;",
     "database-parsing/updating-preview": "Mise à jour de l'aperçu…",

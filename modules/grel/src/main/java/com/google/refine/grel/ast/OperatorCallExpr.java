@@ -34,7 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.text.Collator;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -45,7 +48,7 @@ import com.google.refine.expr.ExpressionUtils;
 /**
  * An abstract syntax tree node encapsulating an operator call, such as "+".
  */
-public class OperatorCallExpr implements Evaluable {
+public class OperatorCallExpr extends GrelExpr {
 
     final protected Evaluable[] _args;
     final protected String _op;
@@ -218,6 +221,15 @@ public class OperatorCallExpr implements Evaluable {
     }
 
     @Override
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        Evaluable[] translatedArgs = new Evaluable[_args.length];
+        for (int i = 0; i != _args.length; i++) {
+            translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
+        }
+        return new OperatorCallExpr(translatedArgs, _op);
+    }
+
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
@@ -235,5 +247,26 @@ public class OperatorCallExpr implements Evaluable {
 
     private boolean isIntegral(Object n) {
         return n instanceof Long || n instanceof Integer;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(_args);
+        result = prime * result + Objects.hash(_op);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OperatorCallExpr other = (OperatorCallExpr) obj;
+        return Arrays.equals(_args, other._args) && Objects.equals(_op, other._op);
     }
 }

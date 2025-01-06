@@ -45,6 +45,7 @@ import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.filters.AnyRowRecordFilter;
 import com.google.refine.browsing.filters.ExpressionStringComparisonRowFilter;
 import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.MetaParser;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.util.PatternSyntaxExceptionParser;
@@ -79,6 +80,19 @@ public class TextSearchFacet implements Facet {
         @Override
         public String getJsonType() {
             return "text";
+        }
+
+        @Override
+        public void validate() {
+            if ("regex".equals(_mode)) {
+                try {
+                    Pattern.compile(
+                            _query,
+                            _caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+                } catch (java.util.regex.PatternSyntaxException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
         }
     }
 
@@ -161,6 +175,16 @@ public class TextSearchFacet implements Facet {
             @Override
             public Object evaluate(Properties bindings) {
                 return bindings.get("value");
+            }
+
+            @Override
+            public String getSource() {
+                return "value";
+            }
+
+            @Override
+            public String getLanguagePrefix() {
+                return MetaParser.GREL_LANGUAGE_CODE;
             }
 
         };

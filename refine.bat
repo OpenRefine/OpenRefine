@@ -176,12 +176,6 @@ set OPTS=%OPTS% -Drefine.verbosity=%REFINE_VERBOSITY%
 
 if not "%REFINE_EXTRA_OPTS%" == "" set OPTS=%OPTS% -D%REFINE_EXTRA_OPTS%
 
-if "%GDATA_CLIENT_ID%" == "" goto skipGDataCredentials
-if "%GDATA_CLIENT_SECRET%" == "" goto skipGDataCredentials
-if "%GDATA_API_KEY%" == "" goto skipGDataCredentials
-set OPTS=%OPTS% -Dext.gdata.clientid=%GDATA_CLIENT_ID% -Dext.gdata.clientsecret=%GDATA_CLIENT_SECRET% -Dext.gdata.apikey=%GDATA_API_KEY%
-:skipGDataCredentials
-
 rem ----- Respond to the action ----------------------------------------------------------
 
 set ACTION=%1

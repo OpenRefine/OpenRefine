@@ -38,6 +38,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -59,6 +60,11 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
             @JsonProperty("rowCount") int rowCount) {
         _columnName = columnName;
         _rowCount = rowCount;
+    }
+
+    @Override
+    public void validate() {
+        Validate.notNull(_columnName, "Missing column name");
     }
 
     @JsonProperty("rowCount")

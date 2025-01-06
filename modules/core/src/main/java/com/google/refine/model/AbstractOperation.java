@@ -40,27 +40,37 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.OperationResolver;
 import com.google.refine.process.Process;
 import com.google.refine.process.QuickHistoryEntryProcess;
 
-/*
- *  An abstract operation can be applied to different but similar
- *  projects.
+/**
+ * An operation can be applied to different but similar projects. Instances of this class store the metadata describing
+ * the operation before it is carried out, such as the names of the columns it applies to, the configuration of any
+ * facets to be observed by the operation, and so on. Any data obtained from executing the operation on the project
+ * should be stored in a {@link Change} instead.
+ * 
+ * Operations need to be (de)serializable in JSON via Jackson, used for project persistence and in the extract/apply
+ * dialog of the history panel. Validation of the operation's parameters should not happen during deserialization, but
+ * in the {@link #validate()} method.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = "op", visible = true) // for
-                                                                                                                 // UnknownOperation,
-                                                                                                                 // which
-                                                                                                                 // needs
-                                                                                                                 // to
-                                                                                                                 // read
-                                                                                                                 // its
-                                                                                                                 // own
-                                                                                                                 // id
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = "op", visible = true)
 @JsonTypeIdResolver(OperationResolver.class)
 abstract public class AbstractOperation {
+
+    /**
+     * Checks whether the parameters of this operation are suitably filled. Those checks should not happen in the
+     * deserialization constructor as it would risk rejecting JSON certain representations at project loading time.
+     * 
+     * @throws IllegalArgumentException
+     *             if any parameter is missing or inconsistent
+     */
+    public void validate() throws IllegalArgumentException {
+
+    }
 
     public Process createProcess(Project project, Properties options) throws Exception {
         return new QuickHistoryEntryProcess(project, getBriefDescription(null)) {
