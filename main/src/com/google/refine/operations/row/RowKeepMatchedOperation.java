@@ -67,7 +67,7 @@ public class RowKeepMatchedOperation extends EngineDependentOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                row_keep_matching_brief() + " (" + rowsToRemove.size() + " rows removed)",
+                row_keep_matching_brief() + " - " + rowsToRemove.size() + " rows removed",
                 this,
                 new RowRemovalChange(rowsToRemove));
     }
