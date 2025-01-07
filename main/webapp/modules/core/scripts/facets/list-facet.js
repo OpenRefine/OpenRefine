@@ -40,7 +40,6 @@ class ListFacet extends Facet {
     }
 
     this._selection = selection || config.selection || [];
-    this._combineMode = config.combineMode || "union";
 
     if (!("invert" in this._config)) {
       this._config.invert = false;
@@ -89,7 +88,6 @@ class ListFacet extends Facet {
                 selection: [],
                 selectBlank: this._blankChoice !== null && this._blankChoice.s,
                 selectError: this._errorChoice !== null && this._errorChoice.s,
-                combineMode: this._combineMode,
                 invert: this._config.invert
     };
     for (var i = 0; i < this._selection.length; i++) {
@@ -187,12 +185,6 @@ class ListFacet extends Facet {
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
             '<span bind="titleSpan"></span>' +
           '</td>' +
-         '<td width="1%">' +
-         '<div class="facet-mode-buttons">' +
-         '<a href="javascript:{}" title="AND mode" class="facet-combine-toggle' + (this._combineMode === "AND" ? ' active' : '') + '" data-mode="AND" bind="andModeButton">&amp;</a>' +
-         '<a href="javascript:{}" title="OR mode" class="facet-combine-toggle' + (this._combineMode === "OR" ? ' active' : '') + '" data-mode="OR" bind="orModeButton">∥</a>' +
-         '</div>' +
-        '</td>' +
         '</tr></table></div>' +
       '</div>' +
       '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n('core-facets/click-to-edit')+'"></div>' +
@@ -209,15 +201,7 @@ class ListFacet extends Facet {
       '</div>'
     );
     this._elmts = DOM.bind(this._div);
-    this._elmts.andModeButton.on('click', function(e) {
-      e.preventDefault();
-      self._setCombineMode('AND');
-    });
 
-    this._elmts.orModeButton.on('click', function(e) {
-      e.preventDefault();
-      self._setCombineMode('OR');
-    });
     this._elmts.titleSpan.text(this._config.name);
     this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).on('click',function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
@@ -265,14 +249,6 @@ class ListFacet extends Facet {
       });
     }
   };
-  _setCombineMode(mode) {
-    if (this._combineMode !== mode) {
-      this._combineMode = mode;
-      this._div.find('.facet-combine-toggle').removeClass('active');
-      this._div.find('.facet-combine-toggle[data-mode="' + mode + '"]').addClass('active');
-      Refine.update({ engineChanged: true });
-    }
-  }
 
   _copyChoices() {
     var self = this;

@@ -357,31 +357,3 @@ img.facet-choice-link {
 .scatterplot-selectors .scatterplot-dot-selector label.dot-big-label {
   background-position: -48px -25px;
 }
-.facet-mode-buttons {
-  display: inline-flex;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-}
-
-.facet-combine-toggle {
-  padding: 2px 6px;
-  text-decoration: none;
-  color: #666;
-  background: #f8f8f8;
-  border-right: 1px solid #ccc;
-}
-
-.facet-combine-toggle:last-child {
-  border-right: none;
-}
-.facet-combine-toggle.active {
-  background: #4b82d3;
-  color: #fff;
-}
-.facet-combine-toggle:hover {
-  background: #eee;
-}
-
-.facet-combine-toggle.active:hover {
-  background: #3b71c2;
-}
