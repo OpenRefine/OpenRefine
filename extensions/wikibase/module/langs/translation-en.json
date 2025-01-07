@@ -277,7 +277,7 @@
     "warnings-messages/new-media-without-file-name/title": "New media without file name",
     "warnings-messages/new-media-without-file-name/body": "Uploading new media files requires supplying a file name to be used on the wiki. No file name was provided for {example_entity}, for instance.",
     "warnings-messages/new-media-without-wikitext/title": "New media without wikitext",
-    "warnings-messages/new-media-without-wikitext/body": "Uploading new media files requires supplying accompanying wikitext. No or incomplete wikitext was provided..",
+    "warnings-messages/new-media-without-wikitext/body": "\"Uploading new media files requires supplying accompanying wikitext. No wikitext was provided for {example_entity}, for instance.",
     "warnings-messages/new-media-chunked-upload/title": "Uploading large files",
     "warnings-messages/new-media-chunked-upload/body": "Some files are large and may take a long time to upload. If the upload is interrupted it could result in files being published without required information. Please check the uploaded files if that happens.",
     "warnings-messages/new-media-missing-property/title": "New media requires property {property_entity}",

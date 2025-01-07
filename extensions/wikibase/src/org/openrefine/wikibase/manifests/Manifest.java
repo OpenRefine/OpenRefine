@@ -126,12 +126,10 @@ public interface Manifest {
     String getEditGroupsUrlSchema();
 
     /**
-     * Returns an entity or property id used in the CommonsQualityConstraints extension.
-     *
-     * @param name
-     *            our internal identifier for the entity id
+     * Returns an entity or property id used in the MediaWiki mandatort properties
+     * .
      * @return the entity id
      */
-    String getMediaConstraintsRelatedId(String name);
+    String getMandatoryMediaInfoPropertyIds();
 
 }

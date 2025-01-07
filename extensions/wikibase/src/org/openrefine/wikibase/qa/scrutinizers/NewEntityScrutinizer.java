@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -82,22 +81,12 @@ public class NewEntityScrutinizer extends EditScrutinizer {
     @Override
     public boolean prepareDependencies() {
         newMediaRequiredProperties = new ArrayList<>();
-        if (manifest.getMediaConstraintsRelatedId("required_properties") != null
-                && !manifest.getMediaConstraintsRelatedId("required_properties").isBlank()) {
-            newMediaRequiredProperties = Arrays.stream(manifest.getMediaConstraintsRelatedId("required_properties").split(","))
+        if (manifest.getMandatoryMediaInfoPropertyIds() != null
+                && !manifest.getMandatoryMediaInfoPropertyIds().isBlank()) {
+            newMediaRequiredProperties = Arrays.stream(manifest.getMandatoryMediaInfoPropertyIds().split(","))
                     .map(String::trim)
                     .collect(Collectors.toList());
         }
-
-        newMediaWikitextRequirement = new ArrayList<>();
-        if (manifest.getMediaConstraintsRelatedId("wikitext_requires_anyone_infobox_template") != null
-                && !manifest.getMediaConstraintsRelatedId("wikitext_requires_anyone_infobox_template").isBlank()) {
-            newMediaWikitextRequirement = Arrays.stream(manifest.getMediaConstraintsRelatedId("wikitext_requires_anyone_infobox_template").split(","))
-                    .map(String::trim)
-                    .map(field -> infoBoxFieldRegexTemplate.replace("INFOBOXFIELD", field))
-                    .collect(Collectors.toList());
-        }
-
         return true;
     }
 
@@ -135,11 +124,9 @@ public class NewEntityScrutinizer extends EditScrutinizer {
                 }
             }
 
-            if (update.getWikitext() == null || update.getWikitext().isBlank() ||
-                    (!newMediaWikitextRequirement.isEmpty() && !newMediaWikitextRequirement
-                            .stream()
-                            .anyMatch(pattern -> Pattern.compile(pattern).matcher(update.getWikitext()).find()))) {
+            if (update.getWikitext() == null || update.getWikitext().isBlank()) {
                 QAWarning issue = new QAWarning(newMediaWithoutWikitextType, null, QAWarning.Severity.CRITICAL, 1);
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
 

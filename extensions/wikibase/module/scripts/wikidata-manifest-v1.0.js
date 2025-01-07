@@ -5,10 +5,7 @@ const WikidataManifestV1_0 = {
     "root": "https://www.wikidata.org/wiki/",
     "main_page": "https://www.wikidata.org/wiki/Wikidata:Main_Page",
     "api": "https://www.wikidata.org/w/api.php",
-    "constraints": {
-       "required_properties": "P7482, P571, P170, P6216, P275",
-       "wikitext_requires_anyone_infobox_template" : "Information, Artwork, Photography, Art photo, Book, Map, Musical work"
-    }
+    "mandatoryMediaInfoPropertyIds": "P7482, P170, P6216"
   },
   "wikibase": {
     "site_iri": "http://www.wikidata.org/entity/",

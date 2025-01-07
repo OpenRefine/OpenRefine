@@ -38,6 +38,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
+import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
 import org.openrefine.wikibase.testing.TestingData;
 import org.openrefine.wikibase.updates.ItemEdit;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
@@ -145,7 +147,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
         scrutinizer.setEnableSlowChecks(true);
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.invalidFilePathType,
-                NewEntityScrutinizer.newMediaMissingProperty, NewEntityScrutinizer.newMediaWithoutWikitextType);
+                NewEntityScrutinizer.newMediaMissingProperty);
     }
 
     @Test
@@ -158,8 +160,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .build();
         scrutinizer.setEnableSlowChecks(true);
         scrutinize(update);
-        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaMissingProperty,
-                NewEntityScrutinizer.newMediaWithoutWikitextType);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaMissingProperty);
     }
 
     @Test
@@ -172,8 +173,7 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
                 .build();
         scrutinizer.setEnableSlowChecks(false);
         scrutinize(update);
-        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaMissingProperty,
-                NewEntityScrutinizer.newMediaWithoutWikitextType);
+        assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaMissingProperty);
     }
 
     @Test
@@ -188,11 +188,11 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
         scrutinizer.setEnableSlowChecks(true);
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.newMediaChunkedUpload,
-                NewEntityScrutinizer.newMediaMissingProperty, NewEntityScrutinizer.newMediaWithoutWikitextType);
+                NewEntityScrutinizer.newMediaMissingProperty);
     }
 
     @Test
-    public void testWikiTextWarning() {
+    public void testNewMediaMandatoryPropertiesWarning() {
         MediaInfoEdit update = new MediaInfoEditBuilder(TestingData.newMidA)
                 .addFilePath("/this/path/does/not/exist.jpg")
                 .addFileName("my_file.jpg")
@@ -211,5 +211,22 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
         scrutinize(update);
         assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.invalidFilePathType,
                 NewEntityScrutinizer.newMediaMissingProperty);
+
+        QAWarning warnP170 = new QAWarning("new-media-missing-property", "P170", QAWarning.Severity.CRITICAL, 1);
+        warnP170.setFacetable(true);
+        warnP170.setProperty("property_entity", new SuggestedPropertyIdValue("P170", "http://www.wikidata.org/entity/", ""));
+
+        QAWarning warnP6216 = new QAWarning("new-media-missing-property", "P6216", QAWarning.Severity.CRITICAL, 1);
+        warnP6216.setFacetable(true);
+        warnP6216.setProperty("property_entity", new SuggestedPropertyIdValue("P6216", "http://www.wikidata.org/entity/", ""));
+
+        QAWarning warnP7482 = new QAWarning("new-media-missing-property", "P7482", QAWarning.Severity.CRITICAL, 1);
+        warnP7482.setFacetable(true);
+        warnP7482.setProperty("property_entity", new SuggestedPropertyIdValue("P7482", "http://www.wikidata.org/entity/", ""));
+
+        assertWarningRaised(warnP170);
+        assertWarningRaised(warnP6216);
+        assertWarningRaised(warnP7482);
+
     }
 }

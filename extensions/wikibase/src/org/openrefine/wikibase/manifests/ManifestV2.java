@@ -30,12 +30,12 @@ public class ManifestV2 implements Manifest {
     private String editGroupsUrlSchema;
     private String tagTemplate;
     private boolean hideStructuredFieldsInMediaInfo;
+    private String mandatoryMediaInfoPropertyIds;
+
 
     private Map<String, EntityTypeSettings> entityTypeSettings;
 
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
-
-    private Map<String, String> mediaConstraintsMap = new HashMap<>();
 
     public ManifestV2(JsonNode manifest) throws JsonParseException, JsonMappingException, IOException {
         version = manifest.path("version").textValue();
@@ -43,15 +43,7 @@ public class ManifestV2 implements Manifest {
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
-
-        JsonNode mediaConstraints = mediawiki.path("constraints");
-        Iterator<Map.Entry<String, JsonNode>> mediaFields = mediaConstraints.fields();
-        while (mediaFields.hasNext()) {
-            Map.Entry<String, JsonNode> entry = mediaFields.next();
-            String name = entry.getKey();
-            String value = entry.getValue().textValue();
-            mediaConstraintsMap.put(name, value);
-        }
+        mandatoryMediaInfoPropertyIds = mediawiki.path("mandatoryMediaInfoPropertyIds").textValue();
 
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
@@ -197,7 +189,7 @@ public class ManifestV2 implements Manifest {
     }
 
     @Override
-    public String getMediaConstraintsRelatedId(String name) {
-        return mediaConstraintsMap.get(name);
+    public String getMandatoryMediaInfoPropertyIds() {
+        return mandatoryMediaInfoPropertyIds;
     }
 }
