@@ -126,8 +126,8 @@ public interface Manifest {
     String getEditGroupsUrlSchema();
 
     /**
-     * Returns an entity or property id used in the MediaWiki mandatort properties
-     * .
+     * Returns an entity or property id used in the MediaWiki mandatort properties .
+     * 
      * @return the entity id
      */
     String getMandatoryMediaInfoPropertyIds();

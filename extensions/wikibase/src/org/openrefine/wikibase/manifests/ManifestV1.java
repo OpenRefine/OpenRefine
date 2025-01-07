@@ -155,7 +155,7 @@ public class ManifestV1 implements Manifest {
 
     @Override
     public String getMandatoryMediaInfoPropertyIds() {
-            return mandatoryMediaInfoPropertyIds;
+        return mandatoryMediaInfoPropertyIds;
     }
 
 }

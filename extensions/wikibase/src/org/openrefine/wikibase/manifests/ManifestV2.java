@@ -32,7 +32,6 @@ public class ManifestV2 implements Manifest {
     private boolean hideStructuredFieldsInMediaInfo;
     private String mandatoryMediaInfoPropertyIds;
 
-
     private Map<String, EntityTypeSettings> entityTypeSettings;
 
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();

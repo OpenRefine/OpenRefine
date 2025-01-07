@@ -67,15 +67,12 @@ public class NewEntityScrutinizer extends EditScrutinizer {
     public static final String newMediaChunkedUpload = "new-media-chunked-upload";
     public static final String invalidFilePathType = "invalid-file-path";
     public static final String newMediaMissingProperty = "new-media-missing-property";
-
-    public static final String infoBoxFieldRegexTemplate = "\\{\\{INFOBOXFIELD\\s*(\\|[^\\|\\n]+=[^\\|\\n]*\\S[^\\|\\n]*\\s*)+\\}\\}";
     // TODO add checks for bad file names (which are page titles): https://www.mediawiki.org/wiki/Help:Bad_title
     // https://commons.wikimedia.org/wiki/Commons:File_naming
 
     // map from seen pairs of labels and descriptions in a given language to an example id where this was seen
     Map<LabelDescription, EntityIdValue> labelDescriptionPairs;
     // New media validation constraints
-    List<String> newMediaWikitextRequirement;
     List<String> newMediaRequiredProperties;
 
     @Override
@@ -138,7 +135,8 @@ public class NewEntityScrutinizer extends EditScrutinizer {
             for (Object requiredProperty : newMediaRequiredProperties) {
                 if (!propertiesSet.contains(requiredProperty)) {
                     QAWarning issue = new QAWarning(newMediaMissingProperty, (String) requiredProperty, QAWarning.Severity.CRITICAL, 1);
-                    issue.setProperty("property_entity", new SuggestedPropertyIdValue((String) requiredProperty, this.manifest.getSiteIri(), ""));
+                    issue.setProperty("property_entity",
+                            new SuggestedPropertyIdValue((String) requiredProperty, this.manifest.getSiteIri(), ""));
                     addIssue(issue);
                 }
             }
