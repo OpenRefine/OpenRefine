@@ -36,7 +36,10 @@ public class RowKeepMatchedOperation extends EngineDependentOperation {
 
     }
     protected String createDescription(Project project, int rowCount) {
-        return row_keep_matching_rows_desc(rowCount);
+        return String.format("%s (%s)",
+                row_keep_matching_brief(),
+                row_keep_matching_rows_desc(rowCount)
+        );
     }
 
     @Override
@@ -71,7 +74,7 @@ public class RowKeepMatchedOperation extends EngineDependentOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                row_keep_matching_brief() + " - "+createDescription(project, rowsToRemove.size()),
+                createDescription(project, rowsToRemove.size()),
                 this,
                 new RowRemovalChange(rowsToRemove));
     }
