@@ -34,6 +34,14 @@
       <resource>
         <directory>resources</directory>
       </resource>
+      <resource>
+        <directory>/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>/main/webapp/WEB-INF/web.xml</directory>
+        <filtering>true</filtering>
+      </resource>
     </resources>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>tests/server/src</testSourceDirectory>
@@ -166,6 +174,17 @@
             <!-- Metaphone3 should be an external library and has many instructions, dominating our actual code in coverage reports -->
             <exclude>com/google/refine/clustering/binning/Metaphone3.class</exclude>
           </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.4.0</version>
+        <configuration>
+          <webXml>/main/webapp/WEB-INF/web.xml</webXml>
+          <warName>openrefine</warName>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <outputDirectory>${project.build.directory}</outputDirectory>
         </configuration>
       </plugin>
 
