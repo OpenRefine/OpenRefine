@@ -24,9 +24,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="3.1963805"
-     inkscape:cx="127.1751"
-     inkscape:cy="63.040055"
+     inkscape:zoom="2.2601823"
+     inkscape:cx="-20.794783"
+     inkscape:cy="-24.997983"
      inkscape:window-width="1918"
      inkscape:window-height="1054"
      inkscape:window-x="0"
@@ -63,23 +63,23 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.11667;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
-       d="m 17.161558,7.0144412 h 2.386056 c 1.163708,0.034378 2.456751,1.6490737 2.456751,2.7644286 V 23.646621 c 0.01702,1.409225 -1.129534,2.668228 -2.470614,2.692503 h -2.351906"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.85208333;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 17.245085,5.3372225 h 2.771025 c 1.351462,0.040334 2.853127,1.9347968 2.853127,3.2434012 V 24.85114 c 0.01977,1.653391 -1.311775,3.130532 -2.869226,3.159013 h -2.731366"
        id="path1750"
        sodipodi:nodetypes="ccsccc" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.11667;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
-       d="m 26.856979,7.0501634 h -2.386055 c -1.163709,0.034378 -2.456752,1.6490737 -2.456752,2.7644287 V 23.682343 c -0.01702,1.409225 1.129535,2.668228 2.470615,2.692503 h 2.351906"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.85208333;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="M 28.504778,5.379134 H 25.733753 C 24.38229,5.4194684 22.880626,7.3139308 22.880626,8.6225353 V 24.893051 c -0.01977,1.653391 1.311776,3.130533 2.869227,3.159014 h 2.731366"
        id="path1750-0"
        sodipodi:nodetypes="ccsccc" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.85208;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
-       d="M 19.232443,22.458946 H 4.3856988 V 11.075268 H 19.235811"
+       d="M 19.650089,23.927472 H 2.4079522 l 0,-14.4797422 H 19.654001"
        id="path1708"
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.85208;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
-       d="M 24.880196,22.441495 H 28.90201 V 11.057818 h -4.025182"
+       d="m 26.209058,23.966792 h 4.670699 l 0,-14.4646401 h -4.67461"
        id="path1708-5"
        sodipodi:nodetypes="cccc" />
     <text
@@ -94,18 +94,18 @@
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.6667px;line-height:125%;font-family:STIXIntegralsUp;-inkscape-font-specification:STIXIntegralsUp;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect2207);fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><tspan
          x="32.210938"
          y="90.011097"
-         id="tspan2261"><tspan
+         id="tspan1075"><tspan
            style="font-size:13.3333px"
-           id="tspan2259">a</tspan></tspan></text>
+           id="tspan1073">a</tspan></tspan></text>
     <text
        xml:space="preserve"
-       transform="matrix(0.96105751,0,0,0.96105751,-0.22370098,-78.408693)"
+       transform="matrix(1.1161158,0,0,1.127573,-2.9451341,-94.982325)"
        id="text2213"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14px;line-height:125%;font-family:STIXIntegralsUp;-inkscape-font-specification:STIXIntegralsUp;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect2215);fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><tspan
          x="6.9902344"
          y="102.83786"
-         id="tspan2265"><tspan
+         id="tspan1079"><tspan
            style="font-weight:bold;-inkscape-font-specification:'STIXIntegralsUp Bold'"
-           id="tspan2263">a</tspan></tspan></text>
+           id="tspan1077">a</tspan></tspan></text>
   </g>
 </svg>
