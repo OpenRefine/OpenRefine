@@ -167,14 +167,6 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           if ("tooltip" in item) {
             menuItem.attr("title", item.tooltip);
           }
-          if ("icon" in item) {
-            let img = $('<img />')
-             .attr('src', item.icon)
-             .addClass('menu-icon')
-             .attr('aria-hidden', 'true');
-            contentsDiv.prepend(' ');
-            contentsDiv.prepend(img);
-          }
           menuItem.on('mouseenter click', function () {
             clearTimeout(MenuSystem._hoverTimeout);
             MenuSystem._hoverTimeout = setTimeout(function () {
@@ -182,6 +174,14 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
             }, 300);
           });
         }
+      }
+      if ("icon" in item) {
+        let img = $('<img />')
+          .attr('src', item.icon)
+          .addClass('menu-icon')
+          .attr('aria-hidden', 'true');
+        contentsDiv.prepend(' ');
+        contentsDiv.prepend(img);
       }
     } else if ("heading" in item) {
       $('<div></div>').addClass("menu-section").text(item.heading).appendTo(menu);
