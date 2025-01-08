@@ -36,10 +36,7 @@ public class RowKeepMatchedOperation extends EngineDependentOperation {
 
     }
     protected String createDescription(Project project, int rowCount) {
-        return String.format("%s (%s)",
-                row_keep_matching_brief(),
-                row_keep_matching_rows_desc(rowCount)
-        );
+           return row_keep_matching_rows_desc(rowCount);
     }
 
     @Override
