@@ -134,7 +134,7 @@ describe(__filename, function () {
             .then( () => resetWikibases(savedValue))
     });
 
-    it('Add a wikibase instance (Manifest missing media mandatory property definition)', function () {
+    it('Add a wikibase instance (Manifest missing mediawiki mandatory properties definition)', function () {
         cy.loadAndVisitProject('food.mini');
         getPreference('wikibase.manifests');
 
@@ -175,20 +175,13 @@ describe(__filename, function () {
             JSON.stringify(manifest)
         );
 
+        cy.get('.add-wikibase-dialog button').contains('Add Wikibase').click();
+
         // Validate alert for media wiki missing property
         // manifest.mediawiki should have required property 'mandatoryMediaInfoPropertyIds'
-        const stub = cy.stub()
-        cy.on('window:alert', stub)
-
-        cy.get('.add-wikibase-dialog button')
-          .contains('Add Wikibase')
-          .click()
-          .then(() => {
-            expect(stub.getCall(0)).to.be.calledWith('manifest.mediawiki should have required property \'mandatoryMediaInfoPropertyIds\'')
-          });
-
-        cy.get('.wikibase-dialog .dialog-footer button').contains('Cancel').click()
-            .then( () => resetWikibases(savedValue))
+        cy.on('window:alert', (alertText) => {
+              expect(alertText).to.equal('manifest.mediawiki should have required property \'mandatoryMediaInfoPropertyIds\'');
+            });
     });
 
     it('Delete wikibase', function () {
