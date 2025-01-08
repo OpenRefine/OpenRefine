@@ -535,6 +535,7 @@ function init() {
       "scripts/reconciliation/standard-service-panel.js",
 
       "scripts/dialogs/extract-operations-dialog.js",
+      "scripts/dialogs/apply-operations-dialog.js",
       "scripts/dialogs/expression-preview-dialog.js",
       "scripts/dialogs/add-column-by-reconciliation.js",
       "scripts/dialogs/clustering-dialog.js",
