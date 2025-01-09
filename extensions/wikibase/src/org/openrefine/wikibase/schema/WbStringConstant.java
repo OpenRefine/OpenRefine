@@ -31,7 +31,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
 import org.openrefine.wikibase.schema.validation.ValidationState;
 
-public class WbStringConstant implements WbExpression<StringValue> {
+public class WbStringConstant extends WbConstantExpr<StringValue> {
 
     private String value;
 

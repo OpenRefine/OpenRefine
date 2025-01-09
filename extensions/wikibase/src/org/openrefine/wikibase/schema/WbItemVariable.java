@@ -24,6 +24,8 @@
 
 package org.openrefine.wikibase.schema;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.wikidata.wdtk.datamodel.implementation.EntityIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -93,6 +95,11 @@ public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
             return new ReconItemIdValue(cell.recon, cell.value.toString());
         }
         throw new SkipSchemaExpressionException();
+    }
+
+    @Override
+    public WbExpression<ItemIdValue> renameColumns(Map<String, String> substitutions) {
+        return new WbItemVariable(substitutions.getOrDefault(getColumnName(), getColumnName()));
     }
 
     @Override

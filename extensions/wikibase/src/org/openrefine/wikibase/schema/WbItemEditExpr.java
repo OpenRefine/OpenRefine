@@ -25,7 +25,11 @@
 package org.openrefine.wikibase.schema;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -148,6 +152,25 @@ public class WbItemEditExpr implements WbExpression<ItemEdit> {
     @JsonProperty("statementGroups")
     public List<WbStatementGroupExpr> getStatementGroups() {
         return Collections.unmodifiableList(statementGroups);
+    }
+
+    @Override
+    public Set<String> getColumnDependencies() {
+        Set<String> deps = new HashSet<>(subject.getColumnDependencies());
+        for (WbNameDescExpr nameDesc : nameDescs) {
+            deps.addAll(nameDesc.getColumnDependencies());
+        }
+        for (WbStatementGroupExpr statementGroupExpr : statementGroups) {
+            deps.addAll(statementGroupExpr.getColumnDependencies());
+        }
+        return deps;
+    }
+
+    @Override
+    public WbItemEditExpr renameColumns(Map<String, String> substitutions) {
+        return new WbItemEditExpr(subject.renameColumns(substitutions),
+                nameDescs.stream().map(nameDesc -> nameDesc.renameColumns(substitutions)).collect(Collectors.toList()),
+                statementGroups.stream().map(statementGroup -> statementGroup.renameColumns(substitutions)).collect(Collectors.toList()));
     }
 
     @Override
