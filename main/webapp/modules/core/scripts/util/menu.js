@@ -137,7 +137,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
   var createMenuItem = function(item) {
     if ("label" in item) {
       var menuItem = MenuSystem.createMenuItem().appendTo(menu);
-      menuItem.text(item.label);
+      $('<div></div>').text(item.label).appendTo(menuItem);
       if ("submenu" in item) {
         menuItem.addClass('submenu');
         menuItem.on('mouseenter click', function () {

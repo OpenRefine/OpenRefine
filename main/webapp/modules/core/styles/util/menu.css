@@ -70,10 +70,11 @@ a.menu-item:hover {
   background-color: #dbe8f8;
 }
 
-.menu-item.submenu {
+.menu-item.submenu div {
   background: url('../../images/right-arrow.png') no-repeat;
-  background-position-x: right 7px;
+  background-position-x: right;
   background-position-y: 50%;
+  padding-right: 8px;
 }
 
 a.menu-item img {
