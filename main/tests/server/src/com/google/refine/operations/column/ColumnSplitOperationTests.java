@@ -27,6 +27,8 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.Collections;
 
@@ -107,6 +109,19 @@ public class ColumnSplitOperationTests extends RefineTest {
                 "    \"fieldLengths\": [1,1]\n" +
                 "  }";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnSplitOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        AbstractOperation op = new ColumnSplitOperation(invalidEngineConfig, "foo", false, false, ",",
+                false, 0);
+        assertThrows(IllegalArgumentException.class, () -> op.validate());
+        AbstractOperation noColumnName = new ColumnSplitOperation(EngineConfig.reconstruct("{}"), null, false, false, ",",
+                false, 0);
+        assertThrows(IllegalArgumentException.class, () -> noColumnName.validate());
+        AbstractOperation lengths = new ColumnSplitOperation(new EngineConfig(Collections.emptyList(), Mode.RowBased), "hello", false,
+                false, null);
+        assertThrows(IllegalArgumentException.class, () -> lengths.validate());
     }
 
     @Test

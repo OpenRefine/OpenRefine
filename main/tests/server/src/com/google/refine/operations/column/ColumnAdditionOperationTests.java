@@ -27,6 +27,8 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.Collections;
 
@@ -98,6 +100,34 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        ColumnAdditionOperation invalidEngine = new ColumnAdditionOperation(
+                invalidEngineConfig,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+        assertThrows(IllegalArgumentException.class, () -> invalidEngine.validate());
+        ColumnAdditionOperation missingBaseColumn = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                null,
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+        assertThrows(IllegalArgumentException.class, () -> missingBaseColumn.validate());
+        ColumnAdditionOperation invalidExpression = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                "bar",
+                "grel:foo(",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+        assertThrows(IllegalArgumentException.class, () -> invalidExpression.validate());
     }
 
     @Test

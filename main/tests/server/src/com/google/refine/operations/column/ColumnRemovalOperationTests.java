@@ -27,6 +27,8 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -70,6 +72,12 @@ public class ColumnRemovalOperationTests extends RefineTest {
                 + "\"description\":" + new TextNode(OperationDescription.column_removal_brief("my column")).toString() + ","
                 + "\"columnName\":\"my column\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        ColumnRemovalOperation SUT = new ColumnRemovalOperation(null);
+        assertThrows(IllegalArgumentException.class, () -> SUT.validate());
     }
 
     @Test

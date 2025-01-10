@@ -40,6 +40,7 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -48,6 +49,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
@@ -86,6 +88,21 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 
         _newColumnName = newColumnName;
         _columnInsertIndex = columnInsertIndex;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        Validate.notNull(_baseColumnName, "Missing base column name");
+        Validate.notNull(_expression, "Missing expression");
+        try {
+            MetaParser.parse(_expression);
+        } catch (ParsingException e) {
+            throw new IllegalArgumentException(e);
+        }
+        Validate.notNull(_onError, "Missing 'on error' behaviour");
+        Validate.notNull(_newColumnName, "Missing new column name");
+        Validate.isTrue(_columnInsertIndex >= 0, "Invalid column insert index");
     }
 
     @JsonProperty("newColumnName")

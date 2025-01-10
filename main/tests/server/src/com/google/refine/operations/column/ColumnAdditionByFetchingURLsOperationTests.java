@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.column;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -144,6 +145,50 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
         Process process = op.createProcess(project, new Properties());
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));
+    }
+
+    @Test
+    public void testValidate() {
+        AbstractOperation withInvalidEngine = new ColumnAdditionByFetchingURLsOperation(invalidEngineConfig,
+                "fruits",
+                "\"https://foo.com/api?city=\"+value",
+                OnError.StoreError,
+                "rand",
+                1,
+                5,
+                true,
+                null);
+        assertThrows(IllegalArgumentException.class, () -> withInvalidEngine.validate());
+        AbstractOperation missingBaseColumn = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                null,
+                "\"https://foo.com/api?city=\"+value",
+                OnError.StoreError,
+                "rand",
+                1,
+                5,
+                true,
+                null);
+        assertThrows(IllegalArgumentException.class, () -> missingBaseColumn.validate());
+        AbstractOperation missingNewColumn = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                "fruits",
+                "\"https://foo.com/api?city=\"+value",
+                OnError.StoreError,
+                null,
+                1,
+                5,
+                true,
+                null);
+        assertThrows(IllegalArgumentException.class, () -> missingNewColumn.validate());
+        AbstractOperation missingExpression = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                "fruits",
+                null,
+                OnError.StoreError,
+                "rand",
+                1,
+                5,
+                true,
+                null);
+        assertThrows(IllegalArgumentException.class, () -> missingExpression.validate());
     }
 
     /**
