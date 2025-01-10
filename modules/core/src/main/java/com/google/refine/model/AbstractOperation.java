@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -98,5 +100,24 @@ abstract public class AbstractOperation {
     @JsonProperty("description")
     public String getJsonDescription() {
         return getBriefDescription(null);
+    }
+
+    /**
+     * A set of columns required by this operation to run. If present, the operation is guaranteed to be able to run on
+     * any project which has at least those columns. If equal to {@link Optional#empty()} the operation could
+     * potentially depend on any column.
+     */
+    @JsonIgnore
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.empty();
+    }
+
+    /**
+     * If the effect of the operation on the set of columns in the project is predictable, this effect can be exposed in
+     * this method. Otherwise, {@link Optional#empty()} can be returned.
+     */
+    @JsonIgnore
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.empty();
     }
 }
