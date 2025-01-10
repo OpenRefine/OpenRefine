@@ -34,6 +34,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -69,6 +70,23 @@ public class ScatterplotFacetTests extends RefineTest {
             "          \"ey\": \"value\",\n" +
             "          \"cx\": \"my column\",\n" +
             "          \"cy\": \"e\",\n" +
+            "          \"name\": \"my column (x) vs. e (y)\"\n" +
+            "        }";
+
+    public static String configJsonRenamed = "{\n" +
+            "          \"to_x\": 1,\n" +
+            "          \"to_y\": 1,\n" +
+            "          \"dot\": 1,\n" +
+            "          \"from_x\": 0.21333333333333335,\n" +
+            "          \"l\": 150,\n" +
+            "          \"type\": \"scatterplot\",\n" +
+            "          \"from_y\": 0.26666666666666666,\n" +
+            "          \"dim_y\": \"lin\",\n" +
+            "          \"ex\": \"grel:value\",\n" +
+            "          \"dim_x\": \"lin\",\n" +
+            "          \"ey\": \"grel:value\",\n" +
+            "          \"cx\": \"my column\",\n" +
+            "          \"cy\": \"f\",\n" +
             "          \"name\": \"my column (x) vs. e (y)\"\n" +
             "        }";
 
@@ -158,4 +176,12 @@ public class ScatterplotFacetTests extends RefineTest {
         ScatterplotFacetConfig facetConfig = ParsingUtilities.mapper.readValue(configJsonWithParseError, ScatterplotFacetConfig.class);
         assertEquals(facetConfig.getColumnDependencies(), Optional.of(Collections.emptySet()));
     }
+
+    @Test
+    public void testRenameColumnDependencies() throws Exception {
+        ScatterplotFacetConfig facetConfig = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
+        FacetConfig renamed = facetConfig.renameColumnDependencies(Map.of("foo", "bar", "e", "f"));
+        TestUtils.isSerializedTo(renamed, configJsonRenamed);
+    }
+
 }

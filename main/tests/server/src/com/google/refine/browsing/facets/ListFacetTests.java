@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -74,6 +75,19 @@ public class ListFacetTests extends RefineTest {
             + "\"name\":\"facet A\","
             + "\"columnName\":\"Column A\","
             + "\"expression\":\"foo(\","
+            + "\"omitBlank\":false,"
+            + "\"omitError\":false,"
+            + "\"selection\":[{\"v\":{\"v\":\"foobar\",\"l\":\"true\"}}],"
+            + "\"selectBlank\":false,"
+            + "\"selectError\":false,"
+            + "\"invert\":false"
+            + "}";
+
+    private static String jsonConfigRenamed = "{"
+            + "\"type\":\"list\","
+            + "\"name\":\"facet A\","
+            + "\"columnName\":\"Column A2\","
+            + "\"expression\":\"grel:value + \\\"bar\\\"\","
             + "\"omitBlank\":false,"
             + "\"omitError\":false,"
             + "\"selection\":[{\"v\":{\"v\":\"foobar\",\"l\":\"true\"}}],"
@@ -138,6 +152,20 @@ public class ListFacetTests extends RefineTest {
     public void testColumnDependenciesWithError() throws Exception {
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfigParseError, ListFacetConfig.class);
         assertEquals(facetConfig.getColumnDependencies(), Optional.of(Collections.emptySet()));
+    }
+
+    @Test
+    public void testRenameColumns() throws Exception {
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
+        FacetConfig renamed = facetConfig.renameColumnDependencies(Map.of("Column A", "Column A2"));
+        TestUtils.isSerializedTo(renamed, jsonConfigRenamed);
+    }
+
+    @Test
+    public void testRenameColumnsWithParseError() throws Exception {
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfigParseError, ListFacetConfig.class);
+        FacetConfig renamed = facetConfig.renameColumnDependencies(Map.of("foo", "bar"));
+        TestUtils.isSerializedTo(renamed, jsonConfigParseError);
     }
 
     @Test

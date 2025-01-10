@@ -304,6 +304,7 @@ public class GrelTests extends GrelTestBase {
                 { "cells.foo", "cells.bar" },
                 { "value + ' ' + cells.foo.value", "value + ' ' + cells.bar.value" },
                 { "cells[\"foo\"].value+'_'+value", "cells[\"bar\"].value+'_'+value" },
+                { "toDate(cells[\"foo\"].value)", "toDate(cells[\"bar\"].value)" },
                 { "parseHtml(value.trim())", "parseHtml(value.trim())" },
                 // when the dependencies cannot be isolated, we just return the original
                 { "cells", "cells" },
