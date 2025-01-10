@@ -918,5 +918,18 @@
     "core-dialogs/action": "アクション",
     "core-views/warning-function-name": "関数名を入力してください.",
     "core-views/warning-delete-functions": "本当にこの関数を削除しますか?",
-    "core-index-parser/store-blank-columns": "空白カラムも保存"
+    "core-index-parser/store-blank-columns": "空白カラムも保存",
+    "core-index-open/search-placeholder": "検索",
+    "core-index-open/no-results-message": "見つかりません",
+    "core-dialogs/remove-duplicate-rows": "重複した行を削除",
+    "core-buttons/no-criteria-selected": "重複行の基準となるカラムが少なくとも１つは必要です.",
+    "core-index-extensions/extensions": "拡張機能",
+    "core-index-extensions/open-extension-directory": "拡張機能のディレクトリを開く",
+    "core-index-extensions/list-extensions-header": "インストールされた拡張機能",
+    "core-index-extensions/extensions-documentation-button": "ドキュメント",
+    "core-index-extensions/extensions-discovery-button": "拡張機能を探す",
+    "core-index-extensions/extensions-table-name": "拡張機能",
+    "core-index-extensions/extensions-table-bundled": "付属",
+    "core-dialogs/remove-duplicate-rows-col-select": "重複行とみなす基準のカラムを選択",
+    "core-views/remove-duplicates": "重複した行を削除"
 }
