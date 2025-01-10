@@ -72,12 +72,12 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             @JsonProperty("separator") String separator,
             @JsonProperty("regex") boolean regex,
             @JsonProperty("fieldLengths") int[] fieldLengths) {
-        if ("separator".equals(mode) || "plain".equals(mode)) {
+        if ("separator".equals(mode) || "plain".equals(mode) || "regex".equals(mode)) {
             return new MultiValuedCellSplitOperation(
                     columnName,
                     keyColumnName,
                     separator,
-                    regex);
+                    regex || "regex".equals(mode));
         } else {
             return new MultiValuedCellSplitOperation(
                     columnName,

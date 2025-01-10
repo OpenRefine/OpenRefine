@@ -109,7 +109,7 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
     }
 
     @Test
-    public void deserializeLegacySeparatorSyntax() throws JsonMappingException, JsonProcessingException {
+    public void deserializeLegacySeparatorSyntaxPlain() throws JsonMappingException, JsonProcessingException {
         // regression test for https://github.com/OpenRefine/OpenRefine/issues/7078
         String json = "{\n"
                 + "    \"op\": \"core/multivalued-cell-split\",\n"
@@ -128,6 +128,30 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
                 + "    \"separator\": \"||\",\n"
                 + "    \"mode\": \"separator\","
                 + "    \"regex\": false\n"
+                + "}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), serialized);
+    }
+
+    @Test
+    public void deserializeLegacySeparatorSyntaxRegex() throws JsonMappingException, JsonProcessingException {
+        // regression test for https://github.com/OpenRefine/OpenRefine/issues/7078
+        String json = "{\n"
+                + "    \"op\": \"core/multivalued-cell-split\",\n"
+                + "    \"description\": \"Split multi-valued cells in column Dirigeants\",\n"
+                + "    \"columnName\": \"Dirigeants\",\n"
+                + "    \"keyColumnName\": \"RCS\",\n"
+                + "    \"separator\": \"[a-z]\",\n"
+                + "    \"mode\": \"regex\"\n"
+                + "}";
+        String serialized = "{\n"
+                + "    \"op\": \"core/multivalued-cell-split\",\n"
+                + "    \"description\": " + new TextNode(OperationDescription.cell_multivalued_cell_split_brief("Dirigeants")).toString()
+                + ",\n"
+                + "    \"columnName\": \"Dirigeants\",\n"
+                + "    \"keyColumnName\": \"RCS\",\n"
+                + "    \"separator\": \"[a-z]\",\n"
+                + "    \"mode\": \"separator\","
+                + "    \"regex\": true\n"
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), serialized);
     }
