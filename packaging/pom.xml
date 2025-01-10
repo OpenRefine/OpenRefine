@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.9-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
@@ -253,7 +253,7 @@
             <configuration>
               <target name="downloadJRE" description="Download JRE">
                 <!-- Download JRE (Mac OS X) -->
-                <exec dir="${project.build.directory}" executable="curl">
+                <exec dir="${project.build.directory}"  executable="curl">
                   <arg line="-L"/>
                   <arg line="-C"/>
                   <arg line="-"/>

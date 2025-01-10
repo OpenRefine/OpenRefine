@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.9-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <properties>
@@ -29,7 +29,7 @@
     <finalName>openrefine-main</finalName>
     <resources>
       <resource>
-        <directory>src</directory>
+        <directory>main</directory>
       </resource>
       <resource>
         <directory>resources</directory>
@@ -176,18 +176,6 @@
           </excludes>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>3.4.0</version>
-        <configuration>
-          <webXml>/main/webapp/WEB-INF/web.xml</webXml>
-          <warName>openrefine</warName>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-          <outputDirectory>${project.build.directory}</outputDirectory>
-        </configuration>
-      </plugin>
-
     </plugins>
   </build>
 
