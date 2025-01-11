@@ -30,6 +30,7 @@ public class ManifestV2 implements Manifest {
     private String editGroupsUrlSchema;
     private String tagTemplate;
     private boolean hideStructuredFieldsInMediaInfo;
+    private String mandatoryMediaInfoPropertyIds;
 
     private Map<String, EntityTypeSettings> entityTypeSettings;
 
@@ -41,6 +42,7 @@ public class ManifestV2 implements Manifest {
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
+        mandatoryMediaInfoPropertyIds = mediawiki.path("mandatoryMediaInfoPropertyIds").textValue();
 
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
@@ -183,5 +185,10 @@ public class ManifestV2 implements Manifest {
     @Override
     public int getMaxEditsPerMinute() {
         return maxEditsPerMinute;
+    }
+
+    @Override
+    public String getMandatoryMediaInfoPropertyIds() {
+        return mandatoryMediaInfoPropertyIds;
     }
 }

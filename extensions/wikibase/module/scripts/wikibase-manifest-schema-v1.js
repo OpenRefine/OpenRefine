@@ -29,9 +29,13 @@ const WikibaseManifestSchemaV1 = {
         "api": {
           "type": "string",
           "description": "The MediaWiki API endpoint of the Wikibase, such as 'https://www.wikidata.org/w/api.php'"
+        },
+        "mandatoryMediaInfoPropertyIds": {
+            "type": "string",
+            "description": "The mandatory properties when uploading a new media, such as 'P7482, P170, P6216'"
         }
       },
-      "required": ["name", "root", "main_page", "api"]
+      "required": ["name", "root", "main_page", "api", "mandatoryMediaInfoPropertyIds"]
     },
     "wikibase": {
       "type": "object",

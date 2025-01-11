@@ -22,8 +22,11 @@ public class ManifestV1 implements Manifest {
     private String editGroupsUrlSchema;
     private String tagTemplate;
     private int maxEditsPerMinute;
+    private String mandatoryMediaInfoPropertyIds;
 
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
+
+    private Map<String, String> mediaConstraintsMap = new HashMap<>();
 
     public ManifestV1(JsonNode manifest) {
         version = manifest.path("version").textValue();
@@ -31,6 +34,7 @@ public class ManifestV1 implements Manifest {
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
+        mandatoryMediaInfoPropertyIds = mediawiki.path("mandatoryMediaInfoPropertyIds").textValue();
 
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
@@ -147,6 +151,11 @@ public class ManifestV1 implements Manifest {
     @Override
     public int getMaxEditsPerMinute() {
         return maxEditsPerMinute;
+    }
+
+    @Override
+    public String getMandatoryMediaInfoPropertyIds() {
+        return mandatoryMediaInfoPropertyIds;
     }
 
 }
