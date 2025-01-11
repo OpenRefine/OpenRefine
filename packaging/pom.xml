@@ -89,6 +89,11 @@
     </profile>
     <profile>
       <id>windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
       <build>
         <plugins>
           <plugin>

@@ -151,7 +151,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-	<version>${maven-resources-plugin.version}</version>
+	      <version>${maven-resources-plugin.version}</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -159,7 +159,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-	<version>${exec-maven-plugin.version}</version>
+	      <version>${exec-maven-plugin.version}</version>
         <configuration>
           <skip>true</skip>
           <mainClass>none</mainClass>
@@ -168,7 +168,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-	<version>${maven-dependency-plugin.version}</version>
+	      <version>${maven-dependency-plugin.version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
