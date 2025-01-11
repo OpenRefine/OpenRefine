@@ -3,6 +3,7 @@ name: server CI
 on:
   pull_request:
     paths:
+      - '.github/workflows/pull_request_server.yml'
       - 'benchmark/**'
       - 'conf/**'
       - 'extensions/database/src/**'
