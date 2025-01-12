@@ -27,7 +27,7 @@
   </scm>
 
   <build>
-    <finalName>openrefine-${project.version}-server</finalName>
+    <finalName>openrefine-server</finalName>
     <resources>
       <resource>
         <directory>src</directory>
