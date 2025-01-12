@@ -175,6 +175,14 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           });
         }
       }
+      if ("icon" in item) {
+        let img = $('<img />')
+          .attr('src', item.icon)
+          .addClass('menu-icon')
+          .attr('aria-hidden', 'true');
+        menuItem.prepend(' ');
+        menuItem.prepend(img);
+      }
     } else if ("heading" in item) {
       $('<div></div>').addClass("menu-section").text(item.heading).appendTo(menu);
     } else {
