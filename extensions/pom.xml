@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>extensions</artifactId>
   <packaging>pom</packaging>
-  <version>3.9-SNAPSHOT</version>
+  <version>${revision}</version>
 
   <name>OpenRefine - extensions</name>
   <description>Extensions add importers, exporters and other sorts of features to OpenRefine</description>

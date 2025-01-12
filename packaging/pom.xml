@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.9-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
@@ -35,8 +35,11 @@
   </properties>
 
   <profiles>
+
+  <!-- MAC BUILD -->
+
     <profile>
-      <id>default</id>
+      <id>mac</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -55,97 +58,20 @@
                 <configuration>
                   <descriptors>
                     <descriptor>linux.xml</descriptor>
-                    <descriptor>windows-with-jre.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
                 </configuration>
               </execution>
             </executions>
           </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>linux</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>package-distributions</id>
-                <configuration>
-                  <descriptors>
-                    <descriptor>linux.xml</descriptor>
-                  </descriptors>
-                  <attach>false</attach>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>windows</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>sh.tak.appbundler</groupId>
-            <artifactId>appbundle-maven-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>package-distributions</id>
-                <configuration>
-                  <descriptors>
-                    <descriptor>windows-without-jre.xml</descriptor>
-                    <descriptor>windows-with-jre.xml</descriptor>
-                  </descriptors>
-                  <attach>false</attach>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
-  <build>
-    <plugins>
-      <plugin> <!-- gathers license files for all dependencies at packaging time -->
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <version>${license-plugin.version}</version>
-        <configuration>
-          <socketTimeout>10000</socketTimeout>
-          <connectTimeout>10000</connectTimeout>
-          <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
-          <licensesConfigFile>${basedir}/manual_licenses.xml</licensesConfigFile>
-          <excludedArtifacts>oro</excludedArtifacts>  
-        </configuration>
-        <executions>
-          <execution>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>download-licenses</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin> <!-- we attach a dummy main artifact for the packaging project, 
+          <plugin> <!-- we attach a dummy main artifact for the packaging project, 
                 because Appbundle requires one -->
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>groovy-maven-plugin</artifactId>
         <version>2.1.1</version>
         <executions>
           <execution>
-          <id>set-main-artifact</id>
+          <id>mac-set-main-artifact</id>
           <phase>prepare-package</phase>
           <goals> 
             <goal>execute</goal>
@@ -165,7 +91,7 @@
         <executions>
           <execution>
             <phase>prepare-package</phase>
-            <id>prepare-mac-bundle</id>
+            <id>mac-prepare-bundle</id>
             <configuration>
 
               <target>
@@ -245,7 +171,7 @@
             </goals>
           </execution>
           <execution>
-            <id>download-jre</id>
+            <id>mac-download-jre</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>run</goal>
@@ -253,23 +179,13 @@
             <configuration>
               <target name="downloadJRE" description="Download JRE">
                 <!-- Download JRE (Mac OS X) -->
-                <exec dir="${project.build.directory}" executable="curl">
+                <exec dir="${project.build.directory}"  executable="curl">
                   <arg line="-L"/>
                   <arg line="-C"/>
                   <arg line="-"/>
                   <arg line="-o"/>
                   <arg line="mac_jre.tar.gz"/>
                   <arg line="${mac.jre.url}"/>
-                </exec>
-
-                <!-- Download JRE (Windows) -->
-                <exec dir="${project.build.directory}" executable="curl">
-                  <arg line="-L"/>
-                  <arg line="-C"/>
-                  <arg line="-"/>
-                  <arg line="-o"/>
-                  <arg line="windows_jre.zip"/>
-                  <arg line="${windows.jre.url}"/>
                 </exec>
 
                 <!-- Unzip Mac JRE archive -->
@@ -279,19 +195,11 @@
                   <arg line="mac_jre.tar.gz"/>
                   <arg line="-C &quot;mac_jre&quot; --strip-components=1"/>
                 </exec>
-
-                <!-- Unzip Windows JRE archive -->
-                <!-- The Windows JRE is downloaded as a Zip file so we cannot untar it. -->
-                <!-- We use the mapper to get rid of the root directory whose name is unpredictable -->
-                <mkdir dir="${project.build.directory}/windows_jre"/>
-                <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
-                  <mapper type="regexp" from="^([^/]*)/(.*)$$" to="\2"/>
-                </unzip>
               </target>
             </configuration>
           </execution>
           <execution>
-            <id>generate-dmg</id>
+            <id>mac-generate-dmg</id>
             <phase>package</phase> 
             <goals>
               <goal>run</goal>
@@ -310,7 +218,7 @@
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/legal&quot;"/>
                 </exec>
                 <!-- adapt file permissions, for https://github.com/OpenRefine/OpenRefine/issues/5160 -->
-                <exec dir="${project.build.directory}" executable="chmod">
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="chmod">
                     <arg line="-R" />
                     <arg line="o+r" />
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/Resources/webapp/WEB-INF/&quot;" />
@@ -424,7 +332,99 @@
 
         </executions>
       </plugin>
-      <plugin>
+        </plugins>
+      </build>
+    </profile>
+
+<!-- LINUX BUILD -->
+
+    <profile>
+      <id>linux</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>package-distributions</id>
+                <configuration>
+                  <descriptors>
+                    <descriptor>linux.xml</descriptor>
+                  </descriptors>
+                  <attach>false</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+<!-- WINDOWS BUILD -->
+
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>package-distributions</id>
+                <configuration>
+                  <descriptors>
+                    <descriptor>windows-without-jre.xml</descriptor>
+                    <descriptor>windows-with-jre.xml</descriptor>
+                  </descriptors>
+                  <attach>false</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+             <execution>
+            <id>windows-download-jre</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target name="downloadJRE" description="Download JRE">
+
+                <!-- Download JRE (Windows) -->
+                <exec dir="${project.build.directory}" executable="curl">
+                  <arg line="-L"/>
+                  <arg line="-C"/>
+                  <arg line="-"/>
+                  <arg line="-o"/>
+                  <arg line="windows_jre.zip"/>
+                  <arg line="${windows.jre.url}"/>
+                </exec>
+
+                <!-- Unzip Windows JRE archive -->
+                <!-- The Windows JRE is downloaded as a Zip file so we cannot untar it. -->
+                <!-- We use the mapper to get rid of the root directory whose name is unpredictable -->
+                <mkdir dir="${project.build.directory}/windows_jre"/>
+                <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
+                  <mapper type="regexp" from="^([^/]*)/(.*)$$" to="\2"/>
+                </unzip>
+              </target>
+            </configuration>
+          </execution>
+          </executions>
+          </plugin>
+        
+           <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
         <version>2.5.2</version>
@@ -436,7 +436,7 @@
             <configuration>
               <headerType>console</headerType>
               <outfile>target/openrefine_with_jre.exe</outfile>
-              <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
+              <jar>server/target/lib/openrefine-server.jar</jar>
               <dontWrapJar>true</dontWrapJar>
               <saveConfig>true</saveConfig>
               <icon>openrefine.ico</icon>
@@ -447,9 +447,10 @@
               </classPath>
               <jre>
                 <path>server/target/jre</path>
+                <requiresJdk>false</requiresJdk>
+                <requires64Bit>false</requires64Bit>
                 <minVersion>${java.minversion}</minVersion>
                 <maxVersion>${java.maxversion}</maxVersion>
-                <bundledJreAsFallback>true</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
@@ -472,6 +473,37 @@
 
         </executions>
       </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+<!-- DEFAULT BUILD -->
+
+  <build>
+    <plugins>
+      <plugin> <!-- gathers license files for all dependencies at packaging time -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>${license-plugin.version}</version>
+        <configuration>
+          <socketTimeout>10000</socketTimeout>
+          <connectTimeout>10000</connectTimeout>
+          <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
+          <licensesConfigFile>${basedir}/manual_licenses.xml</licensesConfigFile>
+          <excludedArtifacts>oro</excludedArtifacts>  
+        </configuration>
+        <executions>
+          <execution>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>download-licenses</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+     
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -512,25 +544,7 @@
     				</lifecycleMappingMetadata>
     			</configuration>
     		</plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.7.1</version>
-          <executions>
-            <execution>
-              <id>package-distributions</id>
-              <goals>
-                <goal>single</goal>
-              </goals>
-              <phase>package</phase>
-              <configuration>
-                <descriptors>
-                <!-- TBD -->
-                </descriptors>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+
         <plugin>
           <groupId>sh.tak.appbundler</groupId>
           <artifactId>appbundle-maven-plugin</artifactId>
@@ -581,7 +595,7 @@
               <fileSet>
                 <directory>${rootdir}/server/target</directory>
                 <includes>
-                  <include>openrefine-${project.version}-server.jar</include>
+                  <include>openrefine-server.jar</include>
                 </includes>
                 <excludes>
                   <exclude>**/lib/**</exclude>
@@ -610,12 +624,5 @@
     	</plugins>
     </pluginManagement>
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>server</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+
 </project>

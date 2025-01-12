@@ -24,11 +24,11 @@
         <servlet-class>com.google.refine.RefineServlet</servlet-class>
         <init-param>
             <param-name>refine.version</param-name>
-            <param-value>$VERSION</param-value>
+            <param-value>${project.version}</param-value>
         </init-param>
         <init-param>
             <param-name>refine.revision</param-name>
-            <param-value>$REVISION</param-value>
+            <param-value>${revision}</param-value>
         </init-param>
         <init-param>
             <param-name>gzip</param-name>

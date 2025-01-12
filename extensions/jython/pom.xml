@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>jython</artifactId>
   <packaging>jar</packaging>
-  <version>3.9-SNAPSHOT</version>
+  <version>${revision}</version>
 
   <name>OpenRefine - Jython extension</name>
   <description>OpenRefine integration of Python as an expression language</description>
