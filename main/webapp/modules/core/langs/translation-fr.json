@@ -925,5 +925,11 @@
     "core-buttons/add-keying-function": "Ajouter une nouvelle fonction de codage",
     "core-dialogs/edit-name": "Nom de la fonction",
     "core-views/total-matching-records": "$1 enregistrements réconciliés <span id=\"summary-total\">(total $2)</span>",
-    "core-dialogs/sql-exporter-sql-type-header": "Type SQL"
+    "core-dialogs/sql-exporter-sql-type-header": "Type SQL",
+    "core-index-open/no-results-message": "Aucun résultat",
+    "core-index-open/search-placeholder": "Rechercher",
+    "core-views/remove-duplicates": "Supprimer les lignes en double",
+    "core-dialogs/remove-duplicate-rows": "Supprimer les lignes en double",
+    "core-dialogs/remove-duplicate-rows-col-select": "Sélectionner les colonnes utilisées pour identifier les lignes en double",
+    "core-buttons/no-criteria-selected": "Au moins une colonne doit être sélectionnée pour identifier les doublons."
 }
