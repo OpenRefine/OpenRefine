@@ -27,6 +27,8 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -68,6 +70,12 @@ public class ColumnReorderOperationTests extends RefineTest {
         TestUtils.isSerializedTo(op, "{\"op\":\"core/column-reorder\","
                 + "\"description\":" + new TextNode(OperationDescription.column_reorder_brief()).toString() + ","
                 + "\"columnNames\":[\"b\",\"c\",\"a\"]}");
+    }
+
+    @Test
+    public void testValidate() {
+        AbstractOperation op = new ColumnReorderOperation(null);
+        assertThrows(IllegalArgumentException.class, () -> op.validate());
     }
 
     @Test
