@@ -24,13 +24,13 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="2.2601822"
-     inkscape:cx="93.134085"
-     inkscape:cy="41.810789"
-     inkscape:window-width="1918"
-     inkscape:window-height="1054"
+     inkscape:zoom="2.3100587"
+     inkscape:cx="9.7400124"
+     inkscape:cy="12.120904"
+     inkscape:window-width="1503"
+     inkscape:window-height="933"
      inkscape:window-x="0"
-     inkscape:window-y="24"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      showguides="true">
@@ -46,6 +46,12 @@
        width="86.076181"
        height="87.027807"
        id="rect969" />
+    <rect
+       x="22.525585"
+       y="21.070324"
+       width="86.07618"
+       height="87.027809"
+       id="rect969-0" />
   </defs>
   <g
      inkscape:label="Calque 1"
@@ -53,13 +59,23 @@
      id="layer1">
     <text
        xml:space="preserve"
-       transform="matrix(0.93268228,0,0,1.0114424,-18.916529,-17.439169)"
+       transform="matrix(0.93268228,0,0,1.0114424,-6.5221109,-19.062123)"
        id="text967"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.3333px;line-height:125%;font-family:STIXIntegralsUp;-inkscape-font-specification:STIXIntegralsUp;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect969);display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><tspan
          x="22.525391"
          y="40.480952"
-         id="tspan1083"><tspan
-           style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1081">f(x)</tspan></tspan></text>
+         id="tspan6765"><tspan
+           style="font-weight:bold;font-size:14.5286px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold'"
+           id="tspan6763">(x)</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(1.0967606,-0.10003733,0.11287046,1.2374568,-23.093836,-25.173661)"
+       id="text967-9"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.3333px;line-height:125%;font-family:STIXIntegralsUp;-inkscape-font-specification:STIXIntegralsUp;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect969-0);display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><tspan
+         x="22.525391"
+         y="40.480952"
+         id="tspan6769"><tspan
+           style="font-family:Z003;-inkscape-font-specification:Z003"
+           id="tspan6767">f</tspan></tspan></text>
   </g>
 </svg>
