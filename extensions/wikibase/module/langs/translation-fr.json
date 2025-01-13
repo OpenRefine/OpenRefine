@@ -316,7 +316,7 @@
     "wikibase-addition/manifest-paste-input": "Manifeste JSON",
     "warnings-messages/upload-new-file-version/title": "Téléchargement d'une nouvelle version du fichier",
     "warnings-messages/upload-new-file-version/body": "Certains fichiers, tels que <span class=\"wb-issue-preformat\">{example_filename}</span>, ont été associés à des fichiers existants. Cette opération permet de télécharger de nouvelles versions de ces fichiers.",
-    "warnings-messages/missing-file-name-extension/body": "Les noms de fichiers fournis pour les fichiers à télécharger doivent se terminer par une extension, ce qui n'est pas le cas pour les noms de fichiers tels que <span class=\"wb-issue-preformat\">{example_filename}.",
+    "warnings-messages/missing-file-name-extension/body": "Les noms de fichiers fournis pour les fichiers à télécharger doivent se terminer par une extension, ce qui n'est pas le cas pour les noms de fichiers tels que <span class=\"wb-issue-preformat\">{example_filename}</span>.",
     "warnings-messages/inconsistent-file-name-and-path-extension/body": "Certains chemins de fichiers et leurs noms de fichiers cibles correspondants sur le wiki ont des extensions différentes, comme <span class=\"wb-issue-preformat\">{example_filepath}</span> et <span class=\"wb-issue-preformat\">{example_filename}</span>.",
     "warnings-messages/inconsistent-file-name-and-path-extension/title": "Extensions incohérentes entre les chemins de fichiers et les noms de fichiers",
     "warnings-messages/replaced-characters-in-filename/title": "Certains caractères spéciaux dans les noms de fichiers seront remplacés",
