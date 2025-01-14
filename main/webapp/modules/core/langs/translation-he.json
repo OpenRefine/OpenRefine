@@ -549,12 +549,12 @@
     "core-views/transp-cell": "Transpose Cells Across Columns into Rows",
     "core-views/from-col": "מעמודה",
     "core-views/to-col": "לעמודה",
-    "core-views/transp-into": "Transpose into",
+    "core-views/transp-into": "שחלוף לתוך",
     "core-views/two-new-col": "שתי עמודות חדשות",
     "core-views/key-col": "עמודת מפתח",
     "core-views/contain-names": "(containing original columns' names)",
-    "core-views/val-col": "Value Column",
-    "core-views/contain-val": "(containing original cells' values)",
+    "core-views/val-col": "עמודת ערך",
+    "core-views/contain-val": "(מכיל את ערכי התאים המקוריים)",
     "core-views/one-col": "עמודה אחת",
     "core-views/prepend-name": "prepend the original column's name to each cell",
     "core-views/follow-by": "followed by",
@@ -568,7 +568,7 @@
     "core-views/how-many-rows": "How many rows to transpose?",
     "core-views/expect-two": "Expected an integer at least 2.",
     "core-views/columnize": "Columnize by Key/Value Columns",
-    "core-views/note-col": "Note Column (optional)",
+    "core-views/note-col": "עמודת הערות (רשות)",
     "core-views/sel-col-val": "Please select one key column and one value column that are different from one another.",
     "core-views/cannot-same": "If specified, the note column cannot be the same as the key column or the value column.",
     "core-views/transp-cell-row": "שחלוף התאים על פני עמודות לשורות…",
@@ -757,5 +757,6 @@
     "core-dialogs/sql-exporter-field-name-header": "שם השדה",
     "core-dialogs/sql-exporter-sql-type-header": "סוג SQL",
     "core-dialogs/sql-exporter-allow-null-header": "לאפשר ריקים/null",
-    "core-dialogs/sql-exporter-default-header": "ברירת מחדל"
+    "core-dialogs/sql-exporter-default-header": "ברירת מחדל",
+    "core-index/refine-extensions": "הרחבות: $1"
 }
