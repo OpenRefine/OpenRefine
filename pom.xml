@@ -185,6 +185,7 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco-maven-plugin.version}</version>
         <configuration>
+          <skip>${skipTests}</skip>
           <excludes>
             <exclude>org/openrefine/messages/**/*</exclude>
           </excludes>
@@ -218,6 +219,7 @@
             </goals>
             <phase>test</phase>
             <configuration>
+              <skip>${skipTests}</skip>
               <destFile>${project.build.directory}/report/jacoco-merged.exec</destFile>
               <fileSets>
                 <fileSet>
