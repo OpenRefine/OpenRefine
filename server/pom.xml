@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.9-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <properties>
@@ -27,7 +27,7 @@
   </scm>
 
   <build>
-    <finalName>openrefine-${project.version}-server</finalName>
+    <finalName>openrefine-server</finalName>
     <resources>
       <resource>
         <directory>src</directory>
