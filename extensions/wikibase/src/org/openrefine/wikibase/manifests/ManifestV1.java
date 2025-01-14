@@ -1,6 +1,7 @@
 
 package org.openrefine.wikibase.manifests;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,7 +23,7 @@ public class ManifestV1 implements Manifest {
     private String editGroupsUrlSchema;
     private String tagTemplate;
     private int maxEditsPerMinute;
-    private String mandatoryMediaInfoPropertyIds;
+    private List<String> mandatoryMediaInfoPropertyIds;
 
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
 
@@ -34,7 +35,10 @@ public class ManifestV1 implements Manifest {
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
-        mandatoryMediaInfoPropertyIds = mediawiki.path("mandatoryMediaInfoPropertyIds").textValue();
+        mandatoryMediaInfoPropertyIds = new ArrayList<>();
+        for (JsonNode node : mediawiki.path("mandatoryMediaInfoPropertyIds")) {
+            mandatoryMediaInfoPropertyIds.add(node.asText());
+        }
 
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
@@ -154,7 +158,7 @@ public class ManifestV1 implements Manifest {
     }
 
     @Override
-    public String getMandatoryMediaInfoPropertyIds() {
+    public List<String> getMandatoryMediaInfoPropertyIds() {
         return mandatoryMediaInfoPropertyIds;
     }
 

@@ -130,6 +130,6 @@ public interface Manifest {
      * 
      * @return the entity id
      */
-    String getMandatoryMediaInfoPropertyIds();
+    List<String> getMandatoryMediaInfoPropertyIds();
 
 }

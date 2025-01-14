@@ -28,12 +28,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
@@ -77,13 +75,7 @@ public class NewEntityScrutinizer extends EditScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        newMediaRequiredProperties = new ArrayList<>();
-        if (manifest.getMandatoryMediaInfoPropertyIds() != null
-                && !manifest.getMandatoryMediaInfoPropertyIds().isBlank()) {
-            newMediaRequiredProperties = Arrays.stream(manifest.getMandatoryMediaInfoPropertyIds().split(","))
-                    .map(String::trim)
-                    .collect(Collectors.toList());
-        }
+        newMediaRequiredProperties = manifest.getMandatoryMediaInfoPropertyIds();
         return true;
     }
 

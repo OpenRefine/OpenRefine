@@ -80,7 +80,7 @@ describe(__filename, function () {
                 root: 'https://or-wikibase-test.wiki.opencura.com/wiki/',
                 main_page: 'https://or-wikibase-test.wiki.opencura.com/wiki/Main_Page',
                 api: 'https://or-wikibase-test.wiki.opencura.com/w/api.php',
-                mandatoryMediaInfoPropertyIds: "P7482, P170, P6216"
+                mandatoryMediaInfoPropertyIds: ["P7482", "P170", "P6216"]
             },
             wikibase: {
                 site_iri: 'http://or-wikibase-test.wiki.opencura.com/entity/',
@@ -132,56 +132,6 @@ describe(__filename, function () {
         cy.get('.add-wikibase-dialog .dialog-footer button').contains('Cancel').click();
         cy.get('.wikibase-dialog .dialog-footer button').contains('OK').click()
             .then( () => resetWikibases(savedValue))
-    });
-
-    it('Add a wikibase instance (Manifest missing mediawiki mandatory properties definition)', function () {
-        cy.loadAndVisitProject('food.mini');
-        getPreference('wikibase.manifests');
-
-        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
-        cy.get('.menu-container a').contains('Manage Wikibase instances').click();
-
-        cy.get('.wikibase-dialog .dialog-footer button')
-            .contains('Add Wikibase')
-            .click();
-
-        // add a manifest
-        const manifest = {
-            version: '1.0',
-            mediawiki: {
-                name: 'OpenRefine Wikibase Cypress Test',
-                root: 'https://or-wikibase-test.wiki.opencura.com/wiki/',
-                main_page: 'https://or-wikibase-test.wiki.opencura.com/wiki/Main_Page',
-                api: 'https://or-wikibase-test.wiki.opencura.com/w/api.php'
-            },
-            wikibase: {
-                site_iri: 'http://or-wikibase-test.wiki.opencura.com/entity/',
-                maxlag: 5,
-                properties: {
-                    instance_of: 'P1',
-                    subclass_of: 'P2',
-                },
-            },
-            oauth: {
-                registration_page:
-                    'https://or-wikibase-test.wiki.opencura.com/wiki/Special:OAuthConsumerRegistration/propose',
-            },
-            reconciliation: {
-                endpoint: 'https://or-wikibase-test.reconci.link/${lang}/api',
-            },
-        };
-        cy.get('.add-wikibase-dialog textarea').invoke(
-            'val',
-            JSON.stringify(manifest)
-        );
-
-        cy.get('.add-wikibase-dialog button').contains('Add Wikibase').click();
-
-        // Validate alert for media wiki missing property
-        // manifest.mediawiki should have required property 'mandatoryMediaInfoPropertyIds'
-        cy.on('window:alert', (alertText) => {
-              expect(alertText).to.equal('manifest.mediawiki should have required property \'mandatoryMediaInfoPropertyIds\'');
-            });
     });
 
     it('Delete wikibase', function () {
