@@ -219,6 +219,7 @@
             </goals>
             <phase>test</phase>
             <configuration>
+              <skip>${skipTests}</skip>
               <destFile>${project.build.directory}/report/jacoco-merged.exec</destFile>
               <fileSets>
                 <fileSet>
