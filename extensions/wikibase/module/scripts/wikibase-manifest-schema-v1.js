@@ -32,7 +32,7 @@ const WikibaseManifestSchemaV1 = {
         },
         "mandatoryMediaInfoPropertyIds": {
             "type": "array",
-            "description": "The mandatory properties when uploading a new media, such as 'P7482, P170, P6216'"
+            "description": "The mandatory properties when uploading a new media, such as ['P7482', 'P170', 'P6216']"
         }
       },
       "required": ["name", "root", "main_page", "api"]
