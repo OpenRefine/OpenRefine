@@ -91,10 +91,12 @@ public class NewEntityScrutinizer extends EditScrutinizer {
 
             if (update.getFileName() == null || update.getFileName().isBlank()) {
                 QAWarning issue = new QAWarning(newMediaWithoutFileNameType, null, QAWarning.Severity.CRITICAL, 1);
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
             if (update.getFilePath() == null || update.getFilePath().isBlank()) {
                 QAWarning issue = new QAWarning(newMediaWithoutFilePathType, null, QAWarning.Severity.CRITICAL, 1);
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             } else if (enableSlowChecks) {
                 // check that the file exists.
@@ -113,6 +115,7 @@ public class NewEntityScrutinizer extends EditScrutinizer {
 
             if (update.getWikitext() == null || update.getWikitext().isBlank()) {
                 QAWarning issue = new QAWarning(newMediaWithoutWikitextType, null, QAWarning.Severity.CRITICAL, 1);
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
 
