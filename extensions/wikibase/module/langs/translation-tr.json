@@ -35,5 +35,13 @@
     "wikibase-schema/schema-tab-header": "Şema",
     "wikibase-schema/warnings-tab-header": "Sorunlar",
     "wikibase-schema/edits-preview-tab-header": "Önizleme",
-    "wikibase-schema/statements-header": "İfadeler"
+    "wikibase-schema/statements-header": "İfadeler",
+    "wikibase-schema/empty-statements": "hiçbir ifade eklenmedi",
+    "wikibase-schema/captions-header": "Başlıklar",
+    "wikibase-schema/mediainfo-file-path": "Dosya yolu:",
+    "wikibase-schema/mediainfo-file-name": "Dosya adı:",
+    "wikibase-schema/mediainfo-wikitext": "Viki metin:",
+    "wikibase-schema/mediainfo-wikitext-override": "Viki metin (üzerine yaz):",
+    "wikibase-schema/mediainfo-wikitext-no-override": "Viki metin (üzerine yazma):",
+    "wikibase-schema/empty-terms": "etiket, açıklama veya diğer ad eklenmedi"
 }
