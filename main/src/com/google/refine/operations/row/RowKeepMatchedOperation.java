@@ -35,8 +35,9 @@ public class RowKeepMatchedOperation extends EngineDependentOperation {
         return row_keep_matching_brief();
 
     }
+
     protected String createDescription(Project project, int rowCount) {
-           return row_keep_matching_rows_desc(rowCount);
+        return row_keep_matching_rows_desc(rowCount);
     }
 
     @Override
