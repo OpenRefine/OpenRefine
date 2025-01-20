@@ -93,12 +93,6 @@ public class EditInspector {
     private ApiConnection connection;
     private boolean slowMode;
 
-    // Add all warning types for new entity where the new entity is provided as example
-    private static List<String> warningTypesFilterListforLabelResolver = List.of(
-            NewEntityScrutinizer.newMediaWithoutFileNameType,
-            NewEntityScrutinizer.newMediaWithoutWikitextType,
-            NewEntityScrutinizer.newMediaWithoutFilePathType);
-
     /**
      * Builds an edit inspector.
      *
@@ -226,9 +220,6 @@ public class EditInspector {
     private void resolveWarningPropertyLabels() throws ExecutionException {
         if (entityCache != null) {
             List<EntityIdValue> propertyIdValues = warningStore.getWarnings().stream()
-                    .filter(warning -> {
-                        return !warningTypesFilterListforLabelResolver.contains(warning.getType());
-                    })
                     .flatMap(warning -> warning.getProperties().entrySet().stream()
                             .filter(entry -> entry.getValue() instanceof EntityIdValue)
                             .filter(entry -> {
@@ -244,9 +235,6 @@ public class EditInspector {
             entityCache.getMultipleDocuments(propertyIdValues);
 
             warningStore.getWarnings().stream()
-                    .filter(warning -> {
-                        return !warningTypesFilterListforLabelResolver.contains(warning.getType());
-                    })
                     .forEach(warning -> {
                         warning.getProperties().forEach((key, value) -> {
                             if (value instanceof PropertyIdValue || value instanceof ItemIdValue) {
