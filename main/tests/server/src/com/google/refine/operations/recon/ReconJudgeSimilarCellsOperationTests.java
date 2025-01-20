@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -50,6 +51,7 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -94,7 +96,8 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
     @Test
     public void serializeReconJudgeSimilarCellsOperation() throws IOException {
         String json = "{\"op\":\"core/recon-judge-similar-cells\","
-                + "\"description\":\"Mark to create one single new item for all cells containing \\\"foo\\\" in column A\","
+                + "\"description\":" + new TextNode(OperationDescription.recon_judge_similar_cells_new_share_brief("foo", "A")).toString()
+                + ","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"A\","
                 + "\"similarValue\":\"foo\","
@@ -106,7 +109,9 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
     @Test
     public void serializeReconJudgeSimilarCellsOperationMatch() throws IOException {
         String json = "{\"op\":\"core/recon-judge-similar-cells\","
-                + "\"description\":\"Match item Douglas Adams (Q42) for cells containing \\\"foo\\\" in column A\","
+                + "\"description\":"
+                + new TextNode(OperationDescription.recon_judge_similar_cells_matched_brief("Douglas Adams", "Q42", "A", "foo")).toString()
+                + ","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"A\","
                 + "\"similarValue\":\"foo\","

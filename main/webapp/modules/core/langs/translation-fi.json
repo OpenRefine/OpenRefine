@@ -262,6 +262,6 @@
     "core-index-import/load-json-rows-error": "JSON-datan jäsentäminen epäonnistui",
     "core-index-import/load-xml-rows-error": "XML-datan jäsentäminen epäonnistui",
     "core-index-import/remove-row": "Poista tämä rivi",
-    "core-dialogs/opt-for": "Valinnat:",
+    "core-dialogs/opt-for": "Vaihtoehdot tälle",
     "core-dialogs/sel-and-ord": "Valitse ja järjestä vietävät sarakkeet"
 }

@@ -33,8 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -139,6 +142,17 @@ public class ListFacet implements Facet {
                 throw new IllegalArgumentException(e);
             }
         }
+
+        @Override
+        public Optional<Set<String>> getColumnDependencies() {
+            try {
+                return MetaParser.parse(expression)
+                        .getColumnDependencies(Optional.of(columnName));
+            } catch (ParsingException e) {
+                return Optional.of(Collections.emptySet());
+            }
+        }
+
     }
 
     /**

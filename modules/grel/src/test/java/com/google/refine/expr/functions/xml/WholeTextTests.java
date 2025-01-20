@@ -31,6 +31,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.GrelTestBase;
 
 public class WholeTextTests extends GrelTestBase {
@@ -41,7 +42,6 @@ public class WholeTextTests extends GrelTestBase {
         Assert.assertTrue(invoke("wholeText", "test") instanceof EvalError);
 
         EvalError evalError = (EvalError) invoke("wholeText", "test");
-        Assert.assertEquals(evalError.toString(),
-                "wholeText() cannot work with this \'string\' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+        Assert.assertEquals(evalError.toString(), EvalErrorMessage.xml_text_cannot_work_with_and_failed("wholeText", "string"));
     }
 }

@@ -32,6 +32,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.Serializable;
 import java.util.Collections;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -39,18 +40,21 @@ import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
+    String description = OperationDescription.recon_mark_new_topics_shared_brief("my column");
+
     String jsonWithoutService = "{"
             + "\"op\":\"core/recon-mark-new-topics\","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"columnName\":\"my column\","
             + "\"shareNewTopics\":true,"
-            + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\""
+            + "\"description\":" + new TextNode(description).toString()
             + "}";
 
     String jsonWithService = "{"
@@ -58,7 +62,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"columnName\":\"my column\","
             + "\"shareNewTopics\":true,"
-            + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\","
+            + "\"description\":" + new TextNode(description).toString() + ","
             + "\"service\":\"http://foo.com/api\","
             + "\"identifierSpace\":\"http://foo.com/identifierSpace\","
             + "\"schemaSpace\":\"http://foo.com/schemaSpace\""

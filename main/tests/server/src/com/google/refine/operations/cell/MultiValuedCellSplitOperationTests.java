@@ -37,6 +37,9 @@ import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -45,6 +48,7 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -84,7 +88,7 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
     @Test
     public void serializeMultiValuedCellSplitOperationWithSeparator() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
-                + "\"description\":\"Split multi-valued cells in column Value\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_multivalued_cell_split_brief("Value")).toString() + ","
                 + "\"columnName\":\"Value\","
                 + "\"keyColumnName\":\"Key\","
                 + "\"mode\":\"separator\","
@@ -96,12 +100,60 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
     @Test
     public void serializeMultiValuedCellSplitOperationWithLengths() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
-                + "\"description\":\"Split multi-valued cells in column Value\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_multivalued_cell_split_brief("Value")).toString() + ","
                 + "\"columnName\":\"Value\","
                 + "\"keyColumnName\":\"Key\","
                 + "\"mode\":\"lengths\","
                 + "\"fieldLengths\":[1,1]}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
+    }
+
+    @Test
+    public void deserializeLegacySeparatorSyntaxPlain() throws JsonMappingException, JsonProcessingException {
+        // regression test for https://github.com/OpenRefine/OpenRefine/issues/7078
+        String json = "{\n"
+                + "    \"op\": \"core/multivalued-cell-split\",\n"
+                + "    \"description\": \"Split multi-valued cells in column Dirigeants\",\n"
+                + "    \"columnName\": \"Dirigeants\",\n"
+                + "    \"keyColumnName\": \"RCS\",\n"
+                + "    \"separator\": \"||\",\n"
+                + "    \"mode\": \"plain\"\n"
+                + "}";
+        String serialized = "{\n"
+                + "    \"op\": \"core/multivalued-cell-split\",\n"
+                + "    \"description\": " + new TextNode(OperationDescription.cell_multivalued_cell_split_brief("Dirigeants")).toString()
+                + ",\n"
+                + "    \"columnName\": \"Dirigeants\",\n"
+                + "    \"keyColumnName\": \"RCS\",\n"
+                + "    \"separator\": \"||\",\n"
+                + "    \"mode\": \"separator\","
+                + "    \"regex\": false\n"
+                + "}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), serialized);
+    }
+
+    @Test
+    public void deserializeLegacySeparatorSyntaxRegex() throws JsonMappingException, JsonProcessingException {
+        // regression test for https://github.com/OpenRefine/OpenRefine/issues/7078
+        String json = "{\n"
+                + "    \"op\": \"core/multivalued-cell-split\",\n"
+                + "    \"description\": \"Split multi-valued cells in column Dirigeants\",\n"
+                + "    \"columnName\": \"Dirigeants\",\n"
+                + "    \"keyColumnName\": \"RCS\",\n"
+                + "    \"separator\": \"[a-z]\",\n"
+                + "    \"mode\": \"regex\"\n"
+                + "}";
+        String serialized = "{\n"
+                + "    \"op\": \"core/multivalued-cell-split\",\n"
+                + "    \"description\": " + new TextNode(OperationDescription.cell_multivalued_cell_split_brief("Dirigeants")).toString()
+                + ",\n"
+                + "    \"columnName\": \"Dirigeants\",\n"
+                + "    \"keyColumnName\": \"RCS\",\n"
+                + "    \"separator\": \"[a-z]\",\n"
+                + "    \"mode\": \"separator\","
+                + "    \"regex\": true\n"
+                + "}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), serialized);
     }
 
     @Test

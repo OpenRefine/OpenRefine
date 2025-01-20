@@ -63,6 +63,7 @@ public class RenameColumnCommand extends Command {
             String newColumnName = request.getParameter("newColumnName");
 
             AbstractOperation op = new ColumnRenameOperation(oldColumnName, newColumnName);
+            op.validate();
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);

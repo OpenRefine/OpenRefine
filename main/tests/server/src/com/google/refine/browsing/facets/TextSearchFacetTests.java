@@ -33,8 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -206,5 +210,11 @@ public class TextSearchFacetTests extends RefineTest {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
         TextSearchFacet facet = config.apply(project);
         TestUtils.isSerializedTo(facet, sensitiveFacetJson);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        TextSearchFacetConfig facetConfig = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
+        assertEquals(facetConfig.getColumnDependencies(), Optional.of(Collections.singleton("Value")));
     }
 }

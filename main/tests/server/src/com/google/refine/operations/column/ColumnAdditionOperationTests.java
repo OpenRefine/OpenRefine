@@ -27,9 +27,12 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.Collections;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -45,6 +48,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OnError;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -83,13 +87,47 @@ public class ColumnAdditionOperationTests extends RefineTest {
 
     @Test
     public void serializeColumnAdditionOperation() throws Exception {
+        String description = OperationDescription.column_addition_brief("organization_json", 3, "employments",
+                "grel:value.parseJson()[\"employment-summary\"].join('###'");
         String json = "{"
                 + "   \"op\":\"core/column-addition\","
-                + "   \"description\":\"Create column organization_json at index 3 based on column employments using expression grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\",\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},\"newColumnName\":\"organization_json\",\"columnInsertIndex\":3,\"baseColumnName\":\"employments\","
-                + "    \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
+                + "   \"description\":" + new TextNode(description).toString() + ","
+                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "   \"newColumnName\":\"organization_json\","
+                + "   \"columnInsertIndex\":3,"
+                + "   \"baseColumnName\":\"employments\","
+                + "   \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json);
+    }
+
+    @Test
+    public void testValidate() {
+        ColumnAdditionOperation invalidEngine = new ColumnAdditionOperation(
+                invalidEngineConfig,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+        assertThrows(IllegalArgumentException.class, () -> invalidEngine.validate());
+        ColumnAdditionOperation missingBaseColumn = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                null,
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+        assertThrows(IllegalArgumentException.class, () -> missingBaseColumn.validate());
+        ColumnAdditionOperation invalidExpression = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                "bar",
+                "grel:foo(",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+        assertThrows(IllegalArgumentException.class, () -> invalidExpression.validate());
     }
 
     @Test

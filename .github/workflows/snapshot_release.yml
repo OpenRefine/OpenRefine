@@ -8,7 +8,7 @@ on:
     paths-ignore:
       - 'docs/**'
   release:
-    types: [created]
+    types: [created, published]
 
 jobs:
   prepare_e2e_test_matrix:

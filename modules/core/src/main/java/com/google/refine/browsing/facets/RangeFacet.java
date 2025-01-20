@@ -33,6 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -132,6 +136,16 @@ public class RangeFacet implements Facet {
                 MetaParser.parse(_expression);
             } catch (ParsingException e) {
                 throw new IllegalArgumentException(e);
+            }
+        }
+
+        @Override
+        public Optional<Set<String>> getColumnDependencies() {
+            try {
+                return MetaParser.parse(_expression)
+                        .getColumnDependencies(Optional.of(_columnName));
+            } catch (ParsingException e) {
+                return Optional.of(Collections.emptySet());
             }
         }
     }

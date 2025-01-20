@@ -293,7 +293,7 @@
     "wikibase-statement-settings/mode-label": "Režim úprav",
     "warnings-messages/invalid-characters-in-file-name/body": "Názvy souborů jako <span class=\"wb-issue-preformat\">{example_filename}</span> obsahují znak <span class=\"wb-issue-preformat\">{invalid_character}</span>, který nemůže být součástí názvů souborů na wiki.",
     "warnings-messages/missing-file-name-extension/title": "Názvy souborů bez přípon souborů",
-    "warnings-messages/missing-file-name-extension/body": "Názvy souborů poskytnuté pro soubory, které mají být nahrány, musí končit příponou souboru, což neplatí pro názvy souborů, jako je <span class=\"wb-issue-preformat\">{example_filename}.",
+    "warnings-messages/missing-file-name-extension/body": "Názvy souborů poskytnuté pro soubory, které mají být nahrány, musí končit příponou souboru, což neplatí pro názvy souborů, jako je <span class=\"wb-issue-preformat\">{example_filename}</span>.",
     "warnings-messages/replaced-characters-in-filename/title": "Některé speciální znaky v názvech souborů budou nahrazeny",
     "warnings-messages/label-too-long/title": "Titulky přesahují maximální délku",
     "wikibase-statement-settings/dialog-header": "Nastavení výroku",

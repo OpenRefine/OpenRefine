@@ -30,6 +30,7 @@ package com.google.refine.operations.recon;
 import java.io.Serializable;
 import java.util.Collections;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -42,6 +43,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconMatchSpecificTopicOperation.ReconItem;
 import com.google.refine.util.ParsingUtilities;
@@ -71,7 +73,9 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
     public void serializeReconMatchSpecificTopicOperation() throws Exception {
         String json = "{\n" +
                 "    \"op\": \"core/recon-match-specific-topic-to-cells\",\n" +
-                "    \"description\": \"Match specific item Gangnam (Q489941) to cells in column researcher\",\n" +
+                "    \"description\": "
+                + new TextNode(OperationDescription.recon_match_specific_topic_brief("Gangnam", "Q489941", "researcher")).toString() + ",\n"
+                +
                 "    \"engineConfig\": {\n" +
                 "      \"mode\": \"record-based\",\n" +
                 "      \"facets\": []\n" +

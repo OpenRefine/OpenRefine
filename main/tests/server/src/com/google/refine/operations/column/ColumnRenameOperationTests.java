@@ -27,8 +27,11 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -37,6 +40,7 @@ import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -66,11 +70,19 @@ public class ColumnRenameOperationTests extends RefineTest {
     @Test
     public void serializeColumnRenameOperation() throws Exception {
         String json = "{\"op\":\"core/column-rename\","
-                + "\"description\":\"Rename column old name to new name\","
+                + "\"description\":" + new TextNode(OperationDescription.column_rename_brief("old name", "new name")).toString() + ","
                 + "\"oldColumnName\":\"old name\","
                 + "\"newColumnName\":\"new name\"}";
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, AbstractOperation.class);
         TestUtils.isSerializedTo(op, json);
+    }
+
+    @Test
+    public void testValidate() {
+        ColumnRenameOperation noOldName = new ColumnRenameOperation(null, "newfoo");
+        assertThrows(IllegalArgumentException.class, () -> noOldName.validate());
+        ColumnRenameOperation noNewName = new ColumnRenameOperation("foo", null);
+        assertThrows(IllegalArgumentException.class, () -> noNewName.validate());
     }
 
     @Test
