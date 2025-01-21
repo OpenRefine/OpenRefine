@@ -3,6 +3,7 @@ package org.openrefine.wikibase.manifests;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +33,7 @@ public class ManifestV2 implements Manifest {
     private String tagTemplate;
     private boolean hideStructuredFieldsInMediaInfo;
     private List<String> mandatoryMediaInfoPropertyIds;
+    private final List<String> defaultMandatoryMediaInfoPropertyIds = Arrays.asList("P7482", "P170", "P6216");
 
     private Map<String, EntityTypeSettings> entityTypeSettings;
 
@@ -46,6 +48,9 @@ public class ManifestV2 implements Manifest {
         mandatoryMediaInfoPropertyIds = new ArrayList<>();
         for (JsonNode node : mediawiki.path("mandatoryMediaInfoPropertyIds")) {
             mandatoryMediaInfoPropertyIds.add(node.asText());
+        }
+        if (mandatoryMediaInfoPropertyIds.isEmpty()) {
+            mandatoryMediaInfoPropertyIds = new ArrayList<>(defaultMandatoryMediaInfoPropertyIds);
         }
 
         JsonNode wikibase = manifest.path("wikibase");

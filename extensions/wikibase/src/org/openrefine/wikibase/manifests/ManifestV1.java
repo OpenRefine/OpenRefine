@@ -24,6 +24,7 @@ public class ManifestV1 implements Manifest {
     private String tagTemplate;
     private int maxEditsPerMinute;
     private List<String> mandatoryMediaInfoPropertyIds;
+    private final List<String> defaultMandatoryMediaInfoPropertyIds = Arrays.asList("P7482", "P170", "P6216");
 
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
 
@@ -38,6 +39,9 @@ public class ManifestV1 implements Manifest {
         mandatoryMediaInfoPropertyIds = new ArrayList<>();
         for (JsonNode node : mediawiki.path("mandatoryMediaInfoPropertyIds")) {
             mandatoryMediaInfoPropertyIds.add(node.asText());
+        }
+        if (mandatoryMediaInfoPropertyIds.isEmpty()) {
+            mandatoryMediaInfoPropertyIds = new ArrayList<>(defaultMandatoryMediaInfoPropertyIds);
         }
 
         JsonNode wikibase = manifest.path("wikibase");
