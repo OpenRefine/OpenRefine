@@ -36,12 +36,16 @@ public class ManifestV1 implements Manifest {
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
-        mandatoryMediaInfoPropertyIds = new ArrayList<>();
-        for (JsonNode node : mediawiki.path("mandatoryMediaInfoPropertyIds")) {
-            mandatoryMediaInfoPropertyIds.add(node.asText());
-        }
-        if (mandatoryMediaInfoPropertyIds.isEmpty()) {
+        Object mediaPropertiesValue = mediawiki.path("mandatoryMediaInfoPropertyIds");
+        if (mediaPropertiesValue != null && mediaPropertiesValue instanceof Iterable) {
+            mandatoryMediaInfoPropertyIds = new ArrayList<>();
+            for (JsonNode node : (Iterable<JsonNode>) mediaPropertiesValue) {
+                mandatoryMediaInfoPropertyIds.add(node.asText());
+            }
+        } else if (mediaPropertiesValue == null && "https://commons.wikimedia.org/w/api.php".equals(mediaWikiApiEndpoint)) {
             mandatoryMediaInfoPropertyIds = new ArrayList<>(defaultMandatoryMediaInfoPropertyIds);
+        } else {
+            mandatoryMediaInfoPropertyIds = new ArrayList<>();
         }
 
         JsonNode wikibase = manifest.path("wikibase");
