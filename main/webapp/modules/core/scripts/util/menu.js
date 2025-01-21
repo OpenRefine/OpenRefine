@@ -137,7 +137,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
   var createMenuItem = function(item) {
     if ("label" in item) {
       var menuItem = MenuSystem.createMenuItem().appendTo(menu);
-      $('<div></div>').text(item.label).appendTo(menuItem);
+      let contentsDiv = $('<div></div>').text(item.label).appendTo(menuItem);
       if ("submenu" in item) {
         menuItem.addClass('submenu');
         menuItem.on('mouseenter click', function () {
@@ -174,6 +174,14 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
             }, 300);
           });
         }
+      }
+      if ("icon" in item) {
+        let img = $('<img />')
+          .attr('src', item.icon)
+          .addClass('menu-icon')
+          .attr('aria-hidden', 'true');
+        contentsDiv.prepend(' ');
+        contentsDiv.prepend(img);
       }
     } else if ("heading" in item) {
       $('<div></div>').addClass("menu-section").text(item.heading).appendTo(menu);
