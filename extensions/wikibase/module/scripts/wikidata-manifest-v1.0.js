@@ -4,8 +4,7 @@ const WikidataManifestV1_0 = {
     "name": "Wikidata",
     "root": "https://www.wikidata.org/wiki/",
     "main_page": "https://www.wikidata.org/wiki/Wikidata:Main_Page",
-    "api": "https://www.wikidata.org/w/api.php",
-    "mandatoryMediaInfoPropertyIds": ["P7482", "P170", "P6216"]
+    "api": "https://www.wikidata.org/w/api.php"
   },
   "wikibase": {
     "site_iri": "http://www.wikidata.org/entity/",

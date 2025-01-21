@@ -126,7 +126,7 @@ public class NewEntityScrutinizer extends EditScrutinizer {
 
             for (Object requiredProperty : newMediaRequiredProperties) {
                 if (!propertiesSet.contains(requiredProperty)) {
-                    QAWarning issue = new QAWarning(newMediaMissingProperty, (String) requiredProperty, QAWarning.Severity.CRITICAL, 1);
+                    QAWarning issue = new QAWarning(newMediaMissingProperty, (String) requiredProperty, QAWarning.Severity.IMPORTANT, 1);
                     issue.setProperty("property_entity",
                             new SuggestedPropertyIdValue((String) requiredProperty, this.manifest.getSiteIri(), ""));
                     addIssue(issue);
