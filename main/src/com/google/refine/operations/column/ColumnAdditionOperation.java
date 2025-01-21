@@ -36,7 +36,9 @@ package com.google.refine.operations.column;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -55,6 +57,7 @@ import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellAtRow;
@@ -137,6 +140,21 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
         return OperationDescription.column_addition_desc(_newColumnName, column.getName(), cellsAtRows.size(), _expression);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        try {
+            Evaluable evaluable = MetaParser.parse(_expression);
+            return evaluable.getColumnDependencies(Optional.of(_baseColumnName));
+        } catch (ParsingException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.builder().addColumn(_newColumnName, _baseColumnName).build());
     }
 
     @Override

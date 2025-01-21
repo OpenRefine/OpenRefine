@@ -27,10 +27,13 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.Assert;
@@ -85,6 +88,8 @@ public class ColumnReorderOperationTests extends RefineTest {
         int cCol = project.columnModel.getColumnByName("c").getCellIndex();
 
         AbstractOperation op = new ColumnReorderOperation(Arrays.asList("a"));
+        assertEquals(op.getColumnDependencies().get(), Set.of("a"));
+        assertEquals(op.getColumnsDiff(), Optional.empty());
 
         runOperation(op, project);
 
@@ -107,6 +112,8 @@ public class ColumnReorderOperationTests extends RefineTest {
     @Test
     public void testReorder() throws Exception {
         ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"));
+        assertEquals(SUT.getColumnDependencies().get(), Set.of("b", "c"));
+        assertEquals(SUT.getColumnsDiff(), Optional.empty());
 
         runOperation(SUT, project);
 
