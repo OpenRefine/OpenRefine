@@ -212,15 +212,15 @@ public class NewEntityScrutinizerTest extends ScrutinizerTest {
         assertWarningsRaised(NewEntityScrutinizer.newMediaType, NewEntityScrutinizer.invalidFilePathType,
                 NewEntityScrutinizer.newMediaMissingProperty);
 
-        QAWarning warnP170 = new QAWarning("new-media-missing-property", "P170", QAWarning.Severity.CRITICAL, 1);
+        QAWarning warnP170 = new QAWarning("new-media-missing-property", "P170", QAWarning.Severity.IMPORTANT, 1);
         warnP170.setFacetable(true);
         warnP170.setProperty("property_entity", new SuggestedPropertyIdValue("P170", "http://www.wikidata.org/entity/", ""));
 
-        QAWarning warnP6216 = new QAWarning("new-media-missing-property", "P6216", QAWarning.Severity.CRITICAL, 1);
+        QAWarning warnP6216 = new QAWarning("new-media-missing-property", "P6216", QAWarning.Severity.IMPORTANT, 1);
         warnP6216.setFacetable(true);
         warnP6216.setProperty("property_entity", new SuggestedPropertyIdValue("P6216", "http://www.wikidata.org/entity/", ""));
 
-        QAWarning warnP7482 = new QAWarning("new-media-missing-property", "P7482", QAWarning.Severity.CRITICAL, 1);
+        QAWarning warnP7482 = new QAWarning("new-media-missing-property", "P7482", QAWarning.Severity.IMPORTANT, 1);
         warnP7482.setFacetable(true);
         warnP7482.setProperty("property_entity", new SuggestedPropertyIdValue("P7482", "http://www.wikidata.org/entity/", ""));
 
