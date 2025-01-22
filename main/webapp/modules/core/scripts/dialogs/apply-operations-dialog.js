@@ -39,27 +39,25 @@ function ApplyOperationsDialog() {
   elmts.dialogHeader.html($.i18n('core-project/apply-operation'));
   elmts.or_proj_pasteJson.html($.i18n('core-project/paste-json'));
 
-  elmts.operationJsonButton.on('click', async function() {
-    const fileInput = elmts.operationJsonButton[0];
-    fileInput.accept = '.json';
-    fileInput.onchange = async function() {
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const fileContent = JSON.parse(e.target.result);
-          const textAreaElement = elmts.textarea[0];
-          if (textAreaElement) {
-            textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
-          }
-        } catch (error) {
-          elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));   
+  const fileInput = elmts.operationJsonButton[0];
+  fileInput.accept = '.json';
+  fileInput.onchange = async function() {
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const fileContent = JSON.parse(e.target.result);
+        const textAreaElement = elmts.textarea[0];
+        if (textAreaElement) {
+          textAreaElement.textContent = JSON.stringify(fileContent, null, 2)
         }
-      };
-      reader.readAsText(file);
+      } catch (error) {
+        elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));   
+      }
     };
-    fileInput.click();
-  });
+    reader.readAsText(file);
+  };
+
   elmts.textarea.on('change', function() {
      elmts.errorContainer.empty();
   });
