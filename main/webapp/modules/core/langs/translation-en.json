@@ -897,7 +897,7 @@
     "core-buttons/refresh": "Refresh",
     "core-buttons/reset-all": "Reset all",
     "core-buttons/remove-all": "Remove all",
-    "core-buttons/perform-op": "Perform operations",
+    "core-buttons/perform-op": "Run operations",
     "core-buttons/add-std-svc": "Add standard service",
     "core-buttons/start-recon": "Start reconciling...",
     "core-buttons/add-service": "Add service",
