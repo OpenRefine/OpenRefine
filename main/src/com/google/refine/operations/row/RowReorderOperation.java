@@ -35,6 +35,7 @@ package com.google.refine.operations.row;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -89,6 +90,11 @@ public class RowReorderOperation extends AbstractOperation {
     @JsonIgnore
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.empty());
+    }
+
+    @Override
+    public RowReorderOperation renameColumns(Map<String, String> newColumnNames) {
+        return new RowReorderOperation(_mode, _sorting.renameColumns(newColumnNames));
     }
 
     @Override
