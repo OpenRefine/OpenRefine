@@ -32,6 +32,8 @@ import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -124,5 +126,14 @@ public class ColumnReorderOperationTests extends RefineTest {
                         { "g", "f" },
                 });
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRename() {
+        ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"));
+
+        ColumnReorderOperation renamed = SUT.renameColumns(Map.of("a", "a2", "b", "b2"));
+
+        assertEquals(renamed._columnNames, List.of("c", "b2"));
     }
 }
