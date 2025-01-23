@@ -931,5 +931,6 @@
     "core-buttons/no-criteria-selected": "Pro identifikaci duplicit je třeba vybrat alespoň jeden sloupec.",
     "core-views/remove-duplicates": "Odstranit duplicitní řádky",
     "core-index-open/no-results-message": "Žádné výsledky",
-    "core-index-open/search-placeholder": "Hledat"
+    "core-index-open/search-placeholder": "Hledat",
+    "core-views/keep-only-matching": "Ponechat pouze shodné řádky"
 }

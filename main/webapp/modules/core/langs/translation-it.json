@@ -210,7 +210,7 @@
     "core-dialogs/cell-value": "Il valore della cella corrente. Questa è una scorciatoia per 'cell.value'.",
     "core-dialogs/cluster-values": "Valori nei cluster",
     "core-dialogs/clustering": "Raggruppamento…",
-    "core-dialogs/out-empty-row": "Esporta righe vuote (es: tutte celle null)",
+    "core-dialogs/out-empty-row": "Esporta righe vuote (es: tutte le celle sono null)",
     "core-dialogs/from": "Da",
     "core-dialogs/export-to-local": "Archivia il progetto come file",
     "core-dialogs/drag-column": "Trascina le colonne per riordinarle",
@@ -289,7 +289,7 @@
     "core-facets/linear-plot-abbr": "lin",
     "core-facets/small-dot": "Dimensione punto: piccola",
     "core-facets/edit-based-col": "Modifica l'espressione della faccetta basandoti sulla colonna",
-    "core-facets/facet-choices": "Faccetta le alternative come valori separati da Tab",
+    "core-facets/facet-choices": "Scelte delle faccette come valori separati da tabulazione",
     "core-facets/change": "cambia",
     "core-facets/name": "nome",
     "core-facets/count": "quantità",
@@ -433,7 +433,7 @@
     "core-views/keep-or": "mantieni l'originale",
     "core-views/qa-facets": "Faccette QA",
     "core-views/discard-judg2": "Annulla gli abbinamenti in questa colonna per tutte le righe selezionate",
-    "core-views/list-int": "Lista di interi separati da virgola, es: 5, 7, 15",
+    "core-views/list-int": "Lista di numeri interi separati da virgola (p. es. 5, 7, 15)",
     "core-views/flag-rows": "Spunta bandiere",
     "core-views/after-split": "Dopo la separazione",
     "core-views/one-col": "Una colonna",
@@ -931,5 +931,6 @@
     "core-dialogs/expression-preview": "Anteprima dell'espressione",
     "core-dialogs/edit-name": "Nome della funzione",
     "core-dialogs/template-preview": "Anteprima del template",
-    "core-dialogs/no-other-numeric-columns": "Non ci sono altre colonne numeriche (colonne con più del 50% di dati numerici (valori verdi)) da confrontare con la colonna $1."
+    "core-dialogs/no-other-numeric-columns": "Non ci sono altre colonne numeriche (colonne con più del 50% di dati numerici (valori verdi)) da confrontare con la colonna $1.",
+    "core-views/keep-only-matching": "Mantieni soltanto righe corrispondenti"
 }

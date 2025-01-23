@@ -357,5 +357,7 @@
     "wikibase-save-schema-dialog/schema-name": "Název nového schématu",
     "wikibase-schema/schema-validation/path-element/reference/with-position": "Odkaz #$1",
     "wikibase-schema/schema-validation/path-element/alias": "alias",
-    "wikibase-schema/schema-validation/path-element/unit": "Jednotka"
+    "wikibase-schema/schema-validation/path-element/unit": "Jednotka",
+    "warnings-messages/new-media-missing-property/title": "Nové médium vyžaduje vlastnost {property_entity}",
+    "warnings-messages/new-media-missing-property/body": "Nahrávání nových médií vyžaduje zadání {property_entity}. Nebyla zadána žádná vlastnost."
 }

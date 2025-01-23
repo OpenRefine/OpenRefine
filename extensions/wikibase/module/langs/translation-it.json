@@ -357,5 +357,7 @@
     "wikibase-schema/schema-validation/path-element/wikitext": "Wikitesto",
     "wikibase-save-schema-dialog/existing-schema-label": "O seleziona uno schema esistente da sovrascrivere",
     "wikibase-save-schema-dialog/select-schema": "Seleziona...",
-    "wikibase-save-schema-dialog/save": "Salva"
+    "wikibase-save-schema-dialog/save": "Salva",
+    "warnings-messages/new-media-missing-property/body": "Il caricamento dei nuovi file multimediali richiede di inserire la proprietà {property_entity}. Nessuna proprietà è stata inserita.",
+    "warnings-messages/new-media-missing-property/title": "Il nuovo file multimediale richiede la proprietà {property_entity}"
 }
