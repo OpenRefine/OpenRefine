@@ -107,6 +107,14 @@ public class StandardReconConfig extends ReconConfig {
             this.propertyID = property == null ? propertyID : property.id;
         }
 
+        public ColumnDetail renameColumn(Map<String, String> newColumnNames) {
+            return new ColumnDetail(
+                    newColumnNames.getOrDefault(columnName, columnName),
+                    propertyName,
+                    propertyID,
+                    null);
+        }
+
         @Override
         public String toString() {
             try {
@@ -335,6 +343,23 @@ public class StandardReconConfig extends ReconConfig {
         return Optional.of(columnDetails.stream()
                 .map(columnDetail -> columnDetail.columnName)
                 .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public StandardReconConfig renameColumns(Map<String, String> newColumnNames) {
+        List<ColumnDetail> translatedColumnDetails = columnDetails.stream()
+                .map(column -> column.renameColumn(newColumnNames))
+                .collect(Collectors.toList());
+        return new StandardReconConfig(
+                service,
+                identifierSpace,
+                schemaSpace,
+                typeID,
+                typeName,
+                autoMatch,
+                batchSize,
+                translatedColumnDetails,
+                limit);
     }
 
     public ReconJob createSimpleJob(String query) {
@@ -744,4 +769,5 @@ public class StandardReconConfig extends ReconConfig {
     public String getMode() {
         return "standard-service";
     }
+
 }
