@@ -39,6 +39,7 @@ import static org.testng.Assert.assertThrows;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -138,6 +139,38 @@ public class KeyValueColumnizeTests extends RefineTest {
     public void testColumnsDependencies() {
         assertEquals(new KeyValueColumnizeOperation("foo", "baz", "bar").getColumnDependencies().get(), Set.of("foo", "baz", "bar"));
         assertEquals(new KeyValueColumnizeOperation("foo", "baz", null).getColumnDependencies().get(), Set.of("foo", "baz"));
+    }
+
+    @Test
+    public void testRename() {
+        KeyValueColumnizeOperation SUT = new KeyValueColumnizeOperation("foo", "baz", null);
+
+        KeyValueColumnizeOperation renamed = SUT.renameColumns(Map.of("foo", "foo2", "bar", "bar2"));
+
+        TestUtils.isSerializedTo(renamed, "{\n"
+                + "   \"description\" : " + new TextNode(OperationDescription.cell_key_value_columnize_brief("foo2", "baz")).toString()
+                + ",\n"
+                + "   \"keyColumnName\" : \"foo2\",\n"
+                + "   \"noteColumnName\" : null,\n"
+                + "   \"op\" : \"core/key-value-columnize\",\n"
+                + "   \"valueColumnName\" : \"baz\"\n"
+                + "}");
+    }
+
+    @Test
+    public void testRenameNoNotesColumn() {
+        KeyValueColumnizeOperation SUT = new KeyValueColumnizeOperation("foo", "baz", "bar");
+
+        KeyValueColumnizeOperation renamed = SUT.renameColumns(Map.of("foo", "foo2", "bar", "bar2"));
+
+        TestUtils.isSerializedTo(renamed, "{\n"
+                + "   \"description\" : "
+                + new TextNode(OperationDescription.cell_key_value_columnize_note_column_brief("foo2", "baz", "bar2")).toString() + ",\n"
+                + "   \"keyColumnName\" : \"foo2\",\n"
+                + "   \"noteColumnName\" : \"bar2\",\n"
+                + "   \"op\" : \"core/key-value-columnize\",\n"
+                + "   \"valueColumnName\" : \"baz\"\n"
+                + "}");
     }
 
     /**

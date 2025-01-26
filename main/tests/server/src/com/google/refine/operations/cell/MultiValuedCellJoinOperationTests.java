@@ -37,6 +37,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -118,6 +119,20 @@ public class MultiValuedCellJoinOperationTests extends RefineTest {
     @Test
     public void testColumnsDependencies() {
         assertEquals(new MultiValuedCellJoinOperation("value", "key", "sep").getColumnDependencies().get(), Set.of("value", "key"));
+    }
+
+    @Test
+    public void testRename() {
+        var SUT = new MultiValuedCellJoinOperation("value", "key", "sep");
+
+        MultiValuedCellJoinOperation renamed = SUT.renameColumns(Map.of("value", "value2", "key", "key2", "sep", "sep2"));
+
+        String expectedJson = "{\"op\":\"core/multivalued-cell-join\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_multivalued_cell_join_brief("value2")).toString() + ","
+                + "\"columnName\":\"value2\","
+                + "\"keyColumnName\":\"key2\","
+                + "\"separator\":\"sep\"}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     /*
