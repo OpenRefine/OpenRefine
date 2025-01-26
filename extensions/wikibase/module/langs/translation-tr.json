@@ -43,5 +43,10 @@
     "wikibase-schema/mediainfo-wikitext": "Viki metin:",
     "wikibase-schema/mediainfo-wikitext-override": "Viki metin (üzerine yaz):",
     "wikibase-schema/mediainfo-wikitext-no-override": "Viki metin (üzerine yazma):",
-    "wikibase-schema/empty-terms": "etiket, açıklama veya diğer ad eklenmedi"
+    "wikibase-schema/empty-terms": "etiket, açıklama veya diğer ad eklenmedi",
+    "wikibase-schema/target-wikibase-instance": "Hedef Wikibase örneği:",
+    "wikibase-addition/version-error": "Manifest sürümü $1 desteklenmiyor. OpenRefine yalnızca 1.x ve 2.x manifest sürümlerini destekler.",
+    "wikibase-schema/dialog-header": "Wikibase ile hizala",
+    "wikibase-schema/preview-explanation": "Bu sekme, değişiklikleri <a href=\"$2\" target=\"_blank\">$3</a> adresine yüklediğinizde yapılacak $1 düzenlemenin ilk kısmını gösterir. Belirli öğelerdeki düzenlemeleri incelemek için boyutları kullanabilirsiniz.",
+    "wikibase-schema/start-from-an-existing-schema": "Mevcut bir şemadan başlat:"
 }
