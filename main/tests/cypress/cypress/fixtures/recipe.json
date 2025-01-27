@@ -1,0 +1,30 @@
+[
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "desc",
+    "expression": "value.toLowercase()",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Transformer le texte sur les cellules de la colonne desc à laide de lexpression value.toLowercase()"
+  },
+  {
+    "op": "core/multivalued-cell-split",
+    "columnName": "desc",
+    "keyColumnName": "NDB_No",
+    "mode": "separator",
+    "separator": ",",
+    "regex": false,
+    "description": "Diviser les cellules à valeurs multiples dans la colonne desc"
+  },
+  {
+    "op": "core/column-removal",
+    "columnName": "Energ_Kcal",
+    "description": "Supprimer la colonne Energ_Kcal"
+  }
+]
+
