@@ -93,7 +93,7 @@
     <commons-validator.version>1.9.0</commons-validator.version>
     <org-jvnet-localizer.version>1.31</org-jvnet-localizer.version>
     <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
-    <commons-codec.version>1.17.2</commons-codec.version>
+    <commons-codec.version>1.18.0</commons-codec.version>
     <commons-compress.version>1.27.1</commons-compress.version>
     <velocity.version>2.4.1</velocity.version>
     <marc4j.version>2.9.6</marc4j.version>
