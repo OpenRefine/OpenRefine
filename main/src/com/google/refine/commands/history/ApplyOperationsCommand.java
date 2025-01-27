@@ -44,9 +44,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.google.refine.commands.Command;
 import com.google.refine.history.HistoryEntry;
