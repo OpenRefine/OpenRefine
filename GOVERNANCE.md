@@ -75,7 +75,7 @@ Steering Committee members are invited by OpenRefine's Advisory Committee
 There is currently no Steering Committee as the project is looking for a better format. See discussion [Fwd: Steering committee being disbanded?](https://forum.openrefine.org/t/fwd-steering-committee-being-disbanded/430/) and [Proposition to create OpenRefine Ambassador Council](https://forum.openrefine.org/t/proposition-to-create-openrefine-ambassador-council/462)
 
 ### Advisory Committee
-The Advisory Committee runs the administrative aspect of the project on a day to day basis with the support of Code for Science and Society (CS&S). Its member are bound by the  fiscal sponsorship agreement with Code for Science and Society. They meet once per month with Code for Science and Society.
+The Advisory Committee runs the administrative aspect of the project on a day to day basis with the support of Code for Science and Society (CS&S). Its members are bound by the  fiscal sponsorship agreement with Code for Science and Society. They meet once per month with Code for Science and Society.
 
 It is composed of at least three members. No more than 49 percent of the members of the Advisory Committee may be paid by the project.
 
