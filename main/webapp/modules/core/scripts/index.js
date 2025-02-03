@@ -160,7 +160,7 @@ $(function() {
         } else if (notificationStatus == "enabled") {
             $.getJSON("https://openrefine.org/versions.json",
                 function (data) {
-                  if (data.events) {
+                  if (data.events && data.events.length > 0) {
                     var latestEvent = data.events[0];
                     var container = $('<div id="notification-container">')
                         .appendTo(document.body);
