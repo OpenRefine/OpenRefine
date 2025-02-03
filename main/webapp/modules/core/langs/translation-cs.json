@@ -866,7 +866,7 @@
     "core-views/column-join-replace-nulls": "Nahraďte nuly za",
     "core-views/column-join-skip-nulls": "Přeskočit nuly.",
     "core-buttons/apply": "Použít",
-    "core-buttons/perform-op": "Provést operace",
+    "core-buttons/perform-op": "Spustit operace",
     "core-buttons/add-keying-function": "Přidat novou funkci klíčování",
     "core-buttons/yes": "Ano",
     "core-buttons/no": "Ne",
