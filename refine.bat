@@ -257,7 +257,7 @@ if ""%ACTION%"" == ""build"" goto :build-setup
 goto :endif
 :build-setup
 pushd main\webapp 
-call npm install
+call npm install || exit /b 1
 popd
 set MVN_ACTION=compile test-compile dependency:build-classpath
 :endif
@@ -270,7 +270,7 @@ if ""%ACTION%"" == ""lint"" (
     rem Skip the call to process-resources as it's not needed for this action
     goto :mvnCall
 )
-call "%MVN%" process-resources
+call "%MVN%" process-resources || exit /b 1
 :mvnCall
-call "%MVN%" %MVN_ACTION%
+call "%MVN%" %MVN_ACTION%  || exit /b 1
 goto :eof
