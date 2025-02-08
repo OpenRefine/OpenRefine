@@ -39,6 +39,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -133,4 +135,13 @@ abstract public class ReconConfig {
      */
     @JsonIgnore
     abstract public String getMode();
+
+    /**
+     * @return the set of columns referred to by this reconciliation configuration, or {@link Optional#empty()} if the
+     *         reconciliation might depend on any column.
+     */
+    @JsonIgnore
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.empty();
+    }
 }

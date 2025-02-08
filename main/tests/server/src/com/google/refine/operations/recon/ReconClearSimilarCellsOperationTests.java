@@ -27,8 +27,12 @@
 
 package com.google.refine.operations.recon;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
@@ -40,6 +44,7 @@ import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.operations.OperationDescription;
@@ -49,6 +54,12 @@ import com.google.refine.util.TestUtils;
 
 public class ReconClearSimilarCellsOperationTests extends RefineTest {
 
+    String json = "{\"op\":\"core/recon-clear-similar-cells\","
+            + "\"description\":"
+            + new TextNode(OperationDescription.recon_clear_similar_cells_brief("some value", "my column")).toString() + ","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+            + "\"columnName\":\"my column\","
+            + "\"similarValue\":\"some value\"}";
     Project project;
 
     @BeforeSuite
@@ -69,13 +80,14 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
 
     @Test
     public void serializeReconClearSimilarCellsOperation() throws Exception {
-        String json = "{\"op\":\"core/recon-clear-similar-cells\","
-                + "\"description\":"
-                + new TextNode(OperationDescription.recon_clear_similar_cells_brief("some value", "my column")).toString() + ","
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
-                + "\"columnName\":\"my column\","
-                + "\"similarValue\":\"some value\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class), json);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        AbstractOperation op = ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class);
+        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("my column")));
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of("my column")));
     }
 
     @Test

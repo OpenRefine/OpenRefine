@@ -31,12 +31,16 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.Serializable;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.OperationDescription;
@@ -64,6 +68,13 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
     @Test
     public void serializeReconUseValuesAsIdentifiersOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        AbstractOperation operation = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("ids")));
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("ids")));
     }
 
     @Test

@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -327,6 +328,13 @@ public class StandardReconConfig extends ReconConfig {
     @Override
     public String getBriefDescription(Project project, String columnName) {
         return "Reconcile cells in column " + columnName + " to type " + typeID;
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(columnDetails.stream()
+                .map(columnDetail -> columnDetail.columnName)
+                .collect(Collectors.toSet()));
     }
 
     public ReconJob createSimpleJob(String query) {

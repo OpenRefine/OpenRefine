@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -51,6 +52,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
@@ -99,6 +101,18 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     @JsonProperty("applyToJudgedCells")
     public boolean getApplyToJudgedCells() {
         return _applyToJudgedCells;
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        Set<String> columnNames = new HashSet<>(Set.of(_toColumnNames));
+        columnNames.add(_fromColumnName);
+        return Optional.of(columnNames);
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(new ColumnsDiff(List.of(), Set.of(), Set.of(_toColumnNames)));
     }
 
     @Override
