@@ -111,7 +111,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         try {
             MetaParser.parse(_expression);
         } catch (ParsingException e) {
-            throw new IllegalArgumentException(e);
+            throw new IllegalArgumentException(String.format("Invalid expression '%s': %s", _expression, e.getMessage()), e);
         }
     }
 

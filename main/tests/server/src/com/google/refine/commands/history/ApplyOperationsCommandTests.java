@@ -3,6 +3,7 @@ package com.google.refine.commands.history;
 
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -21,6 +22,8 @@ import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.MassEditOperation;
+import com.google.refine.operations.cell.TextTransformOperation;
+import com.google.refine.operations.column.ColumnRenameOperation;
 import com.google.refine.util.ParsingUtilities;
 
 public class ApplyOperationsCommandTests extends CommandTestBase {
@@ -58,6 +61,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
                         { null, true }
                 });
         OperationRegistry.registerOperation(getCoreModule(), "mass-edit", MassEditOperation.class);
+        OperationRegistry.registerOperation(getCoreModule(), "column-rename", ColumnRenameOperation.class);
+        OperationRegistry.registerOperation(getCoreModule(), "text-transform", TextTransformOperation.class);
     }
 
     @BeforeMethod
@@ -118,6 +123,31 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
         String response = writer.toString();
         JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
         assertEquals(node.get("code").toString(), "\"error\"");
+    }
+
+    @Test
+    public void testInvalidExpression() throws Exception {
+        String json = "[{"
+                + "   \"op\":\"core/text-transform\","
+                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "   \"columnName\":\"foo\","
+                + "   \"expression\":\"grel:\\\"invalid\","
+                + "   \"onError\":\"set-to-blank\","
+                + "   \"repeat\": false,"
+                + "   \"repeatCount\": 0"
+                + "}]";
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("operations")).thenReturn(json);
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").toString(), "\"error\"");
+        assertEquals(node.get("operationIndex").asInt(), 0);
+        assertTrue(node.get("message").asText().startsWith("Operation #1: Invalid expression"));
     }
 
 }
