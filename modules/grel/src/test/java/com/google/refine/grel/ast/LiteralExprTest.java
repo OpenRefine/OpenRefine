@@ -32,6 +32,7 @@ import static org.testng.Assert.assertEquals;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.testng.annotations.Test;
 
@@ -39,24 +40,31 @@ public class LiteralExprTest {
 
     @Test
     public void intLiteralToString() {
-        LiteralExpr expr = new LiteralExpr(42);
+        LiteralExpr expr = new LiteralExpr(42, "42");
         assertEquals("42", expr.toString());
     }
 
     @Test
     public void columnDependencies() {
-        LiteralExpr expr = new LiteralExpr(34);
+        LiteralExpr expr = new LiteralExpr(34, "34");
         assertEquals(expr.getColumnDependencies(Optional.of("column")), Optional.of(Collections.emptySet()));
         assertEquals(expr.renameColumnDependencies(Map.of("foo", "bar")), expr);
 
-        LiteralExpr string = new LiteralExpr("foo");
+        LiteralExpr string = new LiteralExpr("foo", "\"foo\"");
         assertEquals(string.getColumnDependencies(Optional.of("foo")), Optional.of(Collections.emptySet()));
         assertEquals(string.renameColumnDependencies(Map.of("foo", "bar")), string);
     }
 
     @Test
     public void stringLiteralToString() {
-        LiteralExpr expr = new LiteralExpr("string with \"\\backslash\"");
+        LiteralExpr expr = new LiteralExpr("string with \"\\backslash\"", "\"string with \\\"\\\\backslash\\\"\"");
         assertEquals("\"string with \\\"\\\\backslash\\\"\"", expr.toString());
+    }
+
+    @Test
+    public void testPattern() {
+        Pattern pattern = Pattern.compile("foo");
+        LiteralExpr expr = new LiteralExpr(pattern, "/foo/");
+        assertEquals(expr.toString(), "/foo/");
     }
 }
