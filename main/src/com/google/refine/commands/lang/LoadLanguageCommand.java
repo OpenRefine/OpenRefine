@@ -161,7 +161,9 @@ public class LoadLanguageCommand extends Command {
             fisLang = new FileInputStream(langFile);
         } catch (FileNotFoundException e) {
             // Could be normal if we've got a list of languages as fallbacks
-            logger.info("Language file " + strMessage + " not found " + e.getMessage());
+            logger.info("Language file " + strMessage + " not found");
+            logger.debug("Exception details: " + e.getMessage());
+
         } catch (SecurityException e) {
             logger.error("Language file " + strMessage + " cannot be read (security)", e);
         }
