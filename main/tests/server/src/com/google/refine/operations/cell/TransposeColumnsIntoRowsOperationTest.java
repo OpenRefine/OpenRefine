@@ -1,9 +1,11 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeSuite;
@@ -51,6 +53,17 @@ public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
                 "b 1", 2, true, false, null, "value").validate());
         assertThrows(IllegalArgumentException.class, () -> new TransposeColumnsIntoRowsOperation(
                 "b 1", 2, true, false, "key", null).validate());
+    }
+
+    @Test
+    public void testColumnsDiff() {
+        assertEquals(new TransposeColumnsIntoRowsOperation("num1", -1, true, false, "a", true, ":").getColumnsDiff(), Optional.empty());
+    }
+
+    @Test
+    public void testColumnsDependencies() {
+        assertEquals(new TransposeColumnsIntoRowsOperation("num1", -1, true, false, "a", true, ":").getColumnDependencies(),
+                Optional.empty());
     }
 
     @Test

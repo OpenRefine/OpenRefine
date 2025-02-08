@@ -1,9 +1,11 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.AfterMethod;
@@ -16,6 +18,7 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationDescription;
@@ -92,6 +95,26 @@ public class TextTransformOperationTests extends RefineTest {
                 "grel:foo(",
                 OnError.SetToBlank,
                 false, 0).validate());
+    }
+
+    @Test
+    public void testColumnsDiff() {
+        assertEquals(new TextTransformOperation(
+                defaultEngineConfig,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                false, 0).getColumnsDiff().get(), ColumnsDiff.modifySingleColumn("bar"));
+    }
+
+    @Test
+    public void testColumnsDependencies() {
+        assertEquals(new TextTransformOperation(
+                engineConfigWithColumnDeps,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                false, 0).getColumnDependencies().get(), Set.of("foo", "bar", "facet_1"));
     }
 
     @Test

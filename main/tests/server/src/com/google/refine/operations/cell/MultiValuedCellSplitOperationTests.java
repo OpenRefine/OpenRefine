@@ -33,9 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -47,6 +49,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
@@ -161,6 +164,24 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
         assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellSplitOperation(null, "key", "sep", false).validate());
         assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellSplitOperation("value", null, "sep", false).validate());
         assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellSplitOperation("value", "key", null, false).validate());
+    }
+
+    @Test
+    public void testColumnsDiff() {
+        assertEquals(new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                ":",
+                false).getColumnsDiff().get(), ColumnsDiff.modifySingleColumn("Value"));
+    }
+
+    @Test
+    public void testColumnsDependencies() {
+        assertEquals(new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                ":",
+                false).getColumnDependencies().get(), Set.of("Value", "Key"));
     }
 
     /**

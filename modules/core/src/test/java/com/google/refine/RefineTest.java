@@ -103,6 +103,7 @@ public class RefineTest {
 
     protected EngineConfig invalidEngineConfig;
     protected EngineConfig defaultEngineConfig;
+    protected EngineConfig engineConfigWithColumnDeps;
 
     @BeforeSuite
     public void init() {
@@ -134,6 +135,9 @@ public class RefineTest {
         invalidEngineConfig = mock(EngineConfig.class);
         doThrow(IllegalArgumentException.class).when(invalidEngineConfig).validate();
         defaultEngineConfig = new EngineConfig(Collections.emptyList(), Mode.RowBased);
+        engineConfigWithColumnDeps = mock(EngineConfig.class);
+        when(engineConfigWithColumnDeps.getMode()).thenReturn(Mode.RowBased);
+        when(engineConfigWithColumnDeps.getColumnDependencies()).thenReturn(Optional.of(Set.of("facet_1")));
     }
 
     protected Project createProjectWithColumns(String projectName, String... columnNames) throws IOException, ModelException {

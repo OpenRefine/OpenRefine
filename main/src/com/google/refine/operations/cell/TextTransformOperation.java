@@ -35,7 +35,9 @@ package com.google.refine.operations.cell;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -49,6 +51,7 @@ import com.google.refine.expr.ParsingException;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
@@ -122,6 +125,21 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             List<CellChange> cellChanges) {
 
         return OperationDescription.cell_text_transform_desc(cellChanges.size(), column.getName(), _expression);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        try {
+            Evaluable parsed = MetaParser.parse(_expression);
+            return parsed.getColumnDependencies(Optional.of(_columnName));
+        } catch (ParsingException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
     }
 
     @Override

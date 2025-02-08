@@ -35,6 +35,8 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -48,6 +50,7 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
@@ -188,6 +191,16 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                         _valueColumnName);
             }
         }
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.empty();
     }
 
     @Override
