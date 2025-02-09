@@ -37,7 +37,6 @@ function DataTableColumnHeaderUI(dataTableView, column, columnIndex, td, col) {
   this._columnIndex = columnIndex;
   this._td = td;
   this._col = col;
-  this._isResizing = false;
 
   this._render();
 }
@@ -71,21 +70,6 @@ DataTableColumnHeaderUI.prototype._render = function() {
   elmts.dropdownMenu.on('click',function() {
     self._createMenuForColumnHeader(this);
   });
-
-  // Add event listeners for column resizing
-  td.on("mousedown", function(event) {
-    if (self._isOnColumnEdge(event, td)) {
-      self._isResizing = true;
-      td.addClass("resizing");
-      $(document).on("mouseup", stopResizing);
-    }
-  });
-
-  function stopResizing() {
-    self._isResizing = false;
-    td.removeClass("resizing");
-    $(document).off("mouseup", stopResizing);
-  }
 
   var serviceUrl = null;
   if (this._column.reconConfig) {
@@ -152,23 +136,6 @@ DataTableColumnHeaderUI.prototype._render = function() {
     }
   }
 };
-
-DataTableColumnHeaderUI.prototype._isOnColumnEdge = function(event, td) {
-  var offset = td.offset();
-  var x = event.pageX - offset.left;
-  var edgeThreshold = 5; // Define edge sensitivity
-  return x > td.width() - edgeThreshold;
-};
-
-// Add CSS for resizing indication
-var style = document.createElement('style');
-style.innerHTML = `
-  .resizing {
-    border-right: 3px solid blue !important;
-  }
-`;
-document.head.appendChild(style);
-
 
 DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
   var self = this;
