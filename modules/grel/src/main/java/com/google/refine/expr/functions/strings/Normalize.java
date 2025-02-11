@@ -1,3 +1,4 @@
+
 package com.google.refine.expr.functions.strings;
 
 import java.text.Normalizer;
@@ -15,12 +16,11 @@ public class Normalize implements Function {
             // Lm = modifier letter, Sk = modifier symbol
             .compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
 
-
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if(args.length==1 && args[0]!=null){
+        if (args.length == 1 && args[0] != null) {
             Object o = args[0];
-            return (o instanceof String ? normalize((String) o):normalize(o.toString()));
+            return (o instanceof String ? normalize((String) o) : normalize(o.toString()));
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single string parameter");
 

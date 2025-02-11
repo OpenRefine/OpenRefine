@@ -271,7 +271,6 @@ public class ControlFunctionRegistry {
         registerFunction("levenshteinDistance", new LevenshteinDistance());
         registerFunction("normalize", new Normalize());
 
-
         registerFunction("parseUri", new ParseUri());
 
         // XML and HTML functions from JSoup

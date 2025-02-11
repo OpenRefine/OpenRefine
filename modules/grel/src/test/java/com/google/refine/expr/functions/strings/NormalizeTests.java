@@ -1,3 +1,4 @@
+
 package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
@@ -5,7 +6,6 @@ import java.util.Properties;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
@@ -44,7 +44,5 @@ public class NormalizeTests extends GrelTestBase {
         Object result = invoke("normalize", "");
         Assert.assertEquals(result, "");
     }
-
-
 
 }
