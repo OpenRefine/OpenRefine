@@ -75,7 +75,6 @@ Type: filesandordirs; Name: "{app}\webapp"
 [Files]
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "{#MyProgramFiles}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
-Source: "{#MyProgramFiles}\README.md"; DestDir: "{app}"; Flags: isreadme ignoreversion
 ; recompressing compressed files takes unnecessary build time, with usually no perceivable gain
 ;Source: "{#MyProgramFiles}\*.jar"; DestDir: "{app}"; Flags: nocompression ignoreversion recursesubdirs
 ;Source: "{#MyProgramFiles}\*.png"; DestDir: "{app}"; Flags: nocompression ignoreversion recursesubdirs
