@@ -140,27 +140,6 @@ const css = `
   .column-header-resizer.right {
     right: -5px; /* Half the width to center on border */
   }
-  
-  /* Optional: Visual feedback on hover */
-  /*.column-header-resizer:hover {
-    background: rgba(66, 133, 244, 0.1);
-  }*/
-  
-  .buffer-column {
-    min-width: 50px;
-    width: auto;
-}
-
-.buffer-header {
-    background: transparent !important;
-    border-right: none !important;
-}
-
-/* Ensure table does not shrink incorrectly */
-.data-table {
-    min-width: 100%;
-    table-layout: auto;
-}
     `;
 
 
@@ -824,16 +803,16 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
     createColumnHeader(columns[i], i);
   }
 
-  // Add a buffer column at the end
-  var spacerTh = $('<th>')
-    .addClass('column-header buffer-header')
-    .text('')
-    .css('min-width', '50px') // Adjust as needed
-    .appendTo(trHead);
-
-  var spacerCol = $('<col>')
-    .attr('class', 'buffer-column')
-    .appendTo(colGroup);
+  // // Add a buffer column at the end
+  // var spacerTh = $('<th>')
+  //   .addClass('column-header buffer-header')
+  //   .text('')
+  //   .css('min-width', '50px') // Adjust as needed
+  //   .appendTo(trHead);
+  //
+  // var spacerCol = $('<col>')
+  //   .attr('class', 'buffer-column')
+  //   .appendTo(colGroup);
 };
 
 DataTableView.prototype._addResizingControls = function(th, index) {
