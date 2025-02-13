@@ -98,49 +98,49 @@ DataTableView.resizingState = {
 
 //The CSS to ensure proper overlay positioning of highlight column while resizing
 const css = `
-  .data-table-container {
-    position: relative;
-    overflow: auto;
-  }
-  
-  .column-resize-overlay {
-    position: absolute;
-    top: 0;
-    width: 2px;
-    background-color: #4285f4;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1000;
-    display: none;
-  }
-  
-  /* Make headers relative for absolute positioning of handles */
-  .column-header {
-    position: relative !important;
-    overflow: visible !important;
-  }
-  
-  /* Common styles for resize handles */
-  .column-header-resizer {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    width: 10px; /* Wider grab area */
-    cursor: col-resize;
-    z-index: 100;
-    background: transparent;
-  }
-  
-  /* Left handle positioning */
-  .column-header-resizer.left {
-    left: -5px; /* Half the width to center on border */
-  }
-  
-  /* Right handle positioning */
-  .column-header-resizer.right {
-    right: -5px; /* Half the width to center on border */
-  }
-    `;
+    .data-table-container {
+      position: relative;
+      overflow: auto;
+    }
+    
+    .column-resize-overlay {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      background-color: #4285f4;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      display: none;
+    }
+    
+    /* Make headers relative for absolute positioning of handles */
+    .column-header {
+      position: relative !important;
+      overflow: visible !important;
+    }
+    
+    /* Common styles for resize handles */
+    .column-header-resizer {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 10px; /* Wider grab area */
+      cursor: col-resize;
+      z-index: 100;
+      background: transparent;
+    }
+    
+    /* Left handle positioning */
+    .column-header-resizer.left {
+      left: -5px; /* Half the width to center on border */
+    }
+    
+    /* Right handle positioning */
+    .column-header-resizer.right {
+      right: -5px; /* Half the width to center on border */
+    }
+      `;
 
 
 DataTableView.prototype._startResizing = function(columnIndex, clickEvent) {
