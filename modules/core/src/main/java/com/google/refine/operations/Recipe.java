@@ -16,6 +16,7 @@ import com.google.refine.model.ColumnsDiff;
 
 /**
  * A list of operations to be applied in the specified order.
+ * @since 3.10
  */
 public class Recipe {
 
@@ -56,7 +57,7 @@ public class Recipe {
      * @return a set of required column names
      */
     public Set<String> computeRequiredColumns() {
-        // columnNames represents the current set of column names in the project,
+        // currentColumnNames represents the current set of column names in the project,
         // after having applied the operations scanned so far. If it is empty, then
         // that means we lost track of which columns are present.
         Optional<Set<String>> currentColumnNames = Optional.of(new HashSet<>());
@@ -83,7 +84,7 @@ public class Recipe {
                         if (requiredColumnNames.contains(columnName)) {
                             // if this column has already been required before,
                             // but is no longer part of the current columns,
-                            // that means it has been deleted since.
+                            // that means it has since been deleted.
                             throw new IllegalArgumentException(
                                     "Inconsistent list of operations: column '" + columnName + "' used after being deleted or renamed");
                         } else {
