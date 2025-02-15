@@ -99,7 +99,8 @@ public class HistoryEntryTests extends RefineTest {
         String jsonSimple = "{"
                 + "\"id\":1533633623158,"
                 + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
-                + "\"time\":\"2018-08-07T09:06:37Z\"}";
+                + "\"time\":\"2018-08-07T09:06:37Z\","
+                + "\"operation_id\":\"core/mock-operation\"}";
 
         HistoryEntry historyEntry = HistoryEntry.load(project, fullJson);
         TestUtils.isSerializedTo(historyEntry, jsonSimple, false);
