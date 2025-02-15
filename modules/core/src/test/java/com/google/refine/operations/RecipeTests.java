@@ -20,7 +20,12 @@ public class RecipeTests {
 
     String json = "[{\"op\":\"unknown\",\"description\":\"some operation\"}]";
 
-    // Sample test operations
+    //// Sample test operations
+
+    /**
+     * An operation which removes a column (faithful to the actual such operation in OpenRefine, which isn't visible in
+     * this module).
+     */
     class ColumnRemovalOperation extends AbstractOperation {
 
         final String columnName;
@@ -40,6 +45,10 @@ public class RecipeTests {
         }
     }
 
+    /**
+     * An operation which renames a column (also faithful to the actual such operation in OpenRefine, which isn't
+     * visible in this module).
+     */
     class ColumnRenameOperation extends AbstractOperation {
 
         final String oldName;
@@ -61,6 +70,10 @@ public class RecipeTests {
         }
     }
 
+    /**
+     * An operation which exposes its dependencies, but not its impact on columns after having run (just like the
+     * ColumnSplitOperation in OpenRefine, not visible here)
+     */
     class ColumnSplitOperation extends AbstractOperation {
 
         final String columnName;
@@ -80,6 +93,9 @@ public class RecipeTests {
         }
     }
 
+    /**
+     * An operation which modifies a single column, like the transform operation in OpenRefine (not visible here).
+     */
     class ColumnTransformOperation extends AbstractOperation {
 
         final String columnName;
@@ -99,6 +115,9 @@ public class RecipeTests {
         }
     }
 
+    /**
+     * An operation which declares neither the columns it depends on, nor its impact on the columns after having run.
+     */
     class OpaqueOperation extends AbstractOperation {
 
         OpaqueOperation() {
@@ -126,7 +145,7 @@ public class RecipeTests {
     }
 
     @Test
-    public void testValidate() {
+    public void testValidateMethod() {
         assertThrows(IllegalArgumentException.class, () -> new Recipe(List.of(
                 new UnknownOperation("some-operation", "Some description"))).validate());
 
@@ -137,7 +156,7 @@ public class RecipeTests {
     }
 
     @Test
-    public void testComputeRequiredColumns() throws Exception {
+    public void testComputeRequiredColumnsMethod() throws Exception {
         assertEquals(
                 new Recipe(List.of()).computeRequiredColumns(),
                 Set.of());

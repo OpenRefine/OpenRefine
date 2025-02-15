@@ -16,6 +16,7 @@ import com.google.refine.model.ColumnsDiff;
 
 /**
  * A list of operations to be applied in the specified order.
+ * 
  * @since 3.10
  */
 public class Recipe {
