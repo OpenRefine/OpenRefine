@@ -1,6 +1,12 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+if "%PSModulePath"=="" (
+    SET PS=false
+) else (
+    SET PS=true
+)
+
 rem Change current working directory to directory of the batch script
 cd %~dp0
 
@@ -193,7 +199,13 @@ if ""%ACTION%"" == """" goto doRun
 
 :doRun
 
-for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
+@echo off
+if "!PS!"=="true" (
+    for /f %%i in ('powershell -Command "(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory"') do set /a freeRam=%%i/1024
+) else (
+    for /f "tokens=2 delims==" %%i in ('wmic OS get FreePhysicalMemory /Value') do set /a freeRam=%%i/1024
+)
+
 echo -------------------------------------------------------------------------------------------------
 echo You have %freeRam%M of free memory.
 echo Your current configuration is set to use %REFINE_MEMORY% of memory.
