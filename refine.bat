@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-if "%PSModulePath"=="" (
+if "%PSModulePath%"=="" (
     SET PS=false
 ) else (
     SET PS=true
