@@ -88,116 +88,70 @@ DataTableView.resizingState = {
   columnName: null, // the name of the column being resized
   originalWidth: 0, // the original width of the header when the dragging started
   originalPosition: 0, // the original position of the cursor when the dragging started
-  newWidth:0, //width after calculation
   moveListener: null, // the event listener for mouse move events
   releaseListener: null, // the event listener for mouse release events
-  overlay: null, // Track the overlay element
-  isLeftResizer: false, // Track which side is being resized
 };
 
-
-//The CSS to ensure proper overlay positioning of highlight column while resizing
-const css = `
-    .data-table-container {
-      position: relative;
-      overflow: auto;
-    }
-    
-    .column-resize-overlay {
-      position: absolute;
-      top: 0;
-      width: 2px;
-      background-color: #4285f4;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1000;
-      display: none;
-    }
-    
-    /* Make headers relative for absolute positioning of handles */
-    .column-header {
-      position: relative !important;
-      overflow: visible !important;
-    }
-    
-    /* Common styles for resize handles */
-    .column-header-resizer {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      width: 10px; /* Wider grab area */
-      cursor: col-resize;
-      z-index: 100;
-      background: transparent;
-    }
-    
-    /* Left handle positioning */
-    .column-header-resizer.left {
-      left: -5px; /* Half the width to center on border */
-    }
-    
-    /* Right handle positioning */
-    .column-header-resizer.right {
-      right: -5px; /* Half the width to center on border */
-    }
-      `;
-
+DataTableView.resizingState = {
+  dragging: false,
+  col: null,
+  columnName: null,
+  originalWidth: 0,
+  originalPosition: 0,
+  moveListener: null,
+  releaseListener: null,
+  tableContainer: null, // Add reference to table container
+  columnIndex:0 // Reference to column number
+};
 
 DataTableView.prototype._startResizing = function(columnIndex, clickEvent) {
   var self = this;
   var columnHeader = self._columnHeaderUIs[columnIndex];
-  clickEvent.preventDefault();
-
   var state = DataTableView.resizingState;
+
+  clickEvent.preventDefault();
   state.dragging = true;
   state.col = columnHeader._col;
   state.columnName = columnHeader._column.name;
   state.originalWidth = columnHeader._col.width();
   state.originalPosition = clickEvent.pageX;
-  state.isLeftResizer = $(clickEvent.target).hasClass('column-header-resizer-left');
+  // Store table container reference when starting resize
+  state.tableContainer = this._div.find(".data-table");
+  state.tableWidth = this._div.find(".column-header");
+  state.columnIndex=columnIndex+1;
 
-  var container = $('.data-table-container');
-  var table = container.find('.data-table');
-
-  // Remove any existing overlay
-  if (state.overlay) {
-    state.overlay.remove();
+  // Find the corresponding <th> for this column
+  var thElement = $('.data-table-header th').eq(columnIndex+1);
+  if (thElement.length === 0) {
+    console.error("Column <th> not found for index:", columnIndex);
+    return;
   }
 
-  // Create new overlay
-  state.overlay = $('<div class="column-resize-overlay"></div>');
-  container.append(state.overlay);
+  var thRect = thElement[0].getBoundingClientRect();
 
-  var fullTableHeight = table.height();
-  var scrollLeft = container.scrollLeft();
-  var scrollTop = container.scrollTop();
+  var themeColor = columnHeader._col.css('border-color');
 
-  // var targetHeader = $('.column-header').eq(columnIndex);
-  var allHeaders = container.find('.column-header');
-  var targetHeader = allHeaders.filter((_, el) => $(el).text().trim() === state.columnName);
+  $('#column-resize-highlight').remove();
 
-  var colRect = targetHeader[0].getBoundingClientRect();
-  var containerRect = container[0].getBoundingClientRect();
-
-  var colPosition = colRect.left - containerRect.left + scrollLeft;
-  var colWidth = targetHeader.outerWidth();
-  state.newWidth=colWidth;
-
-  // Ensure correct initial position
-  state.overlay.css({
-    'left': (state.isLeftResizer ? colPosition : colPosition + colWidth) + 'px',
-    'height': fullTableHeight + 'px',
-    'top': -scrollTop + 'px',
-    'display': 'block'
-  });
-
-  // Handle scrolling dynamically
-  container.on('scroll.resize', function() {
-    var newScrollLeft = container.scrollLeft();
-    state.overlay.css({
-      'left': (state.isLeftResizer ? colPosition - newScrollLeft : colPosition + colWidth - newScrollLeft) + 'px'
+  var highlightLine = $('<div></div>')
+    .attr('id', 'column-resize-highlight')
+    .css({
+      'position': 'absolute',
+      'height': state.tableContainer.height() + 'px',
+      'width': '3px',
+      'background-color': themeColor,
+      'opacity': '0.7',
+      'border-radius': '2px',
+      'top': (thRect.top + window.scrollY) + 'px',
+      'left': (thRect.right) + 'px',
+      'pointer-events': 'none',
+      'z-index': 10000
     });
-  });
+
+  $('body').append(highlightLine);
+  highlightLine[0].offsetHeight; // Force reflow
+
+  console.log("Highlight added:", $('#column-resize-highlight').length > 0);
 
   $('body')
     .on('mousemove', DataTableView.mouseMoveListener)
@@ -206,82 +160,51 @@ DataTableView.prototype._startResizing = function(columnIndex, clickEvent) {
 
 DataTableView.mouseMoveListener = function(e) {
   var state = DataTableView.resizingState;
-  if (!state.dragging) return;
+  if (state.dragging) {
+    var totalMovement = e.pageX - state.originalPosition;
+    var newWidth = state.originalWidth + totalMovement;
 
-  var container = $('.data-table-container');
-  var table = container.find('.data-table');
-
-  var totalMovement = e.pageX - state.originalPosition;
-  var newWidthAfterDrag = state.newWidth + (state.isLeftResizer ? -totalMovement : totalMovement);
-
-  // Ensure minimum width
-  newWidthAfterDrag = Math.max(newWidthAfterDrag, 50);
-  state.col.css('width', newWidthAfterDrag + 'px');
-
-  var scrollLeft = container.scrollLeft();
-  var scrollTop = container.scrollTop();
-  var fullTableHeight = table.height();
-
-  var colPosition;
-  var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-  if (isSafari) {
-    // Safari-specific calculation using offset and bounding rects
-    var allHeaders = container.find('.column-header');
-    var targetHeader = allHeaders.filter((_, el) => $(el).text().trim() === state.columnName);
-
-    if (targetHeader.length > 0) {
-      var colRect = targetHeader[0].getBoundingClientRect();
-      var containerRect = container[0].getBoundingClientRect();
-      colPosition = colRect.left - containerRect.left + scrollLeft;
-    } else {
-      colPosition = state.originalPosition + totalMovement - container.offset().left;
+    if (state.col.css('min-width')) {
+      state.col.css('min-width', '');
     }
-  } else {
-    // Standard calculation for other browsers
-    var colRect = state.col[0].getBoundingClientRect();
-    var containerRect = container[0].getBoundingClientRect();
-    colPosition = colRect.left - containerRect.left + scrollLeft;
+    state.col.width(newWidth);
+
+    // Find the corresponding <th> for this column
+    var thElement = $('.data-table-header th').eq(state.columnIndex);
+    if (thElement.length === 0) {
+      console.error("Column <th> not found for index:", state.columnIndex);
+      return;
+    }
+
+    var thRect = thElement[0].getBoundingClientRect();
+
+    // Update highlight position using stored table container reference
+    var highlight = $('#column-resize-highlight');
+    if (highlight.length) {
+      var colRect = state.col[0].getBoundingClientRect();
+      highlight.css({
+        'left': (thRect.right) + 'px',
+        'height': state.tableContainer.height() + 'px'
+      });
+    }
+
+    e.preventDefault();
   }
-
-  requestAnimationFrame(() => {
-    state.overlay.css({
-      'left': (state.isLeftResizer ? colPosition : colPosition + newWidthAfterDrag) + 'px',
-      'top': -scrollTop + 'px',
-      'height': fullTableHeight + 'px',
-      'display': 'block',
-      'transition': 'none'
-    });
-  });
-
-  e.preventDefault();
 };
 
-// event handlers to react to mouse moves during resizing
+
 DataTableView.mouseReleaseListener = function(e) {
-  if (e.button !== 0) {
-    return;
-  }
+  if (e.button !== 0) return;
 
   var state = DataTableView.resizingState;
   if (state.dragging) {
     var totalMovement = e.pageX - state.originalPosition;
-    var newWidthAfterdrag = state.originalWidth + (state.isLeftResizer ? -totalMovement : totalMovement);
-
-    // Ensure minimum width and convert to em
-    newWidthAfterdrag = Math.max(newWidthAfterdrag, 50);
-    state.col.width((Math.floor(newWidthAfterdrag) / state.emFactor) + 'em');
-
-    // Remove overlay immediately
-    if (state.overlay) {
-      state.overlay.remove();
-      state.overlay = null;
-    }
-
-    // Clean up event listeners
-    $('.data-table-container').off('scroll.resize');
+    var newWidth = state.originalWidth + totalMovement;
+    state.col.width((Math.floor(newWidth) / state.emFactor) + 'em');
 
     state.dragging = false;
+    $('#column-resize-highlight').remove(); // Remove highlight after resizing
+
     $('body')
       .off('mousemove', DataTableView.mouseMoveListener)
       .off('mouseup', DataTableView.mouseReleaseListener);
@@ -289,20 +212,6 @@ DataTableView.mouseReleaseListener = function(e) {
   e.preventDefault();
 };
 
-// Add cleanup method to remove overlay when view is destroyed
-// Make sure to clean up when disposing
-DataTableView.prototype.dispose = function() {
-  var state = DataTableView.resizingState;
-  if (state.overlay) {
-    state.overlay.remove();
-    state.overlay = null;
-  }
-  $('.data-table-container').off('scroll.resize');
-};
-
-const styleTag = document.createElement('style');
-styleTag.textContent = css;
-document.head.appendChild(styleTag);
 
 DataTableView.prototype.update = function(onDone, preservePage) {
   var paginationOptions = {};
@@ -509,25 +418,6 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader, colGrou
   var columns = theProject.columnModel.columns;
   var columnGroups = theProject.columnModel.columnGroups;
 
-  // Clear any existing overlay before re-rendering
-  if (DataTableView.resizingState.overlay) {
-    DataTableView.resizingState.overlay.remove();
-    DataTableView.resizingState.overlay = null;
-  }
-
-  // Reset resizing state when re-rendering
-  DataTableView.resizingState = {
-    dragging: false,
-    col: null,
-    columnName: null,
-    originalWidth: 0,
-    originalPosition: 0,
-    moveListener: null,
-    releaseListener: null,
-    overlay: null,
-    isLeftResizer: false
-  };
-
   /*------------------------------------------------------------
    *  Column Group Headers
    *------------------------------------------------------------
@@ -715,29 +605,6 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader, colGrou
     }
     renderRow(tr, r, row, even);
   }
-
-  // Add cleanup of resizing state when changing page size
-  this._pageSize = this._pageSize || 10;
-  if (this._previousPageSize && this._previousPageSize !== this._pageSize) {
-    // Clear any active resizing state when page size changes
-    if (DataTableView.resizingState.overlay) {
-      DataTableView.resizingState.overlay.remove();
-      DataTableView.resizingState.overlay = null;
-    }
-    DataTableView.resizingState.dragging = false;
-    DataTableView.resizingState.col = null;
-  }
-  this._previousPageSize = this._pageSize;
-
-  // Ensure overlay container exists and is properly positioned
-  var ensureOverlayContainer = function() {
-    var container = $('.data-table-container');
-    if (container.length && !container.find('.column-resize-overlay').length) {
-      $('<div class="column-resize-overlay"></div>').appendTo(container);
-    }
-  };
-  ensureOverlayContainer();
-
 };
 
 // cache which remembers the set width of each column (used when the grid is re-rendered)
@@ -749,7 +616,7 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
   var trHead = document.createElement('tr');
   tableHeader.append(trHead);
 
-  // Header for the first three columns (star, flag, row number)
+  // header for the first three columns (star, flag, row number)
   DOM.bind(
     $(trHead.appendChild(document.createElement("th")))
       .attr("colspan", "3")
@@ -764,7 +631,7 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
   });
   $('<col>').attr('span', 3).appendTo(colGroup);
 
-  // Headers for the normal columns
+  // headers for the normal columns
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
     var th = trHead.appendChild(document.createElement("th"));
@@ -777,7 +644,9 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
     if (cachedWidth !== undefined && !self._collapsedColumnNames.hasOwnProperty(column.name)) {
       col.width(cachedWidth + 'em');
     } else {
-      // Ensure a minimum column width
+      // Not set in CSS directly because the user needs to be able to override that by dragging.
+      // Set in px rather than in em because with em it can lead to a fractional width in pixels,
+      // which causes the right border not to display correctly.
       col.css('min-width', '50px');
     }
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
@@ -802,47 +671,34 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
   for (var i = 0; i < columns.length; i++) {
     createColumnHeader(columns[i], i);
   }
-
-  // // Add a buffer column at the end
-  // var spacerTh = $('<th>')
-  //   .addClass('column-header buffer-header')
-  //   .text('')
-  //   .css('min-width', '50px') // Adjust as needed
-  //   .appendTo(trHead);
-  //
-  // var spacerCol = $('<col>')
-  //   .attr('class', 'buffer-column')
-  //   .appendTo(colGroup);
-};
+}
 
 DataTableView.prototype._addResizingControls = function(th, index) {
   var self = this;
   var columns = theProject.columnModel.columns;
+  var resizerLeft = $('<div></div>').addClass('column-header-resizer-left')
+    .appendTo(th);
+  resizerLeft.on('mousedown', function(e) {
+    // only capture left clicks
+    if (e.button !== 0) {
+      return;
+    }
+    self._startResizing(index, e);
+  });
 
-  // Add left resizer for all columns except the first
+  // add resizing control for the previous column (if uncollapsed)
   if (index > 0 && !self._collapsedColumnNames.hasOwnProperty(columns[index-1].name)) {
-    var leftResizer = $('<div>')
-      .addClass('column-header-resizer left')
+    var resizerRight = $('<div></div>').addClass('column-header-resizer-right')
       .appendTo(th);
-
-    leftResizer.on('mousedown', function(e) {
-      if (e.button !== 0) return; // only left clicks
+    resizerRight.on('mousedown', function(e) {
+      // only capture left clicks
+      if (e.button !== 0) {
+        return;
+      }
       self._startResizing(index - 1, e);
-      e.preventDefault();
     });
   }
-
-  // Add right resizer for all columns
-  var rightResizer = $('<div>')
-    .addClass('column-header-resizer right')
-    .appendTo(th);
-
-  rightResizer.on('mousedown', function(e) {
-    if (e.button !== 0) return; // only left clicks
-    self._startResizing(index, e);
-    e.preventDefault();
-  });
-};
+}
 
 DataTableView.prototype._showRows = function(paginationOptions, onDone) {
   var self = this;
@@ -1217,7 +1073,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/star-rows'),
           id: "core/star-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+            Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {
@@ -1239,7 +1095,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/unflag-rows'),
           id: "core/unflag-rows",
           click: function() {
-            Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
+            Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
         },
         {},
