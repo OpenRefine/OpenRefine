@@ -45,6 +45,7 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.Recipe;
+import com.google.refine.operations.Recipe.RecipeValidationException;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
@@ -68,7 +69,6 @@ public class ApplyOperationsCommand extends Command {
             Set<String> requiredColumns = recipe.computeRequiredColumns();
             for (String columnName : requiredColumns) {
                 if (project.columnModel.getColumnByName(columnName) == null) {
-                    // TODO: present the user with a dialog to match all missing columns to ones that are present
                     throw new IllegalArgumentException(
                             "Column '" + columnName + "' is referenced in the list of operations but is absent from the project");
                 }
@@ -85,6 +85,8 @@ public class ApplyOperationsCommand extends Command {
             } else {
                 respond(response, "{ \"code\" : \"ok\" }");
             }
+        } catch (RecipeValidationException e) {
+            respondJSON(response, e);
         } catch (Exception e) {
             respondException(response, e);
         }

@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -38,14 +39,19 @@ public class Recipe {
      * Checks that all operations in this recipe are valid (non null, known operations with valid parameters).
      */
     public void validate() {
+        int index = 0;
         for (AbstractOperation op : operations) {
             if (op == null) {
-                throw new IllegalArgumentException("The list of operations contains 'null'");
+                throw new RecipeValidationException(index, "The operation is 'null'");
             }
             if (op instanceof UnknownOperation) {
-                throw new IllegalArgumentException("Unknown operation id: " + op.getOperationId());
+                throw new RecipeValidationException(index, "Unknown operation " + op.getOperationId());
             }
-            op.validate();
+            try {
+                op.validate();
+            } catch (IllegalArgumentException e) {
+                throw new RecipeValidationException(index, e.getMessage());
+            }
         }
     }
 
@@ -133,5 +139,27 @@ public class Recipe {
     @Override
     public String toString() {
         return "Recipe [operations=" + operations + "]";
+    }
+
+    public static class RecipeValidationException extends IllegalArgumentException {
+
+        private static final long serialVersionUID = 196414487572541357L;
+        @JsonProperty("operationIndex")
+        protected final int index;
+        @JsonProperty("operationValidationMessage")
+        protected final String operationValidationMessage;
+        @JsonProperty("code")
+        protected final String code = "error";
+
+        public RecipeValidationException(int index, String message) {
+            this.operationValidationMessage = message;
+            this.index = index;
+        }
+
+        @JsonProperty("message")
+        @Override
+        public String getMessage() {
+            return String.format("Operation #%d: %s", (index + 1), operationValidationMessage);
+        }
     }
 }
