@@ -34,6 +34,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -149,6 +150,18 @@ public class BlankDownTests extends RefineTest {
     public void testColumnsDependencies() {
         assertEquals(new BlankDownOperation(defaultEngineConfig, "bar").getColumnDependencies().get(), Set.of("bar"));
         assertEquals(new BlankDownOperation(engineConfigWithColumnDeps, "bar").getColumnDependencies().get(), Set.of("bar", "facet_1"));
+    }
+
+    @Test
+    public void testRenameColumns() {
+        String renamedJson = "{\"op\":\"core/blank-down\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_blank_down_brief("bar")).toString() + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"bar\"}";
+
+        var SUT = new BlankDownOperation(defaultEngineConfig, "foo");
+        AbstractOperation renamed = SUT.renameColumns(Map.of("foo", "bar"));
+        TestUtils.isSerializedTo(renamed, renamedJson);
     }
 
     @Test
