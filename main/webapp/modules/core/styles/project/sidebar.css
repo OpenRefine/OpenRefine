@@ -193,6 +193,10 @@ a.history-entry.filtered-out>* {
 .history-past {
   position: relative;
   background: var(--background-primary);
+
+  a.history-entry:hover ~ a.history-entry {
+    background: var(--chrome-secondary);
+  }
 }
 
 .history-now {
@@ -202,23 +206,10 @@ a.history-entry.filtered-out>* {
 .history-future {
   position: relative;
   padding-bottom: var(--padding-loose);
-}
 
-.history-highlight {
-  position: absolute;
-  left: 0px;
-  width: 100%;
-  display: none;
-}
-
-.history-past .history-highlight {
-  background: var(--chrome-secondary);
-  bottom: 0;
-}
-
-.history-future .history-highlight {
-  background: var(--background-primary);
-  top: 0;
+  a.history-entry:hover, a.history-entry:has(~ a.history-entry:hover) {
+    background: var(--background-primary);
+  }
 }
 
 .history-future a.history-entry, .history-future a.history-entry-index {
