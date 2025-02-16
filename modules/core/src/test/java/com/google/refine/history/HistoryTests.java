@@ -127,7 +127,8 @@ public class HistoryTests extends RefineTest {
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}}";
         String json1simple = "{\"id\":1533650900300,"
                 + "\"description\":\"Reconcile cells in column organization_name to type Q43229\","
-                + "\"time\":\"2018-08-07T13:57:17Z\"}";
+                + "\"time\":\"2018-08-07T13:57:17Z\","
+                + "\"operation_id\":\"core/recon\"}";
         String json2 = "{\"id\":1533651586483,"
                 + "\"description\":\"Edit single cell on row 94, column organization_id\","
                 + "\"time\":\"2018-08-07T14:18:21Z\"}";
