@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.fail;
 
@@ -232,6 +233,14 @@ public class GrelTests extends GrelTestBase {
     }
 
     @Test
+    public void testRegexParsing() throws ParsingException {
+        String test = "value.replace(/foo/, 'bar')";
+
+        Evaluable eval = MetaParser.parse("grel:" + test);
+        assertEquals(eval.getSource(), test);
+    }
+
+    @Test
     public void testColumnDependencies() throws ParsingException {
         // integration test for column dependency extraction
 
@@ -268,13 +277,14 @@ public class GrelTests extends GrelTestBase {
         String tests[][] = {
                 { "value", "value" },
                 { "cell.recon.match.id", "cell.recon.match.id" },
-                { "value + 'a'", "value + \"a\"" },
+                { "value + 'a'", "value + 'a'" },
                 { "\"foo\"", "\"foo\"" },
-                { "'\"'", "\"\\\"\"" }, // TODO we could print the string with the original quotes to avoid the escaping
+                { "'\"'", "'\"'" },
+                { "/\"/", "/\"/" },
                 { "1", "1" },
                 { "4 * (5 + 6)", "4 * (5 + 6)" },
                 { "cells.foo", "cells.foo" },
-                { "value + ' ' + cells.foo.value", "value + \" \" + cells.foo.value" },
+                { "value + ' ' + cells.foo.value", "value + ' ' + cells.foo.value" },
                 { "cells[\"foo\"].value", "cells.get(\"foo\").value" }, // TODO this could be more faithful
                 { "toDate( value+4 )", "toDate(value + 4)" },
                 { "(value + 4).toDate()", "(value + 4).toDate()" },
@@ -302,6 +312,7 @@ public class GrelTests extends GrelTestBase {
                 { "\"foo\"", "\"foo\"" },
                 { "1", "1" },
                 { "cells.foo", "cells.bar" },
+                { "value.replace(/foo/, 'bar')", "value.replace(/foo/, 'bar')" },
                 { "value + ' ' + cells.foo.value", "value + ' ' + cells.bar.value" },
                 { "cells[\"foo\"].value+'_'+value", "cells[\"bar\"].value+'_'+value" },
                 { "toDate(cells[\"foo\"].value)", "toDate(cells[\"bar\"].value)" },
