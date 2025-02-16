@@ -95,20 +95,6 @@ HistoryPanel.prototype._render = function() {
       a.attr("href", "javascript:{}")
       .on('click',function(evt) {
         return self._onClickHistoryEntry(evt, entry, lastDoneID);
-      })
-      .on('mouseover',function() {
-        if (past) {
-          elmts.pastHighlightDiv.show().height(elmts.pastDiv.height() - this.offsetTop - this.offsetHeight);
-        } else {
-          elmts.futureHighlightDiv.show().height(this.offsetTop + this.offsetHeight);
-        }
-      })
-      .on('mouseout',function() {
-        if (past) {
-          elmts.pastHighlightDiv.hide();
-        } else {
-          elmts.futureHighlightDiv.hide();
-        }
       });
     }
 
