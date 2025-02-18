@@ -50,9 +50,20 @@ import com.google.refine.expr.Evaluable;
 public class LiteralExpr extends GrelExpr {
 
     final protected Object _value;
+    final protected String _source;
 
+    /**
+     * @deprecated use the version of the constructor which supplies the full source of the literal
+     */
+    @Deprecated(since = "3.10")
     public LiteralExpr(Object value) {
         _value = value;
+        _source = null;
+    }
+
+    public LiteralExpr(Object value, String source) {
+        _value = value;
+        _source = source;
     }
 
     protected Object getValue() {
@@ -76,12 +87,16 @@ public class LiteralExpr extends GrelExpr {
 
     @Override
     public String toString() {
-        return _value instanceof String ? new TextNode((String) _value).toString() : _value.toString();
+        if (_source != null) {
+            return _source;
+        } else {
+            return _value instanceof String ? new TextNode((String) _value).toString() : _value.toString();
+        }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_value);
+        return Objects.hash(_source);
     }
 
     @Override
@@ -93,6 +108,7 @@ public class LiteralExpr extends GrelExpr {
         if (getClass() != obj.getClass())
             return false;
         LiteralExpr other = (LiteralExpr) obj;
-        return Objects.equals(_value, other._value);
+        // ignore _value on purpose because it is entirely determined from _source
+        return Objects.equals(_source, other._source);
     }
 }

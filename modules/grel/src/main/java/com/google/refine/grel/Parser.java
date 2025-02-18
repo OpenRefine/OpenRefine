@@ -42,6 +42,7 @@ import com.google.refine.expr.LanguageSpecificParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.Scanner.NumberToken;
 import com.google.refine.grel.Scanner.RegexToken;
+import com.google.refine.grel.Scanner.StringToken;
 import com.google.refine.grel.Scanner.Token;
 import com.google.refine.grel.Scanner.TokenType;
 import com.google.refine.grel.ast.ArrayExpr;
@@ -176,20 +177,21 @@ public class Parser {
         Evaluable eval = null;
 
         if (_token.type == TokenType.String) {
-            eval = new LiteralExpr(_token.text);
+            StringToken t = (StringToken) _token;
+            eval = new LiteralExpr(_token.text, t.fullSource());
             next(false);
         } else if (_token.type == TokenType.Regex) {
             RegexToken t = (RegexToken) _token;
 
             try {
                 Pattern pattern = Pattern.compile(_token.text, t.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
-                eval = new LiteralExpr(pattern);
+                eval = new LiteralExpr(pattern, t.fullSource());
                 next(false);
             } catch (Exception e) {
                 throw makeException("Bad regular expression (" + e.getMessage() + ")");
             }
         } else if (_token.type == TokenType.Number) {
-            eval = new LiteralExpr(((NumberToken) _token).value);
+            eval = new LiteralExpr(((NumberToken) _token).value, _token.text);
             next(false);
         } else if (_token.type == TokenType.Operator && _token.text.equals("-")) { // unary minus?
             next(true);
@@ -198,9 +200,9 @@ public class Parser {
                 Number n = ((NumberToken) _token).value;
 
                 if (n instanceof Long) {
-                    eval = new LiteralExpr(-n.longValue());
+                    eval = new LiteralExpr(-n.longValue(), _token.text);
                 } else {
-                    eval = new LiteralExpr(-n.doubleValue());
+                    eval = new LiteralExpr(-n.doubleValue(), _token.text);
                 }
 
                 next(false);
@@ -212,10 +214,10 @@ public class Parser {
             next(false);
 
             if (_token == null || _token.type != TokenType.Delimiter || !_token.text.equals("(")) {
-                eval = "null".equals(text) ? new LiteralExpr(null) : new VariableExpr(text);
+                eval = "null".equals(text) ? new LiteralExpr(null, text) : new VariableExpr(text);
             } else if ("PI".equals(text)) {
                 // TODO: This duplicates ExpressionUtils which adds PI to the bindings
-                eval = new LiteralExpr(Math.PI);
+                eval = new LiteralExpr(Math.PI, text);
                 next(false);
             } else {
                 Function f = ControlFunctionRegistry.getFunction(text);
