@@ -154,7 +154,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         try {
             MetaParser.parse(_urlExpression);
         } catch (ParsingException e) {
-            throw new IllegalArgumentException(e);
+            throw new IllegalArgumentException(String.format("Invalid expression '%s': %s", _urlExpression, e.getMessage()), e);
         }
         Validate.notNull(_onError, "Missing 'on error' behaviour");
         Validate.notNull(_newColumnName, "Missing new column name");
