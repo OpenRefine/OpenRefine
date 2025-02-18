@@ -683,6 +683,7 @@
     "core-views/after-split": "After splitting",
     "core-views/guess-cell": "Guess cell type",
     "core-views/remove-col": "Remove this column",
+    "core-views/remove-col2": "Remove column",
     "core-views/specify-sep": "Please specify a separator.",
     "core-views/warning-no-length": "No field length is specified.",
     "core-views/warning-format": "The given field lengths are not properly formatted.",

@@ -270,6 +270,21 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
       tooltip: $.i18n('core-views/reconcile-tooltip'),
       width: "170px",
       submenu: []
+    },
+    {},
+    {
+      id: "core/remove-column",
+      label: $.i18n('core-views/remove-col2'),
+      click: function() {
+        Refine.postCoreProcess(
+          "remove-column",
+          {
+            columnName: self._column.name
+          },
+          null,
+          { modelsChanged: true, rowIdsPreserved: true }
+        );
+      }
     }
   ];
 

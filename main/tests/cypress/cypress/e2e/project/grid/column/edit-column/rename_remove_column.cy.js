@@ -2,11 +2,11 @@ describe(__filename, function () {
   it('Ensures a column is removed from the data-table', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Remove this column']);
+    cy.columnActionClick('Shrt_Desc', ['Remove column']);
 
     cy.assertNotificationContainingText('Remove column Shrt_Desc');
 
-    cy.columnActionClick('Water', ['Edit column', 'Remove this column']);
+    cy.columnActionClick('Water', ['Remove column']);
 
     cy.assertNotificationContainingText('Remove column Water');
 

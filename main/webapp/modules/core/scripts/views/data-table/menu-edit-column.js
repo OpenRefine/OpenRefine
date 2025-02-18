@@ -199,17 +199,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
-  var doRemoveColumn = function() {
-    Refine.postCoreProcess(
-      "remove-column", 
-      {
-        columnName: column.name
-      },
-      null,
-      { modelsChanged: true, rowIdsPreserved: true }
-    );
-  };
-
   var doRenameColumn = function() {
     var frame = $(
         DOM.loadHTML("core", "scripts/views/data-table/rename-column.html"));
@@ -617,12 +606,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         label: $.i18n('core-views/rename-col'),
         icon: 'images/operations/rename.svg',
         click: doRenameColumn
-      },
-      {
-        id: "core/remove-column",
-        label: $.i18n('core-views/remove-col'),
-        icon: 'images/operations/delete.svg',
-        click: doRemoveColumn
       },
       {},
       {
