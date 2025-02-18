@@ -41,8 +41,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -82,6 +85,9 @@ public class ExtendDataOperation extends EngineDependentOperation {
     final protected DataExtensionConfig _extension;
     @JsonProperty("columnInsertIndex")
     final protected int _columnInsertIndex;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("resultColumnNames")
+    final protected List<String> _resultColumnNames;
 
     @JsonCreator
     public ExtendDataOperation(
@@ -91,7 +97,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
             @JsonProperty("identifierSpace") String identifierSpace,
             @JsonProperty("schemaSpace") String schemaSpace,
             @JsonProperty("extension") DataExtensionConfig extension,
-            @JsonProperty("columnInsertIndex") int columnInsertIndex) {
+            @JsonProperty("columnInsertIndex") int columnInsertIndex,
+            @JsonProperty("resultColumnNames") List<String> resultColumnNames) {
         super(engineConfig);
 
         _baseColumnName = baseColumnName;
@@ -100,6 +107,25 @@ public class ExtendDataOperation extends EngineDependentOperation {
         _schemaSpace = schemaSpace;
         _extension = extension;
         _columnInsertIndex = columnInsertIndex;
+        _resultColumnNames = resultColumnNames;
+        if (_resultColumnNames != null && _extension.properties.size() != _resultColumnNames.size()) {
+            throw new IllegalArgumentException("Inconsistent number of properties fetched and of result column names");
+        }
+    }
+
+    /**
+     * @deprecated legacy constructor: supply column names instead
+     */
+    @Deprecated(since = "3.9")
+    public ExtendDataOperation(
+            EngineConfig engineConfig,
+            String baseColumnName,
+            String endpoint,
+            String identifierSpace,
+            String schemaSpace,
+            DataExtensionConfig extension,
+            int columnInsertIndex) {
+        this(engineConfig, baseColumnName, endpoint, identifierSpace, schemaSpace, extension, columnInsertIndex, null);
     }
 
     @Override
@@ -124,12 +150,24 @@ public class ExtendDataOperation extends EngineDependentOperation {
         return Optional.of(Set.of(_baseColumnName));
     }
 
+    @JsonIgnore
+    protected List<String> getCreatedColumnNames() {
+        if (_resultColumnNames != null) {
+            return _resultColumnNames;
+        } else {
+            return _extension.properties.stream().map(property -> property.name).collect(Collectors.toList());
+        }
+    }
+
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
-        // Sadly, although the names of the properties fetched are present in the extension metadata,
-        // the names of the column created can differ from those, if there already are columns with any of those names.
-        // So we can't predict the name of the created columns in this context.
-        return Optional.empty();
+        var builder = ColumnsDiff.builder();
+        String afterColumn = _baseColumnName;
+        for (String addedColumn : getCreatedColumnNames()) {
+            builder.addColumn(addedColumn, afterColumn);
+            afterColumn = addedColumn;
+        }
+        return Optional.of(builder.build());
     }
 
     public class ExtendDataProcess extends LongRunningProcess implements Runnable {
@@ -270,9 +308,12 @@ public class ExtendDataOperation extends EngineDependentOperation {
             }
 
             if (!_canceled) {
-                List<String> columnNames = new ArrayList<String>();
-                for (ColumnInfo info : _job.columns) {
-                    columnNames.add(info.name);
+                List<String> columnNames = _resultColumnNames;
+                if (columnNames == null) {
+                    columnNames = new ArrayList<String>();
+                    for (ColumnInfo info : _job.columns) {
+                        columnNames.add(info.name);
+                    }
                 }
 
                 List<ReconType> columnTypes = new ArrayList<ReconType>();
