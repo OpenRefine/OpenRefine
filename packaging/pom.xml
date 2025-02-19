@@ -312,7 +312,7 @@
                 <!-- adapt file permissions, for https://github.com/OpenRefine/OpenRefine/issues/5160 -->
                 <exec dir="${project.build.directory}" executable="chmod">
                     <arg line="-R" />
-                    <arg line="o+r" />
+                    <arg line="go+r" />
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/Resources/webapp/WEB-INF/&quot;" />
                 </exec>
 
