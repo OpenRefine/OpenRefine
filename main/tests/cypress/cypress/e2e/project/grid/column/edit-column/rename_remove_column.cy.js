@@ -26,7 +26,7 @@ describe(__filename, function () {
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
     cy.getFacetContainer('Shrt_Desc').should('exist');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Rename this column']);
+    cy.columnActionClick('Shrt_Desc', ['Rename column']);
     cy.waitForDialogPanel();
     cy.get('.dialog-container .dialog-body input').clear();
     cy.get('.dialog-container .dialog-body input').type('test_rename_butter');
