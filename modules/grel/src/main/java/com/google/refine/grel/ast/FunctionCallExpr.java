@@ -42,6 +42,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.commons.lang3.Validate;
 
 import com.google.refine.expr.EvalError;
@@ -169,7 +170,7 @@ public class FunctionCallExpr extends GrelExpr {
             String newColumnName = substitutions.getOrDefault(columnName, columnName);
             return new FunctionCallExpr(new Evaluable[] {
                     _args[0],
-                    new LiteralExpr(newColumnName)
+                    new LiteralExpr(newColumnName, new TextNode(newColumnName).toString())
             }, _function, _functionName, _fluentStyle);
         } else {
             Evaluable[] translatedArgs = new Evaluable[_args.length];
