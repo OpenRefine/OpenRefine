@@ -156,26 +156,26 @@ public class RecipeTests {
     }
 
     @Test
-    public void testComputeRequiredColumnsMethod() throws Exception {
+    public void testGetRequiredColumns() throws Exception {
         assertEquals(
-                new Recipe(List.of()).computeRequiredColumns(),
+                new Recipe(List.of()).getRequiredColumns(),
                 Set.of());
 
         assertEquals(
                 new Recipe(List.of(
-                        new ColumnRemovalOperation("foo"))).computeRequiredColumns(),
+                        new ColumnRemovalOperation("foo"))).getRequiredColumns(),
                 Set.of("foo"));
 
         assertEquals(
                 new Recipe(List.of(
                         new ColumnRemovalOperation("foo"),
-                        new ColumnRemovalOperation("bar"))).computeRequiredColumns(),
+                        new ColumnRemovalOperation("bar"))).getRequiredColumns(),
                 Set.of("foo", "bar"));
 
         assertEquals(
                 new Recipe(List.of(
                         new ColumnRenameOperation("foo", "foo2"),
-                        new ColumnRemovalOperation("bar"))).computeRequiredColumns(),
+                        new ColumnRemovalOperation("bar"))).getRequiredColumns(),
                 Set.of("foo", "bar"));
 
         assertEquals(
@@ -185,19 +185,43 @@ public class RecipeTests {
                         // The dependency of the following operation is not taken into account,
                         // because the previous operation does not expose a columns diff,
                         // so we can't predict if "bar" is going to be produced by it or not.
-                        new ColumnRemovalOperation("bar"))).computeRequiredColumns(),
+                        new ColumnRemovalOperation("bar"))).getRequiredColumns(),
                 Set.of("foo"));
 
         assertEquals(
                 new Recipe(List.of(
                         new ColumnTransformOperation("foo"),
-                        new ColumnRemovalOperation("foo"))).computeRequiredColumns(),
+                        new ColumnRemovalOperation("foo"))).getRequiredColumns(),
                 Set.of("foo"));
 
         // unanalyzable operation
         assertEquals(
                 new Recipe(List.of(
-                        new OpaqueOperation())).computeRequiredColumns(),
+                        new OpaqueOperation())).getRequiredColumns(),
+                Set.of());
+    }
+
+    @Test
+    public void testGetNewColumns() throws Exception {
+        assertEquals(
+                new Recipe(List.of()).getNewColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRemovalOperation("foo"))).getNewColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRenameOperation("foo", "foo2"),
+                        new ColumnRemovalOperation("bar"))).getNewColumns(),
+                Set.of("foo2"));
+
+        // unanalyzable operation
+        assertEquals(
+                new Recipe(List.of(
+                        new OpaqueOperation())).getNewColumns(),
                 Set.of());
     }
 
@@ -205,14 +229,14 @@ public class RecipeTests {
     public void testRequiredColumnsFromInconsistentOperations() {
         assertThrows(IllegalArgumentException.class, () -> new Recipe(List.of(
                 new ColumnRemovalOperation("foo"),
-                new ColumnRenameOperation("foo", "bar"))).computeRequiredColumns());
+                new ColumnRenameOperation("foo", "bar"))).getRequiredColumns());
     }
 
     @Test
     public void testConflictingColumnCreation() {
         assertThrows(IllegalArgumentException.class, () -> new Recipe(List.of(
                 new ColumnTransformOperation("bar"),
-                new ColumnRenameOperation("foo", "bar"))).computeRequiredColumns());
+                new ColumnRenameOperation("foo", "bar"))).getRequiredColumns());
     }
 
 }
