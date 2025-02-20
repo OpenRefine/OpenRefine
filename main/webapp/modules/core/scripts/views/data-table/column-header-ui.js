@@ -275,6 +275,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     {
       id: "core/rename-column",
       label: $.i18n('core-views/rename-col'),
+      icon: 'images/operations/rename.svg',
       click: function() {
         var frame = $(DOM.loadHTML("core", "scripts/views/data-table/rename-column.html"));
 
@@ -330,6 +331,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     {
       id: "core/remove-column",
       label: $.i18n('core-views/remove-col2'),
+      icon: 'images/operations/delete.svg',
       click: function() {
         Refine.postCoreProcess(
           "remove-column",
@@ -347,7 +349,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     DataTableColumnHeaderUI._extenders[i].call(null, this._column, this, menu);
   }
 
-  MenuSystem.createAndShowStandardMenu(menu, elmt, { width: "120px", horizontal: false });
+  MenuSystem.createAndShowStandardMenu(menu, elmt, { width: "135px", horizontal: false });
 };
 
 DataTableColumnHeaderUI.prototype.createSortingMenu = function() {
