@@ -180,6 +180,20 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       columnIndex, 
       o.rowIndices,
       function(extension, endpoint, identifierSpace, schemaSpace) {
+        // deduplicate columns
+        let currentColumns = new Set(theProject.columnModel.columns.map(c => c.name));
+        let resultColumns = [];
+        for (let property of extension.properties) {
+          let attempt = property.name;
+          let counter = 1;
+          while (currentColumns.has(attempt)) {
+            counter++;
+            attempt = `${property.name} ${counter}`;
+          }
+          resultColumns.push(attempt);
+          currentColumns.add(attempt);
+        }
+
         Refine.postProcess(
             "core",
             "extend-data", 
@@ -191,7 +205,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
               columnInsertIndex: columnIndex + 1
             },
             {
-              extension: JSON.stringify(extension)
+              extension: JSON.stringify(extension),
+              resultColumns: JSON.stringify(resultColumns),
             },
             { rowsChanged: true, modelsChanged: true }
         );
