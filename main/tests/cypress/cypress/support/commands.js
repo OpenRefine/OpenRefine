@@ -223,7 +223,7 @@ Cypress.Commands.add('selectClojure', () => {
  */
 Cypress.Commands.add('deleteColumn', (columnName) => {
   cy.get('.data-table th[title="' + columnName + '"]').should('exist');
-  cy.columnActionClick(columnName, ['Edit column', 'Remove this column']);
+  cy.columnActionClick(columnName, ['Remove column']);
   cy.get('.data-table th[title="' + columnName + '"]').should('not.exist');
 });
 
