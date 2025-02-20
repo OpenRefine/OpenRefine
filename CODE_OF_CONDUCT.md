@@ -60,8 +60,6 @@ The committee consists of:
 * Lozanna Rossenova
 * Antoine Beaubien
 * Isao Matsunami
-* Juliane Schneider
-* Jessica Hardwicke
 
 All complaints will be reviewed and investigated and will result in a response that
 is deemed necessary and appropriate to the circumstances. The code of conduct is
