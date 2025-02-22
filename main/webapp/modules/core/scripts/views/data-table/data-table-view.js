@@ -92,118 +92,63 @@ DataTableView.resizingState = {
   releaseListener: null, // the event listener for mouse release events
 };
 
-DataTableView.resizingState = {
-  dragging: false,
-  col: null,
-  columnName: null,
-  originalWidth: 0,
-  originalPosition: 0,
-  moveListener: null,
-  releaseListener: null,
-  tableContainer: null, // Add reference to table container
-  columnIndex:0 // Reference to column number
-};
-
 DataTableView.prototype._startResizing = function(columnIndex, clickEvent) {
   var self = this;
   var columnHeader = self._columnHeaderUIs[columnIndex];
-  var state = DataTableView.resizingState;
-
   clickEvent.preventDefault();
+  var state = DataTableView.resizingState;
   state.dragging = true;
   state.col = columnHeader._col;
   state.columnName = columnHeader._column.name;
   state.originalWidth = columnHeader._col.width();
   state.originalPosition = clickEvent.pageX;
-  // Store table container reference when starting resize
-  state.tableContainer = this._div.find(".data-table");
-  state.tableWidth = this._div.find(".column-header");
-  state.columnIndex=columnIndex+1;
 
-  // Find the corresponding <th> for this column
-  var thElement = $('.data-table-header th').eq(columnIndex+1);
-  if (thElement.length === 0) {
-    console.error("Column <th> not found for index:", columnIndex);
-    return;
-  }
-
-  var thRect = thElement[0].getBoundingClientRect();
-
-  var themeColor = columnHeader._col.css('border-color');
-
-  $('#column-resize-highlight').remove();
-
-  var highlightLine = $('<div></div>')
-    .attr('id', 'column-resize-highlight')
-    .css({
-      'position': 'absolute',
-      'height': state.tableContainer.height() + 'px',
-      'width': '3px',
-      'background-color': themeColor,
-      'opacity': '0.7',
-      'border-radius': '2px',
-      'top': (thRect.top + window.scrollY) + 'px',
-      'left': (thRect.right) + 'px',
-      'pointer-events': 'none',
-      'z-index': 10000
-    });
-
-  $('body').append(highlightLine);
-  highlightLine[0].offsetHeight; // Force reflow
-
-  console.log("Highlight added:", $('#column-resize-highlight').length > 0);
+  // Select all header and column cells for the given index
+  // Apply the highlight class to the entire column (header + all rows)
+  var columnIndex = state.col.index();
+  $("th").eq(columnIndex).addClass("column-highlightRight");
+  $("th").eq(columnIndex+1).addClass("column-highlightLeft");
+  $("td:nth-child(" + (columnIndex + 3) + ")").addClass("column-highlightRight");
+  $("td:nth-child(" + (columnIndex + 4) + ")").addClass("column-highlightLeft");
 
   $('body')
     .on('mousemove', DataTableView.mouseMoveListener)
     .on('mouseup', DataTableView.mouseReleaseListener);
 };
 
+
+// event handlers to react to mouse moves during resizing
 DataTableView.mouseMoveListener = function(e) {
   var state = DataTableView.resizingState;
   if (state.dragging) {
     var totalMovement = e.pageX - state.originalPosition;
     var newWidth = state.originalWidth + totalMovement;
-
     if (state.col.css('min-width')) {
       state.col.css('min-width', '');
     }
     state.col.width(newWidth);
 
-    // Find the corresponding <th> for this column
-    var thElement = $('.data-table-header th').eq(state.columnIndex);
-    if (thElement.length === 0) {
-      console.error("Column <th> not found for index:", state.columnIndex);
-      return;
-    }
-
-    var thRect = thElement[0].getBoundingClientRect();
-
-    // Update highlight position using stored table container reference
-    var highlight = $('#column-resize-highlight');
-    if (highlight.length) {
-      var colRect = state.col[0].getBoundingClientRect();
-      highlight.css({
-        'left': (thRect.right) + 'px',
-        'height': state.tableContainer.height() + 'px'
-      });
-    }
-
     e.preventDefault();
   }
 };
 
-
 DataTableView.mouseReleaseListener = function(e) {
-  if (e.button !== 0) return;
-
+  // only capture left clicks
+  if (e.button !== 0) {
+    return;
+  }
   var state = DataTableView.resizingState;
   if (state.dragging) {
     var totalMovement = e.pageX - state.originalPosition;
     var newWidth = state.originalWidth + totalMovement;
     state.col.width((Math.floor(newWidth) / state.emFactor) + 'em');
-
     state.dragging = false;
-    $('#column-resize-highlight').remove(); // Remove highlight after resizing
+
+    // Remove highlight (border)
+    // state.col.css("border-right", "");
+    $("th, td").removeClass("column-highlightLeft");
+    $("th, td").removeClass("column-highlightRight");
+
 
     $('body')
       .off('mousemove', DataTableView.mouseMoveListener)
@@ -211,7 +156,6 @@ DataTableView.mouseReleaseListener = function(e) {
   }
   e.preventDefault();
 };
-
 
 DataTableView.prototype.update = function(onDone, preservePage) {
   var paginationOptions = {};

@@ -107,7 +107,7 @@ div.viewpanel-pagesize span:first-of-type {
   margin: 0;
   padding: 0;
   font-size: 1.05em;
-  border-collapse: separate;
+  border-collapse: collapse;
   width: max-content;
 }
 
@@ -469,4 +469,13 @@ ul.sorting-dialog-blank-error-positions>li {
   margin: 2px;
   cursor: move;
   border-radius: 3px;
+}
+
+/* Highlight the right edge of a column */
+th.column-highlightRight, td.column-highlightRight {
+  border-right: 4px solid blue !important; /* Ensure visibility */
+}
+/* Highlight the left edge of a column+1 */
+th.column-highlightLeft, td.column-highlightLeft {
+  border-left: 4px solid blue !important; /* Ensure visibility */
 }
