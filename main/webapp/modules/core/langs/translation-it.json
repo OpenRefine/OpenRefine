@@ -309,7 +309,7 @@
     "core-project/use-facets": "Utilizza faccette e filtri",
     "core-project/extract-history": "Esporta storico delle operazioni",
     "core-project/refreshing-facet": "Aggiornando faccette…",
-    "core-project/cancel-all": "Cancella tutto",
+    "core-project/cancel-all": "{{plural:$1|Cancella|Cancella tutto}}",
     "core-project/excel": "Excel (.xls)",
     "core-project/canceling": "Cancellando…",
     "core-project/proj-name": "Clicca per rinominare il progetto",
