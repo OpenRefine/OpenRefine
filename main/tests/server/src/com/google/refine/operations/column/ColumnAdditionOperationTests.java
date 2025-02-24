@@ -32,6 +32,7 @@ import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -48,6 +49,7 @@ import com.google.refine.browsing.facets.ListFacet;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OnError;
@@ -151,6 +153,33 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 2);
 
         assertEquals(operation.getColumnDependencies().get(), Set.of("foo", "bar", "other_column"));
+    }
+
+    @Test
+    public void testRenameColumns() {
+        String description = OperationDescription.column_addition_brief("organization_json", 3, "employments",
+                "grel:value.parseJson()[\"employment-summary\"].join('###'");
+        String expectedJSON = "{"
+                + "   \"op\":\"core/column-addition\","
+                + "   \"description\":" + new TextNode(description).toString() + ","
+                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "   \"newColumnName\":\"organization_json\","
+                + "   \"columnInsertIndex\":3,"
+                + "   \"baseColumnName\":\"employments\","
+                + "   \"expression\":\"grel:value.parseJson().get(\\\"employment-summary\\\").join('###')\","
+                + "   \"onError\":\"set-to-blank\""
+                + "}";
+
+        var SUT = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                "job_titles",
+                "grel:value.parseJson()[\"employment-summary\"].join('###')",
+                OnError.SetToBlank,
+                "new_column",
+                3);
+
+        AbstractOperation result = SUT.renameColumns(Map.of("job_titles", "employments", "new_column", "organization_json"));
+        TestUtils.isSerializedTo(result, expectedJSON);
     }
 
     @Test

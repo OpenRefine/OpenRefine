@@ -170,6 +170,22 @@ public class ExtendDataOperation extends EngineDependentOperation {
         return Optional.of(builder.build());
     }
 
+    @Override
+    public ExtendDataOperation renameColumns(Map<String, String> newColumnNames) {
+        String newBaseColumn = newColumnNames.getOrDefault(_baseColumnName, _baseColumnName);
+        List<String> newResultColumns = getCreatedColumnNames().stream().map(name -> newColumnNames.getOrDefault(name, name))
+                .collect(Collectors.toList());
+        return new ExtendDataOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newBaseColumn,
+                _endpoint,
+                _identifierSpace,
+                _schemaSpace,
+                _extension,
+                _columnInsertIndex,
+                newResultColumns);
+    }
+
     public class ExtendDataProcess extends LongRunningProcess implements Runnable {
 
         final protected Project _project;
