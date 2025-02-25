@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -93,6 +94,22 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
         AbstractOperation op = ParsingUtilities.mapper.readValue(jsonWithoutService, ReconMarkNewTopicsOperation.class);
         assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("my column")));
         assertEquals(op.getColumnDependencies(), Optional.of(Set.of("my column")));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        var SUT = ParsingUtilities.mapper.readValue(jsonWithoutService, ReconMarkNewTopicsOperation.class);
+
+        ReconMarkNewTopicsOperation renamed = SUT.renameColumns(Map.of("my column", "new name"));
+
+        String expectedJson = "{"
+                + "\"op\":\"core/recon-mark-new-topics\","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"new name\","
+                + "\"shareNewTopics\":true,"
+                + "\"description\":" + new TextNode(OperationDescription.recon_mark_new_topics_shared_brief("new name")).toString()
+                + "}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

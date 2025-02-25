@@ -42,6 +42,7 @@ import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -248,6 +249,45 @@ public class ReconOperationTests extends RefineTest {
         AbstractOperation operation = ParsingUtilities.mapper.readValue(jsonWithColumnDetails, ReconOperation.class);
         assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("researcher")));
         assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("researcher", "organization_country", "organization_id")));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        ReconOperation SUT = ParsingUtilities.mapper.readValue(jsonWithColumnDetails, ReconOperation.class);
+
+        ReconOperation renamed = SUT.renameColumns(Map.of("organization_country", "country", "researcher", "employee"));
+
+        String expectedJson = "{\n"
+                + "       \"columnName\" : \"employee\",\n"
+                + "       \"config\" : {\n"
+                + "         \"autoMatch\" : true,\n"
+                + "         \"columnDetails\" : [ {\n"
+                + "           \"column\" : \"country\",\n"
+                + "           \"propertyID\" : \"P17/P297\",\n"
+                + "           \"propertyName\" : \"SPARQL: P17/P297\"\n"
+                + "         }, {\n"
+                + "           \"column\" : \"organization_id\",\n"
+                + "           \"propertyID\" : \"P3500|P2427\",\n"
+                + "           \"propertyName\" : \"SPARQL: P3500|P2427\"\n"
+                + "         } ],\n"
+                + "         \"identifierSpace\" : \"http://www.wikidata.org/entity/\",\n"
+                + "         \"limit\" : 0,\n"
+                + "         \"mode\" : \"standard-service\",\n"
+                + "         \"schemaSpace\" : \"http://www.wikidata.org/prop/direct/\",\n"
+                + "         \"service\" : \"https://tools.wmflabs.org/openrefine-wikidata/en/api\",\n"
+                + "         \"type\" : {\n"
+                + "           \"id\" : \"Q5\",\n"
+                + "           \"name\" : \"human\"\n"
+                + "         }\n"
+                + "       },\n"
+                + "       \"description\" : \"Reconcile cells in column employee to type Q5\",\n"
+                + "       \"engineConfig\" : {\n"
+                + "         \"facets\" : [ ],\n"
+                + "         \"mode\" : \"row-based\"\n"
+                + "       },\n"
+                + "       \"op\" : \"core/recon\"\n"
+                + "     }";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

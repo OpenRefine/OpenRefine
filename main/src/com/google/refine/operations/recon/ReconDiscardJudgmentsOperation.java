@@ -107,6 +107,14 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
     }
 
     @Override
+    public ReconDiscardJudgmentsOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconDiscardJudgmentsOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                _clearData);
+    }
+
+    @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
 

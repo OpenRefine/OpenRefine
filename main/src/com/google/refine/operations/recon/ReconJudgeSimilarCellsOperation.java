@@ -154,6 +154,17 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     }
 
     @Override
+    public ReconJudgeSimilarCellsOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconJudgeSimilarCellsOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                _similarValue,
+                _judgment,
+                _match,
+                _shareNewTopics);
+    }
+
+    @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         ReconConfig reconConfig = column.getReconConfig();
@@ -264,4 +275,5 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                 column.getReconConfig(),
                 null);
     }
+
 }
