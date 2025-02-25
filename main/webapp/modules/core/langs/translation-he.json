@@ -477,7 +477,7 @@
     "core-views/split-into-col": "פיצול למספר עמודות…",
     "core-views/add-based-col": "הוספת עמודה על בסיס העמודה הזאת…",
     "core-views/add-by-urls": "הוספת עמודה על ידי משיכת כתובות…",
-    "core-views/rename-col": "שינוי שם העמודה הזאת…",
+    "core-views/rename-col": "שינוי שם העמודה…",
     "core-views/move-to-beg": "העברת עמודה להתחלה",
     "core-views/move-to-end": "העברת עמודה לסוף",
     "core-views/move-to-left": "להעביר עמודה שמאלה",
