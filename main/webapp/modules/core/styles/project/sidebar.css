@@ -167,7 +167,7 @@ a.history-entry.filtered-out>* {
 }
 
 .history-entry-text, .history-entry-icon {
-  align-self: center;
+  align-self: baseline;
 }
 
 .history-panel-controls {
