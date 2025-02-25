@@ -27,7 +27,10 @@ package org.openrefine.wikibase.operations;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -36,6 +39,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
@@ -53,7 +57,6 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
     public SaveWikibaseSchemaOperation(
             @JsonProperty("schema") WikibaseSchema schema) {
         this._schema = schema;
-
     }
 
     @Override
@@ -69,6 +72,21 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
         Change change = new WikibaseSchemaChange(_schema);
 
         return new HistoryEntry(historyEntryID, project, description, SaveWikibaseSchemaOperation.this, change);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(_schema.getColumnDependencies());
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.empty());
+    }
+
+    @Override
+    public SaveWikibaseSchemaOperation renameColumns(Map<String, String> newColumnNames) {
+        return new SaveWikibaseSchemaOperation(_schema.renameColumns(newColumnNames));
     }
 
     static public class WikibaseSchemaChange implements Change {

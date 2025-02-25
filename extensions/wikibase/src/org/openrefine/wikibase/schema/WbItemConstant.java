@@ -35,7 +35,7 @@ import org.openrefine.wikibase.schema.validation.ValidationState;
 /**
  * Represents an item that does not vary, it is independent of the row.
  */
-public class WbItemConstant implements WbExpression<ItemIdValue> {
+public class WbItemConstant extends WbConstantExpr<ItemIdValue> {
 
     private String qid;
     private String label;

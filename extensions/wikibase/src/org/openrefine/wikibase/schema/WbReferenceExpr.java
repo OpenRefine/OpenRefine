@@ -27,6 +27,9 @@ package org.openrefine.wikibase.schema;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -112,6 +115,18 @@ public class WbReferenceExpr implements WbExpression<Reference> {
     @Override
     public int hashCode() {
         return snakExprs.hashCode();
+    }
+
+    @Override
+    public Set<String> getColumnDependencies() {
+        return snakExprs.stream()
+                .flatMap(snak -> snak.getColumnDependencies().stream())
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public WbReferenceExpr renameColumns(Map<String, String> substitutions) {
+        return new WbReferenceExpr(snakExprs.stream().map(snak -> snak.renameColumns(substitutions)).collect(Collectors.toList()));
     }
 
 }

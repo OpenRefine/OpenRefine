@@ -27,6 +27,8 @@ package org.openrefine.wikibase.schema;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -53,6 +55,18 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     public String jsonRepresentation = "{\"name_type\":\"ALIAS\",\"value\":{\"type\":\"wbmonolingualexpr\",\"language\":"
             + "{\"type\":\"wblanguageconstant\",\"id\":\"en\",\"label\":\"English\"},\"value\":"
             + "{\"type\":\"wbstringvariable\",\"columnName\":\"column A\"}}}";
+
+    @Test
+    public void testDependencies() {
+        assertEquals(expr.getColumnDependencies(), Set.of("column A"));
+    }
+
+    @Test
+    public void testRenameColumns() {
+        WbNameDescExpr expected = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS,
+                new WbMonolingualExpr(new WbLanguageConstant("en", "English"), new WbStringVariable("column B")));
+        assertEquals(expr.renameColumns(Map.of("column A", "column B")), expected);
+    }
 
     @Test
     public void testContributeToLabel() throws QAWarningException {

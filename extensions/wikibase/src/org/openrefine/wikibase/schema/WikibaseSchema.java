@@ -29,8 +29,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
@@ -252,6 +255,20 @@ public class WikibaseSchema implements OverlayModel {
     static public WikibaseSchema load(Project project, String obj)
             throws Exception {
         return reconstruct(obj);
+    }
+
+    @JsonIgnore
+    public Set<String> getColumnDependencies() {
+        return entityEditExprs.stream().flatMap(e -> e.getColumnDependencies().stream()).collect(Collectors.toSet());
+    }
+
+    public WikibaseSchema renameColumns(Map<String, String> substitutions) {
+        return new WikibaseSchema(
+                entityEditExprs.stream().map(e -> e.renameColumns(substitutions)).collect(Collectors.toList()),
+                null,
+                siteIri,
+                entityTypeSiteIri,
+                mediaWikiApiEndpoint);
     }
 
     @Override
