@@ -206,6 +206,10 @@ table.data-table td.column-header, table.data-table th.column-header {
   position: absolute;
 }
 
+th:last-child .column-header-name {
+  position: initial;
+}
+
 .column-header-menu {
   display: inline-block;
   margin: 0 4px 0 0;
@@ -217,6 +221,7 @@ table.data-table td.column-header, table.data-table th.column-header {
   border: none;
   padding: 0;
   background-color: transparent;
+  vertical-align: top;
 }
 
 .column-header-menu-expand {
