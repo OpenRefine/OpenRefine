@@ -109,6 +109,7 @@ div.viewpanel-pagesize span:first-of-type {
   font-size: 1.05em;
   border-collapse: separate;
   width: max-content;
+  padding-right: 3em;
 }
 
 .data-table td, .data-table-header td, .data-table-header th {
