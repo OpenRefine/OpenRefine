@@ -172,6 +172,10 @@ function registerOperations() {
   OR.registerOperation(module, "column-removal", Packages.com.google.refine.operations.column.ColumnRemovalOperation);
   OR.registerOperation(module, "column-rename", Packages.com.google.refine.operations.column.ColumnRenameOperation);
   OR.registerOperation(module, "column-move", Packages.com.google.refine.operations.column.ColumnMoveOperation);
+  OR.registerOperation(module, "column-move-left", Packages.com.google.refine.operations.column.ColumnMoveLeftOperation);
+  OR.registerOperation(module, "column-move-right", Packages.com.google.refine.operations.column.ColumnMoveRightOperation);
+  OR.registerOperation(module, "column-move-first", Packages.com.google.refine.operations.column.ColumnMoveFirstOperation);
+  OR.registerOperation(module, "column-move-last", Packages.com.google.refine.operations.column.ColumnMoveLastOperation);
   OR.registerOperation(module, "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);
   OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation);
   OR.registerOperation(module, "column-reorder", Packages.com.google.refine.operations.column.ColumnReorderOperation);
