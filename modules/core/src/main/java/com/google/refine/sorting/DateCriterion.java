@@ -35,6 +35,7 @@ package com.google.refine.sorting;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
@@ -69,5 +70,15 @@ public class DateCriterion extends Criterion {
     @Override
     public String getValueType() {
         return "date";
+    }
+
+    @Override
+    public DateCriterion renameColumns(Map<String, String> newColumnNames) {
+        DateCriterion adapted = new DateCriterion();
+        adapted.blankPosition = blankPosition;
+        adapted.errorPosition = errorPosition;
+        adapted.reverse = reverse;
+        adapted.columnName = newColumnNames.getOrDefault(columnName, columnName);
+        return adapted;
     }
 }

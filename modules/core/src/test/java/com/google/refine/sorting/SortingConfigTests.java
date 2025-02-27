@@ -28,6 +28,7 @@
 package com.google.refine.sorting;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 
@@ -35,19 +36,40 @@ import com.google.refine.util.TestUtils;
 
 public class SortingConfigTests {
 
+    String json = "{\n" +
+            "      \"criteria\": [\n" +
+            "        {\n" +
+            "          \"errorPosition\": 1,\n" +
+            "          \"valueType\": \"number\",\n" +
+            "          \"column\": \"start_year\",\n" +
+            "          \"blankPosition\": 2,\n" +
+            "          \"reverse\": false\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    }";
+
     @Test
     public void serializeSortingConfig() throws IOException {
-        String json = "{\n" +
+        TestUtils.isSerializedTo(SortingConfig.reconstruct(json), json);
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        SortingConfig SUT = SortingConfig.reconstruct(json);
+
+        SortingConfig renamed = SUT.renameColumns(Map.of("start_year", "new_name"));
+
+        String jsonRenamed = "{\n" +
                 "      \"criteria\": [\n" +
                 "        {\n" +
                 "          \"errorPosition\": 1,\n" +
                 "          \"valueType\": \"number\",\n" +
-                "          \"column\": \"start_year\",\n" +
+                "          \"column\": \"new_name\",\n" +
                 "          \"blankPosition\": 2,\n" +
                 "          \"reverse\": false\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    }";
-        TestUtils.isSerializedTo(SortingConfig.reconstruct(json), json);
+        TestUtils.isSerializedTo(renamed, jsonRenamed);
     }
 }
