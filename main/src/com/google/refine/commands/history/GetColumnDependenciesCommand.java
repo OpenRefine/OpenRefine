@@ -2,7 +2,10 @@
 package com.google.refine.commands.history;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.commands.Command;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.operations.Recipe;
 import com.google.refine.util.ParsingUtilities;
 
@@ -20,7 +25,7 @@ import com.google.refine.util.ParsingUtilities;
  */
 public class GetColumnDependenciesCommand extends Command {
 
-    class Result {
+    protected static class Result {
 
         @JsonProperty("code")
         String code = "ok";
@@ -28,6 +33,18 @@ public class GetColumnDependenciesCommand extends Command {
         Set<String> dependencies;
         @JsonProperty("newColumns")
         Set<String> newColumns;
+        @JsonProperty("steps")
+        List<AnnotatedOperation> steps;
+    }
+
+    protected static class AnnotatedOperation {
+
+        @JsonProperty("operation")
+        AbstractOperation op;
+        @JsonProperty("dependencies")
+        Optional<List<String>> dependencies;
+        @JsonProperty("columnsDiff")
+        Optional<ColumnsDiff> columnsDiff;
     }
 
     @Override
@@ -45,6 +62,19 @@ public class GetColumnDependenciesCommand extends Command {
             Result result = new Result();
             result.dependencies = recipe.getRequiredColumns();
             result.newColumns = recipe.getNewColumns();
+            result.steps = recipe.getOperations().stream()
+                    .map(op -> {
+                        var annotated = new AnnotatedOperation();
+                        annotated.columnsDiff = op.getColumnsDiff();
+                        annotated.dependencies = Optional.empty();
+                        Optional<Set<String>> dependencySet = op.getColumnDependencies();
+                        if (dependencySet.isPresent()) {
+                            annotated.dependencies = Optional.of(dependencySet.get().stream().sorted().collect(Collectors.toList()));
+                        }
+                        annotated.op = op;
+                        return annotated;
+                    })
+                    .collect(Collectors.toList());
 
             respondJSON(response, result);
         } catch (Exception e) {
