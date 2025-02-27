@@ -500,6 +500,7 @@ function init() {
 
       "scripts/widgets/histogram-widget.js",
       "scripts/widgets/slider-widget.js",
+      "scripts/widgets/recipe-widget.js",
 
       "scripts/project/browsing-engine.js",
       "scripts/project/history-panel.js",
@@ -539,6 +540,7 @@ function init() {
 
       "scripts/dialogs/extract-operations-dialog.js",
       "scripts/dialogs/apply-operations-dialog.js",
+
       "scripts/dialogs/expression-preview-dialog.js",
       "scripts/dialogs/add-column-by-reconciliation.js",
       "scripts/dialogs/clustering-dialog.js",
@@ -546,6 +548,7 @@ function init() {
       "scripts/dialogs/templating-exporter-dialog.js",
       "scripts/dialogs/column-reordering-dialog.js",
       "scripts/dialogs/common-transform-dialog.js",
+      "scripts/dialogs/column-mapping-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
@@ -596,6 +599,7 @@ function init() {
       "styles/reconciliation/recon-dialog.css",
       "styles/reconciliation/standard-service-panel.css",
       "styles/reconciliation/add-column-by-reconciliation.css",
+      "styles/dialogs/column-mapping-dialog.css",
       "styles/dialogs/remove-duplicate-rows-dialog.css"
     ]
   );
