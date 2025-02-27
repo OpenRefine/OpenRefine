@@ -171,11 +171,18 @@ ExpressionPreviewDialog.Widget = function(
     this._renderHelpTab();
 };
 
-ExpressionPreviewDialog.Widget.prototype.setCursorToEnd = function() {
+ExpressionPreviewDialog.Widget.prototype.useSavedExpression = function(expression, language) {
+    this._elmts.expressionPreviewTextarea[0].value = expression;
+    this._elmts.expressionPreviewLanguageSelect[0].value = language;
+
+    $("#expression-preview-tabs").tabs();
+
     const textarea = this._elmts.expressionPreviewTextarea[0];
     const length = textarea.value.length;
     textarea.focus();
     textarea.setSelectionRange(length, length);
+
+    this.update();
 };
 
 ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
@@ -337,7 +344,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
 
             $("#expression-preview-tabs").tabs();
 
-            self.setCursorToEnd();
+            self.useSavedExpression(o.expression, o.language);
 
             self.update();
         });
@@ -415,7 +422,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
             
             $("#expression-preview-tabs").tabs();
 
-            self.setCursorToEnd();
+            self.useSavedExpression(o.expression, o.language);
             
             self.update();
         });
