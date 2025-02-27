@@ -337,10 +337,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
 
             $("#expression-preview-tabs").tabs();
 
-            const textarea = self._elmts.expressionPreviewTextarea[0];
-            const length = textarea.value.length;
-            textarea.focus();
-            textarea.setSelectionRange(length, length);
+            self.setCursorToEnd();
 
             self.update();
         });
@@ -418,10 +415,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
             
             $("#expression-preview-tabs").tabs();
 
-            const textarea = self._elmts.expressionPreviewTextarea[0];
-            const length = textarea.value.length;
-            textarea.focus();
-            textarea.setSelectionRange(length, length);
+            self.setCursorToEnd();
             
             self.update();
         });
