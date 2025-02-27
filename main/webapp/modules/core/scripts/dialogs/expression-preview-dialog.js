@@ -171,6 +171,13 @@ ExpressionPreviewDialog.Widget = function(
     this._renderHelpTab();
 };
 
+ExpressionPreviewDialog.Widget.prototype.setCursorToEnd = function() {
+    const textarea = this._elmts.expressionPreviewTextarea[0];
+    const length = textarea.value.length;
+    textarea.focus();
+    textarea.setSelectionRange(length, length);
+};
+
 ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     var s = jQueryTrim(this.expression || "");
     if (!s.length) {
