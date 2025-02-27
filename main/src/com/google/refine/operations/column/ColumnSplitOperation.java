@@ -36,6 +36,7 @@ package com.google.refine.operations.column;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -215,6 +216,27 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.empty(); // sadly the columns created depend on the data and the name of existing columns
+    }
+
+    @Override
+    public ColumnSplitOperation renameColumns(Map<String, String> newColumnNames) {
+        if ("separator".equals(_mode)) {
+            return new ColumnSplitOperation(
+                    _engineConfig.renameColumnDependencies(newColumnNames),
+                    newColumnNames.getOrDefault(_columnName, _columnName),
+                    _guessCellType,
+                    _removeOriginalColumn,
+                    _separator,
+                    _regex,
+                    _maxColumns);
+        } else {
+            return new ColumnSplitOperation(
+                    _engineConfig.renameColumnDependencies(newColumnNames),
+                    newColumnNames.getOrDefault(_columnName, _columnName),
+                    _guessCellType,
+                    _removeOriginalColumn,
+                    _fieldLengths);
+        }
     }
 
     @Override

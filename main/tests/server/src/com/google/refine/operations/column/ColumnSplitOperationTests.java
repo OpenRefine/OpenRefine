@@ -32,6 +32,7 @@ import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -257,5 +258,49 @@ public class ColumnSplitOperationTests extends RefineTest {
                         { "12,true", "b", "g1", "g", "1" },
                 });
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRenameLengths() {
+        ColumnSplitOperation SUT = new ColumnSplitOperation(EngineConfig.defaultRowBased(), "hello", false,
+                false, new int[] { 1, 2 });
+
+        ColumnSplitOperation renamed = SUT.renameColumns(Map.of("hello", "world"));
+        TestUtils.isSerializedTo(renamed, "{\n"
+                + "       \"columnName\" : \"world\",\n"
+                + "       \"description\" : " + new TextNode(OperationDescription.column_split_brief("world")).toString() + ",\n"
+                + "       \"engineConfig\" : {\n"
+                + "         \"facets\" : [ ],\n"
+                + "         \"mode\" : \"row-based\"\n"
+                + "       },\n"
+                + "       \"fieldLengths\" : [ 1, 2 ],\n"
+                + "       \"guessCellType\" : false,\n"
+                + "       \"mode\" : \"lengths\",\n"
+                + "       \"op\" : \"core/column-split\",\n"
+                + "       \"removeOriginalColumn\" : false\n"
+                + "     }");
+    }
+
+    @Test
+    public void testRenameSeparator() {
+        ColumnSplitOperation SUT = new ColumnSplitOperation(EngineConfig.defaultRowBased(), "foo", true, true, ",",
+                false, 2);
+
+        ColumnSplitOperation renamed = SUT.renameColumns(Map.of("foo", "bar"));
+        TestUtils.isSerializedTo(renamed, "{\n"
+                + "       \"columnName\" : \"bar\",\n"
+                + "       \"description\" : " + new TextNode(OperationDescription.column_split_separator_brief("bar")).toString() + ",\n"
+                + "       \"engineConfig\" : {\n"
+                + "         \"facets\" : [ ],\n"
+                + "         \"mode\" : \"row-based\"\n"
+                + "       },\n"
+                + "       \"guessCellType\" : true,\n"
+                + "       \"maxColumns\": 2,\n"
+                + "       \"regex\": false,\n"
+                + "       \"mode\" : \"separator\",\n"
+                + "       \"separator\": \",\",\n"
+                + "       \"op\" : \"core/column-split\",\n"
+                + "       \"removeOriginalColumn\" : true\n"
+                + "     }");
     }
 }

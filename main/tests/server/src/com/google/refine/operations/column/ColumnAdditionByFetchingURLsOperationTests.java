@@ -40,6 +40,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
@@ -191,6 +192,25 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 true,
                 null);
         assertThrows(IllegalArgumentException.class, () -> missingExpression.validate());
+    }
+
+    @Test
+    public void testRename() {
+        ColumnAdditionByFetchingURLsOperation SUT = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                "fruits",
+                "grel:\"https://example.com/api?city=\"+value",
+                OnError.StoreError,
+                "results",
+                1,
+                5,
+                true,
+                null);
+
+        ColumnAdditionByFetchingURLsOperation renamed = SUT.renameColumns(Map.of("fruits", "vegetables", "results", "json"));
+
+        assertEquals(renamed._baseColumnName, "vegetables");
+        assertEquals(renamed._newColumnName, "json");
+        assertEquals(renamed._urlExpression, "grel:\"https://example.com/api?city=\" + value");
     }
 
     /**

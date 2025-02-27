@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -225,6 +226,28 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.builder().addColumn(_newColumnName, _baseColumnName).build());
+    }
+
+    @Override
+    public ColumnAdditionByFetchingURLsOperation renameColumns(Map<String, String> newColumnNames) {
+        String renamedExpression;
+        try {
+            Evaluable evaluable = MetaParser.parse(_urlExpression);
+            Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
+            renamedExpression = renamedEvaluable.getFullSource();
+        } catch (ParsingException e) {
+            return this;
+        }
+        return new ColumnAdditionByFetchingURLsOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_baseColumnName, _baseColumnName),
+                renamedExpression,
+                _onError,
+                newColumnNames.getOrDefault(_newColumnName, _newColumnName),
+                _columnInsertIndex,
+                _delay,
+                _cacheResponses,
+                _httpHeadersJson);
     }
 
     @Override
