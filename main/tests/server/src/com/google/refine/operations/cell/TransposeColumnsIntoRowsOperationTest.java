@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -64,6 +65,50 @@ public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
     public void testColumnsDependencies() {
         assertEquals(new TransposeColumnsIntoRowsOperation("num1", -1, true, false, "a", true, ":").getColumnDependencies(),
                 Optional.empty());
+    }
+
+    @Test
+    public void testRename() {
+        var SUT = new TransposeColumnsIntoRowsOperation("num1", -1, true, false, "a", true, ":");
+
+        TransposeColumnsIntoRowsOperation renamed = SUT.renameColumns(Map.of("num1", "num2", "a", "a2"));
+
+        TestUtils.isSerializedTo(renamed, "{\n"
+                + "  \"columnCount\" : -1,\n"
+                + "  \"combinedColumnName\" : \"a2\",\n"
+                + "  \"description\" : "
+                + new TextNode(OperationDescription.cell_transpose_columns_into_rows_combined_neg_brief("num2", "a2")).toString() + ",\n"
+                + "  \"fillDown\" : false,\n"
+                + "  \"ignoreBlankCells\" : true,\n"
+                + "  \"keyColumnName\" : null,\n"
+                + "  \"op\" : \"core/transpose-columns-into-rows\",\n"
+                + "  \"prependColumnName\" : true,\n"
+                + "  \"separator\" : \":\",\n"
+                + "  \"startColumnName\" : \"num2\",\n"
+                + "  \"valueColumnName\" : null\n"
+                + "}");
+    }
+
+    @Test
+    public void testRename2() {
+        var SUT = new TransposeColumnsIntoRowsOperation(
+                "b 1", 2, true, false, "key", "value");
+
+        TransposeColumnsIntoRowsOperation renamed = SUT.renameColumns(Map.of("b 1", "b", "key", "key2"));
+
+        TestUtils.isSerializedTo(renamed, "{\n"
+                + "  \"columnCount\" : 2,\n"
+                + "  \"description\" : " + new TextNode(OperationDescription.cell_transpose_columns_into_rows_not_combined_pos_brief(2, "b",
+                        "key2", "value")).toString()
+                + ",\n"
+                + "  \"fillDown\" : false,\n"
+                + "  \"ignoreBlankCells\" : true,\n"
+                + "  \"keyColumnName\" : \"key2\",\n"
+                + "  \"op\" : \"core/transpose-columns-into-rows\",\n"
+                + "  \"separator\" : null,\n"
+                + "  \"startColumnName\" : \"b\",\n"
+                + "  \"valueColumnName\" : \"value\"\n"
+                + "}");
     }
 
     @Test

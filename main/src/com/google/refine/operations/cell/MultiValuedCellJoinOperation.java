@@ -35,6 +35,7 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -99,6 +100,14 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+    }
+
+    @Override
+    public MultiValuedCellJoinOperation renameColumns(Map<String, String> newColumnNames) {
+        return new MultiValuedCellJoinOperation(
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                newColumnNames.getOrDefault(_keyColumnName, _keyColumnName),
+                _separator);
     }
 
     @Override

@@ -37,6 +37,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -99,6 +100,21 @@ public class TransposeRowsIntoColumnsOperationTests extends RefineTest {
     @Test
     public void testColumnsDependencies() {
         assertEquals(new TransposeRowsIntoColumnsOperation("b", 2).getColumnDependencies(), Optional.of(Set.of("b")));
+    }
+
+    @Test
+    public void testRename() {
+        var SUT = new TransposeRowsIntoColumnsOperation("b", 2);
+
+        TransposeRowsIntoColumnsOperation renamed = SUT.renameColumns(Map.of("b", "c"));
+
+        TestUtils.isSerializedTo(renamed, "{\n"
+                + "  \"columnName\" : \"c\",\n"
+                + "  \"description\" : " + new TextNode(OperationDescription.cell_transpose_rows_into_columns_brief(2, "c")).toString()
+                + ",\n"
+                + "  \"op\" : \"core/transpose-rows-into-columns\",\n"
+                + "  \"rowCount\" : 2\n"
+                + "}");
     }
 
     @Test

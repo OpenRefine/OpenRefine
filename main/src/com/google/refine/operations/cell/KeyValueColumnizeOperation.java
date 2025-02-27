@@ -117,6 +117,14 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
     }
 
     @Override
+    public KeyValueColumnizeOperation renameColumns(Map<String, String> newColumnNames) {
+        return new KeyValueColumnizeOperation(
+                newColumnNames.getOrDefault(_keyColumnName, _keyColumnName),
+                newColumnNames.getOrDefault(_valueColumnName, _valueColumnName),
+                _noteColumnName == null ? null : newColumnNames.getOrDefault(_noteColumnName, _noteColumnName));
+    }
+
+    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         int keyColumnIndex = project.columnModel.getColumnIndexByName(_keyColumnName);
         int valueColumnIndex = project.columnModel.getColumnIndexByName(_valueColumnName);

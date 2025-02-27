@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -115,6 +116,31 @@ public class TextTransformOperationTests extends RefineTest {
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
                 false, 0).getColumnDependencies().get(), Set.of("foo", "bar", "facet_1"));
+    }
+
+    @Test
+    public void testRename() {
+        var SUT = new TextTransformOperation(
+                engineConfigWithColumnDeps,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                false, 0);
+
+        TextTransformOperation renamed = SUT.renameColumns(Map.of("foo", "foo2", "bar", "bar2"));
+        String description = OperationDescription.cell_text_transform_brief("bar2",
+                "grel:cells.get(\"foo2\").value + '_' + value");
+        String expectedJson = "{\n"
+                + "  \"columnName\" : \"bar2\",\n"
+                + "  \"description\" : " + new TextNode(description).toString() + ",\n"
+                + "  \"engineConfig\" : null,\n"
+                + "  \"expression\" : \"grel:cells.get(\\\"foo2\\\").value + '_' + value\",\n"
+                + "  \"onError\" : \"set-to-blank\",\n"
+                + "  \"op\" : \"core/text-transform\",\n"
+                + "  \"repeat\" : false,\n"
+                + "  \"repeatCount\" : 0\n"
+                + "}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test
