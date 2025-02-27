@@ -81,12 +81,16 @@ a.menu-item img {
   border: none;
 }
 
+.menu-item-icon-text {
+  display: grid;
+  grid-template-columns: 1.6em 1fr;
+}
+
 a.menu-item .menu-icon {
-  display: inline;
   height: 1.6em;
-  vertical-align: middle;
-  margin-left: -2px;
-  margin-top: -1px;
+  align-self: baseline;
+  margin-left: -3px;
+  margin-top: -2px;
 }
 
 .menu-section {
