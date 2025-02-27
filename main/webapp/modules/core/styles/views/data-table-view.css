@@ -204,11 +204,11 @@ table.data-table td.column-header, table.data-table th.column-header {
 .column-header-name {
   padding: 4px 0 0 0;
   display: inline-block;
-  position: absolute;
+  position: initial;
 }
 
-th:last-child .column-header-name {
-  position: initial;
+th.resized-column .column-header-name {
+  position: absolute;
 }
 
 .column-header-menu {
