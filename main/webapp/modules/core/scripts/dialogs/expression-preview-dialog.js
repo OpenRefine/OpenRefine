@@ -171,6 +171,20 @@ ExpressionPreviewDialog.Widget = function(
     this._renderHelpTab();
 };
 
+ExpressionPreviewDialog.Widget.prototype.useSavedExpression = function(expression, language) {
+    this._elmts.expressionPreviewTextarea[0].value = expression;
+    this._elmts.expressionPreviewLanguageSelect[0].value = language;
+
+    $("#expression-preview-tabs").tabs();
+
+    const textarea = this._elmts.expressionPreviewTextarea[0];
+    const length = textarea.value.length;
+    textarea.focus();
+    textarea.setSelectionRange(length, length);
+
+    this.update();
+};
+
 ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     var s = jQueryTrim(this.expression || "");
     if (!s.length) {
@@ -327,11 +341,11 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/reuse')+'</a>').appendTo(tr.insertCell(1)).on('click',function() {
             self._elmts.expressionPreviewTextarea[0].value = o.expression;
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
-            
+
             $("#expression-preview-tabs").tabs();
-            
-            self._elmts.expressionPreviewTextarea.trigger('select').trigger('focus');
-            
+
+            self.useSavedExpression(o.expression, o.language);
+
             self.update();
         });
         
@@ -407,8 +421,8 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
             
             $("#expression-preview-tabs").tabs();
-            
-            self._elmts.expressionPreviewTextarea.trigger('select').trigger('focus');
+
+            self.useSavedExpression(o.expression, o.language);
             
             self.update();
         });
