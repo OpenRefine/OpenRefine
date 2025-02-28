@@ -98,8 +98,17 @@ HistoryPanel.prototype._render = function() {
       });
     }
 
-    a[0].childNodes[0].appendChild(document.createTextNode(index + "."));
-    a[0].childNodes[1].appendChild(document.createTextNode(entry.description));
+    var fields = DOM.bind(a);
+    fields.entryIndex.text(index + ".");
+    fields.entryDescription.text(entry.description);
+    if (entry.operation_id != null) {
+      let icon = OperationIconRegistry.getIcon(entry.operation_id);
+      if (icon != null) {
+        $('<img />')
+          .attr('src', icon)
+          .appendTo(fields.operationIcon);
+      }
+    }
 
     return a;
   };
