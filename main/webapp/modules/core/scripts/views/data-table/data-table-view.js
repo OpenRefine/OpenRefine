@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -58,7 +58,7 @@ DataTableView._extenders = [];
       "label": "Test",
       "click": function() {
           alert("Test");
-      } 
+      }
     });
   });
 */
@@ -71,11 +71,11 @@ DataTableView.prototype.getSorting = function() {
 };
 
 DataTableView.prototype.resize = function() {
-  
+
   var topHeight =
     this._div.find(".viewpanel-header").outerHeight(true);
   var tableContainerIntendedHeight = this._div.innerHeight() - topHeight;
-  
+
   var tableContainer = this._div.find(".data-table-container").css("display", "block");
   var tableContainerVPadding = tableContainer.outerHeight(true) - tableContainer.height();
   tableContainer.height((tableContainerIntendedHeight - tableContainerVPadding) + "px");
@@ -102,13 +102,20 @@ DataTableView.prototype._startResizing = function(columnIndex, clickEvent) {
   state.columnName = columnHeader._column.name;
   state.originalWidth = columnHeader._col.width();
   state.originalPosition = clickEvent.pageX;
-  // for conversion from px to em
-  state.emFactor = parseFloat(getComputedStyle($(".data-table-container colgroup")[0]).fontSize);
+
+  // Select all header and column cells for the given index
+  // Apply the highlight class to the entire column (header + all rows)
+  var columnIndex = state.col.index();
+  $("th").eq(columnIndex).addClass("column-highlightRight");
+  $("th").eq(columnIndex+1).addClass("column-highlightLeft");
+  $("td:nth-child(" + (columnIndex + 3) + ")").addClass("column-highlightRight");
+  $("td:nth-child(" + (columnIndex + 4) + ")").addClass("column-highlightLeft");
 
   $('body')
-      .on('mousemove', DataTableView.mouseMoveListener)
-      .on('mouseup', DataTableView.mouseReleaseListener);
+    .on('mousemove', DataTableView.mouseMoveListener)
+    .on('mouseup', DataTableView.mouseReleaseListener);
 };
+
 
 // event handlers to react to mouse moves during resizing
 DataTableView.mouseMoveListener = function(e) {
@@ -136,9 +143,16 @@ DataTableView.mouseReleaseListener = function(e) {
     var newWidth = state.originalWidth + totalMovement;
     state.col.width((Math.floor(newWidth) / state.emFactor) + 'em');
     state.dragging = false;
+
+    // Remove highlight (border)
+    // state.col.css("border-right", "");
+    $("th, td").removeClass("column-highlightLeft");
+    $("th, td").removeClass("column-highlightRight");
+
+
     $('body')
-        .off('mousemove', DataTableView.mouseMoveListener)
-        .off('mouseup', DataTableView.mouseReleaseListener);
+      .off('mousemove', DataTableView.mouseMoveListener)
+      .off('mouseup', DataTableView.mouseReleaseListener);
   }
   e.preventDefault();
 };
@@ -184,21 +198,21 @@ DataTableView.prototype.render = function() {
 
   var html = $(
     '<div class="viewpanel-header">' +
-      '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
-        '<span bind="modeSelectors"></span>' + 
-      '</div>' +
-      '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
-      '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
-      '<div class="viewpanel-paging" bind="pagingControls"></div>' +
+    '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
+    '<span bind="modeSelectors"></span>' +
+    '</div>' +
+    '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
+    '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
+    '<div class="viewpanel-paging" bind="pagingControls"></div>' +
     '</div>' +
     '<div bind="dataTableContainer" class="data-table-container">' +
-      '<table class="data-table">'+
-        '<colgroup bind="colGroup"></colgroup>'+
-        '<thead bind="tableHeader" class="data-table-header">'+
-        '</thead>'+
-        '<tbody bind="table" class="data-table">'+
-        '</tbody>'+
-      '</table>' +
+    '<table class="data-table">'+
+    '<colgroup bind="colGroup"></colgroup>'+
+    '<thead bind="tableHeader" class="data-table-header">'+
+    '</thead>'+
+    '<tbody bind="table" class="data-table">'+
+    '</tbody>'+
+    '</table>' +
     '</div>'
   );
   var elmts = DOM.bind(html);
@@ -207,9 +221,9 @@ DataTableView.prototype.render = function() {
 
   var renderBrowsingModeLink = function(label, value) {
     var a = $('<a href="javascript:{}"></a>')
-    .addClass("viewPanel-browsingModes-mode")
-    .text(label)
-    .appendTo(elmts.modeSelectors);
+      .addClass("viewPanel-browsingModes-mode")
+      .text(label)
+      .appendTo(elmts.modeSelectors);
 
     if (value == ui.browsingEngine.getMode()) {
       a.addClass("selected");
@@ -235,7 +249,7 @@ DataTableView.prototype.render = function() {
   $(".data-table-null").toggle(self._shownulls);
 
   this.resize();
-  
+
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
 };
 
@@ -243,13 +257,13 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
   var self = this;
 
   $('<a href="javascript:{}"></a>')
-  .addClass("action")
-  .text($.i18n('core-views/sort/single') + " ")
-  .append($('<img>').attr("src", "images/down-arrow.png"))
-  .appendTo(sortingControls)
-  .on('click',function() {
-    self._createSortingMenu(this);
-  });
+    .addClass("action")
+    .text($.i18n('core-views/sort/single') + " ")
+    .append($('<img>').attr("src", "images/down-arrow.png"))
+    .appendTo(sortingControls)
+    .on('click',function() {
+      self._createSortingMenu(this);
+    });
 };
 
 DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
@@ -257,9 +271,9 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
 
   var rowIds = theProject.rowModel.rows.map(row => row.k);
   if (theProject.rowModel.start !== undefined) {
-     rowIds.push(theProject.rowModel.start);
+    rowIds.push(theProject.rowModel.start);
   } else {
-     rowIds.push(theProject.rowModel.end);
+    rowIds.push(theProject.rowModel.end);
   }
   var minRowId = Math.min(... rowIds);
   var maxRowId = Math.max(... rowIds);
@@ -300,8 +314,8 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   var renderPageSize = function(index) {
     var pageSize = self._gridPagesSizes[index];
     var a = $('<a href="javascript:{}"></a>')
-    .addClass("viewPanel-pagingControls-page")
-    .appendTo(pageSizeControls);
+      .addClass("viewPanel-pagingControls-page")
+      .appendTo(pageSizeControls);
     if (pageSize == self._pageSize) {
       a.text(pageSize).addClass("selected");
     } else {
@@ -311,20 +325,20 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
       });
     }
   };
-  
+
   for (var i = 0; i < self._gridPagesSizes.length; i++) {
     renderPageSize(i);
   }
-  
+
   $('<span>')
-  .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n('core-views/records') : ' '+$.i18n('core-views/rows'))
-  .appendTo(pageSizeControls);
+    .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n('core-views/records') : ' '+$.i18n('core-views/rows'))
+    .appendTo(pageSizeControls);
 };
 
 DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGridPageSize) {
   var self = this;
   var newGridPageSize = [];
-  
+
   if(gridPageSize == null || typeof gridPageSize != "object") return defaultGridPageSize;
 
   for (var i = 0; i < gridPageSize.length; i++) {
@@ -333,12 +347,12 @@ DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGri
   }
 
   if(newGridPageSize.length < 2) return defaultGridPageSize;
-  
+
   var distinctValueFilter = (value, index, selfArray) => (selfArray.indexOf(value) == index);
   newGridPageSize.filter(distinctValueFilter);
-  
+
   newGridPageSize.sort((a, b) => (a - b));
-  
+
   return newGridPageSize;
 };
 
@@ -426,10 +440,10 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader, colGrou
 
   if (columnGroups.length > 0) {
     renderColumnGroups(
-        columnGroups, 
-        [ theProject.columnModel.keyCellIndex ]
+      columnGroups,
+      [ theProject.columnModel.keyCellIndex ]
     );
-  }    
+  }
 
   /*------------------------------------------------------------
    *  Column Headers with Menus
@@ -454,7 +468,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader, colGrou
     star.classList.add(row.starred ? "data-table-star-on" : "data-table-star-off");
     tdStar.appendChild(star).appendChild(document.createTextNode('\u00A0')); // NBSP
     star.addEventListener('click', function() {
-    var newStarred = !row.starred;
+      var newStarred = !row.starred;
       Refine.postCoreProcess(
         "annotate-one-row",
         { row: row.i, starred: newStarred },
@@ -470,7 +484,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader, colGrou
         "json"
       );
     });
-    
+
     var tdFlag = tr.insertCell(tr.cells.length);
     var flag = document.createElement('a');
     flag.classList.add(row.flagged ? "data-table-flag-on" : "data-table-flag-off");
@@ -548,12 +562,12 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
 
   // header for the first three columns (star, flag, row number)
   DOM.bind(
-      $(trHead.appendChild(document.createElement("th")))
+    $(trHead.appendChild(document.createElement("th")))
       .attr("colspan", "3")
       .addClass("column-header")
       .html(
         '<div class="column-header-title">' +
-          '<button class="column-header-menu" bind="dropdownMenu"></button><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
+        '<button class="column-header-menu" bind="dropdownMenu"></button><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
         '</div>'
       )
   ).dropdownMenu.on('click',function() {
@@ -567,23 +581,23 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
     var th = trHead.appendChild(document.createElement("th"));
     $(th).addClass("column-header").attr('title', column.name);
     var col = $('<col>')
-        .attr('span', 1)
-        .data('name', column.name)
-        .appendTo(colGroup);
+      .attr('span', 1)
+      .data('name', column.name)
+      .appendTo(colGroup);
     var cachedWidth = DataTableView.columnWidthCache.get(column.name);
     if (cachedWidth !== undefined && !self._collapsedColumnNames.hasOwnProperty(column.name)) {
       col.width(cachedWidth + 'em');
     } else {
       // Not set in CSS directly because the user needs to be able to override that by dragging.
       // Set in px rather than in em because with em it can lead to a fractional width in pixels,
-      // which causes the right border not to display correctly. 
+      // which causes the right border not to display correctly.
       col.css('min-width', '50px');
     }
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-      DOM.bind( 
+      DOM.bind(
         $(th)
-        .attr('title',$.i18n('core-views/expand', column.name))
-        .html("<button class='column-header-menu column-header-menu-expand' bind='expandColumn' ></button>")
+          .attr('title',$.i18n('core-views/expand', column.name))
+          .html("<button class='column-header-menu column-header-menu-expand' bind='expandColumn' ></button>")
       ).expandColumn.on(
         'click', function() {
           delete self._collapsedColumnNames[column.name];
@@ -607,7 +621,7 @@ DataTableView.prototype._addResizingControls = function(th, index) {
   var self = this;
   var columns = theProject.columnModel.columns;
   var resizerLeft = $('<div></div>').addClass('column-header-resizer-left')
-        .appendTo(th);
+    .appendTo(th);
   resizerLeft.on('mousedown', function(e) {
     // only capture left clicks
     if (e.button !== 0) {
@@ -619,7 +633,7 @@ DataTableView.prototype._addResizingControls = function(th, index) {
   // add resizing control for the previous column (if uncollapsed)
   if (index > 0 && !self._collapsedColumnNames.hasOwnProperty(columns[index-1].name)) {
     var resizerRight = $('<div></div>').addClass('column-header-resizer-right')
-          .appendTo(th);
+      .appendTo(th);
     resizerRight.on('mousedown', function(e) {
       // only capture left clicks
       if (e.button !== 0) {
@@ -719,60 +733,60 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
 };
 
 /** below can be move to seperate file **/
-  var doTextTransformPrompt = function() {
-    var frame = $(
-        DOM.loadHTML("core", "scripts/views/data-table/text-transform-dialog.html")
-        .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
+var doTextTransformPrompt = function() {
+  var frame = $(
+    DOM.loadHTML("core", "scripts/views/data-table/text-transform-dialog.html")
+      .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
 
-    var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/transform/header'));
-    elmts.or_views_errorOn.text($.i18n('core-views/on-error'));
-    elmts.or_views_keepOr.text($.i18n('core-views/keep-or'));
-    elmts.or_views_setBlank.text($.i18n('core-views/set-blank'));
-    elmts.or_views_storeErr.text($.i18n('core-views/store-err'));
-    elmts.or_views_reTrans.text($.i18n('core-views/re-trans'));
-    elmts.or_views_timesChang.text($.i18n('core-views/times-chang'));
-    elmts.okButton.html($.i18n('core-buttons/ok'));
-    elmts.cancelButton.text($.i18n('core-buttons/cancel'));    
+  var elmts = DOM.bind(frame);
+  elmts.dialogHeader.text($.i18n('core-views/transform/header'));
+  elmts.or_views_errorOn.text($.i18n('core-views/on-error'));
+  elmts.or_views_keepOr.text($.i18n('core-views/keep-or'));
+  elmts.or_views_setBlank.text($.i18n('core-views/set-blank'));
+  elmts.or_views_storeErr.text($.i18n('core-views/store-err'));
+  elmts.or_views_reTrans.text($.i18n('core-views/re-trans'));
+  elmts.or_views_timesChang.text($.i18n('core-views/times-chang'));
+  elmts.okButton.html($.i18n('core-buttons/ok'));
+  elmts.cancelButton.text($.i18n('core-buttons/cancel'));
 
-    var level = DialogSystem.showDialog(frame);
-    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+  var level = DialogSystem.showDialog(frame);
+  var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    elmts.cancelButton.on('click',dismiss);
-    elmts.okButton.on('click',function() {
-        new ExpressionColumnDialog(
-                previewWidget.getExpression(true),
-                $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
-                elmts.repeatCheckbox[0].checked,
-                elmts.repeatCountInput[0].value
-        );
-    });
-    
-    var previewWidget = new ExpressionPreviewDialog.Widget(
-      elmts,
-      -1,
-      [],
-      [],
-      null
+  elmts.cancelButton.on('click',dismiss);
+  elmts.okButton.on('click',function() {
+    new ExpressionColumnDialog(
+      previewWidget.getExpression(true),
+      $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
+      elmts.repeatCheckbox[0].checked,
+      elmts.repeatCountInput[0].value
     );
-    previewWidget._prepareUpdate = function(params) {
-      params.repeat = elmts.repeatCheckbox[0].checked;
-      params.repeatCount = elmts.repeatCountInput[0].value;
-    };
+  });
+
+  var previewWidget = new ExpressionPreviewDialog.Widget(
+    elmts,
+    -1,
+    [],
+    [],
+    null
+  );
+  previewWidget._prepareUpdate = function(params) {
+    params.repeat = elmts.repeatCheckbox[0].checked;
+    params.repeatCount = elmts.repeatCountInput[0].value;
   };
-  /** above can be move to seperate file **/
-  
+};
+/** above can be move to seperate file **/
+
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
   var self = this;
   var menu = [
-        {
-            label: $.i18n('core-views/transform'),
-            id: "core/facets",
-            width: "200px",
-            click: function() {
-                   doTextTransformPrompt();
-            }
-        },
+    {
+      label: $.i18n('core-views/transform'),
+      id: "core/facets",
+      width: "200px",
+      click: function() {
+        doTextTransformPrompt();
+      }
+    },
     {},
     {
       id: "core/common-transforms",
@@ -854,10 +868,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/facet-by-star",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/starred-rows'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "row.starred"
               },
               {
@@ -871,10 +885,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/facet-by-flag",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/flagged-rows'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "row.flagged"
               },
               {
@@ -888,10 +902,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/facet-by-blank",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/blank-rows'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "(filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()==0).toString()"
               },
               {
@@ -905,15 +919,15 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/blank-values",
           click: function() {
             ui.browsingEngine.addFacet(
-                "list",
-                {
-                  "name" : $.i18n('core-views/blank-values'),
-                  "columnName" : "",
-                  "expression" : "filter(row.columnNames,cn,isBlank(cells[cn].value))"
-                },
-                {
-                  "scroll" : false
-                }
+              "list",
+              {
+                "name" : $.i18n('core-views/blank-values'),
+                "columnName" : "",
+                "expression" : "filter(row.columnNames,cn,isBlank(cells[cn].value))"
+              },
+              {
+                "scroll" : false
+              }
             );
           }
         },
@@ -922,15 +936,15 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/blank-records",
           click: function() {
             ui.browsingEngine.addFacet(
-                "list",
-                {
-                  "name" : $.i18n('core-views/blank-records'),
-                  "columnName" : "",
-                  "expression" : "filter(row.columnNames,cn,isBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),true)))"
-                },
-                {
-                  "scroll" : false
-                }
+              "list",
+              {
+                "name" : $.i18n('core-views/blank-records'),
+                "columnName" : "",
+                "expression" : "filter(row.columnNames,cn,isBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),true)))"
+              },
+              {
+                "scroll" : false
+              }
             );
           }
         },
@@ -939,10 +953,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/non-blank-values",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/non-blank-values'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "filter(row.columnNames,cn,isNonBlank(cells[cn].value))"
               },
               {
@@ -956,10 +970,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/non-blank-records",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/non-blank-records'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "filter(row.columnNames,cn,isNonBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),null)))"
               },
               {
@@ -1071,10 +1085,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/fill-down",
           click: function () {
             if (self._getSortingCriteriaCount() > 0) {
-                self._createPendingSortWarningDialog(doAllFillDown);
+              self._createPendingSortWarningDialog(doAllFillDown);
             }
             else {
-                doAllFillDown();
+              doAllFillDown();
             }
           }
         },
@@ -1083,10 +1097,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/blank-down",
           click: function () {
             if (self._getSortingCriteriaCount() > 0) {
-                self._createPendingSortWarningDialog(doAllBlankDown);
+              self._createPendingSortWarningDialog(doAllBlankDown);
             }
             else {
-                doAllBlankDown();
+              doAllBlankDown();
             }
           }
         }
@@ -1199,17 +1213,17 @@ var doAllFillDown = function() {
 var doFillDown = function(colIndex) {
   if (colIndex >= 0) {
     Refine.postCoreProcess(
-        "fill-down",
-        {
-          columnName: theProject.columnModel.columns[colIndex].name
-        },
-        null,
-        {modelsChanged: true},
-        {
-          onDone: function() {
-            doFillDown(--colIndex);
-          }
+      "fill-down",
+      {
+        columnName: theProject.columnModel.columns[colIndex].name
+      },
+      null,
+      {modelsChanged: true},
+      {
+        onDone: function() {
+          doFillDown(--colIndex);
         }
+      }
     );
   }
 };
@@ -1221,17 +1235,17 @@ var doAllBlankDown = function() {
 var doBlankDown = function(colIndex) {
   if (colIndex < theProject.columnModel.columns.length) {
     Refine.postCoreProcess(
-        "blank-down",
-        {
-          columnName: theProject.columnModel.columns[colIndex].name
-        },
-        null,
-        { modelsChanged: true },
-        {
-          onDone: function() {
-            doBlankDown(++colIndex);
-          }
+      "blank-down",
+      {
+        columnName: theProject.columnModel.columns[colIndex].name
+      },
+      null,
+      { modelsChanged: true },
+      {
+        onDone: function() {
+          doBlankDown(++colIndex);
         }
+      }
     );
   }
 };
@@ -1283,8 +1297,8 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
   var self = this;
   new ExpressionPreviewDialog(
     title,
-    column.cellIndex, 
-    o.rowIndices, 
+    column.cellIndex,
+    o.rowIndices,
     o.values,
     expression,
     onDone
@@ -1307,12 +1321,12 @@ DataTableView.prototype._createPendingSortWarningDialog = function(func) {
   var dismiss = function() { DialogSystem.dismissLevel(level - 1); };
 
   elmts.cancelButton.on('click', function () {
-     dismiss();
+    dismiss();
   });
 
   elmts.okButton.on('click', function () {
-     func();
-     dismiss();
+    func();
+    dismiss();
   });
 
 };
