@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -83,6 +85,15 @@ abstract public class Criterion {
         }
         return cellIndex;
     }
+
+    /**
+     * Adapt the criterion to column renames, without modifying this instance.
+     * 
+     * @param newColumnNames
+     *            a map from old to new column names
+     * @return an adapted criterion
+     */
+    public abstract Criterion renameColumns(Map<String, String> newColumnNames);
 
     // TODO: We'd like things to be more strongly typed a la the following, but
     // it's too involved to change right now

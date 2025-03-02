@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -70,6 +71,15 @@ public class RowDuplicatesRemovalOperation extends EngineDependentOperation {
     @Override
     protected String getBriefDescription(Project project) {
         return OperationDescription.row_remove_duplicates_brief();
+    }
+
+    @Override
+    public RowDuplicatesRemovalOperation renameColumns(Map<String, String> newColumnNames) {
+        return new RowDuplicatesRemovalOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                _criteria.stream()
+                        .map(criterion -> newColumnNames.getOrDefault(criterion, criterion))
+                        .collect(Collectors.toList()));
     }
 
     @Override

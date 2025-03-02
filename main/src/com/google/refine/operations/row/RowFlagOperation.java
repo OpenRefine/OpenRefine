@@ -35,6 +35,7 @@ package com.google.refine.operations.row;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -87,6 +88,13 @@ public class RowFlagOperation extends EngineDependentOperation {
     @JsonIgnore
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.empty());
+    }
+
+    @Override
+    public RowFlagOperation renameColumns(Map<String, String> newColumnNames) {
+        return new RowFlagOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                _flagged);
     }
 
     @Override
