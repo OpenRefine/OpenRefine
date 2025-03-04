@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.column;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,6 +83,12 @@ public class ColumnReorderOperation extends AbstractOperation {
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.empty(); // we don't know what columns there were before, so we can't diff them
+    }
+
+    @Override
+    public ColumnReorderOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ColumnReorderOperation(
+                _columnNames.stream().map(name -> newColumnNames.getOrDefault(name, name)).collect(Collectors.toList()));
     }
 
     @Override

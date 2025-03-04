@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -104,5 +105,10 @@ public class ColumnMoveOperation extends AbstractOperation {
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.empty());
+    }
+
+    @Override
+    public ColumnMoveOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ColumnMoveOperation(newColumnNames.getOrDefault(_columnName, _columnName), _index);
     }
 }
