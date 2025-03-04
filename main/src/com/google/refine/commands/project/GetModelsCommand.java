@@ -114,7 +114,12 @@ public class GetModelsCommand extends Command {
             }
         }
         if (project == null) {
-            project = getProject(request);
+            try {
+                project = getProject(request);
+            } catch (ServletException e) {
+                respondStatusError(response, e.getMessage());
+                return;
+            }
         }
 
         response.setHeader("Cache-Control", "no-cache");
