@@ -27,12 +27,15 @@ package org.openrefine.wikibase.schema;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -224,6 +227,27 @@ public class WbStatementExpr {
     @JsonProperty("mode")
     public StatementEditingMode getMode() {
         return mode;
+    }
+
+    @JsonIgnore
+    public Set<String> getColumnDependencies() {
+        Set<String> deps = new HashSet<>(mainSnakValueExpr.getColumnDependencies());
+        for (WbSnakExpr snak : qualifierExprs) {
+            deps.addAll(snak.getColumnDependencies());
+        }
+        for (WbReferenceExpr ref : referenceExprs) {
+            deps.addAll(ref.getColumnDependencies());
+        }
+        return deps;
+    }
+
+    public WbStatementExpr renameColumns(Map<String, String> substitutions) {
+        return new WbStatementExpr(
+                mainSnakValueExpr.renameColumns(substitutions),
+                qualifierExprs.stream().map(qualifier -> qualifier.renameColumns(substitutions)).collect(Collectors.toList()),
+                referenceExprs.stream().map(reference -> reference.renameColumns(substitutions)).collect(Collectors.toList()),
+                merger,
+                mode);
     }
 
     @Override

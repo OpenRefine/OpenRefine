@@ -24,6 +24,8 @@
 
 package org.openrefine.wikibase.schema;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import com.google.refine.model.Cell;
@@ -70,7 +72,13 @@ public class WbLanguageVariable extends WbVariableExpr<String> {
     }
 
     @Override
+    public WbExpression<String> renameColumns(Map<String, String> substitutions) {
+        return new WbLanguageVariable(substitutions.getOrDefault(getColumnName(), getColumnName()));
+    }
+
+    @Override
     public boolean equals(Object other) {
         return equalAsVariables(other, WbLanguageVariable.class);
     }
+
 }

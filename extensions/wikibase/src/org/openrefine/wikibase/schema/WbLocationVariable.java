@@ -25,6 +25,7 @@
 package org.openrefine.wikibase.schema;
 
 import java.text.ParseException;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
@@ -65,7 +66,13 @@ public class WbLocationVariable extends WbVariableExpr<GlobeCoordinatesValue> {
     }
 
     @Override
+    public WbExpression<GlobeCoordinatesValue> renameColumns(Map<String, String> substitutions) {
+        return new WbLocationVariable(substitutions.getOrDefault(getColumnName(), getColumnName()));
+    }
+
+    @Override
     public boolean equals(Object other) {
         return equalAsVariables(other, WbLocationVariable.class);
     }
+
 }
