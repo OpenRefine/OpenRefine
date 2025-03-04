@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -88,6 +89,21 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class);
         assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("my column")));
         assertEquals(op.getColumnDependencies(), Optional.of(Set.of("my column")));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        ReconClearSimilarCellsOperation op = ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class);
+
+        ReconClearSimilarCellsOperation renamed = op.renameColumns(Map.of("my column", "your column"));
+
+        String expectedJson = "{\"op\":\"core/recon-clear-similar-cells\","
+                + "\"description\":"
+                + new TextNode(OperationDescription.recon_clear_similar_cells_brief("some value", "your column")).toString() + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"your column\","
+                + "\"similarValue\":\"some value\"}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

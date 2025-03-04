@@ -34,12 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.recon;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -113,6 +115,19 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(new ColumnsDiff(List.of(), Set.of(), Set.of(_toColumnNames)));
+    }
+
+    @Override
+    public ReconCopyAcrossColumnsOperation renameColumns(Map<String, String> newColumnNames) {
+        List<String> translatedToColumnNames = Arrays.asList(_toColumnNames).stream()
+                .map(name -> newColumnNames.getOrDefault(name, name))
+                .collect(Collectors.toList());
+        return new ReconCopyAcrossColumnsOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_fromColumnName, _fromColumnName),
+                translatedToColumnNames.toArray(new String[translatedToColumnNames.size()]),
+                _judgments,
+                _applyToJudgedCells);
     }
 
     @Override

@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -75,6 +76,28 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
         AbstractOperation operation = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
         assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("ids")));
         assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("ids")));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        ReconUseValuesAsIdentifiersOperation SUT = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
+
+        ReconUseValuesAsIdentifiersOperation renamed = SUT.renameColumns(Map.of("ids", "identifiers"));
+
+        String expectedJson = "{\n"
+                + "       \"columnName\" : \"identifiers\",\n"
+                + "       \"description\" : "
+                + new TextNode(OperationDescription.recon_use_values_as_identifiers_brief("identifiers")).toString() + ",\n"
+                + "       \"engineConfig\" : {\n"
+                + "         \"facets\" : [ ],\n"
+                + "         \"mode\" : \"row-based\"\n"
+                + "       },\n"
+                + "       \"identifierSpace\" : \"http://test.org/entities/\",\n"
+                + "       \"op\" : \"core/recon-use-values-as-identifiers\",\n"
+                + "       \"schemaSpace\" : \"http://test.org/schema/\",\n"
+                + "       \"service\" : \"http://localhost:8080/api\"\n"
+                + "     }";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

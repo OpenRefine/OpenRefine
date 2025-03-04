@@ -33,6 +33,7 @@ import static org.testng.Assert.assertNull;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -135,6 +136,32 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 null, true);
         assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("A")));
         assertEquals(op.getColumnDependencies(), Optional.of(Set.of("A")));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        String json = "{\"op\":\"core/recon-judge-similar-cells\","
+                + "\"description\":" + new TextNode(OperationDescription.recon_judge_similar_cells_new_share_brief("foo", "A")).toString()
+                + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"A\","
+                + "\"similarValue\":\"foo\","
+                + "\"judgment\":\"new\","
+                + "\"shareNewTopics\":true}";
+
+        var SUT = ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class);
+
+        ReconJudgeSimilarCellsOperation renamed = SUT.renameColumns(Map.of("A", "B"));
+
+        String expectedJson = "{\"op\":\"core/recon-judge-similar-cells\","
+                + "\"description\":" + new TextNode(OperationDescription.recon_judge_similar_cells_new_share_brief("foo", "B")).toString()
+                + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"B\","
+                + "\"similarValue\":\"foo\","
+                + "\"judgment\":\"new\","
+                + "\"shareNewTopics\":true}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test
