@@ -464,6 +464,7 @@
     "core-project/canceling": "Canceling…",
     "core-project/last-op-er": "The last operation encountered some errors:",
     "core-project/continue-remaining": "Continue with the remaining operations?",
+    "core-project/applied-n-operations": "$1 operations applied",
     "core-project/undo": "Undo",
     "core-project/confirm-erasure-of-project-history": "Confirm deletion of project history",
     "core-project/applying-change-erases-entries": "Applying this change will overwrite the following {{plural:$1|history entry|$1 history entries}}:",

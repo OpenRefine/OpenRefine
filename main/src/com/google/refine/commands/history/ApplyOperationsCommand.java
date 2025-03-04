@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.history;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -41,7 +43,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.commands.Command;
+import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.Recipe;
@@ -50,6 +55,24 @@ import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
 public class ApplyOperationsCommand extends Command {
+
+    /**
+     * Response for the case when all operations are immediate, returning the corresponding history entries.
+     */
+    protected static class HistoryEntriesResponse {
+
+        @JsonProperty("code")
+        protected String getCode() {
+            return "ok";
+        }
+
+        @JsonProperty("historyEntries")
+        protected List<HistoryEntry> historyEntries;
+
+        protected HistoryEntriesResponse(List<HistoryEntry> entries) {
+            historyEntries = entries;
+        }
+    }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -75,15 +98,19 @@ public class ApplyOperationsCommand extends Command {
             }
 
             // Run all operations in sequence
+            List<HistoryEntry> entries = new ArrayList<>(recipe.getOperations().size());
             for (AbstractOperation operation : recipe.getOperations()) {
                 Process process = operation.createProcess(project, new Properties());
-                project.processManager.queueProcess(process);
+                HistoryEntry entry = project.processManager.queueProcess(process);
+                if (entry != null) {
+                    entries.add(entry);
+                }
             }
 
             if (project.processManager.hasPending()) {
                 respond(response, "{ \"code\" : \"pending\" }");
             } else {
-                respond(response, "{ \"code\" : \"ok\" }");
+                respondJSON(response, new HistoryEntriesResponse(entries));
             }
         } catch (RecipeValidationException e) {
             respondJSON(response, e);

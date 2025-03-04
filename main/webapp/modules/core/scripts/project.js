@@ -423,6 +423,8 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
 
         if ("historyEntry" in o) {
           ui.processPanel.showUndo(o.historyEntry);
+        } else if ("historyEntries" in o) {
+          ui.processPanel.showMultipleUndo(o.historyEntries);
         }
       } else if (o.code == "pending") {
         if ("onPending" in callbacks) {

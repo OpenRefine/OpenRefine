@@ -38,10 +38,17 @@ describe(__filename, function () {
     );
     cy.get('.dialog-container button[bind="applyButton"]').click();
 
+    cy.assertNotificationContainingText('2 operations applied');
+
     cy.get('table.data-table thead th[title="Shrt_Desc"]').should(
       'not.to.exist'
     );
     cy.get('table.data-table thead th[title="Water"]').should('not.to.exist');
+
+    cy.get('.notification-action a').should('to.contain', 'Undo').click();
+
+    cy.get('table.data-table thead th[title="Shrt_Desc"]').should('exist');
+    cy.get('table.data-table thead th[title="Water"]').should('exist');
   });
 
   it('Use an invalid JSON payload', function () {
