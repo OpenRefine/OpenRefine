@@ -139,23 +139,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 a.history-entry {
-  display: block;
-  position: relative;
+  display: grid;
+  grid-template-columns: 2em 1fr;
   padding: var(--padding-normal);
-  padding-left: calc(var(--padding-normal) + 30px);
   text-decoration: none;
   color: var(--text-primary);
   border-bottom: 1px dotted #ddd;
-}
-
-.history-entry-index {
-  position: absolute;
-  top: 8px;
-  left: 0;
-  width: 30px;
-  text-align: right;
-  font-size: 80%;
-  padding: 2px 0px;
 }
 
 a.history-entry.filtered-out {
@@ -166,6 +155,19 @@ a.history-entry.filtered-out {
 
 a.history-entry.filtered-out>* {
   display: none;
+}
+
+.history-entry-icon img {
+  max-height: 1.5em;
+  max-width: 1.5em;
+}
+
+.history-future .history-entry-icon img {
+  opacity: 0.5;
+}
+
+.history-entry-text, .history-entry-icon {
+  align-self: baseline;
 }
 
 .history-panel-controls {
