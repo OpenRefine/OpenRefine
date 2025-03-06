@@ -92,23 +92,36 @@ ProcessPanel.prototype.update = function(updateOptions, onDone) {
 };
 
 ProcessPanel.prototype.showUndo = function(historyEntry) {
-  var self = this;
-
   this._latestHistoryEntry = historyEntry;
+  this.showNotificationWithUndo(historyEntry.description);
+};
 
-  truncDescription = historyEntry.description.length > 250 ?
-  	historyEntry.description.substring(0, 250) + " ..." : historyEntry.description  
+ProcessPanel.prototype.showNotificationWithUndo = function(description) {
+  var self = this;
+  var truncDescription = description.length > 250 ?
+  	description.substring(0, 250) + " ..." : description;
 
   this._div.stop(true, false);
   this._elmts.progressDiv.hide();
   this._elmts.undoDiv.show();
-  this._elmts.undoDescription.text( truncDescription );
+  this._elmts.undoDescription.text(truncDescription);
   this._elmts.undoLink.off().on('click',function() { self.undo(); });
   
   this._div
     .fadeIn(200)
     .delay(10000)
     .fadeOut(200);
+};
+
+ProcessPanel.prototype.showMultipleUndo = function(historyEntries) {
+  var self = this;
+
+  if (historyEntries.length === 1) {
+    self.showUndo(historyEntries[0]);
+  } else if (historyEntries.length > 1) {
+    this._latestHistoryEntry = historyEntries[0];
+    this.showNotificationWithUndo($.i18n('core-project/applied-n-operations', historyEntries.length));
+  }
 };
 
 ProcessPanel.prototype.undo = function() {
