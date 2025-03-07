@@ -135,6 +135,17 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
         return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
     }
 
+    @Override
+    public ReconMarkNewTopicsOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconMarkNewTopicsOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                _shareNewTopics,
+                _service,
+                _identifierSpace,
+                _schemaSpace);
+    }
+
     protected ReconConfig getNewReconConfig(Column column) {
         return column.getReconConfig() != null ? column.getReconConfig()
                 : new StandardReconConfig(
@@ -225,4 +236,5 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                 getNewReconConfig(column),
                 null);
     }
+
 }
