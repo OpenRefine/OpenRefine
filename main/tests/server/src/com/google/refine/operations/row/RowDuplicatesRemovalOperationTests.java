@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -146,6 +147,15 @@ public class RowDuplicatesRemovalOperationTests extends RefineTest {
                 });
 
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRenameColumns() {
+        RowDuplicatesRemovalOperation SUT = new RowDuplicatesRemovalOperation(EngineConfig.defaultRowBased(), List.of("foo", "bar"));
+
+        RowDuplicatesRemovalOperation renamed = SUT.renameColumns(Map.of("foo", "foo2"));
+
+        assertEquals(renamed._criteria, List.of("foo2", "bar"));
     }
 
 }

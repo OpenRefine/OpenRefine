@@ -32,6 +32,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -99,6 +100,13 @@ public class RowAdditionOperationTests extends RefineTest {
     public void testColumnDependencies() {
         assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
         assertEquals(op.getColumnDependencies(), Optional.of(Set.of()));
+    }
+
+    @Test
+    public void testRename() {
+        RowAdditionOperation renamed = op.renameColumns(Map.of("foo", "bar"));
+
+        TestUtils.isSerializedTo(renamed, json);
     }
 
 }
