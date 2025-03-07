@@ -105,6 +105,9 @@ DataTableView.prototype._startResizing = function(columnIndex, clickEvent) {
   // for conversion from px to em
   state.emFactor = parseFloat(getComputedStyle($(".data-table-container colgroup")[0]).fontSize);
 
+  state.col.width(state.originalWidth);
+  columnHeader._td.classList.add('resized-column');
+
   $('body')
       .on('mousemove', DataTableView.mouseMoveListener)
       .on('mouseup', DataTableView.mouseReleaseListener);
