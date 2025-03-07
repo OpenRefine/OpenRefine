@@ -170,6 +170,7 @@ function registerOperations() {
 
   OR.registerOperation(module, "column-addition", Packages.com.google.refine.operations.column.ColumnAdditionOperation);
   OR.registerOperation(module, "column-removal", Packages.com.google.refine.operations.column.ColumnRemovalOperation);
+  OR.registerOperation(module, "column-multi-removal", Packages.com.google.refine.operations.column.ColumnMultiRemovalOperation);
   OR.registerOperation(module, "column-rename", Packages.com.google.refine.operations.column.ColumnRenameOperation);
   OR.registerOperation(module, "column-move", Packages.com.google.refine.operations.column.ColumnMoveOperation);
   OR.registerOperation(module, "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);

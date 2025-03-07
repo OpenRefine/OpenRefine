@@ -30,6 +30,7 @@ OperationIconRegistry.setIcon('core/key-value-columnize', 'images/operations/key
 
 OperationIconRegistry.setIcon('core/column-addition', 'images/operations/add-column.svg');
 OperationIconRegistry.setIcon('core/column-removal', 'images/operations/delete.svg');
+OperationIconRegistry.setIcon('core/column-multi-removal', 'images/operations/delete.svg');
 OperationIconRegistry.setIcon('core/column-rename', 'images/operations/rename.svg');
 // OperationIconRegistry.setIcon('core/column-move', undefined);
 OperationIconRegistry.setIcon('core/column-split', 'images/operations/split-columns.svg');
