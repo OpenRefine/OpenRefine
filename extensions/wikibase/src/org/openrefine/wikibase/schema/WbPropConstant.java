@@ -37,7 +37,7 @@ import org.openrefine.wikibase.schema.validation.ValidationState;
  * @author Antonin Delpeuch
  *
  */
-public class WbPropConstant implements WbExpression<PropertyIdValue> {
+public class WbPropConstant extends WbConstantExpr<PropertyIdValue> {
 
     private String pid;
     private String label;

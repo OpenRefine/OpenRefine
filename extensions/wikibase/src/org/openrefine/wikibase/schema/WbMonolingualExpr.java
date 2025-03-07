@@ -24,6 +24,10 @@
 
 package org.openrefine.wikibase.schema;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -85,6 +89,18 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
     @JsonProperty("value")
     public WbExpression<? extends StringValue> getValueExpr() {
         return valueExpr;
+    }
+
+    @Override
+    public Set<String> getColumnDependencies() {
+        HashSet<String> set = new HashSet<>(languageExpr.getColumnDependencies());
+        set.addAll(valueExpr.getColumnDependencies());
+        return set;
+    }
+
+    @Override
+    public WbMonolingualExpr renameColumns(Map<String, String> substitutions) {
+        return new WbMonolingualExpr(languageExpr.renameColumns(substitutions), valueExpr.renameColumns(substitutions));
     }
 
     @Override
