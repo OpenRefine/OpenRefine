@@ -1,0 +1,36 @@
+.recipe-svg-container {
+    text-align: center;
+    overflow: auto;
+    min-height: 100px;
+    max-height: 100%;
+    position: relative;
+}
+
+.recipe-tooltip {
+    position: fixed;
+    z-index: 20;
+}
+
+.recipe-tooltip-inner {
+    background-color: white;
+    border: 1px solid #888;
+    padding: 3px;
+    padding-left: 7px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    text-align: left;
+    word-wrap: break-word;
+    max-width: 250px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.recipe-tooltip-triangle {
+    width: 0; 
+    height: 0; 
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-right:7px solid #888;
+    display: inline-block;
+    vertical-align: middle;
+  }
