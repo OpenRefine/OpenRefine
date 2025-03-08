@@ -1,0 +1,17 @@
+<div bind="recipe-widget" class="refine-tabs">
+  <ul>
+    <li><a href="#recipe-graph" bind="graphButton"></a></li>
+    <li><a href="#recipe-json" bind="jsonButton"></a></li>
+  </ul>
+  <div id="recipe-graph">
+    <div class="recipe-widget-container recipe-svg-container" bind="graphContainer">
+      <svg bind="recipeSvg" id="recipe-svg">
+      </svg>
+    </div>
+  </div>
+  <div id="recipe-json" style="display: none;">
+    <div class="recipe-widget-container" bind="jsonContainer">
+      <textarea bind="jsonTextarea" spellcheck="false"></textarea>
+    </div>
+  </div>
+</div>

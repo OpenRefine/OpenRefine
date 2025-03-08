@@ -228,7 +228,7 @@ a.history-entry.filtered-out>* {
 
 .history-extract-dialog-panel {
   border: 1px solid var(--chrome-primary);
-  height: 400px;
+  height: 500px;
   overflow: auto;
 }
 
