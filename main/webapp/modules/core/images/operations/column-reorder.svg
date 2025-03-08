@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 33.866666 33.866667"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="column-reorder.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="4.5203645"
+     inkscape:cx="-3.6501481"
+     inkscape:cy="73.334794"
+     inkscape:window-width="1918"
+     inkscape:window-height="1054"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1359" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="powerclip"
+       id="path-effect5466"
+       is_visible="true"
+       lpeversion="1"
+       inverse="true"
+       flatten="false"
+       hide_clip="false"
+       message="Utilise la règle de remplissage « fill-rule: evenodd » de la boîte de dialogue &lt;b&gt;Fond et contour&lt;/b&gt; en l'absence de résultat de mise à plat après une conversion en chemin." />
+    <marker
+       style="overflow:visible"
+       id="TriangleStart"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="4"
+       markerHeight="4"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-3"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="4"
+       markerHeight="4"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6" />
+    </marker>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5446">
+      <path
+         style="color:#000000;display:none;fill:#000000;fill-rule:evenodd;stroke-width:1;-inkscape-stroke:none"
+         d="m 6.1972656,4.5039063 c -0.040654,3.2829029 1.1578034,6.0880687 2.7675781,8.0546877 1.6097753,1.966619 3.4561073,3.233594 4.9902343,4.43164 3.068254,2.396094 5.010971,3.692282 4.828125,9.134766 l 6.996094,0.234375 C 26.039814,18.604979 21.629113,14.102784 18.263672,11.474609 16.580951,10.160522 15.187984,9.109089 14.380859,8.123047 13.573735,7.1370047 13.175395,6.3559148 13.197266,4.5898438 Z"
+         id="path5448" />
+      <path
+         id="lpe_path-effect5466"
+         style="color:#000000;fill:#000000;fill-rule:evenodd;stroke-width:1;-inkscape-stroke:none"
+         class="powerclip"
+         d="M 1.9228291,-0.50158093 H 29.577289 V 35.53422 H 1.9228291 Z M 6.1972656,4.5039063 c -0.040654,3.2829029 1.1578034,6.0880687 2.7675781,8.0546877 1.6097753,1.966619 3.4561073,3.233594 4.9902343,4.43164 3.068254,2.396094 5.010971,3.692282 4.828125,9.134766 l 6.996094,0.234375 C 26.039814,18.604979 21.629113,14.102784 18.263672,11.474609 16.580951,10.160522 15.187984,9.109089 14.380859,8.123047 13.573735,7.1370047 13.175395,6.3559148 13.197266,4.5898438 Z" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart)"
+       d="M 9.7224932,4.4937097 C 9.5974432,14.591668 22.749053,12.992789 22.305689,26.189682"
+       id="path4433"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart-3)"
+       d="M 23.326461,4.5138975 C 23.451511,14.611855 10.299901,13.012976 10.743265,26.209869"
+       id="path4433-0"
+       sodipodi:nodetypes="cc"
+       clip-path="url(#clipPath5446)"
+       inkscape:path-effect="#path-effect5466"
+       inkscape:original-d="M 23.326461,4.5138975 C 23.451511,14.611855 10.299901,13.012976 10.743265,26.209869" />
+  </g>
+</svg>
