@@ -75,7 +75,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
   RS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
-  
+
   RS.registerCommand(module, "get-models", new Packages.com.google.refine.commands.project.GetModelsCommand());
   RS.registerCommand(module, "get-rows", new Packages.com.google.refine.commands.row.GetRowsCommand());
   RS.registerCommand(module, "get-processes", new Packages.com.google.refine.commands.history.GetProcessesCommand());
@@ -86,7 +86,6 @@ function registerCommands() {
 
   RS.registerCommand(module, "undo-redo", new Packages.com.google.refine.commands.history.UndoRedoCommand());
   RS.registerCommand(module, "apply-operations", new Packages.com.google.refine.commands.history.ApplyOperationsCommand());
-  RS.registerCommand(module, "get-column-dependencies", new Packages.com.google.refine.commands.history.GetColumnDependenciesCommand());
   RS.registerCommand(module, "cancel-processes", new Packages.com.google.refine.commands.history.CancelProcessesCommand());
 
   RS.registerCommand(module, "compute-facets", new Packages.com.google.refine.commands.browsing.ComputeFacetsCommand());
@@ -106,7 +105,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "get-languages", Packages.com.google.refine.commands.lang.GetLanguagesCommand());
   RS.registerCommand(module, "load-language", Packages.com.google.refine.commands.lang.LoadLanguageCommand());
-  
+
   RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
   RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
   RS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
@@ -141,7 +140,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
   RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
-  RS.registerCommand(module, "get-starred-expressions", new Packages.com.google.refine.commands.expr.GetStarredExpressionsCommand());     
+  RS.registerCommand(module, "get-starred-expressions", new Packages.com.google.refine.commands.expr.GetStarredExpressionsCommand());
   RS.registerCommand(module, "toggle-starred-expression", new Packages.com.google.refine.commands.expr.ToggleStarredExpressionCommand());
   RS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
   RS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
@@ -151,7 +150,7 @@ function registerCommands() {
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
   RS.registerCommand(module, "open-extensions-dir", new Packages.com.google.refine.commands.OpenExtensionsDirCommand());
-  
+
 }
 
 function registerOperations() {
@@ -209,18 +208,18 @@ function registerImporting() {
 
   IM.registerFormat("text", "core-import-formats/text" ); // generic format, no parser to handle it
   IM.registerFormat("text/line-based", "core-import-formats/text/line-based", "LineBasedParserUI",
-      new Packages.com.google.refine.importers.LineBasedImporter());
+    new Packages.com.google.refine.importers.LineBasedImporter());
   IM.registerFormat("text/line-based/*sv", "core-import-formats/text/line-based/*sv", "SeparatorBasedParserUI",
-      new Packages.com.google.refine.importers.SeparatorBasedImporter());
+    new Packages.com.google.refine.importers.SeparatorBasedImporter());
   IM.registerFormat("text/line-based/fixed-width", "core-import-formats/text/line-based/fixed-width", "FixedWidthParserUI",
-      new Packages.com.google.refine.importers.FixedWidthImporter());
+    new Packages.com.google.refine.importers.FixedWidthImporter());
 
-  IM.registerFormat("text/rdf/nt", "core-import-formats/text/rdf/nt", "RdfTriplesParserUI", 
-              new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.NT));
-  IM.registerFormat("text/rdf/n3", "core-import-formats/text/rdf/n3", "RdfTriplesParserUI", 
-          new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
-  IM.registerFormat("text/rdf/ttl", "core-import-formats/text/rdf/ttl", "RdfTriplesParserUI", 
-                  new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.TTL));
+  IM.registerFormat("text/rdf/nt", "core-import-formats/text/rdf/nt", "RdfTriplesParserUI",
+    new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.NT));
+  IM.registerFormat("text/rdf/n3", "core-import-formats/text/rdf/n3", "RdfTriplesParserUI",
+    new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
+  IM.registerFormat("text/rdf/ttl", "core-import-formats/text/rdf/ttl", "RdfTriplesParserUI",
+    new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.TTL));
   IM.registerFormat("text/rdf/xml", "core-import-formats/text/rdf/xml", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
   IM.registerFormat("text/rdf/ld+json", "core-import-formats/text/rdf/ld+json", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
 
@@ -244,7 +243,7 @@ function registerImporting() {
 
   IM.registerExtension(".xml", "text/xml");
   IM.registerExtension(".atom", "text/xml");
-  
+
   IM.registerExtension(".json", "text/json");
   IM.registerExtension(".js", "text/json");
 
@@ -252,10 +251,10 @@ function registerImporting() {
   IM.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
 
   IM.registerExtension(".ods", "text/xml/ods");
-  
+
   IM.registerExtension(".nt", "text/rdf/nt");
   IM.registerExtension(".ntriples", "text/rdf/nt");
-  
+
   IM.registerExtension(".n3", "text/rdf/n3");
   IM.registerExtension(".ttl", "text/rdf/ttl");
   IM.registerExtension(".jsonld", "text/rdf/ld+json");
@@ -276,7 +275,7 @@ function registerImporting() {
   IM.registerMimeType("text/tab-separated-values", "text/line-based/*sv");
 
   IM.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
-  
+
   IM.registerMimeType("application/n-triples", "text/rdf/nt");
   IM.registerMimeType("text/n3", "text/rdf/n3");
   IM.registerMimeType("text/rdf+n3", "text/rdf/n3");
@@ -306,7 +305,7 @@ function registerImporting() {
   IM.registerMimeType("+json", "text/json"); // suffix will be tried only as fallback
 
   IM.registerMimeType("application/marc", "text/marc");
-  
+
   /*
    *  Format guessers: these take a format derived from extensions or mime-types,
    *  look at the actual files' content, and try to guess a better format.
@@ -328,16 +327,16 @@ function registerImporting() {
 }
 
 function registerExporters() {
-   var ER = Packages.com.google.refine.exporters.ExporterRegistry;
-   ER.registerExporter("csv", new Packages.com.google.refine.exporters.CsvExporter());
-   ER.registerExporter("tsv", new Packages.com.google.refine.exporters.CsvExporter('\t'.charAt(0)));
-   ER.registerExporter("*sv", new Packages.com.google.refine.exporters.CsvExporter());
-   ER.registerExporter("xls", new Packages.com.google.refine.exporters.XlsExporter(false));
-   ER.registerExporter("xlsx", new Packages.com.google.refine.exporters.XlsExporter(true));
-   ER.registerExporter("ods", new Packages.com.google.refine.exporters.OdsExporter());
-   ER.registerExporter("html", new Packages.com.google.refine.exporters.HtmlTableExporter());
-   ER.registerExporter("template", new Packages.com.google.refine.exporters.TemplatingExporter());
-   ER.registerExporter("sql", new Packages.com.google.refine.exporters.sql.SqlExporter());
+  var ER = Packages.com.google.refine.exporters.ExporterRegistry;
+  ER.registerExporter("csv", new Packages.com.google.refine.exporters.CsvExporter());
+  ER.registerExporter("tsv", new Packages.com.google.refine.exporters.CsvExporter('\t'.charAt(0)));
+  ER.registerExporter("*sv", new Packages.com.google.refine.exporters.CsvExporter());
+  ER.registerExporter("xls", new Packages.com.google.refine.exporters.XlsExporter(false));
+  ER.registerExporter("xlsx", new Packages.com.google.refine.exporters.XlsExporter(true));
+  ER.registerExporter("ods", new Packages.com.google.refine.exporters.OdsExporter());
+  ER.registerExporter("html", new Packages.com.google.refine.exporters.HtmlTableExporter());
+  ER.registerExporter("template", new Packages.com.google.refine.exporters.TemplatingExporter());
+  ER.registerExporter("sql", new Packages.com.google.refine.exporters.sql.SqlExporter());
 }
 
 function registerLanguages() {
@@ -347,20 +346,20 @@ function registerLanguages() {
 }
 
 function registerDistances() {
-   var DF = Packages.com.google.refine.clustering.knn.DistanceFactory;
-   var VicinoDistance = Packages.com.google.refine.clustering.knn.VicinoDistance;
-   DF.put("levenshtein", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.LevenshteinDistance()));
-   DF.put("ppm", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.PPMDistance()));
+  var DF = Packages.com.google.refine.clustering.knn.DistanceFactory;
+  var VicinoDistance = Packages.com.google.refine.clustering.knn.VicinoDistance;
+  DF.put("levenshtein", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.LevenshteinDistance()));
+  DF.put("ppm", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.PPMDistance()));
 }
 
 function registerKeyers() {
-   var KF = Packages.com.google.refine.clustering.binning.KeyerFactory;
-   KF.put("fingerprint", new Packages.com.google.refine.clustering.binning.FingerprintKeyer());
-   KF.put("ngram-fingerprint", new Packages.com.google.refine.clustering.binning.NGramFingerprintKeyer());
-   KF.put("metaphone3", new Packages.com.google.refine.clustering.binning.Metaphone3Keyer());
-   KF.put("cologne-phonetic", new Packages.com.google.refine.clustering.binning.ColognePhoneticKeyer());
-   KF.put("daitch-mokotoff", new Packages.com.google.refine.clustering.binning.DaitchMokotoffKeyer());
-   KF.put("beider-morse", new Packages.com.google.refine.clustering.binning.BeiderMorseKeyer());
+  var KF = Packages.com.google.refine.clustering.binning.KeyerFactory;
+  KF.put("fingerprint", new Packages.com.google.refine.clustering.binning.FingerprintKeyer());
+  KF.put("ngram-fingerprint", new Packages.com.google.refine.clustering.binning.NGramFingerprintKeyer());
+  KF.put("metaphone3", new Packages.com.google.refine.clustering.binning.Metaphone3Keyer());
+  KF.put("cologne-phonetic", new Packages.com.google.refine.clustering.binning.ColognePhoneticKeyer());
+  KF.put("daitch-mokotoff", new Packages.com.google.refine.clustering.binning.DaitchMokotoffKeyer());
+  KF.put("beider-morse", new Packages.com.google.refine.clustering.binning.BeiderMorseKeyer());
 }
 
 /*
@@ -378,22 +377,22 @@ function init() {
   registerKeyers();
 
   var commonModules = [
-      "3rdparty/jquery.js",
-      "3rdparty/jquery-migrate.js",
-      "externals/jquery-ui/jquery-ui.js",
-      "3rdparty/js.cookie.js",
-      "3rdparty/underscore.js",
+    "3rdparty/jquery.js",
+    "3rdparty/jquery-migrate.js",
+    "3rdparty/jquery-ui/jquery-ui.js",
+    "3rdparty/js.cookie.js",
+    "3rdparty/underscore.js",
 
-      "3rdparty/jquery.i18n/CLDRPluralRuleParser.js",
-      "3rdparty/jquery.i18n/jquery.i18n.js",
-      "3rdparty/jquery.i18n/jquery.i18n.messagestore.js",
-      "3rdparty/jquery.i18n/jquery.i18n.fallbacks.js",
-      "3rdparty/jquery.i18n/jquery.i18n.parser.js",
-      "3rdparty/jquery.i18n/jquery.i18n.emitter.js",
-      "3rdparty/jquery.i18n/jquery.i18n.language.js",
-      "3rdparty/jquery.i18n/languages/fi.js",
-      "3rdparty/jquery.i18n/languages/ru.js",
-    ];
+    "3rdparty/jquery.i18n/CLDRPluralRuleParser.js",
+    "3rdparty/jquery.i18n/jquery.i18n.js",
+    "3rdparty/jquery.i18n/jquery.i18n.messagestore.js",
+    "3rdparty/jquery.i18n/jquery.i18n.fallbacks.js",
+    "3rdparty/jquery.i18n/jquery.i18n.parser.js",
+    "3rdparty/jquery.i18n/jquery.i18n.emitter.js",
+    "3rdparty/jquery.i18n/jquery.i18n.language.js",
+    "3rdparty/jquery.i18n/languages/fi.js",
+    "3rdparty/jquery.i18n/languages/ru.js",
+  ];
 
   var RC = Packages.com.google.refine.model.recon.ReconConfig;
   RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);
@@ -451,7 +450,7 @@ function init() {
     "index/styles",
     module,
     [
-      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
+      "3rdparty/jquery-ui/css/ui-lightness/jquery-ui.css",
       "3rdparty/select2/select2.css",
       "3rdparty/tablesorter/theme.blue.css",
 
@@ -561,7 +560,6 @@ function init() {
     module,
     [
       "externals/suggest/css/suggest-4_3.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
       "styles/theme.css",
@@ -614,7 +612,6 @@ function init() {
     module,
     [
       "externals/suggest/css/suggest-4_3.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
 
       "styles/theme.css",
       "styles/jquery-ui-overrides.css",
@@ -631,10 +628,10 @@ function process(path, request, response) {
   if (path == "wirings.js") {
     var wirings = butterfly.getWirings(request);
     butterfly.sendString(
-      request, 
-      response, 
+      request,
+      response,
       "var ModuleWirings = " + JSON.stringify(wirings) + ";",
-      encoding, 
+      encoding,
       "text/javascript"
     );
   } else {
@@ -667,10 +664,10 @@ function process(path, request, response) {
             var urlConnection = url.openConnection();
 
             input = new Packages.java.io.BufferedReader(
-                new Packages.java.io.InputStreamReader(urlConnection.getInputStream(), "UTF8"));
+              new Packages.java.io.InputStreamReader(urlConnection.getInputStream(), "UTF8"));
 
-            output.write("/* ===== "); 
-            output.write(qualifiedPath.fullPath); 
+            output.write("/* ===== ");
+            output.write(qualifiedPath.fullPath);
             output.write(" ===== */\n\n");
 
             Packages.org.apache.commons.io.IOUtils.copy(input, output);
@@ -699,10 +696,10 @@ function process(path, request, response) {
           params.put(name, request.getParameterValues(name)[0]);
         }
         context.params = params;
-        
+
         // We prepend '' to convert the Java string to a Javascript string.
         context.projectID = ('' + request.getParameter("project")).replace(/\D/g, '');
-        
+
         var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
         var styleInjection = [];
         for (var key in styles) {
@@ -710,9 +707,9 @@ function process(path, request, response) {
             var qualifiedPath = styles[key];
             var styleSource;
             if (qualifiedPath.fullPath.substring(1).startsWith("extension/")) {
-                styleSource = qualifiedPath.fullPath.split("/")[2];
+              styleSource = qualifiedPath.fullPath.split("/")[2];
             } else {
-                styleSource = "core";
+              styleSource = "core";
             }
 
 
@@ -730,15 +727,15 @@ function process(path, request, response) {
             if (scripts.hasOwnProperty(key)) {
               var qualifiedPath = scripts[key];
               scriptInjection.push(
-                  '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
+                '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
             }
           }
           context.scriptInjection = scriptInjection.join("\n");
         }
-        
+
         if (templatedFiles[lastSegment].outputEncodings) {
           var encodings = [];
-          
+
           var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();
           var keySetArray = sortedCharsetMap.keySet().toArray();
           for (var key in keySetArray) {
@@ -754,18 +751,18 @@ function process(path, request, response) {
                 aliases.push(aliasesArray[key1]);
               }
             }
-            
+
             encodings.push({
               code: code,
               name: charset.displayName(),
               aliases: aliases
             });
           }
-          
+
           context.encodingJson = JSON.stringify(encodings);
           context.defaultEncoding = JSON.stringify(Packages.java.nio.charset.Charset.defaultCharset().name());
         }
-        
+
         send(request, response, path + ".vt", context);
       }
     }
