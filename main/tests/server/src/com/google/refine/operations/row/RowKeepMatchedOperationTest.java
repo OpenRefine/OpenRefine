@@ -2,12 +2,15 @@
 package com.google.refine.operations.row;
 
 import static com.google.refine.operations.OperationDescription.row_keep_matching_brief;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
@@ -30,6 +33,7 @@ import com.google.refine.grel.Function;
 import com.google.refine.grel.Parser;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -171,6 +175,9 @@ public class RowKeepMatchedOperationTest extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         RowKeepMatchedOperation operation = new RowKeepMatchedOperation(engineConfig);
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("hello")));
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
+
         runOperation(operation, project);
 
         Project expected = createProject(new String[] { "foo", "bar", "hello" },
@@ -189,6 +196,8 @@ public class RowKeepMatchedOperationTest extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         RowKeepMatchedOperation operation = new RowKeepMatchedOperation(engineConfig);
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("hello")));
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
 
         runOperation(operation, project);
 
