@@ -15,40 +15,35 @@ describe(__filename, function () {
       .click();
       
     // JSON for operations that will be applied
-    const operations = [
-      {
-        op: 'core/column-removal',
-        columnName: 'Shrt_Desc',
-        description: 'Remove column Shrt_Desc',
-      },
-      {
-        op: 'core/column-removal',
-        columnName: 'Water',
-        description: 'Remove column Water',
-      },
-    ];
-
-    cy.get('.dialog-container .history-operation-json').type(
-      JSON.stringify(operations),
-      {
-        parseSpecialCharSequences: false,
-        delay: 0,
-        waitForAnimations: false,
-      }
-    );
+    const recipeFile = { filePath: 'recipe.json', mimeType: 'application/json' };
+    cy.get('#file-input[type="file"]').attachFile(recipeFile);
+    
     cy.get('.dialog-container button[bind="applyButton"]').click();
 
-    cy.assertNotificationContainingText('2 operations applied');
+    // Column mapping dialog
+    cy.get('.dialog-header').contains('Map recipe columns to project columns');
+    cy.get('select[name="column_0"]').contains('Energ_Kcal');
+    cy.get('select[name="column_2"]').select('Shrt_Desc');
 
-    cy.get('table.data-table thead th[title="Shrt_Desc"]').should(
+    cy.get('input[type="submit"]').contains('Run operations').click();
+
+    cy.get('table.data-table thead th[title="Energ_Kcal"]').should(
       'not.to.exist'
     );
-    cy.get('table.data-table thead th[title="Water"]').should('not.to.exist');
+
+    cy.assertNotificationContainingText('3 operations applied');
+    cy.get('a#or-proj-undoRedo > span.count')
+      .invoke('text')
+      .should('equal', '3 / 3');
+    cy.get('#summary-bar > span')
+      .invoke('text')
+      .should('equal', '5 rows');
 
     cy.get('.notification-action a').should('to.contain', 'Undo').click();
 
-    cy.get('table.data-table thead th[title="Shrt_Desc"]').should('exist');
-    cy.get('table.data-table thead th[title="Water"]').should('exist');
+    cy.get('a#or-proj-undoRedo > span.count')
+      .invoke('text')
+      .should('equal', '0 / 3');
   });
 
   it('Use an invalid JSON payload', function () {
