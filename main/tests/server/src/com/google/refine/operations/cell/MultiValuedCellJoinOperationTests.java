@@ -122,6 +122,11 @@ public class MultiValuedCellJoinOperationTests extends RefineTest {
     }
 
     @Test
+    public void testColumnsDependenciesWithIdenticalColumns() {
+        assertEquals(new MultiValuedCellJoinOperation("key", "key", "sep").getColumnDependencies().get(), Set.of("key"));
+    }
+
+    @Test
     public void testRename() {
         var SUT = new MultiValuedCellJoinOperation("value", "key", "sep");
 

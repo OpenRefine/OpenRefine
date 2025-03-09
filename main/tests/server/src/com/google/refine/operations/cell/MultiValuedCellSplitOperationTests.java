@@ -186,6 +186,15 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
     }
 
     @Test
+    public void testColumnsDependenciesWithIdenticalColumns() {
+        assertEquals(new MultiValuedCellSplitOperation(
+                "Key",
+                "Key",
+                ":",
+                false).getColumnDependencies().get(), Set.of("Key"));
+    }
+
+    @Test
     public void testRename() {
         var SUT = new MultiValuedCellSplitOperation(
                 "Value",
