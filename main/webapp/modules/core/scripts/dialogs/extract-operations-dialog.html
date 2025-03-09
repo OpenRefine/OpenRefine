@@ -11,7 +11,21 @@
         <tr>
           <td width="50%" style="vertical-align: top"><div class="history-extract-dialog-panel"><table role="presentation" class="history-extract-dialog-entries" bind="entryTable"></table></div></td>
           <td width="50%" rowspan="2" style="vertical-align: top">
-              <div class="input-container"><textarea aria-label="" spellcheck="false" wrap="off" class="history-operation-json" bind="textarea"></textarea></div>
+            <div id="recipe-extract-tabs" class="refine-tabs">
+              <ul>
+                <li><a href="#recipe-json" bind="recipeJSONTabLink"></a></li>
+                <li><a href="#recipe-visualization" bind="recipeVisualizationTabLink"></a></li>
+              </ul>
+              <div id="recipe-json" class="input-container">
+                 <textarea aria-label="" spellcheck="false" wrap="off" class="history-operation-json" bind="textarea"></textarea>
+              </div>
+              <div id="recipe-visualization">
+                <div class="recipe-svg-container" style="max-height: 500px">
+                  <svg bind="recipeSvg" id="recipe-svg">
+                  </svg>
+                </div>
+              </div> 
+            </div>
           </td>
         </tr>
         <tr>
