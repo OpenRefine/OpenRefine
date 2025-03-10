@@ -1,0 +1,32 @@
+<div class="dialog-frame" style="min-width: 800px;">
+  <div class="dialog-border">
+    <form bind="form">
+      <div class="dialog-header" bind="dialogHeader"></div>
+      <div class="dialog-body" bind="dialogBody">
+        <div class="column-mapping-form">
+            <div class="grid-layout layout-normal" bind="columnMap">
+            <p bind="dependenciesExplanation"></p>
+            <table>
+                <thead bind="dependenciesTableHead">
+                </thead>
+                <tbody bind="dependenciesTableBody">
+                </tbody>
+            </table>
+            <p bind="newColumnsExplanation"></p>
+            <table>
+                <thead bind="newColumnsTableHead">
+                </thead>
+                <tbody bind="newColumnsTableBody">
+                </tbody>
+            </table>
+            </div>
+        </div>
+        <div class="history-operation-json-error" bind="errorContainer"></div>
+      </div>
+      <div class="dialog-footer" bind="dialogFooter">
+      <input type="submit" class="button button-primary" bind="applyButton" />
+      <button class="button" bind="backButton"></button>
+      </div>
+    </form>
+  </div>
+</div>
