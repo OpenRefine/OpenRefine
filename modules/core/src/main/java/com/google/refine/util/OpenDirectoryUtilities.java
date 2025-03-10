@@ -32,7 +32,8 @@ public class OpenDirectoryUtilities {
         } else if (SystemUtils.IS_OS_LINUX) {
             rt.exec(new String[] { "xdg-open", location });
         } else {
-            logger.warn(String.format("Java Desktop class not supported on this platform. Please open %s in your browser", location));
+            logger.warn(String.format("Java Desktop class not supported on this platform. Please open %s in your native application",
+                    location));
         }
     }
 }
