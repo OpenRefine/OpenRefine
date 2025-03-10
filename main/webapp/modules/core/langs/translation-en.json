@@ -456,6 +456,8 @@
     "core-project/extract-history": "Extract operation history",
     "core-project/operation-history-json": "Operation history JSON",
     "core-project/extract-save": "Extract and save parts of your operation history as JSON that you can apply to this or other projects in the future.",
+    "core-project/recipe-json-tab": "JSON",
+    "core-project/recipe-visualization-tab": "Visualization",
     "core-project/apply-operation": "Apply operation history",
     "core-project/paste-json": "Select a file or paste an extracted JSON history of operations to perform:",
     "core-project/percent-complete": "$1% complete",
