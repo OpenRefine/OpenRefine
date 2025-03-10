@@ -93,7 +93,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     @Test
     public void serializeColumnAdditionOperation() throws Exception {
         String description = OperationDescription.column_addition_brief("organization_json", 3, "employments",
-                "grel:value.parseJson()[\"employment-summary\"].join('###'");
+                "grel:value.parseJson()[\"employment-summary\"].join('###')");
         String json = "{"
                 + "   \"op\":\"core/column-addition\","
                 + "   \"description\":" + new TextNode(description).toString() + ","
@@ -158,7 +158,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     @Test
     public void testRenameColumns() {
         String description = OperationDescription.column_addition_brief("organization_json", 3, "employments",
-                "grel:value.parseJson()[\"employment-summary\"].join('###'");
+                "grel:value.parseJson().get(\"employment-summary\").join('###')");
         String expectedJSON = "{"
                 + "   \"op\":\"core/column-addition\","
                 + "   \"description\":" + new TextNode(description).toString() + ","
