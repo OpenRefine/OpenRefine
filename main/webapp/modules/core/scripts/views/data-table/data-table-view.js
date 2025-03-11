@@ -259,7 +259,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   if (theProject.rowModel.start !== undefined) {
      rowIds.push(theProject.rowModel.start);
   } else {
-     rowIds.push(theProject.rowModel.end);
+     rowIds.push(theProject.rowModel.end - 1);
   }
   var minRowId = Math.min(... rowIds);
   var maxRowId = Math.max(... rowIds);
