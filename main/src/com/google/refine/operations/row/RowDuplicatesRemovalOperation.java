@@ -33,9 +33,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -44,6 +47,7 @@ import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowRemovalChange;
@@ -71,6 +75,16 @@ public class RowDuplicatesRemovalOperation extends EngineDependentOperation {
     @Override
     protected String getBriefDescription(Project project) {
         return OperationDescription.row_remove_duplicates_brief();
+    }
+
+    @Override
+    protected Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        return Optional.of(_criteria.stream().collect(Collectors.toSet()));
+    }
+
+    @JsonIgnore
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.empty());
     }
 
     @Override
