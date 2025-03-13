@@ -136,31 +136,23 @@ public class GetRowsCommandTest extends RefineTest {
                 "       },\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
-                "           \"v\" : \"a\"\n" +
+                "           \"v\" : \"g\"\n" +
                 "         }, {\n" +
-                "           \"v\" : \"b\"\n" +
+                "           \"v\" : \"h\"\n" +
                 "         } ],\n" +
                 "         \"flagged\" : false,\n" +
-                "         \"i\" : 0,\n" +
-                "         \"k\" : 0,\n" +
-                "         \"starred\" : false\n" +
-                "       }, {\n" +
-                "         \"cells\" : [ null, {\n" +
-                "           \"v\" : \"c\"\n" +
-                "         } ],\n" +
-                "         \"flagged\" : false,\n" +
-                "         \"i\" : 1,\n" +
-                "         \"k\" : 1,\n" +
+                "         \"i\" : 4,\n" +
+                "         \"k\" : 4,\n" +
                 "         \"starred\" : false\n" +
                 "       } ],\n" +
-                "       \"start\" : 0,\n" +
-                "       \"nextPageStart\": 2,\n" +
+                "       \"start\" : 4,\n" +
+                "       \"previousPageEnd\": 4," +
                 "       \"total\" : 5,\n" +
                 "       \"totalRows\" : 5\n" +
                 "     }";
 
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
-        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("start")).thenReturn("4");
         when(request.getParameter("limit")).thenReturn("2");
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
@@ -235,6 +227,39 @@ public class GetRowsCommandTest extends RefineTest {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         when(request.getParameter("end")).thenReturn("2");
         when(request.getParameter("limit")).thenReturn("3");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testJsonOutputRowsEndWithNoNextPage() throws ServletException, IOException {
+        String rowJson = "{\n" +
+                "       \"filtered\" : 5,\n" +
+                "       \"limit\" : 1,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"g\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"h\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 4,\n" +
+                "         \"k\" : 4,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"end\" : 5,\n" +
+                "       \"previousPageEnd\": 4," +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5\n" +
+                "     }";
+
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
+        when(request.getParameter("end")).thenReturn("5");
+        when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
