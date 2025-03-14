@@ -546,7 +546,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       {
         id: "core/add-column",
         label: $.i18n('core-views/add-based-col'),
-        icon: 'images/operations/add-column.svg',
+        icon: 'images/operations/add.svg',
         click: doAddColumn
       },
       {

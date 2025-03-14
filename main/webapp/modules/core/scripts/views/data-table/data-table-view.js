@@ -105,6 +105,9 @@ DataTableView.prototype._startResizing = function(columnIndex, clickEvent) {
   // for conversion from px to em
   state.emFactor = parseFloat(getComputedStyle($(".data-table-container colgroup")[0]).fontSize);
 
+  state.col.width(state.originalWidth);
+  columnHeader._td.classList.add('resized-column');
+
   $('body')
       .on('mousemove', DataTableView.mouseMoveListener)
       .on('mouseup', DataTableView.mouseReleaseListener);
@@ -259,7 +262,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   if (theProject.rowModel.start !== undefined) {
      rowIds.push(theProject.rowModel.start);
   } else {
-     rowIds.push(theProject.rowModel.end);
+     rowIds.push(theProject.rowModel.end - 1);
   }
   var minRowId = Math.min(... rowIds);
   var maxRowId = Math.max(... rowIds);

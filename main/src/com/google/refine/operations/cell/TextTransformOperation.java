@@ -35,6 +35,7 @@ package com.google.refine.operations.cell;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -140,6 +141,25 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+    }
+
+    @Override
+    public TextTransformOperation renameColumns(Map<String, String> newColumnNames) {
+        String renamedExpression;
+        try {
+            Evaluable evaluable = MetaParser.parse(_expression);
+            Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
+            renamedExpression = renamedEvaluable.getFullSource();
+        } catch (ParsingException e) {
+            return this;
+        }
+        return new TextTransformOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                renamedExpression,
+                _onError,
+                _repeat,
+                _repeatCount);
     }
 
     @Override

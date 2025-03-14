@@ -24,7 +24,11 @@
 
 package org.openrefine.wikibase.schema;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -34,6 +38,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.ModelException;
+import com.google.refine.util.ParsingUtilities;
 
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.qa.QAWarning.Severity;
@@ -65,6 +70,22 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
                 + "{\"type\":\"wblanguageconstant\",\"id\":\"en\",\"label\":\"English\"},"
                 + "\"value\":{\"type\":\"wbstringvariable\",\"columnName\":\"column D\"}}}" + "],\"statementGroups\":["
                 + sgt.jsonRepresentation + "]}";
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        WbItemEditExpr itemEditExpr = ParsingUtilities.mapper.readValue(jsonRepresentation, WbItemEditExpr.class);
+
+        assertEquals(itemEditExpr.getColumnDependencies(), Set.of("column A", "column B", "column C", "column D", "column E"));
+    }
+
+    @Test
+    public void testRenameColumns() throws Exception {
+        WbItemEditExpr itemEditExpr = ParsingUtilities.mapper.readValue(jsonRepresentation, WbItemEditExpr.class);
+        String renamedJson = jsonRepresentation.replace("column A", "column A2");
+        WbItemEditExpr expected = ParsingUtilities.mapper.readValue(renamedJson, WbItemEditExpr.class);
+
+        assertEquals(itemEditExpr.renameColumns(Map.of("column A", "column A2")), expected);
     }
 
     @Test

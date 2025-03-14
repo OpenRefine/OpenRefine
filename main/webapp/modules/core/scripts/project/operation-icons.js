@@ -27,7 +27,7 @@ OperationIconRegistry.setIcon('core/transpose-columns-into-rows', 'images/operat
 OperationIconRegistry.setIcon('core/transpose-rows-into-columns', 'images/operations/transpose-into-columns.svg');
 OperationIconRegistry.setIcon('core/key-value-columnize', 'images/operations/key-value-columnize.svg');
 
-OperationIconRegistry.setIcon('core/column-addition', 'images/operations/add-column.svg');
+OperationIconRegistry.setIcon('core/column-addition', 'images/operations/add.svg');
 OperationIconRegistry.setIcon('core/column-removal', 'images/operations/delete.svg');
 OperationIconRegistry.setIcon('core/column-rename', 'images/operations/rename.svg');
 OperationIconRegistry.setIcon('core/column-move', 'images/operations/column-move.svg');
@@ -39,18 +39,18 @@ OperationIconRegistry.setIcon('core/row-removal', 'images/operations/delete.svg'
 OperationIconRegistry.setIcon('core/row-star', 'images/operations/row-star.svg');
 OperationIconRegistry.setIcon('core/row-flag', 'images/operations/row-flag.svg');
 OperationIconRegistry.setIcon('core/row-reorder', 'images/operations/row-reorder.svg');
-// OperationIconRegistry.setIcon('core/row-addition', undefined);
+OperationIconRegistry.setIcon('core/row-addition', 'images/operations/add.svg');
 OperationIconRegistry.setIcon('core/row-duplicate-removal', 'images/operations/row-duplicate-removal.svg');
 OperationIconRegistry.setIcon('core/row-keep-matched', 'images/operations/row-keep-matched.svg');
 
 OperationIconRegistry.setIcon('core/recon', 'images/operations/reconcile.svg');
-// OperationIconRegistry.setIcon('core/recon-mark-new-topics', undefined);
-// OperationIconRegistry.setIcon('core/recon-match-best-candidates', undefined);
-// OperationIconRegistry.setIcon('core/recon-discard-judgments', undefined);
-// OperationIconRegistry.setIcon('core/recon-match-specific-topic-to-cells', undefined);
-// OperationIconRegistry.setIcon('core/recon-judge-similar-cells', undefined);
-// OperationIconRegistry.setIcon('core/recon-clear-similar-cells', undefined);
-// OperationIconRegistry.setIcon('core/recon-copy-across-columns', undefined);
+OperationIconRegistry.setIcon('core/recon-mark-new-topics', 'images/operations/recon-mark-new-topics.svg');
+OperationIconRegistry.setIcon('core/recon-match-best-candidates', 'images/operations/recon-match-best-candidates.svg');
+OperationIconRegistry.setIcon('core/recon-discard-judgments', 'images/operations/recon-discard-judgments.svg');
+OperationIconRegistry.setIcon('core/recon-match-specific-topic-to-cells', 'images/operation/recon-match-specific-topic-to-cells.svg');
+OperationIconRegistry.setIcon('core/recon-judge-similar-cells', 'images/operations/recon-match-specific-topic-to-cells.svg');
+OperationIconRegistry.setIcon('core/recon-clear-similar-cells', 'images/operations/delete.svg');
+OperationIconRegistry.setIcon('core/recon-copy-across-columns', 'images/operations/recon-copy-across-columns.svg');
 OperationIconRegistry.setIcon('core/extend-reconciled-data', 'images/operations/data-extension.svg');
-// OperationIconRegistry.setIcon('core/recon-use-values-as-identifiers', undefined);
+OperationIconRegistry.setIcon('core/recon-use-values-as-identifiers', 'images/operations/recon-use-values-as-identifiers.svg');
 

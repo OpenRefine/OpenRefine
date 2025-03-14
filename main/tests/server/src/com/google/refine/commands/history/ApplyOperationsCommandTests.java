@@ -20,6 +20,7 @@ import com.google.refine.commands.CommandTestBase;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.MassEditOperation;
 import com.google.refine.operations.cell.TextTransformOperation;
@@ -79,6 +80,26 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
     public void testCSRFProtection() throws ServletException, IOException {
         command.doPost(request, response);
         assertCSRFCheckFailed();
+    }
+
+    @Test
+    public void testHappyPath() throws Exception {
+        String json = "[{\"op\":\"core/column-rename\","
+                + "\"description\":\"Rename column foo to foo2\","
+                + "\"oldColumnName\":\"foo\","
+                + "\"newColumnName\":\"foo2\"}]";
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(String.format("%d", project.id));
+        when(request.getParameter("operations")).thenReturn(json);
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").asText(), "ok");
+        assertEquals(node.get("historyEntries").get(0).get("description").asText(),
+                OperationDescription.column_rename_brief("foo", "foo2"));
     }
 
     @Test

@@ -286,6 +286,9 @@ public class GetRowsCommand extends Command {
                 }
                 nextPageStart = end;
             }
+            if (nextPageStart != null && nextPageStart >= project.rows.size()) {
+                nextPageStart = null;
+            }
 
             JsonResult result = new JsonResult(engine.getMode(),
                     rwv.results, rwv.total,

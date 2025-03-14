@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -114,6 +115,28 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 });
 
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        AbstractOperation operation = new ReconCopyAcrossColumnsOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased),
+                "bar",
+                new String[] { "foo" },
+                new String[] { "matched", "none" },
+                true);
+
+        AbstractOperation renamed = operation.renameColumns(Map.of("bar", "bar2", "foo", "foo2", "none", "what?"));
+
+        String expectedJson = "{\"op\":\"core/recon-copy-across-columns\","
+                + "\"description\":"
+                + new TextNode(OperationDescription.recon_copy_across_columns_brief("bar2", "foo2")).toString() + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"fromColumnName\":\"bar2\","
+                + "\"toColumnNames\":[\"foo2\"],"
+                + "\"judgments\":[\"matched\",\"none\"],"
+                + "\"applyToJudgedCells\":true}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
 }

@@ -24,6 +24,10 @@
 
 package org.openrefine.wikibase.schema;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -126,6 +130,18 @@ public class WbSnakExpr implements WbExpression<Snak> {
     @Override
     public int hashCode() {
         return prop.hashCode() + value.hashCode();
+    }
+
+    @Override
+    public Set<String> getColumnDependencies() {
+        Set<String> set = new HashSet<>(prop.getColumnDependencies());
+        set.addAll(value.getColumnDependencies());
+        return set;
+    }
+
+    @Override
+    public WbSnakExpr renameColumns(Map<String, String> substitutions) {
+        return new WbSnakExpr(prop.renameColumns(substitutions), value.renameColumns(substitutions));
     }
 
 }

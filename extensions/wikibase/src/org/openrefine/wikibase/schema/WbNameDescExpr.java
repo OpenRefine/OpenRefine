@@ -24,6 +24,9 @@
 
 package org.openrefine.wikibase.schema;
 
+import java.util.Map;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -179,6 +182,15 @@ public class WbNameDescExpr {
         } else {
             return null;
         }
+    }
+
+    @JsonIgnore
+    public Set<String> getColumnDependencies() {
+        return value.getColumnDependencies();
+    }
+
+    public WbNameDescExpr renameColumns(Map<String, String> substitutions) {
+        return new WbNameDescExpr(type, value.renameColumns(substitutions));
     }
 
     @Override

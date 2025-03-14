@@ -35,6 +35,7 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -201,6 +202,28 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.empty();
+    }
+
+    @Override
+    public TransposeColumnsIntoRowsOperation renameColumns(Map<String, String> newColumnNames) {
+        if (_combinedColumnName != null) {
+            return new TransposeColumnsIntoRowsOperation(
+                    newColumnNames.getOrDefault(_startColumnName, _startColumnName),
+                    _columnCount,
+                    _ignoreBlankCells,
+                    _fillDown,
+                    newColumnNames.getOrDefault(_combinedColumnName, _combinedColumnName),
+                    _prependColumnName,
+                    _separator);
+        } else {
+            return new TransposeColumnsIntoRowsOperation(
+                    newColumnNames.getOrDefault(_startColumnName, _startColumnName),
+                    _columnCount,
+                    _ignoreBlankCells,
+                    _fillDown,
+                    newColumnNames.getOrDefault(_keyColumnName, _keyColumnName),
+                    newColumnNames.getOrDefault(_valueColumnName, _valueColumnName));
+        }
     }
 
     @Override

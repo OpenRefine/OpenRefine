@@ -40,7 +40,7 @@ import org.openrefine.wikibase.schema.validation.ValidationState;
  * @author Antonin Delpeuch
  *
  */
-public class WbLocationConstant implements WbExpression<GlobeCoordinatesValue> {
+public class WbLocationConstant extends WbConstantExpr<GlobeCoordinatesValue> {
 
     public static final double defaultPrecision = GlobeCoordinatesValue.PREC_TEN_MICRO_DEGREE;
 

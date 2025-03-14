@@ -25,6 +25,9 @@
 package org.openrefine.wikibase.schema;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -120,6 +123,22 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
     @JsonProperty("unit")
     public WbExpression<? extends ItemIdValue> getUnitExpr() {
         return unitExpr;
+    }
+
+    @Override
+    public WbExpression<QuantityValue> renameColumns(Map<String, String> substitutions) {
+        return new WbQuantityExpr(
+                amountExpr.renameColumns(substitutions),
+                unitExpr == null ? null : unitExpr.renameColumns(substitutions));
+    }
+
+    @Override
+    public Set<String> getColumnDependencies() {
+        Set<String> set = new HashSet<>(amountExpr.getColumnDependencies());
+        if (unitExpr != null) {
+            set.addAll(unitExpr.getColumnDependencies());
+        }
+        return set;
     }
 
 }

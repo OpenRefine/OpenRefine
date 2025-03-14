@@ -37,6 +37,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -182,6 +183,28 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
                 "Key",
                 ":",
                 false).getColumnDependencies().get(), Set.of("Value", "Key"));
+    }
+
+    @Test
+    public void testRename() {
+        var SUT = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                ":",
+                false);
+
+        MultiValuedCellSplitOperation renamed = SUT.renameColumns(Map.of("Value", "value2", "key", "Key2"));
+
+        String expectedJson = "{\n"
+                + "  \"columnName\" : \"value2\",\n"
+                + "  \"description\" : " + new TextNode(OperationDescription.cell_multivalued_cell_split_brief("value2")).toString() + ",\n"
+                + "  \"keyColumnName\" : \"Key\",\n"
+                + "  \"mode\" : \"separator\",\n"
+                + "  \"op\" : \"core/multivalued-cell-split\",\n"
+                + "  \"regex\" : false,\n"
+                + "  \"separator\" : \":\"\n"
+                + "}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     /**

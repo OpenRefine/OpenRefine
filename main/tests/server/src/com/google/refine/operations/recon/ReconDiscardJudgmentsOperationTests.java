@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -92,6 +93,26 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class);
         assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("researcher")));
         assertEquals(op.getColumnDependencies(), Optional.of(Set.of("researcher")));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        AbstractOperation op = ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class);
+
+        AbstractOperation renamed = op.renameColumns(Map.of("researcher", "employee"));
+
+        String expectedJson = "{\n" +
+                "    \"op\": \"core/recon-discard-judgments\",\n" +
+                "    \"description\": "
+                + new TextNode(OperationDescription.recon_discard_judgments_clear_data_brief("employee")).toString() + ",\n" +
+                "    \"engineConfig\": {\n" +
+                "      \"mode\": \"record-based\",\n" +
+                "      \"facets\": []\n" +
+                "    },\n" +
+                "    \"columnName\": \"employee\",\n" +
+                "    \"clearData\": true\n" +
+                "  }";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

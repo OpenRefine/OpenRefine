@@ -129,6 +129,14 @@ public class ReconOperation extends EngineDependentOperation {
         return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
     }
 
+    @Override
+    public ReconOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                _reconConfig.renameColumns(newColumnNames));
+    }
+
     static protected class ReconEntry {
 
         final public int rowIndex;

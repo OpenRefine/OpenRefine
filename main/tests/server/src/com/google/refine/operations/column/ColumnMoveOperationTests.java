@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -147,6 +148,15 @@ public class ColumnMoveOperationTests extends RefineTest {
                         { "v1", "j", "b" },
                 });
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRename() {
+        ColumnMoveOperation SUT = new ColumnMoveOperation("hello", 1);
+
+        ColumnMoveOperation renamed = SUT.renameColumns(Map.of("hello", "world"));
+
+        assertEquals(renamed._columnName, "world");
     }
 
 }

@@ -379,7 +379,7 @@
     "core-dialogs/try-another-method": "Zkuste vybrat jinou z výše uvedených metod nebo změnit jeji parametry",
     "core-index/refine-version": "Verze $1",
     "core-about/thanks": "Speciální díky",
-    "core-about/history": "OpenRefine vytvořil původně vytvořil <a href='$1'> $ 2 </a> pod názvem „Freebase Gridworks“. V červenci 2010 přešel Metaweb pod firmu <a href='$3'> $ 4 </a>, která přejmenovala aplikaci na „Google Refine“. V prosinci 2012 se název produktu změnil na OpenRefine, neboť se z něj stal projekt podporovaný komunitou.",
+    "core-about/history": "OpenRefine vytvořil původně vytvořil <a href='$1'> $2 </a> pod názvem „Freebase Gridworks“. V červenci 2010 přešel Metaweb pod firmu <a href='$3'> $4 </a>, která přejmenovala aplikaci na „Google Refine“. V prosinci 2012 se název produktu změnil na OpenRefine, neboť se z něj stal projekt podporovaný komunitou.",
     "core-about/contributors": "Přispěvatelé (v chronologickém pořadí)",
     "core-about/definition": "OpenRefine je výkonný nástroj pro práci s nepřehlednými daty. Pomocí něj můžete zlepšit konzistenci dat, propojit je s datovými registry, jako jsou například Wikidata, rozšířit je o data z jiných zdrojů, transformovat data do různých formátů, které mohou využívat jiné nástroje, a přispívat daty zpět do jejich zdrojů. OpenRefine není webová služba, ale desktopová aplikace, která běží na vašem vlastním počítači, takže citlivá data můžete zpracovávat v soukromí.",
     "core-facets/no-rotation": "Bez rotace",
@@ -645,7 +645,7 @@
     "core-views/re-trans": "Přetransformovat až do",
     "core-views/to-text/single": "Na text",
     "core-project/do-not-warn": "Neupozorňovat na přepisování záznamů historie v budoucnu",
-    "core-views/rename-col": "Přejmenovat tento sloupec…",
+    "core-views/rename-col": "Přejmenovat sloupec…",
     "core-views/new-topic/header": "Vytvořit novou položku pro každou buňku",
     "core-views/view": "Zobrazit",
     "core-recon/service-documentation": "Dokumentace služby",
@@ -932,5 +932,7 @@
     "core-views/remove-duplicates": "Odstranit duplicitní řádky",
     "core-index-open/no-results-message": "Žádné výsledky",
     "core-index-open/search-placeholder": "Hledat",
-    "core-views/keep-only-matching": "Ponechat pouze shodné řádky"
+    "core-views/keep-only-matching": "Ponechat pouze shodné řádky",
+    "core-views/remove-col2": "Odebrat sloupec",
+    "core-project/applied-n-operations": "$1 operací použito"
 }
