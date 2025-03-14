@@ -1,4 +1,3 @@
-
 var OperationIconRegistry = {
   map: new Map()
 };
@@ -19,7 +18,7 @@ OperationIconRegistry.getIcon = function(operationId) {
 }
 
 OperationIconRegistry.setIcon('core/text-transform', 'images/operations/transform.svg');
-// OperationIconRegistry.setIcon('core/mass-edit', undefined);
+OperationIconRegistry.setIcon('core/mass-edit', 'images/operations/mass-edit.svg');
 OperationIconRegistry.setIcon('core/multivalued-cell-join', 'images/operations/join-rows.svg');
 OperationIconRegistry.setIcon('core/multivalued-cell-split', 'images/operations/split-rows.svg');
 OperationIconRegistry.setIcon('core/fill-down', 'images/operations/fill-down.svg');
@@ -31,18 +30,18 @@ OperationIconRegistry.setIcon('core/key-value-columnize', 'images/operations/key
 OperationIconRegistry.setIcon('core/column-addition', 'images/operations/add.svg');
 OperationIconRegistry.setIcon('core/column-removal', 'images/operations/delete.svg');
 OperationIconRegistry.setIcon('core/column-rename', 'images/operations/rename.svg');
-// OperationIconRegistry.setIcon('core/column-move', undefined);
+OperationIconRegistry.setIcon('core/column-move', 'images/operations/column-move.svg');
 OperationIconRegistry.setIcon('core/column-split', 'images/operations/split-columns.svg');
 OperationIconRegistry.setIcon('core/column-addition-by-fetching-urls', 'images/operations/fetch-urls.svg');
-
-// OperationIconRegistry.setIcon('core/column-reorder', undefined);
+OperationIconRegistry.setIcon('core/column-reorder', 'images/operations/column-reorder.svg');
 
 OperationIconRegistry.setIcon('core/row-removal', 'images/operations/delete.svg');
-// OperationIconRegistry.setIcon('core/row-star', undefined);
-// OperationIconRegistry.setIcon('core/row-flag', undefined);
-// OperationIconRegistry.setIcon('core/row-reorder', undefined);
+OperationIconRegistry.setIcon('core/row-star', 'images/operations/row-star.svg');
+OperationIconRegistry.setIcon('core/row-flag', 'images/operations/row-flag.svg');
+OperationIconRegistry.setIcon('core/row-reorder', 'images/operations/row-reorder.svg');
 OperationIconRegistry.setIcon('core/row-addition', 'images/operations/add.svg');
-// OperationIconRegistry.setIcon('core/row-duplicate-removal', undefined);
+OperationIconRegistry.setIcon('core/row-duplicate-removal', 'images/operations/row-duplicate-removal.svg');
+OperationIconRegistry.setIcon('core/row-keep-matched', 'images/operations/row-keep-matched.svg');
 
 OperationIconRegistry.setIcon('core/recon', 'images/operations/reconcile.svg');
 OperationIconRegistry.setIcon('core/recon-mark-new-topics', 'images/operations/recon-mark-new-topics.svg');

@@ -1005,6 +1005,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/star-rows'),
           id: "core/star-rows",
+          icon: "images/operations/row-star.svg",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
@@ -1012,6 +1013,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/unstar-rows'),
           id: "core/unstar-rows",
+          icon: "images/operations/row-unstar.svg",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
@@ -1020,6 +1022,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/flag-rows'),
           id: "core/flag-rows",
+          icon: "images/operations/row-flag.svg",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
@@ -1027,6 +1030,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/unflag-rows'),
           id: "core/unflag-rows",
+          icon: "images/operations/row-unflag.svg",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true, rowIdsPreserved: true, recordIdsPreserved: true });
           }
@@ -1035,6 +1039,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/remove-matching'),
           id: "core/remove-rows",
+          icon: "images/operations/delete.svg",
           click: function() {
             Refine.postCoreProcess("remove-rows", {}, null, { rowMetadataChanged: true });
           }
@@ -1042,6 +1047,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/keep-only-matching'),
           id: "core/keep-only-matching",
+          icon: "images/operations/row-keep-matched.svg",
           click: function() {
             Refine.postCoreProcess("keep-matching-rows", {}, null, { rowMetadataChanged: true });
           }
@@ -1050,6 +1056,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/remove-duplicates'),
           id: "core/remove-duplicates",
+          icon: "images/operations/row-duplicate-removal.svg",
           click: function() {
             new RemoveDuplicateRowsDialog();
           }
@@ -1064,6 +1071,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/reorder-remove'),
           id: "core/reorder-columns",
+          icon: "images/operations/column-reorder.svg",
           click: function() {
             new ColumnReorderingDialog();
           }
@@ -1072,6 +1080,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/fill-down'),
           id: "core/fill-down",
+          icon: "images/operations/fill-down.svg",
           click: function () {
             if (self._getSortingCriteriaCount() > 0) {
                 self._createPendingSortWarningDialog(doAllFillDown);
@@ -1084,6 +1093,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/blank-down'),
           id: "core/blank-down",
+          icon: "images/operations/blank-down.svg",
           click: function () {
             if (self._getSortingCriteriaCount() > 0) {
                 self._createPendingSortWarningDialog(doAllBlankDown);
