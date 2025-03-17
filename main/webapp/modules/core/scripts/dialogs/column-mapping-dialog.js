@@ -77,7 +77,6 @@ function ColumnMappingDialog(operations, analyzedOperations) {
     if (defaultValue === '') {
       $('<option></option>')
         .attr('value', '')
-        .text($.i18n('core-project/select-a-column-placeholder'))
         .attr('selected', 'true')
         .attr('disabled', 'true')
         .css('display', 'none')
