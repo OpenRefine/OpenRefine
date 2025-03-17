@@ -72,33 +72,14 @@ The Release Manager is responsible to
 The current Release Manager is Tom Morris [@tfmorris](https://github.com/tfmorris) and on the [forum](https://forum.openrefine.org/u/tfmorris/summary).
 
 ### Code of Conduct Committee
-The code of conduct committee is responsible to
-- Respond to [code of conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md) report
-- Provide at least a quarterly report on the forum [day-to-day operations](https://forum.openrefine.org/c/community/operations/10)
+The Code of Conduct Committee is responsible for responding to all [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md) reports, as well as managing and maintaining the Code of Conduct policy document.
 
 **How to join the Code of Conduct Committee?**. Committers are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the Member Election section below for more details.
 
 ### Advisory Committee
 The Advisory Committee runs the administrative aspect of the project on a daily basis with the support of Code for Science and Society (CS&S). Its members are bound by the fiscal sponsorship agreement with Code for Science and Society. They meet once per month with Code for Science and Society.
 
-Advisory Committee members:
-- Represent OpenRefine with Code for Science and Society (CS&S)
-  - CS&S requires that there be an advisory committee and that the project pay no more than 49% of the committee.
-  - CS&S requires the committee to be at least three people.
-  - Every member of the Advisory Committee must sign the fiscal sponsorship agreement with CS&S, agreement, and agree to the policies of CS&S.
-  - Must supervise (manage pay and review performance) paid project staff or delegate to the Project Manager.
-- Manage Budget & Contract
-  - Approve budget and oversee grant and financial activities
-  - Approve grant applications
-  - Enter into contracts on behalf of the project 
-  - Oversee contract and legal engagement for the project
-- Participate in at least one call per quarter;
-- Can be part of the Admin team for the project on GitHub
-- Publish minutes of their meeting on [the forum](https://forum.openrefine.org/tag/minute-advisory)
-
 **How to join the Advisory Committee?** Members of the Advisory Committee publish an announcement on the blog when searching for a new member. The Advisory Committee selects new committee members through consensus-driven discussions among current members.
-
-**Conflict of Interest**: In the event of any conflict of interest (a Committee Member, their family member, or someone with whom the Committee Member has a close academic or employment relationship is involved in a decision), the Committee Member must immediately notify other Committee Members. The Committee Members will be asked to recuse themselves from ongoing conversations and decision processes regarding the Transaction.
 
 **Current list of Advisory Committee members**
 - Jan Ainali [@Ainali](https://github.com/Ainali) and on the [forum](https://forum.openrefine.org/u/ainali/summary)
@@ -114,7 +95,9 @@ The Project Manager:
 - Assists in finding and securing new sources of funding
 - Supports the Advisory Committee in OpenRefine's day-to-day operations; this may include supervising paid project staff.
 
-The current Project Manager is Martin Magdinier [@magdmartin](https://github.com/magdmartin)and on the [forum](https://forum.openrefine.org/u/Martin/summary).
+The current Project Manager is Martin Magdinier [@magdmartin](https://github.com/magdmartin) and on the [forum](https://forum.openrefine.org/u/Martin/summary).
+
+# OpenRefine Policies
 
 ## Member Election
 When voting for new Committers, Core Developer Group or Code of Conduct Committee members, start a new thread with a subject line starting with `[VOTE]` to indicate that a formal vote has been requested on the [developer discussion list](https://forum.openrefine.org/c/dev/8) and use the `election` tag. In your message, indicate
@@ -164,6 +147,26 @@ Contractors and employees hired via a restricted fund will:
 - Contribute to conversations revolving around general maintenance and operations
 - Spend their remaining time contributing to general maintenance and operations
 
+## Advisory Committee Policies
+
+Advisory Committee members:
+- Represent OpenRefine with Code for Science and Society (CS&S)
+  - CS&S requires that there be an advisory committee and that the project pay no more than 49% of the committee.
+  - CS&S requires the committee to be at least three people.
+  - Every member of the Advisory Committee must sign the fiscal sponsorship agreement with CS&S, agreement, and agree to the policies of CS&S.
+  - Must supervise (manage pay and review performance) paid project staff or delegate to the Project Manager.
+- Manage Budget & Contract
+  - Approve budget and oversee grant and financial activities
+  - Approve grant applications
+  - Enter into contracts on behalf of the project
+  - Oversee contract and legal engagement for the project
+- Participate in at least one call per quarter;
+- Publish minutes of their meeting on [the forum](https://forum.openrefine.org/tag/minute-advisory)
+- Advisory Committee members are subject to the Conflict of Interest policy.
+
+## Conflict of Interest
+In the event of any conflict of interest (a Committee Member, their family member, or someone with whom the Committee Member has a close academic or employment relationship is involved in a decision), the Committee Member must immediately notify other Committee Members. The Committee Members will be asked to recuse themselves from ongoing conversations and decision processes regarding the Transaction.
+
 ## Fiscal sponsorship: Code For Science and Society
 Since January 2020, OpenRefine is a member project of [Code For Science and Society](https://codeforscience.org/) (CS&S). CS&S provides administrative, legal and fiscal infrastructure to receive and manage funds under the CS&S Fiscal Sponsorship Agreement.
 - CS&S retains a 15% handling fee on any donation to finance their operations (20% for government funding).
@@ -171,5 +174,5 @@ Since January 2020, OpenRefine is a member project of [Code For Science and Soci
 
 CS&S is a USA-based organization qualified as exempt from federal income tax under Section 501(c)(3) of the Internal Revenue Code (IRC) and classified as a public charity under IRC Sections 509(a)(1) and 170(b)(1)(A)(vi).
 
-## Notes
+# Notes
 This document is licensed under a [Creative Commons Attribution-ShareAlike 2.0.](http://creativecommons.org/licenses/by-sa/2.0/). This work is based upon ["Meritocratic Governance Model"](http://www.oss-watch.ac.uk/resources/meritocraticGovernanceModel) by University of Oxford and guidelines available for the [Apache Community](http://community.apache.org).
