@@ -117,11 +117,15 @@ Only eligible voters have a binding vote. Votes are expressed as
 The results must be positive for the person to be elected.
 
 ## Funding Application
-While the vast majority of OpenRefine contributors are volunteers, we recognize the need to attract and retain contributors to help:
+OpenRefine welcomes and encourages contributions and fundraising efforts from individuals and organizations. However, committees with additional authority over the project; namely the Core Dev Group, Advisory Committee, and Project Manager, have an increased responsibility to ensure transparency in funding applications.
+
+This policy provides guidelines to uphold openness and accountability in fundraising efforts while maintaining alignment with OpenRefine’s mission and values. It applies specifically when funds are managed by Code for Science & Society (CS&S).
+
+While the vast majority of OpenRefine contributors are volunteers, the Advisory Committee recognize the need to attract and retain contributors to help:
 - Perform time-critical maintenance tasks for the project.
 - Address issues that the community will not naturally do.
 
-From a funding perspective, we distinguish between restricted and unrestricted funds.
+From a funding perspective, the Advisory Committee distinguish between restricted and unrestricted funds.
 
 ### Unrestricted funds (donations)
 Unrestricted funds are not linked to a specific deliverable or usage and usually come from donations. The Advisory Committee decides how to use these funds based on the budget requests from Contributors.
