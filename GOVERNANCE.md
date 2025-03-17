@@ -54,7 +54,7 @@ Also referred to as Core Dev. The Core Developer Group are trusted developers wh
 - Merge pull requests
 - Publish releases
 - Review security vulnerability reports
-- Provide long-term project vision with the Advisory Committee team
+- Provide long-term project vision with the community
 - Are responsible for the technical direction of the project
 - Are part of the Admin team for the project on GitHub
 
@@ -119,17 +119,17 @@ The current Project Manager is Martin Magdinier [@magdmartin](https://github.com
 ## Member Election
 When voting for new Committers, Core Developer Group or Code of Conduct Committee members, start a new thread with a subject line starting with `[VOTE]` to indicate that a formal vote has been requested on the [developer discussion list](https://forum.openrefine.org/c/dev/8) and use the `election` tag. In your message, indicate
 * The name of the individual nominated with their GitHub or forum username
-* For which group you are nominating this person (Committers, Core Developer or Code of Conduct Committee)
+* Which group you are nominating this person (Committers, Core Developer or Code of Conduct Committee)
 * Why are you nominating this person? You can list significant contributions and adherence to OpenRefine governance.
 
 See, for example [this message](https://forum.openrefine.org/t/nominating-sunilnatraj-to-be-part-of-the-openrefine-github-organization/1914)
 
-Voting is open for 72 hours to provide an opportunity for all concerned persons to participate, regardless of their geographic location.
+Voting is open for seven days to provide an opportunity for all concerned persons to participate, regardless of their geographic location.
 
 Only eligible voters have a binding vote. Votes are expressed as
 - +1: yes
 - 0: I will not oppose the nomination.
-- -1: no, I oppose the nomination. All -1 votes must be justified.
+- -1: no, I oppose the nomination. All -1 votes must be explained.
 
 The results must be positive for the person to be elected.
 
