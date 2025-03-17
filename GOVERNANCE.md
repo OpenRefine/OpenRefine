@@ -118,7 +118,7 @@ The current Project Manager is Martin Magdinier [@magdmartin](https://github.com
 
 ## Member Election
 When voting for new Committers, Core Developer Group or Code of Conduct Committee members, start a new thread with a subject line starting with `[VOTE]` to indicate that a formal vote has been requested on the [developer discussion list](https://forum.openrefine.org/c/dev/8) and use the `election` tag. In your message, indicate
-* The name of the individual nominated with its GitHub or forum username
+* The name of the individual nominated with their GitHub or forum username
 * For which group you are nominating this person (Committers, Core Developer or Code of Conduct Committee)
 * Why are you nominating this person? You can list significant contributions and adherence to OpenRefine governance.
 
