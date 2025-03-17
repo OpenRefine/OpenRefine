@@ -124,7 +124,40 @@ function ColumnMappingDialog(operations, analyzedOperations) {
     idx++;
   }
 
-  var level = DialogSystem.showDialog(frame);
+  var level = null;
+
+  let runOperations = function(renames) {
+      Refine.postCoreProcess(
+        "apply-operations",
+        {},
+        {
+          operations: JSON.stringify(operations),
+          renames: JSON.stringify(renames)
+        },
+        { everythingChanged: true },
+        {
+          onDone: function(o) {
+            if (o.code == "pending") {
+              // Something might have already been done and so it's good to update
+              Refine.update({ everythingChanged: true });
+            }
+            if (level !== null) {
+              DialogSystem.dismissUntil(level - 1);
+            }
+          },
+          onError: function(e) {
+            elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));   
+          },
+        }
+    );
+  }
+
+  if (columnDependencies.length == 0 && newColumns.length == 0) {
+    runOperations({});
+    return;
+  }
+
+  level = DialogSystem.showDialog(frame);
 
   elmts.backButton.on('click',function() {
     DialogSystem.dismissUntil(level - 1);
@@ -134,8 +167,7 @@ function ColumnMappingDialog(operations, analyzedOperations) {
   elmts.form.on('submit',function(e) {
     e.preventDefault();
     // collect the column mapping from the form
-    var renames = {
-    };
+    var renames = {};
     var errorFound = false;
 
     elmts.columnMap.find('select').each(function(index, child) {
@@ -163,27 +195,7 @@ function ColumnMappingDialog(operations, analyzedOperations) {
     });
     
     if (!errorFound) {
-      Refine.postCoreProcess(
-          "apply-operations",
-          {},
-          {
-            operations: JSON.stringify(operations),
-            renames: JSON.stringify(renames)
-          },
-          { everythingChanged: true },
-          {
-            onDone: function(o) {
-              if (o.code == "pending") {
-                // Something might have already been done and so it's good to update
-                Refine.update({ everythingChanged: true });
-              }
-              DialogSystem.dismissUntil(level - 1);
-            },
-            onError: function(e) {
-              elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));   
-            },
-          }
-      );
+      runOperations(renames);
     }
   });
 }
