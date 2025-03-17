@@ -1,5 +1,5 @@
 describe(__filename, function () {
-  it('Apply a JSON', function () {
+  it('Apply a recipe', function () {
     cy.loadAndVisitProject('food.mini');
 
     // Check some columns before the test
@@ -44,6 +44,31 @@ describe(__filename, function () {
     cy.get('a#or-proj-undoRedo > span.count')
       .invoke('text')
       .should('equal', '0 / 3');
+  });
+
+  it('Apply a recipe that does not reference any column', function () {
+    cy.loadAndVisitProject('food.mini');
+
+    // flag a row before the test
+    cy.get('.data-table tr:nth-child(1) td:nth-child(2) a')
+      .should('have.class', 'data-table-flag-off')
+      .click();
+    cy.assertNotificationContainingText('Flag row 1');
+
+    // find the "apply" button
+    cy.get('#or-proj-undoRedo').click();
+    cy.wait(500); // eslint-disable-line
+    cy.get('#refine-tabs-history .history-panel-controls')
+      .contains('Apply')
+      .click();
+      
+    // JSON for operations that will be applied
+    const recipeFile = { filePath: 'recipe_without_column_reference.json', mimeType: 'application/json' };
+    cy.get('#file-input[type="file"]').attachFile(recipeFile);
+    
+    cy.get('.dialog-container button[bind="applyButton"]').click();
+
+    cy.assertNotificationContainingText('Remove 1 rows');
   });
 
   it('Use an invalid JSON payload', function () {
