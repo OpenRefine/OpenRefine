@@ -98,6 +98,13 @@ The Project Manager:
 The current Project Manager is Martin Magdinier [@magdmartin](https://github.com/magdmartin) and on the [forum](https://forum.openrefine.org/u/Martin/summary).
 
 # OpenRefine Policies
+Introduction to Governance Policies
+
+The **Code of Conduct Committee, Advisory Committee, and Core Developer Group** hold greater authority within the OpenRefine project, with the ability to represent and make commitments on its behalf. To maintain the community’s trust, these groups are held to a higher standard of transparency and accountability in their decision-making processes.
+This includes clear and open practices for:
+- Member Election 
+- Requesting and managing funds
+- Managing conflicts of interest
 
 ## Member Election
 When voting for new Committers, Core Developer Group or Code of Conduct Committee members, start a new thread with a subject line starting with `[VOTE]` to indicate that a formal vote has been requested on the [developer discussion list](https://forum.openrefine.org/c/dev/8) and use the `election` tag. In your message, indicate
@@ -151,8 +158,10 @@ Contractors and employees hired via a restricted fund will:
 - Contribute to conversations revolving around general maintenance and operations
 - Spend their remaining time contributing to general maintenance and operations
 
-## Advisory Committee Policies
+## Conflict of Interest
+In the event of any conflict of interest (a Committee Member, their family member, or someone with whom the Committee Member has a close academic or employment relationship is involved in a decision), the Committee Member must immediately notify other Committee Members. The Committee Members will be asked to recuse themselves from ongoing conversations and decision processes regarding the Transaction.
 
+## Advisory Committee Policies
 Advisory Committee members:
 - Represent OpenRefine with Code for Science and Society (CS&S)
   - CS&S requires that there be an advisory committee and that the project pay no more than 49% of the committee.
@@ -167,9 +176,6 @@ Advisory Committee members:
 - Participate in at least one call per quarter;
 - Publish minutes of their meeting on [the forum](https://forum.openrefine.org/tag/minute-advisory)
 - Advisory Committee members are subject to the Conflict of Interest policy.
-
-## Conflict of Interest
-In the event of any conflict of interest (a Committee Member, their family member, or someone with whom the Committee Member has a close academic or employment relationship is involved in a decision), the Committee Member must immediately notify other Committee Members. The Committee Members will be asked to recuse themselves from ongoing conversations and decision processes regarding the Transaction.
 
 ## Fiscal sponsorship: Code For Science and Society
 Since January 2020, OpenRefine is a member project of [Code For Science and Society](https://codeforscience.org/) (CS&S). CS&S provides administrative, legal and fiscal infrastructure to receive and manage funds under the CS&S Fiscal Sponsorship Agreement.
