@@ -126,7 +126,7 @@ The results must be positive for the person to be elected.
 ## Funding Application
 OpenRefine welcomes and encourages contributions and fundraising efforts from individuals and organizations. However, committees with additional authority over the project; namely the Core Dev Group, Advisory Committee, and Project Manager, have an increased responsibility to ensure transparency in funding applications.
 
-This policy provides guidelines to uphold openness and accountability in fundraising efforts while maintaining alignment with OpenRefine’s mission and values. It applies specifically when funds are managed by Code for Science & Society (CS&S).
+This policy provides guidelines to uphold openness and accountability in fundraising efforts. It applies specifically when funds are managed by Code for Science & Society (CS&S).
 
 While the vast majority of OpenRefine contributors are volunteers, the Advisory Committee recognize the need to attract and retain contributors to help:
 - Perform time-critical maintenance tasks for the project.
