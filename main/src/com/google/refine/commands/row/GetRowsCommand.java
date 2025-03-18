@@ -277,7 +277,7 @@ public class GetRowsCommand extends Command {
                 if (start > 0) {
                     previousPageEnd = start;
                 }
-                if (!wrappedRows.isEmpty()) {
+                if (!wrappedRows.isEmpty() && ((wrappedRows.size() >= limit))) {
                     nextPageStart = wrappedRows.get(wrappedRows.size() - 1).paginationIndex + 1;
                 }
             } else {
