@@ -27,11 +27,17 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -47,8 +53,10 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -120,7 +128,7 @@ public class BlankDownTests extends RefineTest {
     @Test
     public void serializeBlankDownOperation() throws Exception {
         String json = "{\"op\":\"core/blank-down\","
-                + "\"description\":\"Blank down cells in column my column\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_blank_down_brief("my column")).toString() + ","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\"}";
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, BlankDownOperation.class);
@@ -128,8 +136,37 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new BlankDownOperation(invalidEngineConfig, "bar").validate());
+        assertThrows(IllegalArgumentException.class, () -> new BlankDownOperation(defaultEngineConfig, null).validate());
+    }
+
+    @Test
+    public void testColumnsDiff() {
+        assertEquals(new BlankDownOperation(defaultEngineConfig, "bar").getColumnsDiff().get(), ColumnsDiff.modifySingleColumn("bar"));
+    }
+
+    @Test
+    public void testColumnsDependencies() {
+        assertEquals(new BlankDownOperation(defaultEngineConfig, "bar").getColumnDependencies().get(), Set.of("bar"));
+        assertEquals(new BlankDownOperation(engineConfigWithColumnDeps, "bar").getColumnDependencies().get(), Set.of("bar", "facet_1"));
+    }
+
+    @Test
+    public void testRenameColumns() {
+        String renamedJson = "{\"op\":\"core/blank-down\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_blank_down_brief("bar")).toString() + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"bar\"}";
+
+        var SUT = new BlankDownOperation(defaultEngineConfig, "foo");
+        AbstractOperation renamed = SUT.renameColumns(Map.of("foo", "bar"));
+        TestUtils.isSerializedTo(renamed, renamedJson);
+    }
+
+    @Test
     public void testBlankDownRecordsNoFacets() throws Exception {
-        BlankDownOperation operation = new BlankDownOperation(EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
+        BlankDownOperation operation = new BlankDownOperation(EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
 
         runOperation(operation, projectToBlankDown);
 
@@ -147,7 +184,7 @@ public class BlankDownTests extends RefineTest {
 
     @Test
     public void testBlankDownRowsNoFacets() throws Exception {
-        BlankDownOperation operation = new BlankDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "bar");
+        BlankDownOperation operation = new BlankDownOperation(EngineConfig.defaultRowBased(), "bar");
 
         runOperation(operation, projectToBlankDown);
 
@@ -178,7 +215,7 @@ public class BlankDownTests extends RefineTest {
         project.columnModel.update();
 
         AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
 
         runOperation(op, project);
@@ -240,7 +277,7 @@ public class BlankDownTests extends RefineTest {
 
     @Test
     public void testBlankDownRecordKey() throws Exception {
-        BlankDownOperation operation = new BlankDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "foo");
+        BlankDownOperation operation = new BlankDownOperation(EngineConfig.deserialize("{\"mode\":\"row-based\",\"facets\":[]}"), "foo");
 
         runOperation(operation, projectForRecordKey);
 

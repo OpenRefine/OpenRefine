@@ -33,10 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -54,6 +61,7 @@ import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -98,18 +106,71 @@ public class KeyValueColumnizeTests extends RefineTest {
     @Test
     public void serializeKeyValueColumnizeOperation() throws Exception {
         String json = "{\"op\":\"core/key-value-columnize\","
-                + "\"description\":\"Columnize by key column key column and value column value column\","
+                + "\"description\":"
+                + new TextNode(OperationDescription.cell_key_value_columnize_brief("key column", "value column")).toString() + ","
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":null}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, KeyValueColumnizeOperation.class), json);
 
         String jsonFull = "{\"op\":\"core/key-value-columnize\","
-                + "\"description\":\"Columnize by key column key column and value column value column with note column note column\","
+                + "\"description\":"
+                + new TextNode(OperationDescription.cell_key_value_columnize_note_column_brief("key column", "value column", "note column"))
+                        .toString()
+                + ","
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":\"note column\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonFull, KeyValueColumnizeOperation.class), jsonFull);
+    }
+
+    @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new KeyValueColumnizeOperation(null, "foo", "bar").validate());
+        assertThrows(IllegalArgumentException.class, () -> new KeyValueColumnizeOperation("foo", null, "bar").validate());
+    }
+
+    @Test
+    public void testColumnsDiff() {
+        assertEquals(new KeyValueColumnizeOperation("foo", "baz", "bar").getColumnsDiff(), Optional.empty());
+    }
+
+    @Test
+    public void testColumnsDependencies() {
+        assertEquals(new KeyValueColumnizeOperation("foo", "baz", "bar").getColumnDependencies().get(), Set.of("foo", "baz", "bar"));
+        assertEquals(new KeyValueColumnizeOperation("foo", "baz", null).getColumnDependencies().get(), Set.of("foo", "baz"));
+    }
+
+    @Test
+    public void testRename() {
+        KeyValueColumnizeOperation SUT = new KeyValueColumnizeOperation("foo", "baz", null);
+
+        KeyValueColumnizeOperation renamed = SUT.renameColumns(Map.of("foo", "foo2", "bar", "bar2"));
+
+        TestUtils.isSerializedTo(renamed, "{\n"
+                + "   \"description\" : " + new TextNode(OperationDescription.cell_key_value_columnize_brief("foo2", "baz")).toString()
+                + ",\n"
+                + "   \"keyColumnName\" : \"foo2\",\n"
+                + "   \"noteColumnName\" : null,\n"
+                + "   \"op\" : \"core/key-value-columnize\",\n"
+                + "   \"valueColumnName\" : \"baz\"\n"
+                + "}");
+    }
+
+    @Test
+    public void testRenameNoNotesColumn() {
+        KeyValueColumnizeOperation SUT = new KeyValueColumnizeOperation("foo", "baz", "bar");
+
+        KeyValueColumnizeOperation renamed = SUT.renameColumns(Map.of("foo", "foo2", "bar", "bar2"));
+
+        TestUtils.isSerializedTo(renamed, "{\n"
+                + "   \"description\" : "
+                + new TextNode(OperationDescription.cell_key_value_columnize_note_column_brief("foo2", "baz", "bar2")).toString() + ",\n"
+                + "   \"keyColumnName\" : \"foo2\",\n"
+                + "   \"noteColumnName\" : \"bar2\",\n"
+                + "   \"op\" : \"core/key-value-columnize\",\n"
+                + "   \"valueColumnName\" : \"baz\"\n"
+                + "}");
     }
 
     /**

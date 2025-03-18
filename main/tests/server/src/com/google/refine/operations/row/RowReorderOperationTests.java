@@ -27,8 +27,14 @@
 
 package com.google.refine.operations.row;
 
-import java.io.Serializable;
+import static org.testng.Assert.assertEquals;
 
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -39,7 +45,9 @@ import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.util.ParsingUtilities;
@@ -48,6 +56,23 @@ import com.google.refine.util.TestUtils;
 public class RowReorderOperationTests extends RefineTest {
 
     Project project = null;
+
+    String json = "  {\n" +
+            "    \"op\": \"core/row-reorder\",\n" +
+            "    \"description\": " + new TextNode(OperationDescription.row_reorder_brief()).toString() + ",\n" +
+            "    \"mode\": \"record-based\",\n" +
+            "    \"sorting\": {\n" +
+            "      \"criteria\": [\n" +
+            "        {\n" +
+            "          \"errorPosition\": 1,\n" +
+            "          \"valueType\": \"number\",\n" +
+            "          \"column\": \"start_year\",\n" +
+            "          \"blankPosition\": 2,\n" +
+            "          \"reverse\": false\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    }\n" +
+            "  }";
 
     @BeforeSuite
     public void registerOperation() {
@@ -71,6 +96,17 @@ public class RowReorderOperationTests extends RefineTest {
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.id);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":true,\"blankPosition\":-1,\"errorPosition\":1}]}";
+        SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
+        AbstractOperation op = new RowReorderOperation(
+                Mode.RowBased, sortingConfig);
+
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of()));
+        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
     }
 
     @Test
@@ -144,23 +180,32 @@ public class RowReorderOperationTests extends RefineTest {
 
     @Test
     public void serializeRowReorderOperation() throws Exception {
-        String json = "  {\n" +
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json);
+    }
+
+    @Test
+    public void testRenameColumns() throws Exception {
+        RowReorderOperation SUT = ParsingUtilities.mapper.readValue(json, RowReorderOperation.class);
+
+        RowReorderOperation renamed = SUT.renameColumns(Map.of("start_year", "new_name"));
+
+        String json = "{\n" +
                 "    \"op\": \"core/row-reorder\",\n" +
-                "    \"description\": \"Reorder rows\",\n" +
+                "    \"description\": " + new TextNode(OperationDescription.row_reorder_brief()).toString() + ",\n" +
                 "    \"mode\": \"record-based\",\n" +
                 "    \"sorting\": {\n" +
                 "      \"criteria\": [\n" +
                 "        {\n" +
                 "          \"errorPosition\": 1,\n" +
                 "          \"valueType\": \"number\",\n" +
-                "          \"column\": \"start_year\",\n" +
+                "          \"column\": \"new_name\",\n" +
                 "          \"blankPosition\": 2,\n" +
                 "          \"reverse\": false\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    }\n" +
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json);
+        TestUtils.isSerializedTo(renamed, json);
     }
 
 }

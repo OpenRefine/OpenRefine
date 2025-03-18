@@ -142,7 +142,7 @@
     "core-index-parser/lines-beg": "Zeile(n) am Dateianfang",
     "core-index-parser/preserve-empty": "Leere Zeichenfolgen bewahren",
     "core-index-parser/rows-data": "Datenzeile(n)",
-    "core-index-parser/load-at-most": "Maximale Last",
+    "core-index-parser/load-at-most": "Lade maximal",
     "core-index-parser/column-names-label": "Spaltennamen (durch Kommata getrennt)",
     "core-index-parser/column-names-optional": "Kommagetrennt",
     "core-dialogs/help": "Hilfe",
@@ -815,5 +815,17 @@
     "core-index-import/load-json-rows-error": "Das Parsen von JSON-Daten ist fehlgeschlagen",
     "core-index/navigate-home": "Zum Startbildschirm navigieren",
     "core-index-import/load-xml-rows-error": "Das Parsen von XML-Daten ist fehlgeschlagen",
-    "core-recon/type": "Typ"
+    "core-recon/type": "Typ",
+    "core-index-import/or": "Oder von einer URL",
+    "core-index-import/warning-import-input": "Du musst eine Projektdatei/ URL angeben.",
+    "core-index-import/drag-files": "Zieh Dateien hierher",
+    "core-index-import/sort-filename": "Dateiname",
+    "core-index-open/no-results-message": "Keine Ergebnisse",
+    "core-index-open/search-placeholder": "Suche",
+    "core-index-extensions/extensions": "Erweiterungen",
+    "core-index-extensions/list-extensions-header": "Installierte Erweiterungen",
+    "core-index-extensions/extensions-documentation-button": "Dokumentation",
+    "core-index-extensions/extensions-discovery-button": "Entdecke Erweiterungen",
+    "core-index-import/warning-import-url": "Du musst eine korrekte URL angeben.",
+    "core-index-import/sort-filesize": "Dateigröße"
 }

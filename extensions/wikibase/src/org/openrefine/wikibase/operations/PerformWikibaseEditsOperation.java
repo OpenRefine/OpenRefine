@@ -31,8 +31,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,6 +64,7 @@ import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.CellChange;
@@ -143,6 +147,28 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     }
 
     @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        return Optional.of(Set.of());
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.builder().addColumn(resultsColumnName, null).build());
+    }
+
+    @Override
+    public PerformWikibaseEditsOperation renameColumns(Map<String, String> newColumnNames) {
+        return new PerformWikibaseEditsOperation(
+                getEngineConfig().renameColumnDependencies(newColumnNames),
+                summary,
+                maxlag,
+                editGroupsUrlSchema,
+                maxEditsPerMinute,
+                tagTemplate,
+                newColumnNames.getOrDefault(resultsColumnName, resultsColumnName));
+    }
+
+    @Override
     public Process createProcess(Project project, Properties options)
             throws Exception {
         return new PerformEditsProcess(
@@ -210,6 +236,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             if (newEntityLibrary != null) {
                 writer.write("newItems=");
                 ObjectMapper mapper = new ObjectMapper();
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 writer.write(mapper.writeValueAsString(newEntityLibrary) + "\n");
             }
             writer.write("/ec/\n"); // end of change
@@ -287,6 +314,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 onDone.add(createFacetAction);
 
             }
+
         }
 
         @Override

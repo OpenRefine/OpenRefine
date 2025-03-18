@@ -66,10 +66,15 @@ Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
+; Make sure we delete any previous install before copying our files.
+; See https://github.com/OpenRefine/OpenRefine/issues/7122
+[InstallDelete]
+Type: filesandordirs; Name: "{app}\server"
+Type: filesandordirs; Name: "{app}\webapp"
+
 [Files]
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "{#MyProgramFiles}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
-Source: "{#MyProgramFiles}\README.md"; DestDir: "{app}"; Flags: isreadme ignoreversion
 ; recompressing compressed files takes unnecessary build time, with usually no perceivable gain
 ;Source: "{#MyProgramFiles}\*.jar"; DestDir: "{app}"; Flags: nocompression ignoreversion recursesubdirs
 ;Source: "{#MyProgramFiles}\*.png"; DestDir: "{app}"; Flags: nocompression ignoreversion recursesubdirs

@@ -27,11 +27,17 @@
 
 package com.google.refine.operations.cell;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -47,8 +53,10 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -108,16 +116,45 @@ public class FillDownTests extends RefineTest {
     @Test
     public void serializeFillDownOperation() throws Exception {
         String json = "{\"op\":\"core/fill-down\","
-                + "\"description\":\"Fill down cells in column my key\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_fill_down_brief("my key")).toString() + ","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my key\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, FillDownOperation.class), json);
     }
 
     @Test
+    public void testValidate() {
+        assertThrows(IllegalArgumentException.class, () -> new FillDownOperation(invalidEngineConfig, "bar").validate());
+        assertThrows(IllegalArgumentException.class, () -> new FillDownOperation(defaultEngineConfig, null).validate());
+    }
+
+    @Test
+    public void testColumnsDiff() {
+        assertEquals(new FillDownOperation(defaultEngineConfig, "bar").getColumnsDiff().get(), ColumnsDiff.modifySingleColumn("bar"));
+    }
+
+    @Test
+    public void testColumnsDependencies() {
+        assertEquals(new FillDownOperation(defaultEngineConfig, "bar").getColumnDependencies().get(), Set.of("bar"));
+        assertEquals(new FillDownOperation(engineConfigWithColumnDeps, "bar").getColumnDependencies().get(), Set.of("bar", "facet_1"));
+    }
+
+    @Test
+    public void testRenameColumns() {
+        String renamedJson = "{\"op\":\"core/fill-down\","
+                + "\"description\":" + new TextNode(OperationDescription.cell_fill_down_brief("bar")).toString() + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"bar\"}";
+
+        var SUT = new FillDownOperation(defaultEngineConfig, "foo");
+        AbstractOperation renamed = SUT.renameColumns(Map.of("foo", "bar"));
+        TestUtils.isSerializedTo(renamed, renamedJson);
+    }
+
+    @Test
     public void testFillDownRecordKey() throws Exception {
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "key");
 
         runOperation(op, project);
@@ -137,7 +174,7 @@ public class FillDownTests extends RefineTest {
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
     public void testFillDownRecordsNoFacets() throws Exception {
-        FillDownOperation operation = new FillDownOperation(EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
+        FillDownOperation operation = new FillDownOperation(EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"), "bar");
 
         runOperation(operation, toFillDown);
 
@@ -157,7 +194,7 @@ public class FillDownTests extends RefineTest {
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
     public void testFillDownRowsNoFacets() throws Exception {
-        FillDownOperation operation = new FillDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "bar");
+        FillDownOperation operation = new FillDownOperation(EngineConfig.defaultRowBased(), "bar");
 
         runOperation(operation, toFillDown);
 
@@ -188,7 +225,7 @@ public class FillDownTests extends RefineTest {
         project.columnModel.update();
 
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
 
         runOperation(op, project);
@@ -249,7 +286,7 @@ public class FillDownTests extends RefineTest {
 
     @Test
     public void testFillDownRowsKeyColumn() throws Exception {
-        FillDownOperation operation = new FillDownOperation(EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"), "foo");
+        FillDownOperation operation = new FillDownOperation(EngineConfig.defaultRowBased(), "foo");
 
         runOperation(operation, toFillDown);
 

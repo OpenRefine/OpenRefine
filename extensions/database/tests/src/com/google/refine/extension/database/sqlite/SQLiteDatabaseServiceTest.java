@@ -128,7 +128,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
         Assert.assertTrue(result);
     }
 
-    @Test
+    @Test(enabled = false) // flaky test, see https://github.com/OpenRefine/OpenRefine/issues/7057
     public void testConnect() throws DatabaseServiceException {
 
         SQLiteDatabaseService sqLiteDatabaseService = (SQLiteDatabaseService) DatabaseService

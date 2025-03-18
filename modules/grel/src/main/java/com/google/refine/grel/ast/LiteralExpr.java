@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -45,12 +47,27 @@ import com.google.refine.expr.Evaluable;
 /**
  * An abstract syntax tree node encapsulating a literal value.
  */
-public class LiteralExpr implements Evaluable {
+public class LiteralExpr extends GrelExpr {
 
     final protected Object _value;
+    final protected String _source;
 
+    /**
+     * @deprecated use the version of the constructor which supplies the full source of the literal
+     */
+    @Deprecated(since = "3.10")
     public LiteralExpr(Object value) {
         _value = value;
+        _source = null;
+    }
+
+    public LiteralExpr(Object value, String source) {
+        _value = value;
+        _source = source;
+    }
+
+    protected Object getValue() {
+        return _value;
     }
 
     @Override
@@ -64,7 +81,34 @@ public class LiteralExpr implements Evaluable {
     }
 
     @Override
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        return this;
+    }
+
+    @Override
     public String toString() {
-        return _value instanceof String ? new TextNode((String) _value).toString() : _value.toString();
+        if (_source != null) {
+            return _source;
+        } else {
+            return _value instanceof String ? new TextNode((String) _value).toString() : _value.toString();
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_source);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LiteralExpr other = (LiteralExpr) obj;
+        // ignore _value on purpose because it is entirely determined from _source
+        return Objects.equals(_source, other._source);
     }
 }

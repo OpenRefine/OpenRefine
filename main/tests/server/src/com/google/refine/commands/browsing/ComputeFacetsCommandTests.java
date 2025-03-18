@@ -22,4 +22,5 @@ public class ComputeFacetsCommandTests extends CommandTestBase {
         command.doPost(request, response);
         assertCSRFCheckFailed();
     }
+
 }

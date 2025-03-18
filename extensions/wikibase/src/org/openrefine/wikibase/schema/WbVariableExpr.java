@@ -24,6 +24,8 @@
 
 package org.openrefine.wikibase.schema;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -113,6 +115,11 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
             return fromCell(cell, ctxt);
         }
         throw new SkipSchemaExpressionException();
+    }
+
+    @Override
+    public Set<String> getColumnDependencies() {
+        return Set.of(columnName);
     }
 
     /**

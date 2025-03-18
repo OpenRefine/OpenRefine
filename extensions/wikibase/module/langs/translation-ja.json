@@ -342,9 +342,20 @@
     "warnings-messages/duplicate-file-names-in-batch/title": "複数のファイルを同じ名前でアップロードしています",
     "warnings-messages/invalid-characters-in-file-name/body": "<span class=\"wb-issue-preformat\">{example_filename}</span>のようなファイル名には、wikiで使用できない無効な文字 <span class=\"wb-issue-preformat\">{invalid_character}</span> が使われています.",
     "warnings-messages/file-name-too-long/body": "ファイル名は、上限{max_length}字を超えることができません。例えば、<span class=\"wb-issue-preformat\">{example_filename}</span>は長すぎます.",
-    "warnings-messages/missing-file-name-extension/body": "アップロードするファイルには拡張子が必要です。例えば、<span class=\"wb-issue-preformat\">{example_filename}には拡張子がありません.",
+    "warnings-messages/missing-file-name-extension/body": "アップロードされるファイルは拡張子が必要です。ただし、<span class=\"wb-issue-preformat\">{example_filename}</span>のようなファイル名の場合は当てはまりません.",
     "warnings-messages/replaced-characters-in-filename/title": "ファイル名にある特殊文字は置換されることがあります",
     "warnings-messages/replaced-characters-in-filename/body": "これらの文字 <span class=\"wb-issue-preformat\">:/\\</span> を <span class=\"wb-issue-preformat\">-</span>で置き換えます。例えば、ファイル名 <span class=\"wb-issue-preformat\">{original}</span> は <span class=\"wb-issue-preformat\">{normalized}</span>となります。",
     "wikibase-schema/no-value": "値なし",
-    "wikibase-schema/some-value": "値あり"
+    "wikibase-schema/some-value": "値あり",
+    "perform-wikibase-edits/wikibase-editing-results": "Wikibase編集結果",
+    "warnings-messages/new-item-requires-property-to-have-certain-values-with-suggested-value/title": "{property_entity} はプロパティ {added_property_entity} が値 {item_entity} を持つ必要があります.",
+    "warnings-messages/existing-item-requires-property-to-have-certain-values-with-suggested-value/title": "{property_entity} はプロパティ {added_property_entity} の値が {item_entity} にセットされている必要があります.",
+    "warnings-messages/new-item-requires-property-to-have-certain-values-with-suggested-value/body": "プロパティ {added_property_entity} は、項目 {example_entity} のように、{item_entity}として値をセットしなければなりません.",
+    "warnings-messages/new-media-chunked-upload/title": "大きなファイルをアップロード",
+    "warnings-messages/new-media-chunked-upload/body": "大きなファイルはアップロードに時間がかかります。途中で中断されると、必要な情報が欠けたファイルが公開されてしまいます。その際はアップロードしたファイルを確認してください。",
+    "warnings-messages/upload-new-file-version/title": "新しいバージョンのファイルをアップロード",
+    "warnings-messages/upload-new-file-version/body": "<span class=\"wb-issue-preformat\">{example_filename}</span> のようなファイルは、既存のファイルと一致しているため、新しいバージョンのファイルをアップロードします。",
+    "warnings-messages/label-too-long/title": "キャプションが最大長を超えています",
+    "warnings-messages/existing-item-requires-property-to-have-certain-values-with-suggested-value/body": "{example_entity} のようなエンティティでは、プロパティ {added_property_entity} は {item_entity} に値を設定しなければなりません。エンティティがプロパティ {added_property_entity} と、{wikibase_name} の適切な値を設定したステートメントをすでに持っている場合、この警告は無視してもかまいません.",
+    "warnings-messages/label-too-long/body": "キャプションは {max_length} 文字を超えることができません。<span class=\"wb-issue-preformat\">{lang_code}</span> の <span class=\"wb-issue-preformat\">{example_entity}</span> は、{length} 文字の長さがあります。"
 }

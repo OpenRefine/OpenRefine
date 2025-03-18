@@ -4,6 +4,8 @@ package org.openrefine.wikibase.schema;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.testng.annotations.Test;
@@ -20,6 +22,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.ModelException;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 import org.openrefine.wikibase.qa.QAWarning;
@@ -70,6 +73,23 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
                 + "{\"type\":\"wblanguageconstant\",\"id\":\"en\",\"label\":\"English\"},"
                 + "\"value\":{\"type\":\"wbstringvariable\",\"columnName\":\"column D\"}}}" + "],\"statementGroups\":["
                 + sgt.jsonRepresentation + "]}";
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        WbMediaInfoEditExpr expr = ParsingUtilities.mapper.readValue(jsonRepresentation, WbMediaInfoEditExpr.class);
+
+        assertEquals(expr.getColumnDependencies(), Set.of("column A", "column B", "column C", "column D", "column E"));
+    }
+
+    @Test
+    public void testRenameColumns() throws Exception {
+        WbMediaInfoEditExpr expr = ParsingUtilities.mapper.readValue(jsonRepresentation, WbMediaInfoEditExpr.class);
+
+        String replacedJson = jsonRepresentation.replace("column B", "column B2").replace("column C", "column C2");
+        WbMediaInfoEditExpr expectedExpr = ParsingUtilities.mapper.readValue(replacedJson, WbMediaInfoEditExpr.class);
+
+        assertEquals(expr.renameColumns(Map.of("column B", "column B2", "column C", "column C2")), expectedExpr);
     }
 
     @Test

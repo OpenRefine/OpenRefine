@@ -15,7 +15,7 @@
     "core-about/history": "<a href='$1'>$2</a> kehitti OpenRefinen alun perin nimellä \"Freebase Gridworks\". <a href='$3'>$4</a> osti Metawebin heinäkuussa 2010, ja he antoivat tuotteen nimeksi Google Refine. Lokakuussa 2012 tuote nimettiin uudelleen OpenRefineksi, kun se siirtyi yhteisön tukemaan projektiin.",
     "core-about/thanks": "Erityiskiitokset",
     "core-index/help": "Ohje",
-    "core-index/about": "Noin",
+    "core-index/about": "Tietoja",
     "core-index/version": "Versio",
     "core-index/new-version": "Uusi versio",
     "core-index/refine-version": "Versio $1",
@@ -48,7 +48,7 @@
     "core-index-create/no-details": "Ei teknisiä yksityiskohtia.",
     "core-index-create/question": "Luo projekti tuomalla tietoja. Millaisia datatiedostoja voin tuoda?",
     "core-index-create/formats": "TSV-, CSV-, *SV-, Excel- (.xls ja .xlsx), JSON-, XML-, RDF-muodossa XML- ja Google Data -asiakirjoja tuetaan. Muiden muotojen tuki voidaan lisätä OpenRefine-laajennuksilla.",
-    "core-index-create/from": "Hae tiedot osoitteesta",
+    "core-index-create/from": "Tuo dataa",
     "core-index-import/import-proj": "Tuo projekti",
     "core-index-import/locate": "Etsi olemassa oleva Refine-projektitiedosto (.tar tai .tar.gz):",
     "core-index-import/file": "Projektitiedosto",
@@ -262,6 +262,7 @@
     "core-index-import/load-json-rows-error": "JSON-datan jäsentäminen epäonnistui",
     "core-index-import/load-xml-rows-error": "XML-datan jäsentäminen epäonnistui",
     "core-index-import/remove-row": "Poista tämä rivi",
-    "core-dialogs/opt-for": "Valinnat:",
-    "core-dialogs/sel-and-ord": "Valitse ja järjestä vietävät sarakkeet"
+    "core-dialogs/opt-for": "Vaihtoehdot tälle",
+    "core-dialogs/sel-and-ord": "Valitse ja järjestä vietävät sarakkeet",
+    "core-index-import/drag-files": "Raahaa tiedostot tähän"
 }

@@ -27,11 +27,17 @@
 
 package com.google.refine.operations.row;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -45,7 +51,9 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -54,6 +62,7 @@ public class RowFlagOperationTests extends RefineTest {
 
     Project project;
     ListFacetConfig facet;
+    RowFlagOperation operation;
 
     @BeforeSuite
     public void registerOperation() {
@@ -85,25 +94,68 @@ public class RowFlagOperationTests extends RefineTest {
         facet.name = "hello";
         facet.expression = "grel:value";
         facet.columnName = "hello";
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("d", "d"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        operation = new RowFlagOperation(engineConfig, true);
     }
 
     @Test
     public void serializeRowFlagOperation() throws Exception {
         String json = "{"
                 + "\"op\":\"core/row-flag\","
-                + "\"description\":\"Flag rows\","
+                + "\"description\":" + new TextNode(OperationDescription.row_flag_brief()).toString() + ","
                 + "\"flagged\":true,"
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowFlagOperation.class), json);
     }
 
     @Test
+    public void testColumnDependencies() {
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("hello")));
+    }
+
+    @Test
+    public void testRenameColumns() {
+        String expectedJson = "{\n"
+                + "       \"description\" : " + new TextNode(OperationDescription.row_flag_brief()).toString() + ",\n"
+                + "       \"engineConfig\" : {\n"
+                + "         \"facets\" : [ {\n"
+                + "           \"columnName\" : \"world\",\n"
+                + "           \"expression\" : \"grel:value\",\n"
+                + "           \"invert\" : false,\n"
+                + "           \"name\" : \"world\",\n"
+                + "           \"omitBlank\" : false,\n"
+                + "           \"omitError\" : false,\n"
+                + "           \"selectBlank\" : false,\n"
+                + "           \"selectError\" : false,\n"
+                + "           \"selection\" : [ {\n"
+                + "             \"v\" : {\n"
+                + "               \"l\" : \"h\",\n"
+                + "               \"v\" : \"h\"\n"
+                + "             }\n"
+                + "           }, {\n"
+                + "             \"v\" : {\n"
+                + "               \"l\" : \"d\",\n"
+                + "               \"v\" : \"d\"\n"
+                + "             }\n"
+                + "           } ],\n"
+                + "           \"type\" : \"list\"\n"
+                + "         } ],\n"
+                + "         \"mode\" : \"row-based\"\n"
+                + "       },\n"
+                + "       \"flagged\" : true,\n"
+                + "       \"op\" : \"core/row-flag\"\n"
+                + "     }";
+        RowFlagOperation renamed = operation.renameColumns(Map.of("hello", "world"));
+
+        TestUtils.isSerializedTo(renamed, expectedJson);
+    }
+
+    @Test
     public void testFlagRows() throws Exception {
-        facet.selection = Arrays.asList(
-                new DecoratedValue("h", "h"),
-                new DecoratedValue("d", "d"));
-        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
-        RowFlagOperation operation = new RowFlagOperation(engineConfig, true);
 
         runOperation(operation, project);
 

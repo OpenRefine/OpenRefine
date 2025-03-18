@@ -34,11 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.recon;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -51,6 +54,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
@@ -99,6 +103,31 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     @JsonProperty("applyToJudgedCells")
     public boolean getApplyToJudgedCells() {
         return _applyToJudgedCells;
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        Set<String> columnNames = new HashSet<>(Set.of(_toColumnNames));
+        columnNames.add(_fromColumnName);
+        return Optional.of(columnNames);
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(new ColumnsDiff(List.of(), Set.of(), Set.of(_toColumnNames)));
+    }
+
+    @Override
+    public ReconCopyAcrossColumnsOperation renameColumns(Map<String, String> newColumnNames) {
+        List<String> translatedToColumnNames = Arrays.asList(_toColumnNames).stream()
+                .map(name -> newColumnNames.getOrDefault(name, name))
+                .collect(Collectors.toList());
+        return new ReconCopyAcrossColumnsOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_fromColumnName, _fromColumnName),
+                translatedToColumnNames.toArray(new String[translatedToColumnNames.size()]),
+                _judgments,
+                _applyToJudgedCells);
     }
 
     @Override
@@ -195,6 +224,6 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return OperationDescription.recon_copy_across_columns_brief(_fromColumnName, StringUtils.join(_toColumnNames));
+        return OperationDescription.recon_copy_across_columns_brief(_fromColumnName, StringUtils.join(_toColumnNames, ", "));
     }
 }

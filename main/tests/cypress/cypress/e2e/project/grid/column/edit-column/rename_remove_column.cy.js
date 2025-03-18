@@ -2,11 +2,11 @@ describe(__filename, function () {
   it('Ensures a column is removed from the data-table', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Remove this column']);
+    cy.columnActionClick('Shrt_Desc', ['Remove column']);
 
     cy.assertNotificationContainingText('Remove column Shrt_Desc');
 
-    cy.columnActionClick('Water', ['Edit column', 'Remove this column']);
+    cy.columnActionClick('Water', ['Remove column']);
 
     cy.assertNotificationContainingText('Remove column Water');
 
@@ -23,13 +23,19 @@ describe(__filename, function () {
       cy.visit(
         Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
     });
-    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Rename this column']);
+    cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
+    cy.getFacetContainer('Shrt_Desc').should('exist');
+
+    cy.columnActionClick('Shrt_Desc', ['Rename column']);
     cy.waitForDialogPanel();
     cy.get('.dialog-container .dialog-body input').clear();
     cy.get('.dialog-container .dialog-body input').type('test_rename_butter');
     cy.get('.dialog-container .dialog-footer button').contains('OK').click();
 
     cy.assertNotificationContainingText('Rename column Shrt_Desc');
+    cy.getFacetContainer('test_rename_butter')
+        .find('.facet-choice')
+        .should('have.length', 2);
 
     cy.assertCellEquals(0, 'test_rename_butter', 'BUTTER,WITH SALT');
     cy.assertCellEquals(1, 'test_rename_butter', 'BUTTER,WHIPPED,WITH SALT');

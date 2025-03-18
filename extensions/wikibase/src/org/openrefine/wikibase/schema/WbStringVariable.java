@@ -24,6 +24,8 @@
 
 package org.openrefine.wikibase.schema;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
@@ -70,5 +72,10 @@ public class WbStringVariable extends WbVariableExpr<StringValue> {
     @Override
     public boolean equals(Object other) {
         return equalAsVariables(other, WbStringVariable.class);
+    }
+
+    @Override
+    public WbStringVariable renameColumns(Map<String, String> substitutions) {
+        return new WbStringVariable(substitutions.getOrDefault(getColumnName(), getColumnName()));
     }
 }

@@ -41,30 +41,28 @@ function BrowsingEngine(div, facetConfigs) {
   if (facetConfigs.length > 0) {
     for (var i = 0; i < facetConfigs.length; i++) {
       var facetConfig = facetConfigs[i];
-      var type = facetConfig.c.type;
-
       var elmt = this._createFacetContainer();
-      var facet;
-      switch (type) {
-      case "range":
-        facet = RangeFacet.reconstruct(elmt, facetConfig);
-        break;
-      case "timerange":
-        facet = TimeRangeFacet.reconstruct(elmt, facetConfig);
-        break;
-      case "scatterplot":
-        facet = ScatterplotFacet.reconstruct(elmt, facetConfig);
-        break;
-      case "text":
-        facet = TextSearchFacet.reconstruct(elmt, facetConfig);
-        break;
-      default:
-        facet = ListFacet.reconstruct(elmt, facetConfig);
-      }
+      var facet = this._createFacet(elmt, facetConfig);
 
       this._facets.push({ elmt: elmt, facet: facet });
       facet.prepareUI();
     }
+  }
+}
+
+BrowsingEngine.prototype._createFacet = function(elmt, uiState, options) {
+  var type = uiState.c.type;
+  switch (type) {
+    case "range":
+      return RangeFacet.reconstruct(elmt, uiState, options);
+    case "timerange":
+      return TimeRangeFacet.reconstruct(elmt, uiState, options);
+    case "scatterplot":
+      return ScatterplotFacet.reconstruct(elmt, uiState, options);
+    case "text":
+      return TextSearchFacet.reconstruct(elmt, uiState, options);
+    default:
+      return ListFacet.reconstruct(elmt, uiState, options);
   }
 }
 
@@ -169,25 +167,35 @@ BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
   return a;
 };
 
+BrowsingEngine.prototype.setJSON = function(engineConfig, updateLater) {
+  this._mode = engineConfig.mode;
+  
+  for (var i = 0; i < this._facets.length; i++) {
+    this._facets[i].facet.dispose();
+    this._facets[i].elmt.remove();
+  }
+
+  this._facets = [];
+
+  var facetConfigs = engineConfig.facets;
+  for (var i = 0; i < facetConfigs.length; i++) {
+    var facetConfig = facetConfigs[i];
+    var elmt = this._createFacetContainer();
+    var facet = this._createFacet(elmt, {c: facetConfig});
+
+    this._facets.push({ elmt: elmt, facet: facet });
+    facet.prepareUI();
+  }
+  if (!updateLater) {
+    Refine.update({ engineChanged: true });
+  }
+};
+
+
 BrowsingEngine.prototype.addFacet = function(type, config, options, avoidDuplicates) {
   var elmt = this._createFacetContainer();
-  var facet;
-  switch (type) {
-  case "range":
-    facet = new RangeFacet(elmt, config, options);
-    break;
-  case "timerange":
-    facet = new TimeRangeFacet(elmt, config, options);
-    break;
-  case "scatterplot":
-    facet = new ScatterplotFacet(elmt, config, options);
-    break;
-  case "text":
-    facet = new TextSearchFacet(elmt, config, options);
-    break;
-  default:
-    facet = new ListFacet(elmt, config, options);
-  }
+  config.type = type;
+  var facet = this._createFacet(elmt, {c: config}, options);
 
   if (avoidDuplicates) {
     let criterion = facet.uniquenessCriterion();

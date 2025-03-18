@@ -33,34 +33,47 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.OperationResolver;
 import com.google.refine.process.Process;
 import com.google.refine.process.QuickHistoryEntryProcess;
 
-/*
- *  An abstract operation can be applied to different but similar
- *  projects.
+/**
+ * An operation can be applied to different but similar projects. Instances of this class store the metadata describing
+ * the operation before it is carried out, such as the names of the columns it applies to, the configuration of any
+ * facets to be observed by the operation, and so on. Any data obtained from executing the operation on the project
+ * should be stored in a {@link Change} instead.
+ * 
+ * Operations need to be (de)serializable in JSON via Jackson, used for project persistence and in the extract/apply
+ * dialog of the history panel. Validation of the operation's parameters should not happen during deserialization, but
+ * in the {@link #validate()} method.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = "op", visible = true) // for
-                                                                                                                 // UnknownOperation,
-                                                                                                                 // which
-                                                                                                                 // needs
-                                                                                                                 // to
-                                                                                                                 // read
-                                                                                                                 // its
-                                                                                                                 // own
-                                                                                                                 // id
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = "op", visible = true)
 @JsonTypeIdResolver(OperationResolver.class)
 abstract public class AbstractOperation {
+
+    /**
+     * Checks whether the parameters of this operation are suitably filled. Those checks should not happen in the
+     * deserialization constructor as it would risk rejecting JSON certain representations at project loading time.
+     * 
+     * @throws IllegalArgumentException
+     *             if any parameter is missing or inconsistent
+     */
+    public void validate() throws IllegalArgumentException {
+
+    }
 
     public Process createProcess(Project project, Properties options) throws Exception {
         return new QuickHistoryEntryProcess(project, getBriefDescription(null)) {
@@ -88,5 +101,37 @@ abstract public class AbstractOperation {
     @JsonProperty("description")
     public String getJsonDescription() {
         return getBriefDescription(null);
+    }
+
+    /**
+     * A set of columns required by this operation to run. If present, the operation is guaranteed to be able to run on
+     * any project which has at least those columns. If equal to {@link Optional#empty()} the operation could
+     * potentially depend on any column.
+     */
+    @JsonIgnore
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.empty();
+    }
+
+    /**
+     * If the effect of the operation on the set of columns in the project is predictable, this effect can be exposed in
+     * this method. Otherwise, {@link Optional#empty()} can be returned.
+     */
+    @JsonIgnore
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.empty();
+    }
+
+    /**
+     * Compute a new version of this operation metadata, with renamed columns. This is a best-effort transformation:
+     * some column references might fail to be updated, for instance if they are embedded into expressions that cannot
+     * be fully analyzed. As a fall-back solution, the same operation can be returned.
+     * 
+     * @param newColumnNames
+     *            a map from old to new column names
+     * @return the updated operation metadata
+     */
+    public AbstractOperation renameColumns(Map<String, String> newColumnNames) {
+        return this;
     }
 }

@@ -139,23 +139,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 a.history-entry {
-  display: block;
-  position: relative;
+  display: grid;
+  grid-template-columns: 2em 1fr;
   padding: var(--padding-normal);
-  padding-left: calc(var(--padding-normal) + 30px);
   text-decoration: none;
   color: var(--text-primary);
   border-bottom: 1px dotted #ddd;
-}
-
-.history-entry-index {
-  position: absolute;
-  top: 8px;
-  left: 0;
-  width: 30px;
-  text-align: right;
-  font-size: 80%;
-  padding: 2px 0px;
 }
 
 a.history-entry.filtered-out {
@@ -166,6 +155,19 @@ a.history-entry.filtered-out {
 
 a.history-entry.filtered-out>* {
   display: none;
+}
+
+.history-entry-icon img {
+  max-height: 1.5em;
+  max-width: 1.5em;
+}
+
+.history-future .history-entry-icon img {
+  opacity: 0.5;
+}
+
+.history-entry-text, .history-entry-icon {
+  align-self: baseline;
 }
 
 .history-panel-controls {
@@ -193,6 +195,10 @@ a.history-entry.filtered-out>* {
 .history-past {
   position: relative;
   background: var(--background-primary);
+
+  a.history-entry:hover ~ a.history-entry {
+    background: var(--chrome-secondary);
+  }
 }
 
 .history-now {
@@ -202,23 +208,10 @@ a.history-entry.filtered-out>* {
 .history-future {
   position: relative;
   padding-bottom: var(--padding-loose);
-}
 
-.history-highlight {
-  position: absolute;
-  left: 0px;
-  width: 100%;
-  display: none;
-}
-
-.history-past .history-highlight {
-  background: var(--chrome-secondary);
-  bottom: 0;
-}
-
-.history-future .history-highlight {
-  background: var(--background-primary);
-  top: 0;
+  a.history-entry:hover, a.history-entry:has(~ a.history-entry:hover) {
+    background: var(--background-primary);
+  }
 }
 
 .history-future a.history-entry, .history-future a.history-entry-index {
@@ -254,4 +247,5 @@ textarea.history-operation-json {
 
 .history-operation-json-error {
   color: var(--error-red);
+  max-width: calc(800px - var(--padding-looser));
 }

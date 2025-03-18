@@ -24,7 +24,11 @@
 
 package org.openrefine.wikibase.schema;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
@@ -33,6 +37,7 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.ModelException;
+import com.google.refine.util.ParsingUtilities;
 
 import org.openrefine.wikibase.schema.exceptions.QAWarningException;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
@@ -69,6 +74,16 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
         public void validate(ValidationState validation) {
             expr.validate(validation);
         }
+
+        @Override
+        public Set<String> getColumnDependencies() {
+            return expr.getColumnDependencies();
+        }
+
+        @Override
+        public WbExpression<StatementGroupEdit> renameColumns(Map<String, String> substitutions) {
+            return new Wrapper(expr.renameColumns(substitutions));
+        }
     }
 
     public WbStatementGroupExprTest() {
@@ -79,6 +94,12 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroupEdi
         statementGroupUpdate = new StatementGroupEdit(Collections.singletonList(statementTest.fullStatementUpdate));
         jsonRepresentation = "{\"property\":{\"type\":\"wbpropconstant\",\"pid\":\"P908\",\"label\":\"myprop\",\"datatype\":\"time\"},"
                 + "\"statements\":[" + statementTest.jsonRepresentation + "]}";
+    }
+
+    @Test
+    public void testDependencies() throws Exception {
+        WbStatementGroupExpr expr = ParsingUtilities.mapper.readValue(jsonRepresentation, WbStatementGroupExpr.class);
+        assertEquals(expr.getColumnDependencies(), Set.of("column A", "column B", "column C"));
     }
 
     @Test

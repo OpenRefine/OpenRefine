@@ -2,8 +2,12 @@
 package org.openrefine.wikibase.schema;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -242,6 +246,39 @@ public class WbMediaInfoEditExpr implements WbExpression<MediaInfoEdit> {
     @JsonProperty("overrideWikitext")
     public boolean isOverridingWikitext() {
         return overrideWikitext;
+    }
+
+    @Override
+    public Set<String> getColumnDependencies() {
+        Set<String> deps = new HashSet<>(subject.getColumnDependencies());
+        for (WbNameDescExpr nameDesc : nameDescs) {
+            deps.addAll(nameDesc.getColumnDependencies());
+        }
+        for (WbStatementGroupExpr statementGroup : statementGroups) {
+            deps.addAll(statementGroup.getColumnDependencies());
+        }
+        if (filePath != null) {
+            deps.addAll(filePath.getColumnDependencies());
+        }
+        if (fileName != null) {
+            deps.addAll(fileName.getColumnDependencies());
+        }
+        if (wikitext != null) {
+            deps.addAll(wikitext.getColumnDependencies());
+        }
+        return deps;
+    }
+
+    @Override
+    public WbMediaInfoEditExpr renameColumns(Map<String, String> substitutions) {
+        return new WbMediaInfoEditExpr(
+                subject.renameColumns(substitutions),
+                nameDescs.stream().map(nd -> nd.renameColumns(substitutions)).collect(Collectors.toList()),
+                statementGroups.stream().map(sg -> sg.renameColumns(substitutions)).collect(Collectors.toList()),
+                filePath == null ? null : filePath.renameColumns(substitutions),
+                fileName == null ? null : fileName.renameColumns(substitutions),
+                wikitext == null ? null : wikitext.renameColumns(substitutions),
+                overrideWikitext);
     }
 
     @Override

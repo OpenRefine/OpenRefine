@@ -124,17 +124,21 @@ public class MediaFileUtils {
      *            the edit summary associated with the upload
      * @param tags
      *            tags to apply to the edit
+     * @param shouldChunk
+     *            whether the file should be uploaded in chunks
+     * @param newVersion
+     *            true when we expect the file to already exist, in which case we want to upload a new version
      * @return
      * @throws IOException
      * @throws MediaWikiApiErrorException
      */
     public MediaUploadResponse uploadLocalFile(File path, String fileName, String wikitext, String summary, List<String> tags,
-            boolean shouldChunk)
+            boolean shouldChunk, boolean newVersion)
             throws IOException, MediaWikiApiErrorException {
         if (shouldChunk) {
             try (ChunkedFile chunkedFile = new ChunkedFile(path)) {
                 logger.info("Uploading large file in chunks.");
-                return uploadLocalFileChunked(chunkedFile, fileName, wikitext, summary, tags);
+                return uploadLocalFileChunked(chunkedFile, fileName, wikitext, summary, tags, newVersion);
             }
         }
 
@@ -148,7 +152,7 @@ public class MediaFileUtils {
         Map<String, ImmutablePair<String, java.io.File>> files = new HashMap<>();
         files.put("file", new ImmutablePair<String, File>(fileName, path));
 
-        return uploadFile(parameters, files);
+        return uploadFile(parameters, files, newVersion);
     }
 
     /**
@@ -169,7 +173,7 @@ public class MediaFileUtils {
      * @throws MediaWikiApiErrorException
      */
     protected MediaUploadResponse uploadLocalFileChunked(ChunkedFile path, String fileName, String wikitext, String summary,
-            List<String> tags)
+            List<String> tags, boolean newVersion)
             throws IOException, MediaWikiApiErrorException {
         MediaUploadResponse response = null;
         int i = 1;
@@ -192,7 +196,7 @@ public class MediaFileUtils {
             Map<String, ImmutablePair<String, java.io.File>> files = new HashMap<>();
             String chunkName = "chunk-" + i + path.getExtension();
             files.put("chunk", new ImmutablePair<String, File>(chunkName, chunk));
-            response = uploadFile(parameters, files);
+            response = uploadFile(parameters, files, newVersion);
             chunk.delete();
             response.checkForErrors();
             double percent = (double) i / totalChunks * 100.0;
@@ -211,7 +215,7 @@ public class MediaFileUtils {
         parameters.put("text", wikitext);
         logger.info("Chunked upload committed.");
 
-        return uploadFile(parameters, null);
+        return uploadFile(parameters, null, newVersion);
     }
 
     /**
@@ -228,11 +232,14 @@ public class MediaFileUtils {
      *            the edit summary associated with the upload
      * @param tags
      *            tags to apply to the edit
+     * @param newVersion
+     *            true when we expect the file to exist already, in which case we want to upload a new version
      * @return
      * @throws IOException
      * @throws MediaWikiApiErrorException
      */
-    public MediaUploadResponse uploadRemoteFile(URL url, String fileName, String wikitext, String summary, List<String> tags)
+    public MediaUploadResponse uploadRemoteFile(URL url, String fileName, String wikitext, String summary, List<String> tags,
+            boolean newVersion)
             throws IOException, MediaWikiApiErrorException {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("action", "upload");
@@ -244,7 +251,7 @@ public class MediaFileUtils {
         parameters.put("url", url.toExternalForm());
         Map<String, ImmutablePair<String, java.io.File>> files = Collections.emptyMap();
 
-        return uploadFile(parameters, files);
+        return uploadFile(parameters, files, newVersion);
     }
 
     /**
@@ -331,7 +338,8 @@ public class MediaFileUtils {
      * @throws IOException
      * @throws MediaWikiApiErrorException
      */
-    protected MediaUploadResponse uploadFile(Map<String, String> parameters, Map<String, ImmutablePair<String, java.io.File>> files)
+    protected MediaUploadResponse uploadFile(Map<String, String> parameters, Map<String, ImmutablePair<String, java.io.File>> files,
+            boolean newVersion)
             throws IOException, MediaWikiApiErrorException {
         int retries = 3;
         long backOffTime = maxLagWaitTime;
@@ -344,6 +352,16 @@ public class MediaFileUtils {
                     throw new IOException("The server did not return an 'upload' field in the JSON response.");
                 }
                 MediaUploadResponse response = ParsingUtilities.mapper.treeToValue(uploadNode, MediaUploadResponse.class);
+                if (response.hasAllowedWarnings() && newVersion) {
+                    logger.info("Ignoring warnings: " + response.warnings);
+                    Map<String, String> ignoreWarningsParameters = new HashMap<>();
+                    ignoreWarningsParameters.putAll(parameters);
+                    ignoreWarningsParameters.put("ignorewarnings", "1");
+                    ignoreWarningsParameters.remove("url");
+                    ignoreWarningsParameters.put("filekey", response.filekey);
+                    return uploadFile(ignoreWarningsParameters, null, newVersion);
+                }
+
                 // todo check for errors which should be retried
                 return response;
             } catch (TokenErrorException e) {
@@ -444,6 +462,27 @@ public class MediaFileUtils {
                 }
             }
             return mid;
+        }
+
+        /**
+         * Checks if warnings are allowed for the purpose of uploading a new version of the file. If there are any
+         * warnings they must all be allowed.
+         *
+         * @return
+         */
+        public boolean hasAllowedWarnings() {
+
+            if ("Success".equals(result)) {
+                return false;
+            }
+
+            if (warnings == null) {
+                return false;
+            }
+
+            Set<String> warningCodes = warnings.keySet();
+            Set<String> allowedWarnings = Set.of("exists", "duplicateversions");
+            return allowedWarnings.containsAll(warningCodes);
         }
     }
 

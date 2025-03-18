@@ -406,6 +406,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       id: "core/reconcile",
       label: $.i18n('core-views/start-recon'),
       tooltip: $.i18n('core-views/recon-text-fb'),
+      icon: 'images/operations/reconcile.svg',
       click: doReconcile
     },
     {},
@@ -570,12 +571,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           id: "core/match-to-best-candidate",
           label: $.i18n('core-views/best-cand'),
           tooltip: $.i18n('core-views/best-cand2'),
+          icon: 'images/operations/recon-match-best-candidates.svg',
           click: doReconMatchBestCandidates
         },
         {
           id: "core/match-to-new-topic",
           label: $.i18n('core-views/new-topic'),
           tooltip: $.i18n('core-views/new-topic2'),
+          icon: 'images/operations/recon-mark-new-topics.svg',
           click: function() {
             doReconMarkNewTopics(false);
           }
@@ -584,6 +587,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           id: "core/match-similar-to-new-topic",
           label: $.i18n('core-views/one-topic'),
           tooltip: $.i18n('core-views/one-topic2'),
+          icon: 'images/operations/recon-mark-new-topics.svg',
           click: function() {
             doReconMarkNewTopics(true);
           }
@@ -592,6 +596,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           id: "core/match-to-specific",
           label: $.i18n('core-views/filtered-cell'),
           tooltip: $.i18n('core-views/filtered-cell2'),
+          icon: 'images/operations/recon-match-specific-topic-to-cells.svg',
           click: doSearchToMatch
         },
         {},
@@ -599,12 +604,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           id: "core/discard-judgments",
           label: $.i18n('core-views/discard-judg'),
           tooltip: $.i18n('core-views/discard-judg2'),
+          icon: 'images/operations/recon-discard-judgments.svg',
           click: doReconDiscardJudgments
         },
         {
           id: "core/clear-recon-data",
           label: $.i18n('core-views/clear-recon'),
           tooltip: $.i18n('core-views/clear-recon2'),
+          icon: 'images/operations/delete.svg',
           click: doClearReconData
         }
       ]
@@ -614,12 +621,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       id: "core/copy-across-columns",
       label: $.i18n('core-views/copy-recon'),
       tooltip: $.i18n('core-views/copy-recon2'),
+      icon: 'images/operations/recon-copy-across-columns.svg',
       click: doCopyAcrossColumns
     },
     {
       id: "core/use-values-as-identifiers",
       label: $.i18n('core-views/use-values-as-identifiers'),
       tooltip: $.i18n('core-views/use-values-as-identifiers2'),
+      icon: 'images/operations/recon-use-values-as-identifiers.svg',
       click: doUseValuesAsIdentifiers
     },
     {},

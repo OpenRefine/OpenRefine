@@ -35,15 +35,20 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
@@ -65,6 +70,13 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         _separator = separator;
     }
 
+    @Override
+    public void validate() {
+        Validate.notNull(_columnName, "Missing column name");
+        Validate.notNull(_keyColumnName, "Missing key column name");
+        Validate.notNull(_separator, "Missing separator");
+    }
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
@@ -78,6 +90,24 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
     @JsonProperty("separator")
     public String getSeparator() {
         return _separator;
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(Set.of(_columnName, _keyColumnName));
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+    }
+
+    @Override
+    public MultiValuedCellJoinOperation renameColumns(Map<String, String> newColumnNames) {
+        return new MultiValuedCellJoinOperation(
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                newColumnNames.getOrDefault(_keyColumnName, _keyColumnName),
+                _separator);
     }
 
     @Override

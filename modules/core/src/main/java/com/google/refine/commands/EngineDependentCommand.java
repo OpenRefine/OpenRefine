@@ -74,6 +74,7 @@ abstract public class EngineDependentCommand extends Command {
             Project project = getProject(request);
 
             AbstractOperation op = createOperation(project, request, getEngineConfig(request));
+            op.validate();
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);

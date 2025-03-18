@@ -489,3 +489,12 @@ p.body-text {
   height: 100%;
   overflow: hidden;
 }
+
+.float-apart {
+  display: flex;
+  justify-content: space-between;
+}
+
+.padding-loose {
+  padding: var(--padding-loose);
+}

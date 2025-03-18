@@ -86,6 +86,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "undo-redo", new Packages.com.google.refine.commands.history.UndoRedoCommand());
   RS.registerCommand(module, "apply-operations", new Packages.com.google.refine.commands.history.ApplyOperationsCommand());
+  RS.registerCommand(module, "get-column-dependencies", new Packages.com.google.refine.commands.history.GetColumnDependenciesCommand());
   RS.registerCommand(module, "cancel-processes", new Packages.com.google.refine.commands.history.CancelProcessesCommand());
 
   RS.registerCommand(module, "compute-facets", new Packages.com.google.refine.commands.browsing.ComputeFacetsCommand());
@@ -135,6 +136,8 @@ function registerCommands() {
   RS.registerCommand(module, "remove-rows", new Packages.com.google.refine.commands.row.RemoveRowsCommand());
   RS.registerCommand(module, "reorder-rows", new Packages.com.google.refine.commands.row.ReorderRowsCommand());
   RS.registerCommand(module, "add-rows", new Packages.com.google.refine.commands.row.AddRowsCommand());
+  RS.registerCommand(module, "remove-duplicate-rows", new Packages.com.google.refine.commands.row.RemoveDuplicateRowsCommand());
+  RS.registerCommand(module, "keep-matching-rows", new Packages.com.google.refine.commands.row.KeepMatchingRowsCommand());
 
   RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
   RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
@@ -147,6 +150,7 @@ function registerCommands() {
   RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
+  RS.registerCommand(module, "open-extensions-dir", new Packages.com.google.refine.commands.OpenExtensionsDirCommand());
   
 }
 
@@ -177,6 +181,8 @@ function registerOperations() {
   OR.registerOperation(module, "row-flag", Packages.com.google.refine.operations.row.RowFlagOperation);
   OR.registerOperation(module, "row-reorder", Packages.com.google.refine.operations.row.RowReorderOperation);
   OR.registerOperation(module, "row-addition", Packages.com.google.refine.operations.row.RowAdditionOperation);
+  OR.registerOperation(module, "row-duplicate-removal", Packages.com.google.refine.operations.row.RowDuplicatesRemovalOperation);
+  OR.registerOperation(module, "row-keep-matched", Packages.com.google.refine.operations.row.RowKeepMatchedOperation);
 
   OR.registerOperation(module, "recon", Packages.com.google.refine.operations.recon.ReconOperation);
   OR.registerOperation(module, "recon-mark-new-topics", Packages.com.google.refine.operations.recon.ReconMarkNewTopicsOperation);
@@ -409,13 +415,17 @@ function init() {
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
       "scripts/util/encoding.js",
+      "scripts/util/host.js",
       "scripts/util/sign.js",
+      "scripts/util/filter-lists.js",
+      "scripts/util/filter-lists-search.js",
 
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
       "scripts/index/open-project-ui.js",
       "scripts/index/import-project-ui.js",
       "scripts/index/lang-settings-ui.js",
+      "scripts/index/manage-extensions-ui.js",
 
       "scripts/index/default-importing-controller/controller.js",
       "scripts/index/default-importing-controller/file-selection-panel.js",
@@ -450,7 +460,7 @@ function init() {
       "styles/common.css",
       "styles/util/dialog.css",
       "styles/util/encoding.css",
-      
+
       "styles/index.css",
       "styles/index/create-project-ui.css",
       "styles/index/open-project-ui.css",
@@ -498,6 +508,7 @@ function init() {
       "scripts/project/summary-bar.js",
       "scripts/project/exporters.js",
       "scripts/project/scripting.js",
+      "scripts/project/operation-icons.js",
 
       "scripts/facets/facet.js",
       "scripts/facets/list-facet.js",
@@ -526,6 +537,8 @@ function init() {
       "scripts/reconciliation/recon-dialog-2.js",
       "scripts/reconciliation/standard-service-panel.js",
 
+      "scripts/dialogs/extract-operations-dialog.js",
+      "scripts/dialogs/apply-operations-dialog.js",
       "scripts/dialogs/expression-preview-dialog.js",
       "scripts/dialogs/add-column-by-reconciliation.js",
       "scripts/dialogs/clustering-dialog.js",
@@ -538,7 +551,8 @@ function init() {
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
       "scripts/dialogs/clustering-functions-dialog.js",
-      "scripts/dialogs/add-rows-dialog.js"
+      "scripts/dialogs/add-rows-dialog.js",
+      "scripts/dialogs/remove-duplicate-rows-dialog.js"
     ])
   );
 
@@ -582,6 +596,7 @@ function init() {
       "styles/reconciliation/recon-dialog.css",
       "styles/reconciliation/standard-service-panel.css",
       "styles/reconciliation/add-column-by-reconciliation.css",
+      "styles/dialogs/remove-duplicate-rows-dialog.css"
     ]
   );
 

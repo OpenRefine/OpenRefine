@@ -27,13 +27,20 @@ package org.openrefine.wikibase.operations;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.util.ParsingUtilities;
 
 import org.openrefine.wikibase.schema.WikibaseSchema;
@@ -56,6 +63,24 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
     public String getJson()
             throws Exception {
         return TestingData.jsonFromFile("operations/save-schema.json");
+    }
+
+    @Test
+    public void testColumnsDiff() throws JsonMappingException, JsonProcessingException, IOException {
+        SaveWikibaseSchemaOperation operation = ParsingUtilities.mapper
+                .readValue(TestingData.jsonFromFile("operations/save-schema-with-variables.json"), SaveWikibaseSchemaOperation.class);
+
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("country", "GRID ID")));
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        SaveWikibaseSchemaOperation operation = ParsingUtilities.mapper
+                .readValue(TestingData.jsonFromFile("operations/save-schema-with-variables.json"), SaveWikibaseSchemaOperation.class);
+        AbstractOperation renamed = operation.renameColumns(Map.of("GRID ID", "grid"));
+
+        assertEquals(renamed.getColumnDependencies(), Optional.of(Set.of("country", "grid")));
     }
 
     @Test

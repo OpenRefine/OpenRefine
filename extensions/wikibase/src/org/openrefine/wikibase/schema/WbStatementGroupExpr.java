@@ -26,9 +26,14 @@ package org.openrefine.wikibase.schema;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -125,6 +130,21 @@ public class WbStatementGroupExpr {
         return Collections.unmodifiableList(statementExprs);
     }
 
+    @JsonIgnore
+    public Set<String> getColumnDependencies() {
+        Set<String> deps = new HashSet<>(propertyExpr.getColumnDependencies());
+        for (WbStatementExpr expr : statementExprs) {
+            deps.addAll(expr.getColumnDependencies());
+        }
+        return deps;
+    }
+
+    public WbStatementGroupExpr renameColumns(Map<String, String> substitutions) {
+        return new WbStatementGroupExpr(
+                propertyExpr.renameColumns(substitutions),
+                statementExprs.stream().map(statement -> statement.renameColumns(substitutions)).collect(Collectors.toList()));
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == null || !WbStatementGroupExpr.class.isInstance(other)) {
@@ -138,4 +158,5 @@ public class WbStatementGroupExpr {
     public int hashCode() {
         return propertyExpr.hashCode() + statementExprs.hashCode();
     }
+
 }

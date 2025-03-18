@@ -35,8 +35,12 @@ package com.google.refine.operations.row;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -45,6 +49,7 @@ import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassChange;
@@ -73,6 +78,21 @@ public class RowStarOperation extends EngineDependentOperation {
     @Override
     protected String getBriefDescription(Project project) {
         return _starred ? OperationDescription.row_star_brief() : OperationDescription.row_unstar_brief();
+    }
+
+    @Override
+    protected Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        return Optional.of(Set.of());
+    }
+
+    @JsonIgnore
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.empty());
+    }
+
+    @Override
+    public RowStarOperation renameColumns(Map<String, String> newColumnNames) {
+        return new RowStarOperation(_engineConfig.renameColumnDependencies(newColumnNames), _starred);
     }
 
     @Override
@@ -124,4 +144,5 @@ public class RowStarOperation extends EngineDependentOperation {
             }
         }.init(changes);
     }
+
 }

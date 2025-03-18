@@ -33,8 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -58,6 +63,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+import com.google.refine.util.NotImplementedException;
 
 public class ListFacet implements Facet {
 
@@ -129,6 +135,52 @@ public class ListFacet implements Facet {
         @Override
         public String getJsonType() {
             return "list";
+        }
+
+        @Override
+        public void validate() {
+            try {
+                MetaParser.parse(expression);
+            } catch (ParsingException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+
+        @Override
+        public Optional<Set<String>> getColumnDependencies() {
+            try {
+                return MetaParser.parse(expression)
+                        .getColumnDependencies(Optional.of(columnName));
+            } catch (ParsingException e) {
+                return Optional.of(Collections.emptySet());
+            }
+        }
+
+        @Override
+        public FacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+            String newExpression;
+            try {
+                Evaluable evaluable = MetaParser.parse(expression);
+                Evaluable translated = evaluable.renameColumnDependencies(substitutions);
+                newExpression = translated.getFullSource();
+            } catch (ParsingException | NotImplementedException e) {
+                return this;
+            }
+            ListFacetConfig newConfig = new ListFacetConfig();
+            newConfig.expression = newExpression;
+            newConfig.columnName = substitutions.getOrDefault(columnName, columnName);
+            if (Objects.equals(name, columnName)) {
+                newConfig.name = newConfig.columnName;
+            } else {
+                newConfig.name = name;
+            }
+            newConfig.invert = invert;
+            newConfig.omitBlank = omitBlank;
+            newConfig.omitError = omitError;
+            newConfig.selection = selection;
+            newConfig.selectBlank = selectBlank;
+            newConfig.selectError = selectError;
+            return newConfig;
         }
     }
 

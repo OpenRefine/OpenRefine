@@ -27,9 +27,15 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -43,8 +49,11 @@ import com.google.refine.browsing.facets.ListFacet;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OnError;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -83,24 +92,107 @@ public class ColumnAdditionOperationTests extends RefineTest {
 
     @Test
     public void serializeColumnAdditionOperation() throws Exception {
+        String description = OperationDescription.column_addition_brief("organization_json", 3, "employments",
+                "grel:value.parseJson()[\"employment-summary\"].join('###')");
         String json = "{"
                 + "   \"op\":\"core/column-addition\","
-                + "   \"description\":\"Create column organization_json at index 3 based on column employments using expression grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\",\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},\"newColumnName\":\"organization_json\",\"columnInsertIndex\":3,\"baseColumnName\":\"employments\","
-                + "    \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
+                + "   \"description\":" + new TextNode(description).toString() + ","
+                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "   \"newColumnName\":\"organization_json\","
+                + "   \"columnInsertIndex\":3,"
+                + "   \"baseColumnName\":\"employments\","
+                + "   \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json);
     }
 
     @Test
-    public void testAddColumnRowsMode() throws Exception {
-        ColumnAdditionOperation operation = new ColumnAdditionOperation(
-                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
+    public void testValidate() {
+        ColumnAdditionOperation invalidEngine = new ColumnAdditionOperation(
+                invalidEngineConfig,
                 "bar",
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertThrows(IllegalArgumentException.class, () -> invalidEngine.validate());
+        ColumnAdditionOperation missingBaseColumn = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                null,
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+        assertThrows(IllegalArgumentException.class, () -> missingBaseColumn.validate());
+        ColumnAdditionOperation invalidExpression = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                "bar",
+                "grel:foo(",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+        assertThrows(IllegalArgumentException.class, () -> invalidExpression.validate());
+    }
+
+    @Test
+    public void testColumnDependenciesIncludeFacets() {
+        ListFacet.ListFacetConfig facetConfig = new ListFacet.ListFacetConfig();
+        facetConfig.name = "my facet";
+        facetConfig.expression = "grel:value";
+        facetConfig.columnName = "other_column";
+        facetConfig.selection = Collections.singletonList(new DecoratedValue("a", "a"));
+        EngineConfig engineConfig = new EngineConfig(Collections.singletonList(facetConfig), Mode.RowBased);
+
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                engineConfig,
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        assertEquals(operation.getColumnDependencies().get(), Set.of("foo", "bar", "other_column"));
+    }
+
+    @Test
+    public void testRenameColumns() {
+        String description = OperationDescription.column_addition_brief("organization_json", 3, "employments",
+                "grel:value.parseJson().get(\"employment-summary\").join('###')");
+        String expectedJSON = "{"
+                + "   \"op\":\"core/column-addition\","
+                + "   \"description\":" + new TextNode(description).toString() + ","
+                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "   \"newColumnName\":\"organization_json\","
+                + "   \"columnInsertIndex\":3,"
+                + "   \"baseColumnName\":\"employments\","
+                + "   \"expression\":\"grel:value.parseJson().get(\\\"employment-summary\\\").join('###')\","
+                + "   \"onError\":\"set-to-blank\""
+                + "}";
+
+        var SUT = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                "job_titles",
+                "grel:value.parseJson()[\"employment-summary\"].join('###')",
+                OnError.SetToBlank,
+                "new_column",
+                3);
+
+        AbstractOperation result = SUT.renameColumns(Map.of("job_titles", "employments", "new_column", "organization_json"));
+        TestUtils.isSerializedTo(result, expectedJSON);
+    }
+
+    @Test
+    public void testAddColumnRowsMode() throws Exception {
+        ColumnAdditionOperation operation = new ColumnAdditionOperation(
+                EngineConfig.deserialize("{\"mode\":\"row-based\",\"facets\":[]}"),
+                "bar",
+                "grel:cells[\"foo\"].value+'_'+value",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("foo", "bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -132,6 +224,8 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("foo", "bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -151,12 +245,13 @@ public class ColumnAdditionOperationTests extends RefineTest {
     @Test
     public void testAddColumnRecordsMode() throws Exception {
         ColumnAdditionOperation operation = new ColumnAdditionOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.deserialize("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "bar",
                 "grel:length(row.record.cells['hello'])",
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -188,6 +283,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -213,6 +309,8 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -238,6 +336,8 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 
@@ -269,6 +369,8 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
+        assertEquals(operation.getColumnDependencies().get(), Set.of("bar"));
+        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("newcolumn", "bar").build());
 
         runOperation(operation, project);
 

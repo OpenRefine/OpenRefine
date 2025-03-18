@@ -27,11 +27,16 @@
 
 package com.google.refine.browsing.facets;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -57,6 +62,32 @@ public class ListFacetTests extends RefineTest {
             + "\"name\":\"facet A\","
             + "\"columnName\":\"Column A\","
             + "\"expression\":\"value+\\\"bar\\\"\","
+            + "\"omitBlank\":false,"
+            + "\"omitError\":false,"
+            + "\"selection\":[{\"v\":{\"v\":\"foobar\",\"l\":\"true\"}}],"
+            + "\"selectBlank\":false,"
+            + "\"selectError\":false,"
+            + "\"invert\":false"
+            + "}";
+
+    private static String jsonConfigParseError = "{"
+            + "\"type\":\"list\","
+            + "\"name\":\"facet A\","
+            + "\"columnName\":\"Column A\","
+            + "\"expression\":\"foo(\","
+            + "\"omitBlank\":false,"
+            + "\"omitError\":false,"
+            + "\"selection\":[{\"v\":{\"v\":\"foobar\",\"l\":\"true\"}}],"
+            + "\"selectBlank\":false,"
+            + "\"selectError\":false,"
+            + "\"invert\":false"
+            + "}";
+
+    private static String jsonConfigRenamed = "{"
+            + "\"type\":\"list\","
+            + "\"name\":\"facet A\","
+            + "\"columnName\":\"Column A2\","
+            + "\"expression\":\"grel:value + \\\"bar\\\"\","
             + "\"omitBlank\":false,"
             + "\"omitError\":false,"
             + "\"selection\":[{\"v\":{\"v\":\"foobar\",\"l\":\"true\"}}],"
@@ -109,6 +140,32 @@ public class ListFacetTests extends RefineTest {
     public void serializeListFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         TestUtils.isSerializedTo(facetConfig, jsonConfig);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
+        assertEquals(facetConfig.getColumnDependencies(), Optional.of(Collections.singleton("Column A")));
+    }
+
+    @Test
+    public void testColumnDependenciesWithError() throws Exception {
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfigParseError, ListFacetConfig.class);
+        assertEquals(facetConfig.getColumnDependencies(), Optional.of(Collections.emptySet()));
+    }
+
+    @Test
+    public void testRenameColumns() throws Exception {
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
+        FacetConfig renamed = facetConfig.renameColumnDependencies(Map.of("Column A", "Column A2"));
+        TestUtils.isSerializedTo(renamed, jsonConfigRenamed);
+    }
+
+    @Test
+    public void testRenameColumnsWithParseError() throws Exception {
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfigParseError, ListFacetConfig.class);
+        FacetConfig renamed = facetConfig.renameColumnDependencies(Map.of("foo", "bar"));
+        TestUtils.isSerializedTo(renamed, jsonConfigParseError);
     }
 
     @Test

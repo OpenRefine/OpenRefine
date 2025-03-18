@@ -80,11 +80,6 @@
   margin-top: 0;
 }
 
-.float-apart {
-  display: flex;
-  justify-content: space-between;
-}
-
 .schema-alignment-footer {
   padding: 1em;
 }

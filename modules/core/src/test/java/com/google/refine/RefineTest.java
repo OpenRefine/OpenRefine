@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,8 +46,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -62,6 +66,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
@@ -69,6 +75,7 @@ import com.google.refine.messages.OpenRefineMessage;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -93,6 +100,10 @@ public class RefineTest {
     protected RefineServlet servlet;
     private List<Project> projects = new ArrayList<Project>();
     private List<ImportingJob> importingJobs = new ArrayList<ImportingJob>();
+
+    protected EngineConfig invalidEngineConfig;
+    protected EngineConfig defaultEngineConfig;
+    protected EngineConfig engineConfigWithColumnDeps;
 
     @BeforeSuite
     public void init() {
@@ -120,6 +131,13 @@ public class RefineTest {
         servlet = new RefineServletStub();
         ProjectManager.singleton = new ProjectManagerStub();
         ImportingManager.initialize(servlet);
+
+        invalidEngineConfig = mock(EngineConfig.class);
+        doThrow(IllegalArgumentException.class).when(invalidEngineConfig).validate();
+        defaultEngineConfig = new EngineConfig(Collections.emptyList(), Mode.RowBased);
+        engineConfigWithColumnDeps = mock(EngineConfig.class);
+        when(engineConfigWithColumnDeps.getMode()).thenReturn(Mode.RowBased);
+        when(engineConfigWithColumnDeps.getColumnDependencies()).thenReturn(Optional.of(Set.of("facet_1")));
     }
 
     protected Project createProjectWithColumns(String projectName, String... columnNames) throws IOException, ModelException {
@@ -385,6 +403,11 @@ public class RefineTest {
      */
     protected long runOperation(AbstractOperation operation, Project project, long timeout) throws Exception {
         long start = System.currentTimeMillis();
+        operation.validate();
+        Optional<ColumnsDiff> columnsDiff = operation.getColumnsDiff();
+        Set<String> columnNamesBefore = project.columnModel.columns.stream()
+                .map(column -> column.getName())
+                .collect(Collectors.toSet());
         Process process = operation.createProcess(project, new Properties());
         if (process.isImmediate()) {
             process.performImmediate();
@@ -392,6 +415,23 @@ public class RefineTest {
             runAndWait(project.getProcessManager(), process, (int) timeout);
         }
         long end = System.currentTimeMillis();
+
+        if (columnsDiff.isPresent()) {
+            // check that the contract announced by the columns diff is respected
+            List<String> addedColumns = project.columnModel.columns.stream()
+                    .map(column -> column.getName())
+                    .filter(name -> !columnNamesBefore.contains(name))
+                    .collect(Collectors.toList());
+            Set<String> deletedColumns = columnNamesBefore.stream()
+                    .filter(name -> project.columnModel.getColumnByName(name) == null)
+                    .collect(Collectors.toSet());
+
+            assertEquals(columnsDiff.get().getAddedColumnNames(),
+                    addedColumns, "incorrect added columns announced by the operation:");
+            assertEquals(columnsDiff.get().getDeletedColumns(),
+                    deletedColumns, "incorrect deleted columns announced by the operation:");
+
+        }
         return end - start;
     }
 

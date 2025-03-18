@@ -33,7 +33,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import org.apache.commons.lang3.NotImplementedException;
+
+/**
+ * A parser for an expression language. It is registered in {@link MetaParser} with a language prefix to identify it.
+ */
 public interface LanguageSpecificParser {
 
-    public Evaluable parse(String s) throws ParsingException;
+    /**
+     * @deprecated in favor of {@link #parse(String, String)}, which is the one implementations should override
+     */
+    @Deprecated(since = "3.9")
+    public default Evaluable parse(String source) throws ParsingException {
+        throw new NotImplementedException("The method parse(String source, String languagePrefix) should be overridden");
+    }
+
+    /**
+     * Parse an expression.
+     * 
+     * @param source
+     *            the source to be parsed
+     * @param languagePrefix
+     *            the prefix which identifies the language (which is the identifier with which this
+     *            {@link LanguageSpecificParser} was registered)
+     * @return a parsed expression
+     * @throws ParsingException
+     *             when the source contains any syntax error
+     */
+    default public Evaluable parse(String source, String languagePrefix) throws ParsingException {
+        return parse(source);
+    }
 }

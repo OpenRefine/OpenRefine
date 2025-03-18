@@ -36,9 +36,12 @@ package com.google.refine.operations.recon;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -56,6 +59,7 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.messages.OpenRefineMessage;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
@@ -107,6 +111,30 @@ public class ReconOperation extends EngineDependentOperation {
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        Optional<Set<String>> reconDeps = _reconConfig.getColumnDependencies();
+        if (reconDeps.isEmpty()) {
+            return Optional.empty();
+        }
+        Set<String> dependencies = new HashSet<>(reconDeps.get());
+        dependencies.add(_columnName);
+        return Optional.of(dependencies);
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+    }
+
+    @Override
+    public ReconOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                _reconConfig.renameColumns(newColumnNames));
     }
 
     static protected class ReconEntry {

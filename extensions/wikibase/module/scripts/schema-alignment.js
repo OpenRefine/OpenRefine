@@ -44,10 +44,12 @@ function serviceLogoFromReconConfig(reconConfig) {
   if (service) {
     serviceLogo = service.logo;
   }
-  try {
-    return new URL(serviceLogo);  
-  } catch {
-    console.warn("Invalid logo URL supplied by service "+serviceUrl)
+  if (serviceLogo) {
+    try {
+        return new URL(serviceLogo);  
+    } catch {
+        console.warn("Invalid logo URL supplied by service "+serviceUrl)
+    }
   }
 };
 

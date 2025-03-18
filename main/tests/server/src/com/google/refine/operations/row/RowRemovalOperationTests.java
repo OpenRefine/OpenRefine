@@ -27,11 +27,17 @@
 
 package com.google.refine.operations.row;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -52,10 +58,12 @@ import com.google.refine.grel.Function;
 import com.google.refine.grel.Parser;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -90,7 +98,7 @@ public class RowRemovalOperationTests extends RefineTest {
     public void serializeRowRemovalOperation() throws IOException {
         String json = "{"
                 + "\"op\":\"core/row-removal\","
-                + "\"description\":\"Remove rows\","
+                + "\"description\":" + new TextNode(OperationDescription.row_removal_brief()).toString() + ","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowRemovalOperation.class), json);
     }
@@ -109,7 +117,7 @@ public class RowRemovalOperationTests extends RefineTest {
                 });
 
         engine = new Engine(projectIssue567);
-        engine_config = EngineConfig.reconstruct(ENGINE_JSON_DUPLICATES);
+        engine_config = EngineConfig.deserialize(ENGINE_JSON_DUPLICATES);
         engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
 
@@ -189,6 +197,18 @@ public class RowRemovalOperationTests extends RefineTest {
     }
 
     @Test
+    public void testColumnDependencies() {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        RowRemovalOperation operation = new RowRemovalOperation(engineConfig);
+
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("hello")));
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
+    }
+
+    @Test
     public void testRemoveRows() throws Exception {
         facet.selection = Arrays.asList(
                 new DecoratedValue("h", "h"),
@@ -226,4 +246,43 @@ public class RowRemovalOperationTests extends RefineTest {
         assertProjectEquals(project, expected);
     }
 
+    @Test
+    public void testRename() {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        RowRemovalOperation operation = new RowRemovalOperation(engineConfig);
+
+        RowRemovalOperation renamed = operation.renameColumns(Map.of("hello", "hello2"));
+        String json = "{"
+                + "\"op\":\"core/row-removal\","
+                + "\"engineConfig\":{\"facets\":["
+                + "  {\n"
+                + "    \"columnName\" : \"hello2\",\n"
+                + "    \"expression\" : \"grel:value\",\n"
+                + "    \"invert\" : false,\n"
+                + "    \"name\" : \"hello2\",\n"
+                + "    \"omitBlank\" : false,\n"
+                + "    \"omitError\" : false,\n"
+                + "    \"selectBlank\" : false,\n"
+                + "    \"selectError\" : false,\n"
+                + "    \"selection\" : [ {\n"
+                + "       \"v\" : {\n"
+                + "          \"l\" : \"h\",\n"
+                + "          \"v\" : \"h\"\n"
+                + "       }\n"
+                + "    }, {\n"
+                + "       \"v\" : {\n"
+                + "          \"l\" : \"i\",\n"
+                + "          \"v\" : \"i\"\n"
+                + "       }\n"
+                + "    } ],\n"
+                + "    \"type\" : \"list\"\n"
+                + "  }"
+                + "],\"mode\":\"record-based\"},"
+                + "\"description\":" + new TextNode(OperationDescription.row_removal_brief()).toString()
+                + "}";
+        TestUtils.isSerializedTo(renamed, json);
+    }
 }

@@ -35,18 +35,23 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
@@ -71,12 +76,12 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             @JsonProperty("separator") String separator,
             @JsonProperty("regex") boolean regex,
             @JsonProperty("fieldLengths") int[] fieldLengths) {
-        if ("separator".equals(mode)) {
+        if ("separator".equals(mode) || "plain".equals(mode) || "regex".equals(mode)) {
             return new MultiValuedCellSplitOperation(
                     columnName,
                     keyColumnName,
                     separator,
-                    regex);
+                    regex || "regex".equals(mode));
         } else {
             return new MultiValuedCellSplitOperation(
                     columnName,
@@ -125,6 +130,17 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         _fieldLengths = fieldLengths;
     }
 
+    @Override
+    public void validate() {
+        Validate.notNull(_columnName, "Missing column name");
+        Validate.notNull(_keyColumnName, "Missing key column name");
+        if ("separator".equals(_mode)) {
+            Validate.notNull(_separator, "Missing separator");
+            // pattern already compiled in the constructor
+        }
+        // field lengths already validated in the constructor
+    }
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
@@ -161,6 +177,32 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     @Override
     protected String getBriefDescription(Project project) {
         return OperationDescription.cell_multivalued_cell_split_brief(_columnName);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(Set.of(_columnName, _keyColumnName));
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+    }
+
+    @Override
+    public MultiValuedCellSplitOperation renameColumns(Map<String, String> newColumnNames) {
+        if ("separator".equals(_mode)) {
+            return new MultiValuedCellSplitOperation(
+                    newColumnNames.getOrDefault(_columnName, _columnName),
+                    newColumnNames.getOrDefault(_keyColumnName, _keyColumnName),
+                    _separator,
+                    _regex);
+        } else {
+            return new MultiValuedCellSplitOperation(
+                    newColumnNames.getOrDefault(_columnName, _columnName),
+                    newColumnNames.getOrDefault(_keyColumnName, _keyColumnName),
+                    _fieldLengths);
+        }
     }
 
     @Override

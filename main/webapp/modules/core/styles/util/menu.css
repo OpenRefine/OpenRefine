@@ -67,15 +67,30 @@ a.menu-item {
 }
 
 a.menu-item:hover {
-  background: #dbe8f8;
+  background-color: #dbe8f8;
+}
+
+.menu-item.submenu div {
+  background: url('../../images/right-arrow.png') no-repeat;
+  background-position-x: right;
+  background-position-y: 50%;
+  padding-right: 8px;
 }
 
 a.menu-item img {
   border: none;
 }
 
-table.menu-item-layout td {
-  vertical-align: middle;
+.menu-item-icon-text {
+  display: grid;
+  grid-template-columns: 1.6em 1fr;
+}
+
+a.menu-item .menu-icon {
+  height: 1.6em;
+  align-self: baseline;
+  margin-left: -3px;
+  margin-top: -2px;
 }
 
 .menu-section {

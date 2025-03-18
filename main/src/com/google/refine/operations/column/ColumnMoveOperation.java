@@ -33,12 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnMoveChange;
 import com.google.refine.operations.OperationDescription;
@@ -54,6 +60,12 @@ public class ColumnMoveOperation extends AbstractOperation {
             @JsonProperty("index") int index) {
         _columnName = columnName;
         _index = index;
+    }
+
+    @Override
+    public void validate() {
+        Validate.notNull(_columnName, "Missing column name");
+        Validate.isTrue(_index >= 0, "Invalid column index");
     }
 
     @JsonProperty("columnName")
@@ -83,5 +95,20 @@ public class ColumnMoveOperation extends AbstractOperation {
         Change change = new ColumnMoveChange(_columnName, _index);
 
         return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnMoveOperation.this, change);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(Set.of(_columnName));
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.empty());
+    }
+
+    @Override
+    public ColumnMoveOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ColumnMoveOperation(newColumnNames.getOrDefault(_columnName, _columnName), _index);
     }
 }

@@ -15,7 +15,7 @@ import org.openrefine.wikibase.schema.validation.ValidationState;
  * @author Antonin Delpeuch
  *
  */
-public class WbEntityIdValueConstant implements WbExpression<EntityIdValue> {
+public class WbEntityIdValueConstant extends WbConstantExpr<EntityIdValue> {
 
     private String id;
     private String label;

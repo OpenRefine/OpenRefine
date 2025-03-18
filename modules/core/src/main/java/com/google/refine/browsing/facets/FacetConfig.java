@@ -27,6 +27,10 @@
 
 package com.google.refine.browsing.facets;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
@@ -63,4 +67,45 @@ public interface FacetConfig {
      */
     @JsonIgnore // already included by @JsonTypeInfo
     public String getJsonType();
+
+    /**
+     * Checks that this facet is correctly configured (such as that expressions are syntactically correct and that
+     * options are not contradictory). This should not be done in the constructor, as it would endanger the
+     * deserialization.
+     * 
+     * @throws IllegalArgumentException
+     *             if any parameter is missing or inconsistent
+     */
+    public default void validate() {
+    }
+
+    /**
+     * Returns an approximation of the names of the columns this facet depends on. This approximation is designed to be
+     * safe: if a set of column names is returned, then the expression does not read any other column than the ones
+     * mentioned, regardless of the data it is executed on.
+     *
+     * @return {@link Optional#empty()} if the columns could not be isolated: in this case, the facet might depend on
+     *         all columns in the project. Note that this is different from returning an empty set, which means that the
+     *         facet's evaluation does not depend on any column.
+     */
+    @JsonIgnore
+    public default Optional<Set<String>> getColumnDependencies() {
+        return Optional.empty();
+    }
+
+    /**
+     * Translates this facet by simultaneously substituting column names, as specified by the supplied map. This is a
+     * best effort transformation: some references to columns might not get renamed in complex expressions. It can
+     * generate an invalid facet configuration. Returning the same facet configuration is the default.
+     *
+     * @param substitutions
+     *            a map specifying new names for some columns. Keys of the map are old column names, values are the new
+     *            names for those columns. If a column name is not present in the map, the column is not renamed.
+     * @return a new facet with updated column names. If this renaming isn't supported, the same facet config should be
+     *         returned
+     */
+    public default FacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+        return this;
+    }
+
 }

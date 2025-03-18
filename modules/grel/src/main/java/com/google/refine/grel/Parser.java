@@ -40,11 +40,13 @@ import java.util.regex.Pattern;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.LanguageSpecificParser;
 import com.google.refine.expr.ParsingException;
-import com.google.refine.expr.functions.arrays.ArgsToArray;
 import com.google.refine.grel.Scanner.NumberToken;
 import com.google.refine.grel.Scanner.RegexToken;
+import com.google.refine.grel.Scanner.StringToken;
 import com.google.refine.grel.Scanner.Token;
 import com.google.refine.grel.Scanner.TokenType;
+import com.google.refine.grel.ast.ArrayExpr;
+import com.google.refine.grel.ast.BracketedExpr;
 import com.google.refine.grel.ast.ControlCallExpr;
 import com.google.refine.grel.ast.FieldAccessorExpr;
 import com.google.refine.grel.ast.FunctionCallExpr;
@@ -57,7 +59,7 @@ public class Parser {
     static public LanguageSpecificParser grelParser = new LanguageSpecificParser() {
 
         @Override
-        public Evaluable parse(String source) throws ParsingException {
+        public Evaluable parse(String source, String languagePrefix) throws ParsingException {
             Parser parser = new Parser(source);
             return parser.getExpression();
         }
@@ -175,20 +177,21 @@ public class Parser {
         Evaluable eval = null;
 
         if (_token.type == TokenType.String) {
-            eval = new LiteralExpr(_token.text);
+            StringToken t = (StringToken) _token;
+            eval = new LiteralExpr(_token.text, t.fullSource());
             next(false);
         } else if (_token.type == TokenType.Regex) {
             RegexToken t = (RegexToken) _token;
 
             try {
                 Pattern pattern = Pattern.compile(_token.text, t.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
-                eval = new LiteralExpr(pattern);
+                eval = new LiteralExpr(pattern, t.fullSource());
                 next(false);
             } catch (Exception e) {
                 throw makeException("Bad regular expression (" + e.getMessage() + ")");
             }
         } else if (_token.type == TokenType.Number) {
-            eval = new LiteralExpr(((NumberToken) _token).value);
+            eval = new LiteralExpr(((NumberToken) _token).value, _token.text);
             next(false);
         } else if (_token.type == TokenType.Operator && _token.text.equals("-")) { // unary minus?
             next(true);
@@ -197,9 +200,9 @@ public class Parser {
                 Number n = ((NumberToken) _token).value;
 
                 if (n instanceof Long) {
-                    eval = new LiteralExpr(-n.longValue());
+                    eval = new LiteralExpr(-n.longValue(), _token.text);
                 } else {
-                    eval = new LiteralExpr(-n.doubleValue());
+                    eval = new LiteralExpr(-n.doubleValue(), _token.text);
                 }
 
                 next(false);
@@ -211,10 +214,10 @@ public class Parser {
             next(false);
 
             if (_token == null || _token.type != TokenType.Delimiter || !_token.text.equals("(")) {
-                eval = "null".equals(text) ? new LiteralExpr(null) : new VariableExpr(text);
+                eval = "null".equals(text) ? new LiteralExpr(null, text) : new VariableExpr(text);
             } else if ("PI".equals(text)) {
                 // TODO: This duplicates ExpressionUtils which adds PI to the bindings
-                eval = new LiteralExpr(Math.PI);
+                eval = new LiteralExpr(Math.PI, text);
                 next(false);
             } else {
                 Function f = ControlFunctionRegistry.getFunction(text);
@@ -233,15 +236,15 @@ public class Parser {
                     if (errorMessage != null) {
                         throw makeException(errorMessage);
                     }
-                    eval = new ControlCallExpr(argsA, c);
+                    eval = new ControlCallExpr(argsA, c, text);
                 } else {
-                    eval = new FunctionCallExpr(makeArray(args), f);
+                    eval = new FunctionCallExpr(makeArray(args), f, text, false);
                 }
             }
         } else if (_token.type == TokenType.Delimiter && _token.text.equals("(")) {
             next(true);
 
-            eval = parseExpression();
+            eval = new BracketedExpr(parseExpression());
 
             if (_token != null && _token.type == TokenType.Delimiter && _token.text.equals(")")) {
                 next(false);
@@ -253,7 +256,7 @@ public class Parser {
 
             List<Evaluable> args = parseExpressionList("]");
 
-            eval = new FunctionCallExpr(makeArray(args), new ArgsToArray());
+            eval = new ArrayExpr(makeArray(args));
         } else {
             throw makeException("Missing number, string, identifier, regex, or parenthesized expression");
         }
@@ -282,7 +285,7 @@ public class Parser {
                     List<Evaluable> args = parseExpressionList(")");
                     args.add(0, eval);
 
-                    eval = new FunctionCallExpr(makeArray(args), f);
+                    eval = new FunctionCallExpr(makeArray(args), f, identifier, true);
                 } else {
                     eval = new FieldAccessorExpr(eval, identifier);
                 }
@@ -292,7 +295,7 @@ public class Parser {
                 List<Evaluable> args = parseExpressionList("]");
                 args.add(0, eval);
 
-                eval = new FunctionCallExpr(makeArray(args), ControlFunctionRegistry.getFunction("get"));
+                eval = new FunctionCallExpr(makeArray(args), ControlFunctionRegistry.getFunction("get"), "get", true);
             } else {
                 break;
             }

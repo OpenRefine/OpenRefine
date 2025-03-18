@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -104,6 +105,14 @@ public class StandardReconConfig extends ReconConfig {
             this.columnName = columnName;
             this.propertyName = property == null ? propertyName : property.name;
             this.propertyID = property == null ? propertyID : property.id;
+        }
+
+        public ColumnDetail renameColumn(Map<String, String> newColumnNames) {
+            return new ColumnDetail(
+                    newColumnNames.getOrDefault(columnName, columnName),
+                    propertyName,
+                    propertyID,
+                    null);
         }
 
         @Override
@@ -327,6 +336,30 @@ public class StandardReconConfig extends ReconConfig {
     @Override
     public String getBriefDescription(Project project, String columnName) {
         return "Reconcile cells in column " + columnName + " to type " + typeID;
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(columnDetails.stream()
+                .map(columnDetail -> columnDetail.columnName)
+                .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public StandardReconConfig renameColumns(Map<String, String> newColumnNames) {
+        List<ColumnDetail> translatedColumnDetails = columnDetails.stream()
+                .map(column -> column.renameColumn(newColumnNames))
+                .collect(Collectors.toList());
+        return new StandardReconConfig(
+                service,
+                identifierSpace,
+                schemaSpace,
+                typeID,
+                typeName,
+                autoMatch,
+                batchSize,
+                translatedColumnDetails,
+                limit);
     }
 
     public ReconJob createSimpleJob(String query) {
@@ -736,4 +769,5 @@ public class StandardReconConfig extends ReconConfig {
     public String getMode() {
         return "standard-service";
     }
+
 }

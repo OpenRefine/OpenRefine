@@ -27,9 +27,14 @@
 
 package com.google.refine.browsing.facets;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -81,6 +86,32 @@ public class TimeRangeFacetTests extends RefineTest {
             "          \"columnName\": \"my column\"\n" +
             "        }";
 
+    public static String configJsonWithParseError = "{\n" +
+            "          \"selectNonTime\": true,\n" +
+            "          \"expression\": \"foo(\",\n" +
+            "          \"selectBlank\": true,\n" +
+            "          \"selectError\": true,\n" +
+            "          \"selectTime\": true,\n" +
+            "          \"name\": \"my column\",\n" +
+            "          \"from\": 1262443349000,\n" +
+            "          \"to\": 1514966950000,\n" +
+            "          \"type\": \"timerange\",\n" +
+            "          \"columnName\": \"my column\"\n" +
+            "        }";
+
+    public static String configJsonRenamed = "{\n" +
+            "          \"selectNonTime\": true,\n" +
+            "          \"expression\": \"grel:value\",\n" +
+            "          \"selectBlank\": true,\n" +
+            "          \"selectError\": true,\n" +
+            "          \"selectTime\": true,\n" +
+            "          \"name\": \"my column\",\n" +
+            "          \"from\": 1262443349000,\n" +
+            "          \"to\": 1514966950000,\n" +
+            "          \"type\": \"timerange\",\n" +
+            "          \"columnName\": \"my column\"\n" +
+            "        }";
+
     @BeforeMethod
     public void registerGRELParser() {
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
@@ -113,5 +144,24 @@ public class TimeRangeFacetTests extends RefineTest {
         TimeRangeFacet facet = config.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
         TestUtils.isSerializedTo(facet, facetJson);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        TimeRangeFacetConfig facetConfig = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
+        assertEquals(facetConfig.getColumnDependencies(), Optional.of(Collections.singleton("my column")));
+    }
+
+    @Test
+    public void testColumnDependenciesWithError() throws Exception {
+        TimeRangeFacetConfig facetConfig = ParsingUtilities.mapper.readValue(configJsonWithParseError, TimeRangeFacetConfig.class);
+        assertEquals(facetConfig.getColumnDependencies(), Optional.of(Collections.emptySet()));
+    }
+
+    @Test
+    public void testRenameColumnDependencies() throws Exception {
+        TimeRangeFacetConfig facetConfig = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
+        FacetConfig renamed = facetConfig.renameColumnDependencies(Map.of("foo", "bar"));
+        TestUtils.isSerializedTo(renamed, configJsonRenamed);
     }
 }

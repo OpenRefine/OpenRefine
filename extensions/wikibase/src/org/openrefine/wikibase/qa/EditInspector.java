@@ -68,6 +68,7 @@ import org.openrefine.wikibase.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.UseAsQualifierScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikibase.schema.WikibaseSchema;
+import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikibase.schema.entityvalues.SuggestedEntityIdValue;
 import org.openrefine.wikibase.schema.entityvalues.SuggestedItemIdValue;
 import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
@@ -217,17 +218,23 @@ public class EditInspector {
         }
     }
 
-    private void resolveWarningPropertyLabels() throws ExecutionException {
+    protected void resolveWarningPropertyLabels() throws ExecutionException {
         if (entityCache != null) {
             List<EntityIdValue> propertyIdValues = warningStore.getWarnings().stream()
                     .flatMap(warning -> warning.getProperties().entrySet().stream()
-                            .filter(entry -> entry.getValue() instanceof EntityIdValue)
                             .filter(entry -> {
-                                if (entry instanceof SuggestedEntityIdValue) {
-                                    String label = ((SuggestedEntityIdValue) entry.getValue()).getLabel();
-                                    return label == null || label.isEmpty();
+                                Object value = entry.getValue();
+                                if (!(value instanceof PropertyIdValue || value instanceof ItemIdValue)) {
+                                    return false;
                                 }
-                                return true;
+                                if (value instanceof SuggestedEntityIdValue) {
+                                    String label = ((SuggestedEntityIdValue) value).getLabel();
+                                    return label == null || label.isEmpty();
+                                } else if (value instanceof ReconEntityIdValue) {
+                                    return false; // already contains labels via the recon object
+                                } else {
+                                    return true; // no label associated with the value, so we fetch it
+                                }
                             })
                             .map(entry -> (EntityIdValue) entry.getValue()))
                     .collect(Collectors.toList());
@@ -237,7 +244,7 @@ public class EditInspector {
             warningStore.getWarnings().stream()
                     .forEach(warning -> {
                         warning.getProperties().forEach((key, value) -> {
-                            if (value instanceof PropertyIdValue || value instanceof ItemIdValue) {
+                            if (value instanceof EntityIdValue && propertyIdValues.contains(value)) {
                                 EntityIdValue entityIdValue = (EntityIdValue) value;
                                 String label = "";
 

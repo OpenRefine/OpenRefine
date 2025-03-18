@@ -137,14 +137,9 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
   var createMenuItem = function(item) {
     if ("label" in item) {
       var menuItem = MenuSystem.createMenuItem().appendTo(menu);
+      let contentsDiv = $('<div></div>').text(item.label).appendTo(menuItem);
       if ("submenu" in item) {
-        menuItem.html(
-          '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" class="menu-item-layout"><tr>' +
-          '<td>' + item.label + '</td>' +
-          '<td width="1%"><img src="images/right-arrow.png" /></td>' +
-          '</tr></table>'
-        );
-
+        menuItem.addClass('submenu');
         menuItem.on('mouseenter click', function () {
         clearTimeout(MenuSystem._hoverTimeout);
         MenuSystem._hoverTimeout = setTimeout(function () {
@@ -162,11 +157,10 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
 
       } else {
         if ("download" in item) {
-          menuItem.html(item.label);
           menuItem.attr("href",item.download);
           menuItem.attr("download","");
         } else {
-          menuItem.html(item.label).on('click', function (evt) {
+          menuItem.on('click', function (evt) {
             item.click.call(this, evt);
             MenuSystem.dismissAll();
           });
@@ -180,6 +174,15 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
             }, 300);
           });
         }
+      }
+      if ("icon" in item) {
+        let img = $('<img />')
+          .attr('src', item.icon)
+          .addClass('menu-icon')
+          .attr('aria-hidden', 'true');
+        contentsDiv.prepend(' ');
+        contentsDiv.prepend(img);
+        contentsDiv.addClass('menu-item-icon-text');
       }
     } else if ("heading" in item) {
       $('<div></div>').addClass("menu-section").text(item.heading).appendTo(menu);

@@ -37,6 +37,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -47,6 +49,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
@@ -120,6 +123,27 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
         return _shareNewTopics ? OperationDescription.recon_mark_new_topics_shared_desc(cellChanges.size(), column.getName())
                 : OperationDescription.recon_mark_new_topics_desc(cellChanges.size(), column.getName());
 
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        return Optional.of(Set.of(_columnName));
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+    }
+
+    @Override
+    public ReconMarkNewTopicsOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconMarkNewTopicsOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                _shareNewTopics,
+                _service,
+                _identifierSpace,
+                _schemaSpace);
     }
 
     protected ReconConfig getNewReconConfig(Column column) {
@@ -212,4 +236,5 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                 getNewReconConfig(column),
                 null);
     }
+
 }

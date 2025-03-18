@@ -69,7 +69,7 @@ The Release Manager is responsible to
 * Coordinate with the community to select which issues and pull requests are part of new releases
 * Prepare and coordinate publishing new releases
 
-The current Release Manager is Tom Morris [@tfmorris](https://github.com/tfmorris) and on the [forum](https://forum.openrefine.org/u/tfmorris/summary).
+The current Release Manager is [Antonin Delpeuch](https://github.com/wetneb).
 
 ### Code of Conduct Committee
 The Code of Conduct Committee is responsible for responding to all [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md) reports, as well as managing and maintaining the Code of Conduct policy document.

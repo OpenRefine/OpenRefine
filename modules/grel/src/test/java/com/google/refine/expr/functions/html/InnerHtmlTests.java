@@ -31,6 +31,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.GrelTestBase;
 
 public class InnerHtmlTests extends GrelTestBase {
@@ -41,8 +42,7 @@ public class InnerHtmlTests extends GrelTestBase {
         Assert.assertTrue(invoke("innerHtml", "test") instanceof EvalError);
 
         EvalError evalError = (EvalError) invoke("innerHtml", "test");
-        Assert.assertEquals(evalError.toString(),
-                "innerHtml() cannot work with this \'string\'. The first parameter is not an HTML Element. Please first use parseHtml(string) and select(query) prior to using this function");
+        Assert.assertEquals(evalError.toString(), EvalErrorMessage.html_cannot_work_with_this_use_parse_html("innerHtml", "string"));
     }
 
 }

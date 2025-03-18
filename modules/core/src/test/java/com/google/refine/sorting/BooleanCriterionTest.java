@@ -28,6 +28,7 @@
 package com.google.refine.sorting;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 
@@ -36,15 +37,29 @@ import com.google.refine.util.TestUtils;
 
 public class BooleanCriterionTest {
 
+    String json = "{\n" +
+            "  \"errorPosition\": 1,\n" +
+            "  \"valueType\": \"boolean\",\n" +
+            "  \"column\": \"start_year\",\n" +
+            "  \"blankPosition\": 2,\n" +
+            "  \"reverse\": false\n" +
+            "}\n";
+
     @Test
     public void serializeBooleanCriterion() throws IOException {
-        String json = "        {\n" +
-                "          \"errorPosition\": 1,\n" +
-                "          \"valueType\": \"boolean\",\n" +
-                "          \"column\": \"start_year\",\n" +
-                "          \"blankPosition\": 2,\n" +
-                "          \"reverse\": false\n" +
-                "        }\n";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json);
+    }
+
+    @Test
+    public void testRenameColumn() throws Exception {
+        String renamedJson = "{\n" +
+                "  \"errorPosition\": 1,\n" +
+                "  \"valueType\": \"boolean\",\n" +
+                "  \"column\": \"start\",\n" +
+                "  \"blankPosition\": 2,\n" +
+                "  \"reverse\": false\n" +
+                "}\n";
+        Criterion renamed = ParsingUtilities.mapper.readValue(json, Criterion.class).renameColumns(Map.of("start_year", "start"));
+        TestUtils.isSerializedTo(renamed, renamedJson);
     }
 }

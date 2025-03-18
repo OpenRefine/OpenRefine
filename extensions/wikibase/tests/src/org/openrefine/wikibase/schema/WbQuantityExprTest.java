@@ -27,6 +27,8 @@ package org.openrefine.wikibase.schema;
 import static org.testng.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.testng.annotations.Test;
@@ -45,6 +47,18 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
     private WbQuantityExpr exprWithUnit = new WbQuantityExpr(new WbStringVariable("column A"),
             new WbItemVariable("column B"));
     private WbQuantityExpr exprWithoutUnit = new WbQuantityExpr(new WbStringVariable("column A"), null);
+
+    @Test
+    public void testColumnDependencies() {
+        assertEquals(exprWithUnit.getColumnDependencies(), Set.of("column A", "column B"));
+        assertEquals(exprWithoutUnit.getColumnDependencies(), Set.of("column A"));
+    }
+
+    @Test
+    public void testRename() {
+        assertEquals(exprWithUnit.renameColumns(Map.of("column A", "column C")).getColumnDependencies(), Set.of("column C", "column B"));
+        assertEquals(exprWithoutUnit.renameColumns(Map.of("column A", "column D")).getColumnDependencies(), Set.of("column D"));
+    }
 
     @Test
     public void testWithoutUnit()

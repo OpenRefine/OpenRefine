@@ -36,12 +36,16 @@ package com.google.refine.operations.column;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.browsing.Engine;
@@ -53,6 +57,7 @@ import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.importers.ImporterUtilities;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.ColumnSplitChange;
@@ -99,6 +104,15 @@ public class ColumnSplitOperation extends EngineDependentOperation {
                     guessCellType,
                     removeOriginalColumn,
                     fieldLengths);
+        }
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        Validate.notNull(_columnName, "Missing column name");
+        if (!"separator".equals(_mode)) {
+            Validate.notNull(_fieldLengths, "Missing field lengths");
         }
     }
 
@@ -192,6 +206,37 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     protected String getBriefDescription(Project project) {
         return ("separator".equals(_mode)) ? OperationDescription.column_split_separator_brief(_columnName)
                 : OperationDescription.column_split_brief(_columnName);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        return Optional.of(Set.of(_columnName));
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.empty(); // sadly the columns created depend on the data and the name of existing columns
+    }
+
+    @Override
+    public ColumnSplitOperation renameColumns(Map<String, String> newColumnNames) {
+        if ("separator".equals(_mode)) {
+            return new ColumnSplitOperation(
+                    _engineConfig.renameColumnDependencies(newColumnNames),
+                    newColumnNames.getOrDefault(_columnName, _columnName),
+                    _guessCellType,
+                    _removeOriginalColumn,
+                    _separator,
+                    _regex,
+                    _maxColumns);
+        } else {
+            return new ColumnSplitOperation(
+                    _engineConfig.renameColumnDependencies(newColumnNames),
+                    newColumnNames.getOrDefault(_columnName, _columnName),
+                    _guessCellType,
+                    _removeOriginalColumn,
+                    _fieldLengths);
+        }
     }
 
     @Override
