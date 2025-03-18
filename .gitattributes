@@ -20,3 +20,6 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Make GitHub syntax-highlight and index .vt files as Velocity templates
+*.vt linguist-language=velocity
