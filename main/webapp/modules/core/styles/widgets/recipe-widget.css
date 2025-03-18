@@ -11,7 +11,7 @@
     z-index: 20;
 }
 
-.recipe-tooltip-inner {
+.recipe-tooltip-inner, .recipe-tooltip-inner-embedded {
     background-color: white;
     border: 1px solid #888;
     padding: 3px;
@@ -20,9 +20,12 @@
     font-size: 0.9em;
     text-align: left;
     word-wrap: break-word;
-    max-width: 250px;
     display: inline-block;
     vertical-align: middle;
+}
+
+.recipe-tooltip-inner {
+    max-width: 250px;
 }
 
 .recipe-tooltip-triangle {
@@ -33,4 +36,4 @@
     border-right:7px solid #888;
     display: inline-block;
     vertical-align: middle;
-  }
+}

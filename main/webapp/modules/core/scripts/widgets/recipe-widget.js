@@ -52,6 +52,21 @@ class RecipeVisualizer {
       this.tooltip = null;
       this.svg = svg;
       this.minWidth = 400;
+      // helper to predict the width of text in labels. The canvas element isn't used except for that purpose.
+      this.measuringContext = $('<canvas>')[0].getContext('2d');
+      this.lengthCache = new Map();
+    }
+
+    // Predicts the width of a column label. This is a slight over-approximation.
+    // This is used for the purposes of positioning the column labels in a compact way,
+    // without overlapping.
+    predictWidth(text) {
+      if (!this.lengthCache.has(text)) {
+        let metrics = this.measuringContext.measureText(text);
+        let length = metrics.actualBoundingBoxRight + metrics.actualBoundingBoxLeft;
+        this.lengthCache.set(text, length*1.2 + 30); // add a bit of margin for the left triangle, borders and padding around the text
+      }
+      return this.lengthCache.get(text);
     }
 
     draw() {
@@ -66,6 +81,7 @@ class RecipeVisualizer {
         let columnColor = '#888';
         let columnWidth = 2;
         let dependencyRadius = 5;
+        let columnNameHeight = 25;
 
         // Define arrow marker
         let defs = $(document.createElementNS('http://www.w3.org/2000/svg', 'defs'))
@@ -86,10 +102,25 @@ class RecipeVisualizer {
 
         // Compute diagram boundaries
         let maxX = columnDistance * 2;
+        let inputColumns = [];
+        let outputColumns = [];
         for (const column of operationsWithIds.columns) {
-            maxX = Math.max(maxX, (columnPositions.get(column.id) + 2) * columnDistance);
+          let xPos = (columnPositions.get(column.id) + 1) * columnDistance;
+          maxX = Math.max(maxX, xPos + columnDistance);
+          if (column.start === 0) {
+            inputColumns.push({xPos, column, name: column.names[0].name});
+          }
+          if (column.end === operationsWithIds.translatedOperations.length) {
+            if (column.start !== 0 || column.names.length > 1) {
+              outputColumns.push({xPos, column, name: column.names[column.names.length - 1].name});
+            }
+          }
         }
         let maxY = operationsWithIds.translatedOperations.length * sliceHeight;
+
+        // Pre-compute the positions of column labels, without drawing them yet
+        let inputColumnLabelAreaHeight = this.layoutBoundaryColumnNames(inputColumns, columnDistance, columnNameHeight);
+        let outputColumnLabelAreaHeight = this.layoutBoundaryColumnNames(outputColumns, columnDistance, columnNameHeight);
 
         // Draw slices
         let boundaryMin = - columnDistance;
@@ -116,12 +147,20 @@ class RecipeVisualizer {
             for(const name of column.names) {
               let start = name.start;
               let end = name.end === undefined ? column.end : name.end;
+              let y1 = (start - 0.5) * sliceHeight;
+              let y2 = (end + 0.5) * sliceHeight;
+              if (start === 0) {
+                y1 = -1 * inputColumnLabelAreaHeight;
+              }
+              if (end === operationsWithIds.translatedOperations.length) {
+                y2 += outputColumnLabelAreaHeight;
+              }
               let line = $(document.createElementNS('http://www.w3.org/2000/svg', 'line'))
                 .attr('id', `column-${column.id}-${start}`)
                 .attr('x1', xPos)
-                .attr('y1', (start - 0.5) * sliceHeight)
+                .attr('y1', y1)
                 .attr('x2', xPos)
-                .attr('y2', (end + 0.5) * sliceHeight)
+                .attr('y2', y2)
                 .attr("stroke", columnColor)
                 .attr("stroke-width", columnWidth)
                 .attr("alt", name.name)
@@ -135,15 +174,15 @@ class RecipeVisualizer {
                 .attr('fill-opacity', 0)
                 .appendTo(svg);
               this.setUpTooltip(svg, hoverArea, line, 2, name.name, true);
-              if (start === 0) {
-                this.drawBoundaryColumnName(svg, xPos,  -0.6 * sliceHeight, false, name.name);
-              }
               if (end === operationsWithIds.translatedOperations.length) {
-                this.drawBoundaryColumnName(svg, xPos,  (end + 0.8) * sliceHeight, true, name.name);
                 line.attr('marker-end', 'url(#arrow)');
               }
             }
         }
+
+        // Draw input and output column names
+        this.drawBoundaryColumnNames(svg, inputColumns, -1 * inputColumnLabelAreaHeight, columnNameHeight);
+        this.drawBoundaryColumnNames(svg, outputColumns, (operationsWithIds.translatedOperations.length + 0.5) * sliceHeight, columnNameHeight);
 
         // Draw all operations
         let sliceId = 0;
@@ -351,16 +390,59 @@ class RecipeVisualizer {
       });
     }
 
-    drawBoundaryColumnName(svg, xPos, yPos, output, name) {
-      let angle = output ? 45 : -45;
-      let g = $(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
-        .attr('transform', `rotate(${angle}, ${xPos}, ${yPos})`)
+    // Pre-computes the vertical positions of static column labels, for input and output columns.
+    // Returns the height of the corresponding area
+    layoutBoundaryColumnNames(columns, columnDistance, columnNameHeight) {
+      columns.sort((a, b) => a.xPos - b.xPos);
+
+      let currentHeight = 0; // height at which the next column label can be positioned
+      let minTopPosition = 0; // minimum horizontal position for a column label to be rendered at height=0
+      let maxHeight = 0; // maximum height of all column labels encountered in the list
+
+      for (const column of columns) {
+        column.labelHeight = 0;
+        if (column.xPos >= minTopPosition) { // the column is sufficiently far on the right to be positioned at height=0 again
+          currentHeight = 0;
+        } else { // we stack the column on its own line, because it would otherwise collide with labels laid out earlier
+          currentHeight += columnNameHeight;
+          column.labelHeight = currentHeight;
+        }
+
+        let width = this.predictWidth(column.name);
+        minTopPosition = Math.max(minTopPosition, column.xPos + width - columnDistance * (currentHeight / columnNameHeight));
+        maxHeight = Math.max(currentHeight + columnNameHeight * 1.5, maxHeight);
+      }
+      return maxHeight;
+    }
+
+    // Render the static column labels for input and output columns.
+    // This assumes that the vertical positions of the labels have been pre-computed
+    // in layoutBoundaryColumnNames
+    drawBoundaryColumnNames(svg, columns, yOffset, columnNameHeight) {
+      columns.sort((a, b) => a.xPos - b.xPos);
+      let i = 0;
+      for (const column of columns) {
+        let width = this.predictWidth(column.name);
+        let g = $(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
         .appendTo(svg);
-      let txt = $(document.createElementNS('http://www.w3.org/2000/svg', 'text'))
-        .attr('x', xPos)
-        .attr('y', yPos)
-        .text(name)
-        .appendTo(g);
+        let fo = $(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'))
+          .attr('x', column.xPos)
+          .attr('y', yOffset + column.labelHeight)
+          .width(width)
+          .height(columnNameHeight)
+          .appendTo(g);
+        let div = $(document.createElement('div'))
+          .addClass('recipe-tooltip')
+          .appendTo(fo);
+        $(document.createElement('div'))
+          .addClass('recipe-tooltip-triangle')
+          .appendTo(div);
+        $(document.createElement('div'))
+          .addClass('recipe-tooltip-inner-embedded')
+          .text(column.name)
+          .appendTo(div);
+        i++;
+      }
     }
 
     computeColumnPositions(operationsWithIds) {

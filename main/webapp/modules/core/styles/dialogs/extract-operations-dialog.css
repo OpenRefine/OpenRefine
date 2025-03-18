@@ -1,3 +1,5 @@
 #recipe-extract-tabs {
     border: none;
+    max-width: 80vw;
+    max-height: 80vh;
 }
