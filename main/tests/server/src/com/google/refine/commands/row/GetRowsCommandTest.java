@@ -44,6 +44,8 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
@@ -82,6 +84,8 @@ public class GetRowsCommandTest extends RefineTest {
                 + "}]}";
         when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
         when(response.getWriter()).thenReturn(new PrintWriter(writer));
+
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
 
     @Test
@@ -304,6 +308,114 @@ public class GetRowsCommandTest extends RefineTest {
         when(request.getParameter("end")).thenReturn("2");
         when(request.getParameter("limit")).thenReturn("3");
         when(request.getParameter("sorting")).thenReturn(sortingConfigJson);
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testOutputFacetedRowsStart() throws ServletException, IOException {
+        String rowJson = "{\n" +
+                "       \"filtered\" : 1,\n" +
+                "       \"limit\" : 2,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"a\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"b\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"start\" : 0,\n" +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5\n" +
+                "     }";
+
+        String engineConfig = "{\n"
+                + "  \"facets\": [ \n"
+                + "    {"
+                + "      \"type\":\"list\", \n"
+                + "      \"name\":\"bar\", \n"
+                + "      \"columnName\":\"bar\", \n"
+                + "      \"expression\":\"value\", \n"
+                + "      \"omitBlank\":false, \n"
+                + "      \"omitError\":false, \n"
+                + "      \"selection\":[{ \n"
+                + "        \"v\":{  \n"
+                + "          \"v\":\"b\", \n"
+                + "          \"l\":\"b\" \n"
+                + "        } \n"
+                + "      }], \n"
+                + "      \"selectBlank\":false, \n"
+                + "      \"selectError\":false, \n"
+                + "      \"invert\":false \n"
+                + "  }], \n"
+                + "  \"mode\":\"row-based\" \n"
+                + "}";
+
+        when(request.getParameter("engine")).thenReturn(engineConfig);
+        when(request.getParameter("start")).thenReturn("0");
+        when(request.getParameter("limit")).thenReturn("2");
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
+    }
+
+    @Test
+    public void testOutputFacetedRowsEnd() throws ServletException, IOException {
+        String rowJson = "{\n" +
+                "       \"filtered\" : 1,\n" +
+                "       \"limit\" : 1,\n" +
+                "       \"mode\" : \"row-based\",\n" +
+                "       \"pool\" : {\n" +
+                "         \"recons\" : { }\n" +
+                "       },\n" +
+                "       \"rows\" : [ {\n" +
+                "         \"cells\" : [ {\n" +
+                "           \"v\" : \"a\"\n" +
+                "         }, {\n" +
+                "           \"v\" : \"b\"\n" +
+                "         } ],\n" +
+                "         \"flagged\" : false,\n" +
+                "         \"i\" : 0,\n" +
+                "         \"k\" : 0,\n" +
+                "         \"starred\" : false\n" +
+                "       } ],\n" +
+                "       \"end\" : 5,\n" +
+                "       \"total\" : 5,\n" +
+                "       \"totalRows\" : 5\n" +
+                "     }";
+
+        String engineConfig = "{\n"
+                + "  \"facets\": [ \n"
+                + "    {"
+                + "      \"type\":\"list\", \n"
+                + "      \"name\":\"bar\", \n"
+                + "      \"columnName\":\"bar\", \n"
+                + "      \"expression\":\"value\", \n"
+                + "      \"omitBlank\":false, \n"
+                + "      \"omitError\":false, \n"
+                + "      \"selection\":[{ \n"
+                + "        \"v\":{  \n"
+                + "          \"v\":\"b\", \n"
+                + "          \"l\":\"b\" \n"
+                + "        } \n"
+                + "      }], \n"
+                + "      \"selectBlank\":false, \n"
+                + "      \"selectError\":false, \n"
+                + "      \"invert\":false \n"
+                + "  }], \n"
+                + "  \"mode\":\"row-based\" \n"
+                + "}";
+
+        when(request.getParameter("engine")).thenReturn(engineConfig);
+        when(request.getParameter("end")).thenReturn("5");
+        when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }

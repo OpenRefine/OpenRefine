@@ -277,7 +277,7 @@ public class GetRowsCommand extends Command {
                 if (start > 0) {
                     previousPageEnd = start;
                 }
-                if (!wrappedRows.isEmpty()) {
+                if (!wrappedRows.isEmpty() && ((wrappedRows.size() >= limit))) {
                     nextPageStart = wrappedRows.get(wrappedRows.size() - 1).paginationIndex + 1;
                 }
             } else {
@@ -293,7 +293,7 @@ public class GetRowsCommand extends Command {
             JsonResult result = new JsonResult(engine.getMode(),
                     rwv.results, rwv.total,
                     engine.getMode() == Mode.RowBased ? project.rows.size() : project.recordModel.getRecordCount(),
-                    rwv.totalRows, start, end, limit, pool, previousPageEnd, nextPageStart);
+                    project.rows.size(), start, end, limit, pool, previousPageEnd, nextPageStart);
 
             respondJSON(response, result);
         } catch (IllegalJsonpException e2) {
