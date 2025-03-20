@@ -657,7 +657,7 @@ DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
 };
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-  this._showRows({end: theProject.rowModel.total});
+  this._showRows({end: theProject.rowModel.totalRows});
 };
 
 DataTableView.prototype._onChangeMinRow = function(elmt, evt) {

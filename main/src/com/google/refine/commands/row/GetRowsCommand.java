@@ -293,7 +293,7 @@ public class GetRowsCommand extends Command {
             JsonResult result = new JsonResult(engine.getMode(),
                     rwv.results, rwv.total,
                     engine.getMode() == Mode.RowBased ? project.rows.size() : project.recordModel.getRecordCount(),
-                    rwv.totalRows, start, end, limit, pool, previousPageEnd, nextPageStart);
+                    project.rows.size(), start, end, limit, pool, previousPageEnd, nextPageStart);
 
             respondJSON(response, result);
         } catch (IllegalJsonpException e2) {
