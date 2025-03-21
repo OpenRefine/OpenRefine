@@ -79,7 +79,7 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   elmt.attr("role", "dialog");
   var dialogHeader = elmt.find(".dialog-header");
   if (dialogHeader.length && dialogHeader[0].id) {
-    elmt.attr("aria-labeledby", dialogHeader[0].id);
+    elmt.attr("aria-labelledby", dialogHeader[0].id);
   }
 
   elmt.attr("tabindex", -1);
