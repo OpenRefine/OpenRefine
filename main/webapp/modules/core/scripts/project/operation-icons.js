@@ -31,6 +31,10 @@ OperationIconRegistry.setIcon('core/column-addition', 'images/operations/add.svg
 OperationIconRegistry.setIcon('core/column-removal', 'images/operations/delete.svg');
 OperationIconRegistry.setIcon('core/column-rename', 'images/operations/rename.svg');
 OperationIconRegistry.setIcon('core/column-move', 'images/operations/column-move.svg');
+OperationIconRegistry.setIcon('core/column-move-left', 'images/operations/move-left.svg');
+OperationIconRegistry.setIcon('core/column-move-right', 'images/operations/move-right.svg');
+OperationIconRegistry.setIcon('core/column-move-first', 'images/operations/move-first.svg');
+OperationIconRegistry.setIcon('core/column-move-last', 'images/operations/move-last.svg');
 OperationIconRegistry.setIcon('core/column-split', 'images/operations/split-columns.svg');
 OperationIconRegistry.setIcon('core/column-addition-by-fetching-urls', 'images/operations/fetch-urls.svg');
 OperationIconRegistry.setIcon('core/column-reorder', 'images/operations/column-reorder.svg');

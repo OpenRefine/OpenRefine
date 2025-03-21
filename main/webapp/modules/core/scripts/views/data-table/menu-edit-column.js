@@ -214,31 +214,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
-  var doMoveColumnTo = function(index) {
+  var doMoveColumnTo = function(direction) {
     Refine.postCoreProcess(
-      "move-column", 
-      {
-        columnName: column.name,
-        index: index
-      },
-      null,
+      "apply-operations",
+      {},
+      { operations: JSON.stringify([
+        {
+           op: 'core/column-move-' + direction,
+           columnName: column.name
+        }
+      ]) },
       { modelsChanged: true, rowIdsPreserved: true }
     );
-  };
-
-  var doMoveColumnBy = function(change) {
-    var newidx = Refine.columnNameToColumnIndex(column.name) + change;
-    if (newidx >= 0) {
-      Refine.postCoreProcess(
-          "move-column", 
-          {
-            columnName: column.name,
-            index: newidx
-          },
-          null,
-          { modelsChanged: true, rowIdsPreserved: true }
-      );
-    }
   };
 
   var doSplitColumn = function() {
@@ -566,25 +553,25 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         id: "core/move-column-to-beginning",
         label: $.i18n('core-views/move-to-beg'),
         icon: 'images/operations/move-first.svg',
-        click: function() { doMoveColumnTo(0); }
+        click: function() { doMoveColumnTo('first'); }
       },
       {
         id: "core/move-column-to-end",
         label: $.i18n('core-views/move-to-end'),
         icon: 'images/operations/move-last.svg',
-        click: function() { doMoveColumnTo(theProject.columnModel.columns.length - 1); }
+        click: function() { doMoveColumnTo('last'); }
       },
       {
         id: "core/move-column-to-left",
         label: $.i18n('core-views/move-to-left'),
         icon: 'images/operations/move-left.svg',
-        click: function() { doMoveColumnBy(-1);}
+        click: function() { doMoveColumnTo('left');}
       },
       {
         id: "core/move-column-to-right",
         label: $.i18n('core-views/move-to-right'),
         icon: 'images/operations/move-right.svg',
-        click: function() { doMoveColumnBy(1); }
+        click: function() { doMoveColumnTo('right'); }
       }
     ]
   );
