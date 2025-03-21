@@ -181,7 +181,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 
     @Override
     public Optional<Set<String>> getColumnDependencies() {
-        return Optional.of(Set.of(_columnName, _keyColumnName));
+        return Optional.of(_columnName.equals(_keyColumnName) ? Set.of(_columnName) : Set.of(_columnName, _keyColumnName));
     }
 
     @Override
