@@ -77,7 +77,7 @@ describe(__filename, function () {
     loadExpressionPanel();
     cy.selectPython();
     cy.typeExpression('(;)');
-    cy.get('.expression-preview-parsing-status').contains('Internal error');
+    cy.get('.expression-preview-parsing-status').contains('Syntax error');
   });
 
   it('Test a Clojure syntax error', function () {
