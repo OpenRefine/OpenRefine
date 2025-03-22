@@ -1,5 +1,5 @@
 describe(__filename, function () {
-  it('Ensure columns are filled down', function () {
+  it('Ensure columns are unescaped', function () {
     cy.loadAndVisitProject([
       ['Column A', 'Column B'],
       ['&lt;html&gt;&lt;body&gt;', '&lt;html&gt;&lt;head&gt;'],
