@@ -29,6 +29,7 @@ OperationIconRegistry.setIcon('core/key-value-columnize', 'images/operations/key
 
 OperationIconRegistry.setIcon('core/column-addition', 'images/operations/add.svg');
 OperationIconRegistry.setIcon('core/column-removal', 'images/operations/delete.svg');
+OperationIconRegistry.setIcon('core/column-multi-removal', 'images/operations/delete.svg');
 OperationIconRegistry.setIcon('core/column-rename', 'images/operations/rename.svg');
 OperationIconRegistry.setIcon('core/column-move', 'images/operations/column-move.svg');
 OperationIconRegistry.setIcon('core/column-move-left', 'images/operations/move-left.svg');
