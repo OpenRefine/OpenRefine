@@ -71,7 +71,7 @@ a.menu-item:hover {
 }
 
 .menu-item.submenu div {
-  background: url('../../images/right-arrow.png') no-repeat;
+  background: url('../../images/right-arrow.svg') no-repeat;
   background-position-x: right;
   background-position-y: 50%;
   padding-right: 8px;
