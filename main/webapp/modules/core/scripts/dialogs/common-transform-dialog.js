@@ -122,10 +122,8 @@ commonTransformDialog.prototype._commit = function(expression) {
     columnName,
     expression
   }});
-  Refine.postCoreProcess(
-    "apply-operations",
-    {},
-    { operations: JSON.stringify(operations) },
+  Refine.postOperations(
+    operations,
     { modelsChanged: true, rowIdsPreserved: true },
     { onDone: function() { self._dismiss(); } }
   );

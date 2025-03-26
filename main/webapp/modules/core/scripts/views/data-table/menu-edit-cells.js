@@ -33,15 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doTextTransform = function(expression, onError, repeat, repeatCount, onDone) {
-    Refine.postCoreProcess(
-      "text-transform",
+    Refine.postOperation(
       {
+        op: "core/text-transform",
         columnName: column.name,
         onError: onError,
         repeat: repeat,
-        repeatCount: repeatCount
+        repeatCount: repeatCount,
+        expression: expression
       },
-      { expression: expression },
       { cellsChanged: true },
       { onDone },
     );
@@ -96,23 +96,21 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doFillDown = function() {
-    Refine.postCoreProcess(
-      "fill-down",
+    Refine.postOperation(
       {
+        op: "core/fill-down",
         columnName: column.name
       },
-      null,
       { modelsChanged: true, rowIdsPreserved: true }
     );
   };
 
   var doBlankDown = function() {
-    Refine.postCoreProcess(
-      "blank-down",
+    Refine.postOperation(
       {
+        op: "core/blank-down",
         columnName: column.name
       },
-      null,
       { modelsChanged: true, rowIdsPreserved: true }
     );
   };
@@ -121,14 +119,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
     var separator = window.prompt($.i18n('core-views/enter-separator'), defaultValue);
     if (separator !== null) {
-      Refine.postCoreProcess(
-        "join-multi-value-cells",
+      Refine.postOperation(
         {
+          op: "core/multivalued-cell-join",
           columnName: column.name,
           keyColumnName: theProject.columnModel.keyColumnName,
           separator
         },
-        null,
         { rowsChanged: true }
       );
       Refine.setPreference("ui.cell.rowSplitDefaultSeparator", separator);
@@ -327,6 +324,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.okButton.on('click',function() {
       var mode = $("input[name='split-by-mode']:checked")[0].value;
       var config = {
+        op: "core/multivalued-cell-split",
         columnName: column.name,
         keyColumnName: theProject.columnModel.keyColumnName,
         mode
@@ -357,13 +355,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             return;
           }
 
-          config.fieldLengths = JSON.stringify(lengths);
+          config.fieldLengths = lengths;
 
         } catch (e) {
           alert($.i18n('core-views/warning-format'));
           return;
         }
       } else if (mode === "cases") {
+        config.mode = "separator";
         if(elmts.reverseTransitionCases[0].checked) {
           config.separator = "(?<=\\p{Upper}|[\\p{Upper}][\\s])(?=\\p{Lower})";
         } else {
@@ -371,6 +370,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
         config.regex = true;
       } else if (mode === "number") {
+        config.mode = "separator";
         if(elmts.reverseTransitionNumbers[0].checked) {
           config.separator = "(?<=\\p{L}|[\\p{L}][\\s])(?=\\p{Digit})";
         } else {
@@ -379,10 +379,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         config.regex = true;
       }
 
-      Refine.postCoreProcess(
-        "split-multi-value-cells",
+      Refine.postOperation(
         config,
-        null,
         { rowsChanged: true },
         { onDone: dismiss }
       );
@@ -556,6 +554,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.cancelButton.on('click',function() { dismiss(); });
     elmts.okButton.on('click',function() {
       var config = {
+        op: "core/transpose-columns-into-rows",
         startColumnName: elmts.fromColumnSelect[0].value,
         columnCount: elmts.toColumnSelect[0].value,
         ignoreBlankCells: elmts.ignoreBlankCellsCheckbox[0].checked,
@@ -586,10 +585,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
       }
 
-      Refine.postCoreProcess(
-          "transpose-columns-into-rows",
+      Refine.postOperation(
           config,
-          null,
           { modelsChanged: true },
           {
             onDone: dismiss
@@ -647,14 +644,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         alert($.i18n('core-views/expect-two'));
       } else {
         var config = {
+          op: "core/transpose-rows-into-columns",
           columnName: column.name,
           rowCount: rowCount
         };
 
-        Refine.postCoreProcess(
-          "transpose-rows-into-columns",
+        Refine.postOperation(
           config,
-          null,
           { modelsChanged: true }
         );
       }
@@ -683,9 +679,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.cancelButton.on('click',function() { dismiss(); });
     elmts.okButton.on('click',function() {
       var config = {
+        op: "core/key-value-columnize",
         keyColumnName: elmts.keyColumnSelect[0].value,
         valueColumnName: elmts.valueColumnSelect[0].value,
-        noteColumnName: elmts.noteColumnSelect[0].value
       };
       if (config.keyColumnName == null ||
           config.valueColumnName == null ||
@@ -695,7 +691,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
 
       var noteColumnName = elmts.noteColumnSelect[0].value;
-      if (noteColumnName != null) {
+      if (noteColumnName) {
         if (noteColumnName == config.keyColumnName ||
             noteColumnName == config.valueColumnName) {
           alert($.i18n('core-views/cannot-same'));
@@ -704,10 +700,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         config.noteColumnName = noteColumnName;
       }
 
-      Refine.postCoreProcess(
-        "key-value-columnize",
+      Refine.postOperation(
         config,
-        null,
         { modelsChanged: true },
         { onDone: dismiss }
       );
