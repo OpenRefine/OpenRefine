@@ -492,6 +492,10 @@ Refine._confirmHistoryErasure = function(entries, onDone) {
     var entryDom = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(elmts.entryList);
     var entryElmts = DOM.bind(entryDom);
     entryElmts.entryDescription.text(entry.description);
+    if (entry.operation_id !== undefined && OperationIconRegistry.getIcon(entry.operation_id) !== undefined) {
+      entryElmts.operationIcon.append($('<img>')
+        .attr('src', OperationIconRegistry.getIcon(entry.operation_id)));
+    }
   }
 
   var updateWarnPreferences = function () {
