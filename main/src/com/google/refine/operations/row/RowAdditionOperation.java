@@ -52,7 +52,7 @@ public class RowAdditionOperation extends AbstractOperation {
     @JsonCreator
     public RowAdditionOperation(
             @JsonProperty("rows") List<Row> rows,
-            @JsonProperty("insertionIndex") int insertionIndex) {
+            @JsonProperty("index") int insertionIndex) {
         _rows = rows;
         _insertionIndex = insertionIndex;
     }
