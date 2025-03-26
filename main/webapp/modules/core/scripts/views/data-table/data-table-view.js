@@ -248,7 +248,7 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
   $('<a href="javascript:{}"></a>')
   .addClass("action")
   .text($.i18n('core-views/sort/single') + " ")
-  .append($('<img>').attr("src", "images/down-arrow.png"))
+  .append($('<img>').attr("src", "images/down-arrow.svg"))
   .appendTo(sortingControls)
   .on('click',function() {
     self._createSortingMenu(this);
@@ -373,7 +373,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader, colGrou
             // See https://github.com/OpenRefine/OpenRefine/blob/master/main/src/com/google/refine/model/ColumnGroup.java
             // and https://github.com/OpenRefine/OpenRefine/tree/master/main/src/com/google/refine/importers/tree
             if (c == keys[k]) {
-              $('<img />').attr("src", "images/down-arrow.png").appendTo(th);
+              $('<img />').attr("src", "images/down-arrow.svg").appendTo(th);
               break;
             }
           }
