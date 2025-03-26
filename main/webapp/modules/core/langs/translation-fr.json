@@ -861,7 +861,7 @@
     "core-index-import/sort-desc": "Descendant",
     "core-dialogs/click-cluster": "Cliquer sur « Groupe » pour trouver des groupes dans la colonne « $1 » en utilisant les paramètres ci-dessus.",
     "core-views/add-rows/label": "Ajouter des lignes supplémentaires",
-    "core-project/applying-change-erases-entries": "Cette modification remplacera {{pluriel:$1|l'entrée suivante|les $1 entrées suivantes}} de l'historique :",
+    "core-project/applying-change-erases-entries": "Cette modification remplacera {{plural:$1|l'entrée suivante|les $1 entrées suivantes}} de l'historique :",
     "core-views/use-values-as-identifiers-note": "Les identificateurs de réconciliation ne seront pas validés.",
     "core-index-import/sort-files-header": "Trier les fichiers",
     "core-views/see-more": "Voir plus",
