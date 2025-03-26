@@ -181,82 +181,82 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     ),
     {
       id: "core/view",
-      label: $.i18n('core-views/hide-show'),
-      tooltip: $.i18n('core-views/hide-show'),
+      label: $.i18n('core-views/view'),
+      tooltip: $.i18n('core-views/view'),
       submenu: [
         {
-          label: $.i18n('core-views/hide-this'),
+          label: $.i18n('core-views/collapse-this'),
           click: function() {
-            self._dataTableView._hiddenColumnNames[self._column.name] = true;
+            self._dataTableView._collapsedColumnNames[self._column.name] = true;
             self._dataTableView.render();
           }
         },
         {
-          label: $.i18n('core-views/hide-other'),
+          label: $.i18n('core-views/collapse-other'),
           click: function() {
-            var hiddenColumnNames = {};
+            var collapsedColumnNames = {};
             for (var i = 0; i < theProject.columnModel.columns.length; i++) {
               if (i != self._columnIndex) {
-                hiddenColumnNames[theProject.columnModel.columns[i].name] = true;
+                collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
               }
             }
-            self._dataTableView._hiddenColumnNames = hiddenColumnNames;
+            self._dataTableView._collapsedColumnNames = collapsedColumnNames;
             self._dataTableView.render();
           }
         },
         {
-          label: $.i18n('core-views/hide-left'),
+          label: $.i18n('core-views/collapse-left'),
           click: function() {
             for (var i = 0; i < self._columnIndex; i++) {
-              self._dataTableView._hiddenColumnNames[theProject.columnModel.columns[i].name] = true;
+              self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
             }
             self._dataTableView.render();
           }
         },
         {
-          label: $.i18n('core-views/hide-right'),
+          label: $.i18n('core-views/collapse-right'),
           click: function() {
             for (var i = self._columnIndex + 1; i < theProject.columnModel.columns.length; i++) {
-              self._dataTableView._hiddenColumnNames[theProject.columnModel.columns[i].name] = true;
+              self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name] = true;
             }
             self._dataTableView.render();
           }
         },
         {
-          label: $.i18n('core-views/show-all'),
+          label: $.i18n('core-views/expand-all'),
           /**
-           * This function shows all the columns in the project
+           * This function expands all the columns in the project
            */
           // CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/4067
           click: function() {
-            self._dataTableView._hiddenColumnNames = [];
+            self._dataTableView._collapsedColumnNames = [];
             self._dataTableView.render();
           }
         },
         {
-          label: $.i18n('core-views/show-left'),
+          label: $.i18n('core-views/expand-left'),
           /**
-           * This function shows the columns to the left of the selected column
+           * This function expands the columns to the left of the selected column
            */
           // CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/4067
           click: function() {
-            //by deleting these entries from hiddenColumnNames, they won't render on the dataTableView
+            //by deleting these entries from collapsedColumnNames, they won't render on the dataTableView
             for (var i = 0; i < self._columnIndex; i++) {
-              delete self._dataTableView._hiddenColumnNames[theProject.columnModel.columns[i].name];
+              delete self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name];
             }
             self._dataTableView.render();
           }
         },
         {
-          label: $.i18n('core-views/show-right'),
+          label: $.i18n('core-views/expand-right'),
           /**
-           * This function shows the columns to the right of the selected column
+           * This function expands the columns to the right of the selected column
            */
           // CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/4067
           click: function() {
-            //by deleting these entries from hiddenColumnNames, they won't render on the dataTableView
+            //by deleting these entries from collapsedColumnNames, they won't render on the dataTableView
             for (var i = self._columnIndex + 1; i < theProject.columnModel.columns.length; i++) {
-              delete self._dataTableView._hiddenColumnNames[theProject.columnModel.columns[i].name];
+              delete self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name];
             }
             self._dataTableView.render();
           }

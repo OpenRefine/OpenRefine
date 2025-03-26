@@ -723,7 +723,7 @@
     "core-views/keep-only-matching": "Keep only matching rows",
     "core-views/edit-col": "Edit columns",
     "core-views/reorder-remove": "Re-order / remove columns…",
-    "core-views/view": "View",
+    "core-views/view": "Hide / Show",
     "core-views/collapse-all": "Hide all columns",
     "core-views/expand-all": "Show all columns",
     "core-views/display-null": "Show / Hide null values in cells",
