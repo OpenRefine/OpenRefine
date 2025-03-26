@@ -1,5 +1,8 @@
 I18NUtil.init("wikidata");
 
+OperationIconRegistry.setIcon('wikidata/save-wikibase-schema', 'extension/wikidata/images/wikibase-black-icon.svg');
+OperationIconRegistry.setIcon('wikidata/perform-wikibase-edits', 'extension/wikidata/images/wikibase-upload-icon.svg');
+
 ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push({
   id: "performWikibaseEdits",
