@@ -95,6 +95,13 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
     }
 
     @Override
+    public ReconMatchBestCandidatesOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconMatchBestCandidatesOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName));
+    }
+
+    @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
 

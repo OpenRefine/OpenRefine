@@ -29,6 +29,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.LineNumberReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -36,6 +39,7 @@ import org.testng.annotations.Test;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Recon;
 import com.google.refine.util.ParsingUtilities;
 
@@ -72,6 +76,25 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
         List<String> candidates = operation.getTagCandidates("3.4");
 
         assertEquals(candidates, Arrays.asList("openrefine-3.4", "openrefine"));
+    }
+
+    @Test
+    public void testGetColumnsDiff() {
+        var operation = new PerformWikibaseEditsOperation(
+                EngineConfig.defaultRowBased(), "my summary", 5, "", 60, "openrefine-${version}", "results column");
+
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.builder().addColumn("results column", null).build()));
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of()));
+    }
+
+    @Test
+    public void testRenameColumns() {
+        var operation = new PerformWikibaseEditsOperation(
+                EngineConfig.defaultRowBased(), "my summary", 5, "", 60, "openrefine-${version}", "results column");
+
+        PerformWikibaseEditsOperation renamed = operation.renameColumns(Map.of("results column", "new column"));
+
+        assertEquals(renamed.getColumnsDiff(), Optional.of(ColumnsDiff.builder().addColumn("new column", null).build()));
     }
 
     @Test

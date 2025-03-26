@@ -72,7 +72,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     // Excel limits: 1M rows x 16K columns, 32K characters max per cell
     public static final int MAX_COLUMNS = 16 * 1024; // default 512
     // TODO: Perhaps use a lower default and make user configurable?
-    public static final int MAX_CHARACTERS_PER_CELL = 32 * 1024; // default 4096
+    public static final int MAX_CHARACTERS_PER_CELL = 1024 * 1024; // default 4096
     public static final int GUESSER_LINE_COUNT = 100;
     char DEFAULT_QUOTE_CHAR = new CsvParserSettings().getFormat().getQuote();
 

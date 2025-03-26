@@ -30,6 +30,8 @@ import static org.testng.Assert.assertNull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -161,6 +163,16 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
         public void validate(ValidationState validation) {
             expr.validate(validation);
         }
+
+        @Override
+        public Set<String> getColumnDependencies() {
+            return expr.getColumnDependencies();
+        }
+
+        @Override
+        public WbExpression<StatementEdit> renameColumns(Map<String, String> substitutions) {
+            return new Wrapper(expr.renameColumns(substitutions));
+        }
     }
 
     public String jsonRepresentation = "{"
@@ -186,6 +198,21 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             + "\"value\":null,"
             + "\"qualifiers\":[],"
             + "\"references\":[]}";
+
+    @Test
+    public void testDependencies() throws Exception {
+        WbStatementExpr expr = ParsingUtilities.mapper.readValue(jsonRepresentation, WbStatementExpr.class);
+        assertEquals(expr.getColumnDependencies(), Set.of("column A", "column B", "column C"));
+    }
+
+    @Test
+    public void testRenameColumns() throws Exception {
+        WbStatementExpr expr = ParsingUtilities.mapper.readValue(jsonRepresentation, WbStatementExpr.class);
+        String renamedJson = jsonRepresentation.replace("column B", "column D");
+        WbStatementExpr expected = ParsingUtilities.mapper.readValue(renamedJson, WbStatementExpr.class);
+
+        assertEquals(expr.renameColumns(Map.of("column B", "column D")), expected);
+    }
 
     @Test
     public void testCreation() {

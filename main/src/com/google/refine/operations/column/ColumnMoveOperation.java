@@ -34,43 +34,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.column;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.Validate;
 
-import com.google.refine.history.Change;
-import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
-import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
-import com.google.refine.model.changes.ColumnMoveChange;
 import com.google.refine.operations.OperationDescription;
 
-public class ColumnMoveOperation extends AbstractOperation {
+public class ColumnMoveOperation extends AbstractColumnMoveOperation {
 
-    final protected String _columnName;
     final protected int _index;
 
     @JsonCreator
     public ColumnMoveOperation(
             @JsonProperty("columnName") String columnName,
             @JsonProperty("index") int index) {
-        _columnName = columnName;
+        super(columnName);
         _index = index;
     }
 
     @Override
     public void validate() {
-        Validate.notNull(_columnName, "Missing column name");
+        super.validate();
         Validate.isTrue(_index >= 0, "Invalid column index");
-    }
-
-    @JsonProperty("columnName")
-    public String getColumnName() {
-        return _columnName;
     }
 
     @JsonProperty("index")
@@ -79,32 +66,16 @@ public class ColumnMoveOperation extends AbstractOperation {
     }
 
     @Override
+    protected int getNewColumnIndex(int currentIndex, Project project) {
+        if (_index < 0 || _index >= project.columnModel.columns.size()) {
+            throw new IllegalArgumentException("New column index out of range " + _index);
+        }
+        return _index;
+    }
+
+    @Override
     protected String getBriefDescription(Project project) {
         return OperationDescription.column_move_brief(_columnName, _index);
-    }
-
-    @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        if (project.columnModel.getColumnByName(_columnName) == null) {
-            throw new Exception("No column named " + _columnName);
-        }
-        if (_index < 0 || _index >= project.columnModel.columns.size()) {
-            throw new Exception("New column index out of range " + _index);
-        }
-
-        Change change = new ColumnMoveChange(_columnName, _index);
-
-        return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnMoveOperation.this, change);
-    }
-
-    @Override
-    public Optional<Set<String>> getColumnDependencies() {
-        return Optional.of(Set.of(_columnName));
-    }
-
-    @Override
-    public Optional<ColumnsDiff> getColumnsDiff() {
-        return Optional.of(ColumnsDiff.empty());
     }
 
     @Override

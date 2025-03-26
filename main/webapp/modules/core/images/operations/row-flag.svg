@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 33.866666 33.866667"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="row-flag.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="4.5203648"
+     inkscape:cx="25.772256"
+     inkscape:cy="93.023466"
+     inkscape:window-width="1918"
+     inkscape:window-height="1054"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1359" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="powerclip"
+       id="path-effect5466"
+       is_visible="true"
+       lpeversion="1"
+       inverse="true"
+       flatten="false"
+       hide_clip="false"
+       message="Utilise la règle de remplissage « fill-rule: evenodd » de la boîte de dialogue &lt;b&gt;Fond et contour&lt;/b&gt; en l'absence de résultat de mise à plat après une conversion en chemin." />
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5446">
+      <path
+         style="color:#000000;display:block;fill:#000000;fill-rule:evenodd;stroke-width:1;-inkscape-stroke:none"
+         d="m 6.1972656,4.5039063 c -0.040654,3.2829029 1.1578034,6.0880687 2.7675781,8.0546877 1.6097753,1.966619 3.4561073,3.233594 4.9902343,4.43164 3.068254,2.396094 5.010971,3.692282 4.828125,9.134766 l 6.996094,0.234375 C 26.039814,18.604979 21.629113,14.102784 18.263672,11.474609 16.580951,10.160522 15.187984,9.109089 14.380859,8.123047 13.573735,7.1370047 13.175395,6.3559148 13.197266,4.5898438 Z"
+         id="path5448" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 16.733586,12.198414 4.181624,-6.9171206 1.008179,7.9696326 8.261281,1.858417 -7.820061,2.903801 1.47044,8.830055 -5.914184,-6.665755 -7.486892,3.572325 4.615073,-7.287646 -5.9913254,-5.908415 z"
+       id="path6044"
+       sodipodi:nodetypes="ccccccccccc" />
+    <path
+       style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1.68139px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
+       d="M 26.477855,6.0218695 C 18.014782,4.2742636 17.92988,11.875823 8.1174578,9.7106428 L 7.1787952,20.308302 C 15.76247,23.950204 17.604778,15.069619 24.339628,17.34971 Z"
+       id="path6554"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="M 27.403947,5.3532686 22.890364,28.643606"
+       id="path6558" />
+  </g>
+</svg>

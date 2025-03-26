@@ -29,6 +29,7 @@ package com.google.refine.operations.recon;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -93,6 +94,16 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+    }
+
+    @Override
+    public ReconUseValuesAsIdentifiersOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconUseValuesAsIdentifiersOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                service,
+                identifierSpace,
+                schemaSpace);
     }
 
     @Override

@@ -933,5 +933,6 @@
     "core-dialogs/remove-duplicate-rows-col-select": "重複行とみなす基準のカラムを選択",
     "core-views/remove-duplicates": "重複した行を削除",
     "core-views/keep-only-matching": "マッチした行だけ保持",
-    "core-views/remove-col2": "カラムを削除"
+    "core-views/remove-col2": "カラムを削除",
+    "core-project/applied-n-operations": "$1 演算が適用されました"
 }

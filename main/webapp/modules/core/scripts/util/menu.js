@@ -182,6 +182,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           .attr('aria-hidden', 'true');
         contentsDiv.prepend(' ');
         contentsDiv.prepend(img);
+        contentsDiv.addClass('menu-item-icon-text');
       }
     } else if ("heading" in item) {
       $('<div></div>').addClass("menu-section").text(item.heading).appendTo(menu);

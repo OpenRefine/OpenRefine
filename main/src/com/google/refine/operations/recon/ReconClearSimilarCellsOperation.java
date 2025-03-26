@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.recon;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -96,6 +97,14 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+    }
+
+    @Override
+    public ReconClearSimilarCellsOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconClearSimilarCellsOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                _similarValue);
     }
 
     @Override

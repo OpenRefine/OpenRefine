@@ -2,12 +2,17 @@
 package com.google.refine.operations.row;
 
 import static com.google.refine.operations.OperationDescription.row_keep_matching_brief;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -28,6 +33,7 @@ import com.google.refine.grel.Function;
 import com.google.refine.grel.Parser;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -169,6 +175,9 @@ public class RowKeepMatchedOperationTest extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         RowKeepMatchedOperation operation = new RowKeepMatchedOperation(engineConfig);
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("hello")));
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
+
         runOperation(operation, project);
 
         Project expected = createProject(new String[] { "foo", "bar", "hello" },
@@ -187,6 +196,8 @@ public class RowKeepMatchedOperationTest extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         RowKeepMatchedOperation operation = new RowKeepMatchedOperation(engineConfig);
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("hello")));
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
 
         runOperation(operation, project);
 
@@ -198,5 +209,46 @@ public class RowKeepMatchedOperationTest extends RefineTest {
                 });
 
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRename() {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        RowKeepMatchedOperation operation = new RowKeepMatchedOperation(engineConfig);
+
+        RowKeepMatchedOperation renamed = operation.renameColumns(Map.of("hello", "hello2"));
+
+        String json = "{"
+                + "\"op\":\"core/row-keep-matched\","
+                + "\"engineConfig\":{\"facets\":["
+                + "  {\n"
+                + "    \"columnName\" : \"hello2\",\n"
+                + "    \"expression\" : \"grel:value\",\n"
+                + "    \"invert\" : false,\n"
+                + "    \"name\" : \"hello2\",\n"
+                + "    \"omitBlank\" : false,\n"
+                + "    \"omitError\" : false,\n"
+                + "    \"selectBlank\" : false,\n"
+                + "    \"selectError\" : false,\n"
+                + "    \"selection\" : [ {\n"
+                + "       \"v\" : {\n"
+                + "          \"l\" : \"h\",\n"
+                + "          \"v\" : \"h\"\n"
+                + "       }\n"
+                + "    }, {\n"
+                + "       \"v\" : {\n"
+                + "          \"l\" : \"i\",\n"
+                + "          \"v\" : \"i\"\n"
+                + "       }\n"
+                + "    } ],\n"
+                + "    \"type\" : \"list\"\n"
+                + "  }"
+                + "],\"mode\":\"record-based\"},"
+                + "\"description\":" + new TextNode(row_keep_matching_brief()).toString()
+                + "}";
+        TestUtils.isSerializedTo(renamed, json);
     }
 }

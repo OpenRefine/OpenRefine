@@ -38,7 +38,7 @@ import org.openrefine.wikibase.utils.LanguageCodeStore;
  * @author Antonin Delpeuch
  *
  */
-public class WbLanguageConstant implements WbExpression<String> {
+public class WbLanguageConstant extends WbConstantExpr<String> {
 
     protected String _langId;
     protected String _origLangId; // for error reporting purposes during validation
