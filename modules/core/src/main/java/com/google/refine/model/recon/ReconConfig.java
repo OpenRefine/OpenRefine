@@ -144,4 +144,14 @@ abstract public class ReconConfig {
     public Optional<Set<String>> getColumnDependencies() {
         return Optional.empty();
     }
+
+    /**
+     * Returns a copy of this recon config, with updated column names.
+     * 
+     * @param newColumnNames
+     *            a map from old to new column names
+     */
+    public ReconConfig renameColumns(Map<String, String> newColumnNames) {
+        return this;
+    }
 }

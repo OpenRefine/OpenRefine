@@ -51,7 +51,7 @@ import org.openrefine.wikibase.schema.validation.ValidationState;
  * @author Antonin Delpeuch
  *
  */
-public class WbDateConstant implements WbExpression<TimeValue> {
+public class WbDateConstant extends WbConstantExpr<TimeValue> {
 
     /**
      * Map of formats accepted by the parser. Each format is associated to the time precision it induces (an integer

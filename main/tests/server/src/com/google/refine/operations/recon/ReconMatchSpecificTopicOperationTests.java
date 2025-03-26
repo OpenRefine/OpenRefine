@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -108,6 +109,37 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                 "http://identifier.space", "http://schema.space");
         assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("bar")));
         assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("bar")));
+    }
+
+    @Test
+    public void testRename() {
+        ReconItem reconItem = new ReconItem("hello", "world", new String[] { "human" });
+
+        var SUT = new ReconMatchSpecificTopicOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased),
+                "bar", reconItem,
+                "http://identifier.space", "http://schema.space");
+
+        ReconMatchSpecificTopicOperation renamed = SUT.renameColumns(Map.of("bar", "foo"));
+
+        String expectedJson = "{\n"
+                + "       \"columnName\" : \"foo\",\n"
+                + "       \"description\" : "
+                + new TextNode(OperationDescription.recon_match_specific_topic_brief("world", "hello", "foo")).toString() + ",\n"
+                + "       \"engineConfig\" : {\n"
+                + "         \"facets\" : [ ],\n"
+                + "         \"mode\" : \"row-based\"\n"
+                + "       },\n"
+                + "       \"identifierSpace\" : \"http://identifier.space\",\n"
+                + "       \"match\" : {\n"
+                + "         \"id\" : \"hello\",\n"
+                + "         \"name\" : \"world\",\n"
+                + "         \"types\" : [ \"human\" ]\n"
+                + "       },\n"
+                + "       \"op\" : \"core/recon-match-specific-topic-to-cells\",\n"
+                + "       \"schemaSpace\" : \"http://schema.space\"\n"
+                + "     }";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

@@ -933,5 +933,6 @@
     "core-index-open/no-results-message": "Žádné výsledky",
     "core-index-open/search-placeholder": "Hledat",
     "core-views/keep-only-matching": "Ponechat pouze shodné řádky",
-    "core-views/remove-col2": "Odebrat sloupec"
+    "core-views/remove-col2": "Odebrat sloupec",
+    "core-project/applied-n-operations": "$1 operací použito"
 }

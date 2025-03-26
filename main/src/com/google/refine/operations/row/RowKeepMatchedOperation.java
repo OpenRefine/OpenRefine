@@ -7,9 +7,12 @@ import static com.google.refine.operations.OperationDescription.row_keep_matchin
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -17,6 +20,7 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowRemovalChange;
@@ -38,6 +42,21 @@ public class RowKeepMatchedOperation extends EngineDependentOperation {
 
     protected String createDescription(Project project, int rowCount) {
         return row_keep_matching_rows_desc(rowCount);
+    }
+
+    @Override
+    protected Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        return Optional.of(Set.of());
+    }
+
+    @JsonIgnore
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.empty());
+    }
+
+    @Override
+    public RowKeepMatchedOperation renameColumns(Map<String, String> newColumnNames) {
+        return new RowKeepMatchedOperation(_engineConfig.renameColumnDependencies(newColumnNames));
     }
 
     @Override

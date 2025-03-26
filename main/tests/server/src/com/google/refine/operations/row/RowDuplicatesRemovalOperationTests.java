@@ -5,6 +5,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -13,6 +16,7 @@ import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.grel.Parser;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 
 public class RowDuplicatesRemovalOperationTests extends RefineTest {
@@ -58,6 +62,9 @@ public class RowDuplicatesRemovalOperationTests extends RefineTest {
 
         EngineConfig engineConfig = EngineConfig.deserialize(_engineConfig);
         RowDuplicatesRemovalOperation operation = new RowDuplicatesRemovalOperation(engineConfig, duplicateRowCriteria);
+        assertEquals(operation.getColumnDependencies(),
+                Optional.of(Set.of("SITE_ID", "SITE_NUM", "LATITUDE", "LONGITUDE", "ELEVATION", "UPDATE_DATE")));
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
 
         runOperation(operation, project);
         assertEquals(project.rows.size(), 7);
@@ -94,6 +101,9 @@ public class RowDuplicatesRemovalOperationTests extends RefineTest {
 
         EngineConfig engineConfig = EngineConfig.defaultRowBased();
         RowDuplicatesRemovalOperation operation = new RowDuplicatesRemovalOperation(engineConfig, duplicateRowCriteria);
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("SITE_ID")));
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
+
         runOperation(operation, project);
         assertEquals(project.rows.size(), 6);
         assertEquals(project.history.getLastPastEntries(1).get(0).description, "Remove 3 rows");
@@ -146,6 +156,15 @@ public class RowDuplicatesRemovalOperationTests extends RefineTest {
                 });
 
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRenameColumns() {
+        RowDuplicatesRemovalOperation SUT = new RowDuplicatesRemovalOperation(EngineConfig.defaultRowBased(), List.of("foo", "bar"));
+
+        RowDuplicatesRemovalOperation renamed = SUT.renameColumns(Map.of("foo", "foo2"));
+
+        assertEquals(renamed._criteria, List.of("foo2", "bar"));
     }
 
 }

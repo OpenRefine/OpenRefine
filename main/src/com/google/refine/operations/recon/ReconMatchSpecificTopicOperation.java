@@ -128,6 +128,16 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     }
 
     @Override
+    public ReconMatchSpecificTopicOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ReconMatchSpecificTopicOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                match,
+                identifierSpace,
+                schemaSpace);
+    }
+
+    @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
         ReconCandidate candidate = match.getCandidate();
@@ -202,4 +212,5 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
                 column.getReconConfig(),
                 null);
     }
+
 }

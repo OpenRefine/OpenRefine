@@ -251,7 +251,7 @@
     "wikibase-schema/start-from-an-existing-schema": "Sélectionner un schéma prédéfini :",
     "wikibase-schema/captions-header": "Légendes",
     "wikibase-schema/target-wikibase-instance": "Sélectionner une instance de Wikibase :",
-    "wikibase-schema/save-new-schema": "Créer un nouveau schéma",
+    "wikibase-schema/save-new-schema": "Enregistrer les changements du schéma",
     "wikibase-schema/override-wikitext": "écraser le wikitext existant",
     "wikibase-schema/caption": "Légende",
     "wikibase-management/discover-manifests": "Découvrez des instances Wikibase…",
