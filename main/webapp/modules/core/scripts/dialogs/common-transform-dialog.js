@@ -90,7 +90,6 @@ commonTransformDialog.prototype._createDialog = function(expression,label) {
 
     this._elmts.okButton.on('click',function() {
       self._commit(expression);
-      self._dismiss();
     });
     this._elmts.cancelButton.on('click',function() {
       self._dismiss();
@@ -114,24 +113,20 @@ commonTransformDialog.prototype._commit = function(expression) {
       columnNames.push(name);
     }
   });
-  var doTextTransform = function(index, expression, onError, repeat, repeatCount) {
-    if (index < columnNames.length) {
-      Refine.postCoreProcess(
-        "text-transform",
-        {
-          columnName: columnNames[index], 
-          expression: expression, 
-          onError: onError,
-          repeat: repeat,
-          repeatCount: repeatCount
-        },
-        null,
-        { cellsChanged: true, rowIdsPreserved: true },
-        { onDone: function() { doTextTransform(index + 1, expression, onError, repeat, repeatCount) } }
-      );
-    } else {
-      self._dismiss();
-    }
-  };
-  doTextTransform(0, expression, "keep-original", false, "");
+  let operations = columnNames.map(columnName => { return {
+    op: "core/text-transform",
+    onError: "keep-original",
+    repeat: false,
+    repeatCount: 0,
+    engineConfig: ui.browsingEngine.getJSON(),
+    columnName,
+    expression
+  }});
+  Refine.postCoreProcess(
+    "apply-operations",
+    {},
+    { operations: JSON.stringify(operations) },
+    { modelsChanged: true, rowIdsPreserved: true },
+    { onDone: function() { self._dismiss(); } }
+  );
 };
