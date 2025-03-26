@@ -33,7 +33,7 @@ describe(__filename, function () {
 
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Reorder columns');
+    cy.assertNotificationContainingText('Remove 2 columns');
 
     cy.assertGridEquals([
       ['NDB_No', 'Energ_Kcal'],

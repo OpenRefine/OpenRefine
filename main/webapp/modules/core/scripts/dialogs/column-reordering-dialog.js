@@ -88,15 +88,40 @@ ColumnReorderingDialog.prototype._dismiss = function() {
 ColumnReorderingDialog.prototype._commit = function() {
     var self = this;
     var columnNames = this._elmts.columnContainer.find('div').map(function() { return this.getAttribute("column"); }).get();
+    var deletedColumnNames = this._elmts.trashContainer.find('div').map(function() { return this.getAttribute("column"); }).get();
+    var retainedColumnNamesInOriginalOrder = theProject.columnModel.columns
+        .map(column => column.name)
+        .filter(columnName => columnNames.indexOf(columnName) != -1);
     
-    Refine.postCoreProcess(
-        "reorder-columns",
-        null,
-        { "columnNames" : JSON.stringify(columnNames) }, 
-        { modelsChanged: true, rowIdsPreserved: true }, // TODO could add recordIdsPreserved: true if the record key column did not change
-        { 
-          includeEngine: false,
-          onDone: function() { self._dismiss(); }
-        }
-    );
+    var isPureReorder = deletedColumnNames.length === 0;
+    var isPureDelete = JSON.stringify(retainedColumnNamesInOriginalOrder) === JSON.stringify(columnNames);
+    
+    if (isPureDelete) {
+        var recordIdsPreserved = columnNames.length > 0 && columnNames[0] === retainedColumnNamesInOriginalOrder[0];
+        Refine.postCoreProcess(
+            "apply-operations",
+            null,
+            { "operations": JSON.stringify([{
+                op: 'core/column-multi-removal',
+                columnNames: deletedColumnNames
+              }])
+            },
+            { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved },
+            { 
+              includeEngine: false,
+              onDone: function() { self._dismiss(); }
+            }
+        ); 
+    } else {
+        Refine.postCoreProcess(
+            "reorder-columns",
+            null,
+            { "columnNames" : JSON.stringify(columnNames), isPureReorder }, 
+            { modelsChanged: true, rowIdsPreserved: true }, // TODO could add recordIdsPreserved: true if the record key column did not change
+            { 
+              includeEngine: false,
+              onDone: function() { self._dismiss(); }
+            }
+        );
+    }
 };
