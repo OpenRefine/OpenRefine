@@ -523,7 +523,7 @@
     "core-views/what-to-copy": "Que copier",
     "core-views/separator": "Séparateur",
     "core-views/ctrl-enter": "Ctrl-Entrée",
-    "core-views/view": "Aperçu",
+    "core-views/view": "Affichage",
     "core-views/extend-not-supported": "Ce service de réconciliation ne supporte pas l'extension de données. Essayez de supprimer le service et de l'ajouter à nouveau. Si le problème persiste, contactez le fournisseur de service.",
     "core-views/to-text": "En texte…",
     "core-views/to-text/header": "En texte",
