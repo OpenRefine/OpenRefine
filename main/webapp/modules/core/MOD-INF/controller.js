@@ -514,6 +514,7 @@ function init() {
       "scripts/project/exporters.js",
       "scripts/project/scripting.js",
       "scripts/project/operation-icons.js",
+      "scripts/project/facet-icons.js",
 
       "scripts/facets/facet.js",
       "scripts/facets/list-facet.js",
