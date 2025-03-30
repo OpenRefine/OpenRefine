@@ -171,4 +171,55 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
         assertTrue(node.get("message").asText().startsWith("Operation #1: Invalid expression"));
     }
 
+    @Test
+    public void testValidWithoutRenames() throws Exception {
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("operations")).thenReturn(historyJSON);
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").asText(), "ok");
+
+        Project expectedProject = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { 1, "hallo" },
+                        { null, true }
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
+    @Test
+    public void testValidWithRenames() throws Exception {
+        String renamesJSON = "{"
+                + "  \"bar\": \"bar_orig\""
+                + "}";
+
+        project = createProject(new String[] { "foo", "bar_orig" },
+                new Serializable[][] {
+                        { 1, "hello" },
+                        { null, true }
+                });
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("operations")).thenReturn(historyJSON);
+        when(request.getParameter("renames")).thenReturn(renamesJSON);
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").asText(), "ok");
+
+        Project expectedProject = createProject(new String[] { "foo", "bar_orig" },
+                new Serializable[][] {
+                        { 1, "hallo" },
+                        { null, true }
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
 }
