@@ -17,6 +17,7 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ColumnsDiff;
 import com.google.refine.operations.Recipe;
+import com.google.refine.operations.Recipe.RecipeValidationException;
 import com.google.refine.util.ParsingUtilities;
 
 /**
@@ -77,6 +78,8 @@ public class GetColumnDependenciesCommand extends Command {
                     .collect(Collectors.toList());
 
             respondJSON(response, result);
+        } catch (RecipeValidationException e) {
+            respondJSON(response, e);
         } catch (Exception e) {
             respondException(response, e);
         }

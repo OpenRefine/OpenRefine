@@ -76,8 +76,17 @@ function ExtractOperationsDialog(json) {
         { operations: JSON.stringify(self.historyJson) },
         function(response) {
           elmts.recipeSvg.empty();
-          let visualizer = new RecipeVisualizer(response.steps, elmts.recipeSvg);
-          visualizer.draw();
+          elmts.recipeError.empty();
+          if (response.code === 'ok') {
+            let visualizer = new RecipeVisualizer(response.steps, elmts.recipeSvg);
+            visualizer.draw();
+          } else {
+            if (response.message) {
+              elmts.recipeError.text(response.message);
+            } else {
+              elmts.recipeError.text($.i18n("core-dialogs/internal-err"));
+            }
+          }
         },
         "json",
         function(e) {

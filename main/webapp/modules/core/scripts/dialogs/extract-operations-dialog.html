@@ -10,7 +10,7 @@
         </tr>
         <tr>
           <td width="50%" style="vertical-align: top"><div class="history-extract-dialog-panel"><table role="presentation" class="history-extract-dialog-entries" bind="entryTable"></table></div></td>
-          <td width="50%" rowspan="2" style="vertical-align: top">
+          <td width="50%" style="vertical-align: top">
             <div id="recipe-extract-tabs" class="refine-tabs">
               <ul>
                 <li><a href="#recipe-json" bind="recipeJSONTabLink"></a></li>
@@ -33,6 +33,9 @@
             <button class="button" bind="selectAllButton"></button>
             <button class="button" bind="deselectAllButton"></button>
             <button class="button" bind="saveJsonAsFileButton" style="float: right"></button>
+          </td>
+          <td>
+            <span class="history-operation-json-error" bind="recipeError"></span>
           </td>
         </tr>
       </table></div>

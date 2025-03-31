@@ -58,6 +58,7 @@ public class Recipe {
             } catch (IllegalArgumentException e) {
                 throw new RecipeValidationException(index, e.getMessage());
             }
+            index++;
         }
 
         // currentColumnNames represents the current set of column names in the project,
@@ -70,6 +71,7 @@ public class Recipe {
         // columns created by the recipe
         newColumns = new HashSet<>();
 
+        index = 0;
         for (AbstractOperation op : operations) {
             if (currentColumnNames.isPresent()) {
                 Set<String> allDependencies = new HashSet<>();
@@ -90,7 +92,7 @@ public class Recipe {
                             // if this column has already been required before,
                             // but is no longer part of the current columns,
                             // that means it has since been deleted.
-                            throw new IllegalArgumentException(
+                            throw new RecipeValidationException(index,
                                     "Inconsistent list of operations: column '" + columnName + "' used after being deleted or renamed");
                         } else {
                             dependencies.add(columnName);
@@ -107,7 +109,7 @@ public class Recipe {
                 currentColumnNames.get().removeAll(columnsDiff.get().getDeletedColumns());
                 for (String addedColumn : columnsDiff.get().getAddedColumnNames()) {
                     if (currentColumnNames.get().contains(addedColumn)) {
-                        throw new IllegalArgumentException(
+                        throw new RecipeValidationException(index,
                                 "Creation of column '" + addedColumn + "' conflicts with an existing column with the same name");
                     }
                 }
@@ -115,6 +117,7 @@ public class Recipe {
                 newColumns.removeAll(columnsDiff.get().getDeletedColumns());
                 newColumns.addAll(columnsDiff.get().getAddedColumnNames());
             }
+            index++;
         }
     }
 
