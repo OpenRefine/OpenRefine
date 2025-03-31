@@ -226,6 +226,55 @@ public class RecipeTests {
     }
 
     @Test
+    public void testGetInternalColumns() throws Exception {
+        assertEquals(
+                new Recipe(List.of()).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRemovalOperation("foo"))).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRemovalOperation("foo"),
+                        new ColumnRemovalOperation("bar"))).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRenameOperation("foo", "foo2"),
+                        new ColumnRemovalOperation("bar"))).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRenameOperation("foo", "foo2"),
+                        new ColumnSplitOperation("foo2"), // opaque
+                        new ColumnRemovalOperation("bar"))).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnTransformOperation("foo"),
+                        new ColumnRemovalOperation("foo"))).getInternalColumns(),
+                Set.of());
+
+        // unanalyzable operation
+        assertEquals(
+                new Recipe(List.of(
+                        new OpaqueOperation())).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRenameOperation("foo", "foo2"),
+                        new ColumnRenameOperation("foo2", "foo3"))).getInternalColumns(),
+                Set.of("foo2"));
+    }
+
+    @Test
     public void testRequiredColumnsFromInconsistentOperations() {
         assertThrows(IllegalArgumentException.class, () -> new Recipe(List.of(
                 new ColumnRemovalOperation("foo"),

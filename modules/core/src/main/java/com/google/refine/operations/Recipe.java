@@ -27,6 +27,7 @@ public class Recipe {
     private final List<AbstractOperation> operations;
     private Set<String> dependencies;
     private Set<String> newColumns;
+    private Set<String> internalColumns;
 
     @JsonCreator
     public Recipe(
@@ -34,6 +35,7 @@ public class Recipe {
         this.operations = operations;
         this.dependencies = null;
         this.newColumns = null;
+        this.internalColumns = null;
     }
 
     @JsonValue
@@ -69,6 +71,8 @@ public class Recipe {
         dependencies = new HashSet<>();
         // columns created by the recipe
         newColumns = new HashSet<>();
+        // columns only created during the recipe but deleted before the end of the recipe
+        internalColumns = new HashSet<>();
 
         for (AbstractOperation op : operations) {
             if (currentColumnNames.isPresent()) {
@@ -112,7 +116,10 @@ public class Recipe {
                     }
                 }
                 currentColumnNames.get().addAll(columnsDiff.get().getAddedColumnNames());
-                newColumns.removeAll(columnsDiff.get().getDeletedColumns());
+                Set<String> newInternalColumns = new HashSet<>(columnsDiff.get().getDeletedColumns());
+                newInternalColumns.retainAll(newColumns);
+                internalColumns.addAll(newInternalColumns);
+                newColumns.removeAll(newInternalColumns);
                 newColumns.addAll(columnsDiff.get().getAddedColumnNames());
             }
         }
@@ -145,6 +152,20 @@ public class Recipe {
             validate();
         }
         return newColumns;
+    }
+
+    /**
+     * Computes the set of columns created throughout the recipe, but which get deleted before the end of the recipe.
+     * This is an under-approximation: if certain operations in the list fail to expose their impac on the set of
+     * columns, then the columns created at this stage will be omitted from the return value.
+     * 
+     * @return a set of internal column names
+     */
+    public Set<String> getInternalColumns() {
+        if (internalColumns == null) {
+            validate();
+        }
+        return internalColumns;
     }
 
     /**
