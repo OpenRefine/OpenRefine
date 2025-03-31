@@ -1,6 +1,7 @@
 
 package com.google.refine.operations;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -181,6 +182,36 @@ public class Recipe {
                 .map(op -> op.renameColumns(newColumnNames))
                 .collect(Collectors.toList());
         return new Recipe(result);
+    }
+
+    /**
+     * In preparation for applying the recipe to a project, ensure that the internal column names in the recipe are
+     * disjoint from the columns present in the project. The conflicting column names are deduplicated by adding a
+     * number at the end of the column such that there is no conflict anymore.
+     * 
+     * @param projectColumnNames
+     *            the set of column names in the project
+     * @return a new version of the recipe, where any conflicting internal column names have been deduplicated.
+     */
+    public Recipe avoidInternalColumnCollisions(Set<String> projectColumnNames) {
+        Set<String> allColumns = new HashSet<>(projectColumnNames);
+        allColumns.addAll(getNewColumns());
+
+        Set<String> conflictingInternal = new HashSet<>(getInternalColumns());
+        conflictingInternal.retainAll(allColumns);
+        allColumns.addAll(getInternalColumns());
+
+        Map<String, String> rename = new HashMap<>();
+        for (String conflicting : conflictingInternal) {
+            int deduplicatingNumber = 1;
+            String newName;
+            do {
+                deduplicatingNumber++;
+                newName = String.format("%s_%d", conflicting, deduplicatingNumber);
+            } while (allColumns.contains(newName));
+            rename.put(conflicting, newName);
+        }
+        return this.renameColumns(rename);
     }
 
     @Override

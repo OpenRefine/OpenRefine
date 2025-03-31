@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -98,6 +99,11 @@ public class ApplyOperationsCommand extends Command {
             recipe.validate();
             if (!renames.isEmpty()) {
                 recipe = recipe.renameColumns(renames);
+            }
+
+            // deduplicate internal column names to make sure they don't conflict with the ones in the project
+            if (!recipe.getInternalColumns().isEmpty()) {
+                recipe = recipe.avoidInternalColumnCollisions(project.columnModel.getColumnNames().stream().collect(Collectors.toSet()));
             }
 
             // check all required columns are present
