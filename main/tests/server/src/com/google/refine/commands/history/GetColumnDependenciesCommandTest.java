@@ -2,6 +2,8 @@
 package com.google.refine.commands.history;
 
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.Optional;
 
 import javax.servlet.ServletException;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -22,6 +25,8 @@ import com.google.refine.grel.Parser;
 import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.MassEditOperation;
+import com.google.refine.operations.column.ColumnAdditionOperation;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class GetColumnDependenciesCommandTest extends CommandTestBase {
@@ -49,10 +54,32 @@ public class GetColumnDependenciesCommandTest extends CommandTestBase {
             + "  }\n"
             + "]";
 
+    // recipe which creates the same column twice, which is inconsistent
+    String inconsistentRecipe = "["
+            + "{"
+            + "  \"op\":\"core/column-addition\","
+            + "  \"engineConfig\":{\"facets\":[],\"mode\":\"row-based\"},"
+            + "  \"baseColumnName\":\"a\","
+            + "  \"expression\":\"grel:value\","
+            + "  \"onError\":\"set-to-blank\","
+            + "  \"newColumnName\":\"c\","
+            + "  \"columnInsertIndex\":1"
+            + "},{"
+            + "  \"op\":\"core/column-addition\","
+            + "  \"engineConfig\":{\"facets\":[],\"mode\":\"row-based\"},"
+            + "  \"baseColumnName\":\"a\","
+            + "  \"expression\":\"grel:value\","
+            + "  \"onError\":\"set-to-blank\","
+            + "  \"newColumnName\":\"c\","
+            + "  \"columnInsertIndex\":1"
+            + "}"
+            + "]";
+
     @BeforeMethod
     public void setUpDependencies() {
         command = new GetColumnDependenciesCommand();
         OperationRegistry.registerOperation(getCoreModule(), "mass-edit", MassEditOperation.class);
+        OperationRegistry.registerOperation(getCoreModule(), "column-addition", ColumnAdditionOperation.class);
     }
 
     @BeforeMethod
@@ -110,6 +137,20 @@ public class GetColumnDependenciesCommandTest extends CommandTestBase {
                 + "      } ]\n"
                 + "}";
         TestUtils.assertEqualsAsJson(response, json);
+    }
+
+    @Test
+    public void testInconsistentRecipe() throws Exception {
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("operations")).thenReturn(inconsistentRecipe);
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").toString(), "\"error\"");
+        assertEquals(node.get("operationIndex").asInt(), 1);
+        assertTrue(node.get("message").asText().startsWith("Operation #2: Creation of column 'c' conflicts"));
     }
 
     @Test
