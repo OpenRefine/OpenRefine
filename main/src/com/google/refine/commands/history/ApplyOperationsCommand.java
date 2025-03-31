@@ -115,6 +115,15 @@ public class ApplyOperationsCommand extends Command {
                 }
             }
 
+            // check all new columns are not present
+            Set<String> newColumns = recipe.getNewColumns();
+            for (String columnName : newColumns) {
+                if (project.columnModel.getColumnByName(columnName) != null) {
+                    throw new IllegalArgumentException(
+                            "Column '" + columnName + "' already exists in the project");
+                }
+            }
+
             // Run all operations in sequence
             List<HistoryEntry> entries = new ArrayList<>(recipe.getOperations().size());
             for (AbstractOperation operation : recipe.getOperations()) {

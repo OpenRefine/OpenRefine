@@ -183,6 +183,24 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
     }
 
     @Test
+    public void testDuplicateNewColumn() throws Exception {
+        String json = "[{\"op\":\"core/column-rename\","
+                + "\"description\":\"Rename column foo to bar\","
+                + "\"oldColumnName\":\"foo\","
+                + "\"newColumnName\":\"bar\"}]";
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("operations")).thenReturn(json);
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").toString(), "\"error\"");
+    }
+
+    @Test
     public void testInvalidExpression() throws Exception {
         String json = "[{"
                 + "   \"op\":\"core/text-transform\","
