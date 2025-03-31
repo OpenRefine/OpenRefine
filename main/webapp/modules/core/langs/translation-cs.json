@@ -934,5 +934,11 @@
     "core-index-open/search-placeholder": "Hledat",
     "core-views/keep-only-matching": "Ponechat pouze shodné řádky",
     "core-views/remove-col2": "Odebrat sloupec",
-    "core-project/applied-n-operations": "$1 operací použito"
+    "core-project/applied-n-operations": "$1 operací použito",
+    "core-project/error-created-column": "Vytvořený sloupec s názvem \"$1\" by v projektu ještě neměl existovat, protože při použití receptu dojde k jeho vytvoření.",
+    "core-project/map-columns": "Mapování sloupců předpisů na sloupce projektu",
+    "core-project/columns-in-the-project": "V projektu",
+    "core-project/recipe-required-columns": "Vyžadované sloupce:",
+    "core-project/recipe-created-columns": "Vytvořené sloupce:",
+    "core-project/columns-in-the-recipe": "V předpisu"
 }
