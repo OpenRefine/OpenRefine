@@ -6,6 +6,8 @@ import static org.testng.Assert.assertThrows;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,7 +28,7 @@ public class RecipeTests {
      * An operation which removes a column (faithful to the actual such operation in OpenRefine, which isn't visible in
      * this module).
      */
-    class ColumnRemovalOperation extends AbstractOperation {
+    static class ColumnRemovalOperation extends AbstractOperation {
 
         final String columnName;
 
@@ -49,7 +51,7 @@ public class RecipeTests {
      * An operation which renames a column (also faithful to the actual such operation in OpenRefine, which isn't
      * visible in this module).
      */
-    class ColumnRenameOperation extends AbstractOperation {
+    static class ColumnRenameOperation extends AbstractOperation {
 
         final String oldName;
         final String newName;
@@ -68,13 +70,38 @@ public class RecipeTests {
         public Optional<ColumnsDiff> getColumnsDiff() {
             return Optional.of(ColumnsDiff.builder().deleteColumn(oldName).addColumn(newName, oldName).build());
         }
+
+        @Override
+        public AbstractOperation renameColumns(Map<String, String> newColumnNames) {
+            return new ColumnRenameOperation(
+                    newColumnNames.getOrDefault(oldName, oldName),
+                    newColumnNames.getOrDefault(newName, newName));
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(newName, oldName);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            ColumnRenameOperation other = (ColumnRenameOperation) obj;
+            return Objects.equals(newName, other.newName) && Objects.equals(oldName, other.oldName);
+        }
+
     }
 
     /**
      * An operation which exposes its dependencies, but not its impact on columns after having run (just like the
      * ColumnSplitOperation in OpenRefine, not visible here)
      */
-    class ColumnSplitOperation extends AbstractOperation {
+    static class ColumnSplitOperation extends AbstractOperation {
 
         final String columnName;
 
@@ -118,7 +145,7 @@ public class RecipeTests {
     /**
      * An operation which declares neither the columns it depends on, nor its impact on the columns after having run.
      */
-    class OpaqueOperation extends AbstractOperation {
+    static class OpaqueOperation extends AbstractOperation {
 
         OpaqueOperation() {
         }
@@ -226,6 +253,55 @@ public class RecipeTests {
     }
 
     @Test
+    public void testGetInternalColumns() throws Exception {
+        assertEquals(
+                new Recipe(List.of()).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRemovalOperation("foo"))).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRemovalOperation("foo"),
+                        new ColumnRemovalOperation("bar"))).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRenameOperation("foo", "foo2"),
+                        new ColumnRemovalOperation("bar"))).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRenameOperation("foo", "foo2"),
+                        new ColumnSplitOperation("foo2"), // opaque
+                        new ColumnRemovalOperation("bar"))).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnTransformOperation("foo"),
+                        new ColumnRemovalOperation("foo"))).getInternalColumns(),
+                Set.of());
+
+        // unanalyzable operation
+        assertEquals(
+                new Recipe(List.of(
+                        new OpaqueOperation())).getInternalColumns(),
+                Set.of());
+
+        assertEquals(
+                new Recipe(List.of(
+                        new ColumnRenameOperation("foo", "foo2"),
+                        new ColumnRenameOperation("foo2", "foo3"))).getInternalColumns(),
+                Set.of("foo2"));
+    }
+
+    @Test
     public void testRequiredColumnsFromInconsistentOperations() {
         assertThrows(IllegalArgumentException.class, () -> new Recipe(List.of(
                 new ColumnRemovalOperation("foo"),
@@ -237,6 +313,19 @@ public class RecipeTests {
         assertThrows(IllegalArgumentException.class, () -> new Recipe(List.of(
                 new ColumnTransformOperation("bar"),
                 new ColumnRenameOperation("foo", "bar"))).getRequiredColumns());
+    }
+
+    @Test
+    public void testInternalColumnRenaming() {
+        Recipe recipe = new Recipe(List.of(
+                new ColumnRenameOperation("foo", "foo2"),
+                new ColumnRenameOperation("foo2", "foo3")));
+
+        Recipe rewritten = recipe.avoidInternalColumnCollisions(Set.of("foo", "foo2"));
+
+        assertEquals(rewritten, new Recipe(List.of(
+                new ColumnRenameOperation("foo", "foo2_2"),
+                new ColumnRenameOperation("foo2_2", "foo3"))));
     }
 
 }
