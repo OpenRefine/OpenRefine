@@ -93,7 +93,7 @@ The Project Manager:
 - Helps to improve OpenRefine's governance and community diversity
 - Helps build community-driven structures to formalize OpenRefine's roadmap and keep it up-to-date
 - Assists in finding and securing new sources of funding
-- Supports the Advisory Committee in OpenRefine's day-to-day operations; this may include supervising paid project staff.
+- Supports the Advisory Committee in OpenRefine's day-to-day operations (this may include supervising paid project staff)
 
 The current Project Manager is Martin Magdinier [@magdmartin](https://github.com/magdmartin) and on the [forum](https://forum.openrefine.org/u/Martin/summary).
 
