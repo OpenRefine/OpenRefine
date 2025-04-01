@@ -18,7 +18,7 @@ Users can help the project by:
 - Advertising and advocating for the project
 - Informing developers of the strengths and weaknesses of the tool through the [user discussion list](https://forum.openrefine.org/) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)
 - Providing moral support (a ‘thank you’ goes a long way)
-- Writing tutorials to contextualize OpenRefine for your community
+- Writing tutorials to contextualize OpenRefine for specific communities
 
 How to become an OpenRefine user? [Download OpenRefine](http://openrefine.org/download.html) and start refining!
 
