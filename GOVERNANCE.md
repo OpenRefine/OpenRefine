@@ -6,7 +6,7 @@ OpenRefine is a free, open-source, powerful tool for working with messy data. Op
 ## Roles and responsibilities
 OpenRefine is a meritocratic, consensus-based community project based on the [Apache Decision Making process](https://community.apache.org/committers/decisionMaking.html).
 
-Decision-making is done based on user consensus following open discussion (i.e., using OpenRefine's [discussion list](https://forum.openrefine.org/c/dev/8) and [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)). No decisions about the project’s direction, bug fixes, or features may be made in private without community involvement and participation. Discussions must begin at the earliest possible point on a topic; the community’s participation is vital during the entire decision-making process.
+In so far that is possilbe, decision-making is done based on user consensus following open discussion (i.e., using OpenRefine's [discussion list](https://forum.openrefine.org/) and [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)). No major decisions about the project’s direction, bug fixes, or features should be made in private without community involvement and participation. Discussions must begin at the earliest possible point on a topic; the community’s participation is vital during the entire decision-making process.
 
 All project participants abide by the [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md).
 
