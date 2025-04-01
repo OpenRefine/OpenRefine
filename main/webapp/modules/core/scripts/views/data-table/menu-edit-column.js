@@ -33,19 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var columnIndex = Refine.columnNameToColumnIndex(column.name);
-  var doTextTransform = function(columnName, expression, onError, repeat, repeatCount, callbacks) {
-      callbacks = callbacks || {};
-	    Refine.postCoreProcess(
-	      "text-transform",
-	      {
+  var doTextTransform = function(columnName, expression, onError, repeat, repeatCount, furtherOperations, onDone) {
+	    Refine.postOperations(
+	      [{
+	        op: "core/text-transform",
 	        columnName: columnName,
 	        onError: onError,
 	        repeat: repeat,
-	        repeatCount: repeatCount
-	      },
-	      { expression: expression },
+	        repeatCount: repeatCount,
+                expression
+	      }].concat(furtherOperations),
 	      { cellsChanged: true, rowIdsPreserved: true },
-	      callbacks
+              { onDone }
 	    );
 	  };
 	  
@@ -86,15 +85,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         return;
       }
 
-      Refine.postCoreProcess(
-        "add-column", 
+      Refine.postOperation(
         {
+          op: "core/column-addition", 
           baseColumnName: column.name,  
           newColumnName: columnName, 
           columnInsertIndex: columnIndex + 1,
-          onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value
+          onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value,
+          expression: previewWidget.getExpression(true)
         },
-        { expression: previewWidget.getExpression(true) },
         { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
         {
           onDone: function(o) {
@@ -153,9 +152,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         alert($.i18n('core-views/warning-throttle-delay-input'));
         return;
       }
-      Refine.postCoreProcess(
-        "add-column-by-fetching-urls", 
+      Refine.postOperation(
         {
+          op: "core/column-addition-by-fetching-urls", 
           baseColumnName: column.name, 
           urlExpression: previewWidget.getExpression(true), 
           newColumnName: columnName, 
@@ -163,9 +162,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           delay: delay,
           onError: $('input[name="dialog-onerror-choice"]:checked')[0].value,
           cacheResponses: $('input[name="dialog-cache-responses"]')[0].checked,
-          httpHeaders: JSON.stringify(elmts.setHttpHeadersContainer.find("input").serializeArray())
+          httpHeaders: elmts.setHttpHeadersContainer.find("input").serializeArray()
         },
-        null,
         { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
         { onDone: dismiss }
       );
@@ -194,19 +192,16 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           currentColumns.add(attempt);
         }
 
-        Refine.postProcess(
-            "core",
-            "extend-data", 
+        Refine.postOperation(
             {
+              op: "core/extend-data", 
               baseColumnName: column.name,
 	      endpoint: endpoint,
               identifierSpace: identifierSpace,
               schemaSpace: schemaSpace,
-              columnInsertIndex: columnIndex + 1
-            },
-            {
-              extension: JSON.stringify(extension),
-              resultColumns: JSON.stringify(resultColumns),
+              columnInsertIndex: columnIndex + 1,
+              extension,
+              resultColumns
             },
             { rowsChanged: true, modelsChanged: true }
         );
@@ -215,15 +210,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doMoveColumnTo = function(direction) {
-    Refine.postCoreProcess(
-      "apply-operations",
-      {},
-      { operations: JSON.stringify([
-        {
-           op: 'core/column-move-' + direction,
-           columnName: column.name
-        }
-      ]) },
+    Refine.postOperation(
+      {
+        op: 'core/column-move-' + direction,
+        columnName: column.name
+      },
       { modelsChanged: true, rowIdsPreserved: true }
     );
   };
@@ -256,6 +247,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.okButton.on('click',function() {
       var mode = $("input[name='split-by-mode']:checked")[0].value;
       var config = {
+        op: "core/column-split", 
         columnName: column.name,
         mode: mode,
         guessCellType: elmts.guessCellTypeInput[0].checked,
@@ -269,6 +261,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
 
         config.regex = elmts.regexInput[0].checked;
+        config.maxColumns = 0;
 
         var s = elmts.maxColumnsInput[0].value;
         if (s) {
@@ -294,7 +287,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             return;
           }
 
-          config.fieldLengths = JSON.stringify(lengths);
+          config.fieldLengths = lengths;
           
         } catch (e) {
           alert($.i18n('core-views/warning-format'));
@@ -302,10 +295,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
       }
 
-      Refine.postCoreProcess(
-        "split-column", 
+      Refine.postOperation(
         config,
-        null,
         { modelsChanged: true },
         { onDone: dismiss }
       );
@@ -347,21 +338,16 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // function called in a callback
       var deleteColumns = function() {
         if (deleteJoinedColumns) {
-          var columnsToKeep = theProject.columnModel.columns
-          .map (function (col) {return col.name;})
-          .filter (function(colName) {
-            // keep the selected column if it contains the result
-            return (
-                (columnsToJoin.indexOf (colName) == -1) ||
-                ((writeOrCopy !="copy-to-new-column") && (colName == column.name)));
-            }); 
-          Refine.postCoreProcess(
-              "reorder-columns",
-              null,
-              { "columnNames" : JSON.stringify(columnsToKeep) }, 
-              { modelsChanged: true, rowIdsPreserved: true },
-              { includeEngine: false }
-          );
+          var columnsToDelete = columnsToJoin;
+          if (writeOrCopy != "copy-to-new-column") {
+            columnsToDelete = columnsToDelete.filter(colName => colName != column.name);
+          }
+          return [{
+              op: "core/column-multi-removal",
+              columnNames : columnsToDelete
+          }];
+        } else {
+          return [];
         }
       };
       // get options
@@ -403,17 +389,17 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       expression = 'join ([' + expression + '],\'' + escapeString(fieldSeparator,dontEscape) + "')";
       // apply expression to selected column or new column
       if (writeOrCopy =="copy-to-new-column") {
-        Refine.postCoreProcess(
-          "add-column", 
+        Refine.postOperations([
           {
-          baseColumnName: column.name,  
-          newColumnName: newColumnName, 
-          columnInsertIndex: columnIndex + 1,
-          onError: onError
-          },
-          { expression: expression },
+            op: "core/column-addition", 
+            baseColumnName: column.name,  
+            newColumnName: newColumnName, 
+            columnInsertIndex: columnIndex + 1,
+            onError: onError,
+            expression
+          }].concat(deleteColumns()),
           { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true },
-          { onDone: dismiss, onFinallyDone: deleteColumns}
+          { onDone: dismiss }
         );
       } 
       else {
@@ -423,7 +409,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             onError,
             repeat,
             repeatCount,
-            { onDone: dismiss, onFinallyDone: deleteColumns});
+            deleteColumns(),
+            dismiss);
       }
     };
     // core of doJoinColumn
