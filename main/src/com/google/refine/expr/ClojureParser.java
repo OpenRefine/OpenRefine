@@ -77,8 +77,7 @@ public class ClojureParser implements LanguageSpecificParser {
                                 bindings.get("row"),
                                 bindings.get("rowIndex"),
                                 bindings.get("value1"),
-                                bindings.get("value2")
-                                );
+                                bindings.get("value2"));
                     } catch (Exception e) {
                         return new EvalError(e.getMessage());
                     }
