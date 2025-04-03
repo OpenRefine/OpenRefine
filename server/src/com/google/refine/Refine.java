@@ -120,6 +120,7 @@ public class Refine {
 
         RefineServer server = new RefineServer();
         server.init(iface, port, host);
+        String contextPath = server.getURI().getPath();
 
         boolean headless = Configurations.getBoolean("refine.headless", false);
         if (headless) {
@@ -131,12 +132,12 @@ public class Refine {
                 if ("*".equals(host)) {
                     if ("0.0.0.0".equals(iface)) {
                         logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
-                        client.init("localhost", port);
+                        client.init("localhost", port, contextPath);
                     } else {
-                        client.init(iface, port);
+                        client.init(iface, port, contextPath);
                     }
                 } else {
-                    client.init(host, port);
+                    client.init(host, port, contextPath);
                 }
             } catch (Exception e) {
                 logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host
@@ -492,8 +493,8 @@ class RefineClient extends JFrame implements ActionListener {
 
     private URI uri;
 
-    public void init(String host, int port) throws Exception {
-        uri = new URI("http://" + host + ":" + port + "/");
+    public void init(String host, int port, String contextPath) throws Exception {
+        uri = new URI("http://" + host + ":" + port + contextPath);
         openBrowser();
     }
 

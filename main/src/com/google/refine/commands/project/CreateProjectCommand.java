@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.importing.ImportingManager.Format;
@@ -129,7 +128,7 @@ public class CreateProjectCommand extends Command {
 
             long projectId = ImportingUtilities.createProject(job, format, optionObj, exceptions, true);
 
-            HttpUtilities.redirect(response, "/project?project=" + projectId);
+            redirect(response, request.getContextPath() + "/project?project=" + projectId);
         } catch (Exception e) {
             respondWithErrorPage(request, response, "Failed to import file", e);
         } finally {
