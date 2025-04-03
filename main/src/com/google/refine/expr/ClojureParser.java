@@ -50,7 +50,7 @@ public class ClojureParser implements LanguageSpecificParser {
 //                    RT.load("clojure/core"); // Make sure RT is initialized
             Object foo = RT.CURRENT_NS; // Make sure RT is initialized
             IFn fn = (IFn) clojure.lang.Compiler.load(new StringReader(
-                    "(fn [value cell cells row rowIndex] " + source + ")"));
+                    "(fn [value cell cells row rowIndex value1 value2] " + source + ")"));
 
             // TODO: We should to switch from using Compiler.load
             // because it's technically an internal interface
@@ -75,7 +75,9 @@ public class ClojureParser implements LanguageSpecificParser {
                                 bindings.get("cell"),
                                 bindings.get("cells"),
                                 bindings.get("row"),
-                                bindings.get("rowIndex"));
+                                bindings.get("rowIndex"),
+                                bindings.get("value1"),
+                                bindings.get("value2"));
                     } catch (Exception e) {
                         return new EvalError(e.getMessage());
                     }
