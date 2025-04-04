@@ -182,7 +182,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     {
       id: "core/view",
       label: $.i18n('core-views/view'),
-      tooltip: $.i18n('core-views/view'),
+      tooltip: $.i18n('core-views/collapse-expand'),
       submenu: [
         {
           label: $.i18n('core-views/collapse-this'),
