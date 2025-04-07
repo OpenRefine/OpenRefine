@@ -29,7 +29,7 @@ package com.google.refine.model.changes;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -107,13 +107,18 @@ public class RowAdditionChangeTests extends RefineTest {
     }
 
     @Test
-    // After prepend apply, project's new prepended rows are identical those passed to constructor
+    // After prepend apply, project's new prepended rows are equal those passed to constructor
+    // but not identical, because otherwise modifying the row will change the operation's metadata.
+    // See https://github.com/OpenRefine/OpenRefine/issues/7245
     public void testPrependApplyRowIdentity() {
         change.apply(project);
         for (int i = insertionIndex; i < newRows.size(); i++) {
             Row actual = project.rows.get(i);
             Row expected = newRows.get(i);
-            assertSame(actual, expected);
+            assertNotSame(actual, expected);
+            assertEquals(actual.flagged, expected.flagged);
+            assertEquals(actual.starred, expected.starred);
+            assertEquals(actual.cells, expected.cells);
         }
     }
 
@@ -205,6 +210,8 @@ public class RowAdditionChangeTests extends RefineTest {
 
     @Test
     // After append apply, project's new append rows are identical those passed to constructor
+    // but not identical, because otherwise modifying the row will change the operation's metadata.
+    // See https://github.com/OpenRefine/OpenRefine/issues/7245
     public void testAppendApplyRowIdentity() {
         insertionIndex = project.rows.size();
         change = new RowAdditionChange(newRows, insertionIndex);
@@ -213,7 +220,10 @@ public class RowAdditionChangeTests extends RefineTest {
         for (int i = insertionIndex; i < newRows.size(); i++) {
             Row actual = project.rows.get(insertionIndex + i);
             Row expected = newRows.get(i);
-            assertSame(actual, expected);
+            assertNotSame(actual, expected);
+            assertEquals(actual.flagged, expected.flagged);
+            assertEquals(actual.starred, expected.starred);
+            assertEquals(actual.cells, expected.cells);
         }
     }
 
