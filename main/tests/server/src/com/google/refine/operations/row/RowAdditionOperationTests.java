@@ -51,7 +51,8 @@ import com.google.refine.util.TestUtils;
 
 public class RowAdditionOperationTests extends RefineTest {
 
-    String json;
+    String legacyJson;
+    String newJson;
 
     @BeforeSuite
     public void registerOperation() {
@@ -60,9 +61,17 @@ public class RowAdditionOperationTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() {
-        json = "{"
+        // JSON serialization before 3.9.3, which might contain some corrupted cells because of mutability issues,
+        // manifesting themselves in https://github.com/OpenRefine/OpenRefine/issues/7245
+        legacyJson = "{"
                 + "\"op\":\"core/row-addition\","
-                + "\"rows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
+                + "\"rows\":[{\"starred\":false,\"flagged\":false,\"cells\":[{\"foo\":3}]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
+                + "\"index\":0,"
+                + "\"description\":" + new TextNode(OperationDescription.row_addition_brief()).toString() + "}";
+        // JSON serialization from 3.9.3 on
+        newJson = "{"
+                + "\"op\":\"core/row-addition\","
+                + "\"addedRows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
                 + "\"index\":0,"
                 + "\"description\":" + new TextNode(OperationDescription.row_addition_brief()).toString() + "}";
     }
@@ -74,9 +83,15 @@ public class RowAdditionOperationTests extends RefineTest {
     }
 
     @Test
-    public void testDeserialization() throws IOException {
-        RowAdditionOperation op = ParsingUtilities.mapper.readValue(json, RowAdditionOperation.class);
-        TestUtils.isSerializedTo(op, json);
+    public void testLegacyDeserialization() throws IOException {
+        RowAdditionOperation op = ParsingUtilities.mapper.readValue(legacyJson, RowAdditionOperation.class);
+        TestUtils.isSerializedTo(op, newJson);
+    }
+
+    @Test
+    public void testNewDeserialization() throws IOException {
+        RowAdditionOperation op = ParsingUtilities.mapper.readValue(newJson, RowAdditionOperation.class);
+        TestUtils.isSerializedTo(op, newJson);
     }
 
     @Test
@@ -89,7 +104,7 @@ public class RowAdditionOperationTests extends RefineTest {
         RowAdditionOperation op = new RowAdditionOperation(rows, index);
         ObjectMapper objectMapper = new ObjectMapper();
         String serializedObject = objectMapper.writeValueAsString(op);
-        assertEquals(serializedObject, json);
+        assertEquals(serializedObject, newJson);
     }
 
 }

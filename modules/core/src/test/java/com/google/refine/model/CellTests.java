@@ -184,4 +184,17 @@ public class CellTests {
         assertNotEquals(c1, "foo");
         assertEquals(c1.hashCode(), new Cell("foo", recon).hashCode());
     }
+
+    @Test
+    public void testDeepCopy() {
+        Recon recon = mock(Recon.class);
+        Recon reconDup = mock(Recon.class);
+        when(recon.dup()).thenReturn(reconDup);
+
+        Cell c1 = new Cell("foo", recon);
+        Cell c2 = c1.deepCopy();
+
+        assertEquals(c2.value, "foo");
+        assertEquals(c2.recon, reconDup);
+    }
 }
