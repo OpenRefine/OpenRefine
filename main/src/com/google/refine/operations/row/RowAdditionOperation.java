@@ -76,7 +76,7 @@ public class RowAdditionOperation extends AbstractOperation {
     public RowAdditionOperation(
             @JsonProperty("addedRows") List<Row> addedRows,
             @JsonProperty("rows") List<Object> rows,
-            @JsonProperty("insertionIndex") int insertionIndex) {
+            @JsonProperty("index") int insertionIndex) {
         _rows = addedRows != null ? addedRows
                 : (rows == null ? List.of() : rows.stream().map(r -> new Row(0)).collect(Collectors.toList()));
         _insertionIndex = insertionIndex;

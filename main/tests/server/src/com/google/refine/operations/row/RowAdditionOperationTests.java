@@ -59,6 +59,7 @@ public class RowAdditionOperationTests extends RefineTest {
 
     String legacyJson;
     String newJson;
+    String jsonAppend;
     RowAdditionOperation op;
 
     @BeforeSuite
@@ -80,6 +81,11 @@ public class RowAdditionOperationTests extends RefineTest {
                 + "\"op\":\"core/row-addition\","
                 + "\"addedRows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
                 + "\"index\":0,"
+                + "\"description\":" + new TextNode(OperationDescription.row_addition_brief()).toString() + "}";
+        jsonAppend = "{"
+                + "\"op\":\"core/row-addition\","
+                + "\"addedRows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
+                + "\"index\":15,"
                 + "\"description\":" + new TextNode(OperationDescription.row_addition_brief()).toString() + "}";
 
         List<Row> rows = new ArrayList<>(2);
@@ -106,6 +112,12 @@ public class RowAdditionOperationTests extends RefineTest {
     public void testNewDeserialization() throws IOException {
         RowAdditionOperation op = ParsingUtilities.mapper.readValue(newJson, RowAdditionOperation.class);
         TestUtils.isSerializedTo(op, newJson);
+    }
+
+    @Test
+    public void testDeserializationAppend() throws IOException {
+        RowAdditionOperation op = ParsingUtilities.mapper.readValue(jsonAppend, RowAdditionOperation.class);
+        TestUtils.isSerializedTo(op, jsonAppend);
     }
 
     @Test
