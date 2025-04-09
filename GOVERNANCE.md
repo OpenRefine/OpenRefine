@@ -97,8 +97,8 @@ The Project Manager:
 
 The current Project Manager is Martin Magdinier [@magdmartin](https://github.com/magdmartin) and on the [forum](https://forum.openrefine.org/u/Martin/summary).
 
-# OpenRefine Policies
-Introduction to Governance Policies
+# Advisory Committee Policies
+Introduction to the Policies
 
 The **Code of Conduct Committee, Advisory Committee, and Core Developer Group** hold greater authority within the OpenRefine project, with the ability to represent and make commitments on its behalf. To maintain the community’s trust, these groups are held to a higher standard of transparency and accountability in their decision-making processes.
 This includes clear and open practices for:
