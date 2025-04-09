@@ -97,17 +97,17 @@ The Project Manager:
 
 The current Project Manager is Martin Magdinier [@magdmartin](https://github.com/magdmartin) and on the [forum](https://forum.openrefine.org/u/Martin/summary).
 
-# Advisory Committee Policies
-Introduction to the Policies
-
+# Policies
+This section does NOT cover OpenRefine project governance. It is currently maintained in this `GOVERNANCE.md` file temporarily until another document or location can hold this information and make it transparent to the community.
+ 
 The **Code of Conduct Committee, Advisory Committee, and Core Developer Group** hold greater authority within the OpenRefine project, with the ability to represent and make commitments on its behalf. To maintain the community’s trust, these groups are held to a higher standard of transparency and accountability in their decision-making processes.
-This includes clear and open practices for:
-- Member Election 
+This includes transparent and open practices for:
+- Member election 
 - Requesting and managing funds
 - Managing conflicts of interest
 
 ## Member Election
-When voting for new Committers, Core Developer Group or Code of Conduct Committee members, start a new thread with a subject line starting with `[VOTE]` to indicate that a formal vote has been requested on the [developer discussion list](https://forum.openrefine.org/c/dev/8) and use the `election` tag. In your message, indicate
+When voting for new Committers, Core Developer Group or Code of Conduct Committee members, start a new thread with a subject line starting with `[VOTE]` to indicate that a formal vote has been requested on the [developer discussion list](https://forum.openrefine.org/c/dev/8) and use the [`election`](https://forum.openrefine.org/tag/election) tag. In your message, indicate
 * The name of the individual nominated with their GitHub or forum username
 * Which group you are nominating this person (Committers, Core Developer or Code of Conduct Committee)
 * Why are you nominating this person? You can list significant contributions and adherence to OpenRefine governance.
