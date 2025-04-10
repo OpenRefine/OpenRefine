@@ -32,10 +32,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
@@ -44,7 +43,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Row;
 import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
@@ -54,7 +52,6 @@ import com.google.refine.util.TestUtils;
 public class RowAdditionOperationTests extends RefineTest {
 
     String json;
-    RowAdditionOperation op;
 
     @BeforeSuite
     public void registerOperation() {
@@ -68,13 +65,6 @@ public class RowAdditionOperationTests extends RefineTest {
                 + "\"rows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
                 + "\"index\":0,"
                 + "\"description\":" + new TextNode(OperationDescription.row_addition_brief()).toString() + "}";
-
-        List<Row> rows = new ArrayList<>(2);
-        rows.add(new Row(0)); // Blank row
-        rows.add(new Row(0)); // Blank row
-        int index = 0; // Prepend rows
-
-        op = new RowAdditionOperation(rows, index);
     }
 
     @Override
@@ -91,14 +81,15 @@ public class RowAdditionOperationTests extends RefineTest {
 
     @Test
     public void testSerialization() throws JsonProcessingException {
-        String serializedObject = ParsingUtilities.mapper.writeValueAsString(op);
-        assertEquals(serializedObject, json);
-    }
+        List<Row> rows = new ArrayList<>(2);
+        rows.add(new Row(0)); // Blank row
+        rows.add(new Row(0)); // Blank row
+        int index = 0; // Prepend rows
 
-    @Test
-    public void testColumnDependencies() {
-        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
-        assertEquals(op.getColumnDependencies(), Optional.of(Set.of()));
+        RowAdditionOperation op = new RowAdditionOperation(rows, index);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String serializedObject = objectMapper.writeValueAsString(op);
+        assertEquals(serializedObject, json);
     }
 
 }

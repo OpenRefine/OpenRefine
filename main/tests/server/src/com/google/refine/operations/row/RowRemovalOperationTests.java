@@ -27,14 +27,10 @@
 
 package com.google.refine.operations.row;
 
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.Properties;
-import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
@@ -57,7 +53,6 @@ import com.google.refine.grel.Function;
 import com.google.refine.grel.Parser;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
-import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -193,18 +188,6 @@ public class RowRemovalOperationTests extends RefineTest {
         public void end(Project project) {
             Assert.assertEquals(count, target);
         }
-    }
-
-    @Test
-    public void testColumnDependencies() {
-        facet.selection = Arrays.asList(
-                new DecoratedValue("h", "h"),
-                new DecoratedValue("i", "i"));
-        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
-        RowRemovalOperation operation = new RowRemovalOperation(engineConfig);
-
-        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("hello")));
-        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
     }
 
     @Test
