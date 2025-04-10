@@ -13,7 +13,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.Evaluable;
-import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -143,10 +142,5 @@ public class JythonEvaluableTest {
 
         assertEquals(evaluable.getSource(), "return (1,2)");
         assertEquals(evaluable.getLanguagePrefix(), "jython");
-    }
-
-    @Test(expectedExceptions = ParsingException.class)
-    public void testParseError() throws ParsingException {
-        JythonEvaluable.createParser().parse("foo(", "jython");
     }
 }
