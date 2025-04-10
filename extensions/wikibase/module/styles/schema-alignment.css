@@ -17,6 +17,18 @@
   height: 100%;
 }
 
+#schema-preview-divided-header {
+  max-width: 900px;
+  padding: 0px 10px 0px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+#schema-preview-divided-header .panel-explanation {
+  margin-left: 0em;
+}
+
 .schema-alignment-tab-content {
   max-width: 70em;
 }
