@@ -468,12 +468,12 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
         );
 
         self._params = {
-            "expression" : this._getLanguage() + ":" + expression,
+            "expression" : expression,
             "radius" : Number(document.getElementById('radius').value),
             "blocking-ngram-size" : Number(document.getElementById('blockingChars').value)
         };
 
-        Refine.postCSRF(
+        $.post(
             "command/core/compute-clusters?" + $.param({ project: theProject.id }),
             {
                 engine: JSON.stringify(ui.browsingEngine.getJSON()),
@@ -664,7 +664,7 @@ ExpressionPreviewDialog.Widget.prototype._renderDistancePreview = function(first
         let newExpression = expression.replace(/value1/g, '"' + value1.toString().replaceAll(' ', '\xa0') + '"')
                                 .replace(/value2/g, '"' + value2.toString().replaceAll(' ', '\xa0') + '"')
                                 .replace(/value/g,"");
-        Refine.postCSRF(
+        $.post(
             "command/core/preview-expression?" + $.param(params), 
             {
                 expression: self._getLanguage() + ":" + newExpression,

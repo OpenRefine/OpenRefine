@@ -223,7 +223,7 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
                             }),
                             data: {
                                 "value": JSON.stringify(_functions),
-                                "csrf_token": token
+                                csrf_token: token
                             },
                             success: function (data) {
                                 self._renderTable();
@@ -313,7 +313,7 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
                             }),
                             data: {
                                 "value": JSON.stringify(_functions),
-                                "csrf_token": token
+                                csrf_token: token
                             },
                             success: function (data) {
                                 self._renderTable();
@@ -352,7 +352,7 @@ ClusteringFunctionsDialog.prototype._deleteFunction = function (index) {
                             }),
                             data: {
                                 "value": JSON.stringify(_functions),
-                                "csrf_token": token
+                                csrf_token: token
                             },
                             success: function (data) {
                                 self._renderTable();

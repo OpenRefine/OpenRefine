@@ -46,7 +46,7 @@ public class UserDefinedDistance implements SimilarityDistance {
     private Properties bindings;
 
     public UserDefinedDistance(String expression) throws ParsingException {
-        eval = MetaParser.parse(expression);
+        eval = MetaParser.parse("grel:" + expression);
         bindings = new Properties();
 
         bindings.put("true", true);

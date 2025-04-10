@@ -33,74 +33,44 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.clustering.knn;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.mockito.AdditionalAnswers;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.Evaluable;
-import com.google.refine.expr.LanguageSpecificParser;
+import com.google.refine.RefineTest;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.Parser;
 
-public class DistanceTests {
+public class DistanceTests extends RefineTest {
 
-    private List<Integer> testLengths = List.of(1, 3, 5);
+    private static SimilarityDistance _distance;
 
-    @Mock
-    private LanguageSpecificParser testParser;
-
-    @Mock
-    private Evaluable testEvaluable;
-
-    @DataProvider(name = "user-defined-distance-expressions")
-    private String[][] userDefinedKeyerExpressions() {
-        return new String[][] {
-                { "value1.length() - value2.length()", },
-                { "grel:value1.length() - value2.length()", },
-                { "testparser:value1.length() - value2.length()" },
-        };
+    @Override
+    @BeforeTest
+    public void init() {
+        logger = LoggerFactory.getLogger(this.getClass());
     }
 
     @BeforeMethod
-    public void setupMocks() throws ParsingException {
-        MockitoAnnotations.openMocks(this);
-        when(testParser.parse(anyString(), eq("testparser"))).thenReturn(testEvaluable);
-        when(testEvaluable.evaluate(any())).thenAnswer(AdditionalAnswers.returnsElementsOf(testLengths));
-    }
-
-    @BeforeMethod
-    public void registerParser() {
+    public void registerGRELParser() {
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-        MetaParser.registerLanguageParser("testparser", "Test Parser", testParser, "return value");
     }
 
     @AfterMethod
-    public void unregisterParser() {
+    public void unregisterGRELParser() {
         MetaParser.unregisterLanguageParser("grel");
-        MetaParser.unregisterLanguageParser("testparser");
     }
 
     @Test
     public void testUserDefinedDistance() {
         String expression = "value1.length() - value2.length()";
 
-        SimilarityDistance distance;
         try {
-            distance = new UserDefinedDistance(expression);
+            _distance = new UserDefinedDistance(expression);
         } catch (ParsingException e) {
             throw new RuntimeException(e);
         }
@@ -108,31 +78,9 @@ public class DistanceTests {
         String[] testString = { "Ahmed", "Mohamed", "Omar", "Othman", "Aly", "Eleraky" };
         for (int i = 0; i < testString.length; i++) {
             for (int j = i + 1; j < testString.length; j++) {
-                Assert.assertEquals(testString[i].length() - testString[j].length(),
-                        distance.compute(testString[i], testString[j]),
+                Assert.assertEquals(testString[i].length() - testString[j].length(), _distance.compute(testString[i], testString[j]),
                         "User defined distance for strings: " + testString[i] + ", " + testString[j] + " failed");
             }
-        }
-    }
-
-    @Test(dataProvider = "user-defined-distance-expressions")
-    public void testUserDefinedDistanceWithDifferentExpressions(String expression) {
-        SimilarityDistance distance;
-        try {
-            distance = new UserDefinedDistance(expression);
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            Assert.fail("Could not parse expression " + expression);
-            throw new RuntimeException(e);
-        }
-
-        for (int expectedDistance : testLengths) {
-            int baseLength = 10;
-            String testString1 = StringUtils.repeat("*", baseLength);
-            String testString2 = StringUtils.repeat("*", baseLength - expectedDistance);
-            double computedDistance = distance.compute(testString1, testString2);
-            Assert.assertEquals(computedDistance, expectedDistance,
-                    "User defined distance for strings: " + testString1 + ", " + testString2 + " failed");
         }
     }
 }
