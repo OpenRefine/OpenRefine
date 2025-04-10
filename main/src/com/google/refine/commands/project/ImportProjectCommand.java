@@ -88,7 +88,7 @@ public class ImportProjectCommand extends Command {
                     }
                 }
 
-                redirect(response, request.getContextPath() + "/project?project=" + projectID);
+                redirect(response, "/project?project=" + projectID);
             } else {
                 respondWithErrorPage(request, response, "Failed to import project. Reason unknown.", null);
             }
