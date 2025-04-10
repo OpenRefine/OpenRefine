@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.sorting;
 
 import java.time.OffsetDateTime;
-import java.util.Map;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
@@ -83,15 +82,5 @@ public class NumberCriterion extends Criterion {
     @Override
     public String getValueType() {
         return "number";
-    }
-
-    @Override
-    public NumberCriterion renameColumns(Map<String, String> newColumnNames) {
-        NumberCriterion adapted = new NumberCriterion();
-        adapted.blankPosition = blankPosition;
-        adapted.errorPosition = errorPosition;
-        adapted.reverse = reverse;
-        adapted.columnName = newColumnNames.getOrDefault(columnName, columnName);
-        return adapted;
     }
 }

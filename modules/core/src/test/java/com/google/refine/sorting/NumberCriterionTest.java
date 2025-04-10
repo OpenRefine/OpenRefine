@@ -28,7 +28,6 @@
 package com.google.refine.sorting;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.testng.annotations.Test;
 
@@ -37,29 +36,15 @@ import com.google.refine.util.TestUtils;
 
 public class NumberCriterionTest {
 
-    String json = "{\n" +
-            "  \"errorPosition\": 2,\n" +
-            "  \"valueType\": \"number\",\n" +
-            "  \"column\": \"start_year\",\n" +
-            "  \"blankPosition\": 1,\n" +
-            "  \"reverse\": true\n" +
-            "}\n";
-
     @Test
     public void serializeNumberCriterion() throws IOException {
+        String json = "        {\n" +
+                "          \"errorPosition\": 2,\n" +
+                "          \"valueType\": \"number\",\n" +
+                "          \"column\": \"start_year\",\n" +
+                "          \"blankPosition\": 1,\n" +
+                "          \"reverse\": true\n" +
+                "        }\n";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json);
-    }
-
-    @Test
-    public void testRenameColumn() throws Exception {
-        String renamedJson = "{\n" +
-                "  \"errorPosition\": 2,\n" +
-                "  \"valueType\": \"number\",\n" +
-                "  \"column\": \"start\",\n" +
-                "  \"blankPosition\": 1,\n" +
-                "  \"reverse\": true\n" +
-                "}\n";
-        Criterion renamed = ParsingUtilities.mapper.readValue(json, Criterion.class).renameColumns(Map.of("start_year", "start"));
-        TestUtils.isSerializedTo(renamed, renamedJson);
     }
 }

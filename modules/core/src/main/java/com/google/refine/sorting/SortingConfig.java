@@ -28,9 +28,6 @@
 package com.google.refine.sorting;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -60,19 +57,5 @@ public final class SortingConfig {
 
     public static SortingConfig reconstruct(String obj) throws IOException {
         return ParsingUtilities.mapper.readValue(obj, SortingConfig.class);
-    }
-
-    /**
-     * Adapt the sorting configuration to column renames, without modifying this instance.
-     * 
-     * @param newColumnNames
-     *            a map from old to new column names
-     * @return an adapted sorting config
-     */
-    public SortingConfig renameColumns(Map<String, String> newColumnNames) {
-        List<Criterion> renamedCriteria = List.<Criterion> of(_criteria).stream()
-                .map(criterion -> criterion.renameColumns(newColumnNames))
-                .collect(Collectors.toList());
-        return new SortingConfig(renamedCriteria.toArray(new Criterion[renamedCriteria.size()]));
     }
 }

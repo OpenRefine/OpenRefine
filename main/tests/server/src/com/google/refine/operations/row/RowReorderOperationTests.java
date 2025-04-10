@@ -30,7 +30,6 @@ package com.google.refine.operations.row;
 import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -56,23 +55,6 @@ import com.google.refine.util.TestUtils;
 public class RowReorderOperationTests extends RefineTest {
 
     Project project = null;
-
-    String json = "  {\n" +
-            "    \"op\": \"core/row-reorder\",\n" +
-            "    \"description\": " + new TextNode(OperationDescription.row_reorder_brief()).toString() + ",\n" +
-            "    \"mode\": \"record-based\",\n" +
-            "    \"sorting\": {\n" +
-            "      \"criteria\": [\n" +
-            "        {\n" +
-            "          \"errorPosition\": 1,\n" +
-            "          \"valueType\": \"number\",\n" +
-            "          \"column\": \"start_year\",\n" +
-            "          \"blankPosition\": 2,\n" +
-            "          \"reverse\": false\n" +
-            "        }\n" +
-            "      ]\n" +
-            "    }\n" +
-            "  }";
 
     @BeforeSuite
     public void registerOperation() {
@@ -180,16 +162,7 @@ public class RowReorderOperationTests extends RefineTest {
 
     @Test
     public void serializeRowReorderOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json);
-    }
-
-    @Test
-    public void testRenameColumns() throws Exception {
-        RowReorderOperation SUT = ParsingUtilities.mapper.readValue(json, RowReorderOperation.class);
-
-        RowReorderOperation renamed = SUT.renameColumns(Map.of("start_year", "new_name"));
-
-        String json = "{\n" +
+        String json = "  {\n" +
                 "    \"op\": \"core/row-reorder\",\n" +
                 "    \"description\": " + new TextNode(OperationDescription.row_reorder_brief()).toString() + ",\n" +
                 "    \"mode\": \"record-based\",\n" +
@@ -198,14 +171,14 @@ public class RowReorderOperationTests extends RefineTest {
                 "        {\n" +
                 "          \"errorPosition\": 1,\n" +
                 "          \"valueType\": \"number\",\n" +
-                "          \"column\": \"new_name\",\n" +
+                "          \"column\": \"start_year\",\n" +
                 "          \"blankPosition\": 2,\n" +
                 "          \"reverse\": false\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    }\n" +
                 "  }";
-        TestUtils.isSerializedTo(renamed, json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json);
     }
 
 }

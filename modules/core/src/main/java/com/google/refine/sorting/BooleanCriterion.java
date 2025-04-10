@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
-import java.util.Map;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 
@@ -70,15 +68,5 @@ public class BooleanCriterion extends Criterion {
     @Override
     public String getValueType() {
         return "boolean";
-    }
-
-    @Override
-    public BooleanCriterion renameColumns(Map<String, String> newColumnNames) {
-        BooleanCriterion adapted = new BooleanCriterion();
-        adapted.blankPosition = blankPosition;
-        adapted.errorPosition = errorPosition;
-        adapted.reverse = reverse;
-        adapted.columnName = newColumnNames.getOrDefault(columnName, columnName);
-        return adapted;
     }
 }

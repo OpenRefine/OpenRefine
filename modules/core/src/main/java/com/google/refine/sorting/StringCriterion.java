@@ -35,7 +35,6 @@ package com.google.refine.sorting;
 
 import java.text.CollationKey;
 import java.text.Collator;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -79,16 +78,5 @@ public class StringCriterion extends Criterion {
     @Override
     public String getValueType() {
         return "string";
-    }
-
-    @Override
-    public StringCriterion renameColumns(Map<String, String> newColumnNames) {
-        StringCriterion adapted = new StringCriterion();
-        adapted.caseSensitive = caseSensitive;
-        adapted.blankPosition = blankPosition;
-        adapted.errorPosition = errorPosition;
-        adapted.reverse = reverse;
-        adapted.columnName = newColumnNames.getOrDefault(columnName, columnName);
-        return adapted;
     }
 }

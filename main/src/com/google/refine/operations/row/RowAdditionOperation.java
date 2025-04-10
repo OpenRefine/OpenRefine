@@ -28,7 +28,6 @@
 package com.google.refine.operations.row;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -80,11 +79,6 @@ public class RowAdditionOperation extends AbstractOperation {
     @JsonIgnore
     public Optional<ColumnsDiff> getColumnsDiff() {
         return Optional.of(ColumnsDiff.empty());
-    }
-
-    @Override
-    public RowAdditionOperation renameColumns(Map<String, String> newColumnNames) {
-        return this;
     }
 
     @Override

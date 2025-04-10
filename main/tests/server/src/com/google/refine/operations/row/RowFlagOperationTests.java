@@ -32,7 +32,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -115,43 +114,6 @@ public class RowFlagOperationTests extends RefineTest {
     public void testColumnDependencies() {
         assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
         assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("hello")));
-    }
-
-    @Test
-    public void testRenameColumns() {
-        String expectedJson = "{\n"
-                + "       \"description\" : " + new TextNode(OperationDescription.row_flag_brief()).toString() + ",\n"
-                + "       \"engineConfig\" : {\n"
-                + "         \"facets\" : [ {\n"
-                + "           \"columnName\" : \"world\",\n"
-                + "           \"expression\" : \"grel:value\",\n"
-                + "           \"invert\" : false,\n"
-                + "           \"name\" : \"world\",\n"
-                + "           \"omitBlank\" : false,\n"
-                + "           \"omitError\" : false,\n"
-                + "           \"selectBlank\" : false,\n"
-                + "           \"selectError\" : false,\n"
-                + "           \"selection\" : [ {\n"
-                + "             \"v\" : {\n"
-                + "               \"l\" : \"h\",\n"
-                + "               \"v\" : \"h\"\n"
-                + "             }\n"
-                + "           }, {\n"
-                + "             \"v\" : {\n"
-                + "               \"l\" : \"d\",\n"
-                + "               \"v\" : \"d\"\n"
-                + "             }\n"
-                + "           } ],\n"
-                + "           \"type\" : \"list\"\n"
-                + "         } ],\n"
-                + "         \"mode\" : \"row-based\"\n"
-                + "       },\n"
-                + "       \"flagged\" : true,\n"
-                + "       \"op\" : \"core/row-flag\"\n"
-                + "     }";
-        RowFlagOperation renamed = operation.renameColumns(Map.of("hello", "world"));
-
-        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

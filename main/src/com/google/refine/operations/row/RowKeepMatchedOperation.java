@@ -7,7 +7,6 @@ import static com.google.refine.operations.OperationDescription.row_keep_matchin
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -39,11 +38,6 @@ public class RowKeepMatchedOperation extends EngineDependentOperation {
 
     protected String createDescription(Project project, int rowCount) {
         return row_keep_matching_rows_desc(rowCount);
-    }
-
-    @Override
-    public RowKeepMatchedOperation renameColumns(Map<String, String> newColumnNames) {
-        return new RowKeepMatchedOperation(_engineConfig.renameColumnDependencies(newColumnNames));
     }
 
     @Override

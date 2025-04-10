@@ -35,7 +35,6 @@ package com.google.refine.operations.row;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -91,11 +90,6 @@ public class RowStarOperation extends EngineDependentOperation {
     }
 
     @Override
-    public RowStarOperation renameColumns(Map<String, String> newColumnNames) {
-        return new RowStarOperation(_engineConfig.renameColumnDependencies(newColumnNames), _starred);
-    }
-
-    @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
 
@@ -144,5 +138,4 @@ public class RowStarOperation extends EngineDependentOperation {
             }
         }.init(changes);
     }
-
 }
