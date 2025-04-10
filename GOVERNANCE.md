@@ -97,15 +97,6 @@ The Project Manager:
 
 The current Project Manager is Martin Magdinier [@magdmartin](https://github.com/magdmartin) and on the [forum](https://forum.openrefine.org/u/Martin/summary).
 
-# Policies
-This section does NOT cover OpenRefine project governance. It is currently maintained in this `GOVERNANCE.md` file temporarily until another document or location can hold this information and make it transparent to the community.
- 
-The **Code of Conduct Committee, Advisory Committee, and Core Developer Group** hold greater authority within the OpenRefine project, with the ability to represent and make commitments on its behalf. To maintain the community’s trust, these groups are held to a higher standard of transparency and accountability in their decision-making processes.
-This includes transparent and open practices for:
-- Member election 
-- Requesting and managing funds
-- Managing conflicts of interest
-
 ## Member Election
 When voting for new Committers, Core Developer Group or Code of Conduct Committee members, start a new thread with a subject line starting with `[VOTE]` to indicate that a formal vote has been requested on the [developer discussion list](https://forum.openrefine.org/c/dev/8) and use the [`election`](https://forum.openrefine.org/tag/election) tag. In your message, indicate
 * The name of the individual nominated with their GitHub or forum username
@@ -122,6 +113,14 @@ Only eligible voters have a binding vote. Votes are expressed as
 - -1: no, I oppose the nomination. All -1 votes must be explained.
 
 The results must be positive for the person to be elected.
+
+# Policies
+This section does NOT cover OpenRefine project governance. It is currently maintained in this `GOVERNANCE.md` file temporarily until another document or location can hold this information and make it transparent to the community.
+ 
+The **Code of Conduct Committee, Advisory Committee, and Core Developer Group** hold greater authority within the OpenRefine project, with the ability to represent and make commitments on its behalf. To maintain the community’s trust, these groups are held to a higher standard of transparency and accountability in their decision-making processes.
+This includes transparent and open practices for:
+- Requesting and managing funds
+- Managing conflicts of interest
 
 ## Funding Application
 OpenRefine welcomes and encourages contributions and fundraising efforts from individuals and organizations. However, committees with additional authority over the project; namely the Core Dev Group, Advisory Committee, and Project Manager, have an increased responsibility to ensure transparency in funding applications.
