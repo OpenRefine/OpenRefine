@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,39 +49,15 @@ public class RowAdditionOperation extends AbstractOperation {
     final private List<Row> _rows;
     final private int _insertionIndex;
 
+    @JsonCreator
     public RowAdditionOperation(
-            List<Row> rows,
-            int insertionIndex) {
+            @JsonProperty("rows") List<Row> rows,
+            @JsonProperty("insertionIndex") int insertionIndex) {
         _rows = rows;
         _insertionIndex = insertionIndex;
     }
 
-    /**
-     * Deserialization constructor to provide compatibility for the legacy serialization format. In this format, only
-     * the number of rows is relevant: the contents of the rows must be ignored, because they might have been corrupted
-     * due to mutability issues in https://github.com/OpenRefine/OpenRefine/issues/7245.
-     * 
-     * @param addedRows
-     *            the rows to add to the project
-     * @param rows
-     *            a legacy serialization field, whose length is is the only thing that matters. If provided, it will be
-     *            converted to a list of empty rows of the same size.
-     * @param insertionIndex
-     *            the place in the grid where to insert this list.
-     * @deprecated should not be called directly, is only provided for JSON deserialization.
-     */
-    @Deprecated
-    @JsonCreator
-    public RowAdditionOperation(
-            @JsonProperty("addedRows") List<Row> addedRows,
-            @JsonProperty("rows") List<Object> rows,
-            @JsonProperty("insertionIndex") int insertionIndex) {
-        _rows = addedRows != null ? addedRows
-                : (rows == null ? List.of() : rows.stream().map(r -> new Row(0)).collect(Collectors.toList()));
-        _insertionIndex = insertionIndex;
-    }
-
-    @JsonProperty("addedRows")
+    @JsonProperty("rows")
     public List<Row> getRows() {
         return _rows;
     }

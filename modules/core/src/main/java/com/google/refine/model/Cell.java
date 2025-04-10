@@ -193,13 +193,6 @@ public class Cell implements HasFields, Serializable {
         return new Cell((Serializable) value, recon);
     }
 
-    /**
-     * Return a deep copy of this object, making sure that if one instance is modified, the other isn't.
-     */
-    public Cell deepCopy() {
-        return new Cell(value, recon == null ? null : recon.dup());
-    }
-
     @Override
     public String toString() {
         // TODO this is kept like this for now, but it should rather be a string which makes the difference

@@ -33,7 +33,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
@@ -58,7 +57,7 @@ public class RowAdditionChange implements Change {
     @Override
     public void apply(Project project) {
         synchronized (project) {
-            project.rows.addAll(_insertionIndex, _additionalRows.stream().map(row -> row.deepCopy()).collect(Collectors.toList()));
+            project.rows.addAll(_insertionIndex, _additionalRows);
 
             project.update();
             project.columnModel.clearPrecomputes();

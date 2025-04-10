@@ -38,7 +38,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -91,19 +90,6 @@ public class Row implements HasFields {
         row.flagged = flagged;
         row.starred = starred;
         row.cells.addAll(cells);
-        return row;
-    }
-
-    /**
-     * Make a deep copy of the row, making sure that if one is modified, the other isn't.
-     */
-    public Row deepCopy() {
-        Row row = new Row(cells.size());
-        row.flagged = flagged;
-        row.starred = starred;
-        row.cells.addAll(cells.stream()
-                .map(cell -> cell == null ? null : cell.deepCopy())
-                .collect(Collectors.toList()));
         return row;
     }
 
