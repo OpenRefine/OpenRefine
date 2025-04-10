@@ -800,5 +800,12 @@
     "core-index-import/warning-import-url": "Deve especificar uma URL correta.",
     "core-index-import/sort-filesize": "Tamanho do ficheiro",
     "core-views/add-rows/end-option": "Fim",
-    "core-buttons/remove": "Remover"
+    "core-buttons/remove": "Remover",
+    "core-index-extensions/open-extension-directory": "Abrir diretório de extensões",
+    "core-index-extensions/extensions-documentation-button": "Documentação",
+    "core-index-extensions/extensions-table-name": "Extensão",
+    "core-index/notification-privacy-info": "informações de privacidade",
+    "core-index-extensions/extensions": "Extensões",
+    "core-index-extensions/list-extensions-header": "Extensões instaladas",
+    "core-index-extensions/extensions-discovery-button": "Descobrir extensões"
 }

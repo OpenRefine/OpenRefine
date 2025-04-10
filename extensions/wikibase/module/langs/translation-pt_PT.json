@@ -1,1 +1,19 @@
-{}
+{
+    "wikibase-extension/menu-label": "Wikidata",
+    "wikibase-extension/select-wikibase-instance": "Gerir instâncias do Wikibase…",
+    "wikibase-extension/edit-wikibase-schema": "Editar esquema de Wikidata",
+    "wikibase-extension/import-wikibase-schema": "Importar esquema…",
+    "wikibase-extension/manage-wikibase-account": "Gerir conta de Wikidata…",
+    "wikibase-extension/export-schema": "Exportar esquema",
+    "wikibase-extension/perform-edits-on-wikibase": "Carregar edições para Wikidata…",
+    "wikibase-extension/export-to-qs": "Exportar para QuickStatements",
+    "wikibase-extension/qs-file": "Ficheiro de QuickStatements",
+    "wikibase-extension/wikibase-edits": "Edições de Wikidata…",
+    "wikibase-extension/export-wikibase-schema": "Exportar esquema de Wikidata",
+    "wikibase-extension/wikibase-schema": "Esquema de Wikidata",
+    "wikibase-extension/quickstatements-export-name": "QuickStatements",
+    "wikibase-management/explain-select-wikibase": "Clique num elemento abaixo para selecioná-lo como o Wikibase alvo para trabalhar. Isto irá limpar qualquer esquema existente. Após a mudança para o Wikibase alvo, deve reconciliar os seus dados com ele antes de editar o esquema.",
+    "wikibase-management/current-selected-wikibase": "Wikibase selecionada atualmente: <a href=\"$1\" target=\"_blank\">$2</a>",
+    "wikibase-management/add-wikibase": "Adicionar Wikibase",
+    "wikibase-management/close": "Fechar"
+}
