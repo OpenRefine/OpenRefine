@@ -55,6 +55,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/text-facet",
       label: $.i18n('core-views/text-facet'),
+      icon: FacetIconRegistry.getIcon('list'),
       click: function() {
         ui.browsingEngine.addFacet(
             "list",
@@ -69,6 +70,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/numeric-facet",
       label:  $.i18n('core-views/numeric-facet'),
+      icon: FacetIconRegistry.getIcon('range'),
       click: function() {
         ui.browsingEngine.addFacet(
             "range",
@@ -84,6 +86,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/time-facet",
       label: $.i18n('core-views/timeline-facet'),
+      icon: FacetIconRegistry.getIcon('timerange'),
       click: function() {
         ui.browsingEngine.addFacet(
             "timerange",
@@ -99,6 +102,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/scatterplot-facet",
       label: $.i18n('core-views/scatterplot-facet'),
+      icon: FacetIconRegistry.getIcon('scatterplot'),
       click: function() {
           var params = {
               project: theProject.id
@@ -321,6 +325,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.insertAfter(menu, [ "core/facet" ], [
     {
       label: $.i18n('core-views/text-filter'),
+      icon: FacetIconRegistry.getIcon('text'),
       click: function() {
         ui.browsingEngine.addFacet(
             "text", 
