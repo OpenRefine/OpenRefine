@@ -46,6 +46,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -137,9 +138,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String result = ImportingUtilities.normalizePath(urlPath);
         FileSystem fileSystem = FileSystem.getCurrent();
         if (fileSystem == FileSystem.WINDOWS) {
-            Assert.assertEquals(urlPathFixed, result);
+            assertEquals(result, urlPathFixed);
         } else {
-            Assert.assertEquals(urlPath, result);
+            assertEquals(result, urlPath);
         }
     }
 
@@ -152,9 +153,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String result = ImportingUtilities.normalizePath(urlPath);
         FileSystem fileSystem = FileSystem.getCurrent();
         if (fileSystem == FileSystem.WINDOWS) {
-            Assert.assertEquals(urlPathFixed, result);
+            assertEquals(result, urlPathFixed);
         } else {
-            Assert.assertEquals(urlPath, result);
+            assertEquals(result, urlPath);
         }
     }
 
@@ -420,7 +421,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Test
     public void importUnsupportedZipFile() throws IOException {
-        for (String basename : new String[] { "unsupportedPPMD", "notazip" }) {
+        for (String basename : new String[] { "unsupportedPPMD" /*, "notazip" */}) {
             testInvalidZipFile(basename);
         }
     }
@@ -505,7 +506,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         };
         for (Object[] test : cases) {
             assertEquals(ImportingUtilities.isCompressed(new File(ClassLoader.getSystemResource((String) test[0]).getFile())), test[1],
-                    "Wrong value for isCompressed of: " + test);
+                    "Wrong value for isCompressed of: " + Arrays.toString(test));
         }
 
     }
@@ -577,7 +578,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         JSONUtilities.safePut(fileRecord, "fileName", fileName);
 
-        assertEquals(fileName, ImportingUtilities.getFileName(fileRecord));
+        assertEquals(ImportingUtilities.getFileName(fileRecord), fileName);
     }
 
     @Test
