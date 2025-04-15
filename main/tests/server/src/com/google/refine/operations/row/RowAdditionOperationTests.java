@@ -30,6 +30,7 @@ package com.google.refine.operations.row;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
@@ -107,4 +110,33 @@ public class RowAdditionOperationTests extends RefineTest {
         assertEquals(serializedObject, newJson);
     }
 
+
+    // regression test for https://github.com/OpenRefine/OpenRefine/issues/7245
+    @Test
+    public void mutabilityBugRegressionTest() throws Exception {
+        Project project = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b " },
+                        { null, "c" },
+                });
+
+        RowAdditionOperation op = ParsingUtilities.mapper.readValue(newJson, RowAdditionOperation.class);
+
+        // add the two rows at the beginning
+        runOperation(op, project);
+        // and then edit a cell in the first row
+        project.rows.get(0).setCell(0, new Cell("hello", null));
+
+        Project expected = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "hello", null },
+                        { null, null },
+                        { "a", "b " },
+                        { null, "c" },
+                });
+        assertProjectEquals(project, expected);
+
+        // the operation metadata is still unchanged
+        TestUtils.isSerializedTo(op, newJson);
+    }
 }
