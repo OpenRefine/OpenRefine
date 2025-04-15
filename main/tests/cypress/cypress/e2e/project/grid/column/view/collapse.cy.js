@@ -7,8 +7,8 @@ describe(__filename, function () {
       ];
   it('it collapses all columns', function () {
     cy.loadAndVisitProject(fixture);
-    cy.columnActionClick('a', ['View', 'Collapse this column']);
+    cy.columnActionClick('a', ['Hide / Show', 'Hide this column']);
 
-    cy.get('[title="Expand column \'a\'"]').should('to.contain', '');
+    cy.get('[title="Show column \'a\'"]').should('to.contain', '');
   });
 });
