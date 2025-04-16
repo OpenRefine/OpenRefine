@@ -228,6 +228,10 @@ SchemaAlignment._rerenderTabs = function() {
   previewElmts.invalidSchemaWarningPreview.text($.i18n('wikibase-schema/invalid-schema-warning'));
   this.schemaValidationErrorsInPreview = previewElmts.schemaValidationErrors;
   this._previewPanes = $(".schema-alignment-dialog-preview");
+  previewElmts.uploadEditsButton.text($.i18n('wikibase-extension/perform-edits-on-wikibase'));
+  previewElmts.uploadEditsButton.on('click', function(evt) {
+    PerformEditsDialog.checkAndLaunch();
+  });
 
   // add all recon services for all the entity types of the Wikibase instance
   var entityTypes = WikibaseManager.getSelectedWikibaseAvailableEntityTypes();
