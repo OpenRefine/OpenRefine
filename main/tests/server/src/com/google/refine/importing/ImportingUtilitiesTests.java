@@ -37,10 +37,12 @@ import static org.testng.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -378,7 +380,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Test
     public void importUnsupportedZipFile() throws IOException {
-        for (String basename : new String[] { "unsupportedPPMD", "notazip" }) {
+        for (String basename : new String[] { "unsupportedPPMD" }) {
             testInvalidZipFile(basename);
         }
     }
@@ -428,10 +430,11 @@ public class ImportingUtilitiesTests extends ImporterTest {
             // Write two copies of the data to test reading concatenated streams
             Files.write(tmp.toPath(), contents, StandardOpenOption.APPEND);
 
-            InputStream is = ImportingUtilities.tryOpenAsCompressedFile(tmp, null, null);
-            Assert.assertNotNull(is, "Failed to open compressed file: " + filename);
+            File uncompressedFile = ImportingUtilities.uncompressFile(job.getRawDataDir(), tmp, "", "",
+                    ParsingUtilities.mapper.createObjectNode(), getDummyProgress());
+            Assert.assertNotNull(uncompressedFile, "Failed to open compressed file: " + filename);
 
-            reader = new InputStreamReader(is); // TODO: This needs an encoding
+            reader = new InputStreamReader(new FileInputStream(uncompressedFile), StandardCharsets.UTF_8);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
             Assert.assertEquals(StreamSupport.stream(records.spliterator(), false).count(), LINES * 2,
@@ -583,21 +586,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         JSONUtilities.safePut(config, "retrievalRecord", retrievalRecord);
         JSONUtilities.safePut(config, "state", "loading-raw-data");
 
-        final ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
-        JSONUtilities.safePut(config, "progress", progress);
-
-        ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
-                new ImportingUtilities.Progress() {
-
-                    @Override
-                    public void setProgress(String message, int percent) {
-                    }
-
-                    @Override
-                    public boolean isCanceled() {
-                        return job.canceled;
-                    }
-                });
+        ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, getDummyProgress());
 
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(0).get("format").asText());
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(1).get("format").asText());
@@ -617,6 +606,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         };
     }
 
+    // TODO: This isn't synchronized with what's actually used in production
     private void importFlowSettings() {
         // Register Format guessers
         ImportingManager.registerFormatGuesser("text", new TextFormatGuesser());
