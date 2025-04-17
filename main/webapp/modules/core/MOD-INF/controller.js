@@ -588,6 +588,7 @@ function init() {
 
       "styles/widgets/histogram-widget.css",
       "styles/widgets/slider-widget.css",
+      "styles/widgets/recipe-widget.css",
 
       "styles/views/data-table-view.css",
       "styles/views/column-join.css",
@@ -601,6 +602,7 @@ function init() {
       "styles/dialogs/sql-exporter-dialog.css",
       "styles/dialogs/recon-service-selection-dialog.css",
       "styles/dialogs/confirm-history-erasure-dialog.less",
+      "styles/dialogs/extract-operations-dialog.css",
       "styles/reconciliation/recon-dialog.css",
       "styles/reconciliation/standard-service-panel.css",
       "styles/reconciliation/add-column-by-reconciliation.css",
