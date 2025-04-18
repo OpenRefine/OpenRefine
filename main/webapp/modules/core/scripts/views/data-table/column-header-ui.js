@@ -121,6 +121,18 @@ DataTableColumnHeaderUI.prototype._render = function() {
     elmts.columnNameInput.trigger('focus').trigger('select');
   });
 
+  // shortcut: right click to show menu
+  this._td.addEventListener('contextmenu',function(e) {
+    e.preventDefault();
+    self._createMenuForColumnHeader(elmts.dropdownMenu);
+  });
+
+  // shortcut: middle click to collapse column
+  this._td.addEventListener('auxclick',function(e) {
+    self._dataTableView._collapsedColumnNames[self._column.name] = true;
+    self._dataTableView.render();
+  });
+
   elmts.dropdownMenu.on('click',function() {
     self._createMenuForColumnHeader(this);
   });
