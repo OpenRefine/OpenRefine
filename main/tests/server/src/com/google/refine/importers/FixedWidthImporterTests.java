@@ -226,6 +226,37 @@ public class FixedWidthImporterTests extends ImporterTest {
         Assert.assertTrue(project.columnModel.getColumnNames().contains("Water"));
     }
 
+    @Test
+    public void testDeleteEmptyColumnsButKeepFileNameColumn() throws IOException {
+        String filenameEmptyColumn = "fixed-width-test-file-header-and-sample-row-with-empty-column.txt";
+        List<String> linesWithEmptyColumn = List.of(SAMPLE_ROW, "012345green...."); // add blank column
+        List<ObjectNode> fileRecords = prepareFileRecords(filenameEmptyColumn, linesWithEmptyColumn);
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "skipDataLines", 0);
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "headerLines", 1);
+
+        ArrayNode columnWidths = ParsingUtilities.mapper.valueToTree(List.of(6, 0, 9, 0, 5)); // add blank columns
+        JSONUtilities.safePut(options, "columnWidths", columnWidths);
+
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false);
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
+        parse(SUT, fileRecords, options);
+
+        // check expected columns are all included
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("NDB_No"));
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("Shrt_Desc"));
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("File"));
+        // check entries
+        int fileColumnIndex = project.columnModel.getColumnIndexByName("File");
+        Assert.assertTrue(project.rows.stream().allMatch(row -> filenameEmptyColumn.equals(row.getCell(fileColumnIndex).value)));
+    }
+
     // --helpers--
     private List<ObjectNode> prepareFileRecords(final String filename, List<String> lines) throws IOException {
         // File is assumed to be in job.getRawDataDir(), so write test data there

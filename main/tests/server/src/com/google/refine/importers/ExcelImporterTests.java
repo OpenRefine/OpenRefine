@@ -500,6 +500,41 @@ public class ExcelImporterTests extends ImporterTest {
         assertTrue(project.columnModel.getColumnNames().contains(numberedColumn(14)));
     }
 
+    @Test
+    public void testDeleteEmptyColumnsButKeepFileNameColumn() throws IOException {
+        String filename = "excel-test-file-with-empty-column.xslx";
+        List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "skipDataLines", 1);
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "headerLines", 0);
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree(
+                String.format("{name: \"%s#Test Sheet 0\", "
+                        + "fileNameAndSheetIndex: \"%s#0\", "
+                        + "rows: 31, "
+                        + "selected: true}",
+                        filename, filename)));
+        JSONUtilities.safePut(options, "sheets", sheets);
+
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
+        parse(SUT, fileRecords, options);
+
+        // We should have one less than the start due to empty column being skipped + one for File
+        assertEquals(project.columnModel.columns.size(), 13);
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3)));
+        assertTrue(project.columnModel.getColumnNames().contains("File"));
+        // check entries
+        int fileColumnIndex = project.columnModel.getColumnIndexByName("File");
+        assertTrue(project.rows.stream().allMatch(row -> filename.equals(row.getCell(fileColumnIndex).value)));
+    }
+
     private static File createSpreadsheet(boolean xml, LocalDateTime date) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
