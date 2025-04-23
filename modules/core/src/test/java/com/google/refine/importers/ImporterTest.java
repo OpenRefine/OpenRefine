@@ -195,6 +195,23 @@ public abstract class ImporterTest extends RefineTest {
         }
     }
 
+    protected void parse(ImportingParserBase parser, List<ObjectNode> fileRecords, ObjectNode optionsOverwrite) {
+        List<Exception> exceptions = new ArrayList<Exception>();
+
+        parser.parse(
+                project,
+                metadata,
+                job,
+                fileRecords,
+                "format", // currently unused within parse method
+                -1,
+                optionsOverwrite, // needed because options are not read-only (write + deepCopy)
+                exceptions);
+
+        assertEquals(exceptions.size(), 0, "Unexpected exception(s) thrown: " + exceptions);
+        project.update();
+    }
+
     protected void postProcessProject(
             Project project, ImportColumnGroup rootColumnGroup, List<Exception> exceptions) {
 

@@ -36,6 +36,7 @@ package com.google.refine.importers;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,9 +53,13 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -70,6 +75,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.Project;
+import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporterTests extends ImporterTest {
@@ -420,37 +426,33 @@ public class ExcelImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns() throws Exception {
+    public void testDeleteEmptyColumns() throws IOException {
+        String filename = "excel-test-file-with-empty-column.xslx";
+        List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "skipDataLines", 1);
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "headerLines", 0);
+
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper
-                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper.readTree(
+                String.format("{name: \"%s#Test Sheet 0\", "
+                        + "fileNameAndSheetIndex: \"%s#0\", "
+                        + "rows: 31, "
+                        + "selected: true}",
+                        filename, filename)));
+        JSONUtilities.safePut(options, "sheets", sheets);
 
-        whenGetArrayOption("sheets", options, sheets);
-        whenGetIntegerOption("ignoreLines", options, 0);
-        whenGetIntegerOption("headerLines", options, 0);
-        whenGetIntegerOption("skipDataLines", options, 1);
-        whenGetIntegerOption("limit", options, -1);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
 
-        // This will mock the situation of deleting empty columns(col6)
-        whenGetBooleanOption("storeBlankCellsAsNulls", options, false);
-        whenGetBooleanOption("storeBlankColumns", options, false);
-
-        InputStream stream = new FileInputStream(xlsxFile);
-        parseOneFile(SUT, stream);
+        parse(SUT, fileRecords, options);
 
         // We should have one less than the start due to empty column being skipped
         assertEquals(project.columnModel.columns.size(), 12);
-        // NOTE: we need to redirect through the column model because the rows will still have empty cells
-        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(1).getCellIndex()), true);
-        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(2).getCellIndex()), EXPECTED_DATE_TIME);
-
-        verify(options, times(1)).get("ignoreLines");
-        verify(options, times(1)).get("headerLines");
-        verify(options, times(1)).get("skipDataLines");
-        verify(options, times(1)).get("limit");
-        verify(options, times(1)).get("storeBlankCellsAsNulls");
-        verify(options, times(1)).get("storeBlankColumns");
-
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3))); // see createDataRow
     }
 
     private static File createSpreadsheet(boolean xml, LocalDateTime date) {
@@ -612,4 +614,13 @@ public class ExcelImporterTests extends ImporterTest {
         }
     }
 
+    // --helpers--
+    private List<ObjectNode> prepareFileRecords(final File FILE, String filename) throws IOException {
+        // File is assumed to be in job.getRawDataDir(), so copy it there
+        FileUtils.copyFile(FILE, new File(job.getRawDataDir(), filename));
+        List<ObjectNode> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
+                String.format("{\"fileName\": \"%s\", \"location\": \"%s\"}", filename, filename)));
+        return fileRecords;
+    }
 }

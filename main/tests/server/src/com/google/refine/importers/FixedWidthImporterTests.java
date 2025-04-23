@@ -27,10 +27,16 @@
 
 package com.google.refine.importers;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -159,40 +165,41 @@ public class FixedWidthImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns() throws Exception {
-        StringReader reader = new StringReader(SAMPLE_ROW + "\nTooShort");
+    public void testDeleteEmptyColumns() throws IOException {
+        String filename = "fixed-width-test-file-header-and-sample-row-with-empty-column.txt";
+        List<String> lines = List.of(SAMPLE_ROW, "012345green...."); // add blank column
+        List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
 
-        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
-        // Set up blank column in project
-        JSONUtilities.append(columnWidths, 6);
-        JSONUtilities.append(columnWidths, 0);
-        JSONUtilities.append(columnWidths, 5);
-        JSONUtilities.append(columnWidths, 0);
-        JSONUtilities.append(columnWidths, 3);
-        whenGetArrayOption("columnWidths", options, columnWidths);
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "skipDataLines", 0);
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "headerLines", 1);
 
-        ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
-        columnNames.add("Col 1");
-        columnNames.add("Col 2");
-        columnNames.add("Col 3");
-        columnNames.add("Col 4");
-        columnNames.add("Col 5");
-        columnNames.add("Col 6");
-        whenGetArrayOption("columnNames", options, columnNames);
+        ArrayNode columnWidths = ParsingUtilities.mapper.valueToTree(List.of(6, 9, 5));
+        JSONUtilities.safePut(options, "columnWidths", columnWidths);
 
-        whenGetIntegerOption("ignoreLines", options, 0);
-        whenGetIntegerOption("headerLines", options, 1);
-        whenGetIntegerOption("skipDataLines", options, 0);
-        whenGetIntegerOption("limit", options, -1);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // rm blank columns
 
-        // This will mock the situation of deleting empty columns(col2&col4)
-        whenGetBooleanOption("storeBlankCellsAsNulls", options, false);
-        whenGetBooleanOption("storeBlankColumns", options, false);
+        parse(SUT, fileRecords, options);
 
-        parseOneFile(SUT, reader);
+        // check expected columns are all included
+        Assert.assertEquals(project.columnModel.columns.size(), 2);
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("NDB_No"));
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("Shrt_Desc"));
+    }
 
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Col 1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Col 3");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Col 5");
+    // --helpers--
+    private List<ObjectNode> prepareFileRecords(final String filename, List<String> lines) throws IOException {
+        // File is assumed to be in job.getRawDataDir(), so write test data there
+        File testFile = new File(job.getRawDataDir(), filename);
+        FileUtils.writeLines(testFile, lines);
+        testFile.deleteOnExit();
+
+        List<ObjectNode> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
+                String.format("{\"fileName\": \"%s\", \"location\": \"%s\"}", filename, filename)));
+        return fileRecords;
     }
 }
