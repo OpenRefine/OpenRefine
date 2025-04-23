@@ -36,6 +36,7 @@ package com.google.refine.importers;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -46,10 +47,10 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
-import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 abstract public class TabularImportingParserBase extends ImportingParserBase {
 
@@ -136,7 +137,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
 
-        List<Boolean> columnsHasData = new ArrayList<>(); // Determine if there is data in each column,def = false
+        List<Boolean> columnHasData = new ArrayList<>(Arrays.asList(JSONUtilities.getBooleanArray(options, "columnHasData")));
 
         List<Object> cells = null;
         int rowsWithData = 0;
@@ -185,15 +186,15 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                             int cellIndex = column.getCellIndex();
                             // TODO: Can we make this more efficient? It's only inside this loop for the case where we
                             // have an extra unexpected cell in a row
-                            while (cellIndex >= columnsHasData.size()) {
-                                columnsHasData.add(false);
+                            while (cellIndex >= columnHasData.size()) {
+                                columnHasData.add(false);
                             }
 
                             Object value = cells.get(c);
                             if (value instanceof Cell) {
                                 row.setCell(cellIndex, (Cell) value);
                                 rowHasData = true;
-                                columnsHasData.set(cellIndex, true);
+                                columnHasData.set(cellIndex, true);
                             } else if (ExpressionUtils.isNonBlankData(value)) {
                                 Serializable storedValue;
                                 if (value instanceof String) {
@@ -208,7 +209,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
                                 row.setCell(cellIndex, new Cell(storedValue, null));
                                 rowHasData = true;
-                                columnsHasData.set(cellIndex, true);
+                                columnHasData.set(cellIndex, true);
                             } else if (!storeBlankCellsAsNulls) {
                                 row.setCell(cellIndex, new Cell("", null));
                             } else {
@@ -227,29 +228,10 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                 }
             }
             if (!storeBlankColumns) {// if user don't choose storeBlankColumns, delete all empty columns.
-                deleteEmptyColumns(columnsHasData, project);
+                JSONUtilities.safePut(options, "columnHasData", ParsingUtilities.mapper.valueToTree(columnHasData));
             }
         } catch (IOException e) {
             exceptions.add(e);
-        } catch (ModelException e) {
-            exceptions.add(e);
         }
-    }
-
-    /**
-     * If "storeBlankColumns" == false, delete blank columns.
-     *
-     * @param columnsHasData
-     *            Record if there is data in each column( false:null;true:has data)
-     */
-    static public void deleteEmptyColumns(List<Boolean> columnsHasData, Project project) throws ModelException {
-        project.columnModel.update(); // make sure all our cell indexes are up to date
-        for (int c = 0; c < columnsHasData.size(); c++) {
-            if (!columnsHasData.get(c)) {
-                // remove column from columns
-                project.columnModel.removeColumnByCellIndex(c);
-            }
-        }
-        project.columnModel.update();
     }
 }
