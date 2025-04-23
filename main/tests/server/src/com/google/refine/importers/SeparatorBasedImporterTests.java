@@ -614,6 +614,28 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         Assert.assertTrue(project.columnModel.getColumnNames().contains("Age"));
     }
 
+    @Test
+    public void testDeleteEmptyColumnsAfterCheckingAllFiles() throws IOException {
+        // File with columns Name, Age, Gender where column Gender is NOT empty
+        String filenameNoEmptyColumn = "persons.csv";
+        List<ObjectNode> fileRecords = prepareFileRecords(filenameNoEmptyColumn);
+        // File with columns Name, Age, Gender where column Gender is empty
+        String filenameEmptyColumn = "persons_with_empty_column.csv";
+        fileRecords.addAll(prepareFileRecords(filenameEmptyColumn));
+
+        // This will mock the situation of deleting empty columns, but only after checking all files
+        ObjectNode options = createBasicOptions(",", -1, 0, 0, 1, true, true);
+        JSONUtilities.safePut(options, "storeBlankColumns", false);
+
+        parse(SUT, fileRecords, options);
+
+        // check expected columns are all included
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("Name"));
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("Age"));
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("Gender"));
+    }
+
     // ---------------------guess separators------------------------
 
     @Test

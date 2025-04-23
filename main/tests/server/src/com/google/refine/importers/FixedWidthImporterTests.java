@@ -190,6 +190,37 @@ public class FixedWidthImporterTests extends ImporterTest {
         Assert.assertTrue(project.columnModel.getColumnNames().contains("Shrt_Desc"));
     }
 
+    @Test
+    public void testDeleteEmptyColumnsAfterCheckingAllFiles() throws IOException {
+        String filename = "fixed-width-test-file-header-and-sample-row.txt";
+        List<String> lines = List.of(SAMPLE_ROW, "012345green....00342");
+        List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
+
+        String filenameEmptyColumn = "fixed-width-test-file-header-and-sample-row-with-empty-column.txt";
+        List<String> linesWithEmptyColumn = List.of(SAMPLE_ROW, "012345green...."); // add blank column
+        fileRecords.addAll(prepareFileRecords(filenameEmptyColumn, linesWithEmptyColumn));
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "skipDataLines", 0);
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "headerLines", 1);
+
+        ArrayNode columnWidths = ParsingUtilities.mapper.valueToTree(List.of(6, 9, 5));
+        JSONUtilities.safePut(options, "columnWidths", columnWidths);
+
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // rm blank columns
+
+        parse(SUT, fileRecords, options);
+
+        // check expected columns are all included
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("NDB_No"));
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("Shrt_Desc"));
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("Water"));
+    }
+
     // --helpers--
     private List<ObjectNode> prepareFileRecords(final String filename, List<String> lines) throws IOException {
         // File is assumed to be in job.getRawDataDir(), so write test data there

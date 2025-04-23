@@ -37,6 +37,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -453,6 +454,48 @@ public class ExcelImporterTests extends ImporterTest {
         // We should have one less than the start due to empty column being skipped
         assertEquals(project.columnModel.columns.size(), 12);
         assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3))); // see createDataRow
+    }
+
+    @Test
+    public void testDeleteEmptyColumnsAfterCheckingAllFiles() throws IOException {
+        // same multi-sheet file with different name, so parseOneFile gets called several times
+        // difference in columns is not between files, but between selected sheets, see below
+        String filename1 = "multi-sheet-file-with-extra-columns-1.xslx";
+        List<ObjectNode> fileRecords = prepareFileRecords(xlsxFileWithMultiSheets, filename1);
+        String filename2 = "multi-sheet-file-with-extra-columns-2.xslx";
+        fileRecords.addAll(prepareFileRecords(xlsxFileWithMultiSheets, filename2));
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "skipDataLines", 1);
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "headerLines", 0);
+
+        // xlsxFileWithMultiSheets should have one extra column in sheet 1 that sheet 0 does not have
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree(
+                String.format("{name: \"%s#Test Sheet 1\", "
+                        + "fileNameAndSheetIndex: \"%s#1\", "
+                        + "rows: 31, "
+                        + "selected: true}",
+                        filename1, filename1)));
+        sheets.add(ParsingUtilities.mapper.readTree(
+                String.format("{name: \"%s#Test Sheet 0\", "
+                        + "fileNameAndSheetIndex: \"%s#0\", "
+                        + "rows: 31, "
+                        + "selected: true}",
+                        filename2, filename2)));
+        JSONUtilities.safePut(options, "sheets", sheets);
+
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
+
+        parse(SUT, fileRecords, options);
+
+        // the empty column 3 should still be removed, but extra column from sheet 1 should be included
+        assertEquals(project.columnModel.columns.size(), 13);
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3))); // see createDataRow
+        assertTrue(project.columnModel.getColumnNames().contains(numberedColumn(14)));
     }
 
     private static File createSpreadsheet(boolean xml, LocalDateTime date) {
