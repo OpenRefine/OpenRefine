@@ -1,6 +1,7 @@
 
 package com.google.refine.operations;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class Recipe {
     private final List<AbstractOperation> operations;
     private Set<String> dependencies;
     private Set<String> newColumns;
+    private Set<String> internalColumns;
 
     @JsonCreator
     public Recipe(
@@ -34,6 +36,7 @@ public class Recipe {
         this.operations = operations;
         this.dependencies = null;
         this.newColumns = null;
+        this.internalColumns = null;
     }
 
     @JsonValue
@@ -69,6 +72,8 @@ public class Recipe {
         dependencies = new HashSet<>();
         // columns created by the recipe
         newColumns = new HashSet<>();
+        // columns only created during the recipe but deleted before the end of the recipe
+        internalColumns = new HashSet<>();
 
         for (AbstractOperation op : operations) {
             if (currentColumnNames.isPresent()) {
@@ -112,7 +117,10 @@ public class Recipe {
                     }
                 }
                 currentColumnNames.get().addAll(columnsDiff.get().getAddedColumnNames());
-                newColumns.removeAll(columnsDiff.get().getDeletedColumns());
+                Set<String> newInternalColumns = new HashSet<>(columnsDiff.get().getDeletedColumns());
+                newInternalColumns.retainAll(newColumns);
+                internalColumns.addAll(newInternalColumns);
+                newColumns.removeAll(newInternalColumns);
                 newColumns.addAll(columnsDiff.get().getAddedColumnNames());
             }
         }
@@ -148,6 +156,20 @@ public class Recipe {
     }
 
     /**
+     * Computes the set of columns created throughout the recipe, but which get deleted before the end of the recipe.
+     * This is an under-approximation: if certain operations in the list fail to expose their impac on the set of
+     * columns, then the columns created at this stage will be omitted from the return value.
+     * 
+     * @return a set of internal column names
+     */
+    public Set<String> getInternalColumns() {
+        if (internalColumns == null) {
+            validate();
+        }
+        return internalColumns;
+    }
+
+    /**
      * Compute a new version of this recipe, where the column dependencies have been renamed according to the map
      * supplied.
      * 
@@ -160,6 +182,36 @@ public class Recipe {
                 .map(op -> op.renameColumns(newColumnNames))
                 .collect(Collectors.toList());
         return new Recipe(result);
+    }
+
+    /**
+     * In preparation for applying the recipe to a project, ensure that the internal column names in the recipe are
+     * disjoint from the columns present in the project. The conflicting column names are deduplicated by adding a
+     * number at the end of the column such that there is no conflict anymore.
+     * 
+     * @param projectColumnNames
+     *            the set of column names in the project
+     * @return a new version of the recipe, where any conflicting internal column names have been deduplicated.
+     */
+    public Recipe avoidInternalColumnCollisions(Set<String> projectColumnNames) {
+        Set<String> allColumns = new HashSet<>(projectColumnNames);
+        allColumns.addAll(getNewColumns());
+
+        Set<String> conflictingInternal = new HashSet<>(getInternalColumns());
+        conflictingInternal.retainAll(allColumns);
+        allColumns.addAll(getInternalColumns());
+
+        Map<String, String> rename = new HashMap<>();
+        for (String conflicting : conflictingInternal) {
+            int deduplicatingNumber = 1;
+            String newName;
+            do {
+                deduplicatingNumber++;
+                newName = String.format("%s_%d", conflicting, deduplicatingNumber);
+            } while (allColumns.contains(newName));
+            rename.put(conflicting, newName);
+        }
+        return this.renameColumns(rename);
     }
 
     @Override

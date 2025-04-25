@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -100,12 +101,26 @@ public class ApplyOperationsCommand extends Command {
                 recipe = recipe.renameColumns(renames);
             }
 
+            // deduplicate internal column names to make sure they don't conflict with the ones in the project
+            if (!recipe.getInternalColumns().isEmpty()) {
+                recipe = recipe.avoidInternalColumnCollisions(project.columnModel.getColumnNames().stream().collect(Collectors.toSet()));
+            }
+
             // check all required columns are present
             Set<String> requiredColumns = recipe.getRequiredColumns();
             for (String columnName : requiredColumns) {
                 if (project.columnModel.getColumnByName(columnName) == null) {
                     throw new IllegalArgumentException(
                             "Column '" + columnName + "' is referenced in the list of operations but is absent from the project");
+                }
+            }
+
+            // check all new columns are not present
+            Set<String> newColumns = recipe.getNewColumns();
+            for (String columnName : newColumns) {
+                if (project.columnModel.getColumnByName(columnName) != null) {
+                    throw new IllegalArgumentException(
+                            "Column '" + columnName + "' already exists in the project");
                 }
             }
 
