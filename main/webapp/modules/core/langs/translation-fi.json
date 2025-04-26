@@ -118,7 +118,7 @@
     "core-index-import/single-project": "OpenRefine voi tuoda useita tiedostoja yhteen projektiin vain, jos kaikilla valituilla tiedostoilla on sama tiedostomuoto.",
     "core-index-import/clipboard": "Leikepöytä",
     "core-index-import/enter-url": "Anna yksi tai useampi verkko-osoite (URL), joka osoittaa ladattaviin tietoihin:",
-    "core-index-open/edit-meta-data": "Noin",
+    "core-index-open/edit-meta-data": "Tietoja",
     "core-index-lang/send-req": "Vaihda kieltä",
     "core-index-parser/lines-header": "rivi(t) sarakeotsikoina",
     "core-index-parser/parse-references": "Pura viittaukset lisäsarakkeisiin",

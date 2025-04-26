@@ -256,7 +256,7 @@
     "wikibase-schema/caption": "Légende",
     "wikibase-management/discover-manifests": "Découvrez des instances Wikibase…",
     "wikibase-schema/empty-captions": "aucune légende ajoutée",
-    "wikibase-addition/version-error": "La version 1 du manifeste n'est pas prise en charge. OpenRefine ne prend en charge que les versions 1.x et 2.x du manifeste.",
+    "wikibase-addition/version-error": "La version $1 du manifeste n'est pas prise en charge. OpenRefine ne prend en charge que les versions 1.x et 2.x du manifeste.",
     "warnings-messages/invalid-item-id-format/title": "Identifiants d'éléments non valides",
     "warnings-messages/new-media-without-file-name/title": "Nouveau fichier sans nom",
     "warnings-messages/file-name-too-long/title": "Noms de fichiers dépassant la longueur maximale",
