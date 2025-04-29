@@ -58,7 +58,7 @@ Also referred to as Core Dev. The Core Developer Group are trusted developers wh
 - Are responsible for the technical direction of the project
 - Are part of the Admin team for the project on GitHub
 
-**How to join the Core Dev Group?**. To be eligible to serve on the Core Developers, individuals must first be Committers of the project. Core Dev Group members are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the Member Election section below for more details.
+**How to join the Core Dev Group?**. To be eligible to serve on the Core Developers, individuals must first be Committers of the project. Core Dev Group members are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where committers can nominate themselves or other committers. See the Member Election section below for more details.
 
 **Current list of Core Developers:**
 - Tom Morris [@tfmorris](https://github.com/tfmorris) and on the [forum](https://forum.openrefine.org/u/tfmorris/summary)
