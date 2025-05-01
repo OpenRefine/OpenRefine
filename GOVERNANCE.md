@@ -6,7 +6,7 @@ OpenRefine is a free, open-source, powerful tool for working with messy data. Op
 ## Roles and responsibilities
 OpenRefine is a meritocratic, consensus-based community project based on the [Apache Decision Making process](https://community.apache.org/committers/decisionMaking.html).
 
-In so far that is possilbe, decision-making is done based on user consensus following open discussion (i.e., using OpenRefine's [discussion list](https://forum.openrefine.org/) and [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)). No major decisions about the project’s direction, bug fixes, or features should be made in private without community involvement and participation. Discussions must begin at the earliest possible point on a topic; the community’s participation is vital during the entire decision-making process.
+In so far that is possible, decision-making is done based on user consensus following open discussion (i.e., using OpenRefine's [discussion forum](https://forum.openrefine.org/) and [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)). No major decisions about the project’s direction, bug fixes, or features should be made in private without community involvement and participation. Discussions must begin at the earliest possible point on a topic; the community’s participation is vital during the entire decision-making process.
 
 All project participants abide by the [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md).
 
@@ -26,10 +26,10 @@ How to become an OpenRefine user? [Download OpenRefine](http://openrefine.org/do
 Contributors are users getting involved in the project more closely. Contributions can take many forms:
 
 - Supporting new users via the [user discussion forum](https://forum.openrefine.org/c/support/12)
-- Submitting patches to fix bugs or add features via pull requests, comment on pull requests and help other contributors via the [developer discussion list](https://forum.openrefine.org/c/dev/8)
+- Submitting patches to fix bugs or add features via pull requests, commenting on pull requests and helping other contributors via the [developer discussion list](https://forum.openrefine.org/c/dev/8)
 - Maintaining and improving the [website](https://openrefine.org/)
 - Writing and maintaining the [documentation](https://github.com/OpenRefine/openrefine.org/tree/master/docs)
-- Helping [design interfaces](https://openrefine.org/docs/technical-reference/introduction) for OpenRefine
+- Helping [design user interfaces](https://openrefine.org/docs/technical-reference/introduction) for OpenRefine
 
 How to become an OpenRefine contributor? You will find more details in our [contributing guideline](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md)
 
@@ -45,7 +45,7 @@ Committers have earned enough trust from the community to
 - Run the CI pipeline on your PRs automatically
 - Are part of the OpenRefine organization and have the OpenRefine badge on their GitHub profile
 
-**How to become a Committer?**: Committers are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the Member Election section below for more details.
+**How to become a Committer?**: Committers are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer section of the forum](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the Member Election section below for more details.
 
 **Current list of Committers**: The list is available here: https://github.com/orgs/OpenRefine/people.
 
@@ -77,7 +77,7 @@ The Code of Conduct Committee is responsible for responding to all [Code of Cond
 **How to join the Code of Conduct Committee?**. Committers are voting-binding members; they select and elect new members through a voting process. Nominations should be submitted to the [developer discussion list](https://forum.openrefine.org/c/dev/8), where contributors can nominate themselves or other contributors. See the Member Election section below for more details.
 
 ### Advisory Committee
-The Advisory Committee runs the administrative aspect of the project on a daily basis with the support of Code for Science and Society (CS&S). Its members are bound by the fiscal sponsorship agreement with Code for Science and Society. They meet once per month with Code for Science and Society.
+The Advisory Committee runs the administrative aspect of the project on a regular basis with the support of Code for Science and Society (CS&S). Its members are bound by the fiscal sponsorship agreement with Code for Science and Society. They meet once per month with Code for Science and Society.
 
 **How to join the Advisory Committee?** Members of the Advisory Committee publish an announcement on the blog when searching for a new member. The Advisory Committee selects new committee members through consensus-driven discussions among current members.
 
@@ -87,10 +87,10 @@ The Advisory Committee runs the administrative aspect of the project on a daily 
 - Esther Jackson [@ej2432](https://github.com/ej2432) and on the [forum](https://forum.openrefine.org/u/ej2432/summary)
 
 ### Project Manager
-OpenRefine's Project Manager (paid position) works closely with OpenRefine's advisory committee, Core Dev Groups and OpenRefine users and contributors.
+OpenRefine's Project Manager (paid position) works closely with OpenRefine's Advisory Committee, Core Dev Group, and OpenRefine users and contributors.
 
 The Project Manager:
-- Helps to improve OpenRefine's governance and community diversity
+- Helps improve OpenRefine's governance and community diversity
 - Helps build community-driven structures to formalize OpenRefine's roadmap and keep it up-to-date
 - Assists in finding and securing new sources of funding
 - Supports the Advisory Committee in OpenRefine's day-to-day operations (this may include supervising paid project staff)
