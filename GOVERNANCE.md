@@ -25,7 +25,7 @@ How to become an OpenRefine user? [Download OpenRefine](http://openrefine.org/do
 ### Contributors
 Contributors are users getting involved in the project more closely. Contributions can take many forms:
 
-- Supporting new users via the [user discussion list](https://forum.openrefine.org/c/support/12)
+- Supporting new users via the [user discussion forum](https://forum.openrefine.org/c/support/12)
 - Submitting patches to fix bugs or add features via pull requests, comment on pull requests and help other contributors via the [developer discussion list](https://forum.openrefine.org/c/dev/8)
 - Maintaining and improving the [website](https://openrefine.org/)
 - Writing and maintaining the [documentation](https://github.com/OpenRefine/openrefine.org/tree/master/docs)
