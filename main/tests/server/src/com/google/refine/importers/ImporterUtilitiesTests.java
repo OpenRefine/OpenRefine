@@ -185,21 +185,21 @@ public class ImporterUtilitiesTests extends RefineTest {
         Project project = new Project();
         // Set up column names in project
         List<String> columnNames = new ArrayList<>();
-        List<Boolean> columnHasData = new ArrayList<>();
+        List<Boolean> columnsHasData = new ArrayList<>();
         columnNames.add("Column 1");
-        columnHasData.add(true);
+        columnsHasData.add(true);
 
         columnNames.add("Column 2");
-        columnHasData.add(false);
+        columnsHasData.add(false);
 
         columnNames.add("Column 3");
-        columnHasData.add(true);
+        columnsHasData.add(true);
 
         columnNames.add("Column 4");
-        columnHasData.add(false);
+        columnsHasData.add(false);
 
         columnNames.add("Column 5");
-        columnHasData.add(true);
+        columnsHasData.add(true);
 
         ImporterUtilities.setupColumns(project, columnNames);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
@@ -207,7 +207,7 @@ public class ImporterUtilitiesTests extends RefineTest {
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 3");
 
         // This will mock the situation of deleting empty columns(col2&col4)
-        ImporterUtilities.deleteEmptyColumns(project, columnHasData);
+        TabularImportingParserBase.deleteEmptyColumns(columnsHasData, project);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 3");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 5");

@@ -38,7 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -104,14 +103,6 @@ abstract public class ImportingParserBase implements ImportingParser {
                 break;
             }
         }
-
-        // after processing all files, remove columns identified as empty
-        List<Boolean> columnHasData = Arrays.asList(JSONUtilities.getBooleanArray(options, "columnHasData"));
-        try {
-            ImporterUtilities.deleteEmptyColumns(project, columnHasData);
-        } catch (ModelException e) {
-            exceptions.add(e);
-        }
     }
 
     // TODO: Make private? At least protected?
@@ -173,7 +164,6 @@ abstract public class ImportingParserBase implements ImportingParser {
                 }
 
                 ObjectNode fileOptions = options.deepCopy();
-                fileOptions.remove("columnHasData"); // rm temp variable
                 JSONUtilities.safePut(fileOptions, "fileSource", fileSource);
                 JSONUtilities.safePut(fileOptions, "archiveFileName", archiveFileName);
                 // TODO: This will save a separate copy for each file in the import, but they're
@@ -253,4 +243,5 @@ abstract public class ImportingParserBase implements ImportingParser {
             return columnId;
         }
     }
+
 }

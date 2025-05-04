@@ -122,20 +122,6 @@ public class JSONUtilities {
         return r;
     }
 
-    static public Boolean[] getBooleanArray(ObjectNode obj, String key) {
-        ArrayNode a = getArray(obj, key);
-        if (a == null) {
-            return new Boolean[0];
-        }
-        Boolean[] r = new Boolean[a.size()];
-
-        for (int i = 0; i < r.length; i++) {
-            r[i] = a.get(i).asBoolean();
-        }
-
-        return r;
-    }
-
     static public ObjectNode getObjectElement(ArrayNode a, int i) {
         JsonNode n = a.get(i);
         if (n != null && n instanceof ObjectNode) {
