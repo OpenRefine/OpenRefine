@@ -3,7 +3,11 @@
     "tablesorter",
     "jquery.i18n",
     "jquery.i18n/languages",
-    "select2"
+    "select2",
+    "jquery-ui",
+    "jquery-ui/css",
+    "jquery-ui/css/ui-lightness",
+    "jquery-ui/css/ui-lightness/images"
   ],
   "files" : [
     {"from": "tablesorter/dist/js/jquery.tablesorter.js", "to": "tablesorter/jquery.tablesorter.js"},
@@ -35,6 +39,12 @@
     {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.js", "to": "jquery.i18n/jquery.i18n.js"},
     {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.language.js", "to": "jquery.i18n/jquery.i18n.language.js"},
     {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.messagestore.js", "to": "jquery.i18n/jquery.i18n.messagestore.js"},
-    {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.parser.js", "to": "jquery.i18n/jquery.i18n.parser.js"}
+    {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.parser.js", "to": "jquery.i18n/jquery.i18n.parser.js"},
+    {"from": "jquery-ui-dist/jquery-ui.css", "to": "jquery-ui/css/ui-lightness/jquery-ui.css"},
+    {"from": "jquery-ui-dist/jquery-ui.min.css", "to": "jquery-ui/css/ui-lightness/jquery-ui.min.css"},
+    {"from": "jquery-ui/themes/base/theme.css", "to": "jquery-ui/css/ui-lightness/theme.css"},
+    {"from": "jquery-ui-dist/jquery-ui.js", "to": "jquery-ui/jquery-ui.js"},
+    {"from": "jquery-ui-dist/jquery-ui.min.js", "to": "jquery-ui/jquery-ui.min.js"},
+    {"from": "jquery-ui/themes/base/images/ui-icons_ffffff_256x240.png", "to": "jquery-ui/css/ui-lightness/images/ui-icons_ffffff_256x240.png"}
   ]
 }
