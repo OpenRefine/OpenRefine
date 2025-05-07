@@ -454,6 +454,8 @@ public class ExcelImporterTests extends ImporterTest {
         // We should have one less than the start due to empty column being skipped
         assertEquals(project.columnModel.columns.size(), 12);
         assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3))); // see createDataRow
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(1).getCellIndex()), true);
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(2).getCellIndex()), EXPECTED_DATE_TIME);
     }
 
     @Test
