@@ -165,7 +165,7 @@ public class FixedWidthImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns() throws IOException {
+    public void testDeleteBlankColumns() throws IOException {
         String filename = "fixed-width-test-file-header-and-sample-row-with-empty-column.txt";
         List<String> lines = List.of("012345green...."); // add blank column
         List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
@@ -196,7 +196,7 @@ public class FixedWidthImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumnsAfterCheckingAllFiles() throws IOException {
+    public void testDeleteBlankColumnsAfterCheckingAllFiles() throws IOException {
         String filename = "fixed-width-test-file-header-and-sample-row.txt";
         List<String> lines = List.of(SAMPLE_ROW, "012345green....00342");
         List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
@@ -227,7 +227,7 @@ public class FixedWidthImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumnsButKeepFileNameColumn() throws IOException {
+    public void testDeleteBlankColumnsButKeepFileNameColumn() throws IOException {
         String filenameEmptyColumn = "fixed-width-test-file-header-and-sample-row-with-empty-column.txt";
         List<String> linesWithEmptyColumn = List.of(SAMPLE_ROW, "012345green...."); // add blank column
         List<ObjectNode> fileRecords = prepareFileRecords(filenameEmptyColumn, linesWithEmptyColumn);

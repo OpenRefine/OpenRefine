@@ -427,7 +427,7 @@ public class ExcelImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns() throws IOException {
+    public void testDeleteBlankColumns() throws IOException {
         String filename = "excel-test-file-with-empty-column.xslx";
         List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
 
@@ -446,20 +446,23 @@ public class ExcelImporterTests extends ImporterTest {
                         filename, filename)));
         JSONUtilities.safePut(options, "sheets", sheets);
 
-        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false); // col(6) included with empty strings
         JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
 
         parse(SUT, fileRecords, options);
 
-        // We should have one less than the start due to empty column being skipped
-        assertEquals(project.columnModel.columns.size(), 12);
+        // We should have two less than the start due to empty column being skipped (3 and 6)
+        assertEquals(project.columnModel.columns.size(), 11);
         assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3))); // see createDataRow
         assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(1).getCellIndex()), true);
         assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(2).getCellIndex()), EXPECTED_DATE_TIME);
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(6))); // see createDataRow
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(3).getCellIndex()), " Row 2 Col 5");
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(4).getCellIndex()), 2L);
     }
 
     @Test
-    public void testDeleteEmptyColumnsAfterCheckingAllFiles() throws IOException {
+    public void testDeleteBlankColumnsAfterCheckingAllFiles() throws IOException {
         // same multi-sheet file with different name, so parseOneFile gets called several times
         // difference in columns is not between files, but between selected sheets, see below
         String filename1 = "multi-sheet-file-with-extra-columns-1.xslx";
@@ -494,14 +497,15 @@ public class ExcelImporterTests extends ImporterTest {
 
         parse(SUT, fileRecords, options);
 
-        // the empty column 3 should still be removed, but extra column from sheet 1 should be included
-        assertEquals(project.columnModel.columns.size(), 13);
+        // the empty columns should still be removed, but extra column from sheet 1 should be included
+        assertEquals(project.columnModel.columns.size(), 12);
         assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3))); // see createDataRow
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(6))); // see createDataRow
         assertTrue(project.columnModel.getColumnNames().contains(numberedColumn(14)));
     }
 
     @Test
-    public void testDeleteEmptyColumnsButKeepFileNameColumn() throws IOException {
+    public void testDeleteBlankColumnsButKeepFileNameColumn() throws IOException {
         String filename = "excel-test-file-with-empty-column.xslx";
         List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
 
@@ -526,9 +530,10 @@ public class ExcelImporterTests extends ImporterTest {
 
         parse(SUT, fileRecords, options);
 
-        // We should have one less than the start due to empty column being skipped + one for File
-        assertEquals(project.columnModel.columns.size(), 13);
+        // We should have two less than the start due to empty columns being skipped + one for File
+        assertEquals(project.columnModel.columns.size(), 12);
         assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3)));
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(6)));
         assertTrue(project.columnModel.getColumnNames().contains("File"));
         // check entries
         int fileColumnIndex = project.columnModel.getColumnIndexByName("File");

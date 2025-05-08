@@ -599,7 +599,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumns() throws IOException {
+    public void testDeleteBlankColumns() throws IOException {
         // File with columns Name, Age, Gender where column Gender is empty
         List<ObjectNode> fileRecords = prepareFileRecords("persons_with_empty_column.csv");
 
@@ -615,7 +615,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumnsAfterCheckingAllFiles() throws IOException {
+    public void testDeleteBlankColumnsAfterCheckingAllFiles() throws IOException {
         // File with columns Name, Age, Gender where column Gender is NOT empty
         String filenameNoEmptyColumn = "persons.csv";
         List<ObjectNode> fileRecords = prepareFileRecords(filenameNoEmptyColumn);
@@ -637,7 +637,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteEmptyColumnsButKeepFileNameColumn() throws IOException {
+    public void testDeleteBlankColumnsButKeepFileNameColumn() throws IOException {
         // File with columns Name, Age, Gender where column Gender is empty
         String filename = "persons_with_empty_column.csv";
         List<ObjectNode> fileRecords = prepareFileRecords(filename);
