@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -102,6 +103,12 @@ abstract public class ImportingParserBase implements ImportingParser {
             if (limit > 0 && project.rows.size() >= limit) {
                 break;
             }
+        }
+
+        // if user doesn't choose 'storeBlankColumns', delete all empty columns.
+        boolean storeBlankColumns = JSONUtilities.getBoolean(options, "storeBlankColumns", true);
+        if (!storeBlankColumns) {
+            deleteBlankColumns(project, exceptions);
         }
     }
 
@@ -244,4 +251,31 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
     }
 
+    private static void deleteBlankColumns(Project project, List<Exception> exceptions) {
+        // Determine if there is data in each column
+        List<Boolean> columnsHasData = new ArrayList<>();
+        int rowSize = 0;
+        for (Row row : project.rows) {
+            rowSize = row.getCells().size();
+
+            // TODO: Can we make this more efficient?
+            // It's only inside this loop for the case where we have an extra unexpected cell in a row
+            while (rowSize >= columnsHasData.size()) {
+                columnsHasData.add(Boolean.FALSE); // init every col as empty
+            }
+
+            for (int i = 0; i < rowSize; i++) {
+                if (!row.isCellBlank(i)) {
+                    columnsHasData.set(i, Boolean.TRUE); // only if an entry is found, set col to hasData
+                }
+            }
+        }
+
+        // rm empty columns
+        try {
+            ImporterUtilities.deleteEmptyColumns(project, columnsHasData);
+        } catch (ModelException e) {
+            exceptions.add(e);
+        }
+    }
 }
