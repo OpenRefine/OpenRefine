@@ -109,6 +109,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin: var(--padding-normal) 0 0 0;
   color: var(--text-tertiary);
   font-size: 80%;
+  cursor: pointer;
+}
+
+#openrefine-version svg {
+  height: 16px;
+  width: 16px;
+  margin-left: var(--padding-tight);
+  fill: var(--text-tertiary);
+  position: relative;
+  top: 3px;
 }
 
 #right-panel {
