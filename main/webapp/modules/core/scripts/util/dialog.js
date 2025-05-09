@@ -42,6 +42,13 @@ var escapeKey = function(event) {
   }
 }
 
+/**
+ * Show a dialog.
+ * @public
+ * @param {jQuery} elmt The dialog element to show.
+ * @param {function} onCancel The function to call when the dialog is dismissed.
+ * @return {number} The layer level of the dialog.
+ */
 DialogSystem.showDialog = function(elmt, onCancel) {
   var overlay = $('<div>&nbsp;</div>')
   .addClass("dialog-overlay")
@@ -89,14 +96,33 @@ DialogSystem.showDialog = function(elmt, onCancel) {
 };
 
 
+/**
+ * Pause the escape key handling for the dialog system.
+ * Note that this pauses the handling for all dialogs.
+ * @public
+ * @return {void}
+ */
 DialogSystem.pauseEscapeKeyHandling = function() {
   $(window).off('keydown',escapeKey);
 }
 
+/**
+ * Set up the escape key handling for the dialog system.
+ * This is automatically called when a dialog is shown,
+ * but can be called manually if you paused the handling.
+ * @public
+ * @return {void}
+ */
 DialogSystem.setupEscapeKeyHandling = function() {
   $(window).on('keydown',escapeKey);
 }
 
+/**
+ * Dismiss a dialog at the specified level.
+ * @public
+ * @param {number} level The level of the dialog to dismiss.
+ * @return {void}
+ */
 DialogSystem.dismissLevel = function(level) {
     var layer = DialogSystem._layers[level];
 
@@ -117,10 +143,21 @@ DialogSystem.dismissLevel = function(level) {
     }
 };
 
+/**
+ * Dismiss all dialogs.
+ * @public
+ * @return {void}
+ */
 DialogSystem.dismissAll = function() {
   DialogSystem.dismissUntil(0);
 };
 
+/**
+ * Dismiss all dialogs until the specified level.
+ * @public
+ * @param {number} level The level to dismiss until.
+ * @return {void}
+ */
 DialogSystem.dismissUntil = function(level) {
   for (var i = DialogSystem._layers.length - 1; i >= level; i--) {
 	  DialogSystem.dismissLevel(i);
@@ -129,10 +166,21 @@ DialogSystem.dismissUntil = function(level) {
   DialogSystem._layers = DialogSystem._layers.slice(0, level);
 };
 
+/**
+ * Create an empty dialog frame.
+ * @public
+ * @return {jQuery} The dialog frame element.
+ */
 DialogSystem.createDialog = function() {
   return $('<div></div>').addClass("dialog-frame");
 };
 
+/**
+ * Show a busy dialog with a spinner and message.
+ * @public
+ * @param {string} message The message to show in the dialog.
+ * @return {function} A function to dismiss the dialog, which always returns void.
+ */
 DialogSystem.showBusy = function(message) {
   var frame = DialogSystem.createDialog();
   frame.addClass("dialog-busy");
@@ -148,6 +196,13 @@ DialogSystem.showBusy = function(message) {
   };
 };
 
+/**
+ * Show a dialog with an error message.
+ * @public
+ * This will autoformat the error message if it is an object.
+ * @param {string|object} error The error message to show.
+ * @return {void}
+ */
 DialogSystem.alert = function (error) {
 
     let errorMessage = '';
