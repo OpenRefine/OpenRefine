@@ -12,13 +12,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@colors/colors@npm:1.5.0":
-  version: 1.5.0
-  resolution: "@colors/colors@npm:1.5.0"
-  checksum: 10c0/eb42729851adca56d19a08e48d5a1e95efd2a32c55ae0323de8119052be0510d4b7a1611f2abcbf28c044a6c11e6b7d38f99fccdad7429300c37a8ea5fb95b44
-  languageName: node
-  linkType: hard
-
 "@cypress/request@npm:^3.0.8":
   version: 3.0.8
   resolution: "@cypress/request@npm:3.0.8"
@@ -581,16 +574,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-table3@npm:~0.6.5":
-  version: 0.6.5
-  resolution: "cli-table3@npm:0.6.5"
+"cli-table3@npm:0.6.1":
+  version: 0.6.1
+  resolution: "cli-table3@npm:0.6.1"
   dependencies:
-    "@colors/colors": "npm:1.5.0"
+    colors: "npm:1.4.0"
     string-width: "npm:^4.2.0"
   dependenciesMeta:
-    "@colors/colors":
+    colors:
       optional: true
-  checksum: 10c0/d7cc9ed12212ae68241cc7a3133c52b844113b17856e11f4f81308acc3febcea7cc9fd298e70933e294dd642866b29fd5d113c2c098948701d0c35f09455de78
+  checksum: 10c0/19ab1bb14bd11b3ca3557ce5ad37ef73e489ea814b99f803171e6ac0a3f2ae5fffb6dbc8864e33cdcf2a3644ebc31b488b8e624fd74af44a1c77cc365c143db4
   languageName: node
   linkType: hard
 
@@ -624,6 +617,13 @@ __metadata:
   version: 1.2.2
   resolution: "colorette@npm:1.2.2"
   checksum: 10c0/971b7dc0cfdb82df2266e54ce6c173bef0457be9ca8d6fc06a099efbe67dcddff17ccaae75020e4b8601cf48aea1f23afbf8a4be9fd501034da47bcdcbf42041
+  languageName: node
+  linkType: hard
+
+"colors@npm:1.4.0":
+  version: 1.4.0
+  resolution: "colors@npm:1.4.0"
+  checksum: 10c0/9af357c019da3c5a098a301cf64e3799d27549d8f185d86f79af23069e4f4303110d115da98483519331f6fb71c8568d5688fa1c6523600044fd4a54e97c4efb
   languageName: node
   linkType: hard
 
@@ -724,9 +724,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:14.3.2":
-  version: 14.3.2
-  resolution: "cypress@npm:14.3.2"
+"cypress@npm:14.3.3":
+  version: 14.3.3
+  resolution: "cypress@npm:14.3.3"
   dependencies:
     "@cypress/request": "npm:^3.0.8"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -741,7 +741,7 @@ __metadata:
     check-more-types: "npm:^2.24.0"
     ci-info: "npm:^4.1.0"
     cli-cursor: "npm:^3.1.0"
-    cli-table3: "npm:~0.6.5"
+    cli-table3: "npm:0.6.1"
     commander: "npm:^6.2.1"
     common-tags: "npm:^1.8.0"
     dayjs: "npm:^1.10.4"
@@ -773,7 +773,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/19a38832a716b18e8354de8b18c972cc2135db32506b67b9d20277067a5222e8b83758099251ce7a171418f528fa25f25e9f85565b80490bf8ffe7b4d95c853e
+  checksum: 10c0/b802fd1c29069037cf72d59fdfdb79c8b4779e5dd1fa58ea67c8b520fd66e64e204db9d03817950519779af081b925416ffd5ec23f7dcbf6ac52a9da1af5cfec
   languageName: node
   linkType: hard
 
@@ -960,14 +960,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:^10.1.2":
-  version: 10.1.2
-  resolution: "eslint-config-prettier@npm:10.1.2"
+"eslint-config-prettier@npm:^10.1.5":
+  version: 10.1.5
+  resolution: "eslint-config-prettier@npm:10.1.5"
   peerDependencies:
     eslint: ">=7.0.0"
   bin:
     eslint-config-prettier: bin/cli.js
-  checksum: 10c0/c22c8e29193cc8fd70becf1c2dd072513f2b3004a175c2a49404c79d1745ba4dc0edc2afd00d16b0e26d24f95813a0469e7445a25104aec218f6d84cdb1697e9
+  checksum: 10c0/5486255428e4577e8064b40f27db299faf7312b8e43d7b4bc913a6426e6c0f5950cd519cad81ae24e9aecb4002c502bc665c02e3b52efde57af2debcf27dd6e0
   languageName: node
   linkType: hard
 
@@ -2014,11 +2014,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openrefine-cypress-test-suite@workspace:."
   dependencies:
-    cypress: "npm:14.3.2"
+    cypress: "npm:14.3.3"
     cypress-file-upload: "npm:^5.0.8"
     eslint: "npm:^9.26.0"
     eslint-config-google: "npm:^0.14.0"
-    eslint-config-prettier: "npm:^10.1.2"
+    eslint-config-prettier: "npm:^10.1.5"
     eslint-plugin-cypress: "npm:^4.3.0"
     prettier: "npm:3.5.3"
   languageName: unknown
