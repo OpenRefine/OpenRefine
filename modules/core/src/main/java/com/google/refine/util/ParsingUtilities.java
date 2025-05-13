@@ -72,6 +72,9 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.io.IOUtils;
 
+/**
+ * Utility class for parsing and formatting operations in OpenRefine.
+ */
 public class ParsingUtilities {
 
     public static JsonFactory jsonFactory = new JsonFactory();
@@ -206,16 +209,19 @@ public class ParsingUtilities {
     }
 
     /**
-     * Convert a date/time to an ISO_LOCAL_DATE_TIME string
-     * 
-     * @param d
-     *            the date to be written
-     * @return string with ISO_LOCAL_DATE_TIME formatted date &amp; time
+     * Converts an OffsetDateTime to its ISO 8601 string representation.
+     * @param d the OffsetDateTime to convert
+     * @return the ISO 8601 string
      */
     static public String dateToString(OffsetDateTime d) {
         return d.format(ISO8601);
     }
 
+    /**
+     * Converts a LocalDateTime to its ISO 8601 string representation.
+     * @param d the LocalDateTime to convert
+     * @return the ISO 8601 string
+     */
     static public String localDateToString(LocalDateTime d) {
         OffsetDateTime odt = OffsetDateTime.of(d,
                 OffsetDateTime.now().getOffset());
@@ -224,13 +230,9 @@ public class ParsingUtilities {
     }
 
     /**
-     * Parse an ISO_LOCAL_DATE_TIME formatted string into a Java Date. For backward compatibility, to support the
-     * version &lt;= 2.8, cannot use the DateTimeFormatter.ISO_OFFSET_DATE_TIME. Instead, use the ISO8601 below format:
-     * yyyy-MM-dd'T'HH:mm:ss'Z'
-     * 
-     * @param s
-     *            the string to be parsed
-     * @return LocalDateTime or null if the parse failed
+     * Parses a string into an OffsetDateTime.
+     * @param s the string to parse
+     * @return the parsed OffsetDateTime
      */
     static public OffsetDateTime stringToDate(String s) {
         // Accept timestamps with an explicit time zone
@@ -251,6 +253,11 @@ public class ParsingUtilities {
         return null;
     }
 
+    /**
+     * Parses a string into a LocalDateTime.
+     * @param s the string to parse
+     * @return the parsed LocalDateTime
+     */
     static public LocalDateTime stringToLocalDate(String s) {
         // parse the string as a date and express it in local time
         OffsetDateTime parsed = stringToDate(s);
