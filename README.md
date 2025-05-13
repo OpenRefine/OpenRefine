@@ -61,3 +61,28 @@ This software was created by Metaweb Technologies, Inc. and originally written a
 Since 2020, OpenRefine is fiscally sponsored by [Code for Science and Society](https://www.codeforsociety.org/) (CS&S).
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to contribute yourself.
+
+## Development Quickstart
+
+To contribute to OpenRefine, please follow these steps:
+
+1. **Install dependencies**: Ensure you have [JDK 11+](https://adoptium.net/), [Apache Maven](https://maven.apache.org/), and [Node.js 18+](https://nodejs.org/).
+2. **Run tests**:
+   ```sh
+   mvn test
+   ```
+3. **Run static analysis (Checkstyle & SpotBugs)**:
+   ```sh
+   mvn checkstyle:check spotbugs:check
+   ```
+4. **Format code**:
+   ```sh
+   mvn formatter:format
+   ```
+5. **Check code coverage**:
+   ```sh
+   mvn jacoco:report
+   # Open target/site/jacoco/index.html in your browser
+   ```
+
+Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.

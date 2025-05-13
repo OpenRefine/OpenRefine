@@ -105,11 +105,10 @@ public class ParsingUtilitiesTests extends RefineTest {
         try {
             TimeZone.setDefault(TimeZone.getTimeZone("JST"));
             Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
-            // TODO: This doesn't really make sense since a LocalDate, by definition, doesn't have timezone info
+            // LocalDateTime does not store timezone information, so the hour reflects the system default timezone.
             Assert.assertEquals(ParsingUtilities.localDateToString(
                     ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
                     "2001-08-12T00:00:00Z");
-
         } finally {
             TimeZone.setDefault(originalTimeZone);
         }

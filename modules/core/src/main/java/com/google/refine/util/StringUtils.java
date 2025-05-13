@@ -30,14 +30,16 @@ package com.google.refine.util;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 
+/**
+ * Utility class for string formatting and conversion in OpenRefine.
+ */
 public class StringUtils {
 
     /**
-     * String formatting method that knows how to format dates (using the default locale's date formatter)
-     * 
-     * @param o
-     *            object to be converted to a string
-     * @return string representing object
+     * Converts an object to its string representation, with special handling for OffsetDateTime and arrays.
+     *
+     * @param o object to be converted to a string
+     * @return string representing the object
      */
     public static String toString(Object o) {
         // to replace the DateFormat with java.time.format.DateTimeFormatter
