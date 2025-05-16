@@ -198,6 +198,26 @@ public class ImporterUtilities {
         project.columnModel.update();
     }
 
+    /**
+     * @param columnsHasData
+     *            Record if there is data in each column( false:null;true:has data)
+     */
+    static public void deleteEmptyColumns(Project project, List<Boolean> columnsHasData) throws ModelException {
+        // skip, if no columns to delete
+        if (columnsHasData.isEmpty() || columnsHasData.stream().allMatch(Boolean.TRUE::equals)) {
+            return;
+        }
+
+        project.columnModel.update(); // make sure all our cell indexes are up to date
+        for (int c = 0; c < columnsHasData.size(); c++) {
+            if (Boolean.FALSE.equals(columnsHasData.get(c))) {
+                // remove column from columns
+                project.columnModel.removeColumnByCellIndex(c);
+            }
+        }
+        project.columnModel.update();
+    }
+
     static public interface MultiFileReadingProgress {
 
         public void startFile(String fileSource);

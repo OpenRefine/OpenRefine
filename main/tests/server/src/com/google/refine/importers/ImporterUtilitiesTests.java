@@ -207,7 +207,7 @@ public class ImporterUtilitiesTests extends RefineTest {
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 3");
 
         // This will mock the situation of deleting empty columns(col2&col4)
-        TabularImportingParserBase.deleteEmptyColumns(columnsHasData, project);
+        ImporterUtilities.deleteEmptyColumns(project, columnsHasData);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 3");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 5");
