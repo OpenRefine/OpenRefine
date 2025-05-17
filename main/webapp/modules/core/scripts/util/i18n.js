@@ -1,12 +1,16 @@
 I18NUtil = {};
 
 /*
-   Initialize i18n and load message translation file from the server.
-
-   Note that the language is set by the 'userLang' user preference setting.  You can change that by
-   clicking on 'Language Settings' on the landing page.
-*/
+ * Initialize i18n and load message translation file for
+ * the given module.
+ * @public
+ * @param {string} module The module name to load the translation file for.
+ */
 I18NUtil.init = function (module) {
+    /*
+     * Note that the browser language is only used to show a warning if the server
+     * replies with another. The language is instead picked form the `userLang` preference.
+     */
     var lang = (navigator.language).split("-")[0];
     var dictionary = "";
 
