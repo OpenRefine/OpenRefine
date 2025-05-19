@@ -196,11 +196,11 @@ DataTableView.prototype.render = function() {
     '</div>' +
     '<div bind="dataTableContainer" class="data-table-container">' +
       '<table class="data-table">'+
-        '<colgroup bind="colGroup"></colgroup>'+          
+        '<colgroup bind="colGroup"></colgroup>'+
         '<thead bind="tableHeader" class="data-table-header">'+
-        '</thead>'+          
+        '</thead>'+
         '<tbody bind="table" class="data-table">'+
-        '</tbody>'+          
+        '</tbody>'+
       '</table>' +
     '</div>'
   );
@@ -610,7 +610,7 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
   }
 }
 
-// --- NEW: enable drag-and-drop using jQuery UI Sortable ---
+// --- enable drag-and-drop using jQuery UI Sortable ---
 DataTableView.prototype._enableHeaderDrag = function() {
   var $headerRow = this._div.find("thead tr");
   if ($headerRow.data("ui-sortable")) return; // already enabled
