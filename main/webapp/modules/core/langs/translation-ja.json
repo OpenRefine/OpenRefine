@@ -940,5 +940,7 @@
     "core-project/recipe-created-columns": "作成されたカラム:",
     "core-project/columns-in-the-recipe": "レシピでは",
     "core-project/columns-in-the-project": "プロジェクトでは",
-    "core-project/error-created-column": "レシピが使用するため、カラム名\"$1\" はプロジェクトで許されません。"
+    "core-project/error-created-column": "レシピが使用するため、カラム名\"$1\" はプロジェクトで許されません。",
+    "core-index/refine-version-copied": "バージョン情報をクリップボードにコピーしました!",
+    "core-index/refine-version-copy-to-clipboard": "バージョン情報をクリップボードにコピー"
 }

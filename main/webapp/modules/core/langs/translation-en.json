@@ -10,6 +10,8 @@
     "core-index/version": "Version",
     "core-index/new-version": "New Version",
     "core-index/refine-version": "Version $1",
+    "core-index/refine-version-copied": "Copied version information to your clipboard!",
+    "core-index/refine-version-copy-to-clipboard": "Copy version information to your clipboard",
     "core-index/refine-extensions": "Extensions: $1",
     "core-index/new-version-available": "Download OpenRefine $1 now.",
     "core-index/notification-opt-in": "Do you want to be notified of new OpenRefine releases and events?",
