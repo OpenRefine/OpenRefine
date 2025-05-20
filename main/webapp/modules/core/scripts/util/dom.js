@@ -33,6 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var DOM = {};
 
+/*
+ * Binds one or more DOM elements to a map by their "bind" attribute.
+ * @public
+ * @param {Element} elmt The DOM element to bind.
+ * @return {Object} A map of bound elements.
+ */
 DOM.bind = function(elmt) {
   var map = {};
   var idmap = {};
@@ -104,6 +110,16 @@ DOM._resolveIdInDOMChildren = function(elmt, idmap) {
 };
 
 DOM._loadedHTML = {};
+
+/*
+ * Loads an HTML file from the server. The path is relative to the module
+ * directory. The module name is used to determine the base URL for the
+ * module.
+ * @public
+ * @param {string} module The name of the module.
+ * @param {string} path The path to the HTML file.
+ * @return {string} The HTML content.
+ */
 DOM.loadHTML = function(module, path) {
   var fullPath = (ModuleWirings[module] + path).substring(1);
   if (!(fullPath in DOM._loadedHTML)) {
@@ -119,10 +135,22 @@ DOM.loadHTML = function(module, path) {
   return DOM._loadedHTML[fullPath];
 };
 
+/*
+ * Returns the combined horizontal padding and border width of an element.
+ * @public
+ * @param {Element} elmt The element.
+ * @return {number} The horizontal padding.
+ */
 DOM.getHPaddings = function(elmt) {
   return elmt.outerWidth() - elmt.width();
 };
 
+/*
+ * Returns the combined vertical padding and border width of an element.
+ * @public
+ * @param {Element} elmt The element.
+ * @return {number} The vertical padding.
+ */
 DOM.getVPaddings = function(elmt) {
   return elmt.outerHeight() - elmt.height();
 };
