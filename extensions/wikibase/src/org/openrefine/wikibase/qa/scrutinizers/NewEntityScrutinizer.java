@@ -27,7 +27,9 @@ package org.openrefine.wikibase.qa.scrutinizers;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,6 +39,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import org.openrefine.wikibase.qa.QAWarning;
+import org.openrefine.wikibase.schema.entityvalues.SuggestedPropertyIdValue;
 import org.openrefine.wikibase.updates.ItemEdit;
 import org.openrefine.wikibase.updates.MediaInfoEdit;
 
@@ -61,14 +64,18 @@ public class NewEntityScrutinizer extends EditScrutinizer {
     public static final String newMediaType = "new-media-created";
     public static final String newMediaChunkedUpload = "new-media-chunked-upload";
     public static final String invalidFilePathType = "invalid-file-path";
+    public static final String newMediaMissingProperty = "new-media-missing-property";
     // TODO add checks for bad file names (which are page titles): https://www.mediawiki.org/wiki/Help:Bad_title
     // https://commons.wikimedia.org/wiki/Commons:File_naming
 
     // map from seen pairs of labels and descriptions in a given language to an example id where this was seen
     Map<LabelDescription, EntityIdValue> labelDescriptionPairs;
+    // New media validation constraints
+    List<String> newMediaRequiredProperties;
 
     @Override
     public boolean prepareDependencies() {
+        newMediaRequiredProperties = manifest.getMandatoryMediaInfoPropertyIds();
         return true;
     }
 
@@ -111,6 +118,21 @@ public class NewEntityScrutinizer extends EditScrutinizer {
                 issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
+
+            List<String> propertiesSet = new ArrayList<>();
+            for (Statement statement : update.getAddedStatements()) {
+                propertiesSet.add(statement.getClaim().getMainSnak().getPropertyId().getId());
+            }
+
+            for (Object requiredProperty : newMediaRequiredProperties) {
+                if (!propertiesSet.contains(requiredProperty)) {
+                    QAWarning issue = new QAWarning(newMediaMissingProperty, (String) requiredProperty, QAWarning.Severity.IMPORTANT, 1);
+                    issue.setProperty("property_entity",
+                            new SuggestedPropertyIdValue((String) requiredProperty, this.manifest.getSiteIri(), ""));
+                    addIssue(issue);
+                }
+            }
+
         }
     }
 

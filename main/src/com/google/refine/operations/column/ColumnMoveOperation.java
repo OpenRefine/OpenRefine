@@ -33,36 +33,43 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
-import com.google.refine.history.Change;
-import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.model.changes.ColumnMoveChange;
 import com.google.refine.operations.OperationDescription;
 
-public class ColumnMoveOperation extends AbstractOperation {
+public class ColumnMoveOperation extends AbstractColumnMoveOperation {
 
-    final protected String _columnName;
     final protected int _index;
 
     @JsonCreator
     public ColumnMoveOperation(
             @JsonProperty("columnName") String columnName,
             @JsonProperty("index") int index) {
-        _columnName = columnName;
+        super(columnName);
         _index = index;
     }
 
-    @JsonProperty("columnName")
-    public String getColumnName() {
-        return _columnName;
+    @Override
+    public void validate() {
+        super.validate();
+        Validate.isTrue(_index >= 0, "Invalid column index");
     }
 
     @JsonProperty("index")
     public int getIndex() {
+        return _index;
+    }
+
+    @Override
+    protected int getNewColumnIndex(int currentIndex, Project project) {
+        if (_index < 0 || _index >= project.columnModel.columns.size()) {
+            throw new IllegalArgumentException("New column index out of range " + _index);
+        }
         return _index;
     }
 
@@ -72,16 +79,7 @@ public class ColumnMoveOperation extends AbstractOperation {
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        if (project.columnModel.getColumnByName(_columnName) == null) {
-            throw new Exception("No column named " + _columnName);
-        }
-        if (_index < 0 || _index >= project.columnModel.columns.size()) {
-            throw new Exception("New column index out of range " + _index);
-        }
-
-        Change change = new ColumnMoveChange(_columnName, _index);
-
-        return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnMoveOperation.this, change);
+    public ColumnMoveOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ColumnMoveOperation(newColumnNames.getOrDefault(_columnName, _columnName), _index);
     }
 }

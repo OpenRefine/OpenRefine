@@ -226,7 +226,7 @@ ClusteringDialog.prototype._renderClusteringFunctions = function() {
                     var option = $('<option></option>')
                         .val("UserDefinedKeyer")
                         .text(functions[i].name)
-                        .data('expression', functions[i].expression)
+                        .data('expression', functions[i].expressionLang + ':' + functions[i].expression)
                         .appendTo(self._elmts.keyingFunctionSelector);
 
                 }
@@ -243,7 +243,7 @@ ClusteringDialog.prototype._renderClusteringFunctions = function() {
                     var option = $('<option></option>')
                         .val("UserDefinedDistance")
                         .text(functions[i].name)
-                        .data('expression', functions[i].expression)
+                        .data('expression', functions[i].expressionLang + ':' + functions[i].expression)
                         .appendTo(self._elmts.distanceFunctionSelector);
                 }
             },
@@ -444,7 +444,7 @@ ClusteringDialog.prototype._cluster = function() {
 
     this._elmts.resultSummary.empty();
 
-    $.post(
+    Refine.postCSRF(
         "command/core/compute-clusters?" + $.param({ project: theProject.id }),
         {
             engine: JSON.stringify(ui.browsingEngine.getJSON()),

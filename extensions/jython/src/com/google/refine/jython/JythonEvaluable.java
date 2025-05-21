@@ -50,6 +50,7 @@ import org.python.core.PyLong;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PySyntaxError;
 import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,13 +69,20 @@ public class JythonEvaluable implements Evaluable {
         return new LanguageSpecificParser() {
 
             @Override
-            public Evaluable parse(String s) throws ParsingException {
-                return new JythonEvaluable(s);
+            public Evaluable parse(String source, String languagePrefix) throws ParsingException {
+                try {
+                    return new JythonEvaluable(source, languagePrefix);
+                } catch (PySyntaxError e) {
+                    throw new ParsingException("Syntax error");
+                }
             }
+
         };
     }
 
     private final String s_functionName;
+    private final String s_originalSource;
+    private final String s_languagePrefix;
 
     private static PythonInterpreter _engine;
 
@@ -103,22 +111,29 @@ public class JythonEvaluable implements Evaluable {
         logger.debug("Done with static block in Jython initialization");
     }
 
-    public JythonEvaluable(String s) {
+    // Convenience constructor for tests
+    protected JythonEvaluable(String source) {
+        this(source, "jython");
+    }
+
+    public JythonEvaluable(String source, String languagePrefix) {
+        s_originalSource = source;
+        s_languagePrefix = languagePrefix;
         if (_engine == null) {
             // TODO: This could potentially be done in the background, after startup, but before the user needs it
             logger.debug("Invoking constructor for PythonInterpreter()");
             _engine = new PythonInterpreter();
             logger.debug("Done constructor for PythonInterpreter()");
         }
-        this.s_functionName = String.format("__temp_%d__", Math.abs(s.hashCode()));
+        this.s_functionName = String.format("__temp_%d__", Math.abs(source.hashCode()));
 
         // indent and create a function out of the code
-        String[] lines = s.split("\r\n|\r|\n");
+        String[] lines = source.split("\r\n|\r|\n");
 
         StringBuffer sb = new StringBuffer(1024);
         sb.append("def ");
         sb.append(s_functionName);
-        sb.append("(value, cell, cells, row, rowIndex):");
+        sb.append("(value, cell, cells, row, rowIndex, value1, value2):");
         for (String line : lines) {
             sb.append("\n  ");
             sb.append(line);
@@ -130,29 +145,41 @@ public class JythonEvaluable implements Evaluable {
     @Override
     public Object evaluate(Properties bindings) {
         try {
-            Object value = bindings.get("value");
-            PyObject pyValue;
-            if (value instanceof OffsetDateTime) {
-                // We know the OffsetDateTime is always at UTC, but just in case it ever changes, do the UTC change
-                pyValue = Py.newDatetime(Timestamp.valueOf(((OffsetDateTime) value).atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()));
-            } else {
-                pyValue = Py.java2py(value);
-            }
             // call the temporary PyFunction directly
             Object result = ((PyFunction) _engine.get(s_functionName)).__call__(
 
                     new PyObject[] {
-                            pyValue,
-                            new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
-                            new JythonHasFieldsWrapper((HasFields) bindings.get("cells"), bindings),
-                            new JythonHasFieldsWrapper((HasFields) bindings.get("row"), bindings),
-                            Py.java2py(bindings.get("rowIndex"))
+                            getValue("value", bindings),
+                            getObject("cell", bindings),
+                            getObject("cells", bindings),
+                            getObject("row", bindings),
+                            getValue("rowIndex", bindings),
+                            getValue("value1", bindings),
+                            getValue("value2", bindings)
                     });
 
             return unwrap(result);
         } catch (PyException e) {
             return new EvalError(e.getMessage());
         }
+    }
+
+    private JythonHasFieldsWrapper getObject(String key, Properties bindings) {
+        return new JythonHasFieldsWrapper((HasFields) bindings.get(key), bindings);
+    }
+
+    private PyObject getValue(String key, Properties bindings) {
+        Object value = bindings.get(key);
+        PyObject pyValue;
+        if (value instanceof OffsetDateTime) {
+            // We know the OffsetDateTime is always at UTC, but just in case it ever
+            // changes, do the UTC change
+            pyValue = Py.newDatetime(
+                    Timestamp.valueOf(((OffsetDateTime) value).atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()));
+        } else {
+            pyValue = Py.java2py(value);
+        }
+        return pyValue;
     }
 
     protected Object unwrap(Object result) {
@@ -201,5 +228,15 @@ public class JythonEvaluable implements Evaluable {
         } else {
             return po;
         }
+    }
+
+    @Override
+    public String getSource() {
+        return s_originalSource;
+    }
+
+    @Override
+    public String getLanguagePrefix() {
+        return s_languagePrefix;
     }
 }

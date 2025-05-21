@@ -39,7 +39,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -47,6 +50,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.apache.commons.lang.Validate;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.message.BasicHeader;
 
@@ -58,10 +62,12 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellAtRow;
@@ -141,6 +147,21 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
     }
 
+    @Override
+    public void validate() {
+        super.validate();
+        Validate.notNull(_baseColumnName, "Missing base column name");
+        Validate.notNull(_urlExpression, "Missing URL expression");
+        try {
+            MetaParser.parse(_urlExpression);
+        } catch (ParsingException e) {
+            throw new IllegalArgumentException(String.format("Invalid expression '%s': %s", _urlExpression, e.getMessage()), e);
+        }
+        Validate.notNull(_onError, "Missing 'on error' behaviour");
+        Validate.notNull(_newColumnName, "Missing new column name");
+        Validate.isTrue(_columnInsertIndex >= 0, "Invalid column insert index");
+    }
+
     @JsonProperty("newColumnName")
     public String getNewColumnName() {
         return _newColumnName;
@@ -190,6 +211,43 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
         return OperationDescription.column_addition_by_fetching_urls_desc(_newColumnName, cellsAtRows.size(), column.getName(),
                 _urlExpression);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        try {
+            Evaluable evaluable = MetaParser.parse(_urlExpression);
+            return evaluable.getColumnDependencies(Optional.of(_baseColumnName));
+        } catch (ParsingException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.builder().addColumn(_newColumnName, _baseColumnName).build());
+    }
+
+    @Override
+    public ColumnAdditionByFetchingURLsOperation renameColumns(Map<String, String> newColumnNames) {
+        String renamedExpression;
+        try {
+            Evaluable evaluable = MetaParser.parse(_urlExpression);
+            Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
+            renamedExpression = renamedEvaluable.getFullSource();
+        } catch (ParsingException e) {
+            return this;
+        }
+        return new ColumnAdditionByFetchingURLsOperation(
+                _engineConfig.renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_baseColumnName, _baseColumnName),
+                renamedExpression,
+                _onError,
+                newColumnNames.getOrDefault(_newColumnName, _newColumnName),
+                _columnInsertIndex,
+                _delay,
+                _cacheResponses,
+                _httpHeadersJson);
     }
 
     @Override

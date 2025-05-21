@@ -2,14 +2,14 @@
   <div class="dialog-border">
     <div class="dialog-header" bind="dialogHeader"></div>
     <div class="dialog-body" bind="dialogBody">
-      <div class="grid-layout layout-normal layout-full "><table>
+      <div class="grid-layout layout-normal layout-full "><table role="presentation">
         <tr>
           <td><span bind="or_views_sortAs"></span></td>
           <td><span bind="or_views_positionBlank"></span></td>
         </tr>
         <tr>
           <td style="vertical-align: top;">
-            <div class="grid-layout layout-tightest grid-layout-for-text" bind="valueTypeOptions"><table>
+            <div class="grid-layout layout-tightest grid-layout-for-text" bind="valueTypeOptions"><table role="presentation">
               <tr>
                 <td width="1"><input type="radio" name="sorting-dialog-value-type" value="string" id="$sorting-dialog-value-type-string" /></td>
                 <td><label for="$sorting-dialog-value-type-string" bind="or_views_text"></label>

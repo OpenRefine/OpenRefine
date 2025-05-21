@@ -72,5 +72,6 @@
     "core-index-import/creating-proj": "創建項目…",
     "core-index-import/format": "格式",
     "core-index-import/unknown-err": "未知錯誤",
-    "core-index-import/sel-by-regex": "按文件名通過正則表達式選擇"
+    "core-index-import/sel-by-regex": "按文件名通過正則表達式選擇",
+    "core-about/definition": "OpenRefine 是處理混亂資料的強大工具。使用 OpenRefine 可改善資料的一致性、將資料連結至 Wikidata 等資料註冊處、使用其他來源的資料來擴充資料、將資料轉換成其他工具可使用的不同格式，以及將資料貢獻回資料來源。OpenRefine 不是網路服務，而是在您自己電腦上執行的桌面應用程式，因此您可以私下處理敏感資料。"
 }

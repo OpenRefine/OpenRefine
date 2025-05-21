@@ -7,7 +7,7 @@ describe(__filename, function () {
       'Move column to beginning',
     ]);
 
-    cy.assertNotificationContainingText('Move column Shrt_Desc to position 0');
+    cy.assertNotificationContainingText('Move column Shrt_Desc to the beginning');
 
     cy.get('.data-table-header th:nth-child(2)').should(
       'to.contain',
@@ -19,7 +19,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', ['Edit column', 'Move column to end']);
 
-    cy.assertNotificationContainingText('Move column Shrt_Desc to position 3');
+    cy.assertNotificationContainingText('Move column Shrt_Desc to the end');
 
     cy.get('.data-table-header th:nth-child(5)').should(
       'to.contain',
@@ -31,7 +31,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', ['Edit column', 'Move column left']);
 
-    cy.assertNotificationContainingText('Move column Shrt_Desc to position 0');
+    cy.assertNotificationContainingText('Move column Shrt_Desc to the left');
 
     cy.get('.data-table-header th:nth-child(2)').should(
       'to.contain',
@@ -43,7 +43,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Shrt_Desc', ['Edit column', 'Move column right']);
 
-    cy.assertNotificationContainingText('Move column Shrt_Desc to position 2');
+    cy.assertNotificationContainingText('Move column Shrt_Desc to the right');
 
     cy.get('.data-table-header th:nth-child(4)').should(
       'to.contain',

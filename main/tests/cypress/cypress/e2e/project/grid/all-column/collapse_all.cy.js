@@ -7,11 +7,11 @@ const fixture = [
       ];
   it('it collapses all columns', function () {
     cy.loadAndVisitProject(fixture);
-    cy.columnActionClick('All', ['View', 'Collapse all columns']);
+    cy.columnActionClick('All', ['Hide / Show', 'Hide all columns']);
 
-    cy.get('[title="Expand column \'a\'"]').should('to.contain', '');
-    cy.get('[title="Expand column \'b\'"]').should('to.contain', '');
-    cy.get('[title="Expand column \'c\'"]').should('to.contain', '');
+    cy.get('[title="Show column \'a\'"]').should('to.contain', '');
+    cy.get('[title="Show column \'b\'"]').should('to.contain', '');
+    cy.get('[title="Show column \'c\'"]').should('to.contain', '');
 
   });
 });

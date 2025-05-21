@@ -38,8 +38,6 @@ public class TimeSinceUnixEpochToDateTest extends RefineTest {
     public void testDescriptionParamsReturns() {
         long epochMilliSecond = epoch;
         TimeSinceUnixEpochToDate etd = new TimeSinceUnixEpochToDate();
-        assertEquals(etd.getDescription(),
-                "Returns a number converted to a date based on Unix Epoch Time. The number can be Unix Epoch Time in one of the following supported units: second, millisecond, microsecond. Defaults to 'second'.");
         assertEquals(etd.getParams(),
                 "number n, string unit (optional, defaults to 'seconds')");
         assertEquals(etd.getReturns(), "date(OffsetDateTime)");

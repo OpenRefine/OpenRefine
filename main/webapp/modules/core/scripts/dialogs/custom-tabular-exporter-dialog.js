@@ -309,25 +309,26 @@ CustomTabularExporterDialog.prototype._postExport = function(preview) {
   }
   
   var ext = CustomTabularExporterDialog.formats[format].extension;
-  var form = ExporterManager.prepareExportRowsForm(format, !exportAllRowsCheckbox, ext);
+  Refine.wrapCSRF(function(csrfToken) {
+    var form = ExporterManager.prepareExportRowsForm(format, !exportAllRowsCheckbox, ext, csrfToken);
 
-  if (preview) {
-    $(form).attr("target", "refine-export");
-  }
-  $('<input />')
-  .attr("name", "options")
-  .val(JSON.stringify(options))
-  .appendTo(form);
-  if (encoding) {
+    if (preview) {
+      $(form).attr("target", "refine-export");
+    }
     $('<input />')
-    .attr("name", "encoding")
-    .val(encoding)
-    .appendTo(form);
-  }
-  $('<input />')
-  .attr("name", "preview")
-  .val(preview)
-  .appendTo(form);
+      .attr("name", "options")
+      .val(JSON.stringify(options))
+      .appendTo(form);
+    if (encoding) {
+      $('<input />')
+        .attr("name", "encoding")
+        .val(encoding)
+        .appendTo(form);
+    }
+    $('<input />')
+      .attr("name", "preview")
+      .val(preview)
+      .appendTo(form);
 
     document.body.appendChild(form);
     if (preview) {
@@ -335,6 +336,7 @@ CustomTabularExporterDialog.prototype._postExport = function(preview) {
     }
     form.submit();
     document.body.removeChild(form);
+  });
 }
 
 CustomTabularExporterDialog.prototype._selectColumn = function(columnName) {

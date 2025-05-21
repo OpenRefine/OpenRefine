@@ -28,12 +28,18 @@
 package com.google.refine.operations.row;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowAdditionChange;
@@ -44,15 +50,39 @@ public class RowAdditionOperation extends AbstractOperation {
     final private List<Row> _rows;
     final private int _insertionIndex;
 
-    @JsonCreator
     public RowAdditionOperation(
-            @JsonProperty("rows") List<Row> rows,
-            @JsonProperty("insertionIndex") int insertionIndex) {
+            List<Row> rows,
+            int insertionIndex) {
         _rows = rows;
         _insertionIndex = insertionIndex;
     }
 
-    @JsonProperty("rows")
+    /**
+     * Deserialization constructor to provide compatibility for the legacy serialization format. In this format, only
+     * the number of rows is relevant: the contents of the rows must be ignored, because they might have been corrupted
+     * due to mutability issues in https://github.com/OpenRefine/OpenRefine/issues/7245.
+     * 
+     * @param addedRows
+     *            the rows to add to the project
+     * @param rows
+     *            a legacy serialization field, whose length is is the only thing that matters. If provided, it will be
+     *            converted to a list of empty rows of the same size.
+     * @param insertionIndex
+     *            the place in the grid where to insert this list.
+     * @deprecated should not be called directly, is only provided for JSON deserialization.
+     */
+    @Deprecated
+    @JsonCreator
+    public RowAdditionOperation(
+            @JsonProperty("addedRows") List<Row> addedRows,
+            @JsonProperty("rows") List<Object> rows,
+            @JsonProperty("index") int insertionIndex) {
+        _rows = addedRows != null ? addedRows
+                : (rows == null ? List.of() : rows.stream().map(r -> new Row(0)).collect(Collectors.toList()));
+        _insertionIndex = insertionIndex;
+    }
+
+    @JsonProperty("addedRows")
     public List<Row> getRows() {
         return _rows;
     }
@@ -65,6 +95,21 @@ public class RowAdditionOperation extends AbstractOperation {
     @Override
     protected String getBriefDescription(Project project) {
         return OperationDescription.row_addition_brief();
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(Set.of());
+    }
+
+    @JsonIgnore
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.empty());
+    }
+
+    @Override
+    public RowAdditionOperation renameColumns(Map<String, String> newColumnNames) {
+        return this;
     }
 
     @Override

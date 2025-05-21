@@ -7,7 +7,7 @@
     "private": true,
     "engines": {
         "node": ">=20.0.0",
-        "npm":  ">=8.11.0",
+        "npm": ">=8.11.0",
         "yarn": ">=1.22.15"
     },
     "scripts": {
@@ -16,14 +16,14 @@
         "lint": "prettier --check . && eslint ."
     },
     "dependencies": {
-        "cypress": "13.15.0",
+        "cypress": "14.3.3",
         "cypress-file-upload": "^5.0.8"
     },
     "devDependencies": {
-        "eslint": "^9.12.0",
+        "eslint": "^9.27.0",
         "eslint-config-google": "^0.14.0",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-cypress": "^3.5.0",
-        "prettier": "3.3.3"
+        "eslint-config-prettier": "^10.1.5",
+        "eslint-plugin-cypress": "^4.3.0",
+        "prettier": "3.5.3"
     }
 }

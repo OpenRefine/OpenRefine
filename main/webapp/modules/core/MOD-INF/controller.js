@@ -86,6 +86,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "undo-redo", new Packages.com.google.refine.commands.history.UndoRedoCommand());
   RS.registerCommand(module, "apply-operations", new Packages.com.google.refine.commands.history.ApplyOperationsCommand());
+  RS.registerCommand(module, "get-column-dependencies", new Packages.com.google.refine.commands.history.GetColumnDependenciesCommand());
   RS.registerCommand(module, "cancel-processes", new Packages.com.google.refine.commands.history.CancelProcessesCommand());
 
   RS.registerCommand(module, "compute-facets", new Packages.com.google.refine.commands.browsing.ComputeFacetsCommand());
@@ -135,6 +136,8 @@ function registerCommands() {
   RS.registerCommand(module, "remove-rows", new Packages.com.google.refine.commands.row.RemoveRowsCommand());
   RS.registerCommand(module, "reorder-rows", new Packages.com.google.refine.commands.row.ReorderRowsCommand());
   RS.registerCommand(module, "add-rows", new Packages.com.google.refine.commands.row.AddRowsCommand());
+  RS.registerCommand(module, "remove-duplicate-rows", new Packages.com.google.refine.commands.row.RemoveDuplicateRowsCommand());
+  RS.registerCommand(module, "keep-matching-rows", new Packages.com.google.refine.commands.row.KeepMatchingRowsCommand());
 
   RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
   RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
@@ -147,6 +150,7 @@ function registerCommands() {
   RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
+  RS.registerCommand(module, "open-extensions-dir", new Packages.com.google.refine.commands.OpenExtensionsDirCommand());
   
 }
 
@@ -166,8 +170,13 @@ function registerOperations() {
 
   OR.registerOperation(module, "column-addition", Packages.com.google.refine.operations.column.ColumnAdditionOperation);
   OR.registerOperation(module, "column-removal", Packages.com.google.refine.operations.column.ColumnRemovalOperation);
+  OR.registerOperation(module, "column-multi-removal", Packages.com.google.refine.operations.column.ColumnMultiRemovalOperation);
   OR.registerOperation(module, "column-rename", Packages.com.google.refine.operations.column.ColumnRenameOperation);
   OR.registerOperation(module, "column-move", Packages.com.google.refine.operations.column.ColumnMoveOperation);
+  OR.registerOperation(module, "column-move-left", Packages.com.google.refine.operations.column.ColumnMoveLeftOperation);
+  OR.registerOperation(module, "column-move-right", Packages.com.google.refine.operations.column.ColumnMoveRightOperation);
+  OR.registerOperation(module, "column-move-first", Packages.com.google.refine.operations.column.ColumnMoveFirstOperation);
+  OR.registerOperation(module, "column-move-last", Packages.com.google.refine.operations.column.ColumnMoveLastOperation);
   OR.registerOperation(module, "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);
   OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation);
   OR.registerOperation(module, "column-reorder", Packages.com.google.refine.operations.column.ColumnReorderOperation);
@@ -177,6 +186,8 @@ function registerOperations() {
   OR.registerOperation(module, "row-flag", Packages.com.google.refine.operations.row.RowFlagOperation);
   OR.registerOperation(module, "row-reorder", Packages.com.google.refine.operations.row.RowReorderOperation);
   OR.registerOperation(module, "row-addition", Packages.com.google.refine.operations.row.RowAdditionOperation);
+  OR.registerOperation(module, "row-duplicate-removal", Packages.com.google.refine.operations.row.RowDuplicatesRemovalOperation);
+  OR.registerOperation(module, "row-keep-matched", Packages.com.google.refine.operations.row.RowKeepMatchedOperation);
 
   OR.registerOperation(module, "recon", Packages.com.google.refine.operations.recon.ReconOperation);
   OR.registerOperation(module, "recon-mark-new-topics", Packages.com.google.refine.operations.recon.ReconMarkNewTopicsOperation);
@@ -409,13 +420,17 @@ function init() {
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
       "scripts/util/encoding.js",
+      "scripts/util/host.js",
       "scripts/util/sign.js",
+      "scripts/util/filter-lists.js",
+      "scripts/util/filter-lists-search.js",
 
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
       "scripts/index/open-project-ui.js",
       "scripts/index/import-project-ui.js",
       "scripts/index/lang-settings-ui.js",
+      "scripts/index/manage-extensions-ui.js",
 
       "scripts/index/default-importing-controller/controller.js",
       "scripts/index/default-importing-controller/file-selection-panel.js",
@@ -450,7 +465,7 @@ function init() {
       "styles/common.css",
       "styles/util/dialog.css",
       "styles/util/encoding.css",
-      
+
       "styles/index.css",
       "styles/index/create-project-ui.css",
       "styles/index/open-project-ui.css",
@@ -490,6 +505,7 @@ function init() {
 
       "scripts/widgets/histogram-widget.js",
       "scripts/widgets/slider-widget.js",
+      "scripts/widgets/recipe-widget.js",
 
       "scripts/project/browsing-engine.js",
       "scripts/project/history-panel.js",
@@ -498,6 +514,8 @@ function init() {
       "scripts/project/summary-bar.js",
       "scripts/project/exporters.js",
       "scripts/project/scripting.js",
+      "scripts/project/operation-icons.js",
+      "scripts/project/facet-icons.js",
 
       "scripts/facets/facet.js",
       "scripts/facets/list-facet.js",
@@ -526,6 +544,9 @@ function init() {
       "scripts/reconciliation/recon-dialog-2.js",
       "scripts/reconciliation/standard-service-panel.js",
 
+      "scripts/dialogs/extract-operations-dialog.js",
+      "scripts/dialogs/apply-operations-dialog.js",
+
       "scripts/dialogs/expression-preview-dialog.js",
       "scripts/dialogs/add-column-by-reconciliation.js",
       "scripts/dialogs/clustering-dialog.js",
@@ -533,12 +554,14 @@ function init() {
       "scripts/dialogs/templating-exporter-dialog.js",
       "scripts/dialogs/column-reordering-dialog.js",
       "scripts/dialogs/common-transform-dialog.js",
+      "scripts/dialogs/column-mapping-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
       "scripts/dialogs/clustering-functions-dialog.js",
-      "scripts/dialogs/add-rows-dialog.js"
+      "scripts/dialogs/add-rows-dialog.js",
+      "scripts/dialogs/remove-duplicate-rows-dialog.js"
     ])
   );
 
@@ -582,6 +605,8 @@ function init() {
       "styles/reconciliation/recon-dialog.css",
       "styles/reconciliation/standard-service-panel.css",
       "styles/reconciliation/add-column-by-reconciliation.css",
+      "styles/dialogs/column-mapping-dialog.css",
+      "styles/dialogs/remove-duplicate-rows-dialog.css"
     ]
   );
 
@@ -618,7 +643,7 @@ function process(path, request, response) {
     butterfly.sendString(
       request, 
       response, 
-      "var ModuleWirings = " + butterfly.toJSONString(wirings) + ";", 
+      "var ModuleWirings = " + JSON.stringify(wirings) + ";",
       encoding, 
       "text/javascript"
     );
@@ -693,11 +718,18 @@ function process(path, request, response) {
         for (var key in styles) {
           if (styles.hasOwnProperty(key)) {
             var qualifiedPath = styles[key];
-            styleInjection.push(
-                '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath.substring(1) + '" />');
+            var styleSource;
+            if (qualifiedPath.fullPath.substring(1).startsWith("extension/")) {
+                styleSource = qualifiedPath.fullPath.split("/")[2];
+            } else {
+                styleSource = "core";
+            }
+
+
+            styleInjection.push('@import url(' + qualifiedPath.fullPath.substring(1) + ') layer(' + styleSource + ');');
           }
         }
-        context.styleInjection = styleInjection.join("\n");
+        context.styleInjection = '<style>@layer core;\n' + styleInjection.join("\n") + '</style>';
 
         if (bundle) {
           context.scriptInjection = '<script type="text/javascript" src="' + path + '-bundle.js"></script>';
@@ -740,8 +772,8 @@ function process(path, request, response) {
             });
           }
           
-          context.encodingJson = butterfly.toJSONString(encodings);
-          context.defaultEncoding = butterfly.toJSONString(Packages.java.nio.charset.Charset.defaultCharset().name());
+          context.encodingJson = JSON.stringify(encodings);
+          context.defaultEncoding = JSON.stringify(Packages.java.nio.charset.Charset.defaultCharset().name());
         }
         
         send(request, response, path + ".vt", context);

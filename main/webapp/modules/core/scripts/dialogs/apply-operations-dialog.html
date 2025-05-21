@@ -1,0 +1,15 @@
+<div class="dialog-frame" style="min-width: 800px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="dialog-instruction"><label for="textareaId" bind="or_proj_pasteJson"></label></div>
+      <input type="file" id="file-input" bind="operationJsonButton" style="margin-bottom: 8px;"/>
+      <div class="input-container"><textarea spellcheck="false" wrap="off" bind="textarea" id="textareaId" class="history-operation-json" style="min-width: 764px"></textarea></div>
+      <div class="history-operation-json-error" bind="errorContainer"></div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+    <button class="button button-primary" bind="applyButton"></button>
+    <button class="button" bind="cancelButton"></button>
+    </div>
+  </div>
+</div>

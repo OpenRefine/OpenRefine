@@ -2,6 +2,8 @@
 package org.openrefine.wikibase.manifests;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +32,8 @@ public class ManifestV2 implements Manifest {
     private String editGroupsUrlSchema;
     private String tagTemplate;
     private boolean hideStructuredFieldsInMediaInfo;
+    private List<String> mandatoryMediaInfoPropertyIds;
+    private final List<String> defaultMandatoryMediaInfoPropertyIds = Arrays.asList("P7482", "P170", "P6216");
 
     private Map<String, EntityTypeSettings> entityTypeSettings;
 
@@ -41,6 +45,17 @@ public class ManifestV2 implements Manifest {
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
+        JsonNode mediaPropertiesValue = mediawiki.path("mandatoryMediaInfoPropertyIds");
+        if (!mediaPropertiesValue.isMissingNode() && mediaPropertiesValue instanceof Iterable) {
+            mandatoryMediaInfoPropertyIds = new ArrayList<>();
+            for (JsonNode node : (Iterable<JsonNode>) mediaPropertiesValue) {
+                mandatoryMediaInfoPropertyIds.add(node.asText());
+            }
+        } else if (mediaPropertiesValue.isMissingNode() && "https://commons.wikimedia.org/w/api.php".equals(mediaWikiApiEndpoint)) {
+            mandatoryMediaInfoPropertyIds = new ArrayList<>(defaultMandatoryMediaInfoPropertyIds);
+        } else {
+            mandatoryMediaInfoPropertyIds = new ArrayList<>();
+        }
 
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
@@ -183,5 +198,10 @@ public class ManifestV2 implements Manifest {
     @Override
     public int getMaxEditsPerMinute() {
         return maxEditsPerMinute;
+    }
+
+    @Override
+    public List<String> getMandatoryMediaInfoPropertyIds() {
+        return mandatoryMediaInfoPropertyIds;
     }
 }

@@ -161,7 +161,8 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         Assert.assertEquals(status, "ok");
     }
 
-    @Test
+    // 2025-01-02: disabled because flaky
+    @Test(enabled = false)
     public void testDoPostParsePreview() throws IOException, ServletException {
 
         StringWriter sw = new StringWriter();

@@ -188,7 +188,7 @@ a img {
 }
 
 .button-menu, a.button-menu {
-  background: url(../images/down-arrow.png) no-repeat right 6px;
+  background: url(../images/down-arrow.svg) no-repeat right 6px;
   padding-right: 12px;
 }
 
@@ -488,4 +488,13 @@ p.body-text {
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+
+.float-apart {
+  display: flex;
+  justify-content: space-between;
+}
+
+.padding-loose {
+  padding: var(--padding-loose);
 }

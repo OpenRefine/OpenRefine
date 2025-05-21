@@ -50,6 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   --notification-primary: #fe8;
   --faint-grey: #ddd;
   --light-grey: #999;
+  --error-red: red;
   --dialog-frame: #3a5774;
   --dialog-border: #c1d9ff;
   --dialog-header: #e0edfe;

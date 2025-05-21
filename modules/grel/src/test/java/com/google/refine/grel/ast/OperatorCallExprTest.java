@@ -57,6 +57,8 @@ public class OperatorCallExprTest extends ExprTestBase {
     public void testUnion() {
         Evaluable ev = new OperatorCallExpr(new Evaluable[] { constant, currentColumn, twoColumns }, "+");
         assertEquals(ev.getColumnDependencies(baseColumn), set("baseColumn", "a", "b"));
+        assertEquals(ev.renameColumnDependencies(sampleRename),
+                new OperatorCallExpr(new Evaluable[] { constant, currentColumnRenamed, twoColumnsRenamed }, "+"));
     }
 
     @Test
@@ -77,5 +79,15 @@ class MockEvaluable implements Evaluable {
     @Override
     public Object evaluate(Properties bindings) {
         return value;
+    }
+
+    @Override
+    public String getSource() {
+        return "src";
+    }
+
+    @Override
+    public String getLanguagePrefix() {
+        return "mock";
     }
 }

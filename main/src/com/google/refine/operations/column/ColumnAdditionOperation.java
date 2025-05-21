@@ -36,10 +36,14 @@ package com.google.refine.operations.column;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -48,11 +52,14 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellAtRow;
@@ -88,6 +95,21 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         _columnInsertIndex = columnInsertIndex;
     }
 
+    @Override
+    public void validate() {
+        super.validate();
+        Validate.notNull(_baseColumnName, "Missing base column name");
+        Validate.notNull(_expression, "Missing expression");
+        try {
+            MetaParser.parse(_expression);
+        } catch (ParsingException e) {
+            throw new IllegalArgumentException(String.format("Invalid expression '%s': %s", _expression, e.getMessage()), e);
+        }
+        Validate.notNull(_onError, "Missing 'on error' behaviour");
+        Validate.notNull(_newColumnName, "Missing new column name");
+        Validate.isTrue(_columnInsertIndex >= 0, "Invalid column insert index");
+    }
+
     @JsonProperty("newColumnName")
     public String getNewColumnName() {
         return _newColumnName;
@@ -120,6 +142,40 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
         return OperationDescription.column_addition_desc(_newColumnName, column.getName(), cellsAtRows.size(), _expression);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        try {
+            Evaluable evaluable = MetaParser.parse(_expression);
+            return evaluable.getColumnDependencies(Optional.of(_baseColumnName));
+        } catch (ParsingException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.builder().addColumn(_newColumnName, _baseColumnName).build());
+    }
+
+    @Override
+    public AbstractOperation renameColumns(Map<String, String> newColumnNames) {
+        String renamedExpression;
+        try {
+            Evaluable evaluable = MetaParser.parse(_expression);
+            Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
+            renamedExpression = renamedEvaluable.getFullSource();
+        } catch (ParsingException e) {
+            return this;
+        }
+        return new ColumnAdditionOperation(
+                getEngineConfig().renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_baseColumnName, _baseColumnName),
+                renamedExpression,
+                _onError,
+                newColumnNames.getOrDefault(_newColumnName, _newColumnName),
+                _columnInsertIndex);
     }
 
     @Override

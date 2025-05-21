@@ -43,6 +43,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsListImpl;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.expr.WrappedRow;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.GrelTestBase;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -53,7 +54,7 @@ import com.google.refine.model.Row;
  */
 public class CrossTests extends GrelTestBase {
 
-    private static final String ERROR_MSG = "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)";
+    private static final String ERROR_MSG = EvalErrorMessage.fun_cross_expects_value_project_column("cross");
     private static final OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00",
             DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 

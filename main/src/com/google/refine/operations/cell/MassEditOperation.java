@@ -36,25 +36,33 @@ package com.google.refine.operations.cell;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OperationDescription;
+import com.google.refine.util.NotImplementedException;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.StringUtils;
 
@@ -112,6 +120,17 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         _edits = edits;
     }
 
+    @Override
+    public void validate() {
+        super.validate();
+        try {
+            MetaParser.parse(_expression);
+        } catch (ParsingException e) {
+            throw new IllegalArgumentException(String.format("Invalid expression '%s': %s", _expression, e.getMessage()), e);
+        }
+        Validate.notNull(_edits, "Missing edits");
+    }
+
     @JsonProperty("expression")
     public String getExpression() {
         return _expression;
@@ -120,6 +139,43 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     @JsonProperty("edits")
     public List<Edit> getEdits() {
         return _edits;
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependenciesWithoutEngine() {
+        try {
+            Evaluable parsed = MetaParser.parse(_expression);
+            Optional<Set<String>> deps = parsed.getColumnDependencies(Optional.of(_columnName));
+            if (deps.isPresent()) {
+                Set<String> withBaseColumn = new HashSet<>(deps.get());
+                withBaseColumn.add(_columnName);
+                return Optional.of(withBaseColumn);
+            } else {
+                return deps;
+            }
+        } catch (ParsingException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+    }
+
+    @Override
+    public AbstractOperation renameColumns(Map<String, String> newColumnNames) {
+        try {
+            Evaluable parsed = MetaParser.parse(_expression);
+            Evaluable renamed = parsed.renameColumnDependencies(newColumnNames);
+            return new MassEditOperation(
+                    getEngineConfig().renameColumnDependencies(newColumnNames),
+                    newColumnNames.getOrDefault(_columnName, _columnName),
+                    renamed.getFullSource(),
+                    _edits);
+        } catch (ParsingException | NotImplementedException e) {
+            return this;
+        }
     }
 
     @Override

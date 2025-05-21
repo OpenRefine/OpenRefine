@@ -19,7 +19,7 @@
 }
 
 .wikibase-import-template-error {
-  color: red;
+  color: var(--error-red);
 }
 
 .wikibase-import-template-label {

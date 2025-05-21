@@ -9,9 +9,9 @@ import org.openrefine.wikibase.updates.LabeledStatementEntityEdit;
  */
 public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
 
-    public static final String descEndsByPunctuationSign = "description-end-by-punctuation-sign";
-    public static final String descBeginWithUppercase = "description-begin-with-uppercase";
-    public static final String descBeginWithArticle = "description-begin-with-article";
+    public static final String descEndsByPunctuationSign = "item-description-end-by-punctuation-sign";
+    public static final String descBeginWithUppercase = "item-description-begin-with-uppercase";
+    public static final String descBeginWithArticle = "item-description-begin-with-article";
 
     private static final String LANG = "en";
 

@@ -121,15 +121,16 @@ public class PreviewExpressionCommand extends Command {
         }
     }
 
-    /**
-     * The command uses POST but does not actually modify any state so it does not require CSRF.
-     */
-
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         try {
+            // This command triggers evaluation expression and therefore requires CSRF-protection
+            if (!hasValidCSRFToken(request)) {
+                respondCSRFError(response);
+                return;
+            }
+
             Project project = getProject(request);
 
             int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));

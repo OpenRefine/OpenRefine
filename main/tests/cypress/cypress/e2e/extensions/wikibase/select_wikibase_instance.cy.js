@@ -79,7 +79,7 @@ describe(__filename, function () {
                 name: 'OpenRefine Wikibase Cypress Test',
                 root: 'https://or-wikibase-test.wiki.opencura.com/wiki/',
                 main_page: 'https://or-wikibase-test.wiki.opencura.com/wiki/Main_Page',
-                api: 'https://or-wikibase-test.wiki.opencura.com/w/api.php',
+                api: 'https://or-wikibase-test.wiki.opencura.com/w/api.php'
             },
             wikibase: {
                 site_iri: 'http://or-wikibase-test.wiki.opencura.com/entity/',

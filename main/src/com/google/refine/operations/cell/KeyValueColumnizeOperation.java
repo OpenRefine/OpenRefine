@@ -35,17 +35,22 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
@@ -67,6 +72,13 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         _noteColumnName = noteColumnName;
     }
 
+    @Override
+    public void validate() {
+        Validate.notNull(_keyColumnName, "Missing key column name");
+        Validate.notNull(_valueColumnName, "Missing value column name");
+        // _noteColumnName can be null
+    }
+
     @JsonProperty("keyColumnName")
     public String getKeyColumnName() {
         return _keyColumnName;
@@ -86,6 +98,30 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
     protected String getBriefDescription(Project project) {
         return _noteColumnName == null ? OperationDescription.cell_key_value_columnize_brief(_keyColumnName, _valueColumnName)
                 : OperationDescription.cell_key_value_columnize_note_column_brief(_keyColumnName, _valueColumnName, _noteColumnName);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        Set<String> result = new HashSet<>(3);
+        result.add(_keyColumnName);
+        result.add(_valueColumnName);
+        if (_noteColumnName != null) {
+            result.add(_noteColumnName);
+        }
+        return Optional.of(result);
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.empty();
+    }
+
+    @Override
+    public KeyValueColumnizeOperation renameColumns(Map<String, String> newColumnNames) {
+        return new KeyValueColumnizeOperation(
+                newColumnNames.getOrDefault(_keyColumnName, _keyColumnName),
+                newColumnNames.getOrDefault(_valueColumnName, _valueColumnName),
+                _noteColumnName == null ? null : newColumnNames.getOrDefault(_noteColumnName, _noteColumnName));
     }
 
     @Override

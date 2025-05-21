@@ -27,9 +27,17 @@
 
 package com.google.refine.operations.column;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -38,6 +46,7 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.TestUtils;
 
@@ -64,8 +73,14 @@ public class ColumnReorderOperationTests extends RefineTest {
     public void serializeColumnReorderOperation() {
         AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b", "c", "a"));
         TestUtils.isSerializedTo(op, "{\"op\":\"core/column-reorder\","
-                + "\"description\":\"Reorder columns\","
+                + "\"description\":" + new TextNode(OperationDescription.column_reorder_brief()).toString() + ","
                 + "\"columnNames\":[\"b\",\"c\",\"a\"]}");
+    }
+
+    @Test
+    public void testValidate() {
+        AbstractOperation op = new ColumnReorderOperation(null);
+        assertThrows(IllegalArgumentException.class, () -> op.validate());
     }
 
     @Test
@@ -75,6 +90,8 @@ public class ColumnReorderOperationTests extends RefineTest {
         int cCol = project.columnModel.getColumnByName("c").getCellIndex();
 
         AbstractOperation op = new ColumnReorderOperation(Arrays.asList("a"));
+        assertEquals(op.getColumnDependencies().get(), Set.of("a"));
+        assertEquals(op.getColumnsDiff(), Optional.empty());
 
         runOperation(op, project);
 
@@ -97,6 +114,8 @@ public class ColumnReorderOperationTests extends RefineTest {
     @Test
     public void testReorder() throws Exception {
         ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"));
+        assertEquals(SUT.getColumnDependencies().get(), Set.of("b", "c"));
+        assertEquals(SUT.getColumnsDiff(), Optional.empty());
 
         runOperation(SUT, project);
 
@@ -107,5 +126,14 @@ public class ColumnReorderOperationTests extends RefineTest {
                         { "g", "f" },
                 });
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRename() {
+        ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"));
+
+        ColumnReorderOperation renamed = SUT.renameColumns(Map.of("a", "a2", "b", "b2"));
+
+        assertEquals(renamed._columnNames, List.of("c", "b2"));
     }
 }

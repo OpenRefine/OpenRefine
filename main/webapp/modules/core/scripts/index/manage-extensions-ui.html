@@ -1,0 +1,23 @@
+<div class="relative-frame">
+    <div bind="exitensionsContainer" id="extensions-container" class="padding-loose">
+        <nav class="float-apart">
+            <button id="openExtensionDirectory" class="button">Open extension directory</button>
+            <div>
+                <a href="https://openrefine.org/docs/manual/installing#installing-extensions"
+                    id="extensionsDocumentationButton" target="_blank" class="button">Documentation</a>
+                <a href="https://openrefine.org/extensions" id="extensionsDiscoveryButton" target="_blank"
+                    class="button">Discover extensions</a>
+            </div>
+        </nav>
+        <h1 style="padding-top: var(--padding-loose)" id="listExtensionsHeader">Installed extensions</h1>
+        <table class="list-table preferences">
+            <thead>
+                <tr>
+                    <th id="extensionsTableName">Extension</th>
+                    <th id="extensionsTableBundled">Bundled</th>
+                </tr>
+            </thead>
+            <tbody id="extensionList"></tbody>
+        </table>
+    </div>
+</div>

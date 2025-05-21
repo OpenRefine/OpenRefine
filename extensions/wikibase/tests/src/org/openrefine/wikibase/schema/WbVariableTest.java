@@ -24,9 +24,14 @@
 
 package org.openrefine.wikibase.schema;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
@@ -49,6 +54,18 @@ public abstract class WbVariableTest<T> extends WbExpressionTest<T> {
             throws IOException, ModelException {
         variable = initVariableExpr();
         variable.setColumnName("column A");
+    }
+
+    @Test
+    public void testGetColumnDeps() {
+        assertEquals(variable.getColumnDependencies(), Set.of("column A"));
+    }
+
+    @Test
+    public void testTranslate() {
+        WbVariableExpr<T> translated = (WbVariableExpr<T>) variable.renameColumns(Map.of("column A", "column A2", "column B", "column B2"));
+        assertEquals(variable.getColumnName(), "column A");
+        assertEquals(translated.getColumnName(), "column A2");
     }
 
     /**

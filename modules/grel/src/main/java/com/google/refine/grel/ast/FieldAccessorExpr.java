@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.grel.ast;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -50,7 +52,7 @@ import com.google.refine.expr.util.JsonValueConverter;
  * An abstract syntax tree node encapsulating a field accessor, e.g., "cell.value" is accessing the field named "value"
  * on the variable called "cell".
  */
-public class FieldAccessorExpr implements Evaluable {
+public class FieldAccessorExpr extends GrelExpr {
 
     final protected Evaluable _inner;
     final protected String _fieldName;
@@ -94,7 +96,36 @@ public class FieldAccessorExpr implements Evaluable {
     }
 
     @Override
+    public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
+        String innerStr = _inner.toString();
+        if ("cells".equals(innerStr) || "row.cells".equals(innerStr)) {
+            String newColumnName = substitutions.getOrDefault(_fieldName, _fieldName);
+            return new FieldAccessorExpr(_inner, newColumnName);
+        }
+        // TODO add support for starred, flagged, rowIndex
+        return new FieldAccessorExpr(_inner.renameColumnDependencies(substitutions), _fieldName);
+    }
+
+    @Override
     public String toString() {
         return _inner.toString() + "." + _fieldName;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_fieldName, _inner);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FieldAccessorExpr other = (FieldAccessorExpr) obj;
+        return Objects.equals(_fieldName, other._fieldName) && Objects.equals(_inner, other._inner);
+    }
+
 }

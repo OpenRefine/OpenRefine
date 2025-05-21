@@ -14,6 +14,7 @@ WarningsRenderer._renderEntity = function (entity, plainText) {
   if (entity.label) {
     fullLabel = entity.label + ' (' + id + ')';
   }
+
   if (plainText) {
     return fullLabel;
   }

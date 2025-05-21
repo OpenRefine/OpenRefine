@@ -56,5 +56,15 @@
     "wikibase-schema/schema-tab-header": "סכמה",
     "wikibase-schema/dialog-header": "יישור לוויקיבייס",
     "wikibase-addition/cancel": "ביטול",
-    "wikibase-addition/add-wikibase": "הוספת ויקיבייס"
+    "wikibase-addition/add-wikibase": "הוספת ויקיבייס",
+    "wikibase-management/discover-manifests": "חשיפת מופעים של ויקיבייס…",
+    "wikibase-schema-management-dialog/enter-new-schema-name": "נא למלא שם חדש לסכמה",
+    "wikibase-management/cancel": "ביטול",
+    "wikibase-management/ok": "אישור",
+    "wikibase-schema-management-dialog/invalid-schema": "סכמה שגויה.",
+    "wikibase-schema-management-dialog/rename": "שינוי שם",
+    "wikibase-schema-management-dialog/delete": "מחיקה",
+    "wikibase-schema-management-dialog/dialog-header": "ניהול סכמות של ויקיבייס",
+    "wikibase-schema-management-dialog/export": "ייצוא",
+    "wikibase-schema-management-dialog/import": "ייבוא סכמה חדשה"
 }

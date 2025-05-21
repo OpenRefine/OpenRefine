@@ -1,0 +1,25 @@
+<div class="dialog-frame" style="width: 600px;">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+        <div class="grid-layout grid-layout-for-ui layout-normal layout-full">
+            <div class="remove-duplicate-rows-dialog-instruction">
+                <div bind="or_dialog_columnsList"></div>
+            </div>
+            <table role="presentation">
+                <tr>
+                    <td>
+                        <div class="remove-duplicate-rows-dialog-column-container" bind="columnContainer"></div>
+                    </td>
+                </tr>
+            </table>
+            <div class="remove-duplicate-rows-dialog-footer">
+                <button class="button" bind="selectAllButton"></button>
+                <button class="button" bind="deselectAllButton"></button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+        <button class="button button-primary" bind="okButton"></button>
+        <button class="button" bind="cancelButton"></button>
+    </div>
+</div>

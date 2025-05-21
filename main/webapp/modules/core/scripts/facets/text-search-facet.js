@@ -86,7 +86,7 @@ class TextSearchFacet extends Facet {
     var counter = this._uniqueIdForLabels();
     this._div.empty().show().html(
       '<div class="facet-title" bind="facetTitle">' + 
-        '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+        '<div class="grid-layout layout-tightest layout-full"><table role="presentation"><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +
@@ -100,7 +100,7 @@ class TextSearchFacet extends Facet {
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
-      '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
+      '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table role="presentation">' +
         '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
         '<tr>' +
           '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox'+counter+'" /></td>' +

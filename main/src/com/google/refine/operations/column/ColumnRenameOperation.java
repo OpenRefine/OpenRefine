@@ -33,12 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnRenameChange;
 import com.google.refine.operations.OperationDescription;
@@ -56,6 +62,12 @@ public class ColumnRenameOperation extends AbstractOperation {
         _newColumnName = newColumnName;
     }
 
+    @Override
+    public void validate() {
+        Validate.notNull(_oldColumnName, "Missing old column name");
+        Validate.notNull(_newColumnName, "Missing new column name");
+    }
+
     @JsonProperty("oldColumnName")
     public String getOldColumnName() {
         return _oldColumnName;
@@ -69,6 +81,23 @@ public class ColumnRenameOperation extends AbstractOperation {
     @Override
     protected String getBriefDescription(Project project) {
         return OperationDescription.column_rename_brief(_oldColumnName, _newColumnName);
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(Set.of(_oldColumnName));
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.of(ColumnsDiff.builder().deleteColumn(_oldColumnName).addColumn(_newColumnName, _oldColumnName).build());
+    }
+
+    @Override
+    public ColumnRenameOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ColumnRenameOperation(
+                newColumnNames.getOrDefault(_oldColumnName, _oldColumnName),
+                newColumnNames.getOrDefault(_newColumnName, _newColumnName));
     }
 
     @Override

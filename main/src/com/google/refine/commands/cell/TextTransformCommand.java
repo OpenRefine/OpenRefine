@@ -58,7 +58,6 @@ public class TextTransformCommand extends EngineDependentCommand {
             repeatCount = Math.max(Math.min(Integer.parseInt(repeatCountString), 10), 0);
         } catch (Exception e) {
         }
-
         return new TextTransformOperation(
                 engineConfig,
                 columnName,

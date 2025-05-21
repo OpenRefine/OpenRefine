@@ -24,6 +24,10 @@
 
 package org.openrefine.wikibase.schema;
 
+import java.util.Map;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -75,4 +79,22 @@ public interface WbExpression<T> {
      *            the state in which to log any validation errors
      */
     public void validate(ValidationState validation);
+
+    /**
+     * @return the set of all column names referenced by this expression.
+     */
+    @JsonIgnore
+    public Set<String> getColumnDependencies();
+
+    /**
+     * Returns a copy of this expression after updating any column names it refers to, following the substitution map
+     * provided. The current instance is left immutable. This method assumes that the expression is valid (see
+     * {@link #validate(ValidationState)}).
+     * 
+     * @param substitutions
+     *            the columns to rename. Any column that is not present in the map as a key is expected to stay
+     *            untouched.
+     * @return the updated expression
+     */
+    public WbExpression<T> renameColumns(Map<String, String> substitutions);
 }

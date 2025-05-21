@@ -29,13 +29,11 @@
 
 package com.google.refine.extension.database.sqlite;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -64,15 +62,6 @@ public class SQLiteConnectionManagerTest extends DBExtensionTests {
         testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
 
         DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
-    }
-
-    @AfterTest
-    @Parameters({ "sqliteDbName" })
-    public void afterTest(@Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName) {
-        File f = new File(sqliteDbName);
-        if (f.exists()) {
-            f.delete();
-        }
     }
 
     @Test

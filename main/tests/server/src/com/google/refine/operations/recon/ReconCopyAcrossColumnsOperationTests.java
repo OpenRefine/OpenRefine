@@ -27,9 +27,15 @@
 
 package com.google.refine.operations.recon;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -39,14 +45,24 @@ import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
 
+    String json = "{\"op\":\"core/recon-copy-across-columns\","
+            + "\"description\":"
+            + new TextNode(OperationDescription.recon_copy_across_columns_brief("source column", "first, second")).toString() + ","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+            + "\"fromColumnName\":\"source column\","
+            + "\"toColumnNames\":[\"first\",\"second\"],"
+            + "\"judgments\":[\"matched\",\"new\"],"
+            + "\"applyToJudgedCells\":true}";
     Project project;
 
     @BeforeSuite
@@ -67,14 +83,14 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
 
     @Test
     public void serializeReconCopyAcrossColumnsOperation() throws Exception {
-        String json = "{\"op\":\"core/recon-copy-across-columns\","
-                + "\"description\":\"Copy recon judgments from column source column to firstsecond\","
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
-                + "\"fromColumnName\":\"source column\","
-                + "\"toColumnNames\":[\"first\",\"second\"],"
-                + "\"judgments\":[\"matched\",\"new\"],"
-                + "\"applyToJudgedCells\":true}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        AbstractOperation op = ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class);
+        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.builder().modifyColumn("first").modifyColumn("second").build()));
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of("source column", "first", "second")));
     }
 
     @Test
@@ -99,6 +115,28 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 });
 
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        AbstractOperation operation = new ReconCopyAcrossColumnsOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased),
+                "bar",
+                new String[] { "foo" },
+                new String[] { "matched", "none" },
+                true);
+
+        AbstractOperation renamed = operation.renameColumns(Map.of("bar", "bar2", "foo", "foo2", "none", "what?"));
+
+        String expectedJson = "{\"op\":\"core/recon-copy-across-columns\","
+                + "\"description\":"
+                + new TextNode(OperationDescription.recon_copy_across_columns_brief("bar2", "foo2")).toString() + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"fromColumnName\":\"bar2\","
+                + "\"toColumnNames\":[\"foo2\"],"
+                + "\"judgments\":[\"matched\",\"none\"],"
+                + "\"applyToJudgedCells\":true}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
 }

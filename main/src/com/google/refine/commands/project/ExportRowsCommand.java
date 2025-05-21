@@ -67,7 +67,8 @@ public class ExportRowsCommand extends Command {
     private static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
 
     /**
-     * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
+     * This command uses POST but is left CSRF-unprotected as it does not incur a state change. TODO: add CSRF
+     * protection anyway, as it does not cost much and could still have prevented an XSS vulnerability
      */
 
     @Deprecated(since = "3.9")
@@ -86,6 +87,11 @@ public class ExportRowsCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // This command triggers evaluation expression and therefore requires CSRF-protection
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         ProjectManager.singleton.setBusy(true);
 
@@ -100,11 +106,9 @@ public class ExportRowsCommand extends Command {
                 exporter = new CsvExporter('\t');
             }
 
-            String contentType = params.get("contentType");
-            if (contentType == null) {
-                contentType = exporter.getContentType();
-            }
-            response.setHeader("Content-Type", contentType);
+            response.setHeader("Content-Type", exporter.getContentType());
+            // in case the content-type is text/html, to avoid XSS attacks
+            response.setHeader("Content-Security-Policy", "script-src 'none'; connect-src 'none'");
 
             String preview = params.get("preview");
             if (!"true".equals(preview)) {

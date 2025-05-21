@@ -27,8 +27,14 @@
 
 package com.google.refine.operations.column;
 
-import java.io.Serializable;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
 
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
+
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -36,7 +42,9 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -66,7 +74,7 @@ public class ColumnRenameOperationTests extends RefineTest {
     @Test
     public void serializeColumnRenameOperation() throws Exception {
         String json = "{\"op\":\"core/column-rename\","
-                + "\"description\":\"Rename column old name to new name\","
+                + "\"description\":" + new TextNode(OperationDescription.column_rename_brief("old name", "new name")).toString() + ","
                 + "\"oldColumnName\":\"old name\","
                 + "\"newColumnName\":\"new name\"}";
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, AbstractOperation.class);
@@ -74,8 +82,18 @@ public class ColumnRenameOperationTests extends RefineTest {
     }
 
     @Test
+    public void testValidate() {
+        ColumnRenameOperation noOldName = new ColumnRenameOperation(null, "newfoo");
+        assertThrows(IllegalArgumentException.class, () -> noOldName.validate());
+        ColumnRenameOperation noNewName = new ColumnRenameOperation("foo", null);
+        assertThrows(IllegalArgumentException.class, () -> noNewName.validate());
+    }
+
+    @Test
     public void testRename() throws Exception {
         ColumnRenameOperation SUT = new ColumnRenameOperation("foo", "newfoo");
+        assertEquals(SUT.getColumnDependencies().get(), Set.of("foo"));
+        assertEquals(SUT.getColumnsDiff().get(), ColumnsDiff.builder().deleteColumn("foo").addColumn("newfoo", "foo").build());
 
         runOperation(SUT, project);
 
@@ -90,5 +108,15 @@ public class ColumnRenameOperationTests extends RefineTest {
                         { "v1", "b", "j" },
                 });
         assertProjectEquals(project, expected);
+    }
+
+    @Test
+    public void testRenameDependencies() throws Exception {
+        ColumnRenameOperation SUT = new ColumnRenameOperation("foo", "newfoo");
+
+        ColumnRenameOperation renamed = SUT.renameColumns(Map.of("foo", "foo2", "newfoo", "newfoo2"));
+
+        assertEquals(renamed._oldColumnName, "foo2");
+        assertEquals(renamed._newColumnName, "newfoo2");
     }
 }

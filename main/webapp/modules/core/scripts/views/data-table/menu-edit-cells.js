@@ -32,7 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
-  var doTextTransform = function(expression, onError, repeat, repeatCount) {
+  var doTextTransform = function(expression, onError, repeat, repeatCount, onDone) {
     Refine.postCoreProcess(
       "text-transform",
       {
@@ -42,7 +42,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         repeatCount: repeatCount
       },
       { expression: expression },
-      { cellsChanged: true }
+      { cellsChanged: true },
+      { onDone },
     );
   };
 
@@ -72,9 +73,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         previewWidget.getExpression(true),
         $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
         elmts.repeatCheckbox[0].checked,
-        elmts.repeatCountInput[0].value
+        elmts.repeatCountInput[0].value,
+        dismiss
       );
-      dismiss();
     });
 
     var o = DataTableView.sampleVisibleRows(column);
@@ -285,8 +286,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         text_to_find = '"'+text_to_find+'"';
       }
       expression = 'value.replace('+text_to_find+',"'+replacement_text+'")';
-      doTextTransform(expression, "keep-original", false, "");
-      dismiss();
+      doTextTransform(expression, "keep-original", false, "", dismiss);
     });
   };
 
@@ -383,10 +383,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         "split-multi-value-cells",
         config,
         null,
-        { rowsChanged: true }
+        { rowsChanged: true },
+        { onDone: dismiss }
       );
-
-      dismiss();
     });
   };
 
@@ -394,11 +393,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/text-transform",
       label: $.i18n('core-views/transform'),
+      icon: 'images/operations/transform.svg',
       click: function() { doTextTransformPrompt(); }
     },
     {
       id: "core/common-transforms",
       label: $.i18n('core-views/common-transform'),
+      icon: 'images/operations/magic-wand.svg',
       submenu: [
         {
           id: "core/trim-whitespace",
@@ -470,6 +471,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/fill-down",
       label: $.i18n('core-views/fill-down'),
+      icon: 'images/operations/fill-down.svg',
       click: function () {
         if (columnHeaderUI._dataTableView._getSortingCriteriaCount() > 0) {
            columnHeaderUI._dataTableView._createPendingSortWarningDialog(doFillDown);
@@ -482,6 +484,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/blank-down",
       label: $.i18n('core-views/blank-down'),
+      icon: 'images/operations/blank-down.svg',
       click: function () {
         if (columnHeaderUI._dataTableView._getSortingCriteriaCount() > 0) {
            columnHeaderUI._dataTableView._createPendingSortWarningDialog(doBlankDown);
@@ -495,23 +498,27 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/split-multi-valued-cells",
       label: $.i18n('core-views/split-cells'),
+      icon: 'images/operations/split-rows.svg',
       click: doSplitMultiValueCells
     },
     {
       id: "core/join-multi-valued-cells",
       label: $.i18n('core-views/join-cells'),
+      icon: 'images/operations/join-rows.svg',
       click: doJoinMultiValueCells
     },
     {},
     {
       id: "core/cluster",
       label: $.i18n('core-views/cluster-edit'),
+      icon: 'images/operations/cluster.svg',
       click: function() { new ClusteringDialog(column, "value"); }
     },
     {},
     {
       id: "core/replace",
       label: $.i18n('core-views/replace'),
+      icon: 'images/operations/replace.svg',
       click: doReplace
     }
   ]);
@@ -701,9 +708,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         "key-value-columnize",
         config,
         null,
-        { modelsChanged: true }
+        { modelsChanged: true },
+        { onDone: dismiss }
       );
-      dismiss();
     });
 
     var valueColumnIndex = -1;
@@ -739,17 +746,20 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       {
         id: "core/transpose-columns-into-rows",
         label: $.i18n('core-views/transp-cell-row'),
+        icon: 'images/operations/transpose-into-rows.svg',
         click: doTransposeColumnsIntoRows
       },
       {
         id: "core/transpose-rows-into-columns",
         label: $.i18n('core-views/transp-cell-col'),
+        icon: 'images/operations/transpose-into-columns.svg',
         click: doTransposeRowsIntoColumns
       },
       {},
       {
         id: "core/key-value-columnize",
         label: $.i18n('core-views/columnize-col'),
+        icon: 'images/operations/key-value-columnize.svg',
         click: doKeyValueColumnize
       }
     ]

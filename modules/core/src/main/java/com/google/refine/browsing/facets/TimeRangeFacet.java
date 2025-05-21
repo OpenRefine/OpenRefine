@@ -33,6 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -55,6 +61,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+import com.google.refine.util.NotImplementedException;
 
 public class TimeRangeFacet implements Facet {
 
@@ -101,6 +108,52 @@ public class TimeRangeFacet implements Facet {
         @Override
         public String getJsonType() {
             return "timerange";
+        }
+
+        @Override
+        public void validate() {
+            try {
+                MetaParser.parse(_expression);
+            } catch (ParsingException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+
+        @Override
+        public Optional<Set<String>> getColumnDependencies() {
+            try {
+                return MetaParser.parse(_expression)
+                        .getColumnDependencies(Optional.of(_columnName));
+            } catch (ParsingException e) {
+                return Optional.of(Collections.emptySet());
+            }
+        }
+
+        @Override
+        public FacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+            String newExpression;
+            try {
+                Evaluable evaluable = MetaParser.parse(_expression);
+                Evaluable translated = evaluable.renameColumnDependencies(substitutions);
+                newExpression = translated.getFullSource();
+            } catch (ParsingException | NotImplementedException e) {
+                return this;
+            }
+            TimeRangeFacetConfig newConfig = new TimeRangeFacetConfig();
+            newConfig._expression = newExpression;
+            newConfig._columnName = substitutions.getOrDefault(_columnName, _columnName);
+            if (Objects.equals(_name, _columnName)) {
+                newConfig._name = newConfig._columnName;
+            } else {
+                newConfig._name = _name;
+            }
+            newConfig._from = _from;
+            newConfig._to = _to;
+            newConfig._selectTime = _selectTime;
+            newConfig._selectNonTime = _selectNonTime;
+            newConfig._selectBlank = _selectBlank;
+            newConfig._selectError = _selectError;
+            return newConfig;
         }
     }
 

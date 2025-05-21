@@ -172,7 +172,7 @@ class ListFacet extends Facet {
 
     this._div.empty().show().html(
       '<div class="facet-title" bind="facetTitle">' +
-        '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+        '<div class="grid-layout layout-tightest layout-full"><table role="presentation"><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +
@@ -583,8 +583,6 @@ class ListFacet extends Facet {
     var commit = function() {
       var text = elmts.textarea[0].value;
 
-      MenuSystem.dismissAll();
-
       var edit = { to : text };
       if (choice === self._blankChoice) {
         edit.fromBlank = true;
@@ -609,6 +607,7 @@ class ListFacet extends Facet {
         },
         {
           onDone: function(o) {
+            MenuSystem.dismissAll();
             var selection = [];
             var gotSelection = false;
             for (var i = 0; i < self._selection.length; i++) {

@@ -1,16 +1,14 @@
-name: CI
+name: server CI
 
 on:
   pull_request:
     paths:
+      - '.github/workflows/pull_request_server.yml'
       - 'benchmark/**'
       - 'conf/**'
       - 'extensions/database/src/**'
       - 'extensions/database/tests/**'
       - 'extensions/database/pom.xml'
-      - 'extensions/gdata/src/**'
-      - 'extensions/gdata/tests/**'
-      - 'extensions/gdata/pom.xml'
       - 'extensions/jython/src/**'
       - 'extensions/jython/tests/**'
       - 'extensions/jython/pom.xml'
@@ -95,7 +93,7 @@ jobs:
       - name: Check Java linting
         id: java_linting
         run: |
-          mvn -B compile test-compile formatter:validate impsort:check javadoc:javadoc -Ddoclint=all
+          mvn -T 4 -B compile test-compile formatter:validate impsort:check javadoc:javadoc -Ddoclint=html,syntax,accessibility,reference
 
       - name: Configure connections to databases
         id: configure_db_connections
@@ -111,7 +109,7 @@ jobs:
           PGPASSWORD: postgres
 
       - name: Build and test with Maven
-        run: mvn -B jacoco:prepare-agent test jacoco:report
+        run: mvn -T 4 -B jacoco:prepare-agent test jacoco:report
 
       - name: Coveralls main
         uses: coverallsapp/github-action@v2
@@ -142,17 +140,6 @@ jobs:
           github-token: ${{ env.COVERALLS_TOKEN }}
           format: jacoco
           flag-name: Java-${{ matrix.java }}-phonetic
-          fail-on-error: false
-          parallel: true
-
-      - name: Coveralls gdata
-        uses: coverallsapp/github-action@v2
-        with:
-          base-path: extensions/gdata/src
-          files: extensions/gdata/target/site/jacoco/jacoco.xml
-          github-token: ${{ env.COVERALLS_TOKEN }}
-          format: jacoco
-          flag-name: Java-${{ matrix.java }}-gdata
           fail-on-error: false
           parallel: true
 
@@ -197,7 +184,7 @@ jobs:
           mvn -B formatter:validate impsort:check
 
       - name: Build and test with Maven
-        run: mvn -B jacoco:prepare-agent test
+        run: mvn -T 4 -B jacoco:prepare-agent test
 
   finish:
     needs: linux_server_tests

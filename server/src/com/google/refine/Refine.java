@@ -120,6 +120,7 @@ public class Refine {
 
         RefineServer server = new RefineServer();
         server.init(iface, port, host);
+        String contextPath = server.getURI().getPath();
 
         boolean headless = Configurations.getBoolean("refine.headless", false);
         if (headless) {
@@ -131,12 +132,12 @@ public class Refine {
                 if ("*".equals(host)) {
                     if ("0.0.0.0".equals(iface)) {
                         logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
-                        client.init("localhost", port);
+                        client.init("localhost", port, contextPath);
                     } else {
-                        client.init(iface, port);
+                        client.init(iface, port, contextPath);
                     }
                 } else {
-                    client.init(host, port);
+                    client.init(host, port, contextPath);
                 }
             } catch (Exception e) {
                 logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host
@@ -176,7 +177,7 @@ class RefineServer extends Server {
         logger.info("Java runtime version {} from java.home: {}", Runtime.version().toString(), System.getProperty("java.home", ""));
         logger.info("Java VM: {} {} {} {}", System.getProperty("java.vm.vendor", ""), System.getProperty("java.vm.name", ""),
                 System.getProperty("java.vm.version", ""), System.getProperty("java.vm.info", ""));
-        logger.info("Starting Server bound to '{}:{}'", iface, port);
+        logger.info("Starting Server bound to http://{}:{}", iface, port);
         logger.info("refine.memory size: {} JVM Max heap: {} MBytes", Configurations.get("refine.memory", "<default>"),
                 Runtime.getRuntime().maxMemory() / 1024 / 1024.0);
 
@@ -350,6 +351,7 @@ class RefineServer extends Server {
         }
 
         File dataDir = null;
+        File extensionsDir = null;
         File grefineDir = null;
         File gridworksDir = null;
 
@@ -374,6 +376,7 @@ class RefineServer extends Server {
             }
 
             dataDir = new File(parentDir, "OpenRefine");
+            extensionsDir = new File(dataDir, "extensions");
             grefineDir = new File(new File(parentDir, "Google"), "Refine");
             gridworksDir = new File(parentDir, "Gridworks");
         } else if (os.contains("os x")) {
@@ -388,6 +391,10 @@ class RefineServer extends Server {
 
             String gridworks_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks";
             gridworksDir = new File(gridworks_home);
+
+            String extensions_home = (home != null) ? home + "/Library/Application Support/OpenRefine/extensions"
+                    : ".openrefine/extensions";
+            extensionsDir = new File(extensions_home);
         } else { // most likely a UNIX flavor
             // start with the XDG environment
             // see http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
@@ -401,6 +408,7 @@ class RefineServer extends Server {
             }
 
             dataDir = new File(data_home + "/openrefine");
+            extensionsDir = new File(data_home + "/openrefine/extensions");
             grefineDir = new File(data_home + "/google/refine");
             gridworksDir = new File(data_home + "/gridworks");
         }
@@ -437,6 +445,12 @@ class RefineServer extends Server {
             logger.info("Creating new workspace directory " + dataDir);
             if (!dataDir.mkdirs()) {
                 logger.error("FAILED to create new workspace directory " + dataDir);
+            }
+        }
+
+        if (!extensionsDir.exists()) {
+            if (!extensionsDir.mkdirs()) {
+                logger.error("FAILED to create new extensions directory " + extensionsDir);
             }
         }
 
@@ -479,8 +493,8 @@ class RefineClient extends JFrame implements ActionListener {
 
     private URI uri;
 
-    public void init(String host, int port) throws Exception {
-        uri = new URI("http://" + host + ":" + port + "/");
+    public void init(String host, int port, String contextPath) throws Exception {
+        uri = new URI("http://" + host + ":" + port + contextPath);
         openBrowser();
     }
 

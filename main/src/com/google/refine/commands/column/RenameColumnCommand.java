@@ -34,19 +34,38 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.column;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.Command;
+import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.column.ColumnRenameOperation;
 import com.google.refine.process.Process;
 
 public class RenameColumnCommand extends Command {
+
+    protected static class RenameResult extends HistoryEntryResponse {
+
+        protected RenameResult(HistoryEntry entry) {
+            super(entry);
+        }
+
+        @JsonProperty("newEngineConfig")
+        @JsonInclude(Include.NON_NULL)
+        EngineConfig newEngineConfig = null;
+
+    }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -63,9 +82,24 @@ public class RenameColumnCommand extends Command {
             String newColumnName = request.getParameter("newColumnName");
 
             AbstractOperation op = new ColumnRenameOperation(oldColumnName, newColumnName);
+            op.validate();
             Process process = op.createProcess(project, new Properties());
 
-            performProcessAndRespond(request, response, project, process);
+            HistoryEntry historyEntry = project.processManager.queueProcess(process);
+            if (historyEntry != null) {
+                RenameResult result = new RenameResult(historyEntry);
+
+                // also translate the facets if they have been provided
+                EngineConfig config = getEngineConfig(request);
+                if (config != null) {
+                    Map<String, String> rename = Map.of(oldColumnName, newColumnName);
+                    result.newEngineConfig = config.renameColumnDependencies(rename);
+                }
+
+                respondJSON(response, result);
+            } else {
+                respondCodePending(response);
+            }
         } catch (Exception e) {
             respondException(response, e);
         }

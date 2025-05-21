@@ -124,7 +124,7 @@ class TimeRangeFacet extends Facet{
     .show()
     .html(
       '<div class="facet-title" bind="headerDiv">' +
-        '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+        '<div class="grid-layout layout-tightest layout-full"><table role="presentation"><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +

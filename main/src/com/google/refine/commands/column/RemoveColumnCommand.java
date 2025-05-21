@@ -62,6 +62,7 @@ public class RemoveColumnCommand extends Command {
             String columnName = request.getParameter("columnName");
 
             AbstractOperation op = new ColumnRemovalOperation(columnName);
+            op.validate();
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);

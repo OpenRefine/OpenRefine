@@ -35,6 +35,9 @@ package com.google.refine.model;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.StringWriter;
 import java.util.Properties;
@@ -187,4 +190,18 @@ public class RowTests extends RefineTest {
         Assert.assertTrue((Boolean) row.getField("starred", options));
     }
 
+    @Test
+    public void deepCopy() {
+        Row row = new Row(1);
+        row.flagged = true;
+        row.setCell(0, new Cell("original value", null));
+
+        Row copied = row.deepCopy();
+        row.starred = true;
+        row.setCell(0, new Cell("new value", null));
+
+        assertTrue(copied.flagged);
+        assertFalse(copied.starred);
+        assertEquals(copied.cells.get(0).value, "original value");
+    }
 }

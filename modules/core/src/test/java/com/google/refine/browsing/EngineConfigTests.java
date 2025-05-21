@@ -27,6 +27,12 @@
 
 package com.google.refine.browsing;
 
+import static org.testng.Assert.assertThrows;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -50,6 +56,21 @@ public class EngineConfigTests {
             + "      ]\n"
             + "    }";
 
+    public static String engineConfigJsonRenamed = "{\n"
+            + "      \"mode\": \"row-based\",\n"
+            + "      \"facets\": [\n"
+            + "        {\n"
+            + "          \"mode\": \"text\",\n"
+            + "          \"invert\": false,\n"
+            + "          \"caseSensitive\": false,\n"
+            + "          \"query\": \"www\",\n"
+            + "          \"name\": \"website\",\n"
+            + "          \"type\": \"text\",\n"
+            + "          \"columnName\": \"website\"\n"
+            + "        }\n"
+            + "      ]\n"
+            + "    }";
+
     public static String engineConfigRecordModeJson = "{"
             + "    \"mode\":\"record-based\","
             + "    \"facets\":[]"
@@ -59,14 +80,27 @@ public class EngineConfigTests {
 
     @Test
     public void serializeEngineConfig() {
-        EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
+        EngineConfig ec = EngineConfig.deserialize(engineConfigJson);
         TestUtils.isSerializedTo(ec, engineConfigJson);
     }
 
     @Test
     public void serializeEngineConfigRecordMode() {
-        EngineConfig ec = EngineConfig.reconstruct(engineConfigRecordModeJson);
+        EngineConfig ec = EngineConfig.deserialize(engineConfigRecordModeJson);
         TestUtils.isSerializedTo(ec, engineConfigRecordModeJson);
+    }
+
+    @Test
+    public void columnDependencies() {
+        EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
+        Assert.assertEquals(ec.getColumnDependencies(), Optional.of(Set.of("reference")));
+    }
+
+    @Test
+    public void renameColumnDependencies() {
+        EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
+        EngineConfig renamed = ec.renameColumnDependencies(Map.of("reference", "website"));
+        TestUtils.isSerializedTo(renamed, engineConfigJsonRenamed);
     }
 
     @Test
@@ -79,6 +113,25 @@ public class EngineConfigTests {
     @Test
     public void reconstructNoFacetsProvided() {
         EngineConfig ec = EngineConfig.reconstruct(noFacetProvided);
+        Assert.assertEquals(ec.getMode(), Mode.RowBased);
+        Assert.assertTrue(ec.getFacetConfigs().isEmpty());
+    }
+
+    @Test
+    public void deserializeNullEngineConfig() {
+        assertThrows(IllegalArgumentException.class, () -> EngineConfig.deserialize(null));
+    }
+
+    @Test
+    public void deserializeNoFacetsProvided() {
+        EngineConfig ec = EngineConfig.deserialize(noFacetProvided);
+        Assert.assertEquals(ec.getMode(), Mode.RowBased);
+        Assert.assertTrue(ec.getFacetConfigs().isEmpty());
+    }
+
+    @Test
+    public void defaultRowBased() {
+        EngineConfig ec = EngineConfig.defaultRowBased();
         Assert.assertEquals(ec.getMode(), Mode.RowBased);
         Assert.assertTrue(ec.getFacetConfigs().isEmpty());
     }

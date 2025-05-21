@@ -33,7 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -45,6 +50,7 @@ import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.filters.AnyRowRecordFilter;
 import com.google.refine.browsing.filters.ExpressionStringComparisonRowFilter;
 import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.MetaParser;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.util.PatternSyntaxExceptionParser;
@@ -79,6 +85,40 @@ public class TextSearchFacet implements Facet {
         @Override
         public String getJsonType() {
             return "text";
+        }
+
+        @Override
+        public void validate() {
+            if ("regex".equals(_mode)) {
+                try {
+                    Pattern.compile(
+                            _query,
+                            _caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+                } catch (java.util.regex.PatternSyntaxException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        }
+
+        @Override
+        public Optional<Set<String>> getColumnDependencies() {
+            return Optional.of(Collections.singleton(_columnName));
+        }
+
+        @Override
+        public FacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+            TextSearchFacetConfig newConfig = new TextSearchFacetConfig();
+            newConfig._columnName = substitutions.getOrDefault(_columnName, _columnName);
+            if (Objects.equals(_name, _columnName)) {
+                newConfig._name = newConfig._columnName;
+            } else {
+                newConfig._name = _name;
+            }
+            newConfig._query = _query;
+            newConfig._mode = _mode;
+            newConfig._caseSensitive = _caseSensitive;
+            newConfig._invert = _invert;
+            return newConfig;
         }
     }
 
@@ -161,6 +201,16 @@ public class TextSearchFacet implements Facet {
             @Override
             public Object evaluate(Properties bindings) {
                 return bindings.get("value");
+            }
+
+            @Override
+            public String getSource() {
+                return "value";
+            }
+
+            @Override
+            public String getLanguagePrefix() {
+                return MetaParser.GREL_LANGUAGE_CODE;
             }
 
         };

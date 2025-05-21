@@ -64,7 +64,7 @@ public class TransposeRowsIntoColumnsCommand extends Command {
 
             AbstractOperation op = new TransposeRowsIntoColumnsOperation(
                     columnName, rowCount);
-
+            op.validate();
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);

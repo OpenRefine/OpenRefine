@@ -86,6 +86,7 @@ public class SplitMultiValueCellsCommand extends Command {
                         separator,
                         regex);
             }
+            op.validate();
             Process process = op.createProcess(project, new Properties());
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {

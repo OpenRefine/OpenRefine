@@ -31,26 +31,35 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
 
+    String description = OperationDescription.recon_mark_new_topics_shared_brief("my column");
+
     String jsonWithoutService = "{"
             + "\"op\":\"core/recon-mark-new-topics\","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"columnName\":\"my column\","
             + "\"shareNewTopics\":true,"
-            + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\""
+            + "\"description\":" + new TextNode(description).toString()
             + "}";
 
     String jsonWithService = "{"
@@ -58,7 +67,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"columnName\":\"my column\","
             + "\"shareNewTopics\":true,"
-            + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\","
+            + "\"description\":" + new TextNode(description).toString() + ","
             + "\"service\":\"http://foo.com/api\","
             + "\"identifierSpace\":\"http://foo.com/identifierSpace\","
             + "\"schemaSpace\":\"http://foo.com/schemaSpace\""
@@ -78,6 +87,29 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
     @Test
     public void serializeReconMarkNewTopicsOperationWithService() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonWithService, ReconMarkNewTopicsOperation.class), jsonWithService);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        AbstractOperation op = ParsingUtilities.mapper.readValue(jsonWithoutService, ReconMarkNewTopicsOperation.class);
+        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("my column")));
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of("my column")));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        var SUT = ParsingUtilities.mapper.readValue(jsonWithoutService, ReconMarkNewTopicsOperation.class);
+
+        ReconMarkNewTopicsOperation renamed = SUT.renameColumns(Map.of("my column", "new name"));
+
+        String expectedJson = "{"
+                + "\"op\":\"core/recon-mark-new-topics\","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"new name\","
+                + "\"shareNewTopics\":true,"
+                + "\"description\":" + new TextNode(OperationDescription.recon_mark_new_topics_shared_brief("new name")).toString()
+                + "}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

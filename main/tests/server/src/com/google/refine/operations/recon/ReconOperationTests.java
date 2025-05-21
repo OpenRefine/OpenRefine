@@ -42,7 +42,10 @@ import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
@@ -59,8 +62,10 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.messages.OpenRefineMessage;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
@@ -88,6 +93,33 @@ public class ReconOperationTests extends RefineTest {
             + "   \"type\":{\"id\":\"Q5\",\"name\":\"human\"},"
             + "   \"autoMatch\":true,"
             + "   \"columnDetails\":[],"
+            + "   \"limit\":0"
+            + "},"
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
+
+    private String jsonWithColumnDetails = "{"
+            + "\"op\":\"core/recon\","
+            + "\"description\":\"Reconcile cells in column researcher to type Q5\","
+            + "\"columnName\":\"researcher\","
+            + "\"config\":{"
+            + "   \"mode\":\"standard-service\","
+            + "   \"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+            + "   \"identifierSpace\":\"http://www.wikidata.org/entity/\","
+            + "   \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+            + "   \"type\":{\"id\":\"Q5\",\"name\":\"human\"},"
+            + "   \"autoMatch\":true,"
+            + "   \"columnDetails\":["
+            + "      {"
+            + "        \"column\": \"organization_country\","
+            + "        \"propertyName\": \"SPARQL: P17/P297\","
+            + "        \"propertyID\": \"P17/P297\""
+            + "      },"
+            + "      {"
+            + "        \"column\": \"organization_id\","
+            + "        \"propertyName\": \"SPARQL: P3500|P2427\","
+            + "        \"propertyID\": \"P3500|P2427\""
+            + "      }"
+            + "   ],"
             + "   \"limit\":0"
             + "},"
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
@@ -206,8 +238,61 @@ public class ReconOperationTests extends RefineTest {
     }
 
     @Test
+    public void testColumnDependenciesWithoutColumnDetails() throws Exception {
+        AbstractOperation operation = ParsingUtilities.mapper.readValue(json, ReconOperation.class);
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("researcher")));
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("researcher")));
+    }
+
+    @Test
+    public void testColumnDependenciesWithColumnDetails() throws Exception {
+        AbstractOperation operation = ParsingUtilities.mapper.readValue(jsonWithColumnDetails, ReconOperation.class);
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("researcher")));
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("researcher", "organization_country", "organization_id")));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        ReconOperation SUT = ParsingUtilities.mapper.readValue(jsonWithColumnDetails, ReconOperation.class);
+
+        ReconOperation renamed = SUT.renameColumns(Map.of("organization_country", "country", "researcher", "employee"));
+
+        String expectedJson = "{\n"
+                + "       \"columnName\" : \"employee\",\n"
+                + "       \"config\" : {\n"
+                + "         \"autoMatch\" : true,\n"
+                + "         \"columnDetails\" : [ {\n"
+                + "           \"column\" : \"country\",\n"
+                + "           \"propertyID\" : \"P17/P297\",\n"
+                + "           \"propertyName\" : \"SPARQL: P17/P297\"\n"
+                + "         }, {\n"
+                + "           \"column\" : \"organization_id\",\n"
+                + "           \"propertyID\" : \"P3500|P2427\",\n"
+                + "           \"propertyName\" : \"SPARQL: P3500|P2427\"\n"
+                + "         } ],\n"
+                + "         \"identifierSpace\" : \"http://www.wikidata.org/entity/\",\n"
+                + "         \"limit\" : 0,\n"
+                + "         \"mode\" : \"standard-service\",\n"
+                + "         \"schemaSpace\" : \"http://www.wikidata.org/prop/direct/\",\n"
+                + "         \"service\" : \"https://tools.wmflabs.org/openrefine-wikidata/en/api\",\n"
+                + "         \"type\" : {\n"
+                + "           \"id\" : \"Q5\",\n"
+                + "           \"name\" : \"human\"\n"
+                + "         }\n"
+                + "       },\n"
+                + "       \"description\" : \"Reconcile cells in column employee to type Q5\",\n"
+                + "       \"engineConfig\" : {\n"
+                + "         \"facets\" : [ ],\n"
+                + "         \"mode\" : \"row-based\"\n"
+                + "       },\n"
+                + "       \"op\" : \"core/recon\"\n"
+                + "     }";
+        TestUtils.isSerializedTo(renamed, expectedJson);
+    }
+
+    @Test
     public void testWorkingRecon() throws Exception {
-        ReconOperation operation = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
+        ReconOperation operation = new ReconOperation(EngineConfig.defaultRowBased(), "column", reconConfig);
 
         runOperation(operation, project);
 
@@ -241,7 +326,7 @@ public class ReconOperationTests extends RefineTest {
         when(reconConfig.createJob(Mockito.eq(project), Mockito.anyInt(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(reconJob);
 
-        ReconOperation op = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
+        ReconOperation op = new ReconOperation(EngineConfig.defaultRowBased(), "column", reconConfig);
 
         runOperation(op, project, 1000);
 
@@ -298,7 +383,7 @@ public class ReconOperationTests extends RefineTest {
                     "           }\n" +
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
-            ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
+            ReconOperation op = new ReconOperation(EngineConfig.defaultRowBased(), "director", config);
             Process process = op.createProcess(project, new Properties());
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
@@ -404,7 +489,7 @@ public class ReconOperationTests extends RefineTest {
                     "           }\n" +
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
-            ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
+            ReconOperation op = new ReconOperation(EngineConfig.defaultRowBased(), "director", config);
             Process process = op.createProcess(project, new Properties());
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);

@@ -42,6 +42,7 @@ import java.util.Properties;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.InjectableValues;
@@ -132,6 +133,13 @@ public class HistoryEntry {
             logger.error("Failed to get history entry manager from project manager: "
                     + ProjectManager.singleton);
         }
+    }
+
+    @JsonProperty("operation_id")
+    @JsonView(JsonViews.NonSaveMode.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String getOperationId() {
+        return operation == null ? null : operation.getOperationId();
     }
 
     public void save(Writer writer, Properties options) {

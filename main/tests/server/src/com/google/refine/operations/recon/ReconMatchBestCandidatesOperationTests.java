@@ -27,9 +27,16 @@
 
 package com.google.refine.operations.recon;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -37,21 +44,45 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ReconMatchBestCandidatesOperationTests extends RefineTest {
 
+    String json = "{"
+            + "\"op\":\"core/recon-match-best-candidates\","
+            + "\"description\":" + new TextNode(OperationDescription.recon_match_best_candidates_brief("organization_name")).toString()
+            + ","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
+            + "       {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"range\",\"columnName\":\"organization_name\"},"
+            + "       {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"timerange\",\"columnName\":\"start_year\"}"
+            + "]},"
+            + "\"columnName\":\"organization_name\""
+            + "}";
     Project project;
 
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
+    }
+
+    @BeforeMethod
+    public void registerGRELParser() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+    }
+
+    @AfterMethod
+    public void unregisterGRELParser() {
+        MetaParser.unregisterLanguageParser("grel");
     }
 
     @BeforeMethod
@@ -67,16 +98,33 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
 
     @Test
     public void serializeReconMatchBestCandidatesOperation() throws Exception {
-        String json = "{"
-                + "\"op\":\"core/recon-match-best-candidates\","
-                + "\"description\":\"Match each cell to its best recon candidate in column organization_name\","
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
-                + "       {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"range\",\"columnName\":\"organization_name\"},"
-                + "       {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"timerange\",\"columnName\":\"start_year\"}"
-                + "]},"
-                + "\"columnName\":\"organization_name\""
-                + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        ReconMatchBestCandidatesOperation op = ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class);
+        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("organization_name")));
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of("organization_name", "start_year")));
+    }
+
+    @Test
+    public void testRenameColumns() throws Exception {
+        var SUT = ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class);
+
+        ReconMatchBestCandidatesOperation renamed = SUT.renameColumns(Map.of("organization_name", "org", "start_year", "start"));
+
+        String expectedJson = "{"
+                + "\"op\":\"core/recon-match-best-candidates\","
+                + "\"description\":" + new TextNode(OperationDescription.recon_match_best_candidates_brief("org")).toString()
+                + ","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
+                + "       {\"selectNumeric\":true,\"expression\":\"grel:cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"range\",\"columnName\":\"org\"},"
+                + "       {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"timerange\",\"columnName\":\"start\"}"
+                + "]},"
+                + "\"columnName\":\"org\""
+                + "}";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

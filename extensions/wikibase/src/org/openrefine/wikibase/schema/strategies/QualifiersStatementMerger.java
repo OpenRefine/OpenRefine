@@ -166,24 +166,28 @@ public class QualifiersStatementMerger implements StatementMerger {
     }
 
     /**
-     * Are these two snaks equal up to the {@link ValueMatcher} provided?
+     * Matches two snaks using the underlying value matcher. The snaks must have the same property id to match.
      * 
-     * @param snak1
-     * @param snak2
+     * @param existingSnak
+     * @param addedSnak
      * @return
      */
-    protected boolean snakEquality(Snak snak1, Snak snak2) {
-        if (!snak1.getPropertyId().equals(snak2.getPropertyId())) {
+    protected boolean snakEquality(Snak existingSnak, Snak addedSnak) {
+        // Deliberately only comparing the pids and not the siteIRIs to avoid spurious mismatches due to federation
+        if (!existingSnak.getPropertyId().getId().equals(addedSnak.getPropertyId().getId())) {
             return false;
-        }
-        if (snak1 instanceof NoValueSnak && snak2 instanceof NoValueSnak) {
-            return true;
-        } else if (snak1 instanceof SomeValueSnak && snak2 instanceof SomeValueSnak) {
-            return true;
+        } else if (existingSnak instanceof NoValueSnak) {
+            return addedSnak instanceof NoValueSnak;
+        } else if (existingSnak instanceof SomeValueSnak) {
+            return addedSnak instanceof SomeValueSnak;
+        } else if (addedSnak instanceof ValueSnak) {
+            // existingSnak is also a ValueSnak per the cases above
+            Value existingValue = ((ValueSnak) existingSnak).getValue();
+            Value addedValue = ((ValueSnak) addedSnak).getValue();
+            return valueMatcher.match(existingValue, addedValue);
         } else {
-            Value value1 = ((ValueSnak) snak1).getValue();
-            Value value2 = ((ValueSnak) snak2).getValue();
-            return valueMatcher.match(value1, value2);
+            // mismatching value / somevalue / novalue between addedSnak and existingSnak
+            return false;
         }
     }
 

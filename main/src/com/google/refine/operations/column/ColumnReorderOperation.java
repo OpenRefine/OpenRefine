@@ -34,12 +34,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.column;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.Validate;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnReorderChange;
 import com.google.refine.operations.OperationDescription;
@@ -54,6 +60,11 @@ public class ColumnReorderOperation extends AbstractOperation {
         _columnNames = columnNames;
     }
 
+    @Override
+    public void validate() {
+        Validate.notNull(_columnNames, "Missing column names");
+    }
+
     @JsonProperty("columnNames")
     public List<String> getColumnNames() {
         return _columnNames;
@@ -62,6 +73,22 @@ public class ColumnReorderOperation extends AbstractOperation {
     @Override
     protected String getBriefDescription(Project project) {
         return OperationDescription.column_reorder_brief();
+    }
+
+    @Override
+    public Optional<Set<String>> getColumnDependencies() {
+        return Optional.of(_columnNames.stream().collect(Collectors.toSet()));
+    }
+
+    @Override
+    public Optional<ColumnsDiff> getColumnsDiff() {
+        return Optional.empty(); // we don't know what columns there were before, so we can't diff them
+    }
+
+    @Override
+    public ColumnReorderOperation renameColumns(Map<String, String> newColumnNames) {
+        return new ColumnReorderOperation(
+                _columnNames.stream().map(name -> newColumnNames.getOrDefault(name, name)).collect(Collectors.toList()));
     }
 
     @Override

@@ -4,25 +4,23 @@
  */
 
 /*
-   IMPORTANT: Any test reliant on Facet Actions (Edit,Include/Exclude) should wait 100 msec to ensure the event
+   IMPORTANT: Any test reliant on Facet Actions (Edit,Include/Exclude) should wait >100 msec to ensure the event
    handlers are setup, otherwise clicking on the action will do nothing.
    Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
  */
-const clickFacetAction = (facetType, text, action, setVisibility = false) => {
+const clickFacetAction = (facetType, text, action) => {
   cy.getFacetContainer(facetType)
-      .contains(text)
-      .parent()
-      .within(() => {
-        const elem = cy.contains(action);
-
-        if (setVisibility) {
-          elem.invoke('css', 'visibility', 'visible')
-              .should('have.css', 'visibility', 'visible')
-              .click();
-        } else {
-          elem.click();
-        }
-      });
+    .contains(text)
+    .parent()
+    .invoke('trigger', 'mouseenter'); // include/exclude not visible until we mouse over
+  // start a new chain after the trigger
+  cy.getFacetContainer(facetType)
+    .contains(text)
+    .siblings()
+    .get(".facet-choice-toggle")
+    .contains(action)
+    .should('have.css', 'visibility', 'visible') // partially occluded, so "be.visible" won't work
+    .click();
 };
 
 describe(__filename, function () {
@@ -226,28 +224,28 @@ describe(__filename, function () {
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
-    cy.wait(100);
-    clickFacetAction('Shrt_Desc','ALLSPICE,GROUND', 'include', true);
+    cy.wait(150);
+    clickFacetAction('Shrt_Desc','ALLSPICE,GROUND', 'include');
     cy.getCell(0, 'Shrt_Desc').should('contain', 'ALLSPICE,GROUND');
     cy.get('#tool-panel').contains('1 matching rows');
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
-    cy.wait(100);
-    clickFacetAction('Shrt_Desc','ANISE SEED', 'include', true);
+    cy.wait(150);
+    clickFacetAction('Shrt_Desc','ANISE SEED', 'include');
     cy.getCell(1, 'Shrt_Desc').should('contain', 'ANISE SEED');
     cy.get('#tool-panel').contains('2 matching rows');
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
-    cy.wait(100);
-    clickFacetAction('Shrt_Desc','BUTTER OIL,ANHYDROUS', 'include', true);
+    cy.wait(150);
+    clickFacetAction('Shrt_Desc','BUTTER OIL,ANHYDROUS', 'include');
     cy.getCell(0, 'Shrt_Desc').should('contain', 'BUTTER OIL,ANHYDROUS');
     cy.get('#tool-panel').contains('3 matching rows');
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
-    cy.wait(100);
+    cy.wait(150);
     clickFacetAction('Shrt_Desc','ALLSPICE,GROUND', 'exclude');
     cy.get('#tool-panel').contains('2 matching rows');
   });
@@ -258,9 +256,9 @@ describe(__filename, function () {
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
-    cy.wait(100);
+    cy.wait(150);
     // do a basic facetting, expect 1 row
-    clickFacetAction('Shrt_Desc','ALLSPICE,GROUND','include',true);
+    clickFacetAction('Shrt_Desc','ALLSPICE,GROUND','include');
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'ALLSPICE,GROUND');
     cy.get('#tool-panel').contains('1 matching rows');
 
@@ -285,7 +283,7 @@ describe(__filename, function () {
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
-    cy.wait(100);
+    cy.wait(150);
     // do a basic facetting, expect 1 row
     clickFacetAction('Shrt_Desc','ALLSPICE,GROUND','include',true);
     cy.get('#tool-panel').contains('1 matching rows');
@@ -342,7 +340,7 @@ describe(__filename, function () {
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
-    cy.wait(100);
+    cy.wait(150);
 
     cy.get('div.facet-body-inner > div:nth-child(8)')
         .contains('15.87')
@@ -380,27 +378,15 @@ describe(__filename, function () {
     );
   });
 
-  // // This test is unstable, mouseover behavior is unpredictable
-  // // This might be because the element is detached from the DOM in the middle
-  // // it('Test include/exlude toggle', function () {
-  // // 	cy.loadAndVisitProject('food.small');
-  // // 	cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"]').trigger('mouseover');
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('include').should('be.visible');
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').click();
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('exclude');
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').click();
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('include');
-  // // });
+  it('Test collapsing facet panels', function () {
+    cy.loadAndVisitProject('food.small');
+    cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
+    // ensure facet inner panel is visible
+    cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body-inner').should('be.visible');
+    // collapse the panel
+    cy.get('#refine-tabs-facets .facets-container li:nth-child(1) a[bind="minimizeButton"]').click();
+    // Make sure the body is hidden
+    cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body').should('not.be.visible');
+  });
 
-  // it('Test collapsing facet panels', function () {
-  // The following test does not work
-  // Because the facet panels uses soem weird CSS with overflow:hidden, Cypress can not detect it
-  // //// # cy.loadAndVisitProject('food.small');
-  // //// # cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
-  // //// # ensure facet inner panel is visible
-  // //// # cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body-inner').should('be.visible');
-  // //// #collapse the panel
-  // //// # cy.get('#refine-tabs-facets .facets-container li:nth-child(1) a[bind="minimizeButton"]').click();
-  // ////
 });

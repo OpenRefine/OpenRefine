@@ -30,11 +30,15 @@ package com.google.refine.operations.row;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -42,14 +46,21 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
+import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class RowAdditionOperationTests extends RefineTest {
 
-    String json;
+    String legacyJson;
+    String newJson;
+    String jsonAppend;
+    RowAdditionOperation op;
 
     @BeforeSuite
     public void registerOperation() {
@@ -58,11 +69,31 @@ public class RowAdditionOperationTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() {
-        json = "{"
+        // JSON serialization before 3.9.3, which might contain some corrupted cells because of mutability issues,
+        // manifesting themselves in https://github.com/OpenRefine/OpenRefine/issues/7245
+        legacyJson = "{"
                 + "\"op\":\"core/row-addition\","
-                + "\"rows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
+                + "\"rows\":[{\"starred\":false,\"flagged\":false,\"cells\":[{\"foo\":3}]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
                 + "\"index\":0,"
-                + "\"description\":\"Add rows\"}";
+                + "\"description\":" + new TextNode(OperationDescription.row_addition_brief()).toString() + "}";
+        // JSON serialization from 3.9.3 on
+        newJson = "{"
+                + "\"op\":\"core/row-addition\","
+                + "\"addedRows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
+                + "\"index\":0,"
+                + "\"description\":" + new TextNode(OperationDescription.row_addition_brief()).toString() + "}";
+        jsonAppend = "{"
+                + "\"op\":\"core/row-addition\","
+                + "\"addedRows\":[{\"starred\":false,\"flagged\":false,\"cells\":[]},{\"starred\":false,\"flagged\":false,\"cells\":[]}],"
+                + "\"index\":15,"
+                + "\"description\":" + new TextNode(OperationDescription.row_addition_brief()).toString() + "}";
+
+        List<Row> rows = new ArrayList<>(2);
+        rows.add(new Row(0)); // Blank row
+        rows.add(new Row(0)); // Blank row
+        int index = 0; // Prepend rows
+
+        op = new RowAdditionOperation(rows, index);
     }
 
     @Override
@@ -72,22 +103,69 @@ public class RowAdditionOperationTests extends RefineTest {
     }
 
     @Test
-    public void testDeserialization() throws IOException {
-        RowAdditionOperation op = ParsingUtilities.mapper.readValue(json, RowAdditionOperation.class);
-        TestUtils.isSerializedTo(op, json);
+    public void testLegacyDeserialization() throws IOException {
+        RowAdditionOperation op = ParsingUtilities.mapper.readValue(legacyJson, RowAdditionOperation.class);
+        TestUtils.isSerializedTo(op, newJson);
+    }
+
+    @Test
+    public void testNewDeserialization() throws IOException {
+        RowAdditionOperation op = ParsingUtilities.mapper.readValue(newJson, RowAdditionOperation.class);
+        TestUtils.isSerializedTo(op, newJson);
+    }
+
+    @Test
+    public void testDeserializationAppend() throws IOException {
+        RowAdditionOperation op = ParsingUtilities.mapper.readValue(jsonAppend, RowAdditionOperation.class);
+        TestUtils.isSerializedTo(op, jsonAppend);
     }
 
     @Test
     public void testSerialization() throws JsonProcessingException {
-        List<Row> rows = new ArrayList<>(2);
-        rows.add(new Row(0)); // Blank row
-        rows.add(new Row(0)); // Blank row
-        int index = 0; // Prepend rows
+        String serializedObject = ParsingUtilities.mapper.writeValueAsString(op);
+        assertEquals(serializedObject, newJson);
+    }
 
-        RowAdditionOperation op = new RowAdditionOperation(rows, index);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String serializedObject = objectMapper.writeValueAsString(op);
-        assertEquals(serializedObject, json);
+    @Test
+    public void testColumnDependencies() {
+        assertEquals(op.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
+        assertEquals(op.getColumnDependencies(), Optional.of(Set.of()));
+    }
+
+    @Test
+    public void testRename() {
+        RowAdditionOperation renamed = op.renameColumns(Map.of("foo", "bar"));
+
+        TestUtils.isSerializedTo(renamed, newJson);
+    }
+
+    // regression test for https://github.com/OpenRefine/OpenRefine/issues/7245
+    @Test
+    public void mutabilityBugRegressionTest() throws Exception {
+        Project project = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b " },
+                        { null, "c" },
+                });
+
+        RowAdditionOperation op = ParsingUtilities.mapper.readValue(newJson, RowAdditionOperation.class);
+
+        // add the two rows at the beginning
+        runOperation(op, project);
+        // and then edit a cell in the first row
+        project.rows.get(0).setCell(0, new Cell("hello", null));
+
+        Project expected = createProject(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "hello", null },
+                        { null, null },
+                        { "a", "b " },
+                        { null, "c" },
+                });
+        assertProjectEquals(project, expected);
+
+        // the operation metadata is still unchanged
+        TestUtils.isSerializedTo(op, newJson);
     }
 
 }

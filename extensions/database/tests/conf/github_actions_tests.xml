@@ -21,7 +21,7 @@
     <parameter name = "mariadbDbPassword" value="root"/>
     <parameter name = "mariadbTestTable" value="test_table"/>
 
-    <parameter name = "sqliteDbName" value="extension_test_db.sqlite"/>
+    <parameter name = "sqliteDbName" value="tests/resources/test_db.sqlite"/>
     <parameter name = "sqliteDbHost" value=""/>
     <parameter name = "sqliteDbPort" value=""/>
     <parameter name = "sqliteDbUser" value=""/>

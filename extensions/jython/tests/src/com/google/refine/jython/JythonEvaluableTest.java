@@ -1,6 +1,9 @@
 
 package com.google.refine.jython;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Properties;
@@ -10,7 +13,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.CellTuple;
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -132,5 +137,47 @@ public class JythonEvaluableTest {
         result = evaluable.evaluate(bindings);
         Assert.assertEquals(result, "foo");
 
+    }
+
+    @Test
+    public void testGetters() {
+        Evaluable evaluable = new JythonEvaluable("return (1,2)");
+
+        assertEquals(evaluable.getSource(), "return (1,2)");
+        assertEquals(evaluable.getLanguagePrefix(), "jython");
+    }
+
+    @Test(expectedExceptions = ParsingException.class)
+    public void testParseError() throws ParsingException {
+        JythonEvaluable.createParser().parse("foo(", "jython");
+    }
+
+    @Test
+    public void testEvalErrorOnSomeBindings() {
+        String testKey = "columnName";
+        Properties bindings = createBindings();
+        assertTrue(bindings.containsKey(testKey), "Bindings should contain '" + testKey + "'.");
+
+        Evaluable evaluable = new JythonEvaluable("return " + testKey);
+        Object result = evaluable.evaluate(bindings);
+        assertTrue(result instanceof EvalError,
+                "Should produce an EvalError because '" + testKey + "' is not available.");
+        assertTrue(result.toString().contains(testKey),
+                "EvalError should contain the name '" + testKey + "' in the error message.");
+    }
+
+    @Test
+    public void testSpecialValuesForUserDefinedDistance() {
+        Properties bindings = createBindings();
+        String a = "aaaa";
+        String b = "bbb";
+        // special values used in custom clustering via UserDefinedDistance
+        bindings.put("value1", a);
+        bindings.put("value2", b);
+
+        long expectedLength = a.length() - b.length();
+        Evaluable evaluable = new JythonEvaluable("return len(value1) - len(value2)");
+        Object result = evaluable.evaluate(bindings);
+        assertEquals(result, expectedLength, "Length difference should be the same.");
     }
 }

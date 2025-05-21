@@ -90,7 +90,6 @@ commonTransformDialog.prototype._createDialog = function(expression,label) {
 
     this._elmts.okButton.on('click',function() {
       self._commit(expression);
-      self._dismiss();
     });
     this._elmts.cancelButton.on('click',function() {
       self._dismiss();
@@ -106,29 +105,28 @@ commonTransformDialog.prototype._dismiss = function() {
 
 
 commonTransformDialog.prototype._commit = function(expression) {
-      var doTextTransform = function(columnName, expression, onError, repeat, repeatCount) {
-      Refine.postCoreProcess(
-        "text-transform",
-        {
-          columnName: columnName, 
-          expression: expression, 
-          onError: onError,
-          repeat: repeat,
-          repeatCount: repeatCount
-        },
-        null,
-        { cellsChanged: true, rowIdsPreserved: true }
-      );
-  };
-
-	this._elmts.columnContainer.find('div').each(function() {
+  var self = this;
+  var columnNames = [];
+  this._elmts.columnContainer.find('div').each(function() {
     if ($(this).find('input[type="checkbox"]')[0].checked) {
       var name = this.getAttribute('column');
-	    doTextTransform(name,expression, "keep-original", false, "");
+      columnNames.push(name);
     }
   });
-  
-    
-    this._dismiss();
-    
+  let operations = columnNames.map(columnName => { return {
+    op: "core/text-transform",
+    onError: "keep-original",
+    repeat: false,
+    repeatCount: 0,
+    engineConfig: ui.browsingEngine.getJSON(),
+    columnName,
+    expression
+  }});
+  Refine.postCoreProcess(
+    "apply-operations",
+    {},
+    { operations: JSON.stringify(operations) },
+    { modelsChanged: true, rowIdsPreserved: true },
+    { onDone: function() { self._dismiss(); } }
+  );
 };

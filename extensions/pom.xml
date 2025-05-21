@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>extensions</artifactId>
   <packaging>pom</packaging>
-  <version>3.9-SNAPSHOT</version>
+  <version>3.10-SNAPSHOT</version>
 
   <name>OpenRefine - extensions</name>
   <description>Extensions add importers, exporters and other sorts of features to OpenRefine</description>
@@ -14,14 +14,13 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.9-SNAPSHOT</version>
+    <version>3.10-SNAPSHOT</version>
   </parent>
 
   <modules>
         <module>jython</module>
         <module>wikibase</module>
         <module>database</module>
-        <module>gdata</module>
         <module>pc-axis</module>
         <!-- Add new extensions here -->
   </modules>
@@ -67,7 +66,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.12</version>
+        <version>0.8.13</version>
         <executions>
             <execution>
                 <id>prepare-agent</id>

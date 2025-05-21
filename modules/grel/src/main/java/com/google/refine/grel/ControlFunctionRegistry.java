@@ -118,6 +118,7 @@ import com.google.refine.expr.functions.strings.MD5;
 import com.google.refine.expr.functions.strings.Match;
 import com.google.refine.expr.functions.strings.NGram;
 import com.google.refine.expr.functions.strings.NGramFingerprint;
+import com.google.refine.expr.functions.strings.Normalize;
 import com.google.refine.expr.functions.strings.ParseJson;
 import com.google.refine.expr.functions.strings.ParseUri;
 import com.google.refine.expr.functions.strings.Partition;
@@ -268,6 +269,7 @@ public class ControlFunctionRegistry {
         registerFunction("match", new Match());
         registerFunction("find", new Find());
         registerFunction("levenshteinDistance", new LevenshteinDistance());
+        registerFunction("normalize", new Normalize());
 
         registerFunction("parseUri", new ParseUri());
 

@@ -59,6 +59,7 @@ public class ToStringTests extends GrelTestBase {
         assertTrue(invoke("toString", 100L, "%") instanceof EvalError);
         assertTrue(invoke("toString", 100L, "%.") instanceof EvalError);
         assertTrue(invoke("toString", 100L, "%0") instanceof EvalError);
+        assertTrue(invoke("toString", 12L, "%2.2f") instanceof EvalError);
 
         // test with large number
         assertEquals(invoke("toString", 1000000000000000000L, "%d"), "1000000000000000000");

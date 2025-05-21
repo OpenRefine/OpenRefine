@@ -37,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Properties;
 
+import com.google.common.net.UrlEscapers;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.google.refine.expr.EvalError;
@@ -77,6 +78,12 @@ public class Escape implements Function {
                         return URLEncoder.encode(s, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                     }
+                } else if ("urlpath".equals(mode)) {
+                    return UrlEscapers.urlPathSegmentEscaper().escape(s).replace("%2F", "/");
+                } else if ("urlform".equals(mode)) {
+                    return UrlEscapers.urlFormParameterEscaper().escape(s);
+                } else if ("urlfragment".equals(mode)) {
+                    return UrlEscapers.urlFragmentEscaper().escape(s);
                 } else {
                     // + mode + "'.");
                     return new EvalError(EvalErrorMessage.unrecognized_mode(ControlFunctionRegistry.getFunctionName(this), mode));
@@ -93,7 +100,7 @@ public class Escape implements Function {
 
     @Override
     public String getParams() {
-        return "string s, string mode ['html','xml','csv','url','javascript']";
+        return "string s, string mode ['html','xml','csv','url','javascript','urlpath','urlform','urlfragment']";
     }
 
     @Override

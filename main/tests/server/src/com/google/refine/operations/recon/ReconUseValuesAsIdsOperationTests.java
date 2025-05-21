@@ -31,13 +31,20 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -46,7 +53,7 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
 
     String json = "{"
             + "\"op\":\"core/recon-use-values-as-identifiers\","
-            + "\"description\":\"Use values as reconciliation identifiers in column ids\","
+            + "\"description\":" + new TextNode(OperationDescription.recon_use_values_as_identifiers_brief("ids")).toString() + ","
             + "\"columnName\":\"ids\","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"service\":\"http://localhost:8080/api\","
@@ -62,6 +69,35 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
     @Test
     public void serializeReconUseValuesAsIdentifiersOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        AbstractOperation operation = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("ids")));
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("ids")));
+    }
+
+    @Test
+    public void testRename() throws Exception {
+        ReconUseValuesAsIdentifiersOperation SUT = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
+
+        ReconUseValuesAsIdentifiersOperation renamed = SUT.renameColumns(Map.of("ids", "identifiers"));
+
+        String expectedJson = "{\n"
+                + "       \"columnName\" : \"identifiers\",\n"
+                + "       \"description\" : "
+                + new TextNode(OperationDescription.recon_use_values_as_identifiers_brief("identifiers")).toString() + ",\n"
+                + "       \"engineConfig\" : {\n"
+                + "         \"facets\" : [ ],\n"
+                + "         \"mode\" : \"row-based\"\n"
+                + "       },\n"
+                + "       \"identifierSpace\" : \"http://test.org/entities/\",\n"
+                + "       \"op\" : \"core/recon-use-values-as-identifiers\",\n"
+                + "       \"schemaSpace\" : \"http://test.org/schema/\",\n"
+                + "       \"service\" : \"http://localhost:8080/api\"\n"
+                + "     }";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

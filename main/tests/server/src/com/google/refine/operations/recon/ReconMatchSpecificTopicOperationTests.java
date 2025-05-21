@@ -27,9 +27,15 @@
 
 package com.google.refine.operations.recon;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -39,9 +45,11 @@ import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
+import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconMatchSpecificTopicOperation.ReconItem;
 import com.google.refine.util.ParsingUtilities;
@@ -71,7 +79,9 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
     public void serializeReconMatchSpecificTopicOperation() throws Exception {
         String json = "{\n" +
                 "    \"op\": \"core/recon-match-specific-topic-to-cells\",\n" +
-                "    \"description\": \"Match specific item Gangnam (Q489941) to cells in column researcher\",\n" +
+                "    \"description\": "
+                + new TextNode(OperationDescription.recon_match_specific_topic_brief("Gangnam", "Q489941", "researcher")).toString() + ",\n"
+                +
                 "    \"engineConfig\": {\n" +
                 "      \"mode\": \"record-based\",\n" +
                 "      \"facets\": []\n" +
@@ -88,6 +98,48 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                 "    \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\"\n" +
                 "  }";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json);
+    }
+
+    @Test
+    public void testColumnDependencies() throws Exception {
+        ReconItem reconItem = new ReconItem("hello", "world", new String[] { "human" });
+        AbstractOperation operation = new ReconMatchSpecificTopicOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased),
+                "bar", reconItem,
+                "http://identifier.space", "http://schema.space");
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.modifySingleColumn("bar")));
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of("bar")));
+    }
+
+    @Test
+    public void testRename() {
+        ReconItem reconItem = new ReconItem("hello", "world", new String[] { "human" });
+
+        var SUT = new ReconMatchSpecificTopicOperation(
+                new EngineConfig(Collections.emptyList(), Mode.RowBased),
+                "bar", reconItem,
+                "http://identifier.space", "http://schema.space");
+
+        ReconMatchSpecificTopicOperation renamed = SUT.renameColumns(Map.of("bar", "foo"));
+
+        String expectedJson = "{\n"
+                + "       \"columnName\" : \"foo\",\n"
+                + "       \"description\" : "
+                + new TextNode(OperationDescription.recon_match_specific_topic_brief("world", "hello", "foo")).toString() + ",\n"
+                + "       \"engineConfig\" : {\n"
+                + "         \"facets\" : [ ],\n"
+                + "         \"mode\" : \"row-based\"\n"
+                + "       },\n"
+                + "       \"identifierSpace\" : \"http://identifier.space\",\n"
+                + "       \"match\" : {\n"
+                + "         \"id\" : \"hello\",\n"
+                + "         \"name\" : \"world\",\n"
+                + "         \"types\" : [ \"human\" ]\n"
+                + "       },\n"
+                + "       \"op\" : \"core/recon-match-specific-topic-to-cells\",\n"
+                + "       \"schemaSpace\" : \"http://schema.space\"\n"
+                + "     }";
+        TestUtils.isSerializedTo(renamed, expectedJson);
     }
 
     @Test

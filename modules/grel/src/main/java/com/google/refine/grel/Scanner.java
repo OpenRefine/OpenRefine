@@ -74,6 +74,20 @@ public class Scanner {
         }
     }
 
+    static public class StringToken extends Token {
+
+        final public char delimiter;
+
+        public StringToken(int start, int end, String text, char delimiter) {
+            super(start, end, TokenType.String, text);
+            this.delimiter = delimiter;
+        }
+
+        public String fullSource() {
+            return String.format("%c%s%c", delimiter, text, delimiter);
+        }
+    }
+
     static public class RegexToken extends Token {
 
         final public boolean caseInsensitive;
@@ -81,6 +95,10 @@ public class Scanner {
         public RegexToken(int start, int end, String text, boolean caseInsensitive) {
             super(start, end, TokenType.Regex, text);
             this.caseInsensitive = caseInsensitive;
+        }
+
+        public String fullSource() {
+            return String.format("/%s/", text);
         }
     }
 
@@ -176,11 +194,11 @@ public class Scanner {
                 if (c == delimiter) {
                     _index++; // skip closing delimiter
 
-                    return new Token(
+                    return new StringToken(
                             start,
                             _index,
-                            TokenType.String,
-                            sb.toString());
+                            sb.toString(),
+                            delimiter);
                 } else if (c == '\\') {
                     _index++; // skip escaping marker
                     if (_index < _limit) {

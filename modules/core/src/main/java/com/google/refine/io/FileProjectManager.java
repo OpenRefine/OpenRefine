@@ -279,7 +279,7 @@ public class FileProjectManager extends ProjectManager {
             List<Long> modified = getModifiedProjectIds();
             boolean saveNeeded = (modified.size() > 0) || _preferenceStore.isDirty() || projectRemoved;
             if (!saveNeeded) {
-                logger.info("Skipping unnecessary workspace save");
+                logger.debug("Skipping unnecessary workspace save");
                 return;
             }
             File tempFile = saveWorkspaceToTempFile();

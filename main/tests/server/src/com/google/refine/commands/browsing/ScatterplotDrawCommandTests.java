@@ -1,15 +1,9 @@
 
 package com.google.refine.commands.browsing;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -18,23 +12,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.facets.ScatterplotFacet;
-import com.google.refine.commands.Command;
+import com.google.refine.commands.CommandTestBase;
 import com.google.refine.util.ParsingUtilities;
 
-public class ScatterplotDrawCommandTests {
-
-    protected HttpServletRequest request = null;
-    protected HttpServletResponse response = null;
-    protected StringWriter writer = null;
-    protected Command command = null;
+public class ScatterplotDrawCommandTests extends CommandTestBase {
 
     @BeforeMethod
-    public void setUp() throws IOException {
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
+    public void setUpCommand() {
         command = new GetScatterplotCommand();
-        writer = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(writer));
     }
 
     public static String configJson = "{"
@@ -108,6 +93,12 @@ public class ScatterplotDrawCommandTests {
             + "\"from_y\":0,"
             + "\"to_y\":0,"
             + "\"color\":\"ff6a00\"}";
+
+    @Test
+    public void testCSRFProtection() throws ServletException, IOException {
+        command.doGet(request, response);
+        assertCSRFCheckFailed();
+    }
 
     @Test
     public void testParseConfig() throws JsonParseException, JsonMappingException, IOException {

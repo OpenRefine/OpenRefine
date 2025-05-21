@@ -9,14 +9,14 @@ const fixture = [
   it('expands all columns to left', function () {
     cy.loadAndVisitProject(fixture);
     // Start by collapsing
-    cy.columnActionClick('c', ['View', 'Collapse all columns to left']);
+    cy.columnActionClick('c', ['Hide / Show', 'Hide all columns to left']);
 
     // Verify collapsed columns
-    cy.get('[title="Expand column \'a\'"]').should('to.contain', '');
-    cy.get('[title="Expand column \'b\'"]').should('to.contain', '');
+    cy.get('[title="Show column \'a\'"]').should('to.contain', '');
+    cy.get('[title="Show column \'b\'"]').should('to.contain', '');
 
     // Expand
-    cy.columnActionClick('c', ['View', 'Expand all columns to the left']);
+    cy.columnActionClick('c', ['Hide / Show', 'Show all columns to the left']);
 
     // Verify expanded columns
     cy.get('[title="a"]').should('to.contain', 'a');

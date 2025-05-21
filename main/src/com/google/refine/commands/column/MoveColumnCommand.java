@@ -63,6 +63,7 @@ public class MoveColumnCommand extends Command {
             int index = Integer.parseInt(request.getParameter("index"));
 
             AbstractOperation op = new ColumnMoveOperation(columnName, index);
+            op.validate();
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);

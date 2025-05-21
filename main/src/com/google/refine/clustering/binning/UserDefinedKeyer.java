@@ -45,7 +45,7 @@ public class UserDefinedKeyer extends Keyer {
     private Properties bindings;
 
     public UserDefinedKeyer(String expression) throws ParsingException {
-        eval = MetaParser.parse("grel:" + expression);
+        eval = MetaParser.parse(expression);
         bindings = new Properties();
 
         bindings.put("true", true);
