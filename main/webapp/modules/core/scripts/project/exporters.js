@@ -105,6 +105,18 @@ ExporterManager.prototype._initializeUI = function() {
   });
 };
 
+/**
+ * Adds a menu item to the ExporterManager menu.
+ * @public
+ * @param {object} item The menu item to add.
+ */
+ExporterManager.prototype.addMenuItem = function(item) {
+    // NOTE: while taking id, label, and click induvidually would
+    //       be more descriptive, it would also remove the ability
+    //       to add empty menu items.
+    ExporterManager.MenuItems.push(item);
+}
+
 ExporterManager.stripNonFileChars = function(name) {
     // prohibited characters in file name of linux (/) and windows (\/:*?"<>|)
     // and MacOS https://stackoverflow.com/a/47455094/167425
