@@ -604,7 +604,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords("persons_with_empty_column.csv");
 
         // This will mock the situation of deleting empty columns(Gender)
-        ObjectNode options = getDefaultTabularImportingOptions();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "separator", ",");
         JSONUtilities.safePut(options, "processQuotes", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false);
@@ -626,7 +626,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         fileRecords.addAll(prepareFileRecords(filenameEmptyColumn));
 
         // This will mock the situation of deleting empty columns, but only after checking all files
-        ObjectNode options = getDefaultTabularImportingOptions();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "separator", ",");
         JSONUtilities.safePut(options, "processQuotes", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false);
@@ -647,7 +647,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords(filename);
 
         // This will mock the situation of deleting empty columns (Gender)
-        ObjectNode options = getDefaultTabularImportingOptions();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "separator", ",");
         JSONUtilities.safePut(options, "processQuotes", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false);

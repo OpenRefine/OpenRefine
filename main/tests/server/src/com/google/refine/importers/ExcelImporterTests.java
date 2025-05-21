@@ -431,7 +431,7 @@ public class ExcelImporterTests extends ImporterTest {
         String filename = "excel-test-file-with-empty-column.xslx";
         List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
 
-        ObjectNode options = getDefaultTabularImportingOptions();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper.readTree(
                 String.format("{name: \"%s#Test Sheet 0\", "
@@ -467,7 +467,7 @@ public class ExcelImporterTests extends ImporterTest {
         String filename2 = "multi-sheet-file-with-extra-columns-2.xslx";
         fileRecords.addAll(prepareFileRecords(xlsxFileWithMultiSheets, filename2));
 
-        ObjectNode options = getDefaultTabularImportingOptions();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
 
         // xlsxFileWithMultiSheets should have one extra column in sheet 1 that sheet 0 does not have
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
@@ -503,7 +503,7 @@ public class ExcelImporterTests extends ImporterTest {
         String filename = "excel-test-file-with-empty-column.xslx";
         List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
 
-        ObjectNode options = getDefaultTabularImportingOptions();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper.readTree(

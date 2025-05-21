@@ -170,7 +170,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         List<String> lines = List.of("012345green...."); // add blank column
         List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
 
-        ObjectNode options = getDefaultTabularImportingOptions();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
         columnNames.add("NDB_No");
         columnNames.add("Shrt_Desc");
@@ -200,7 +200,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         List<String> linesWithEmptyColumn = List.of(SAMPLE_ROW, "012345green...."); // add blank column
         fileRecords.addAll(prepareFileRecords(filenameEmptyColumn, linesWithEmptyColumn));
 
-        ObjectNode options = getDefaultTabularImportingOptions();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         ArrayNode columnWidths = ParsingUtilities.mapper.valueToTree(List.of(6, 9, 5));
         JSONUtilities.safePut(options, "columnWidths", columnWidths);
 
@@ -222,7 +222,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         List<String> linesWithEmptyColumn = List.of(SAMPLE_ROW, "012345green...."); // add blank column
         List<ObjectNode> fileRecords = prepareFileRecords(filenameEmptyColumn, linesWithEmptyColumn);
 
-        ObjectNode options = getDefaultTabularImportingOptions();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         ArrayNode columnWidths = ParsingUtilities.mapper.valueToTree(List.of(6, 0, 9, 0, 5)); // add blank columns
         JSONUtilities.safePut(options, "columnWidths", columnWidths);
 
