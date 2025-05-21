@@ -3,22 +3,23 @@ I18NUtil.init("wikidata");
 OperationIconRegistry.setIcon('wikidata/save-wikibase-schema', 'extension/wikidata/images/wikibase-black-icon.svg');
 OperationIconRegistry.setIcon('wikidata/perform-wikibase-edits', 'extension/wikidata/images/wikibase-upload-icon.svg');
 
-ExporterManager.MenuItems.push({});
-ExporterManager.MenuItems.push({
-  id: "performWikibaseEdits",
-  label: $.i18n('wikibase-extension/wikibase-edits'),
-  click: function () {
-    PerformEditsDialog.checkAndLaunch();
-  }
+ExporterManager.addMenuItem({});
+
+ExporterManager.addMenuItem({
+    id: "preformWikibaseEdits",
+    label: $.i18n('wikibase-extension/wikibase-edits'),
+    click: function () {
+        PerformEditsDialog.checkAndLaunch();
+    }
 });
-ExporterManager.MenuItems.push({
+ExporterManager.addMenuItem({
   id: "exportQuickStatements",
   label: $.i18n('wikibase-extension/qs-file'),
   click: function () {
     WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements");
   }
 });
-ExporterManager.MenuItems.push({
+ExporterManager.addMenuItem({
   id: "exportWikibaseSchema",
   label: $.i18n('wikibase-extension/wikibase-schema'),
   click: function () {
