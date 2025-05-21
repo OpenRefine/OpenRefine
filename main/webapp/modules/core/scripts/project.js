@@ -39,7 +39,23 @@ var Refine = {};
 
 I18NUtil.init("core");
 
+/**
+ * Requests a CSRF token and calls the supplied callback.
+ * @public
+ * @param {function(string)} onCSRF - The callback to call with the token.
+ */
 Refine.wrapCSRF = CSRFUtil.wrapCSRF;
+
+/**
+ * Performs a POST request where an additional CSRF token is automatically attached.
+ * @public
+ * @param {string} url - The URL to send the request to.
+ * @param {Object|string} data - The data to send with the request.
+ * @param {function(object)} success - The callback to call on success.
+ * @param {string} dataType - The type of data expected in the response.
+ * @param {function(object)} failCallback - The callback to call on failure.
+ * @returns {jQuery.jqXHR} The jQuery AJAX request object.
+ */
 Refine.postCSRF = CSRFUtil.postCSRF;
 
 Refine.reportException = function(e) {
