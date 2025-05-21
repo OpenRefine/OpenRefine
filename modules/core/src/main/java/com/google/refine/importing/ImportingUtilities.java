@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -62,6 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -76,11 +79,13 @@ import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.utils.InputStreamStatistics;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -696,6 +701,16 @@ public class ImportingUtilities {
         if (!fileRecord.has("format")) {
             JSONUtilities.safePut(fileRecord, "format", guessBetterFormat(file, fileRecord));
         }
+    }
+
+    @Deprecated
+    static public InputStream tryOpenAsArchive(File file, String mimeType) throws IOException {
+        return tryOpenAsArchive(file, mimeType, null);
+    }
+
+    @Deprecated
+    static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) throws IOException {
+        return null;
     }
 
 
