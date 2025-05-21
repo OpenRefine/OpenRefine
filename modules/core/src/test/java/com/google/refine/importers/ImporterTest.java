@@ -50,6 +50,7 @@ import com.google.refine.importers.tree.XmlImportUtilities;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
+import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public abstract class ImporterTest extends RefineTest {
@@ -210,6 +211,26 @@ public abstract class ImporterTest extends RefineTest {
 
         assertEquals(exceptions.size(), 0, "Unexpected exception(s) thrown: " + exceptions);
         project.update();
+    }
+
+    /**
+     * Get options accessed in
+     * {@link TabularImportingParserBase#readTable(Project, ImportingJob, TabularImportingParserBase.TableDataReader, int, ObjectNode, List)}.
+     * All values are set to their default/fallback value.
+     * 
+     * @return options used in tabular parsing all set to their default value.
+     */
+    protected ObjectNode getDefaultTabularImportingOptions() {
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "ignoreLines", -1);
+        JSONUtilities.safePut(options, "headerLines", 1);
+        JSONUtilities.safePut(options, "skipDataLines", 0);
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
+        JSONUtilities.safePut(options, "storeBlankRows", true);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+        JSONUtilities.safePut(options, "trimStrings", false);
+        return options;
     }
 
     protected void postProcessProject(

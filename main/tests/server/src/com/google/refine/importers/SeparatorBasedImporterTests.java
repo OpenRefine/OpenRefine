@@ -604,7 +604,9 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords("persons_with_empty_column.csv");
 
         // This will mock the situation of deleting empty columns(Gender)
-        ObjectNode options = createBasicOptions(",", -1, 0, 0, 1, false, true);
+        ObjectNode options = getDefaultTabularImportingOptions();
+        JSONUtilities.safePut(options, "separator", ",");
+        JSONUtilities.safePut(options, "processQuotes", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false);
 
         parse(SUT, fileRecords, options);
@@ -624,7 +626,9 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         fileRecords.addAll(prepareFileRecords(filenameEmptyColumn));
 
         // This will mock the situation of deleting empty columns, but only after checking all files
-        ObjectNode options = createBasicOptions(",", -1, 0, 0, 1, true, true);
+        ObjectNode options = getDefaultTabularImportingOptions();
+        JSONUtilities.safePut(options, "separator", ",");
+        JSONUtilities.safePut(options, "processQuotes", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false);
 
         parse(SUT, fileRecords, options);
@@ -643,7 +647,9 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords(filename);
 
         // This will mock the situation of deleting empty columns (Gender)
-        ObjectNode options = createBasicOptions(",", -1, 0, 0, 1, true, true);
+        ObjectNode options = getDefaultTabularImportingOptions();
+        JSONUtilities.safePut(options, "separator", ",");
+        JSONUtilities.safePut(options, "processQuotes", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false);
         JSONUtilities.safePut(options, "includeFileSources", true);
 
@@ -739,19 +745,6 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
         whenGetArrayOption("columnNames", options, ParsingUtilities.evaluateJsonStringToArrayNode(columnNames));
         whenGetBooleanOption("includeArchiveFileName", options, includeArchiveFileName);
-    }
-
-    private ObjectNode createBasicOptions(String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
-        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-        JSONUtilities.safePut(options, "separator", sep);
-        JSONUtilities.safePut(options, "limit", limit);
-        JSONUtilities.safePut(options, "skipDataLines", skip);
-        JSONUtilities.safePut(options, "ignoreLines", ignoreLines);
-        JSONUtilities.safePut(options, "headerLines", headerLines);
-        JSONUtilities.safePut(options, "guessValueType", guessValueType);
-        JSONUtilities.safePut(options, "ignoreQuotes", ignoreQuotes);
-        return options;
     }
 
     private List<ObjectNode> prepareFileRecords(final String FILE) throws IOException {

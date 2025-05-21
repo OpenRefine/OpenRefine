@@ -431,12 +431,7 @@ public class ExcelImporterTests extends ImporterTest {
         String filename = "excel-test-file-with-empty-column.xslx";
         List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
 
-        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-        JSONUtilities.safePut(options, "limit", -1);
-        JSONUtilities.safePut(options, "skipDataLines", 1);
-        JSONUtilities.safePut(options, "ignoreLines", 0);
-        JSONUtilities.safePut(options, "headerLines", 0);
-
+        ObjectNode options = getDefaultTabularImportingOptions();
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper.readTree(
                 String.format("{name: \"%s#Test Sheet 0\", "
@@ -446,6 +441,8 @@ public class ExcelImporterTests extends ImporterTest {
                         filename, filename)));
         JSONUtilities.safePut(options, "sheets", sheets);
 
+        JSONUtilities.safePut(options, "headerLines", 0);
+        JSONUtilities.safePut(options, "skipDataLines", 1);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false); // col(6) included with empty strings
         JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
 
@@ -470,11 +467,7 @@ public class ExcelImporterTests extends ImporterTest {
         String filename2 = "multi-sheet-file-with-extra-columns-2.xslx";
         fileRecords.addAll(prepareFileRecords(xlsxFileWithMultiSheets, filename2));
 
-        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-        JSONUtilities.safePut(options, "limit", -1);
-        JSONUtilities.safePut(options, "skipDataLines", 1);
-        JSONUtilities.safePut(options, "ignoreLines", 0);
-        JSONUtilities.safePut(options, "headerLines", 0);
+        ObjectNode options = getDefaultTabularImportingOptions();
 
         // xlsxFileWithMultiSheets should have one extra column in sheet 1 that sheet 0 does not have
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
@@ -492,6 +485,7 @@ public class ExcelImporterTests extends ImporterTest {
                         filename2, filename2)));
         JSONUtilities.safePut(options, "sheets", sheets);
 
+        JSONUtilities.safePut(options, "headerLines", 0);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
 
@@ -509,11 +503,7 @@ public class ExcelImporterTests extends ImporterTest {
         String filename = "excel-test-file-with-empty-column.xslx";
         List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
 
-        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-        JSONUtilities.safePut(options, "limit", -1);
-        JSONUtilities.safePut(options, "skipDataLines", 1);
-        JSONUtilities.safePut(options, "ignoreLines", 0);
-        JSONUtilities.safePut(options, "headerLines", 0);
+        ObjectNode options = getDefaultTabularImportingOptions();
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper.readTree(
@@ -524,6 +514,7 @@ public class ExcelImporterTests extends ImporterTest {
                         filename, filename)));
         JSONUtilities.safePut(options, "sheets", sheets);
 
+        JSONUtilities.safePut(options, "headerLines", 0);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
         JSONUtilities.safePut(options, "includeFileSources", true);
