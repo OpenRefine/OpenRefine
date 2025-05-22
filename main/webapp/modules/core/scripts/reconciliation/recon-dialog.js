@@ -222,20 +222,18 @@ ReconDialog.prototype._onAddStandardService = function() {
  */
 ReconDialog.prototype._refetchServiceManifest = function(service, f) {
   var dismissBusy = DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
-  // First, try with CORS (default "json" dataType)
-  $.ajax({ url: service.url, dataType: 'json', timeout: 5000 })
-    .done(function() {
+  
+  ReconciliationManager.fetchServiceManifest(
+    service.url,
+    function(data, mode) {
+      // Update the service with new manifest data
+      service = $.extend(service, data);
+      service.ui.access = mode;
       ReconciliationManager.reRegisterService(service, f, true);
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-      // If it fails, try with JSONP
-      $.ajax({ url: service.url, dataType: 'jsonp', timeout: 5000 })
-        .done(function() {
-          ReconciliationManager.reRegisterService(service, f, true);
-        })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-          alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + service.url);
-        })
-    })
-    .always(function() { dismissBusy(); });
+    },
+    function(jqXHR, textStatus, errorThrown) {
+      alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + service.url);
+    },
+    function() { dismissBusy(); }
+  )
 };
