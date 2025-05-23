@@ -46,6 +46,7 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
@@ -218,5 +219,24 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         } catch (IOException e) {
             exceptions.add(e);
         }
+    }
+
+    /**
+     * If "storeBlankColumns" == false, delete blank columns.
+     *
+     * @param columnsHasData
+     *            Record if there is data in each column( false:null;true:has data)
+     *
+     * @deprecated 2025-05-23 Use {@link ImporterUtilities#deleteColumns(Project, List)}
+     */
+    static public void deleteEmptyColumns(List<Boolean> columnsHasData, Project project) throws ModelException {
+        project.columnModel.update(); // make sure all our cell indexes are up to date
+        for (int c = 0; c < columnsHasData.size(); c++) {
+            if (!columnsHasData.get(c)) {
+                // remove column from columns
+                project.columnModel.removeColumnByCellIndex(c);
+            }
+        }
+        project.columnModel.update();
     }
 }
