@@ -940,5 +940,7 @@
     "core-project/columns-in-the-project": "V projektu",
     "core-project/recipe-required-columns": "Vyžadované sloupce:",
     "core-project/recipe-created-columns": "Vytvořené sloupce:",
-    "core-project/columns-in-the-recipe": "V předpisu"
+    "core-project/columns-in-the-recipe": "V předpisu",
+    "core-index/refine-version-copy-to-clipboard": "Zkopírovat informace o verzi do schránky",
+    "core-index/refine-version-copied": "Informace o verzi byly zkopírovány do schránky!"
 }

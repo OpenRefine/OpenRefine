@@ -33,6 +33,10 @@ var CellRendererRegistry = {
  * The third argument can be used to specify before which renderer the 
  * new renderer should be executed. If it is not defined, the renderer will
  * be added at the very end of the queue.
+ * @public
+ * @param {string} name The name of the renderer.
+ * @param {object} renderer Your render class instance.
+ * @param {string} beforeRenderer The name of the renderer before which to insert the new renderer.
  */
 CellRendererRegistry.addRenderer = function(name, renderer, beforeRenderer) {
   let record = {
