@@ -77,6 +77,7 @@ function init() {
         "scripts/preview-renderer.js",
         "scripts/wikibase-suggest.js",
         "scripts/schema-alignment.js",
+        "scripts/wikibase-ui.js",
         "scripts/wikidata-extension-manager.js",
         "scripts/dialogs/manage-account-dialog.js",
         "scripts/dialogs/perform-edits-dialog.js",

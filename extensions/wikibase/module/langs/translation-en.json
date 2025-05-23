@@ -5,6 +5,7 @@
     "wikibase-extension/import-wikibase-schema": "Import schema…",
     "wikibase-extension/manage-wikibase-account": "Manage Wikibase account…",
     "wikibase-extension/perform-edits-on-wikibase": "Upload edits to Wikibase…",
+    "wikibase-extension/editing-results-facet": "Editing results facet",
     "wikibase-extension/export-to-qs": "Export to QuickStatements",
     "wikibase-extension/qs-file": "QuickStatements file",
     "wikibase-extension/wikibase-edits": "Wikibase edits…",
