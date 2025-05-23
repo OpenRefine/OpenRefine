@@ -39,7 +39,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
@@ -105,7 +109,7 @@ abstract public class ImportingParserBase implements ImportingParser {
             }
         }
 
-        // if user doesn't choose 'storeBlankColumns', delete all empty columns.
+        // if user set 'storeBlankColumns' to false, delete all empty columns.
         boolean storeBlankColumns = JSONUtilities.getBoolean(options, "storeBlankColumns", true);
         if (!storeBlankColumns) {
             deleteBlankColumns(project, exceptions);
@@ -253,27 +257,23 @@ abstract public class ImportingParserBase implements ImportingParser {
 
     private static void deleteBlankColumns(Project project, List<Exception> exceptions) {
         // Determine if there is data in each column
-        List<Boolean> columnsHasData = new ArrayList<>();
-        int rowSize = 0;
+        Set<Integer> columnsWithNoData = IntStream.rangeClosed(0, project.columnModel.getMaxCellIndex())
+                .boxed()
+                .collect(Collectors.toCollection(HashSet::new)); // init all columns as blank
+
         for (Row row : project.rows) {
-            rowSize = row.getCells().size();
-
-            // TODO: Can we make this more efficient?
-            // It's only inside this loop for the case where we have an extra unexpected cell in a row
-            while (rowSize >= columnsHasData.size()) {
-                columnsHasData.add(Boolean.FALSE); // init every col as empty
+            if (columnsWithNoData.isEmpty()) {
+                break; // short-circuit: all columns have data
             }
 
-            for (int i = 0; i < rowSize; i++) {
-                if (!row.isCellBlank(i)) {
-                    columnsHasData.set(i, Boolean.TRUE); // only if an entry is found, set col to hasData
-                }
-            }
+            // if column has data in it, remove from columnsWithNoData
+            int rowSize = row.getCells().size();
+            columnsWithNoData.removeIf(i -> i < rowSize && !row.isCellBlank(i));
         }
 
         // rm empty columns
         try {
-            ImporterUtilities.deleteEmptyColumns(project, columnsHasData);
+            ImporterUtilities.deleteColumns(project, new ArrayList<>(columnsWithNoData));
         } catch (ModelException e) {
             exceptions.add(e);
         }
