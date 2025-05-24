@@ -393,6 +393,43 @@ public class RefineTest {
         return runOperation(operation, project, -1);
     }
 
+    public void testCreateProjectWithEmptyColumns() throws Exception {
+        Project project = createProjectWithColumns("Empty Columns Project");
+        assertProjectCreated(project, 0, 0);
+    }
+
+    public void testPrepareImportOptions() {
+        ObjectNode options = mock(ObjectNode.class);
+        prepareImportOptions(options, ",", 10, 0, 1, 1, true, false);
+        verifyGetArrayOption("separator", options);
+    }
+
+    public void testReconFields() {
+        Recon recon = testRecon("entity", "Q123", Recon.Judgment.Matched);
+        Assert.assertEquals(recon.judgment, Recon.Judgment.Matched);
+        Assert.assertNotNull(recon.match);
+        Assert.assertEquals(recon.match.id, "Q123");
+    }
+
+
+    public void testAssertEqualsSystemLineEnding() {
+        String expected = "line1\nline2\n";
+        String actual = "line1" + System.lineSeparator() + "line2" + System.lineSeparator();
+        assertEqualsSystemLineEnding(actual, expected);
+    }
+
+    public void testAssertProjectEqualsSameContent() {
+        String[] columns = { "name", "age" };
+        Serializable[][] data = { { "Alice", 30 }, { "Bob", 25 } };
+
+        Project p1 = createProject("P1", columns, data);
+        Project p2 = createProject("P2", columns, data);
+
+        assertProjectEquals(p1, p2);
+    }
+
+
+
     /**
      * Runs an operation on a project. If it's a long-running operation, its process is run in the main thread until
      * completion.
