@@ -3,8 +3,10 @@ CSRFUtil = {
 };
 
 
-// Requests a CSRF token and calls the supplied callback
-// with the token
+/**
+ * Requests a CSRF token and calls the supplied callback.
+ * @param {function(string)} onCSRF - The callback to call with the token.
+ */
 CSRFUtil.wrapCSRF = function(onCSRF) {
     let tokenAge = CSRFUtil._tokenMaxAge + 1;
     if (CSRFUtil._token && CSRFUtil._fetchedOn) {
@@ -26,9 +28,15 @@ CSRFUtil.wrapCSRF = function(onCSRF) {
     }
 };
 
-// Performs a POST request where an additional CSRF token
-// is supplied in the POST data. The arguments match those
-// of $.post().
+/**
+ * Performs a POST request where an additional CSRF token is automatically attached.
+ * @param {string} url - The URL to send the request to.
+ * @param {Object|string} data - The data to send with the request.
+ * @param {function(object)} success - The callback to call on success.
+ * @param {string} dataType - The type of data expected in the response.
+ * @param {function(object)} failCallback - The callback to call on failure.
+ * @returns {jQuery.jqXHR} The jQuery AJAX request object.
+ */
 CSRFUtil.postCSRF = function(url, data, success, dataType, failCallback) {
     CSRFUtil.wrapCSRF(function(token) {
         var fullData = data || {};
