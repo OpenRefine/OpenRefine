@@ -632,9 +632,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:14.3.3":
-  version: 14.3.3
-  resolution: "cypress@npm:14.3.3"
+"cypress@npm:14.4.0":
+  version: 14.4.0
+  resolution: "cypress@npm:14.4.0"
   dependencies:
     "@cypress/request": "npm:^3.0.8"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -681,7 +681,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/b802fd1c29069037cf72d59fdfdb79c8b4779e5dd1fa58ea67c8b520fd66e64e204db9d03817950519779af081b925416ffd5ec23f7dcbf6ac52a9da1af5cfec
+  checksum: 10c0/bca4d04b3245dab4e7c57f36014f4b9b6920caba7b7c7b602c1bdd4e467fd3f9eeec0ca18ea82c3cdfa5aa5c2e396060fea2bd2c63325bc45bd7895c501f4a0b
   languageName: node
   linkType: hard
 
@@ -1682,7 +1682,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openrefine-cypress-test-suite@workspace:."
   dependencies:
-    cypress: "npm:14.3.3"
+    cypress: "npm:14.4.0"
     cypress-file-upload: "npm:^5.0.8"
     eslint: "npm:^9.27.0"
     eslint-config-google: "npm:^0.14.0"
