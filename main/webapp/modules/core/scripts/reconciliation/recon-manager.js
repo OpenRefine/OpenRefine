@@ -62,6 +62,48 @@ ReconciliationManager.registerService = function(service) {
   return ReconciliationManager.customServices.length - 1;
 };
 
+/**
+ * Fetches a reconciliation service manifest from the given URL.
+ * 
+ * @param {string} url - The URL of the reconciliation service manifest to fetch
+ * @param {Function} successCallback - Callback function called on successful fetch
+ * @param {Function} errorCallback - Optional callback function called if both fetch attempts fail
+ * @param {Function} alwaysCallback - Optional callback function called regardless of success or fail
+ * @returns {void}
+ */
+ReconciliationManager.fetchServiceManifest = function(url, successCallback, errorCallback, alwaysCallback) {
+  // First, try with CORS (default "json" dataType)
+  $.ajax(
+    url,
+    { 
+      "dataType" : "json",
+      "timeout": 5000
+    }
+  )
+  .done(function(data, textStatus, jqXHR) {
+    successCallback(data, "json");
+  })
+  .fail(function(jqXHR, textStatus, errorThrown) {
+    // If it fails, try with JSONP
+    $.ajax(
+      url,
+      { 
+        "dataType" : "jsonp",
+        "timeout": 5000
+      }
+    )
+    .done(function(data, textStatus, jqXHR) {
+      successCallback(data, "jsonp");
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      if (errorCallback) {
+        errorCallback(jqXHR, textStatus, errorThrown);
+      }
+    });
+  })
+  .always(function() { alwaysCallback(); });
+};
+
 ReconciliationManager.registerStandardService = function(url, f, silent) {
 
   if (ReconciliationManager._urlMap.hasOwnProperty(url)) {
@@ -99,34 +141,16 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
     }
   };
 
-  // First, try with CORS (default "json" dataType)
-  $.ajax(
+  ReconciliationManager.fetchServiceManifest(
     url,
-    { "dataType" : "json",
-    "timeout":5000
-     }
-  )
-  .done(function(data, textStatus, jqXHR) {
-    registerService(data, "json");
-  })
-  .fail(function(jqXHR, textStatus, errorThrown) {
-    // If it fails, try with JSONP
-    $.ajax(
-        url,
-        { "dataType" : "jsonp",
-           "timeout": 5000
-        }
-    )
-    .done(function(data, textStatus, jqXHR) {
-      registerService(data, "jsonp");
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-        if (!silent) {
-          dismissBusy(); 
-          alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
-        }
-    });
-  });
+    registerService,
+    function(jqXHR, textStatus, errorThrown) {
+      if (!silent) {
+        dismissBusy(); 
+        alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+      }
+    }
+  );
 };
 
 ReconciliationManager.unregisterService = function(service, f) {
@@ -156,8 +180,19 @@ ReconciliationManager.unregisterService = function(service, f) {
 ReconciliationManager.reRegisterService = function(service, f, silent) {
   var self = this;
   if ("url" in service) {
-    self.unregisterService(service, function () {
-      self.registerStandardService(service.url, f, silent);
+    // Remove the old service
+    self.unregisterService(service, function() {
+      // Add the service back with the same data
+      var index = ReconciliationManager.customServices.length + 
+        ReconciliationManager.standardServices.length;
+      
+      ReconciliationManager.standardServices.push(service);
+      ReconciliationManager._rebuildMap();
+      ReconciliationManager.save();
+      
+      if (f) {
+        f(index);
+      }
     });
   }
 }
