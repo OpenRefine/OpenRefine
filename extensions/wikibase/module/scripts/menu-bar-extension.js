@@ -3,28 +3,29 @@ I18NUtil.init("wikidata");
 OperationIconRegistry.setIcon('wikidata/save-wikibase-schema', 'extension/wikidata/images/wikibase-black-icon.svg');
 OperationIconRegistry.setIcon('wikidata/perform-wikibase-edits', 'extension/wikidata/images/wikibase-upload-icon.svg');
 
-ExporterManager.MenuItems.push({});
-ExporterManager.MenuItems.push({
-  id: "performWikibaseEdits",
-  label: $.i18n('wikibase-extension/wikibase-edits'),
-  click: function () {
+ExporterManager.addMenuSpacerAfter();
+
+ExporterManager.addMenuItemAfter(
+  "performWikibaseEdits",
+  $.i18n('wikibase-extension/wikibase-edits'),
+  function () {
     PerformEditsDialog.checkAndLaunch();
   }
-});
-ExporterManager.MenuItems.push({
-  id: "exportQuickStatements",
-  label: $.i18n('wikibase-extension/qs-file'),
-  click: function () {
+);
+ExporterManager.addMenuItemAfter(
+  "exportQuickStatements",
+  $.i18n('wikibase-extension/qs-file'),
+  function () {
     WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements");
   }
-});
-ExporterManager.MenuItems.push({
-  id: "exportWikibaseSchema",
-  label: $.i18n('wikibase-extension/wikibase-schema'),
-  click: function () {
+);
+ExporterManager.addMenuItemAfter(
+  "exportWikibaseSchema",
+  $.i18n('wikibase-extension/wikibase-schema'),
+  function () {
     WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema");
   }
-});
+);
 
 WikibaseExporterMenuBar = {};
 
