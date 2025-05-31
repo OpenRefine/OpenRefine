@@ -773,7 +773,6 @@ function process(path, request, response) {
           }
           
           context.encodingJson = JSON.stringify(encodings);
-          context.defaultEncoding = JSON.stringify(Packages.java.nio.charset.Charset.defaultCharset().name());
         }
         
         send(request, response, path + ".vt", context);
