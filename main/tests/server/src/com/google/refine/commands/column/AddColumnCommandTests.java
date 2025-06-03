@@ -1,36 +1,41 @@
 
 package com.google.refine.commands.column;
 
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Collections;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.commands.CommandTestBase;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.column.ColumnAdditionOperation;
 
-public class AddColumnCommandTests {
+public class AddColumnCommandTests extends CommandTestBase {
 
     private AddColumnCommand command;
-    private HttpServletRequest request;
     private Project project;
     private EngineConfig engineConfig;
 
     @BeforeMethod
-    public void setUp() {
-        command = new AddColumnCommand();
-        request = mock(HttpServletRequest.class);
-        project = new Project();
-        engineConfig = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
+    public void setUpCommand() {
+        try {
+            setUpRequestResponse();
+            command = new AddColumnCommand();
+            project = new Project();
+            engineConfig = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
