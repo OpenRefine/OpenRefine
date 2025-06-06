@@ -121,6 +121,13 @@ $(function () {
             }
           },
           {
+            id: "wikidata/editing-results-facet",
+            label: $.i18n('wikibase-extension/editing-results-facet'),
+            click: function () {
+              WikibaseUI.createEditingResultsFacet();
+            }
+          },
+          {
             id: "wikidata/export-qs",
             label: $.i18n('wikibase-extension/export-to-qs'),
             click: function () {
