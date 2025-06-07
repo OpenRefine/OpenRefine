@@ -33,14 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringWriter;
+import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -55,6 +62,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
@@ -80,6 +88,7 @@ public class StandardReconConfig extends ReconConfig {
     private static final String DEFAULT_SCHEMA_SPACE = "http://localhost/schema";
     private static final String DEFAULT_IDENTIFIER_SPACE = "http://localhost/identifier";
     private static final int DEFAULT_BATCH_SIZE = 10;
+
 
     static public class ColumnDetail {
 
@@ -361,6 +370,8 @@ public class StandardReconConfig extends ReconConfig {
                 translatedColumnDetails,
                 limit);
     }
+
+
 
     public ReconJob createSimpleJob(String query) {
         /*
@@ -739,35 +750,94 @@ public class StandardReconConfig extends ReconConfig {
         return common / longWords.size();
     }
 
-    static final protected Set<String> s_stopWords = new HashSet<String>();
+
+    protected static Map<String, Set<String>> STOP_WORDS_MAP = new HashMap<>();
+   
     static {
         // FIXME: This is English specific - needs i18n
-        s_stopWords.add("the");
-        s_stopWords.add("a");
-        s_stopWords.add("and");
-        s_stopWords.add("of");
-        s_stopWords.add("on");
-        s_stopWords.add("in");
-        s_stopWords.add("at");
-        s_stopWords.add("by");
+        loadStopWordsFromFile();
     }
 
     static protected Set<String> breakWords(String s) {
-        // TODO: This needs i18n
-        String[] words = s.toLowerCase().split("\\s+");
+        if (s == null) {
+            return Collections.emptySet();
+        }
 
-        Set<String> set = new HashSet<String>(words.length);
-        for (String word : words) {
-            if (!s_stopWords.contains(word)) {
-                set.add(word);
+        String normalized = Normalizer.normalize(s, Normalizer.Form.NFD)
+                                    .replaceAll("\\p{M}", "");
+        normalized = normalized.toLowerCase();
+
+        String langCode = Locale.getDefault().getLanguage();
+
+        Set<String> stopWords = STOP_WORDS_MAP.get(langCode);
+        if (stopWords == null) {
+            stopWords = STOP_WORDS_MAP.get("en");
+        }
+        if (stopWords == null) {
+            stopWords = new HashSet<>(Arrays.asList(
+                "the", "a", "an", "and", "or", "of", "to", "in", "on", "for", "with"
+            ));
+            System.out.println("Fallback: using hardcoded English stop words.");
+        }
+
+        Set<String> resultWords = new HashSet<>();
+        for (String word : normalized.split("\\s+")) {
+            if (!stopWords.contains(word)) {
+                resultWords.add(word);
             }
         }
-        return set;
+
+        System.out.println("Stop words used for lang: " + langCode + " -> " + stopWords);
+        System.out.println("Input text: " + s);
+        System.out.println("Words returned: " + resultWords);
+
+        return resultWords;
     }
 
     @Override
     public String getMode() {
         return "standard-service";
     }
+
+    private static void loadStopWordsFromFile() {
+        File file = new File("conf/stopwords.json");
+        if (!file.exists()) {
+         
+            STOP_WORDS_MAP.put("en", new HashSet<>(Arrays.asList(
+                "the","a","an","and","or","of","to","in","on","for","with" 
+            )));
+            
+            return;
+        }
+        try (Reader reader = new FileReader(file)) {
+           
+            JsonNode root = ParsingUtilities.mapper.readTree(reader);
+            if (root != null && root.isObject()) {
+               
+                Iterator<String> languages = root.fieldNames();
+                while (languages.hasNext()) {
+                    String lang = languages.next();
+                    JsonNode wordsArray = root.get(lang);
+                    if (wordsArray != null && wordsArray.isArray()) {
+                        Set<String> wordSet = new HashSet<>();
+                        for (JsonNode wordNode : wordsArray) {
+                            if (wordNode.isTextual()) {
+                                
+                                wordSet.add(wordNode.textValue().toLowerCase());
+                            }
+                        }
+                        STOP_WORDS_MAP.put(lang, wordSet);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            
+            STOP_WORDS_MAP.put("en", new HashSet<>(Arrays.asList(
+                "the","a","an","and","or","of","to","in","on","for","with"
+            )));
+            
+        }
+    }
+
 
 }

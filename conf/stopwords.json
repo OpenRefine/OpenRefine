@@ -1,0 +1,50 @@
+{
+  "en": [
+    "the", "a", "an", "and", "or", "of", "to", "in", "on", "for", "with",
+    "at", "by", "from", "about", "as", "into", "like", "through", "after",
+    "over", "between", "out", "against", "during", "without", "before", "under",
+    "around", "among"
+  ],
+  "fr": [
+    "le", "la", "les", "un", "une", "et", "ou", "de", "du", "des", "pour",
+    "par", "dans", "en", "sur", "avec", "sans", "entre", "avant", "après",
+    "contre", "chez", "sous", "vers"
+  ],
+  "es": [
+    "el", "la", "los", "las", "un", "una", "y", "o", "de", "del", "para",
+    "por", "en", "con", "sin", "sobre", "entre", "antes", "después", "hasta"
+  ],
+  "de": [
+    "der", "die", "das", "ein", "eine", "und", "oder", "von", "mit", "für",
+    "auf", "in", "an", "im", "aus", "zu", "am", "dem", "den", "des", "über",
+    "nach", "vor", "bei", "durch", "ohne"
+  ],
+  "it": [
+    "il", "la", "i", "gli", "le", "un", "una", "e", "o", "di", "del", "della",
+    "dei", "degli", "con", "senza", "per", "tra", "fra", "su", "a", "da", "in"
+  ],
+  "pt": [
+    "o", "a", "os", "as", "um", "uma", "e", "ou", "de", "do", "da", "dos", "das",
+    "em", "no", "na", "nos", "nas", "por", "com", "para", "sem", "entre", "sobre"
+  ],
+  "nl": [
+    "de", "het", "een", "en", "of", "van", "voor", "in", "op", "bij", "met",
+    "zonder", "tegen", "tot", "tussen", "onder", "over", "na", "door"
+  ],
+  "zh": [
+    "的", "了", "和", "是", "在", "我", "有", "也", "不", "就", "人", "都", "一", "上",
+    "个", "到", "说", "要", "你", "他", "她", "它"
+  ],
+  "ja": [
+    "の", "に", "は", "を", "た", "が", "で", "て", "と", "も", "です", "ます", "する", "ない",
+    "よう", "こと", "から", "な", "なる", "その"
+  ],
+  "hi": [
+    "और", "भी", "का", "की", "के", "को", "से", "पर", "में", "यह", "था", "थे", "है", "हो", "जो",
+    "कि", "कर", "लिए", "करना", "हुआ"
+  ],
+  "ko": [
+    "의", "이", "에", "를", "은", "는", "이것", "그것", "합니다", "했다", "에서", "하고", "보다", "까지",
+    "하는", "된다", "수", "그리고", "또한"
+  ]
+}
