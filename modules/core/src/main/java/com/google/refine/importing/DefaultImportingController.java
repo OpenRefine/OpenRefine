@@ -59,6 +59,8 @@ import com.google.refine.util.ParsingUtilities;
 public class DefaultImportingController extends Command implements ImportingController {
 
     protected RefineServlet servlet;
+    public static final int DEFAULT_MAX_CHARS_PER_COLUMN = 32768;
+    public static final int DEFAULT_MAX_COLUMNS = 16384;
 
     @Override
     public void init(RefineServlet servlet) {
@@ -188,6 +190,24 @@ public class DefaultImportingController extends Command implements ImportingCont
         if (job == null) {
             respondStatusError(response, "No such import job");
             return;
+        }
+
+        // (Within doUpdateFormatAndOptions, after parsing the 'options' JSON ObjectNode)
+        ObjectNode options = ParsingUtilities.evaluateJsonStringToObjectNode(request.getParameter("options"));
+        // Validate CSV parser limit options if present
+        if (options.has("maxCharsPerColumn")) {
+            int maxChars = options.get("maxCharsPerColumn").asInt(DEFAULT_MAX_CHARS_PER_COLUMN);
+            if (maxChars < 0 && maxChars != -1) {
+                options.put("maxCharsPerColumn", DEFAULT_MAX_CHARS_PER_COLUMN);
+            } else if (maxChars == 0) {
+                options.put("maxCharsPerColumn", DEFAULT_MAX_CHARS_PER_COLUMN);
+            }
+        }
+        if (options.has("maxColumns")) {
+            int maxCols = options.get("maxColumns").asInt(DEFAULT_MAX_COLUMNS);
+            if (maxCols < 1) {
+                options.put("maxColumns", DEFAULT_MAX_COLUMNS);
+            }
         }
 
         job.updating = true;
