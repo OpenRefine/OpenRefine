@@ -291,6 +291,7 @@ public class ReconOperation extends EngineDependentOperation {
 
             int batchSize = _reconConfig.getBatchSize(_project.rows.size());
             int done = 0;
+            long startTime = System.currentTimeMillis();
 
             List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
             List<JobGroup> groups = new ArrayList<JobGroup>(jobKeyToGroup.values());
@@ -343,6 +344,11 @@ public class ReconOperation extends EngineDependentOperation {
                 }
 
                 _progress = done * 100 / groups.size();
+                double elapsedTime = System.currentTimeMillis() - startTime;
+                double remaining = (elapsedTime * 100 / _progress) - elapsedTime;
+                _eta = (int)Math.floor(Math.round(remaining / 1000.00) / 60.0);
+                logger.info(String.valueOf(_eta));
+
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
