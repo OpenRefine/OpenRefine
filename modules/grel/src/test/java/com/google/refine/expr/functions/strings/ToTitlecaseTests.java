@@ -38,7 +38,7 @@ public class ToTitlecaseTests extends GrelTestBase {
     @Test
     public void testToTitlecaseInvalidParams() {
         Assert.assertTrue(invoke("toTitlecase") instanceof EvalError);
-        Assert.assertTrue(invoke("toTitlecase", "one", "two", "three") instanceof EvalError);
+        Assert.assertTrue(invoke("toTitlecase", "one", "two", "three", "four") instanceof EvalError);
     }
 
     @Test
@@ -49,6 +49,17 @@ public class ToTitlecaseTests extends GrelTestBase {
         Assert.assertEquals((String) (invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.")), "C.R. Sandidge Wines, Inc.");
         Assert.assertEquals((String) (invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.", ",. ")), "C.R. Sandidge Wines, Inc.");
         Assert.assertEquals((String) (invoke("toTitlecase", "one-two-three", "-")), "One-Two-Three");
+    }
+    
+    @Test
+    public void testToTitlecaseBookStyle() {
+        // Test book-style title casing
+        Assert.assertEquals((String) (invoke("toTitlecase", "the lord of the rings", "book")), "The Lord of the Rings");
+        Assert.assertEquals((String) (invoke("toTitlecase", "war and peace", "csl")), "War and Peace");
+        Assert.assertEquals((String) (invoke("toTitlecase", "harry potter: the boy who lived", "book")), "Harry Potter: The Boy Who Lived");
+        
+        // Test that unrecognized style falls back to delimiter behavior
+        Assert.assertEquals((String) (invoke("toTitlecase", "hello-world", "-")), "Hello-World");
     }
 
 }
