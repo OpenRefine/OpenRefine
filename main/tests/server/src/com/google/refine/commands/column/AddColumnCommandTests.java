@@ -6,7 +6,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import org.testng.annotations.BeforeMethod;
@@ -28,14 +27,9 @@ public class AddColumnCommandTests extends CommandTestBase {
 
     @BeforeMethod
     public void setUpCommand() {
-        try {
-            setUpRequestResponse();
-            command = new AddColumnCommand();
-            project = new Project();
-            engineConfig = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        command = new AddColumnCommand();
+        project = new Project();
+        engineConfig = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
     }
 
     @Test
