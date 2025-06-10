@@ -33,66 +33,95 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.clustering.binning;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Fingerprint keyer where fingerprint is sorted list of unique words after case and diacritic folding and removing all
- * punctuation. Word boundary is any whitespace character, while output key has words joined with a single ASCII space
- * character.
- *
+ * Fingerprint keyer where fingerprint is sorted list of unique words after case and diacritic folding,
+ * punctuation removal, and language-specific stop word filtering.
  */
 public class FingerprintKeyer extends Keyer {
 
-    // Punctuation plus C0 & C1 controls (except for whitespace characters which we need for split to work)
-    // Added LF, VT, FF, CR, NEL to the control characters not stripped - tfm 2020-10-17
-    static final Pattern punctctrl = Pattern.compile("\\p{Punct}|[\\x00-\\x08\\x0E-\\x1F\\x7F\\x80-\\x84\\x86-\\x9F]",
-            Pattern.UNICODE_CHARACTER_CLASS);
+    // Punctuation plus C0 & C1 controls (except for whitespace characters)
+    static final Pattern punctctrl = Pattern.compile(
+        "\\p{Punct}|[\\x00-\\x08\\x0E-\\x1F\\x7F\\x80-\\x84\\x86-\\x9F]",
+        Pattern.UNICODE_CHARACTER_CLASS
+    );
 
-    public static final Pattern DIACRITICS_AND_FRIENDS = Pattern
-            // Lm = modifier letter, Sk = modifier symbol
-            .compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
+    public static final Pattern DIACRITICS_AND_FRIENDS = Pattern.compile(
+        "[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+"
+    );
 
-    private static final Pattern WHITESPACE = Pattern.compile("\\s+",
-            Pattern.UNICODE_CHARACTER_CLASS);
-    // First part of table based on https://stackoverflow.com/a/1453284/167425 by Andreas Petersson
-    private static final ImmutableMap<String, String> NONDIACRITICS = ImmutableMap.<String, String> builder()
-            // Replace non-diacritics with their equivalent characters
-            .put("ß", "ss")
-            .put("æ", "ae")
-            .put("ø", "oe")
-            .put("å", "aa") // TODO: We'll never see this after decomposition
-            .put("©", "c") // copyright character
-            .put("\u00F0", "d") // Small letter Icelandic eth
-            .put("\u0111", "d") // Small letter D with stroke
-            .put("\u0256", "d") // Small letter African D
-            .put("\u00FE", "th") // Lower case Icelandic thorn þ
-            .put("ƿ", "w") // Lower case Wynn from Old English modernly transliterated to w
-            // Visually similar replacements from our private former asciify() method
-            // (only need lower case forms since we're already downcased)
-            .put("\u0127", "h") // small H with stroke
-            .put("\u0131", "i") // dotless I
-            .put("\u0138", "k") // small letter Kra
-            .put("\u0142", "l") // Bialystock
-            .put("\u014B", "n") // Small letter Eng
-            .put("\u017F", "s") // long s
-            .put("\u0167", "t") // small letter T with stroke
-            // Additional characters following the same principle
-            .put("œ", "oe")
-            .put("ẜ", "s") // more long S forms
-            .put("ẝ", "s")
-            .build();
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+", Pattern.UNICODE_CHARACTER_CLASS);
+
+    private static final ImmutableMap<String, String> NONDIACRITICS = ImmutableMap.<String, String>builder()
+        .put("ß", "ss").put("æ", "ae").put("ø", "oe").put("å", "aa").put("©", "c")
+        .put("\u00F0", "d").put("\u0111", "d").put("\u0256", "d").put("\u00FE", "th").put("ƿ", "w")
+        .put("\u0127", "h").put("\u0131", "i").put("\u0138", "k").put("\u0142", "l").put("\u014B", "n")
+        .put("\u017F", "s").put("\u0167", "t").put("œ", "oe").put("ẜ", "s").put("ẝ", "s")
+        .build();
+
+    private static final Map<String, Set<String>> STOP_WORDS_MAP = new ConcurrentHashMap<>();
+
+    static {
+        loadStopWords();
+    }
+
+    private static void loadStopWords() {
+        try {
+            InputStream in = FingerprintKeyer.class
+                    .getClassLoader()
+                    .getResourceAsStream("modules/core/conf/stop_words.json");
+
+            if (in == null) {
+                System.err.println("stop_words.json not found in conf folder");
+                return;
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, List<String>> rawMap = mapper.readValue(
+                    new InputStreamReader(in, StandardCharsets.UTF_8),
+                    Map.class
+            );
+
+            for (Map.Entry<String, List<String>> entry : rawMap.entrySet()) {
+                STOP_WORDS_MAP.put(entry.getKey(), new HashSet<>(entry.getValue()));
+            }
+
+        } catch (Exception e) {
+            System.err.println("Failed to load stop_words.json: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public String key(String s, Object... o) {
-        if (s == null || o != null && o.length > 0) {
-            throw new IllegalArgumentException("Fingerprint keyer accepts a single string parameter");
+        if (s == null || (o != null && o.length > 1)) {
+            throw new IllegalArgumentException("Fingerprint keyer accepts one string and optionally a language code");
         }
-        return WHITESPACE.splitAsStream(normalize(s, true)).sorted().distinct().collect(Collectors.joining(" "));
+
+        String lang = (o != null && o.length == 1 && o[0] instanceof String) ? (String) o[0] : "en";
+        Set<String> stopWords = STOP_WORDS_MAP.getOrDefault(lang, Collections.emptySet());
+
+        return WHITESPACE.splitAsStream(normalize(s, true))
+                .filter(token -> !stopWords.contains(token))
+                .sorted()
+                .distinct()
+                .collect(Collectors.joining(" "));
     }
 
     protected String normalize(String s) {
@@ -102,8 +131,8 @@ public class FingerprintKeyer extends Keyer {
 
     protected String normalize(String s, boolean strong) {
         if (strong) {
-            s = CharMatcher.whitespace().trimFrom(s); // first off, remove whitespace around the string
-            s = s.toLowerCase(); // TODO: This is using the default locale. Is that what we want?
+            s = CharMatcher.whitespace().trimFrom(s);  // first off, remove whitespace around the string
+            s = s.toLowerCase();  // TODO: This is using the default locale. Is that what we want?
         }
         s = stripDiacritics(s);
         s = stripNonDiacritics(s);
@@ -128,9 +157,9 @@ public class FingerprintKeyer extends Keyer {
         return str;
     }
 
-    // Based on https://stackoverflow.com/a/1453284/167425 by Andreas Petersson
+// Based on https://stackoverflow.com/a/1453284/167425 by Andreas Petersson    
     private static String stripNonDiacritics(String orig) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < orig.length(); i++) {
             String source = orig.substring(i, i + 1);
             String replace = NONDIACRITICS.get(source);
@@ -138,5 +167,4 @@ public class FingerprintKeyer extends Keyer {
         }
         return result.toString();
     }
-
 }
