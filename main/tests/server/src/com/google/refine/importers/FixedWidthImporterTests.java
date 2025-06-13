@@ -191,6 +191,30 @@ public class FixedWidthImporterTests extends ImporterTest {
     }
 
     @Test
+    public void testDeleteBlankColumnsFromDifferentPositions() throws IOException {
+        String filename = "fixed-width-test-file-header-and-sample-row.txt";
+        List<String> lines = List.of(SAMPLE_ROW, "012345green....00342"); // no blank columns in file
+        List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "headerLines", 1);
+        // add blank columns in different index positions: first, middle, last
+        ArrayNode columnWidths = ParsingUtilities.mapper.valueToTree(List.of(0, 6, 0, 9, 0, 5, 0));
+        JSONUtilities.safePut(options, "columnWidths", columnWidths);
+
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // rm blank columns
+
+        parse(SUT, fileRecords, options);
+
+        // check expected columns are all included
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("NDB_No"));
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("Shrt_Desc"));
+        Assert.assertTrue(project.columnModel.getColumnNames().contains("Water"));
+    }
+
+    @Test
     public void testDeleteBlankColumnsAfterCheckingAllFiles() throws IOException {
         String filename = "fixed-width-test-file-header-and-sample-row.txt";
         List<String> lines = List.of(SAMPLE_ROW, "012345green....00342");
