@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
@@ -424,6 +425,46 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("skipDataLines");
         verify(options, times(SHEETS)).get("limit");
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
+    }
+
+    @Test
+    public void testDeleteBlankColumns() throws IOException {
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+
+        JSONUtilities.safePut(options, "sheets", sheets);
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "headerLines", 0);
+        JSONUtilities.safePut(options, "skipDataLines", 1);
+        JSONUtilities.safePut(options, "limit", -1);
+
+        // This will mock the situation of deleting empty columns(col6)
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false);
+
+        String filename = "file-source"; // needs to be the same as specified in `options.sheets`
+        List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
+        ObjectNode optionsSpy = spy(options); // wrap options in a spy, so we can verify method calls afterwards
+        parse(SUT, fileRecords, optionsSpy);
+
+        // We should have two less than the start due to empty columns being skipped
+        assertEquals(project.columnModel.columns.size(), 11);
+        // NOTE: we need to redirect through the column model because the rows will still have empty cells
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(1).getCellIndex()), true);
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(2).getCellIndex()), EXPECTED_DATE_TIME);
+
+        // why times 2?
+        // since options are not mocked, we are calling `JsonUtilities.getInt`
+        // which in turn calls `JsonNode.get` directly and via `JsonNode.has` once more indirectly
+        int numberOfExpectedInvocations = sheets.size() * 2;
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("ignoreLines");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("headerLines");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("skipDataLines");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("limit");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("storeBlankCellsAsNulls");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("storeBlankColumns");
     }
 
     @Test

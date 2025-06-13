@@ -165,6 +165,47 @@ public class FixedWidthImporterTests extends ImporterTest {
     }
 
     @Test
+    public void testDeleteBlankColumns() throws IOException {
+        String filename = "fixed-width-test-file-sample-row-too-short.txt";
+        List<String> lines = List.of(SAMPLE_ROW, "TooShort");
+        List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
+        // Set up blank column in project
+        JSONUtilities.append(columnWidths, 6);
+        JSONUtilities.append(columnWidths, 0);
+        JSONUtilities.append(columnWidths, 5);
+        JSONUtilities.append(columnWidths, 0);
+        JSONUtilities.append(columnWidths, 3);
+        JSONUtilities.safePut(options, "columnWidths", columnWidths);
+
+        ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
+        columnNames.add("Col 1");
+        columnNames.add("Col 2");
+        columnNames.add("Col 3");
+        columnNames.add("Col 4");
+        columnNames.add("Col 5");
+        columnNames.add("Col 6");
+        JSONUtilities.safePut(options, "columnNames", columnNames);
+
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "headerLines", 1);
+        JSONUtilities.safePut(options, "skipDataLines", 0);
+        JSONUtilities.safePut(options, "limit", -1);
+
+        // This will mock the situation of deleting empty columns(col2&col4)
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false);
+
+        parse(SUT, fileRecords, options);
+
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Col 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Col 3");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Col 5");
+    }
+
+    @Test
     public void testDeleteBlankColumnFromLastPosition() throws IOException {
         String filename = "fixed-width-test-file-header-and-sample-row-with-empty-column.txt";
         List<String> lines = List.of("012345green...."); // add blank column

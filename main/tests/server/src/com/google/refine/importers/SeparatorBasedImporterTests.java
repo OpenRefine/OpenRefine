@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CharSequenceReader;
@@ -598,6 +599,34 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         assertProjectEquals(project, expectedProject);
     }
 
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
+    public void testDeleteBlankColumns(String sep) throws IOException {
+        // Set up blank column in project
+        String inputSeparator = sep == null ? "\t" : sep;
+        String filenameEmptyColumn = "test_with_empty_column.txt";
+        List<String> lines = List.of(
+                "data1" + inputSeparator + inputSeparator + "data2\"" + inputSeparator + inputSeparator + "data3" + inputSeparator,
+                "data4" + inputSeparator + inputSeparator + "data5\"" + inputSeparator + inputSeparator + "data6");
+        List<ObjectNode> fileRecords = prepareFileRecords(filenameEmptyColumn, lines);
+        ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
+        columnNames.add("Col 1");
+        columnNames.add("Col 2");
+        columnNames.add("Col 3");
+        columnNames.add("Col 4");
+        columnNames.add("Col 5");
+
+        // This will mock the situation of deleting empty columns(col2&col4)
+        ObjectNode options = createOptions(sep, -1, 0, 0, 1, false, true);
+        JSONUtilities.safePut(options, "storeBlankColumns", false);
+        JSONUtilities.safePut(options, "columnNames", columnNames);
+        parse(SUT, fileRecords, options);
+
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Col 1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Col 3");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Col 5");
+    }
+
     @Test
     public void testDeleteBlankColumnFromLastPosition() throws IOException {
         // File with columns Name, Age, Gender where column Gender is empty
@@ -747,6 +776,23 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         whenGetBooleanOption("includeArchiveFileName", options, includeArchiveFileName);
     }
 
+    protected ObjectNode createOptions(String sep, int limit, int skip, int ignoreLines,
+            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "separator", sep);
+        JSONUtilities.safePut(options, "quoteCharacter", "\"");
+        JSONUtilities.safePut(options, "limit", limit);
+        JSONUtilities.safePut(options, "skipDataLines", skip);
+        JSONUtilities.safePut(options, "ignoreLines", ignoreLines);
+        JSONUtilities.safePut(options, "headerLines", headerLines);
+        JSONUtilities.safePut(options, "guessCellValueTypes", guessValueType);
+        JSONUtilities.safePut(options, "processQuotes", !ignoreQuotes);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+        JSONUtilities.safePut(options, "columnNames", ParsingUtilities.evaluateJsonStringToArrayNode("[]"));
+        JSONUtilities.safePut(options, "includeArchiveFileName", false);
+        return options;
+    }
+
     private List<ObjectNode> prepareFileRecords(final String FILE) throws IOException {
         String filename = ClassLoader.getSystemResource(FILE).getPath();
         // File is assumed to be in job.getRawDataDir(), so copy it there
@@ -754,6 +800,18 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = new ArrayList<>();
         fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
                 String.format("{\"fileName\": \"%s\", \"location\": \"%s\"}", FILE, FILE)));
+        return fileRecords;
+    }
+
+    private List<ObjectNode> prepareFileRecords(final String filename, List<String> lines) throws IOException {
+        // File is assumed to be in job.getRawDataDir(), so write test data there
+        File testFile = new File(job.getRawDataDir(), filename);
+        FileUtils.writeLines(testFile, lines);
+        testFile.deleteOnExit();
+
+        List<ObjectNode> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
+                String.format("{\"fileName\": \"%s\", \"location\": \"%s\"}", filename, filename)));
         return fileRecords;
     }
 }
