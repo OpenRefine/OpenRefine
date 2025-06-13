@@ -599,7 +599,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteBlankColumns() throws IOException {
+    public void testDeleteBlankColumnFromLastPosition() throws IOException {
         // File with columns Name, Age, Gender where column Gender is empty
         List<ObjectNode> fileRecords = prepareFileRecords("persons_with_empty_column.csv");
 

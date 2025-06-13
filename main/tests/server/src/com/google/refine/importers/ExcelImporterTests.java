@@ -427,7 +427,7 @@ public class ExcelImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteBlankColumns() throws IOException {
+    public void testDeleteBlankColumnsFromMiddlePositions() throws IOException {
         String filename = "excel-test-file-with-empty-column.xslx";
         List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
 

@@ -165,7 +165,7 @@ public class FixedWidthImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testDeleteBlankColumns() throws IOException {
+    public void testDeleteBlankColumnFromLastPosition() throws IOException {
         String filename = "fixed-width-test-file-header-and-sample-row-with-empty-column.txt";
         List<String> lines = List.of("012345green...."); // add blank column
         List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
