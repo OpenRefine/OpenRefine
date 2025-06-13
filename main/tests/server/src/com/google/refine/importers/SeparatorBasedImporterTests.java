@@ -599,6 +599,8 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         assertProjectEquals(project, expectedProject);
     }
 
+    // ---------------------delete blank columns------------------------
+
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void testDeleteBlankColumns(String sep) throws IOException {
         // Set up blank column in project
@@ -633,9 +635,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords("persons_with_empty_column.csv");
 
         // This will mock the situation of deleting empty columns(Gender)
-        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-        JSONUtilities.safePut(options, "separator", ",");
-        JSONUtilities.safePut(options, "processQuotes", false);
+        ObjectNode options = createOptions(",", -1, 0, 0, 1, false, true);
         JSONUtilities.safePut(options, "storeBlankColumns", false);
 
         parse(SUT, fileRecords, options);
@@ -655,9 +655,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         fileRecords.addAll(prepareFileRecords(filenameEmptyColumn));
 
         // This will mock the situation of deleting empty columns, but only after checking all files
-        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-        JSONUtilities.safePut(options, "separator", ",");
-        JSONUtilities.safePut(options, "processQuotes", false);
+        ObjectNode options = createOptions(",", -1, 0, 0, 1, false, true);
         JSONUtilities.safePut(options, "storeBlankColumns", false);
 
         parse(SUT, fileRecords, options);
@@ -676,9 +674,7 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords(filename);
 
         // This will mock the situation of deleting empty columns (Gender)
-        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-        JSONUtilities.safePut(options, "separator", ",");
-        JSONUtilities.safePut(options, "processQuotes", false);
+        ObjectNode options = createOptions(",", -1, 0, 0, 1, false, true);
         JSONUtilities.safePut(options, "storeBlankColumns", false);
         JSONUtilities.safePut(options, "includeFileSources", true);
 

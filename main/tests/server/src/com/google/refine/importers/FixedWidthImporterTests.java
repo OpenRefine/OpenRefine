@@ -164,6 +164,8 @@ public class FixedWidthImporterTests extends ImporterTest {
         assertProjectEquals(project, expectedProject);
     }
 
+    // ---------------------delete blank columns------------------------
+
     @Test
     public void testDeleteBlankColumns() throws IOException {
         String filename = "fixed-width-test-file-sample-row-too-short.txt";
@@ -212,6 +214,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
 
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "headerLines", 0);
         ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
         columnNames.add("NDB_No");
         columnNames.add("Shrt_Desc");
@@ -257,15 +260,17 @@ public class FixedWidthImporterTests extends ImporterTest {
 
     @Test
     public void testDeleteBlankColumnsAfterCheckingAllFiles() throws IOException {
+        // set up file with no empty columns
         String filename = "fixed-width-test-file-header-and-sample-row.txt";
         List<String> lines = List.of(SAMPLE_ROW, "012345green....00342");
         List<ObjectNode> fileRecords = prepareFileRecords(filename, lines);
-
+        // set up file with one empty column
         String filenameEmptyColumn = "fixed-width-test-file-header-and-sample-row-with-empty-column.txt";
         List<String> linesWithEmptyColumn = List.of(SAMPLE_ROW, "012345green...."); // add blank column
         fileRecords.addAll(prepareFileRecords(filenameEmptyColumn, linesWithEmptyColumn));
 
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "headerLines", 1);
         ArrayNode columnWidths = ParsingUtilities.mapper.valueToTree(List.of(6, 9, 5));
         JSONUtilities.safePut(options, "columnWidths", columnWidths);
 
@@ -274,7 +279,7 @@ public class FixedWidthImporterTests extends ImporterTest {
 
         parse(SUT, fileRecords, options);
 
-        // check expected columns are all included
+        // no column should have been deleted because first file has no empty cols
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertTrue(project.columnModel.getColumnNames().contains("NDB_No"));
         Assert.assertTrue(project.columnModel.getColumnNames().contains("Shrt_Desc"));
@@ -288,11 +293,12 @@ public class FixedWidthImporterTests extends ImporterTest {
         List<ObjectNode> fileRecords = prepareFileRecords(filenameEmptyColumn, linesWithEmptyColumn);
 
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "headerLines", 1);
         ArrayNode columnWidths = ParsingUtilities.mapper.valueToTree(List.of(6, 0, 9, 0, 5)); // add blank columns
         JSONUtilities.safePut(options, "columnWidths", columnWidths);
 
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
-        JSONUtilities.safePut(options, "storeBlankColumns", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // rm blank columns
         JSONUtilities.safePut(options, "includeFileSources", true);
 
         parse(SUT, fileRecords, options);

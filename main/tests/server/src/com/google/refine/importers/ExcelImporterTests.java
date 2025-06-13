@@ -427,6 +427,8 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
     }
 
+    // ---------------------delete blank columns------------------------
+
     @Test
     public void testDeleteBlankColumns() throws IOException {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
@@ -482,6 +484,8 @@ public class ExcelImporterTests extends ImporterTest {
                         filename, filename)));
         JSONUtilities.safePut(options, "sheets", sheets);
 
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "limit", -1);
         JSONUtilities.safePut(options, "headerLines", 0);
         JSONUtilities.safePut(options, "skipDataLines", 1);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false); // col(6) included with empty strings
@@ -526,6 +530,8 @@ public class ExcelImporterTests extends ImporterTest {
                         filename2, filename2)));
         JSONUtilities.safePut(options, "sheets", sheets);
 
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "limit", -1);
         JSONUtilities.safePut(options, "headerLines", 0);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
@@ -555,6 +561,8 @@ public class ExcelImporterTests extends ImporterTest {
                         filename, filename)));
         JSONUtilities.safePut(options, "sheets", sheets);
 
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "limit", -1);
         JSONUtilities.safePut(options, "headerLines", 0);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
         JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
