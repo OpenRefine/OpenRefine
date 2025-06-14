@@ -230,14 +230,13 @@ class ReconCellRenderer {
   }
 
   doMatchNewTopicToSimilarCells(cellIndex, cell) {
-    this.doJudgmentForSimilarCells("new", {}, { shareNewTopics: true }, cellIndex, cell);
+    this.doJudgmentForSimilarCells("new", { shareNewTopics: true }, cellIndex, cell);
   };
 
   doClearSimilarCells(cell, cellIndex) {
     this.postProcessSeveralCells(
-      "recon-clear-similar-cells",
-      {},
       {
+        op: "core/recon-clear-similar-cells",
         columnName: Refine.cellIndexToColumn(cellIndex).name,
         similarValue: cell.v
       },
@@ -255,11 +254,13 @@ class ReconCellRenderer {
   }
 
   doMatchTopicToSimilarCells(candidate, cellIndex, cell) {
-    this.doJudgmentForSimilarCells("matched", {}, {
-      id : candidate.id,
-      name: candidate.name,
-      score: candidate.score,
-      types: candidate.types.join(",")
+    this.doJudgmentForSimilarCells("matched", {
+      match: {
+        id : candidate.id,
+        name: candidate.name,
+        score: candidate.score,
+        types: candidate.types
+      }
     }, cellIndex, cell);
   }
 
@@ -279,11 +280,10 @@ class ReconCellRenderer {
     );
   }
 
-  doJudgmentForSimilarCells(judgment, params, bodyParams, cellIndex, cell) {
+  doJudgmentForSimilarCells(judgment, params, cellIndex, cell) {
     this.postProcessSeveralCells(
-      "recon-judge-similar-cells",
-      params || {},
-      $.extend(bodyParams || {}, {
+      $.extend(params || {}, {
+        op: "core/recon-judge-similar-cells",
         columnName: Refine.cellIndexToColumn(cellIndex).name,
         similarValue: cell.v,
         judgment: judgment,
@@ -342,7 +342,19 @@ class ReconCellRenderer {
           params.similarValue = cell.v;
           params.columnName = Refine.cellIndexToColumn(cellIndex).name;
 
-          self.postProcessSeveralCells("recon-judge-similar-cells", {}, params, true);
+          self.postProcessSeveralCells(
+            {
+              op: "core/recon-judge-similar-cells",
+              judgment: "matched",
+              match: {
+                id: match.id,
+                name: match.name,
+                types: notable_types == null ? [] : notable_types.split(',')
+              },
+              similarValue: cell.v,
+              columnName: params.columnName
+            },
+            true);
         } else {
           params.row = rowIndex;
           params.cell = cellIndex;
@@ -426,11 +438,9 @@ class ReconCellRenderer {
     );
   }
 
-  postProcessSeveralCells(command, params, bodyParams, columnStatsChanged) {
-    Refine.postCoreProcess(
-      command,
-      params,
-      bodyParams,
+  postProcessSeveralCells(operation, columnStatsChanged) {
+    Refine.postOperation(
+      operation,
       { cellsChanged: true, columnStatsChanged: columnStatsChanged, rowIdsPreserved: true, recordIdsPreserved: true }
     );
   }
