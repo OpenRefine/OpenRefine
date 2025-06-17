@@ -39,12 +39,12 @@ function ProcessPanel(div) {
   this._updateOptions = {};
   this._onDones = [];
   this._latestHistoryEntry = null;
-  
+
   this._div.html(DOM.loadHTML("core", "scripts/project/progress-panel.html"));
   this._elmts = DOM.bind(this._div);
 
   this._elmts.undoLink.html($.i18n('core-project/undo'));
-  
+
   var self = this;
   $(window).on('keypress',function(evt) {
     if (evt.charCode == 26 || (evt.charCode == 122 && (evt.ctrlKey || evt.metaKey))) { // ctrl-z or meta-z
@@ -169,6 +169,7 @@ ProcessPanel.prototype._render = function(newData) {
         Refine.setTitle($.i18n('core-project/percent-complete', process.progress));
         this._elmts.progressDescription.text(process.description);
         this._elmts.progressSpan.text($.i18n('core-project/percent-complete', process.progress));
+        this._elmts.etaSpan.text(`ETA: ${process.eta}`);
       }
       if ("onDone" in process) {
         newProcessMap[process.id] = process;
