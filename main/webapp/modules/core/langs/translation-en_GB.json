@@ -4,5 +4,6 @@
     "core-views/custom-facets": "Customised facets",
     "core-views/columnize": "Columnise by Key/Value Columns",
     "core-views/columnize-col": "Columnise by key/value columns…",
-    "name": "English"
+    "name": "English",
+    "core-index/slogan": "A power tool for working with messy data"
 }

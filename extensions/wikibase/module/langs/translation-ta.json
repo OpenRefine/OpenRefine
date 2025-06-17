@@ -247,8 +247,8 @@
     "wikibase-preview/delete-all-existing-statements": "தற்போதுள்ள அனைத்து அறிக்கைகளையும் நீக்கு",
     "wikibase-account/dialog-header": "$ 1 கணக்கு",
     "wikibase-account/explain-log-in": "<A href = \"$ 1\" இலக்கு = \"_ வெற்று\"> $ 2 </a> இல் உள்நுழைகிறது.",
-    "wikibase-account/explain-bot-passwords": "<A href = \"$ 1\" இலக்கு = \"_ வெற்று\"> போட் கடவுச்சொற்கள் </a>, இதைப் பார்க்கவும் -விகிடேட்டா-கணக்கீடு \"இலக்கு =\" _ வெற்று \"> விக்கி பக்கம் </a> ஒன்றை எவ்வாறு பெறுவது என்பதை அறிய.",
-    "wikibase-account/explain-owner-only-consumer-wiki": "உரிமையாளர் மட்டுமே நுகர்வோர் <a href = \"$ 1\" இலக்கு = \"_ வெற்று\"> இங்கே </a> உங்களிடம் ஒன்று இல்லையென்றால் நீங்கள் பதிவு செய்ய வேண்டும். ஒன்றைப் பெறுவது எப்படி என்பதை அறிய இதைக் கற்றுக்கொள்ள <a href = \"https://github.com/openrefine/openrefine/openrefine/wiki/wikidata-ownly-consumer\" இலக்கு = \"_ வெற்று\"> விக்கி </a> ஐப் பார்க்கவும்.",
+    "wikibase-account/explain-bot-passwords": "<A href = \"$ 1\" இலக்கு = \"_ வெற்று\"> போட் கடவுச்சொற்கள் </a> உடன் உள்நுழைய நீங்கள் ஊக்குவிக்கப்படுகிறீர்கள், இதைப் பார்க்கவும் <a href = \"https://openrefine.org/docs/manual/wikibase/overview#manage--manage-wikidata-account-account\" how> wigl towis = \"_ _ _ _ _ _ _ _ _ _ _ _ black.",
+    "wikibase-account/explain-owner-only-consumer-wiki": "நீங்கள் உரிமையாளர் மட்டுமே நுகர்வோர் <a href = \"$ 1\" இலக்கு = \"_ வெற்று\"> இங்கே </a> உங்களிடம் இல்லையென்றால் முதலில் பதிவு செய்ய வேண்டும். ஒன்றைப் பெறுவது எப்படி என்பதை அறிய இதைக் கற்றுக்கொள்ள <a href = \"https://github.com/openrefine/openrefine/openrefine/wiki/wikidata-ownly-consumer\" இலக்கு = \"_ வெற்று\"> விக்கி </a> ஐப் பார்க்கவும்.",
     "wikibase-account/explain-password-login": "உங்கள் பயனர்பெயர்/கடவுச்சொல்லுடன் <a> உள்நுழையலாம். </a>",
     "wikibase-account/explain-owner-only-consumer-login": "உங்கள் உரிமையாளருக்கு மட்டுமே நுகர்வோருடன் <a> உள்நுழையலாம். </a>",
     "wikibase-account/invalid-credentials": "தவறான நற்சான்றிதழ்கள்",
@@ -359,5 +359,6 @@
     "warnings-messages/file-name-too-long/body": "கோப்பு பெயர்கள் {max_length} எழுத்துக்களை விட நீளமாக இருக்க முடியாது. இந்த தொகுப்பில் உள்ள சில கோப்பு பெயர்கள் மிக நீளமானவை, அதாவது <span வகுப்பு = \"wb-issue-preformat\"> {example_filename} </span>.",
     "warnings-messages/missing-file-name-extension/title": "கோப்பு நீட்டிப்புகள் இல்லாமல் கோப்பு பெயர்கள்",
     "warnings-messages/missing-file-name-extension/body": "கோப்புகள் பதிவேற்றப்படுவதற்கு வழங்கப்பட்ட கோப்பு பெயர்கள் கோப்பு நீட்டிப்புடன் முடிவடைய வேண்டும், இது <span வகுப்பு = \"wb-issue-preformat\"> {example_filename} </span> போன்ற கோப்பு பெயர்களுக்கு பொருந்தாது.",
-    "warnings-messages/inconsistent-file-name-and-path-extension/body": "சில கோப்பு பாதைகள் மற்றும் விக்கியில் உள்ள அவற்றுடன் தொடர்புடைய இலக்கு கோப்பு பெயர் <ச்பான் கிளாச் = \"WB-ISSUE-PREFORMAT\"> {example_filepath} </span> மற்றும் <span வகுப்பு = \"wb-issue-preformat\"> {example_filename} </span>."
+    "warnings-messages/inconsistent-file-name-and-path-extension/body": "சில கோப்பு பாதைகள் மற்றும் விக்கியில் உள்ள அவற்றுடன் தொடர்புடைய இலக்கு கோப்பு பெயர் <ச்பான் கிளாச் = \"WB-ISSUE-PREFORMAT\"> {example_filepath} </span> மற்றும் <span வகுப்பு = \"wb-issue-preformat\"> {example_filename} </span>.",
+    "wikibase-extension/editing-results-facet": "முடிவுகளைத் திருத்துதல்"
 }
