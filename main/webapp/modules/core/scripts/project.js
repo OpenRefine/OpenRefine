@@ -384,6 +384,34 @@ Refine.update = function(options, onFinallyDone) {
   }, 500);
 };
 
+Refine.postOperation = function(operation, updateOptions, callbacks) {
+  Refine.postOperations([ operation ], updateOptions, callbacks);
+};
+
+Refine.postOperations = function(operations, updateOptions, callbacks) {
+  callbacks = callbacks || {};
+  updateOptions = updateOptions || {};
+
+  // add engine options to each operation
+  if (!("includeEngine" in updateOptions) || updateOptions.includeEngine) {
+    var engineConfig = ("engineConfig" in updateOptions ?
+            updateOptions.engineConfig :
+            ui.browsingEngine.getJSON());
+
+    for (let operation of operations) {
+      operation.engineConfig = engineConfig;
+    }
+  }
+
+  Refine.postCoreProcess(
+    "apply-operations",
+    {},
+    { operations: JSON.stringify(operations) },
+    updateOptions,
+    callbacks
+  );
+};
+
 Refine.postCoreProcess = function(command, params, body, updateOptions, callbacks) {
   Refine.postProcess("core", command, params, body, updateOptions, callbacks);
 };
