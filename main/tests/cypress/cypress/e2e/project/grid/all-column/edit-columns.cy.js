@@ -20,6 +20,20 @@ describe(__filename, function () {
       ['BUTTER,WHIPPED,WITH SALT', '01002', '717', '15.87'],
     ]);
   });
+
+  it('Ensure columns can be reordered from the project grid via drag and drop', function () {
+    cy.loadAndVisitProject('food.mini');
+
+    cy.dragAndDrop('th[data-col-name="Shrt_Desc"]', 'th[data-col-name="NDB_No"]', 'top', 'top');
+    cy.dragAndDrop('th[data-col-name="Energ_Kcal"]', 'th[data-col-name="Water"]', 'top', 'top');
+
+    cy.assertGridEquals([
+      ['Shrt_Desc', 'NDB_No', 'Energ_Kcal', 'Water'],
+      ['BUTTER,WITH SALT', '01001', '717', '15.87'],
+      ['BUTTER,WHIPPED,WITH SALT', '01002', '717', '15.87'],
+    ]);
+  });
+
   it('Ensure columns are removed using remove column', function () {
     cy.loadAndVisitProject('food.mini');
     cy.columnActionClick('All', [
