@@ -14,6 +14,19 @@ Community forum: **https://forum.openrefine.org**
 
 [<img src="https://github.com/OpenRefine/OpenRefine/blob/master/graphics/icon/open-refine-320px.png" align="right">](https://openrefine.org)
 
+## Quick Start
+
+1. **Download** OpenRefine from the [releases page](https://github.com/OpenRefine/OpenRefine/releases)
+2. **Extract** the downloaded file to a folder on your computer
+3. **Run** the appropriate script for your operating system:
+   - Windows: Double-click `refine.bat`
+   - Mac/Linux: Run `./refine` in terminal
+4. **Open** your web browser and go to `http://localhost:3333`
+5. **Create** a new project by uploading a CSV, Excel, or JSON file
+6. **Start** exploring and cleaning your data!
+
+For detailed instructions, see our [User Manual](https://openrefine.org/docs).
+
 ## Download
 
 * [OpenRefine Releases](https://github.com/OpenRefine/OpenRefine/releases)
