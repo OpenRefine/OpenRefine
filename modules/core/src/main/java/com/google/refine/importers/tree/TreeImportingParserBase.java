@@ -142,19 +142,19 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
                             rootColumnGroup, limit, options, exceptions);
                 }
 
-         //     Fill in filename and archive name column for all rows added from this file
-                if (archiveColumnIndex >= 0 || filenameColumnIndex >= 0) {
-                int endingRowCount = project.rows.size(); 
-                for (int i = startingRowCount; i < endingRowCount; i++) {
-                Row row = project.rows.get(i);
-                if (archiveColumnIndex >= 0) {
-                row.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
-                }
-                if (filenameColumnIndex >= 0) {
-                row.setCell(filenameColumnIndex, new Cell(fileSource, null));
-                }
-                }
-               }
+         // Fill in filename and archive name column for all rows added from this file
+         if (archiveColumnIndex >= 0 || filenameColumnIndex >= 0) {
+         int endingRowCount = project.rows.size();
+         for (int i = startingRowCount; i < endingRowCount; i++) {
+         Row row = project.rows.get(i);
+         if (archiveColumnIndex >= 0) {
+            row.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
+          }
+         if (filenameColumnIndex >= 0) {
+            row.setCell(filenameColumnIndex, new Cell(fileSource, null));
+         }
+         }
+         }
 
 
                 ObjectNode fileOptions = options.deepCopy();
