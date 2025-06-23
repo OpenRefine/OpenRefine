@@ -731,4 +731,50 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ImportingManager.registerMimeType("+json", "text/json"); // suffix will be tried only as fallback
         ImportingManager.registerMimeType("application/marc", "text/marc");
     }
+
+    @Test
+    public void testCsvParserHandlesCommasCorrectly() throws Exception {
+        // Arrange: Simulate CSV content similar to OpenRefine's movie datasets
+        String csvContent = "\"Title\",\"Year\",\"Genre\"\n" +
+                "\"The Good, the Bad and the Ugly\",1966,\"Western\"\n" +
+                "\"Dr. Strangelove, or How I Learned to Stop Worrying and Love the Bomb\",1964,\"Comedy\"";
+
+        try (InputStream inputStream = new ByteArrayInputStream(csvContent.getBytes());
+             InputStreamReader reader = new InputStreamReader(inputStream)) {
+
+            // Act: Parse using Apache Commons CSV
+            Iterable<CSVRecord> records = CSVFormat.DEFAULT
+                    .withFirstRecordAsHeader()
+                    .withTrim()
+                    .withQuote('"')
+                    .parse(reader);
+
+            List<CSVRecord> recordList = new ArrayList<>();
+            records.forEach(recordList::add);
+
+            // Assert: Validate parsed records count
+            assertEquals(recordList.size(), 2, "Unexpected number of records parsed.");
+
+            // Assert: Validate headers
+            Map<String, Integer> headers = CSVFormat.DEFAULT
+                    .withFirstRecordAsHeader()
+                    .withQuote('"')
+                    .parse(new InputStreamReader(new ByteArrayInputStream(csvContent.getBytes())))
+                    .getHeaderMap();
+            assertTrue(headers.containsKey("Title"), "Header 'Title' is missing.");
+            assertTrue(headers.containsKey("Year"), "Header 'Year' is missing.");
+            assertTrue(headers.containsKey("Genre"), "Header 'Genre' is missing.");
+
+            // Assert: Validate first record
+            assertEquals(recordList.get(0).get("Title"), "The Good, the Bad and the Ugly");
+            assertEquals(recordList.get(0).get("Year"), "1966");
+            assertEquals(recordList.get(0).get("Genre"), "Western");
+
+            // Assert: Validate second record
+            assertEquals(recordList.get(1).get("Title"),
+                    "Dr. Strangelove, or How I Learned to Stop Worrying and Love the Bomb");
+            assertEquals(recordList.get(1).get("Year"), "1964");
+            assertEquals(recordList.get(1).get("Genre"), "Comedy");
+        }
+    }
 }
