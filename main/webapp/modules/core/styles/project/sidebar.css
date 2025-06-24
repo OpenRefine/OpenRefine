@@ -101,12 +101,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .visibility-panel-button {
+  display: inline-block;
   width: 17px;
   height: 19px;
-  background-image: url(../../images/leftpanel-showhide.png);
+  background-image: url(../../images/leftpanel-showhide.svg);
   background-repeat: no-repeat;
-  background-position: 0px 0px;
+  background-size: 68px 19px; 
   border: none;
+  cursor: pointer;
+  text-indent: -9999px;
+  overflow: hidden;
+  vertical-align: middle;
 }
 
 .hide-left-panel #left-panel {
@@ -114,28 +119,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #show-left-panel-button {
-  margin: 0px 7px 0px 0px;
-  padding: 7px 0px 0px 0px;
+  margin: 0 7px 0 0;
+  padding: 0;
   display: none;
+  background-position: -34px 0; 
 }
 
 .hide-left-panel #show-left-panel-button {
-  background-position: -34px 0px;
   display: inline-block;
 }
-
-.hide-left-panel #show-left-panel-button:hover {
-  background-position: -51px 0px;
-}
-
 #left-panel #hide-left-panel-button {
   float: right;
   margin: 5px 2px 0 0;
-  padding: 0px 0px 0px 0px;
-}
-
-#left-panel #hide-left-panel-button:hover {
-  background-position: -17px 0px;
+  padding: 0;
+  background-position: 0 0; 
 }
 
 a.history-entry {

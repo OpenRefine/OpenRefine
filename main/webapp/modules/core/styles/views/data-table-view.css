@@ -212,17 +212,22 @@ th.resized-column .column-header-name {
 }
 
 .column-header-menu {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0 4px 0 0;
   width: 17px;
   height: 19px;
-  background-image: url(../../images/menu-dropdown.png);
+  background-image: url(../../images/menu-dropdown.svg);
   background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 34px 19px; /* Double width to fit both sprites */
   cursor: pointer;
   border: none;
   padding: 0;
   background-color: transparent;
-  vertical-align: top;
+  vertical-align: middle;
+  transition: transform 0.2s ease;
 }
 
 .column-header-menu-expand {
@@ -230,7 +235,7 @@ th.resized-column .column-header-name {
 }
 
 .column-header-menu:hover {
-  background-position: -17px 0px;
+  background-position: -17px 0; /* Show second sprite on hover */
 }
 
 .container-of-logo-and-statsbar {
