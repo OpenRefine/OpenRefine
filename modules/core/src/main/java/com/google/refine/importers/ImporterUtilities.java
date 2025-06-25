@@ -198,6 +198,32 @@ public class ImporterUtilities {
         project.columnModel.update();
     }
 
+    /**
+     * Deletes the specified columns from the given project's column model.
+     * <p>
+     * This method first updates the column model to ensure that all cell indexes are current. Then, it removes each
+     * column specified by its cell index in the {@code columnsToDelete} list. Finally, it updates the column model
+     * again to reflect the changes.
+     * </p>
+     *
+     * @param project
+     *            the {@link Project} from which columns should be deleted
+     * @param columnsToDelete
+     *            a list of integer cell indexes representing the columns to delete; if the list is empty, the method
+     *            performs no action
+     * @throws ModelException
+     *             if an error occurs during column removal or model update
+     */
+    static void deleteColumns(Project project, List<Integer> columnsToDelete) throws ModelException {
+        if (columnsToDelete.isEmpty()) {
+            return; // skip, if no columns to delete
+        }
+
+        project.columnModel.update(); // make sure all our cell indexes are up to date
+        columnsToDelete.forEach(project.columnModel::removeColumnByCellIndex);
+        project.columnModel.update();
+    }
+
     static public interface MultiFileReadingProgress {
 
         public void startFile(String fileSource);

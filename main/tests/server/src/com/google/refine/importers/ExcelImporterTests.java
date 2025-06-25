@@ -33,9 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,9 +55,13 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -70,6 +77,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.Project;
+import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporterTests extends ImporterTest {
@@ -419,38 +427,157 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
     }
 
+    // ---------------------delete blank columns------------------------
+
     @Test
-    public void testDeleteEmptyColumns() throws Exception {
+    public void testDeleteBlankColumns() throws IOException {
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper
                 .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
 
-        whenGetArrayOption("sheets", options, sheets);
-        whenGetIntegerOption("ignoreLines", options, 0);
-        whenGetIntegerOption("headerLines", options, 0);
-        whenGetIntegerOption("skipDataLines", options, 1);
-        whenGetIntegerOption("limit", options, -1);
+        JSONUtilities.safePut(options, "sheets", sheets);
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "headerLines", 0);
+        JSONUtilities.safePut(options, "skipDataLines", 1);
+        JSONUtilities.safePut(options, "limit", -1);
 
         // This will mock the situation of deleting empty columns(col6)
-        whenGetBooleanOption("storeBlankCellsAsNulls", options, false);
-        whenGetBooleanOption("storeBlankColumns", options, false);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false);
 
-        InputStream stream = new FileInputStream(xlsxFile);
-        parseOneFile(SUT, stream);
+        String filename = "file-source"; // needs to be the same as specified in `options.sheets`
+        List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
+        ObjectNode optionsSpy = spy(options); // wrap options in a spy, so we can verify method calls afterwards
+        parse(SUT, fileRecords, optionsSpy);
 
-        // We should have one less than the start due to empty column being skipped
-        assertEquals(project.columnModel.columns.size(), 12);
+        // We should have two less than the start due to empty columns being skipped
+        assertEquals(project.columnModel.columns.size(), 11);
         // NOTE: we need to redirect through the column model because the rows will still have empty cells
         assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(1).getCellIndex()), true);
         assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(2).getCellIndex()), EXPECTED_DATE_TIME);
 
-        verify(options, times(1)).get("ignoreLines");
-        verify(options, times(1)).get("headerLines");
-        verify(options, times(1)).get("skipDataLines");
-        verify(options, times(1)).get("limit");
-        verify(options, times(1)).get("storeBlankCellsAsNulls");
-        verify(options, times(1)).get("storeBlankColumns");
+        // why times 2?
+        // since options are not mocked, we are calling `JsonUtilities.getInt`
+        // which in turn calls `JsonNode.get` directly and via `JsonNode.has` once more indirectly
+        int numberOfExpectedInvocations = sheets.size() * 2;
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("ignoreLines");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("headerLines");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("skipDataLines");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("limit");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("storeBlankCellsAsNulls");
+        verify(optionsSpy, times(numberOfExpectedInvocations)).get("storeBlankColumns");
+    }
 
+    @Test
+    public void testDeleteBlankColumnsFromMiddlePositions() throws IOException {
+        String filename = "excel-test-file-with-empty-column.xslx";
+        List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree(
+                String.format("{name: \"%s#Test Sheet 0\", "
+                        + "fileNameAndSheetIndex: \"%s#0\", "
+                        + "rows: 31, "
+                        + "selected: true}",
+                        filename, filename)));
+        JSONUtilities.safePut(options, "sheets", sheets);
+
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "headerLines", 0);
+        JSONUtilities.safePut(options, "skipDataLines", 1);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false); // col(6) included with empty strings
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
+
+        parse(SUT, fileRecords, options);
+
+        // We should have two less than the start due to empty column being skipped (3 and 6)
+        assertEquals(project.columnModel.columns.size(), 11);
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3))); // see createDataRow
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(1).getCellIndex()), true);
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(2).getCellIndex()), EXPECTED_DATE_TIME);
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(6))); // see createDataRow
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(3).getCellIndex()), " Row 2 Col 5");
+        assertEquals(project.rows.get(1).getCellValue(project.columnModel.columns.get(4).getCellIndex()), 2L);
+    }
+
+    @Test
+    public void testDeleteBlankColumnsAfterCheckingAllFiles() throws IOException {
+        // same multi-sheet file with different name, so parseOneFile gets called several times
+        // difference in columns is not between files, but between selected sheets, see below
+        String filename1 = "multi-sheet-file-with-extra-columns-1.xslx";
+        List<ObjectNode> fileRecords = prepareFileRecords(xlsxFileWithMultiSheets, filename1);
+        String filename2 = "multi-sheet-file-with-extra-columns-2.xslx";
+        fileRecords.addAll(prepareFileRecords(xlsxFileWithMultiSheets, filename2));
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+
+        // xlsxFileWithMultiSheets should have one extra column in sheet 1 that sheet 0 does not have
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree(
+                String.format("{name: \"%s#Test Sheet 1\", "
+                        + "fileNameAndSheetIndex: \"%s#1\", "
+                        + "rows: 31, "
+                        + "selected: true}",
+                        filename1, filename1)));
+        sheets.add(ParsingUtilities.mapper.readTree(
+                String.format("{name: \"%s#Test Sheet 0\", "
+                        + "fileNameAndSheetIndex: \"%s#0\", "
+                        + "rows: 31, "
+                        + "selected: true}",
+                        filename2, filename2)));
+        JSONUtilities.safePut(options, "sheets", sheets);
+
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "headerLines", 0);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
+
+        parse(SUT, fileRecords, options);
+
+        // the empty columns should still be removed, but extra column from sheet 1 should be included
+        assertEquals(project.columnModel.columns.size(), 12);
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3))); // see createDataRow
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(6))); // see createDataRow
+        assertTrue(project.columnModel.getColumnNames().contains(numberedColumn(14)));
+    }
+
+    @Test
+    public void testDeleteBlankColumnsButKeepFileNameColumn() throws IOException {
+        String filename = "excel-test-file-with-empty-column.xslx";
+        List<ObjectNode> fileRecords = prepareFileRecords(xlsxFile, filename);
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree(
+                String.format("{name: \"%s#Test Sheet 0\", "
+                        + "fileNameAndSheetIndex: \"%s#0\", "
+                        + "rows: 31, "
+                        + "selected: true}",
+                        filename, filename)));
+        JSONUtilities.safePut(options, "sheets", sheets);
+
+        JSONUtilities.safePut(options, "ignoreLines", 0);
+        JSONUtilities.safePut(options, "limit", -1);
+        JSONUtilities.safePut(options, "headerLines", 0);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", false);
+        JSONUtilities.safePut(options, "storeBlankColumns", false); // delete empty columns
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
+        parse(SUT, fileRecords, options);
+
+        // We should have two less than the start due to empty columns being skipped + one for File
+        assertEquals(project.columnModel.columns.size(), 12);
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(3)));
+        assertFalse(project.columnModel.getColumnNames().contains(numberedColumn(6)));
+        assertTrue(project.columnModel.getColumnNames().contains("File"));
+        // check entries
+        int fileColumnIndex = project.columnModel.getColumnIndexByName("File");
+        assertTrue(project.rows.stream().allMatch(row -> filename.equals(row.getCell(fileColumnIndex).value)));
     }
 
     private static File createSpreadsheet(boolean xml, LocalDateTime date) {
@@ -612,4 +739,13 @@ public class ExcelImporterTests extends ImporterTest {
         }
     }
 
+    // --helpers--
+    private List<ObjectNode> prepareFileRecords(final File FILE, String filename) throws IOException {
+        // File is assumed to be in job.getRawDataDir(), so copy it there
+        FileUtils.copyFile(FILE, new File(job.getRawDataDir(), filename));
+        List<ObjectNode> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
+                String.format("{\"fileName\": \"%s\", \"location\": \"%s\"}", filename, filename)));
+        return fileRecords;
+    }
 }

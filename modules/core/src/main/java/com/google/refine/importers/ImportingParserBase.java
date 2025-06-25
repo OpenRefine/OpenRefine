@@ -38,7 +38,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
@@ -102,6 +107,12 @@ abstract public class ImportingParserBase implements ImportingParser {
             if (limit > 0 && project.rows.size() >= limit) {
                 break;
             }
+        }
+
+        // if user set 'storeBlankColumns' to false, delete all empty columns.
+        boolean storeBlankColumns = JSONUtilities.getBoolean(options, "storeBlankColumns", true);
+        if (!storeBlankColumns) {
+            deleteBlankColumns(project, exceptions);
         }
     }
 
@@ -246,4 +257,27 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
     }
 
+    private static void deleteBlankColumns(Project project, List<Exception> exceptions) {
+        // Determine if there is data in each column
+        Set<Integer> columnsWithNoData = IntStream.rangeClosed(0, project.columnModel.getMaxCellIndex())
+                .boxed()
+                .collect(Collectors.toCollection(HashSet::new)); // init all columns as blank
+
+        for (Row row : project.rows) {
+            if (columnsWithNoData.isEmpty()) {
+                break; // short-circuit: all columns have data
+            }
+
+            // if column has data in it, remove from columnsWithNoData
+            int rowSize = row.getCells().size();
+            columnsWithNoData.removeIf(i -> i < rowSize && !row.isCellBlank(i));
+        }
+
+        // rm empty columns
+        try {
+            ImporterUtilities.deleteColumns(project, new ArrayList<>(columnsWithNoData));
+        } catch (ModelException e) {
+            exceptions.add(e);
+        }
+    }
 }

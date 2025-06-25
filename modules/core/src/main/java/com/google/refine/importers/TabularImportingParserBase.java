@@ -128,15 +128,12 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         }
 
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", false);
-        boolean storeBlankColumns = JSONUtilities.getBoolean(options, "storeBlankColumns", true);
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
 
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
-
-        List<Boolean> columnsHasData = new ArrayList<>(); // Determine if there is data in each column,def = false
 
         List<Object> cells = null;
         int rowsWithData = 0;
@@ -183,17 +180,11 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                             Column column = ImporterUtilities.getOrAllocateColumn(
                                     project, columnNames, c, hasOurOwnColumnNames);
                             int cellIndex = column.getCellIndex();
-                            // TODO: Can we make this more efficient? It's only inside this loop for the case where we
-                            // have an extra unexpected cell in a row
-                            while (cellIndex >= columnsHasData.size()) {
-                                columnsHasData.add(false);
-                            }
 
                             Object value = cells.get(c);
                             if (value instanceof Cell) {
                                 row.setCell(cellIndex, (Cell) value);
                                 rowHasData = true;
-                                columnsHasData.set(cellIndex, true);
                             } else if (ExpressionUtils.isNonBlankData(value)) {
                                 Serializable storedValue;
                                 if (value instanceof String) {
@@ -208,7 +199,6 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
                                 row.setCell(cellIndex, new Cell(storedValue, null));
                                 rowHasData = true;
-                                columnsHasData.set(cellIndex, true);
                             } else if (!storeBlankCellsAsNulls) {
                                 row.setCell(cellIndex, new Cell("", null));
                             } else {
@@ -226,12 +216,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                     }
                 }
             }
-            if (!storeBlankColumns) {// if user don't choose storeBlankColumns, delete all empty columns.
-                deleteEmptyColumns(columnsHasData, project);
-            }
         } catch (IOException e) {
-            exceptions.add(e);
-        } catch (ModelException e) {
             exceptions.add(e);
         }
     }
@@ -241,6 +226,8 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
      *
      * @param columnsHasData
      *            Record if there is data in each column( false:null;true:has data)
+     *
+     * @deprecated 2025-05-23 Use {@link ImporterUtilities#deleteColumns(Project, List)}
      */
     static public void deleteEmptyColumns(List<Boolean> columnsHasData, Project project) throws ModelException {
         project.columnModel.update(); // make sure all our cell indexes are up to date
