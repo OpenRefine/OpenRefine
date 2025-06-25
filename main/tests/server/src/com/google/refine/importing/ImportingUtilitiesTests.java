@@ -268,7 +268,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
 
         try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,getDummyProgress());
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, getDummyProgress());
             fail("No Exception was thrown");
         } catch (Exception exception) {
             assertEquals(exception.getMessage(), message);
@@ -500,7 +500,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
             ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
 
             try {
-                ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, getDummyProgress());
+                ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                        getDummyProgress());
                 fail("No Exception was thrown");
             } catch (ClientProtocolException exception) {
                 assertEquals(exception.getMessage(), message);
@@ -595,7 +596,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
         return new ImportingUtilities.Progress() {
 
             @Override
-            public void setProgress(String message, int percent) {}
+            public void setProgress(String message, int percent) {
+            }
 
             @Override
             public boolean isCanceled() {

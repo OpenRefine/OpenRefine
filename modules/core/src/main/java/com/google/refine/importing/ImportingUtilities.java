@@ -638,7 +638,7 @@ public class ImportingUtilities {
 
     static private long saveStreamToFile(InputStream stream, File file, SavingUpdate update) throws IOException {
         long length = 0;
-        try (FileOutputStream fos = new FileOutputStream(file)){
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             byte[] bytes = new byte[16 * 1024];
             int c;
             while ((update == null || !update.isCanceled()) && (c = stream.read(bytes)) > 0) {
@@ -661,13 +661,19 @@ public class ImportingUtilities {
     /**
      * Processes a retrieved file to explode archives and decompress compressed files.
      *
-     * @param rawDataDir the directory where raw data files are stored
-     * @param file the file to be processed
-     * @param fileRecord an ObjectNode containing metadata for the file being processed
-     * @param fileRecords an ArrayNode where metadata for all processed files is recorded
-     * @param progress an implementation of Progress interface to track progress and check for cancellation
+     * @param rawDataDir
+     *            the directory where raw data files are stored
+     * @param file
+     *            the file to be processed
+     * @param fileRecord
+     *            an ObjectNode containing metadata for the file being processed
+     * @param fileRecords
+     *            an ArrayNode where metadata for all processed files is recorded
+     * @param progress
+     *            an implementation of Progress interface to track progress and check for cancellation
      * @return true if the file was successfully handled as an archive
-     * @throws IOException if a processing error or file handling issue occurs
+     * @throws IOException
+     *             if a processing error or file handling issue occurs
      */
     static public boolean postProcessRetrievedFile(
             File rawDataDir, File file, ObjectNode fileRecord, ArrayNode fileRecords, final Progress progress) throws IOException {
@@ -707,7 +713,6 @@ public class ImportingUtilities {
     static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) throws IOException {
         return null;
     }
-
 
     public static boolean isCompressed(File file) throws IOException {
         // Check for common compressed file types to protect ourselves from binary data
@@ -753,16 +758,14 @@ public class ImportingUtilities {
         if (myMimeType.startsWith("application/vnd.openxmlformats-officedocument.") ||
                 myMimeType.startsWith("application/vnd.oasis.opendocument.") ||
                 filename.endsWith(".ods") ||
-                filename.endsWith(".xlsx")
-        ) {
+                filename.endsWith(".xlsx")) {
             return false;
         }
 
         try (
-            FileInputStream fis = new FileInputStream(file);
-            FileChannel fc = fis.getChannel();
-            final BufferedInputStream is = new BufferedInputStream(fis);
-        ) {
+                FileInputStream fis = new FileInputStream(file);
+                FileChannel fc = fis.getChannel();
+                final BufferedInputStream is = new BufferedInputStream(fis);) {
             is.mark(100);
             try {
                 // Use a CompressorStreamFactory configured to decompress concatenated streams
@@ -792,7 +795,8 @@ public class ImportingUtilities {
                                 break;
                             }
                             if (!entry.isDirectory()) {
-                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(), szf.getInputStream(entry));
+                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
+                                        szf.getInputStream(entry));
                                 JSONUtilities.append(fileRecords, fileRecord2);
                             }
                         }
@@ -800,13 +804,14 @@ public class ImportingUtilities {
                         // Apache docs recommend ZipFile over ZipArchiveInputStream, which is what the factory returns
                         // so we handle it separately, similar to 7Zip with a SeekableByteChannel
                         ZipFile zf = new ZipFile.Builder().setSeekableByteChannel(fc.position(0)).get();
-                        for (Iterator<ZipArchiveEntry> it = zf.getEntries().asIterator(); it.hasNext(); ) {
+                        for (Iterator<ZipArchiveEntry> it = zf.getEntries().asIterator(); it.hasNext();) {
                             ZipArchiveEntry entry = it.next();
                             if (progress.isCanceled()) {
                                 break;
                             }
                             if (!entry.isDirectory()) {
-                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(), zf.getInputStream(entry));
+                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
+                                        zf.getInputStream(entry));
                                 JSONUtilities.append(fileRecords, fileRecord2);
                             }
                         }
@@ -816,7 +821,8 @@ public class ImportingUtilities {
                         ArchiveEntry te;
                         while (!progress.isCanceled() && (te = archiveInputStream.getNextEntry()) != null) {
                             if (!te.isDirectory()) {
-                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, te.getName(), archiveInputStream);
+                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, te.getName(),
+                                        archiveInputStream);
                                 JSONUtilities.append(fileRecords, fileRecord2);
                             }
                         }
@@ -826,10 +832,11 @@ public class ImportingUtilities {
                 }
             }
         }
-    return true;
-}
+        return true;
+    }
 
-    private static ObjectNode processArchiveEntry(File rawDataDir, ObjectNode archiveFileRecord, Progress progress, String entryName, InputStream archiveInputStream) throws IOException {
+    private static ObjectNode processArchiveEntry(File rawDataDir, ObjectNode archiveFileRecord, Progress progress, String entryName,
+            InputStream archiveInputStream) throws IOException {
         File tmpFile = allocateFile(rawDataDir, entryName);
 
         progress.setProgress("Extracting " + entryName, -1);
@@ -846,7 +853,6 @@ public class ImportingUtilities {
         postProcessSingleRetrievedFile(tmpFile, fileRecord2);
         return fileRecord2;
     }
-
 
     static File uncompressFile(
             File rawDataDir,
@@ -867,8 +873,7 @@ public class ImportingUtilities {
         try (
                 final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
                 // Use a CompressorStreamFactory configured to decompress concatenated streams
-                CompressorInputStream uncompressedIS = new CompressorStreamFactory(true).createCompressorInputStream(is);
-        ) {
+                CompressorInputStream uncompressedIS = new CompressorStreamFactory(true).createCompressorInputStream(is);) {
 
             File file2 = allocateFile(rawDataDir, fileName);
 
