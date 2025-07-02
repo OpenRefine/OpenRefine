@@ -19,8 +19,8 @@ const fixture = [
     cy.columnActionClick('c', ['Hide / Show', 'Show all columns to the left']);
 
     // Verify expanded columns
-    cy.get('[title="a"]').should('to.contain', 'a');
-    cy.get('[title="b"]').should('to.contain', 'b');
+    cy.get('[title^="a"]').should('to.contain', 'a');
+    cy.get('[title^="b"]').should('to.contain', 'b');
 
   });
 });

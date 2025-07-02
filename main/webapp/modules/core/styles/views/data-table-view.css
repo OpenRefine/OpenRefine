@@ -138,6 +138,13 @@ th.column-header {
   z-index: 1;
 }
 
+.editable-column-header-title:hover {
+  background: var(--fill-editable);
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  height: 19px;
+}
+
 th.column-group-header {
   position: relative;
 }

@@ -571,8 +571,11 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
     var th = trHead.appendChild(document.createElement("th"));
-    $(th).addClass("column-header").attr('title', column.name).attr('data-col-name', column.name); // enable sortable to read names
-
+    let clickToRenameText = $.i18n('core-views/rename-column');
+    let columnTitle = `${column.name} (${clickToRenameText})`;
+    $(th).addClass("column-header")
+         .attr('title', columnTitle)
+         .attr('data-col-name', column.name); // enable sortable to read names;
     var col = $('<col>')
         .attr('span', 1)
         .data('name', column.name)

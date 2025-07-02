@@ -40,4 +40,21 @@ describe(__filename, function () {
     cy.assertCellEquals(0, 'test_rename_butter', 'BUTTER,WITH SALT');
     cy.assertCellEquals(1, 'test_rename_butter', 'BUTTER,WHIPPED,WITH SALT');
   });
+  it('Ensures a column is renamed by clicking on the header', function () {
+      cy.loadAndVisitProject('food.mini');
+
+      // select Shrt_Desc header and double click to open edit dialog
+      const selector = (columnName) => `.data-table th:contains("${columnName}") .editable-column-header-title`;
+      cy.get(selector('Shrt_Desc')).dblclick();
+      cy.waitForDialogPanel();
+      const newName = 'test_rename_double_click';
+
+      // enter new column name
+      cy.get('.dialog-container .dialog-body input').clear();
+      cy.get('.dialog-container .dialog-body input').type(newName);
+      cy.get('.dialog-container .dialog-footer button').contains('OK').click();
+
+      // confirm that the column has the new name
+      cy.get(selector(newName)).contains(newName);
+  });
 });

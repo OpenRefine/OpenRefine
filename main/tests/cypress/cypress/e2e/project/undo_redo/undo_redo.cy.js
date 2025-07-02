@@ -20,7 +20,7 @@ describe(__filename, function () {
       .should('be.visible')
       .should('to.contain', 'Undo');
     cy.get('#notification-container a[bind="undoLink"]').click();
-    cy.get('.data-table th[title="NDB_No"]').should('exist');
+    cy.get('.data-table th[title^="NDB_No"]').should('exist');
   });
 
   it('Delete 3 columns, then successively undo and redo the modifications using the Undo/Redo panel', function () {

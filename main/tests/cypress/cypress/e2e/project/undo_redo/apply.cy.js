@@ -3,8 +3,8 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
 
     // Check some columns before the test
-    cy.get('table.data-table thead th[title="Shrt_Desc"]').should('exist');
-    cy.get('table.data-table thead th[title="Water"]').should('exist');
+    cy.get('table.data-table thead th[title^="Shrt_Desc"]').should('exist');
+    cy.get('table.data-table thead th[title^="Water"]').should('exist');
 
 
     // find the "apply" button
@@ -27,7 +27,7 @@ describe(__filename, function () {
 
     cy.get('input[type="submit"]').contains('Run operations').click();
 
-    cy.get('table.data-table thead th[title="Energ_Kcal"]').should(
+    cy.get('table.data-table thead th[title^="Energ_Kcal"]').should(
       'not.to.exist'
     );
 

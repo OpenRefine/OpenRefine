@@ -19,8 +19,8 @@ const fixture = [
     cy.columnActionClick('a', ['Hide / Show', 'Show all columns to the right']);
 
     // Verify expansion
-    cy.get('[title="b"]').should('to.contain', 'b');
-    cy.get('[title="c"]').should('to.contain', 'c');
+    cy.get('[title^="b"]').should('to.contain', 'b');
+    cy.get('[title^="c"]').should('to.contain', 'c');
 
   });
 });
