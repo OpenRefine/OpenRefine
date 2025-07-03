@@ -360,7 +360,7 @@
     "core-recon/auto-match": "信頼性の高い候補を自動でマッチさせる",
     "core-recon/column": "カラム名",
     "core-recon/service-title": "サービス名",
-    "core-recon/against-type": "この型だけを照合:",
+    "core-recon/against-type": "型を指定して照合:",
     "core-recon/recon-col": "照合対象カラム $1",
     "core-recon/cell-type": "以下の型（Type）に対して照合する:",
     "core-recon/wd-recon-lang": "ja",
