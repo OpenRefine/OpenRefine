@@ -67,6 +67,72 @@ DataTableColumnHeaderUI.prototype._render = function() {
   var elmts = DOM.bind(td);
 
   elmts.nameContainer.text(this._column.name);
+
+  // shortcut: double click to rename column
+  this._td.addEventListener('dblclick',function() {
+    var frame = $(DOM.loadHTML("core", "scripts/views/data-table/rename-column.html"));
+
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n('core-views/enter-col-name'));
+    elmts.columnNameInput.text();
+    elmts.columnNameInput.attr('aria-label',$.i18n('core-views/new-column-name'));
+    elmts.columnNameInput[0].value = self._column.name;
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+    elmts.cancelButton.on('click',dismiss);
+    elmts.form.on('submit',function(event) {
+      event.preventDefault();
+      var newColumnName = jQueryTrim(elmts.columnNameInput[0].value);
+      if (newColumnName === self._column.name) {
+        dismiss();
+        return;
+      }
+      if (newColumnName.length > 0) {
+        Refine.postCoreProcess(
+            "rename-column",
+            {
+              oldColumnName: self._column.name,
+              newColumnName: newColumnName
+            },
+            null,
+            {
+              modelsChanged: true,
+              rowIdsPreserved: true,
+              recordIdsPreserved: true,
+              engineConfig: ui.browsingEngine.getJSON(true),
+            },
+            {
+              onDone: function (response) {
+                if (response.newEngineConfig !== undefined) {
+                  // updateLater is set to true as the update process for the operation
+                  // will also take care of updating the facets, so there is no need to
+                  // do it twice.
+                  ui.browsingEngine.setJSON(response.newEngineConfig, true);
+                }
+                dismiss();
+              }
+            }
+        );
+      }
+    });
+    elmts.columnNameInput.trigger('focus').trigger('select');
+  });
+
+  // shortcut: right click to show menu
+  this._td.addEventListener('contextmenu',function(e) {
+    e.preventDefault();
+    self._createMenuForColumnHeader(elmts.dropdownMenu);
+  });
+
+  // shortcut: middle click to collapse column
+  this._td.addEventListener('auxclick',function(e) {
+    self._dataTableView._collapsedColumnNames[self._column.name] = true;
+    self._dataTableView.render();
+  });
+
   elmts.dropdownMenu.on('click',function() {
     self._createMenuForColumnHeader(this);
   });
