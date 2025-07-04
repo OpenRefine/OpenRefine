@@ -32,61 +32,61 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 .fixed-width-preview-container {
-  position: relative;
-  font-family: monospace;
-  font-size: 150%;
+    position: relative;
+    font-family: monospace;
+    font-size: 150%;
 }
 
 table.data-table.fixed-width-preview-data-table {
-  font-size: inherit;
+    font-size: inherit;
 }
 
-table.data-table.fixed-width-preview-data-table>tbody>tr {
-  border-bottom: 1px solid #ccc;
+table.data-table.fixed-width-preview-data-table > tbody > tr {
+    border-bottom: 1px solid #ccc;
 }
 
-table.data-table.fixed-width-preview-data-table>tbody>tr>td.column-header {
-  background: none;
+table.data-table.fixed-width-preview-data-table > tbody > tr > td.column-header {
+    background: none;
 }
 
-table.data-table.fixed-width-preview-data-table>tbody>tr>td,
-table.data-table.fixed-width-preview-data-table>tbody>tr>td.column-header {
-  border: none;
-  padding: 2px 0px;
-  white-space: pre;
+table.data-table.fixed-width-preview-data-table > tbody > tr > td,
+table.data-table.fixed-width-preview-data-table > tbody > tr > td.column-header {
+    border: none;
+    padding: 2px 0px;
+    white-space: pre;
 }
 
-table.data-table.fixed-width-preview-data-table>tbody>tr>td.even,
-table.data-table.fixed-width-preview-data-table>tbody>tr>td.column-header.even {
-  background: #eee;
+table.data-table.fixed-width-preview-data-table > tbody > tr > td.even,
+table.data-table.fixed-width-preview-data-table > tbody > tr > td.column-header.even {
+    background: #eee;
 }
 
 .fixed-width-preview-column-separator-outer {
-  position: absolute;
-  top: 0px;
-  height: 100%;
-  z-index: 100;
-  background: rgba(255, 238, 93, 0.2);
-  padding: 0px 3px;
-  cursor: ew-resize;
-  overflow: visible;
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    z-index: 100;
+    background: rgba(255, 238, 93, 0.2);
+    padding: 0px 3px;
+    cursor: ew-resize;
+    overflow: visible;
 }
 
 .fixed-width-preview-column-separator-inner {
-  position: relative;
-  height: 100%;
-  width: 1px;
-  background: red;
-  overflow: visible;
+    position: relative;
+    height: 100%;
+    width: 1px;
+    background: red;
+    overflow: visible;
 }
 
-.fixed-width-preview-column-separator-inner>div {
-  position: absolute;
-  top: 50px;
-  left: -7px;
-  border: 1px solid red;
-  background: #fffee0 url(../../images/close.png) no-repeat center center;
-  width: 13px;
-  height: 13px;
-  cursor: pointer;
+.fixed-width-preview-column-separator-inner > div {
+    position: absolute;
+    top: 50px;
+    left: -7px;
+    border: 1px solid red;
+    background: #fffee0 url(../../images/close.svg) no-repeat center center;
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
 }
