@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
@@ -43,11 +45,13 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CharSequenceReader;
+import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -57,6 +61,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.Project;
+import com.google.refine.sampling.BernoulliSampler;
+import com.google.refine.sampling.ReservoirSampler;
+import com.google.refine.sampling.Sampler;
+import com.google.refine.sampling.SamplerRegistry;
+import com.google.refine.sampling.SystematicSampler;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -688,6 +697,99 @@ public class SeparatorBasedImporterTests extends ImporterTest {
         // additionally check entries of File column
         int fileColumnIndex = project.columnModel.getColumnIndexByName("File");
         Assert.assertTrue(project.rows.stream().allMatch(row -> filename.equals(row.getCell(fileColumnIndex).value)));
+    }
+
+    // ---------------------sampling--------------------------------
+
+    @Test
+    public void testImportWithReservoirSampling() throws IOException {
+        String filename = "birds.csv";
+        List<ObjectNode> fileRecords = prepareFileRecords(filename);
+
+        // some default options
+        ObjectNode options = createOptions(",", -1, 0, 0, 1, false, true);
+        // specify sampling method + factor in options
+        String method = "reservoir";
+        int reservoirSize = 10;
+        ObjectNode samplingNode = options.objectNode();
+        samplingNode.put("method", method);
+        samplingNode.put("factor", reservoirSize);
+        JSONUtilities.safePut(options, "sampling", samplingNode);
+
+        Sampler samplerSpy = Mockito.spy(new ReservoirSampler());
+        SamplerRegistry.registerSampler(method, samplerSpy);
+
+        parse(SUT, fileRecords, options);
+
+        // check that number of project.rows = reservoirSize
+        Assert.assertEquals(project.rows.size(), reservoirSize);
+        // and make sure the sampler was called
+        Mockito.verify(SamplerRegistry.getSampler(method), Mockito.times(1)).sample(anyList(), anyInt());
+    }
+
+    @Test
+    public void testImportWithSystematicSampling() throws IOException {
+        String filename = "government_contracts.csv";
+        List<ObjectNode> fileRecords = prepareFileRecords(filename);
+
+        // some default options
+        ObjectNode options = createOptions(",", -1, 0, 0, 1, false, true);
+        // specify sampling method + factor in options
+        String method = "systematic";
+        int stepSize = 1000;
+        ObjectNode samplingNode = options.objectNode();
+        samplingNode.put("method", method);
+        samplingNode.put("factor", stepSize);
+        JSONUtilities.safePut(options, "sampling", samplingNode);
+
+        Sampler samplerSpy = Mockito.spy(new SystematicSampler());
+        SamplerRegistry.registerSampler(method, samplerSpy);
+
+        parse(SUT, fileRecords, options);
+
+        // file government_contracts.csv contains 6422 entries, so 6422 / stepSize ~ 7 (rounded up)
+        Assert.assertEquals(project.rows.size(), 7);
+        // check that first column "Contract ID" contains expected entries
+        List<String> expectedContractIds = List.of("30678", "19425", "35530", "36428", "34894", "28564", "24040");
+        int idColumnIndex = project.columnModel.getColumnIndexByName("Contract ID");
+        List<String> contractIds = project.rows
+                .stream()
+                .map(row -> row.getCell(idColumnIndex).value.toString())
+                .collect(Collectors.toList());
+        Assert.assertEquals(expectedContractIds, contractIds);
+        // and make sure the sampler was called
+        Mockito.verify(SamplerRegistry.getSampler(method), Mockito.times(1)).sample(anyList(), anyInt());
+    }
+
+    @Test
+    public void testImportWithBernoulliSampling() throws IOException {
+        String filename = "birds.csv";
+        List<ObjectNode> fileRecords = prepareFileRecords(filename);
+
+        // some default options
+        ObjectNode options = createOptions(",", -1, 0, 0, 1, false, true);
+        // specify sampling method + factor in options
+        String method = "bernoulli";
+        int percentage = 10;
+        ObjectNode samplingNode = options.objectNode();
+        samplingNode.put("method", method);
+        samplingNode.put("factor", percentage);
+        JSONUtilities.safePut(options, "sampling", samplingNode);
+
+        Sampler samplerSpy = Mockito.spy(new BernoulliSampler());
+        SamplerRegistry.registerSampler(method, samplerSpy);
+
+        parse(SUT, fileRecords, options);
+
+        // when sampling using bernoulli the sample size varies, so we can only specify a reasonable range
+        double mean = 19723 * 10 / (double) 100; // 19723 rows in file
+        double stdDev = Math.sqrt(19723 * (percentage / (double) 100) * ((100 - percentage) / (double) 100));
+        // confidence interval for 99.7%
+        double lowerBound = mean - 3 * stdDev;
+        double upperBound = mean + 3 * stdDev;
+        Assert.assertTrue(project.rows.size() > lowerBound && project.rows.size() < upperBound);
+        // and make sure the sampler was called
+        Mockito.verify(SamplerRegistry.getSampler(method), Mockito.times(1)).sample(anyList(), anyInt());
     }
 
     // ---------------------guess separators------------------------
