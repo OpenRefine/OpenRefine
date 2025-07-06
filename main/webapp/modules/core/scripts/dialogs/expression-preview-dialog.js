@@ -127,13 +127,52 @@ ExpressionPreviewDialog.Widget = function(
     });
         
     var self = this;
+    
+    this._expressionHistory = [];
+    this._currentHistoryIndex = -1; // -1 is current expression, 0 is most recent history, 1 is next history
+
     this._elmts.expressionPreviewTextarea
         .val(this.expression)
         .on("keyup change input",function(){
+            self._expressionHistory[self._currentHistoryIndex] = self._getExpression();
             self._scheduleUpdate();
         })
         .trigger('select')
         .trigger('focus');
+
+    this._elmts.expressionPreviewTextarea
+        .on("keydown", function(e) {
+            var setExpression = function(exp) {
+                var o = Scripting.parse(exp);
+                self._elmts.expressionPreviewTextarea[0].value = o.expression;
+                self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
+                
+                self.update();
+            }
+
+            // handle up and down arrow keys
+            if (e.keyCode == 38) {
+                var isCaratAtBeginning = this.selectionStart == 0 && this.selectionEnd == 0;
+                var hasPreviousHistory = self._currentHistoryIndex < self._expressionHistory.length - 1;
+                if (isCaratAtBeginning && hasPreviousHistory) {
+                    // find the previous expression
+                    self._currentHistoryIndex++;
+                    setExpression(self._expressionHistory[self._currentHistoryIndex]);
+                    // move the carat to the beginning
+                    self._elmts.expressionPreviewTextarea[0].selectionStart = 0;
+                    self._elmts.expressionPreviewTextarea[0].selectionEnd = 0;
+                }
+            } else if (e.keyCode == 40) {
+                var isCaratAtEnd = this.selectionStart == this.value.length && this.selectionEnd == this.value.length;
+                var hasNextHistory = self._currentHistoryIndex >= 0;
+                // check whether the carat is at the end of the line
+                if (isCaratAtEnd && hasNextHistory) {
+                    // find the next expression
+                    self._currentHistoryIndex--;
+                    setExpression(self._expressionHistory[self._currentHistoryIndex]);
+                }
+            }
+        });
 
     this._elmts.or_dialog_expr.html($.i18n('core-dialogs/expression'));
     this._elmts.or_dialog_lang.html($.i18n('core-dialogs/language'));
@@ -193,6 +232,14 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
 
 ExpressionPreviewDialog.Widget.prototype._getLanguage = function() {
     return this._elmts.expressionPreviewLanguageSelect[0].value;
+};
+
+ExpressionPreviewDialog.Widget.prototype._getCode = function() {
+    return jQueryTrim(this._elmts.expressionPreviewTextarea[0].value || "");
+};
+
+ExpressionPreviewDialog.Widget.prototype._getExpression = function() {
+    return this._getLanguage() + ":" + this._getCode();
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
@@ -288,6 +335,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistoryTab = function(
         null,
         function(data) {
             self._renderExpressionHistory(data);
+            self._expressionHistory = data.expressions.map(e => e.code);
         },
         "json"
     );
