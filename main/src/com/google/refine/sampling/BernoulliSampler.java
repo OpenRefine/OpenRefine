@@ -9,7 +9,7 @@ import java.util.Random;
  * Bernoulli Sampling selects a subset of items from a list or sequence such that each item has an equal probability of
  * being chosen, independently of the others.
  */
-public class BernoulliSampler {
+public class BernoulliSampler implements Sampler {
 
     public <T> List<T> sample(List<T> list, int percentage) {
         // validate input

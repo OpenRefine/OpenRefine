@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Systematic sampling selects every k-th item from a list or sequence.
  */
-public class SystematicSampler {
+public class SystematicSampler implements Sampler {
 
     public <T> List<T> sample(List<T> list, int stepSize) {
         // validate input

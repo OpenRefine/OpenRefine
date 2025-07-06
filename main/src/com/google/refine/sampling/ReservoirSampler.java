@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Reservoir sampling selects k items uniformly at random from a list or sequence.
  */
-public class ReservoirSampler {
+public class ReservoirSampler implements Sampler {
 
     public <T> List<T> sample(List<T> list, int reservoirSize) {
         // validate input
