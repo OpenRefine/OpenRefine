@@ -60,6 +60,8 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.sampling.Sampler;
+import com.google.refine.sampling.SamplerRegistry;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.NotImplementedException;
 import com.google.refine.util.ParsingUtilities;
@@ -107,6 +109,12 @@ abstract public class ImportingParserBase implements ImportingParser {
             if (limit > 0 && project.rows.size() >= limit) {
                 break;
             }
+        }
+
+        // if user specified sampling, additionally sample rows.
+        ObjectNode sampling = JSONUtilities.getObject(options, "sampling");
+        if (sampling != null) {
+            sampleRows(project, sampling, exceptions);
         }
 
         // if user set 'storeBlankColumns' to false, delete all empty columns.
@@ -278,6 +286,29 @@ abstract public class ImportingParserBase implements ImportingParser {
             ImporterUtilities.deleteColumns(project, new ArrayList<>(columnsWithNoData));
         } catch (ModelException e) {
             exceptions.add(e);
+        }
+    }
+
+    private static void sampleRows(Project project, ObjectNode sampling, List<Exception> exceptions) {
+        // parse parameters
+        String samplingMethod = JSONUtilities.getString(sampling, "method", "");
+        int samplingFactor = JSONUtilities.getInt(sampling, "factor", -1);
+
+        try {
+            Sampler sampler = SamplerRegistry.getSampler(samplingMethod);
+            List<Row> sample = sampler.sample(project.rows, samplingFactor);
+
+            // ToDo this is probably not the way to go - overwriting global vars
+            project.rows.clear();
+            project.rows.addAll(sample);
+
+            // ToDo do i need to call the same project update methods as in "RowRemovalChange"?
+            // project.columnModel.clearPrecomputes();
+            // ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProject(project.id);
+            // project.update();
+
+        } catch (IllegalArgumentException e) {
+            exceptions.add(new ImportException(e.getMessage(), e));
         }
     }
 }
