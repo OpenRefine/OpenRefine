@@ -110,10 +110,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.30.0":
-  version: 9.30.0
-  resolution: "@eslint/js@npm:9.30.0"
-  checksum: 8/17bffce324fa2670ece4d9d4bd94481b38d00e1bcae5f3f8448e07af04e707a8a003b6c66328bd140f1d6cc70549e092ec1d63569c592b7898424023ba5d2e38
+"@eslint/js@npm:9.30.1":
+  version: 9.30.1
+  resolution: "@eslint/js@npm:9.30.1"
+  checksum: 8/596adcd4336f098121b4f3f336169dabe86ca8d34b9fb4e30c9c44ccbb10def931bdbbd92cd910776c4030a05ae614fbc89fc8d09f69f5bad2795cd7157678e8
   languageName: node
   linkType: hard
 
@@ -641,57 +641,57 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:14.5.0":
-  version: 14.5.0
-  resolution: "cypress@npm:14.5.0"
+"cypress@npm:14.5.1":
+  version: 14.5.1
+  resolution: "cypress@npm:14.5.1"
   dependencies:
-    "@cypress/request": "npm:^3.0.8"
-    "@cypress/xvfb": "npm:^1.2.4"
-    "@types/sinonjs__fake-timers": "npm:8.1.1"
-    "@types/sizzle": "npm:^2.3.2"
-    arch: "npm:^2.2.0"
-    blob-util: "npm:^2.0.2"
-    bluebird: "npm:^3.7.2"
-    buffer: "npm:^5.7.1"
-    cachedir: "npm:^2.3.0"
-    chalk: "npm:^4.1.0"
-    check-more-types: "npm:^2.24.0"
-    ci-info: "npm:^4.1.0"
-    cli-cursor: "npm:^3.1.0"
-    cli-table3: "npm:0.6.1"
-    commander: "npm:^6.2.1"
-    common-tags: "npm:^1.8.0"
-    dayjs: "npm:^1.10.4"
-    debug: "npm:^4.3.4"
-    enquirer: "npm:^2.3.6"
-    eventemitter2: "npm:6.4.7"
-    execa: "npm:4.1.0"
-    executable: "npm:^4.1.1"
-    extract-zip: "npm:2.0.1"
-    figures: "npm:^3.2.0"
-    fs-extra: "npm:^9.1.0"
-    getos: "npm:^3.2.1"
-    hasha: "npm:5.2.2"
-    is-installed-globally: "npm:~0.4.0"
-    lazy-ass: "npm:^1.6.0"
-    listr2: "npm:^3.8.3"
-    lodash: "npm:^4.17.21"
-    log-symbols: "npm:^4.0.0"
-    minimist: "npm:^1.2.8"
-    ospath: "npm:^1.2.2"
-    pretty-bytes: "npm:^5.6.0"
-    process: "npm:^0.11.10"
-    proxy-from-env: "npm:1.0.0"
-    request-progress: "npm:^3.0.0"
-    semver: "npm:^7.7.1"
-    supports-color: "npm:^8.1.1"
-    tmp: "npm:~0.2.3"
-    tree-kill: "npm:1.2.2"
-    untildify: "npm:^4.0.0"
-    yauzl: "npm:^2.10.0"
+    "@cypress/request": ^3.0.8
+    "@cypress/xvfb": ^1.2.4
+    "@types/sinonjs__fake-timers": 8.1.1
+    "@types/sizzle": ^2.3.2
+    arch: ^2.2.0
+    blob-util: ^2.0.2
+    bluebird: ^3.7.2
+    buffer: ^5.7.1
+    cachedir: ^2.3.0
+    chalk: ^4.1.0
+    check-more-types: ^2.24.0
+    ci-info: ^4.1.0
+    cli-cursor: ^3.1.0
+    cli-table3: 0.6.1
+    commander: ^6.2.1
+    common-tags: ^1.8.0
+    dayjs: ^1.10.4
+    debug: ^4.3.4
+    enquirer: ^2.3.6
+    eventemitter2: 6.4.7
+    execa: 4.1.0
+    executable: ^4.1.1
+    extract-zip: 2.0.1
+    figures: ^3.2.0
+    fs-extra: ^9.1.0
+    getos: ^3.2.1
+    hasha: 5.2.2
+    is-installed-globally: ~0.4.0
+    lazy-ass: ^1.6.0
+    listr2: ^3.8.3
+    lodash: ^4.17.21
+    log-symbols: ^4.0.0
+    minimist: ^1.2.8
+    ospath: ^1.2.2
+    pretty-bytes: ^5.6.0
+    process: ^0.11.10
+    proxy-from-env: 1.0.0
+    request-progress: ^3.0.0
+    semver: ^7.7.1
+    supports-color: ^8.1.1
+    tmp: ~0.2.3
+    tree-kill: 1.2.2
+    untildify: ^4.0.0
+    yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: b76b05c029625357fbc34f22b632c55f9f981f86c3a568a88ea3d8982b8299e4bd4275e966b2ec767f9a989c6e9059fb03a4a8086048b4e990079b1cab19ba11
+  checksum: 8/9fe575c8403f5919bd22dc09990de232b2b013735fb686684dd010ebcb306e93d2246d9621294c8a4b7ac67c961ede5a16bc29f7d746f21d2eb28dfc0e9ae9e1
   languageName: node
   linkType: hard
 
@@ -891,9 +891,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.30.0":
-  version: 9.30.0
-  resolution: "eslint@npm:9.30.0"
+"eslint@npm:^9.30.1":
+  version: 9.30.1
+  resolution: "eslint@npm:9.30.1"
   dependencies:
     "@eslint-community/eslint-utils": ^4.2.0
     "@eslint-community/regexpp": ^4.12.1
@@ -901,7 +901,7 @@ __metadata:
     "@eslint/config-helpers": ^0.3.0
     "@eslint/core": ^0.14.0
     "@eslint/eslintrc": ^3.3.1
-    "@eslint/js": 9.30.0
+    "@eslint/js": 9.30.1
     "@eslint/plugin-kit": ^0.3.1
     "@humanfs/node": ^0.16.6
     "@humanwhocodes/module-importer": ^1.0.1
@@ -937,7 +937,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 8/19f4beb78f8f12dbb6960fbf767d775716c729db2a982c8043fbdbbb425e052252aae22a8f2d473de52c59c18c26532be1db46361b28398d762ad9bee6c9c202
+  checksum: 8/e6723b98ba19ff17cf0cacb29c3c0ea5c7c6b6fb648136b2d009e7e2da4980a2562c9523623b0faf449750e890f3b274b20bee11fa9c8f43362d235485ba2f91
   languageName: node
   linkType: hard
 
@@ -1720,9 +1720,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openrefine-cypress-test-suite@workspace:."
   dependencies:
-    cypress: 14.5.0
+    cypress: 14.5.1
     cypress-file-upload: ^5.0.8
-    eslint: ^9.30.0
+    eslint: ^9.30.1
     eslint-config-google: ^0.14.0
     eslint-config-prettier: ^10.1.5
     eslint-plugin-cypress: ^5.1.0
