@@ -141,6 +141,33 @@
               </td>
             </tr>
           </table>
+
+          <table role="presentation" style="margin-top:1em;">
+            <tr> <!-- enable sampling checkbox -->
+              <td width="1%">
+                <input type="checkbox" bind="samplingCheckbox" id="$sampling"/>
+              </td>
+              <td>
+                <label for="$sampling" id="or-import-enable-sampling"></label>
+              </td>
+            </tr>
+
+            <tr>
+              <td></td>
+              <td>
+                <label for="$samplingMethods" id="or-import-apply-sampling"></label>
+                <select bind="samplingMethod" id="$samplingMethods">
+                  <option id="or-sample-method-bernoulli" value="bernoulli"></option>
+                  <option id="or-sample-method-reservoir" value="reservoir"></option>
+                  <option id="or-sample-method-systematic" value="systematic"></option>
+                </select>
+
+                <label for="$samplingFactor" id="or-import-sampling-factor"></label>
+                <input id="$samplingFactor" bind="samplingFactor" type="number" class="lightweight" size="7" value="10" style="text-align: center;"/>
+              </td>
+            </tr>
+          </table>
+
         </div>
       </td>
       <td>
