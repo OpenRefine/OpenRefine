@@ -52,7 +52,7 @@
       <url>https://github.com/OpenRefine/OpenRefine/graphs/contributors</url>
       <roles>
         <role>Contributor</role>
-      </roles>  
+      </roles>
     </developer>
   </developers>
 
@@ -129,6 +129,7 @@
     <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
     <license-plugin.version>2.6.0</license-plugin.version>
     <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
+    <skipTests>false</skipTests>
   </properties>
 
 
