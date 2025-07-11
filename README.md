@@ -3,6 +3,8 @@
 [![DOI](https://zenodo.org/badge/6220644.svg)](https://zenodo.org/badge/latestdoi/6220644)
 [![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine)
 [![Snapshot release](https://github.com/OpenRefine/OpenRefine/actions/workflows/snapshot_release.yml/badge.svg)](https://github.com/OpenRefine/OpenRefine/actions/workflows/snapshot_release.yml) [![Coverage Status](https://coveralls.io/repos/github/OpenRefine/OpenRefine/badge.svg?branch=master)](https://coveralls.io/github/OpenRefine/OpenRefine?branch=master) [![Translation progress](https://hosted.weblate.org/widgets/openrefine/-/svg-badge.svg)](https://hosted.weblate.org/engage/openrefine/?utm_source=widget)
+[![Sponsor on GitHub](https://img.shields.io/badge/Sponsor-GitHub-blue)](https://github.com/sponsors/OpenRefine)
+[![Donate](https://img.shields.io/badge/Donate-OpenRefine-blue)](https://openrefine.org/donate)
 
 OpenRefine is a Java-based power tool that allows you to load data, understand it,
 clean it up, reconcile it, and augment it with data coming from
@@ -53,6 +55,13 @@ This requires [JDK 11](https://adoptium.net/) or newer, [Apache Maven](https://m
 ## Licensing and legal issues
 
 OpenRefine is open source software and is licensed under the BSD license located in the [LICENSE.txt](LICENSE.txt). See the folders `licenses` under `/main/webapp/` as well as within each `/extensions` for information on open source libraries that OpenRefine depends on.
+
+## Funding OpenRefine
+
+OpenRefine is maintained by a small core team and relies on grants plus community support.
+• **Donate** or become a monthly sponsor: https://openrefine.org/donate
+• **See our backers**: https://openrefine.org/backers
+• **Machine-readable manifest**: https://openrefine.org/funding.json
 
 ## Credits
 
