@@ -232,6 +232,7 @@ function registerImporting() {
   IM.registerFormat("text/xml", "core-import-formats/text/xml", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
   IM.registerFormat("binary/text/xml/xls/xlsx", "core-import-formats/binary/text/xml/xls/xlsx", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
   IM.registerFormat("text/xml/ods", "core-import-formats/text/xml/ods", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
+  IM.registerFormat("binary/parquet", "core-import-formats/binary/parquet", "ExcelParserUI", new Packages.com.google.refine.importers.ParquetImporter());
   IM.registerFormat("text/json", "core-import-formats/text/json", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
   IM.registerFormat("text/marc", "core-import-formats/text/marc", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
   IM.registerFormat("text/wiki", "core-import-formats/text/wiki", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
@@ -257,6 +258,8 @@ function registerImporting() {
   IM.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
 
   IM.registerExtension(".ods", "text/xml/ods");
+
+  IM.registerExtension(".parquet", "binary/parquet");
   
   IM.registerExtension(".nt", "text/rdf/nt");
   IM.registerExtension(".ntriples", "text/rdf/nt");
@@ -304,6 +307,7 @@ function registerImporting() {
   IM.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.template", "binary/text/xml/xls/xlsx");
 
   IM.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
+  IM.registerMimeType("application/vnd.apache.parquet","binary/parquet");
 
   IM.registerMimeType("application/json", "text/json");
   IM.registerMimeType("application/javascript", "text/json");
