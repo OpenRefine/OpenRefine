@@ -316,6 +316,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @SuppressWarnings("unchecked")
     @Test
     public void importArchive() throws IOException {
+        // TODO: Need more/better archive tests (perhaps not here), for .tgz .tar.gz .7zip, etc)
+        // don't need to test legacy archive formats like ar, arj, cpio, dump, etc which aren't commonly used for data wrangling
         String filename = "movies.zip";
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
@@ -417,6 +419,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     public void testImportCompressedFiles() throws IOException, URISyntaxException {
         final String FILENAME_BASE = "persons";
         final int LINES = 4;
+        // TODO: Add additional compression formats 7zip, Brotli (& XZ, Z, Zstd, deflate??)
         String[] suffixes = { "", ".csv.gz", ".csv.bz2" };
         InputStreamReader reader = null;
         for (String suffix : suffixes) {
