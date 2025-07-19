@@ -74,6 +74,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.StreamingNotSupportedException;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -734,6 +735,9 @@ public class ImportingUtilities {
                 // Not technically compressed, but binary formats as well (e.g. zip)
                 is.reset();
                 try (ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream(is);) {
+                    return true;
+                } catch (StreamingNotSupportedException ex) {
+                    // 7zip returns StreamingNotSupportedException, but it can be used with File or SeekableByteChannel
                     return true;
                 } catch (ArchiveException ex) {
                     return false;
