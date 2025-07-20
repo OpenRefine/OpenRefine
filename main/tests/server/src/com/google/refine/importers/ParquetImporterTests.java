@@ -1,7 +1,7 @@
+
 package com.google.refine.importers;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
@@ -13,14 +13,15 @@ import org.testng.annotations.Test;
 import com.google.refine.model.Project;
 
 public class ParquetImporterTests extends ImporterTest {
+
+    // System Under Test
+    ParquetImporter SUT = null;
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-
-    // System Under Test
-    ParquetImporter SUT = null;
 
     @Override
     @BeforeMethod
@@ -37,11 +38,11 @@ public class ParquetImporterTests extends ImporterTest {
     }
 
     @Test
-    public void readParquet() throws FileNotFoundException, IOException {
+    public void readParquet() {
 
-        String fileSource = ClassLoader.getSystemResource("films.parquet").getFile();
+        InputStream stream = ClassLoader.getSystemResourceAsStream("films.parquet");
 
-        parseOneFile(SUT, fileSource);
+        parseOneFile(SUT, stream);
 
         Project expectedProject = createProject(
                 new String[] { "Category", "Title", "Director", "Release Date", "Gross", "Rating", "Rank", "Good?" },
@@ -53,4 +54,4 @@ public class ParquetImporterTests extends ImporterTest {
                 });
         assertProjectEquals(project, expectedProject);
     }
- }
+}

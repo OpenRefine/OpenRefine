@@ -100,22 +100,6 @@ public abstract class ImporterTest extends RefineTest {
         project.update();
     }
 
-    protected void parseOneFile(ImportingParserBase parser, String fileSource) {
-        List<Exception> exceptions = new ArrayList<>();
-
-        parser.parseOneFile(
-                 project,
-                 metadata,
-                 job,
-                 fileSource,
-                (InputStream) null,
-        -1,
-         options,
-         exceptions)       ;
-        assertEquals(exceptions.size(), 0, "Unexpected exception(s) thrown: " + exceptions);
-        project.update();
-    }
-
     protected void parseOneFile(ImportingParserBase parser, InputStream inputStream) {
         List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
