@@ -83,9 +83,6 @@ Refine.ParquetParserUI.prototype.getOptions = function() {
   } else {
     options.limit = -1;
   }
-  options.storeBlankRows = this._optionContainerElmts.storeBlankRowsCheckbox[0].checked;
-  options.storeBlankColumns = this._optionContainerElmts.storeBlankColumnsCheckbox[0].checked;
-  options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
   options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
   options.forceText = this._optionContainerElmts.forceTextCheckbox[0].checked;
@@ -106,12 +103,7 @@ Refine.ParquetParserUI.prototype._initialize = function() {
   $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));
   $('#or-import-header').text($.i18n('core-index-parser/lines-header'));
   $('#or-import-discard').text($.i18n('core-index-parser/discard-initial'));
-  $('#or-import-rows').text($.i18n('core-index-parser/rows-data'));
   $('#or-import-load').text($.i18n('core-index-parser/load-at-most'));
-  $('#or-import-rows2').text($.i18n('core-index-parser/rows-data'));
-  $('#or-import-blank').text($.i18n('core-index-parser/store-blank'));
-  $('#or-import-blank-columns').text($.i18n('core-index-parser/store-blank-columns'));
-  $('#or-import-null').text($.i18n('core-index-parser/store-nulls'));
   $('#or-import-source').html($.i18n('core-index-parser/store-source'));
   $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
   $('#or-force-text').html($.i18n('core-index-parser/force-text'));
@@ -119,19 +111,6 @@ Refine.ParquetParserUI.prototype._initialize = function() {
   if (this._config.limit > 0) {
     this._optionContainerElmts.limitCheckbox.prop("checked", true);
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
-  }
-  if (this._config.skipDataLines > 0) {
-    this._optionContainerElmts.skipCheckbox.prop("checked", true);
-    this._optionContainerElmts.skipInput.value[0].value = this._config.skipDataLines.toString();
-  }
-  if (this._config.storeBlankRows) {
-    this._optionContainerElmts.storeBlankRowsCheckbox.prop("checked", true);
-  }
-  if (this._config.storeBlankColumns) {
-    this._optionContainerElmts.storeBlankColumnsCheckbox.prop("checked", true);
-  }
-  if (this._config.storeBlankCellsAsNulls) {
-    this._optionContainerElmts.storeBlankCellsAsNullsCheckbox.prop("checked", true);
   }
   if (this._config.includeFileSources) {
     this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);

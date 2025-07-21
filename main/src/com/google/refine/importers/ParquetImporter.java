@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import blue.strategic.parquet.Hydrator;
@@ -44,6 +45,7 @@ public class ParquetImporter extends TabularImportingParserBase {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
         JSONUtilities.safePut(options, "trimStrings", true);
+        JSONUtilities.safePut(options, "forceText", false);
 
         return options;
     }
@@ -58,6 +60,8 @@ public class ParquetImporter extends TabularImportingParserBase {
             int limit,
             ObjectNode options,
             List<Exception> exceptions) {
+
+        final boolean forceText = JSONUtilities.getBoolean(options, "forceText", false);
 
         int limit2 = JSONUtilities.getInt(options, "limit", -1);
         if (limit > 0) {
@@ -113,7 +117,12 @@ public class ParquetImporter extends TabularImportingParserBase {
                 Row row = new Row(cells.size());
 
                 for (int c = 0; c < cells.size(); c++) {
-                    row.setCell(c, new Cell((Serializable) cells.get(c), null));
+                    Serializable value = (Serializable) cells.get(c);
+                    if (forceText) {
+                        value = Objects.toString(value);
+                    }
+
+                    row.setCell(c, new Cell(value, null));
                 }
 
                 project.rows.add(row);
