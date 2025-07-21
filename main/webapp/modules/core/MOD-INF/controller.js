@@ -232,7 +232,7 @@ function registerImporting() {
   IM.registerFormat("text/xml", "core-import-formats/text/xml", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
   IM.registerFormat("binary/text/xml/xls/xlsx", "core-import-formats/binary/text/xml/xls/xlsx", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
   IM.registerFormat("text/xml/ods", "core-import-formats/text/xml/ods", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
-  IM.registerFormat("binary/parquet", "core-import-formats/binary/parquet", "ExcelParserUI", new Packages.com.google.refine.importers.ParquetImporter());
+  IM.registerFormat("binary/parquet", "core-import-formats/binary/parquet", "ParquetParserUI", new Packages.com.google.refine.importers.ParquetImporter());
   IM.registerFormat("text/json", "core-import-formats/text/json", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
   IM.registerFormat("text/marc", "core-import-formats/text/marc", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
   IM.registerFormat("text/wiki", "core-import-formats/text/wiki", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
@@ -446,6 +446,7 @@ function init() {
       "scripts/index/parser-interfaces/line-based-parser-ui.js",
       "scripts/index/parser-interfaces/fixed-width-parser-ui.js",
       "scripts/index/parser-interfaces/excel-parser-ui.js",
+      "scripts/index/parser-interfaces/parquet-parser-ui.js",
       "scripts/index/parser-interfaces/xml-parser-ui.js",
       "scripts/index/parser-interfaces/json-parser-ui.js",
       "scripts/index/parser-interfaces/rdf-triples-parser-ui.js",
