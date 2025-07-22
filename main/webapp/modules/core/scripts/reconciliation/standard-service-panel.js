@@ -384,12 +384,11 @@ ReconStandardServicePanel.prototype.start = function() {
     return false;
   }
 
-  Refine.postCoreProcess(
-    "reconcile",
-    {},
+  Refine.postOperation(
     {
+      op: "core/reconcile",
       columnName: this._column.name,
-      config: JSON.stringify({
+      config: {
         mode: "standard-service",
         service: this._service.url,
         identifierSpace: this._service.identifierSpace,
@@ -399,7 +398,7 @@ ReconStandardServicePanel.prototype.start = function() {
         batchSize: (Number.isInteger(this._service.batchSize) && this._service.batchSize > 0) ? this._service.batchSize : 10,
         columnDetails: columnDetails,
         limit: parseInt(this._elmts.maxCandidates[0].value) || 0
-      })
+      }
     },
     { cellsChanged: true, columnStatsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true }
   );
