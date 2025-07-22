@@ -1,7 +1,7 @@
 
 package com.google.refine.importers;
 
-import java.io.InputStream;
+import java.io.File;
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
@@ -40,9 +40,9 @@ public class ParquetImporterTests extends ImporterTest {
     @Test
     public void readParquet() {
 
-        InputStream stream = ClassLoader.getSystemResourceAsStream("films.parquet");
+        File file = new File(ClassLoader.getSystemResource("films.parquet").getFile());
 
-        parseOneFile(SUT, stream);
+        parseOneFile(SUT, file);
 
         Project expectedProject = createProject(
                 new String[] { "Category", "Title", "Director", "Release Date", "Gross", "Rating", "Rank", "Good?" },

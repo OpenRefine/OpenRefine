@@ -64,18 +64,35 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.NotImplementedException;
 import com.google.refine.util.ParsingUtilities;
 
+/**
+ * Abstract base class to import files. You have to implement one of the three <code>parseOneFile</code> methods. Which
+ * one you have to implements depends on the way a file can be imported: directly via the (temporary) {@link File}
+ * object, as an {@link InputStream} (for binary data), or as a {@link Reader} (for text).
+ */
 abstract public class ImportingParserBase implements ImportingParser {
 
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
 
-    final protected boolean useInputStream;
+    final protected ImportMode importMode;
 
     /**
      * @param useInputStream
      *            true if parser takes an InputStream, false if it takes a Reader.
      */
     protected ImportingParserBase(boolean useInputStream) {
-        this.useInputStream = useInputStream;
+        if (useInputStream) {
+            importMode = ImportMode.INPUT_STREAM;
+        } else {
+            importMode = ImportMode.READER;
+        }
+    }
+
+    /**
+     * @param importMode
+     *            the mode used to import the file: File, InputStream or Reader
+     */
+    protected ImportingParserBase(ImportMode importMode) {
+        this.importMode = importMode;
     }
 
     @Override
@@ -117,7 +134,7 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
 
     // TODO: Make private? At least protected?
-    public void parseOneFile(
+    private void parseOneFile(
             Project project,
             ProjectMetadata metadata,
             ImportingJob job,
@@ -147,7 +164,9 @@ abstract public class ImportingParserBase implements ImportingParser {
                     filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >= 0);
                 }
 
-                if (useInputStream) {
+                if (importMode == ImportMode.FILE) {
+                    parseOneFile(project, metadata, job, fileName, file, limit, options, exceptions);
+                } else if (importMode == ImportMode.INPUT_STREAM) {
                     parseOneFile(project, metadata, job, fileName, inputStream, limit, options, exceptions);
                 } else {
                     // Although this is called "common" encoding, it may represent the user's override of the encoding
@@ -191,18 +210,9 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
 
     /**
-     * Parsing method to be implemented by Reader-based parsers. ie those initialized with useInputStream == false
-     * 
-     * @param project
-     * @param metadata
-     * @param job
-     * @param fileSource
-     * @param reader
-     * @param limit
-     * @param options
-     * @param exceptions
+     * Parsing method to be implemented by Reader-based parsers. ie those initialized with importMode == READER
      */
-    public void parseOneFile(
+    protected void parseOneFile(
             Project project,
             ProjectMetadata metadata,
             ImportingJob job,
@@ -214,12 +224,30 @@ abstract public class ImportingParserBase implements ImportingParser {
         throw new NotImplementedException();
     }
 
-    public void parseOneFile(
+    /**
+     * Parsing method to be implemented by Reader-based parsers. ie those initialized with importMode == INPUT_STREAM
+     */
+    protected void parseOneFile(
             Project project,
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
             InputStream inputStream,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
+        throw new NotImplementedException();
+    }
+
+    /**
+     * Parsing method to be implemented by Reader-based parsers. ie those initialized with importMode == FILE
+     */
+    protected void parseOneFile(
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            File file,
             int limit,
             ObjectNode options,
             List<Exception> exceptions) {
@@ -279,5 +307,13 @@ abstract public class ImportingParserBase implements ImportingParser {
         } catch (ModelException e) {
             exceptions.add(e);
         }
+    }
+
+    /**
+     * There are three different modes how a file can be imported: directly via the (temporary) {@link File} object, as
+     * an {@link InputStream} (for binary data), or as a {@link Reader} (for text).
+     */
+    protected enum ImportMode {
+        INPUT_STREAM, READER, FILE
     }
 }

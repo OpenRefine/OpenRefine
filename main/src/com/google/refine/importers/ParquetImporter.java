@@ -1,12 +1,9 @@
 
 package com.google.refine.importers;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +33,7 @@ public class ParquetImporter extends TabularImportingParserBase {
     final static Logger logger = LoggerFactory.getLogger(ParquetImporter.class);
 
     public ParquetImporter() {
-        super(true);
+        super(ImportMode.FILE);
     }
 
     @Override
@@ -56,7 +53,7 @@ public class ParquetImporter extends TabularImportingParserBase {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
-            InputStream inputStream,
+            File file,
             int limit,
             ObjectNode options,
             List<Exception> exceptions) {
@@ -73,12 +70,7 @@ public class ParquetImporter extends TabularImportingParserBase {
         }
 
         try {
-            // The structure information is stored at the end of the Parquet file. Therefore, The Parquet readers
-            // needs to know the length of the file. Store the data from the input stream in a temporary local file.
-            Path tempFile = Files.createTempFile("import", ".parquet");
-            tempFile.toFile().deleteOnExit();
-            Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
-            InputFile parquet = new LocalInputFile(tempFile);
+            InputFile parquet = new LocalInputFile(file.toPath());
 
             ParquetMetadata parquetMetadata = ParquetReader.readMetadata(parquet);
 
@@ -131,9 +123,6 @@ public class ParquetImporter extends TabularImportingParserBase {
                     break;
                 }
             }
-
-            // delete the temporary file
-            tempFile.toFile().delete();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
