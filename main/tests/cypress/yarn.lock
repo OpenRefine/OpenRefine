@@ -650,9 +650,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:14.5.1":
-  version: 14.5.1
-  resolution: "cypress@npm:14.5.1"
+"cypress@npm:14.5.2":
+  version: 14.5.2
+  resolution: "cypress@npm:14.5.2"
   dependencies:
     "@cypress/request": ^3.0.8
     "@cypress/xvfb": ^1.2.4
@@ -700,7 +700,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 8/9fe575c8403f5919bd22dc09990de232b2b013735fb686684dd010ebcb306e93d2246d9621294c8a4b7ac67c961ede5a16bc29f7d746f21d2eb28dfc0e9ae9e1
+  checksum: 8/1a5cab5f685cc3cf10f762accb6d2ab4c85d4e637427301e5cec0784c0737d1119d075d2bb6a38bf66c0b675b0d9c6677482c4edea5210b932a9b3c14f693ff0
   languageName: node
   linkType: hard
 
@@ -847,14 +847,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:^10.1.5":
-  version: 10.1.5
-  resolution: "eslint-config-prettier@npm:10.1.5"
+"eslint-config-prettier@npm:^10.1.8":
+  version: 10.1.8
+  resolution: "eslint-config-prettier@npm:10.1.8"
   peerDependencies:
     eslint: ">=7.0.0"
   bin:
     eslint-config-prettier: bin/cli.js
-  checksum: 5486255428e4577e8064b40f27db299faf7312b8e43d7b4bc913a6426e6c0f5950cd519cad81ae24e9aecb4002c502bc665c02e3b52efde57af2debcf27dd6e0
+  checksum: 8/9140e19f78f0dbc888b160bb72b85f8043bada7b12a548faa56cea0ba74f8ef16653250ffd014d85d9a376a88c4941c96a3cdc9d39a07eb3def6967166635bd8
   languageName: node
   linkType: hard
 
@@ -1729,11 +1729,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openrefine-cypress-test-suite@workspace:."
   dependencies:
-    cypress: 14.5.1
+    cypress: 14.5.2
     cypress-file-upload: ^5.0.8
     eslint: ^9.31.0
     eslint-config-google: ^0.14.0
-    eslint-config-prettier: ^10.1.5
+    eslint-config-prettier: ^10.1.8
     eslint-plugin-cypress: ^5.1.0
     prettier: 3.6.2
   languageName: unknown
