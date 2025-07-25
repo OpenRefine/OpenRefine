@@ -619,7 +619,7 @@ DataTableView.prototype._enableHeaderDrag = function() {
     axis: "x",
     containment: "parent",
     items: "> th:not(:first-child)", // skip the "All" column
-    cancel: ".column-header-menu, .column-header-resizer-left, .column-header-resizer-right",
+    cancel: ".column-header-menu, .column-header-name, .column-header-resizer-left, .column-header-resizer-right",
     helper: "clone",
     start: function(_, ui) {
       ui.placeholder.width(ui.helper.width());
@@ -635,7 +635,7 @@ DataTableView.prototype._enableHeaderDrag = function() {
         { modelsChanged: true }
       );
     }
-  }).disableSelection();
+  });
 };
 
 DataTableView.prototype._addResizingControls = function(th, index) {
