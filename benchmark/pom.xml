@@ -51,6 +51,11 @@
     <jmh.version>1.37</jmh.version>
     <javac.target>${java.minversion}</javac.target>
     <uberjar.name>openrefine-benchmarks</uberjar.name>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jmh.version>1.37</jmh.version>
+    <uberjar.name>openrefine-benchmarks</uberjar.name>
+    <maven.compiler.source>${java.minversion}</maven.compiler.source>
+    <maven.compiler.target>${java.minversion}</maven.compiler.target>
   </properties>
 
   <build>
@@ -60,11 +65,11 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.14.0</version>
         <configuration>
-          <compilerVersion>${javac.target}</compilerVersion>
-          <source>${javac.target}</source>
-          <target>${javac.target}</target>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
