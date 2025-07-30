@@ -38,5 +38,10 @@
     "core-index/contributors": "സംഭാവന ചെയ്യുന്നവർ",
     "core-index/subject": "വിഷയം",
     "core-index/description": "വിവരണം",
-    "core-index/rowCount": "വരികളുടെ എണ്ണം"
+    "core-index/rowCount": "വരികളുടെ എണ്ണം",
+    "core-index/notification-privacy-info": "സ്വകാര്യതാ വിവരം",
+    "core-index-create/starting": "തുടങ്ങുന്നു",
+    "core-index-create/done": "പൂർത്തിയായി.",
+    "core-index-create/almost-done": "ഏതാണ്ട് പൂർത്തിയായി…",
+    "core-index-create/no-details": "സാങ്കേതിക വിശദാംശങ്ങളില്ല."
 }
