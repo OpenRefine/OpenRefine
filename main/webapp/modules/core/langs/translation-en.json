@@ -533,6 +533,7 @@
     "core-views/transpose": "Transpose",
     "core-views/sort": "Sort…",
     "core-views/sort/single": "Sort",
+    "core-views/rename-column": "double click to rename",
     "core-views/collapse-expand": "Hide/show columns to make viewing the data more convenient",
     "core-views/collapse-this": "Hide this column",
     "core-views/collapse-other": "Hide all other columns",
