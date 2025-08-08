@@ -41,7 +41,7 @@
     "core-index/delete-key": "刪除偏好設定",
     "core-index/change-value": "更改偏好設定值",
     "core-index/new-version": "新版本",
-    "core-index/version": "版本 $1：",
+    "core-index/version": "版本",
     "core-index/about": "關於",
     "core-index/help": "幫助",
     "core-index/slogan": "處理凌亂資料超強工具",

@@ -32,7 +32,7 @@
     "database-source/newConnectionButtonDiv": "新連接",
     "database-source/savedConnectionSpan": "儲存連接",
     "database-parsing/proj-name": "專案名稱",
-    "database-parsing/create-proj": "建立專案",
+    "database-parsing/create-proj": "建立專案；",
     "database-parsing/worksheet": "工作表",
     "database-parsing/option": "選項",
     "database-parsing/preview-button": "更新;預覽",
