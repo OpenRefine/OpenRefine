@@ -1,5 +1,8 @@
-<div class="column-header-title editable-column-header-title"><button class="column-header-menu" bind="dropdownMenu"></button><span class="column-header-name" bind="nameContainer"></span></div>
+<div class="column-header-title" bind="headerContainer">
+  <button class="column-header-menu" bind="dropdownMenu"></button>
+  <button class="column-header-name editable-column-header-title" bind="nameContainer"></button>
+</div>
 <div class="container-of-logo-and-statsbar">
-<div style="display: none; grid-column:1" bind="serviceLogoContainer" ></div>
-<div style="display: none; grid-column:2" bind="reconStatsContainer"></div>
+  <div style="display: none; grid-column:1" bind="serviceLogoContainer" ></div>
+  <div style="display: none; grid-column:2" bind="reconStatsContainer"></div>
 </div>
