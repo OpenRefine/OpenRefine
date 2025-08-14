@@ -155,7 +155,7 @@ Cypress.Commands.add('assertGridEquals', (values) => {
    * Hence the use of Jquery with the Cypress.$ wrapper, to collect values for headers and grid cells
    */
   cy.get('table.data-table').should((table) => {
-    const headers = Cypress.$('table.data-table th')
+    const headers = Cypress.$('table.data-table th .column-header-name')
       .filter(function (index, element) {
         return element.innerText !== 'All';
       })
