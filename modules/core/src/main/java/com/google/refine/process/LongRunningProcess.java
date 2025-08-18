@@ -48,6 +48,8 @@ abstract public class LongRunningProcess extends Process {
     protected Thread _thread;
     @JsonProperty("progress")
     protected int _progress; // out of 100
+    @JsonProperty("eta")
+    protected int _eta;
     @JsonIgnore
     protected boolean _canceled;
 
