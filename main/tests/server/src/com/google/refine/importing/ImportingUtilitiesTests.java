@@ -317,7 +317,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @Test
     public void importArchive() throws IOException {
         // TODO: Need more/better archive tests (perhaps not here), for .tgz .tar.gz .7zip, etc)
-        // don't need to test legacy archive formats like ar, arj, cpio, dump, etc which aren't commonly used for data wrangling
+        // don't need to test legacy archive formats like ar, arj, cpio, dump, etc which aren't commonly used for data
+        // wrangling
         String filename = "movies.zip";
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
