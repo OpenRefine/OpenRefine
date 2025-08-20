@@ -62,7 +62,6 @@ Also referred to as Core Dev. The Core Developer Group are trusted developers wh
 
 **Current list of Core Developers:**
 - Tom Morris [@tfmorris](https://github.com/tfmorris) and on the [forum](https://forum.openrefine.org/u/tfmorris/summary)
-- Antonin Delpeuch until March 2025: [@wetneb](https://github.com/wetneb) and on the [forum](https://forum.openrefine.org/u/antonin_d/summary).
 
 #### Release Manager
 The Release Manager is responsible to
