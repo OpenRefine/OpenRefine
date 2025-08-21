@@ -384,7 +384,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Test
     public void importUnsupportedZipFile() throws IOException {
-        for (String basename : new String[] { "unsupportedPPMD", "apache-zstd-compress-692", "protected", }) {
+        // TODO: ZStd is supported in the latest Apache Compress 1.20 - create a test for it
+        // TODO: also find test data for BZIP2 (1.11) and DEFLATE64 (1.16)
+        for (String basename : new String[] { "unsupportedPPMD", /* "apache-zstd-compress-692", */ "protected", }) {
             testInvalidZipFile(basename);
         }
     }
@@ -457,13 +459,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 { "persons.csv.bz2", true },
                 { "unsupportedPPMD.zip", true },
                 { "apache-zstd-compress-692.zip", true },
+                { "split-archive.part001.zip", true },
                 { "split-archive.zip", true },
                 { "protected.zip", true },
                 { "sample-1.7z", true },
-                // TODO: RAR files aren't supported by Apache Compress?
-//                { "sample-rar-files-sample-4.rar", true },
-//                { "sample-rar-files-sample-5.rar", true },
-//                { "sample-rar-files-sample-6.rar", true },
         };
         for (Object[] test : cases) {
             assertEquals(ImportingUtilities.isCompressed(new File(ClassLoader.getSystemResource((String) test[0]).getFile())), test[1],

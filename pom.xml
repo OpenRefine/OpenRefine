@@ -96,6 +96,7 @@
     <commons-codec.version>1.19.0</commons-codec.version>
     <commons-compress.version>1.28.0</commons-compress.version>
     <xz.version>1.10</xz.version>
+    <zstd-jni.version>1.5.7-4</zstd-jni.version>
     <velocity.version>2.4.1</velocity.version>
     <marc4j.version>2.9.6</marc4j.version>
     <jsoup.version>1.21.2</jsoup.version>
