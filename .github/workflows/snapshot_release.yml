@@ -167,7 +167,7 @@ jobs:
         github-token: ${{ env.COVERALLS_TOKEN }}
         format: jacoco
         flag-name: Java ${{ matrix.java }}
-        pull-request: ${{ github.event.number }}
+        build-number: ${{ github.event.number }}
         fail-on-error: false
 
     - name: Install webapp dependencies
