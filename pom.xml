@@ -331,8 +331,8 @@
         <version>1.7.0</version>
         <extensions>true</extensions>
         <configuration>
-          <serverId>ossrh</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <serverId>ossrh-staging-api</serverId>
+          <nexusUrl>https://ossrh-staging-api.central.sonatype.com</nexusUrl>
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
@@ -366,7 +366,7 @@
   <repositories>
     <repository>
       <id>snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -390,12 +390,12 @@
   <!-- Locations of the artifacts published -->
   <distributionManagement>
      <snapshotRepository>
-       <id>ossrh</id>
-       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+       <id>ossrh-staging-api</id>
+       <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
      </snapshotRepository>
      <repository>
-       <id>ossrh</id>
-       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+       <id>ossrh-staging-api</id>
+       <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
      </repository>
   </distributionManagement>
 

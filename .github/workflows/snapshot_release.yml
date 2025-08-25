@@ -134,7 +134,7 @@ jobs:
         distribution: 'temurin'
         java-version: 11
         cache: 'maven'
-        server-id: ossrh
+        server-id: ossrh-staging-api
         server-username: OSSRH_USER
         server-password: OSSRH_PASS
         
@@ -192,7 +192,7 @@ jobs:
         distribution: 'temurin'
         java-version: 17
         cache: 'maven'
-        server-id: ossrh
+        server-id: ossrh-staging-api
         server-username: OSSRH_USER
         server-password: OSSRH_PASS
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
@@ -239,7 +239,7 @@ jobs:
 
     - name: Package and upload to OSSRH
       run: |
-        mvn -B deploy -DskipTests=true -DrepositoryId=ossrh -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID -Dgpg.signer=bc
+        mvn -B deploy -DskipTests=true -DrepositoryId=ossrh-staging-api -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID -Dgpg.signer=bc
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
