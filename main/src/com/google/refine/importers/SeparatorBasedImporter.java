@@ -74,6 +74,9 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     // TODO: Perhaps use a lower default and make user configurable?
     public static final int MAX_CHARACTERS_PER_CELL = 1024 * 1024; // default 4096
     public static final int GUESSER_LINE_COUNT = 100;
+    public static final int DEFAULT_MAX_CHARS_PER_COLUMN = 32768;
+    public static final int DEFAULT_MAX_COLUMNS = 16384;
+
     char DEFAULT_QUOTE_CHAR = new CsvParserSettings().getFormat().getQuote();
 
     public SeparatorBasedImporter() {
@@ -93,9 +96,12 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "processQuotes", !nonNullSeparator.equals("\\t"));
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(DEFAULT_QUOTE_CHAR));
         JSONUtilities.safePut(options, "trimStrings", true);
+        JSONUtilities.safePut(options, "maxCharsPerColumn", DEFAULT_MAX_CHARS_PER_COLUMN);
+        JSONUtilities.safePut(options, "maxColumns", DEFAULT_MAX_COLUMNS);
 
         return options;
     }
+
 
     @Override
     public void parseOneFile(
@@ -108,6 +114,21 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             ObjectNode options,
             List<Exception> exceptions) {
         String sep = JSONUtilities.getString(options, "separator", "\\t");
+        // Retrieve custom limits from options (with defaults if not specified)
+        int maxChars = JSONUtilities.getInt(options, "maxCharsPerColumn", DEFAULT_MAX_CHARS_PER_COLUMN);
+        int maxCols  = JSONUtilities.getInt(options, "maxColumns", DEFAULT_MAX_COLUMNS);
+
+        // Validate the inputs: ensure positive integers, allow -1 for unlimited chars
+        if (maxChars < 0 && maxChars != -1) {
+            maxChars = JSONUtilities.getInt(options, "maxCharsPerColumn", DEFAULT_MAX_CHARS_PER_COLUMN); // negative (not -1) -> revert to default
+        }
+        if (maxChars == 0) {
+            maxChars = JSONUtilities.getInt(options, "maxCharsPerColumn", DEFAULT_MAX_CHARS_PER_COLUMN);;  // zero is not allowed, use default
+        }
+        if (maxCols < 1) {
+            maxCols = JSONUtilities.getInt(options, "maxColumns", DEFAULT_MAX_COLUMNS);;           // columns must be >=1, use default if not
+        }
+
         if (sep == null || "".equals(sep)) {
             sep = "\\t";
         }
@@ -156,6 +177,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             settings.setIgnoreTrailingWhitespaces(false);
             parser = new TsvParser(settings);
         } else {
+            
             CsvParserSettings settings = new CsvParserSettings();
             CsvFormat format = settings.getFormat();
             format.setDelimiter(sep);
@@ -167,6 +189,12 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             if (strictQuotes) {
                 settings.setUnescapedQuoteHandling(UnescapedQuoteHandling.RAISE_ERROR);
             }
+            if (maxChars != -1) {
+                settings.setMaxCharsPerColumn(maxChars);
+            } else {
+                settings.setMaxCharsPerColumn(-1);  // -1 denotes no limit in UniVocity:contentReference[oaicite:15]{index=15}
+            }
+            settings.setMaxColumns(maxCols);
             settings.setKeepQuotes(!processQuotes);
             settings.setMaxCharsPerColumn(MAX_CHARACTERS_PER_CELL);
             settings.setMaxColumns(MAX_COLUMNS);
