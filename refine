@@ -70,7 +70,7 @@ load_configs() {
    if [ "${TEMP_CONFIG}" = "" ] ; then
        error "Could not create temporary file to load configurations"
    fi
-   cat $1 | egrep "^[A-Z]" | sed 's/^\([^=]*\)=\(.*\)$/export \1=(\2)/' > ${TEMP_CONFIG}
+   cat $1 | grep -E "^[A-Z]" | sed 's/^\([^=]*\)=\(.*\)$/export \1=(\2)/' > ${TEMP_CONFIG}
    . ${TEMP_CONFIG}
    rm ${TEMP_CONFIG}
 }
@@ -136,13 +136,13 @@ get_version() {
         fail "${VERSION} is not a valid version number"
     fi
     
-    if [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
+    if [ "`echo "${NUM_VERSION}" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}"
-    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
+    elif [ "`echo "${NUM_VERSION}" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}.0"
-    elif [ "`echo "${NUM_VERSION}" | egrep ''^[0-9]+\.[0-9]+$''`" = "${NUM_VERSION}" ] ; then
+    elif [ "`echo "${NUM_VERSION}" | grep -E ''^[0-9]+\.[0-9]+$''`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}.0.0"
-    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+$'`" = "${NUM_VERSION}" ] ; then
+    elif [ "`echo "${NUM_VERSION}" | grep -E '^[0-9]+$'`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}.0.0.0"
     else 
         fail "${VERSION} is not a valid version number"
@@ -312,7 +312,7 @@ mac_dist() {
     TITLE="OpenRefine $VERSION"
     echo "Building MacOSX DMG for $TITLE"
     hdiutil create -srcfolder "$REFINE_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$REFINE_BUILD_DIR/temp_refine.dmg" || error "can't create empty DMG"
-    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed -e "s/^\/dev\///g" -e 1q  | awk '{print $1}'`
+    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | grep -E '^/dev/' | sed -e "s/^\/dev\///g" -e 1q  | awk '{print $1}'`
     echo $DEVICE
     hdiutil attach "$REFINE_BUILD_DIR/temp_refine.dmg" || error "Can't attach temp DMG"
 
