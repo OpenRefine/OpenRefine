@@ -390,7 +390,7 @@
   <!-- Locations of the artifacts published -->
   <distributionManagement>
      <snapshotRepository>
-       <id>ossrh-staging-api</id>
+       <id>central-snapshots</id>
        <url>https://central.sonatype.com/repository/maven-snapshots/</url>
      </snapshotRepository>
      <repository>

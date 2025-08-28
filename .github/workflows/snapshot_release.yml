@@ -135,8 +135,8 @@ jobs:
         java-version: 11
         cache: 'maven'
         server-id: ossrh-staging-api
-        server-username: OSSRH_USER
-        server-password: OSSRH_PASS
+        server-username: CENTRAL_USER
+        server-password: CENTRAL_PASS
         
 
     - name: Install genisoimage and jq
@@ -167,7 +167,7 @@ jobs:
         github-token: ${{ env.COVERALLS_TOKEN }}
         format: jacoco
         flag-name: Java ${{ matrix.java }}
-        pull-request: ${{ github.event.number }}
+        build-number: ${{ github.event.number }}
         fail-on-error: false
 
     - name: Install webapp dependencies
@@ -193,8 +193,8 @@ jobs:
         java-version: 17
         cache: 'maven'
         server-id: ossrh-staging-api
-        server-username: OSSRH_USER
-        server-password: OSSRH_PASS
+        server-username: CENTRAL_USER
+        server-password: CENTRAL_PASS
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
         gpg-passphrase: GPG_PASSPHRASE
 
@@ -240,9 +240,11 @@ jobs:
     - name: Package and upload to OSSRH
       run: |
         mvn -B deploy -DskipTests=true -DrepositoryId=ossrh-staging-api -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID -Dgpg.signer=bc
+        # The below POST is documented as being necessary, but it seems to work without it. Also not clear if it needs to be authenticated.
+        # curl -X POST https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/org.openrefine
       env:
-        OSSRH_USER: ${{ secrets.OSSRH_USER }}
-        OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
+        CENTRAL_USER: ${{ secrets.CENTRAL_USER }}
+        CENTRAL_PASS: ${{ secrets.CENTRAL_PASS }}
         MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
