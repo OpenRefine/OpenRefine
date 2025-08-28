@@ -449,7 +449,6 @@
                 <path>server/target/jre</path>
                 <minVersion>${java.minversion}</minVersion>
                 <maxVersion>${java.maxversion}</maxVersion>
-                <bundledJreAsFallback>true</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
