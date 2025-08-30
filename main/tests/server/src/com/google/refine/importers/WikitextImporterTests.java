@@ -38,8 +38,8 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -147,7 +147,7 @@ public class WikitextImporterTests extends ImporterTest {
             String jsonResponse = "{\"q0\":[{\"id\":\"Q1377256\",\"name\":\"Europäische Beobachtungsstelle für Drogen und Drogensucht\"}],"
                     + "\"q1\":[{\"id\":\"Q1377549\",\"name\":\"European Foundation for the Improvement of Living and Working Conditions\"}],"
                     + "\"q2\":[{\"id\":\"Q1377256\",\"name\":\"European Monitoring Centre for Drugs and Drug Addiction\"}]}";
-            server.enqueue(new MockResponse().setBody(jsonResponse));
+            server.enqueue(new MockResponse.Builder().body(jsonResponse).build());
 
             prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/", server.url("endpoint").url().toString());
             parse(input);
