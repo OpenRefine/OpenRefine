@@ -53,10 +53,10 @@ import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
+import mockwebserver3.Dispatcher;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import mockwebserver3.RecordedRequest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -214,7 +214,7 @@ public class ExtendDataOperationTests extends RefineTest {
 
             @Override
             public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
-                String json = URLDecoder.decode(request.getBody().readUtf8().split("=")[1], StandardCharsets.UTF_8);
+                String json = URLDecoder.decode(request.getBody().utf8().split("=")[1], StandardCharsets.UTF_8);
                 JsonNode parsedQuery;
                 try {
                     parsedQuery = ParsingUtilities.mapper.readTree(json);
@@ -222,7 +222,7 @@ public class ExtendDataOperationTests extends RefineTest {
                     throw new IllegalArgumentException("HTTP call with invalid JSON payload: " + json);
                 }
                 if (mockedResponses.containsKey(parsedQuery)) {
-                    return new MockResponse().setResponseCode(200).setBody(mockedResponses.get(parsedQuery));
+                    return new MockResponse.Builder().code(200).body(mockedResponses.get(parsedQuery)).build();
                 } else {
                     throw new IllegalArgumentException("HTTP call not mocked for query: " + json);
                 }

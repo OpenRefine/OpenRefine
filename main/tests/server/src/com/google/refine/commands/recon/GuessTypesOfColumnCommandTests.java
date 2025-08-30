@@ -14,10 +14,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import mockwebserver3.RecordedRequest;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -138,7 +138,7 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/api");
-            server.enqueue(new MockResponse().setBody(serviceResponse));
+            server.enqueue(new MockResponse.Builder().body(serviceResponse).build());
 
             when(request.getParameter("service")).thenReturn(url.toString());
 
@@ -147,7 +147,7 @@ public class GuessTypesOfColumnCommandTests extends RefineTest {
             TestUtils.assertEqualsAsJson(guessedTypes, writer.toString());
 
             RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
-            TestUtils.assertEqualAsQueries(request.getBody().readUtf8(), expectedQuery);
+            TestUtils.assertEqualAsQueries(request.getBody().utf8(), expectedQuery);
         }
     }
 }

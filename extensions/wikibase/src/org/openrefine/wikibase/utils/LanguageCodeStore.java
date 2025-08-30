@@ -56,16 +56,18 @@ public class LanguageCodeStore {
     private static Set<String> fetchLangCodes(String mediaWikiApiEndpoint) throws IOException {
         String url = mediaWikiApiEndpoint +
                 "?action=query&meta=wbcontentlanguages&wbclprop=code&wbclcontext=monolingualtext&format=json";
-        OkHttpClient client = new OkHttpClient.Builder().build();
+        OkHttpClient client = HttpClient.getClient();
         Request request = new Request.Builder().url(url).build();
         Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            throw new IOException("Failed to fetch Wikibase language codes. HTTP Response code: " + response.code());
+        }
         JsonNode jsonNode = new ObjectMapper().readTree(response.body().string());
         JsonNode languages = jsonNode.path("query").path("wbcontentlanguages");
         Set<String> supportedLangCodes = new HashSet<>();
         for (JsonNode language : languages) {
             supportedLangCodes.add(language.path("code").textValue());
         }
-
         return supportedLangCodes;
     }
 
