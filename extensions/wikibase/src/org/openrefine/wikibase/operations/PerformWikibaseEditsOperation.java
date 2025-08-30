@@ -86,6 +86,7 @@ import org.openrefine.wikibase.manifests.Manifest;
 import org.openrefine.wikibase.schema.WikibaseSchema;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 import org.openrefine.wikibase.updates.EntityEdit;
+import org.openrefine.wikibase.utils.HttpClient;
 
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
@@ -320,7 +321,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         @Override
         public void run() {
 
-            WebResourceFetcherImpl.setUserAgent("OpenRefine Wikidata extension");
+            WebResourceFetcherImpl.setUserAgent(HttpClient.USER_AGENT + " " + WebResourceFetcherImpl.getUserAgent());
             ConnectionManager manager = ConnectionManager.getInstance();
             String mediaWikiApiEndpoint = _schema.getMediaWikiApiEndpoint();
             if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
