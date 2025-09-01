@@ -123,7 +123,7 @@ div.viewpanel-pagesize span:first-of-type {
   max-width: 300px;
 }
 
-.data-table-header td, .data-table-header th {
+.data-table-header td, .data-table-header th, th.column-header {
   border-bottom: 0.02rem dotted var(--chrome-primary);
   border-right: 0.02rem solid var(--chrome-primary);
 }
