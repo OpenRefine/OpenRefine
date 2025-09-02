@@ -114,7 +114,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
 
         try {
             T result = expression.evaluate(ctxt);
-            Assert.assertEquals(expected, result);
+            Assert.assertEquals(result, expected);
         } catch (SkipSchemaExpressionException e) {
             Assert.fail("Value was skipped by evaluator");
         } catch (QAWarningException e) {
