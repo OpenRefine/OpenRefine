@@ -15,7 +15,7 @@ public class HttpClient {
             + " (https://openrefine.org)";
 
     public static OkHttpClient getClient() {
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new UserAgentInterceptor(USER_AGENT + " okhhtp/unknown")).build();
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new UserAgentInterceptor(USER_AGENT + " okhttp/unknown")).build();
         return client;
     }
 

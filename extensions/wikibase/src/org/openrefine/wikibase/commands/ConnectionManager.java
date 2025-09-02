@@ -34,6 +34,7 @@ import javax.servlet.http.Cookie;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -225,12 +226,15 @@ public class ConnectionManager {
 
     // Visible for testing only
     static void setupConnection(ApiConnection connection) {
-        String defaultUserAgent = connection.getCustomUserAgent();
         // Set our custom user agent (if it's not already set)
-        if (defaultUserAgent == null || !defaultUserAgent.contains(HttpClient.USER_AGENT)) {
-            String agentLibrary = defaultUserAgent.split(" ")[0];
-            connection.setCustomUserAgent(HttpClient.USER_AGENT + " " + agentLibrary);
+        String defaultUserAgent = connection.getCustomUserAgent();
+        String agentLibrary = "";
+        if (defaultUserAgent != null && !defaultUserAgent.trim().isEmpty()) {
+            String[] parts = defaultUserAgent.trim().split(" ");
+            agentLibrary = parts.length > 0 ? parts[0] : "";
         }
+        connection.setCustomUserAgent(HttpClient.USER_AGENT + (agentLibrary.isEmpty() ? "" : " " + agentLibrary));
+
         connection.setConnectTimeout(CONNECT_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);
     }

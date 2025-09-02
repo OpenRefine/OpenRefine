@@ -38,6 +38,7 @@ public class FetchManifestCommand extends Command {
             Response res = client.newCall(req).execute();
             if (!res.isSuccessful()) {
                 response.sendError(res.code(), res.message());
+                return;
             }
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
