@@ -298,14 +298,9 @@ abstract public class ImportingParserBase implements ImportingParser {
             Sampler sampler = SamplerRegistry.getSampler(samplingMethod);
             List<Row> sample = sampler.sample(project.rows, samplingFactor);
 
-            // ToDo this is probably not the way to go - overwriting global vars
+            // replace rows with sampled rows
             project.rows.clear();
             project.rows.addAll(sample);
-
-            // ToDo do i need to call the same project update methods as in "RowRemovalChange"?
-            // project.columnModel.clearPrecomputes();
-            // ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProject(project.id);
-            // project.update();
 
         } catch (IllegalArgumentException e) {
             exceptions.add(new ImportException(e.getMessage(), e));
