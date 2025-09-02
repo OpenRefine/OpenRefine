@@ -12,7 +12,7 @@ import com.google.refine.RefineServlet;
 public class HttpClient {
 
     public static final String USER_AGENT = "OpenRefine-Wikibase-extension/" + RefineServlet.FULL_VERSION
-            + " (https://openrefine.org; openrefine+support@discoursemail.com)";
+            + " (https://openrefine.org)";
 
     public static OkHttpClient getClient() {
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new UserAgentInterceptor(USER_AGENT + " okhhtp/unknown")).build();
