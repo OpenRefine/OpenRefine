@@ -45,6 +45,8 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
 
+import org.openrefine.wikibase.utils.HttpClient;
+
 /**
  * Manages a connection to the current Wikibase instance.
  * <p>
@@ -221,7 +223,17 @@ public class ConnectionManager {
         }
     }
 
-    private void setupConnection(ApiConnection connection) {
+    // Visible for testing only
+    static void setupConnection(ApiConnection connection) {
+        // Set our custom user agent (if it's not already set)
+        String defaultUserAgent = connection.getCustomUserAgent();
+        String agentLibrary = "";
+        if (defaultUserAgent != null && !defaultUserAgent.trim().isEmpty()) {
+            String[] parts = defaultUserAgent.trim().split(" ");
+            agentLibrary = parts.length > 0 ? parts[0] : "";
+        }
+        connection.setCustomUserAgent(HttpClient.USER_AGENT + (agentLibrary.isEmpty() ? "" : " " + agentLibrary));
+
         connection.setConnectTimeout(CONNECT_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);
     }

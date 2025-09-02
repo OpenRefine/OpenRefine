@@ -15,6 +15,8 @@ import okhttp3.Response;
 
 import com.google.refine.commands.Command;
 
+import org.openrefine.wikibase.utils.HttpClient;
+
 /**
  * Proxies Wikibase manifests to allow the client to bypass CORS restrictions.
  */
@@ -31,9 +33,13 @@ public class FetchManifestCommand extends Command {
             }
 
             // fetch the contents at the url with a plain get request and return the response
-            OkHttpClient client = new OkHttpClient();
+            OkHttpClient client = HttpClient.getClient();
             Request req = new Request.Builder().url(url).build();
             Response res = client.newCall(req).execute();
+            if (!res.isSuccessful()) {
+                response.sendError(res.code(), res.message());
+                return;
+            }
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
             response.getWriter().write(res.body().string());
