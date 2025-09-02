@@ -81,10 +81,10 @@ jobs:
         run: |
           echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Java ${{ matrix.java }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -169,10 +169,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 21
