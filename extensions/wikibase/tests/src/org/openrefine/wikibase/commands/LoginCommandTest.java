@@ -234,6 +234,13 @@ public class LoginCommandTest extends CommandTest {
         when(connectionManager.getConnection(apiEndpoint)).thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
 
+        // Make sure that we have a custom user agent set (not a very effective test, but the best we can do without
+        // refactoring
+        when(connection.getCustomUserAgent()).thenReturn("test-wdtk-lib");
+        connectionManager.setupConnection(connection);
+        verify(connection, times(1)).getCustomUserAgent();
+        verify(connection, times(1)).setCustomUserAgent(Mockito.matches("^OpenRefine-Wikibase-extension.* test-wdtk-lib$"));
+
         command.doPost(request, response);
 
         verify(connectionManager, times(1)).login(apiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret);
@@ -266,6 +273,13 @@ public class LoginCommandTest extends CommandTest {
         OAuthApiConnection connection = mock(OAuthApiConnection.class);
         when(connectionManager.getConnection(apiEndpoint)).thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
+
+        // Make sure that we have a custom user agent set (not a very effective test, but the best we can do without
+        // refactoring
+        when(connection.getCustomUserAgent()).thenReturn("test-wdtk-lib");
+        connectionManager.setupConnection(connection);
+        verify(connection, times(1)).getCustomUserAgent();
+        verify(connection, times(1)).setCustomUserAgent(Mockito.matches("^OpenRefine-Wikibase-extension.* test-wdtk-lib$"));
 
         command.doPost(request, response);
 
@@ -300,6 +314,13 @@ public class LoginCommandTest extends CommandTest {
         OAuthApiConnection connection = mock(OAuthApiConnection.class);
         when(connectionManager.getConnection(apiEndpoint)).thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
+
+        // Make sure that we have a custom user agent set (not a very effective test, but the best we can do without
+        // refactoring
+        when(connection.getCustomUserAgent()).thenReturn("test-wdtk-lib");
+        connectionManager.setupConnection(connection);
+        verify(connection, times(1)).getCustomUserAgent();
+        verify(connection, times(1)).setCustomUserAgent(Mockito.matches("^OpenRefine-Wikibase-extension.* test-wdtk-lib$"));
 
         command.doPost(request, response);
 

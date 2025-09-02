@@ -223,7 +223,8 @@ public class ConnectionManager {
         }
     }
 
-    private void setupConnection(ApiConnection connection) {
+    // Visible for testing only
+    static void setupConnection(ApiConnection connection) {
         String defaultUserAgent = connection.getCustomUserAgent();
         // Set our custom user agent (if it's not already set)
         if (defaultUserAgent == null || !defaultUserAgent.contains(HttpClient.USER_AGENT)) {
