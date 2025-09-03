@@ -77,7 +77,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- dependency versions -->
-    <jackson.version>2.19.2</jackson.version>
+    <jackson.version>2.20.0</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.6</butterfly.version>
     <slf4j.version>2.0.17</slf4j.version>
@@ -350,6 +350,18 @@
         </plugin>
     </plugins>
   </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <!-- dependencies are stored in the relevant submodules:
