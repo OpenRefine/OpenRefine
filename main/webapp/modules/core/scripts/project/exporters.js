@@ -105,6 +105,29 @@ ExporterManager.prototype._initializeUI = function() {
   });
 };
 
+/**
+ * Adds a menu item to the end of the ExporterManager menu.
+ * @public
+ * @param {string} id - The item ID.
+ * @param {string} label - The item Label.
+ * @param {function} click - The function which is called upon an item click.
+ */
+ExporterManager.addMenuItemAfter = function(id, label, click) {
+    ExporterManager.MenuItems.push({
+        'id': id,
+        'label': label,
+        'click': click,
+    });
+}
+
+/**
+ * Adds a separator item to the end of the menu.
+ * @public
+ */
+ExporterManager.addMenuSpacerAfter = function() {
+    ExporterManager.MenuItems.push({});
+}
+
 ExporterManager.stripNonFileChars = function(name) {
     // prohibited characters in file name of linux (/) and windows (\/:*?"<>|)
     // and MacOS https://stackoverflow.com/a/47455094/167425
