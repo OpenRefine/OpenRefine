@@ -442,7 +442,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
             Assert.assertNotNull(uncompressedFile, "Failed to open compressed file: " + filename);
 
             reader = new InputStreamReader(new FileInputStream(uncompressedFile), StandardCharsets.UTF_8);
-            reader = new InputStreamReader(is, StandardCharsets.UTF_8);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
             Assert.assertEquals(StreamSupport.stream(records.spliterator(), false).count(), LINES,
