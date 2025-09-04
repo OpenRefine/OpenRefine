@@ -229,24 +229,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ImportingJob job = ImportingManager.createJob();
         Map<String, String> parameters = ParsingUtilities.parseParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
-        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
-                    new ImportingUtilities.Progress() {
-
-                        @Override
-                        public void setProgress(String message, int percent) {
-                            if (message != null) {
-                                JSONUtilities.safePut(progress, "message", message);
-                            }
-                            JSONUtilities.safePut(progress, "percent", percent);
-                        }
-
-                        @Override
-                        public boolean isCanceled() {
-                            return job.canceled;
-                        }
-                    });
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, getDummyProgress());
             fail("No Exception was thrown");
         } catch (Exception exception) {
             assertEquals(exception.getMessage(), MESSAGE);
@@ -280,24 +264,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ImportingJob job = ImportingManager.createJob();
         Map<String, String> parameters = ParsingUtilities.parseParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
-        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+
         try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
-                    new ImportingUtilities.Progress() {
-
-                        @Override
-                        public void setProgress(String message, int percent) {
-                            if (message != null) {
-                                JSONUtilities.safePut(progress, "message", message);
-                            }
-                            JSONUtilities.safePut(progress, "percent", percent);
-                        }
-
-                        @Override
-                        public boolean isCanceled() {
-                            return job.canceled;
-                        }
-                    });
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, getDummyProgress());
             fail("No Exception was thrown");
         } catch (Exception exception) {
             assertEquals(exception.getMessage(), message);
@@ -352,18 +321,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
         tmp.deleteOnExit();
         FileUtils.copyFile(new File(filepath), tmp);
 
-        Progress dummyProgress = new Progress() {
-
-            @Override
-            public void setProgress(String message, int percent) {
-            }
-
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
-        };
-
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(fileRecord, "origin", "upload");
@@ -372,7 +329,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         JSONUtilities.safePut(fileRecord, "fileName", filename);
         JSONUtilities.safePut(fileRecord, "location", tmp.getName());
 
-        assertTrue(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
+        assertTrue(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, getDummyProgress()));
         assertEquals(fileRecords.size(), 2);
         assertEquals(fileRecords.get(0).get("fileName").asText(), "movies-condensed.tsv");
         assertEquals(fileRecords.get(0).get("archiveFileName").asText(), "movies.zip");
@@ -434,18 +391,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
         tmp.deleteOnExit();
         FileUtils.copyFile(new File(filepath), tmp);
 
-        Progress dummyProgress = new Progress() {
-
-            @Override
-            public void setProgress(String message, int percent) {
-            }
-
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
-        };
-
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(fileRecord, "origin", "upload");
@@ -458,10 +403,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         assertThrows("Failed to throw for " + filename, IOException.class,
-                () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
+                () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, getDummyProgress()));
         assertThrows("Failed to throw for " + filename, FileUploadBase.InvalidContentTypeException.class,
                 () -> ImportingUtilities.retrieveContentFromPostRequest(request,
-                        new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
+                        new Properties(), job.getRawDataDir(), fileRecord, getDummyProgress()));
         assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
     }
@@ -550,20 +495,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
             ImportingJob job = ImportingManager.createJob();
             Map<String, String> parameters = ParsingUtilities.parseParameters(req);
             ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
-            Progress dummyProgress = new Progress() {
-
-                @Override
-                public void setProgress(String message, int percent) {
-                }
-
-                @Override
-                public boolean isCanceled() {
-                    return false;
-                }
-            };
 
             try {
-                ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
+                ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                        getDummyProgress());
                 fail("No Exception was thrown");
             } catch (ClientProtocolException exception) {
                 assertEquals(exception.getMessage(), message);
@@ -656,10 +591,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
                     @Override
                     public void setProgress(String message, int percent) {
-                        if (message != null) {
-                            JSONUtilities.safePut(progress, "message", message);
-                        }
-                        JSONUtilities.safePut(progress, "percent", percent);
                     }
 
                     @Override
@@ -670,6 +601,20 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(0).get("format").asText());
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(1).get("format").asText());
+    }
+
+    private ImportingUtilities.Progress getDummyProgress() {
+        return new ImportingUtilities.Progress() {
+
+            @Override
+            public void setProgress(String message, int percent) {
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+        };
     }
 
     private void importFlowSettings() {
