@@ -30,6 +30,7 @@ package com.google.refine.importing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -327,7 +328,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(fileRecord, "origin", "upload");
         JSONUtilities.safePut(fileRecord, "declaredEncoding", "UTF-8");
-        JSONUtilities.safePut(fileRecord, "declaredMimeType", "application/x-zip-compressed");
+        JSONUtilities.safePut(fileRecord, "declaredMimeType", "application/zip");
         JSONUtilities.safePut(fileRecord, "fileName", filename);
         JSONUtilities.safePut(fileRecord, "location", tmp.getName());
 
@@ -376,6 +377,68 @@ public class ImportingUtilitiesTests extends ImporterTest {
         importOptions = (ObjectNode) importOptionsArray.get(1);
         assertEquals(importOptions.get("fileSource").asText(), "movies.tsv");
         assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
+    }
+
+    /**
+     * Test regression from issue 7314 to make sure we can import a compressed file which is NOT an archive.
+     *
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void importCompressedNonArchive() throws IOException {
+        String filename = "persons.csv.gz";
+        String filepath = ClassLoader.getSystemResource(filename).getPath();
+        // Make a copy in our data directory where it's expected
+        File tmp = File.createTempFile("openrefine-test-persons", ".csv.gz", job.getRawDataDir());
+        tmp.deleteOnExit();
+        FileUtils.copyFile(new File(filepath), tmp);
+
+        ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
+        ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(fileRecord, "origin", "upload");
+        JSONUtilities.safePut(fileRecord, "declaredEncoding", "UTF-8");
+        JSONUtilities.safePut(fileRecord, "declaredMimeType", "application/gzip");
+        JSONUtilities.safePut(fileRecord, "fileName", filename);
+        JSONUtilities.safePut(fileRecord, "location", tmp.getName());
+
+        // False return just means "not an archive"
+        assertFalse(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, getDummyProgress()));
+        assertEquals(fileRecords.size(), 1);
+        assertEquals(fileRecords.get(0).get("fileName").asText(), "persons.csv.gz");
+        assertEquals(fileRecords.get(0).has("archiveFileName"), false);
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "separator", ",");
+        JSONUtilities.safePut(options, "includeArchiveFileName", true); // not an archive, so ignored
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
+        ImportingParserBase parser = new SeparatorBasedImporter();
+        List<Exception> exceptions = new ArrayList<Exception>();
+        parser.parse(
+                project,
+                metadata,
+                job,
+                JSONUtilities.getObjectList(fileRecords),
+                "csv",
+                -1,
+                options,
+                exceptions);
+        assertEquals(exceptions.size(), 0);
+        project.update();
+
+        assertEquals(project.columnModel.columns.get(0).getName(), "File");
+        assertEquals(project.rows.get(0).getCell(0).getValue(), "persons.csv.gz");
+        assertEquals(project.columnModel.columns.get(1).getName(), "Name");
+        assertEquals(project.rows.get(0).getCell(1).getValue(), "Person1");
+
+        assertEquals(project.rows.size(), 3);
+
+        ArrayNode importOptionsArray = metadata.getImportOptionMetadata();
+        assertEquals(importOptionsArray.size(), 1);
+        ObjectNode importOptions = (ObjectNode) importOptionsArray.get(0);
+        assertEquals(importOptions.get("fileSource").asText(), "persons.csv.gz");
+        assertTrue(importOptions.get("includeFileSources").asBoolean());
     }
 
     @Test
