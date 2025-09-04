@@ -40,6 +40,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.Serializable;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -48,10 +49,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import mockwebserver3.RecordedRequest;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 import org.apache.commons.text.StringEscapeUtils;
 import org.mockito.Mockito;
 import org.testng.Assert;
@@ -361,8 +362,8 @@ public class ReconOperationTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
-            server.enqueue(new MockResponse().setBody(nonJsonResponse));
-            server.enqueue(new MockResponse());
+            server.enqueue(new MockResponse.Builder().body(nonJsonResponse).build());
+            server.enqueue(new MockResponse.Builder().build());
 
             String configJson = " {\n" +
                     "        \"mode\": \"standard-service\",\n" +
@@ -466,9 +467,9 @@ public class ReconOperationTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
-            server.enqueue(new MockResponse().setResponseCode(503)); // service initially overloaded
-            server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
-            server.enqueue(new MockResponse());
+            server.enqueue(new MockResponse.Builder().code(503).build()); // service initially overloaded
+            server.enqueue(new MockResponse.Builder().body(reconResponse).build()); // service returns successfully
+            server.enqueue(new MockResponse.Builder().build());
 
             String configJson = " {\n" +
                     "        \"mode\": \"standard-service\",\n" +
@@ -501,7 +502,7 @@ public class ReconOperationTests extends RefineTest {
             RecordedRequest request1 = server.takeRequest(5, TimeUnit.SECONDS);
 
             assertNotNull(request1);
-            String query = request1.getBody().readUtf8Line();
+            String query = request1.getBody().string(StandardCharsets.UTF_8);
             assertNotNull(query);
             String expected = "queries=" + URLEncoder.encode(
                     "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",

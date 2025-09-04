@@ -43,11 +43,11 @@ import java.util.Set;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import mockwebserver3.RecordedRequest;
+import mockwebserver3.SocketEffect;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-import okhttp3.mockwebserver.SocketPolicy;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -341,8 +341,8 @@ public class StandardReconConfigTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
-            server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
-            server.enqueue(new MockResponse());
+            server.enqueue(new MockResponse.Builder().body(reconResponse).build()); // service returns successfully
+            server.enqueue(new MockResponse.Builder().build());
 
             String configJson = " {\n" +
                     "        \"mode\": \"standard-service\",\n" +
@@ -371,7 +371,7 @@ public class StandardReconConfigTests extends RefineTest {
             RecordedRequest request1 = server.takeRequest();
 
             assertNotNull(request1);
-            String query = request1.getBody().readUtf8Line();
+            String query = request1.getBody().utf8();
             String expected = "queries=" + URLEncoder.encode(
                     "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
                     "UTF-8");
@@ -387,7 +387,7 @@ public class StandardReconConfigTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
-            server.enqueue(new MockResponse().setResponseCode(500));
+            server.enqueue(new MockResponse.Builder().code(500).build());
 
             String configJson = " {\n" +
                     "        \"mode\": \"standard-service\",\n" +
@@ -418,7 +418,7 @@ public class StandardReconConfigTests extends RefineTest {
 
             RecordedRequest request1 = server.takeRequest();
             assertNotNull(request1);
-            String query = request1.getBody().readUtf8Line();
+            String query = request1.getBody().utf8();
             String expected = "queries=" + URLEncoder.encode(
                     "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
                     "UTF-8");
@@ -434,7 +434,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "q0: {\n" +
                     "  }\n" +
                     "}\n";
-            server.enqueue(new MockResponse().setBody(reconResponse)); // service returns successfully
+            server.enqueue(new MockResponse.Builder().body(reconResponse).build()); // service returns successfully
             returnReconList = config.batchRecon(jobList, 1000000000);
             assertEquals(query, expected);
             assertNotNull(returnReconList.get(0));
@@ -449,10 +449,10 @@ public class StandardReconConfigTests extends RefineTest {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
             // enqueue a few responses to cater for the automatic retries
-            server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
-            server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
-            server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
-            server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
+            server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
+            server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
+            server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
+            server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
 
             String configJson = " {\n" +
                     "        \"mode\": \"standard-service\",\n" +

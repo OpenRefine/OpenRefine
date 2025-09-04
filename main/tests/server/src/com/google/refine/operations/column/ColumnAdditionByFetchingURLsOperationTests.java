@@ -47,10 +47,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.node.TextNode;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import mockwebserver3.RecordedRequest;
+import okhttp3.Headers;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -228,7 +229,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 row.setCell(0, new Cell(i < 5 ? "apple" : "orange", null));
                 project.rows.add(row);
                 // We won't need them all, but queue 100 random responses
-                server.enqueue(new MockResponse().setBody(Integer.toString(rand.nextInt(100))));
+                server.enqueue(new MockResponse.Builder().body(Integer.toString(rand.nextInt(100))).build());
             }
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
@@ -252,7 +253,6 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 // all random values should be equal due to caching
                 Assert.assertEquals(project.rows.get(i).getCellValue(1).toString(), ref_val);
             }
-            server.shutdown();
         }
     }
 
@@ -264,7 +264,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/random");
-            server.enqueue(new MockResponse());
+            server.enqueue(new MockResponse.Builder().build());
 
             Row row0 = new Row(2);
             row0.setCell(0, new Cell("auinrestrsc", null)); // malformed -> error
@@ -315,8 +315,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             headers.add(new HttpHeader("user-agent", userAgentValue));
             headers.add(new HttpHeader("accept", acceptValue));
 
-            server.enqueue(new MockResponse().setBody("first"));
-            server.enqueue(new MockResponse().setBody("second"));
+            server.enqueue(new MockResponse.Builder().body("first").build());
+            server.enqueue(new MockResponse.Builder().body("second").build());
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                     "fruits",
@@ -331,11 +331,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             runOperation(op, project, 3000);
 
             RecordedRequest request = server.takeRequest(5, TimeUnit.SECONDS);
-            Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);
-            Assert.assertEquals(request.getHeader("authorization"), authorizationValue);
-            Assert.assertEquals(request.getHeader("accept"), acceptValue);
-
-            server.shutdown();
+            Headers requestHeaders = request.getHeaders();
+            Assert.assertEquals(requestHeaders.get("user-agent"), userAgentValue);
+            Assert.assertEquals(requestHeaders.get("authorization"), authorizationValue);
+            Assert.assertEquals(requestHeaders.get("accept"), acceptValue);
         }
     }
 
@@ -353,13 +352,13 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // Queue 5 error responses with 1 sec. Retry-After interval
             for (int i = 0; i < 5; i++) {
-                server.enqueue(new MockResponse()
+                server.enqueue(new MockResponse.Builder()
                         .setHeader("Retry-After", 1)
-                        .setResponseCode(429)
-                        .setBody(Integer.toString(i, 10)));
+                        .code(429)
+                        .body(Integer.toString(i, 10)).build());
             }
 
-            server.enqueue(new MockResponse().setBody("success"));
+            server.enqueue(new MockResponse.Builder().body("success").build());
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                     "fruits",
@@ -379,8 +378,6 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value
             assertTrue(project.rows.get(0).getCellValue(1).toString().contains("HTTP error 429"), "missing 429 error");
             assertEquals(project.rows.get(1).getCellValue(1).toString(), "success");
-
-            server.shutdown();
         }
     }
 
@@ -398,13 +395,14 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // Use 503 Server Unavailable with no Retry-After header this time
             for (int i = 0; i < 5; i++) {
-                server.enqueue(new MockResponse()
-                        .setResponseCode(503)
-                        .setBody(Integer.toString(i, 10)));
+                server.enqueue(new MockResponse.Builder()
+                        .code(503)
+                        .body(Integer.toString(i, 10))
+                        .build());
             }
-            server.enqueue(new MockResponse().setBody("success"));
+            server.enqueue(new MockResponse.Builder().body("success").build());
 
-            server.enqueue(new MockResponse().setBody("not found").setResponseCode(404));
+            server.enqueue(new MockResponse.Builder().body("not found").code(404).build());
 
             ColumnAdditionByFetchingURLsOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                     "fruits",
@@ -426,8 +424,6 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             assertTrue(project.rows.get(0).getCellValue(1).toString().contains("HTTP error 503"), "Missing 503 error");
             assertEquals(project.rows.get(1).getCellValue(1).toString(), "success");
             assertTrue(project.rows.get(2).getCellValue(1).toString().contains("HTTP error 404"), "Missing 404 error");
-
-            server.shutdown();
         }
     }
 

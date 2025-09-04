@@ -58,9 +58,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.fileupload.FileUploadBase;
@@ -200,9 +200,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String RESPONSE_BODY = "{code:401,message:Unauthorised}";
 
         MockWebServer server = new MockWebServer();
-        MockResponse mockResponse = new MockResponse();
-        mockResponse.setBody(RESPONSE_BODY);
-        mockResponse.setResponseCode(401);
+        MockResponse mockResponse = new MockResponse.Builder()
+                .body(RESPONSE_BODY)
+                .code(401)
+                .build();
         server.start();
         server.enqueue(mockResponse);
         HttpUrl url = server.url("/random");
@@ -523,10 +524,12 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @Test
     public void testTrailingSpaceInUrl() throws IOException, FileUploadException {
         try (MockWebServer server = new MockWebServer()) {
+            server.start();
             String url = server.url("input.csv ").toString();
-            server.enqueue(new MockResponse()
-                    .setHttp2ErrorCode(404)
-                    .setStatus("HTTP/1.1 404 Not Found"));
+            server.enqueue(new MockResponse.Builder()
+                    .code(404)
+                    .status("HTTP/1.1 404 Not Found")
+                    .build());
 
             String message = String.format("HTTP error %d : %s for URL %s", 404,
                     "Not Found", url.trim());
