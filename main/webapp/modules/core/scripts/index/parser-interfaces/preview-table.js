@@ -70,6 +70,8 @@ Refine.PreviewTable.prototype._render = function() {
    *  Data Cells
    *------------------------------------------------------------
    */
+  
+  var tbody = table.createTBody();
 
   var rows = this._projectData.rowModel.rows;
   var renderRow = function(tr, r, row, even) {
@@ -119,7 +121,7 @@ Refine.PreviewTable.prototype._render = function() {
   var even = true;
   for (var r = 0; r < rows.length; r++) {
     var row = rows[r];
-    var tr = table.insertRow(table.rows.length);
+    var tr = tbody.insertRow(tbody.rows.length);
     even = !even;
     renderRow(tr, r, row, even);
   }    
