@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="GEO extension tests" verbose="1" >
+  <test name="GEO extension tests">
+    <packages>
+      <package name="com.google.refine.extension.geo.*" />
+    </packages>
+  </test>
+</suite>

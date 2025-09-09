@@ -1,0 +1,11 @@
+## GEO Extension Macros
+## This file contains Velocity macros for the GEO extension
+
+#macro(geo_extension_info)
+<h3>GEO Extension</h3>
+<p>Provides geographic functions for coordinate conversion and distance calculations.</p>
+<ul>
+  <li><strong>decToGMS(decimal, coordType)</strong> - Convert decimal degrees to degrees, minutes, seconds format</li>
+  <li><strong>geoDistance(lat1, lng1, lat2, lng2, unit)</strong> - Calculate great circle distance between coordinate pairs</li>
+</ul>
+#end
