@@ -35,6 +35,7 @@ package com.google.refine.importing;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,7 +48,9 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -55,15 +58,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -71,9 +71,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import com.google.common.base.Strings;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.StreamingNotSupportedException;
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
@@ -103,6 +114,7 @@ import com.google.refine.util.ParsingUtilities;
 
 public class ImportingUtilities {
 
+    public static final int BUFFER_SIZE = 128 * 1024;
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
 
     final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
@@ -173,7 +185,8 @@ public class ImportingUtilities {
         } catch (Exception e) {
             JSONUtilities.safePut(config, "state", "error");
             JSONUtilities.safePut(config, "error", "Error uploading data");
-            JSONUtilities.safePut(config, "errorDetails", String.valueOf(e.getCause()));
+            // Prefer the nested exception if it's something we wrapped, otherwise use the top level exception
+            JSONUtilities.safePut(config, "errorDetails", e.getCause() == null ? e.getLocalizedMessage() : String.valueOf(e.getCause()));
             throw new IOException(e);
         }
 
@@ -397,20 +410,17 @@ public class ImportingUtilities {
                         URLConnection urlConnection = url.openConnection();
                         urlConnection.setConnectTimeout(5000);
                         urlConnection.connect();
-                        InputStream stream2 = urlConnection.getInputStream();
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding",
-                                urlConnection.getContentEncoding());
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType",
-                                urlConnection.getContentType());
-                        try {
+                        try (InputStream stream2 = urlConnection.getInputStream()) {
+                            JSONUtilities.safePut(fileRecord, "declaredEncoding",
+                                    urlConnection.getContentEncoding());
+                            JSONUtilities.safePut(fileRecord, "declaredMimeType",
+                                    urlConnection.getContentType());
                             if (saveStream(stream2, url, rawDataDir, progress,
                                     update, fileRecord, fileRecords,
                                     urlConnection.getContentLength())) {
                                 archiveCount++;
                             }
                             downloadCount++;
-                        } finally {
-                            stream2.close();
                         }
                     }
                 } else {
@@ -500,7 +510,7 @@ public class ImportingUtilities {
 
     /**
      * Replace the illegal character with '-' in the path in Windows
-     * 
+     *
      * @param path:
      *            file path
      * @return the replaced path or original path if the OS is not Windows
@@ -629,8 +639,7 @@ public class ImportingUtilities {
 
     static private long saveStreamToFile(InputStream stream, File file, SavingUpdate update) throws IOException {
         long length = 0;
-        FileOutputStream fos = new FileOutputStream(file);
-        try {
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             byte[] bytes = new byte[16 * 1024];
             int c;
             while ((update == null || !update.isCanceled()) && (c = stream.read(bytes)) > 0) {
@@ -640,55 +649,61 @@ public class ImportingUtilities {
                 if (update != null) {
                     update.totalRetrievedSize += c;
                     update.savedMore();
+                    if (stream instanceof InputStreamStatistics) {
+                        // TODO: Can we use this to improve progress reporting?
+                        ((InputStreamStatistics) stream).getCompressedCount();
+                    }
                 }
             }
             return length;
-        } catch (ZipException e) {
-            throw new IOException("Compression format not supported, " + e.getMessage());
-        } finally {
-            fos.close();
         }
     }
 
+    /**
+     * Processes a retrieved file to explode archives and decompress compressed files.
+     *
+     * @param rawDataDir
+     *            the directory where raw data files are stored
+     * @param file
+     *            the file to be processed
+     * @param fileRecord
+     *            an ObjectNode containing metadata for the file being processed
+     * @param fileRecords
+     *            an ArrayNode where metadata for all processed files is recorded
+     * @param progress
+     *            an implementation of Progress interface to track progress and check for cancellation
+     * @return true if the file was successfully handled as an archive
+     * @throws IOException
+     *             if a processing error or file handling issue occurs
+     */
     static public boolean postProcessRetrievedFile(
             File rawDataDir, File file, ObjectNode fileRecord, ArrayNode fileRecords, final Progress progress) throws IOException {
 
         String mimeType = JSONUtilities.getString(fileRecord, "declaredMimeType", null);
         String contentEncoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
 
-        InputStream archiveIS = tryOpenAsArchive(file, mimeType, contentEncoding);
-        if (archiveIS != null) {
+        if (explodeArchive(rawDataDir, file, mimeType, fileRecord, fileRecords, progress)) {
+            // FIXME: We really don't want to unpack the entire archive before doing our preview
+            file.delete();
+            return true;
+        }
+
+        if (file.getName().endsWith(".7z")) {
             try {
-                if (explodeArchive(rawDataDir, archiveIS, fileRecord, fileRecords, progress)) {
+                // FIXME: We really don't want to unpack the entire archive before doing our preview
+                if (explode7zipArchive(rawDataDir, file, fileRecord, fileRecords, progress)) {
                     file.delete();
                     return true;
                 }
-            } finally {
-                try {
-                    archiveIS.close();
-                } catch (IOException e) {
-                    // TODO: what to do?
-                }
+            } catch (Exception e) {
+                throw new IOException("Unexpected error attempting to explode .7z file", e);
             }
         }
 
-        InputStream uncompressedIS = tryOpenAsCompressedFile(file, mimeType, contentEncoding);
-        if (uncompressedIS != null) {
-            try {
-                File file2 = uncompressFile(rawDataDir, uncompressedIS, fileRecord, progress);
-
-                file.delete();
-                file = file2;
-            } catch (IOException e) {
-                // TODO: what to do?
-                e.printStackTrace();
-            } finally {
-                try {
-                    uncompressedIS.close();
-                } catch (IOException e) {
-                    // TODO: what to do?
-                }
-            }
+        File file2 = uncompressFile(rawDataDir, file, mimeType, contentEncoding, fileRecord, progress);
+        if (file2 != null) {
+            file.delete();
+            file = file2;
         }
 
         postProcessSingleRetrievedFile(file, fileRecord);
@@ -703,38 +718,14 @@ public class ImportingUtilities {
         }
     }
 
+    @Deprecated
     static public InputStream tryOpenAsArchive(File file, String mimeType) throws IOException {
         return tryOpenAsArchive(file, mimeType, null);
     }
 
+    @Deprecated
     static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) throws IOException {
-        String fileName = file.getName();
-        if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz") || isFileGZipped(file)) {
-            return new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
-        } else if (fileName.endsWith(".tar.bz2")) {
-            return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
-        } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
-            return new TarArchiveInputStream(new FileInputStream(file));
-        } else if (fileName.endsWith(".zip")
-                || "application/x-zip-compressed".equals(contentType)
-                || "application/zip".equals(contentType)
-                || "application/x-compressed".equals(contentType)
-                || "multipart/x-zip".equals(contentType)) {
-            return new ZipInputStream(new FileInputStream(checkValidZip(file)));
-        } else if (fileName.endsWith(".kmz")) {
-            return new ZipInputStream(new FileInputStream(checkValidZip(file)));
-        }
         return null;
-    }
-
-    private static File checkValidZip(File file) throws IOException {
-        try (ZipFile zf = new ZipFile(file)) {
-            if (!zf.entries().hasMoreElements()) {
-                // Needs to have at least one entry to be useful
-                throw new IOException("Empty Zip file");
-            }
-        }
-        return file;
     }
 
     private static boolean isFileGZipped(File file) {
@@ -748,115 +739,214 @@ public class ImportingUtilities {
 
     public static boolean isCompressed(File file) throws IOException {
         // Check for common compressed file types to protect ourselves from binary data
-        try (InputStream is = new FileInputStream(file)) {
+        try (final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));) {
+            try {
+                is.mark(10);
+                CompressorInputStream input = new CompressorStreamFactory()
+                        .createCompressorInputStream(is);
+                if (input != null) {
+                    return true;
+                }
+            } catch (CompressorException e) {
+                // Fall through and try other methods
+            }
             byte[] magic = new byte[4];
+            is.mark(100);
             int count = is.read(magic);
-            if (count == 4 && Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x03, 0x04 }) || // zip
-                    Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x07, 0x08 }) ||
-                    (magic[0] == 0x1F && magic[1] == (byte) 0x8B) || // gzip
-                    (magic[0] == 'B' && magic[1] == 'Z' && magic[2] == 'h') // bzip2
+            // This legacy code is still useful for things like ZIPs with unsupported compressors (e.g. PPMD)
+            if (count == 4 && Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x03, 0x04 }) || // start of zip
+                    Arrays.equals(magic, new byte[] { 0x50, 0x4B, 0x07, 0x08 }) // zip data descriptor
             ) {
                 return true;
             }
+            is.reset();
+            is.mark(100);
+            try (CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream(is);) {
+                return true;
+            } catch (CompressorException e) {
+                // Not technically compressed, but binary formats as well (e.g. zip)
+                is.reset();
+                try (ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream(is);) {
+                    return true;
+                } catch (StreamingNotSupportedException ex) {
+                    // 7zip returns StreamingNotSupportedException, but it can be used with File or SeekableByteChannel
+                    return true;
+                } catch (ArchiveException ex) {
+                    return false;
+                }
+            }
         }
-        return false;
     }
 
     // FIXME: This is wasteful of space and time. We should try to process on the fly
+    // (also for preview, we don't want the user to wait while we unpack the entire thing)
     static private boolean explodeArchive(
             File rawDataDir,
-            InputStream archiveIS,
+            File file,
+            String mimeType,
             ObjectNode archiveFileRecord,
             ArrayNode fileRecords,
             final Progress progress) throws IOException {
-        if (archiveIS instanceof TarArchiveInputStream) {
-            TarArchiveInputStream tis = (TarArchiveInputStream) archiveIS;
+
+        ArchiveInputStream archiveInputStream = null;
+
+        String myMimeType = Strings.nullToEmpty(mimeType);
+        String filename = file.getName();
+        if (myMimeType.startsWith("application/vnd.openxmlformats-officedocument.") ||
+                myMimeType.startsWith("application/vnd.oasis.opendocument.") ||
+                filename.endsWith(".ods") ||
+                filename.endsWith(".xlsx")) {
+            return false;
+        }
+
+        try (
+                FileInputStream fis = new FileInputStream(file);
+                FileChannel fc = fis.getChannel();
+                final BufferedInputStream is = new BufferedInputStream(fis);) {
+            is.mark(100);
             try {
-                TarArchiveEntry te;
-                while (!progress.isCanceled() && (te = tis.getNextEntry()) != null) {
-                    if (!te.isDirectory()) {
-                        String fileName2 = te.getName();
-                        File file2 = allocateFile(rawDataDir, fileName2);
-
-                        progress.setProgress("Extracting " + fileName2, -1);
-
-                        ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
-                        JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
-                        JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
-                        JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
-                        JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
-                        JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
-                        JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
-
-                        JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(tis, file2, null));
-                        postProcessSingleRetrievedFile(file2, fileRecord2);
-
-                        JSONUtilities.append(fileRecords, fileRecord2);
+                // Use a CompressorStreamFactory configured to decompress concatenated streams
+                CompressorInputStream in = new CompressorStreamFactory(true).createCompressorInputStream(is);
+                try {
+                    is.reset();
+                    archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(is);
+                } catch (ArchiveException e) {
+                    // Not a recognized archive type
+                    return false;
+                }
+            } catch (CompressorException e) {
+                // Only a few archive types are compressed, so this isn't unexpected
+                is.reset();
+                String format;
+                try {
+                    format = ArchiveStreamFactory.detect(is);
+                } catch (ArchiveException e1) {
+                    // It's not an archive format that we recognize
+                    return false;
+                }
+                try {
+                    if (ArchiveStreamFactory.SEVEN_Z.equals(format)) {
+                        SevenZFile szf = new SevenZFile.Builder().setSeekableByteChannel(fc.position(0)).get();
+                        for (SevenZArchiveEntry entry : szf.getEntries()) {
+                            if (progress.isCanceled()) {
+                                break;
+                            }
+                            if (!entry.isDirectory()) {
+                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
+                                        szf.getInputStream(entry));
+                                JSONUtilities.append(fileRecords, fileRecord2);
+                            }
+                        }
+                    } else if (ArchiveStreamFactory.ZIP.equals(format)) {
+                        // Apache docs recommend ZipFile over ZipArchiveInputStream, which is what the factory returns
+                        // so we handle it separately, similar to 7Zip with a SeekableByteChannel
+                        ZipFile zf = new ZipFile.Builder().setSeekableByteChannel(fc.position(0)).get();
+                        for (Iterator<ZipArchiveEntry> it = zf.getEntries().asIterator(); it.hasNext();) {
+                            ZipArchiveEntry entry = it.next();
+                            if (progress.isCanceled()) {
+                                break;
+                            }
+                            if (!entry.isDirectory()) {
+                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
+                                        zf.getInputStream(entry));
+                                JSONUtilities.append(fileRecords, fileRecord2);
+                            }
+                        }
+                    } else {
+                        is.reset();
+                        archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(is);
+                        ArchiveEntry te;
+                        while (!progress.isCanceled() && (te = archiveInputStream.getNextEntry()) != null) {
+                            if (!te.isDirectory()) {
+                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, te.getName(),
+                                        archiveInputStream);
+                                JSONUtilities.append(fileRecords, fileRecord2);
+                            }
+                        }
                     }
-                }
-            } catch (IOException e) {
-                // TODO: what to do?
-                e.printStackTrace();
-            }
-            return true;
-        } else if (archiveIS instanceof ZipInputStream) {
-            ZipInputStream zis = (ZipInputStream) archiveIS;
-            ZipEntry ze;
-            while (!progress.isCanceled() && (ze = zis.getNextEntry()) != null) {
-                if (!ze.isDirectory()) {
-                    String fileName2 = ze.getName();
-                    File file2 = allocateFile(rawDataDir, fileName2);
-
-                    progress.setProgress("Extracting " + fileName2, -1);
-
-                    ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
-                    JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
-                    JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
-                    JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
-                    JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
-                    JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
-                    JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
-
-                    JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(zis, file2, null));
-                    postProcessSingleRetrievedFile(file2, fileRecord2);
-
-                    JSONUtilities.append(fileRecords, fileRecord2);
+                } catch (ArchiveException ex) {
+                    // TODO: We could try skipping just this entry and continuing, but this is the historical behavior
+                    throw new IOException("Error expanding archive", ex);
                 }
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
-    static public InputStream tryOpenAsCompressedFile(File file, String mimeType) {
-        return tryOpenAsCompressedFile(file, mimeType, null);
-    }
+    /**
+     * Explode a 7-zip archive. The decompessor doesn't support stream based decompression, so we need to do it
+     * separately/differently from all the others.
+     */
+    private static boolean explode7zipArchive(File rawDataDir, File file, ObjectNode archiveFileRecord, ArrayNode fileRecords,
+            Progress progress) throws IOException {
 
-    static public InputStream tryOpenAsCompressedFile(File file, String mimeType, String contentEncoding) {
-        String fileName = file.getName();
-        try {
-            if (fileName.endsWith(".gz")
-                    || isFileGZipped(file)
-                    || "gzip".equals(contentEncoding)
-                    || "x-gzip".equals(contentEncoding)
-                    || "application/x-gzip".equals(mimeType)) {
-                return new GZIPInputStream(new FileInputStream(file));
-            } else if (fileName.endsWith(".bz2")
-                    || "application/x-bzip2".equals(mimeType)) {
-                return new BZip2CompressorInputStream(new FileInputStream(file), true);
+        SevenZFile sevenZFile = new SevenZFile.Builder().setFile(file).get();
+        if (sevenZFile == null) {
+            return false;
+        }
+
+        SevenZArchiveEntry entry;
+        while (!progress.isCanceled() && (entry = sevenZFile.getNextEntry()) != null) {
+            String fileName2 = entry.getName();
+            if (!entry.isDirectory()) {
+                File file2 = allocateFile(rawDataDir, fileName2);
+                progress.setProgress("Extracting " + fileName2, -1);
+                ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
+                JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
+                JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
+                JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
+                JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
+                JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
+                JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
+
+                byte[] content = new byte[BUFFER_SIZE];
+                // TODO: Track progress and/or decompression ratio
+//                    sevenZFile.getStatisticsForCurrentEntry().getCompressedCount();
+//                    sevenZFile.getStatisticsForCurrentEntry().getUncompressedCount();
+                try (FileOutputStream fos = new FileOutputStream(file2)) {
+                    int len;
+                    long total = 0;
+                    while ((len = sevenZFile.read(content, 0, BUFFER_SIZE)) > 0) {
+                        fos.write(content, 0, len);
+                        total = total + len;
+                    }
+                    JSONUtilities.safePut(fileRecord2, "size", total);
+                }
+
+                postProcessSingleRetrievedFile(file2, fileRecord2);
+                JSONUtilities.append(fileRecords, fileRecord2);
             }
-        } catch (IOException e) {
-            // TODO: We need to get this error back to the user
-            logger.warn("Something that looked like a compressed file gave an error on open: " + file, e);
         }
-        return null;
+        return true;
     }
 
-    static public File uncompressFile(
+    private static ObjectNode processArchiveEntry(File rawDataDir, ObjectNode archiveFileRecord, Progress progress, String entryName,
+            InputStream archiveInputStream) throws IOException {
+        File tmpFile = allocateFile(rawDataDir, entryName);
+
+        progress.setProgress("Extracting " + entryName, -1);
+
+        ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
+        JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
+        JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
+        JSONUtilities.safePut(fileRecord2, "fileName", entryName);
+        JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
+        JSONUtilities.safePut(fileRecord2, "location", getRelativePath(tmpFile, rawDataDir));
+
+        JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(archiveInputStream, tmpFile, null));
+        postProcessSingleRetrievedFile(tmpFile, fileRecord2);
+        return fileRecord2;
+    }
+
+    static File uncompressFile(
             File rawDataDir,
-            InputStream uncompressedIS,
+            File file,
+            String mimeType,
+            String contentEncoding,
             ObjectNode fileRecord,
             final Progress progress) throws IOException {
+
         String fileName = JSONUtilities.getString(fileRecord, "location", "unknown");
         for (String ext : new String[] { ".gz", ".bz2" }) {
             if (fileName.endsWith(ext)) {
@@ -864,17 +954,27 @@ public class ImportingUtilities {
                 break;
             }
         }
-        File file2 = allocateFile(rawDataDir, fileName);
 
-        progress.setProgress("Uncompressing " + fileName, -1);
+        try (
+                final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
+                // Use a CompressorStreamFactory configured to decompress concatenated streams
+                CompressorInputStream uncompressedIS = new CompressorStreamFactory(true).createCompressorInputStream(is);) {
 
-        saveStreamToFile(uncompressedIS, file2, null);
+            File file2 = allocateFile(rawDataDir, fileName);
 
-        JSONUtilities.safePut(fileRecord, "declaredEncoding", (String) null);
-        JSONUtilities.safePut(fileRecord, "declaredMimeType", (String) null);
-        JSONUtilities.safePut(fileRecord, "location", getRelativePath(file2, rawDataDir));
+            progress.setProgress("Uncompressing " + fileName, -1);
 
-        return file2;
+            saveStreamToFile(uncompressedIS, file2, null);
+
+            JSONUtilities.safePut(fileRecord, "declaredEncoding", (String) null);
+            JSONUtilities.safePut(fileRecord, "declaredMimeType", (String) null);
+            JSONUtilities.safePut(fileRecord, "location", getRelativePath(file2, rawDataDir));
+
+            return file2;
+        } catch (CompressorException ex) {
+            // If we weren't able to find a decompressor, just return. Allow any other IOException to throw
+            return null;
+        }
     }
 
     static private int calculateProgressPercent(long totalExpectedSize, long totalRetrievedSize) {
