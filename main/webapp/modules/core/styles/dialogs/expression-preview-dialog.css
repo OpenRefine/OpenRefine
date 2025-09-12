@@ -63,6 +63,7 @@ textarea.expression-preview-code {
 #expression-preview-tabs-starred {
   height: 200px;
   overflow: auto;
+  max-width: 90vw;        /* never exceed viewport width */
 }
 
 #expression-preview-tabs-preview td, #expression-preview-tabs-preview th,
