@@ -22,6 +22,7 @@
         <module>wikibase</module>
         <module>database</module>
         <module>pc-axis</module>
+        <module>geo</module>
         <!-- Add new extensions here -->
   </modules>
 
