@@ -59,8 +59,16 @@ public class DBQueryResultImportReader implements TableDataReader {
     private DatabaseService databaseService;
     private DatabaseQueryInfo dbQueryInfo;
     private int processedRows = 0;
+    private final Integer totalCount;
+    private int currentCount = 0;
+    private final boolean useTotalForProgress;
+    @Deprecated
     private static int progress = 0;
 
+    /**
+     * @deprecated use constructor that includes the total count instead
+     */
+    @Deprecated
     public DBQueryResultImportReader(
             ImportingJob job,
             DatabaseService databaseService,
@@ -68,17 +76,30 @@ public class DBQueryResultImportReader implements TableDataReader {
             List<DatabaseColumn> columns,
             DatabaseQueryInfo dbQueryInfo,
             int batchSize) {
+        this(job, databaseService, querySource, columns, dbQueryInfo, batchSize, null);
+    }
+
+    public DBQueryResultImportReader(
+            ImportingJob job,
+            DatabaseService databaseService,
+            String querySource,
+            List<DatabaseColumn> columns,
+            DatabaseQueryInfo dbQueryInfo,
+            int batchSize,
+            Integer count) {
 
         this.job = job;
         this.querySource = querySource;
         this.batchSize = batchSize;
+        this.totalCount = count;
+        this.useTotalForProgress = totalCount != null && totalCount > 0;
         this.dbColumns = columns;
         this.databaseService = databaseService;
         this.dbQueryInfo = dbQueryInfo;
         if (logger.isDebugEnabled()) {
             logger.debug("batchSize:" + batchSize);
+            logger.debug("count: " + count);
         }
-
     }
 
     @Override
@@ -116,9 +137,12 @@ public class DBQueryResultImportReader implements TableDataReader {
 
                     nextRow = 0;
                     if (processedRows % 100 == 0) {
-                        setProgress(job, querySource, progress++);
+                        progress++;
                     }
                 }
+
+                currentCount++;
+                setProgress(job, querySource, calculateProgress());
                 return result;
             } else {
                 if (logger.isDebugEnabled()) {
@@ -197,6 +221,12 @@ public class DBQueryResultImportReader implements TableDataReader {
         // logger.info("Exit::getRowsOfCells::rowsOfCells:{}", rowsOfCells);
         return rowsOfCells;
 
+    }
+
+    private int calculateProgress() {
+        // to keep backwards compatibility, only use `totalCount` if it is available;
+        // otherwise use the deprecated `progress` counter (may exceed 100 percent)
+        return useTotalForProgress ? (int) (((double) currentCount / totalCount) * 100) : progress;
     }
 
     private static void setProgress(ImportingJob job, String querySource, int percent) {

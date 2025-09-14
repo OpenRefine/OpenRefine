@@ -402,7 +402,7 @@ public class DatabaseImportController implements ImportingController {
                 project,
                 metadata,
                 job,
-                new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize()),
+                new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize(), count),
                 querySource,
                 limit,
                 options,
