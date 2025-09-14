@@ -124,6 +124,24 @@ public class DatabaseServiceTest extends DBExtensionTests {
         Assert.assertEquals(limitQuery, "SELECT * FROM (SELECT * FROM " + testTable + ") data LIMIT " + 100 + " OFFSET " + 0 + ";");
     }
 
+    @Test
+    public void testBuildCountQuery() {
+        DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
+        String basicSelectQuery = "SELECT * FROM " + testTable + ";";
+        String countQuery = dbService.buildCountQuery(basicSelectQuery);
+        Assert.assertNotNull(countQuery);
+        Assert.assertEquals(countQuery, "SELECT COUNT(*) FROM (SELECT * FROM " + testTable + ") AS TOTAL;");
+    }
+
+    @Test
+    public void testBuildCountQueryFromSpaciousBasicQuery() {
+        DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
+        String basicSelectQuery = " SELECT * FROM " + testTable + "  ;   ";
+        String countQuery = dbService.buildCountQuery(basicSelectQuery);
+        Assert.assertNotNull(countQuery);
+        Assert.assertEquals(countQuery, "SELECT COUNT(*) FROM (SELECT * FROM " + testTable + ") AS TOTAL;");
+    }
+
     @Test(groups = { "requiresMySQL" })
     public void testGetColumns() throws DatabaseServiceException {
         List<DatabaseColumn> dbColumns;
@@ -146,4 +164,12 @@ public class DatabaseServiceTest extends DBExtensionTests {
         Assert.assertEquals(dbRows.size(), 1);
     }
 
+    @Test(groups = { "requiresMySQL" })
+    public void testGetCount() {
+        DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
+        Integer count = dbService.getCount(testDbConfig, "SELECT * FROM " + testTable);
+
+        Assert.assertNotNull(count);
+        Assert.assertEquals(count, 1);
+    }
 }
