@@ -1,4 +1,3 @@
-
 package org.openrefine.wikibase.qa.scrutinizers;
 
 import java.util.ArrayList;
@@ -103,7 +102,9 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
                 ItemRequiresConstraint constraint = new ItemRequiresConstraint(statement);
                 PropertyIdValue itemRequiresPid = constraint.itemRequiresPid;
                 List<Value> itemList = constraint.itemList;
-                if (!propertyIdValueValueMap.containsKey(itemRequiresPid)) {
+
+                // ✅ Skip warning if the item already has the required property
+                if (!propertyIdValueValueMap.containsKey(itemRequiresPid) && !hasExistingStatement(update, itemRequiresPid)) {
                     QAWarning issue = new QAWarning(update.isNew()
                             ? (constraint.itemList.size() == 1 ? newItemRequireValueswithSuggestedValueType : newItemRequirePropertyType)
                             : (constraint.itemList.size() == 1 ? existingItemRequireValueswithSuggestedValueType
@@ -149,5 +150,17 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
         }
 
         return true;
+    }
+
+    // ✅ New helper to check existing statements on the item
+    private boolean hasExistingStatement(StatementEntityEdit update, PropertyIdValue propertyId) {
+        if (update.getExistingStatements() != null) {
+            for (Statement statement : update.getExistingStatements()) {
+                if (statement.getClaim().getMainSnak().getPropertyId().equals(propertyId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
