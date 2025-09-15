@@ -48,14 +48,20 @@ Refine.PreviewTable.prototype._render = function() {
    *------------------------------------------------------------
    */
 
-  var trHead = table.insertRow(table.rows.length);
-  $(trHead.insertCell(0)).addClass("column-header").html('&nbsp;'); // index
+  var thead = table.createTHead();
+  var trHead = thead.insertRow(0);
+
+  // Index
+  var thIndex = document.createElement('th');
+  $(thIndex).addClass("column-header").html('&nbsp;');
+  trHead.appendChild(thIndex);
 
   var createColumnHeader = function(column) {
-    $(trHead.insertCell(trHead.cells.length))
-    .addClass("column-header")
-    .text(column.name);
+    var th = document.createElement('th');
+    $(th).addClass("column-header").text(column.name);
+    trHead.appendChild(th);
   };
+
   for (var i = 0; i < columns.length; i++) {
     createColumnHeader(columns[i], i);
   }
@@ -64,6 +70,8 @@ Refine.PreviewTable.prototype._render = function() {
    *  Data Cells
    *------------------------------------------------------------
    */
+  
+  var tbody = table.createTBody();
 
   var rows = this._projectData.rowModel.rows;
   var renderRow = function(tr, r, row, even) {
@@ -113,7 +121,7 @@ Refine.PreviewTable.prototype._render = function() {
   var even = true;
   for (var r = 0; r < rows.length; r++) {
     var row = rows[r];
-    var tr = table.insertRow(table.rows.length);
+    var tr = tbody.insertRow(tbody.rows.length);
     even = !even;
     renderRow(tr, r, row, even);
   }    
