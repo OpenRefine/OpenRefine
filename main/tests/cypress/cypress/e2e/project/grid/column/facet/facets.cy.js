@@ -380,7 +380,7 @@ describe(__filename, function () {
 
   it('Test collapsing facet panels', function () {
     cy.loadAndVisitProject('food.small');
-    cy.columnActionClick('Water', ['Facet', 'Text facet']);
+    cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
     // ensure facet inner panel is visible
     cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body-inner').should('be.visible');
     // collapse the panel
