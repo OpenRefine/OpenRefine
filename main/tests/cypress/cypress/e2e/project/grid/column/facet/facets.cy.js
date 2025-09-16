@@ -411,8 +411,7 @@ describe(__filename, function () {
     cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
     cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
       .focus()
-      .type('{home}{uparrow}')
-      .type('{uparrow}')   // should retrieve first expression
+      .type('{home}{uparrow}') // should retrieve first expression
       .should('have.value', 'value.length()')
       .type('{uparrow}')
       .should('have.value', 'value.toNumber()')
