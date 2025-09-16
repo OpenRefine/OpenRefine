@@ -412,6 +412,7 @@ describe(__filename, function () {
     cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
       .focus()
       .type('{home}{uparrow}') // should retrieve first expression
+      .type('{uparrow}')   
       .should('have.value', 'value.length()')
       .type('{uparrow}')
       .should('have.value', 'value.toNumber()')
