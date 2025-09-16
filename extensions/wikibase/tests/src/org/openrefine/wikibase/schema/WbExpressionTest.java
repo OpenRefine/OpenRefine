@@ -30,10 +30,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
+import mockwebserver3.Dispatcher;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import mockwebserver3.RecordedRequest;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -72,9 +72,10 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
 
             @Override
             public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
-                return new MockResponse()
+                return new MockResponse.Builder()
                         .addHeader("Content-Type", "application/json; charset=utf-8")
-                        .setBody(json);
+                        .body(json)
+                        .build();
             }
         });
         server.start();
@@ -82,7 +83,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
 
     @AfterClass
     public void shutdownServer() throws IOException {
-        server.shutdown();
+        server.close();
     }
 
     @BeforeMethod
@@ -113,7 +114,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
 
         try {
             T result = expression.evaluate(ctxt);
-            Assert.assertEquals(expected, result);
+            Assert.assertEquals(result, expected);
         } catch (SkipSchemaExpressionException e) {
             Assert.fail("Value was skipped by evaluator");
         } catch (QAWarningException e) {
