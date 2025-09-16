@@ -62,8 +62,6 @@ public class DBQueryResultImportReader implements TableDataReader {
     private final Integer totalCount;
     private int currentCount = 0;
     private final boolean useTotalForProgress;
-    @Deprecated
-    private static int progress = 0;
 
     /**
      * @deprecated use constructor that includes the total count instead
@@ -122,7 +120,7 @@ public class DBQueryResultImportReader implements TableDataReader {
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
                 processedRows = processedRows + rowsOfCells.size();
                 batchRowStart = newBatchRowStart;
-                setProgress(job, querySource, -1 /* batchRowStart * 100 / totalRows */);
+                setProgress(job, buildProgressMessage(), -1 /* batchRowStart * 100 / totalRows */);
             }
 
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
@@ -136,13 +134,10 @@ public class DBQueryResultImportReader implements TableDataReader {
                     }
 
                     nextRow = 0;
-                    if (processedRows % 100 == 0) {
-                        progress++;
-                    }
                 }
 
                 currentCount++;
-                setProgress(job, querySource, calculateProgress());
+                setProgress(job, buildProgressMessage(), calculateProgress());
                 return result;
             } else {
                 if (logger.isDebugEnabled()) {
@@ -224,13 +219,17 @@ public class DBQueryResultImportReader implements TableDataReader {
     }
 
     private int calculateProgress() {
-        // to keep backwards compatibility, only use `totalCount` if it is available;
-        // otherwise use the deprecated `progress` counter (may exceed 100 percent)
-        return useTotalForProgress ? (int) (((double) currentCount / totalCount) * 100) : progress;
+        // only use `totalCount` if it is available; otherwise progress can not be tracked
+        return useTotalForProgress ? (int) (((double) currentCount / totalCount) * 100) : -1;
     }
 
-    private static void setProgress(ImportingJob job, String querySource, int percent) {
-        job.setProgress(percent, "Reading " + querySource);
+    private String buildProgressMessage() {
+        String totalFormatted = useTotalForProgress ? totalCount.toString() : "?";
+        return "Reading " + querySource + " (" + currentCount + " / " + totalFormatted + ")";
+    }
+
+    private static void setProgress(ImportingJob job, String message, int percent) {
+        job.setProgress(percent, message);
     }
 
     public List<DatabaseColumn> getColumns() {
