@@ -79,7 +79,6 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
-import org.apache.commons.compress.utils.InputStreamStatistics;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
@@ -121,11 +120,11 @@ public class ImportingUtilities {
     }
 
     /**
-     * @deprecated Use
+     * @deprecated For 3.9. Use
      *             {@link #loadDataAndPrepareJob(HttpServletRequest, HttpServletResponse, Map, ImportingJob, ObjectNode)}
      *             instead.
      */
-    @Deprecated
+    @Deprecated(since = "3.9")
     static public void loadDataAndPrepareJob(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -142,6 +141,9 @@ public class ImportingUtilities {
                 .collect(Collectors.toMap(e -> (String) e.getKey(), e -> (String) e.getValue()));
     }
 
+    /**
+     * @since 3.9
+     */
     static public void loadDataAndPrepareJob(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -213,10 +215,10 @@ public class ImportingUtilities {
     }
 
     /**
-     * @deprecated Use {@link #retrieveContentFromPostRequest(HttpServletRequest, Map, File, ObjectNode, Progress)}
-     *             instead.
+     * @deprecated for 3.9. Use
+     *             {@link #retrieveContentFromPostRequest(HttpServletRequest, Map, File, ObjectNode, Progress)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "3.9")
     static public void retrieveContentFromPostRequest(
             HttpServletRequest request,
             Properties parameters,
@@ -228,6 +230,9 @@ public class ImportingUtilities {
         retrieveContentFromPostRequest(request, parametersMap, rawDataDir, retrievalRecord, progress);
     }
 
+    /**
+     * @since 3.9
+     */
     static public void retrieveContentFromPostRequest(
             HttpServletRequest request,
             Map<String, String> parameters,
@@ -646,10 +651,10 @@ public class ImportingUtilities {
                 if (update != null) {
                     update.totalRetrievedSize += c;
                     update.savedMore();
-                    if (stream instanceof InputStreamStatistics) {
-                        // TODO: Can we use this to improve progress reporting?
-                        ((InputStreamStatistics) stream).getCompressedCount();
-                    }
+//                    if (stream instanceof InputStreamStatistics) {
+//                        // TODO: Can we use this to improve progress reporting?
+//                        ((InputStreamStatistics) stream).getCompressedCount();
+//                    }
                 }
             }
             return length;
@@ -702,12 +707,18 @@ public class ImportingUtilities {
         }
     }
 
-    @Deprecated
+    /**
+     * @deprecated for 3.10. Removed from the public API without replacement.
+     */
+    @Deprecated(since = "3.10")
     static public InputStream tryOpenAsArchive(File file, String mimeType) throws IOException {
         return tryOpenAsArchive(file, mimeType, null);
     }
 
-    @Deprecated
+    /**
+     * @deprecated for 3.10. Removed from the public API without replacement.
+     */
+    @Deprecated(since = "3.10")
     static public InputStream tryOpenAsArchive(File file, String mimeType, String contentType) throws IOException {
         return null;
     }
@@ -840,6 +851,26 @@ public class ImportingUtilities {
         return fileRecord2;
     }
 
+    /**
+     * @deprecated Removed from the public API in 3.10, without a replacement. The fact that this took an InputStream as
+     *             a parameter was really just an artifact of the internal code structure which we're no longer exposing
+     *             to allow more flexibility in internal code organization here.
+     */
+    @Deprecated(since = "3.10")
+    static public File uncompressFile(
+            File rawDataDir,
+            InputStream uncompressedIS,
+            ObjectNode fileRecord,
+            final Progress progress) throws IOException {
+        return null;
+    }
+
+    /**
+     * Takes the place of {@link #uncompressFile(File, InputStream, ObjectNode, Progress)} but is no longer public. It
+     * is package scope for testability, but should be considered private.
+     *
+     * @since 3.10
+     */
     static File uncompressFile(
             File rawDataDir,
             File file,
