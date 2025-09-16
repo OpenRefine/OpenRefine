@@ -118,11 +118,6 @@ public class DBQueryResultImportReader implements TableDataReader {
                     if (processedRows % 100 == 0) {
                         setProgress(job, querySource, progress++);
                     }
-                    if (processedRows % 10000 == 0) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("[[ {} rows processed... ]]", processedRows);
-                        }
-                    }
                 }
                 return result;
             } else {
