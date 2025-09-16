@@ -380,13 +380,44 @@ describe(__filename, function () {
 
   it('Test collapsing facet panels', function () {
     cy.loadAndVisitProject('food.small');
-    cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
+    cy.columnActionClick('Water', ['Facet', 'Text facet']);
     // ensure facet inner panel is visible
     cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body-inner').should('be.visible');
     // collapse the panel
     cy.get('#refine-tabs-facets .facets-container li:nth-child(1) a[bind="minimizeButton"]').click();
     // Make sure the body is hidden
     cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body').should('not.be.visible');
+  });
+
+  it('Test navigating expression history with arrow keys across dialog reopen', function () {
+    cy.loadAndVisitProject('food.small');
+    cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
+
+    // --- First expression ---
+    cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
+    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
+      .clear()
+      .type('value.toNumber()');
+    cy.get('.dialog-footer button').contains('OK').click();
+
+    // --- Second expression ---
+    cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
+    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
+      .clear()
+      .type('value.length()');
+    cy.get('.dialog-footer button').contains('OK').click();
+
+    // --- Reopen to test history navigation ---
+    cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
+    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
+      .focus()
+      .type('{home}{uparrow}')
+      .type('{uparrow}')   // should retrieve first expression
+      .should('have.value', 'value.length()')
+      .type('{uparrow}')
+      .should('have.value', 'value.toNumber()')
+      .type('{end}{downarrow}') // should go back to second expression
+      .should('have.value', 'value.length()');
   });
 
 });
