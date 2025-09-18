@@ -15,7 +15,7 @@ import 'cypress-file-upload';
  */
 Cypress.Commands.add('assertColumnIsReconciled', (columnName) => {
   cy.get(
-    `table.data-table thead th[title="${columnName}"] div.column-header-recon-stats-matched`
+    `table.data-table thead th[title^="${columnName}"] div.column-header-recon-stats-matched`
   ).should('to.exist');
 });
 
@@ -104,7 +104,7 @@ Cypress.Commands.add('castColumnTo', (selector, target) => {
 Cypress.Commands.add('getCell', (rowIndex, columnName) => {
   const cssRowIndex = rowIndex + 1;
   // first get the header, to know the cell index
-  cy.get(`table.data-table thead th[title="${columnName}"]`).then(($elem) => {
+  cy.get(`table.data-table thead th[title^="${columnName}"]`).then(($elem) => {
     // there are 3 td at the beginning of each row
     const columnIndex = $elem.index() + 3;
     return cy.get(
@@ -119,7 +119,7 @@ Cypress.Commands.add('getCell', (rowIndex, columnName) => {
 Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
   const cssRowIndex = rowIndex + 1;
   // first get the header, to know the cell index
-  cy.get(`table.data-table thead th[title="${columnName}"]`).then(($elem) => {
+  cy.get(`table.data-table thead th[title^="${columnName}"]`).then(($elem) => {
     // there are 3 td at the beginning of each row
     const columnIndex = $elem.index() + 3;
     cy.get(
@@ -155,7 +155,7 @@ Cypress.Commands.add('assertGridEquals', (values) => {
    * Hence the use of Jquery with the Cypress.$ wrapper, to collect values for headers and grid cells
    */
   cy.get('table.data-table').should((table) => {
-    const headers = Cypress.$('table.data-table th')
+    const headers = Cypress.$('table.data-table th .column-header-name')
       .filter(function (index, element) {
         return element.innerText !== 'All';
       })
@@ -222,9 +222,9 @@ Cypress.Commands.add('selectClojure', () => {
  * Delete a column from the grid
  */
 Cypress.Commands.add('deleteColumn', (columnName) => {
-  cy.get('.data-table th[title="' + columnName + '"]').should('exist');
+  cy.get('.data-table th[title^="' + columnName + '"]').should('exist');
   cy.columnActionClick(columnName, ['Remove column']);
-  cy.get('.data-table th[title="' + columnName + '"]').should('not.exist');
+  cy.get('.data-table th[title^="' + columnName + '"]').should('not.exist');
 });
 
 /**
