@@ -157,11 +157,22 @@ Refine.actionAreas.push({
   uiClass: Refine.CreateProjectUI
 });
 
+Refine.CreateProjectUI.prototype.setProgressKnown = function(known) {
+  if (known) {
+    $('#create-project-progress-spinner').hide();
+    $('#create-project-progress-bar-frame').show();
+  } else {
+    $('#create-project-progress-bar-frame').hide();
+    $('#create-project-progress-spinner').show();
+  }
+};
+
 Refine.CreateProjectUI.prototype.showImportProgressPanel = function(progressMessage, onCancel) {
   var self = this;
 
   this.showCustomPanel(this._progressPanel);
 
+  self.setProgressKnown(false);
   $('#create-project-progress-message').text(progressMessage);
   $('#create-project-progress-bar-body').css("width", "0%");
   $('#create-project-progress-message-left').text($.i18n('core-index-create/starting'));
@@ -194,6 +205,7 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
         
         onError(job);
       } else if (checkDone(job)) {
+        $('#create-project-progress-bar-body').removeClass('indefinite').css("width", "100%"); // show progress as done
         $('#create-project-progress-message').text($.i18n('core-index-create/done'));
 
         window.clearInterval(timerID);
@@ -206,6 +218,7 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
           var secondsSpent = (new Date().getTime() - start.getTime()) / 1000;
           var secondsRemaining = (100 / progress.percent) * secondsSpent - secondsSpent;
 
+          self.setProgressKnown(true);
           $('#create-project-progress-bar-body')
           .removeClass('indefinite')
           .css("width", progress.percent + "%");
@@ -222,6 +235,7 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
             $('#create-project-progress-timing').text($.i18n('core-index-create/almost-done'));
           }
         } else {
+          self.setProgressKnown(false);
           $('#create-project-progress-bar-body').addClass('indefinite');
           $('#create-project-progress-timing').empty();
         }

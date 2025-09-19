@@ -59,8 +59,14 @@ public class DBQueryResultImportReader implements TableDataReader {
     private DatabaseService databaseService;
     private DatabaseQueryInfo dbQueryInfo;
     private int processedRows = 0;
-    private static int progress = 0;
+    private final Integer totalCount;
+    private int currentCount = 0;
+    private final boolean useTotalForProgress;
 
+    /**
+     * @deprecated use constructor that includes the total count instead
+     */
+    @Deprecated
     public DBQueryResultImportReader(
             ImportingJob job,
             DatabaseService databaseService,
@@ -68,17 +74,30 @@ public class DBQueryResultImportReader implements TableDataReader {
             List<DatabaseColumn> columns,
             DatabaseQueryInfo dbQueryInfo,
             int batchSize) {
+        this(job, databaseService, querySource, columns, dbQueryInfo, batchSize, null);
+    }
+
+    public DBQueryResultImportReader(
+            ImportingJob job,
+            DatabaseService databaseService,
+            String querySource,
+            List<DatabaseColumn> columns,
+            DatabaseQueryInfo dbQueryInfo,
+            int batchSize,
+            Integer count) {
 
         this.job = job;
         this.querySource = querySource;
         this.batchSize = batchSize;
+        this.totalCount = count;
+        this.useTotalForProgress = totalCount != null && totalCount > 0;
         this.dbColumns = columns;
         this.databaseService = databaseService;
         this.dbQueryInfo = dbQueryInfo;
         if (logger.isDebugEnabled()) {
             logger.debug("batchSize:" + batchSize);
+            logger.debug("count: " + count);
         }
-
     }
 
     @Override
@@ -101,7 +120,7 @@ public class DBQueryResultImportReader implements TableDataReader {
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
                 processedRows = processedRows + rowsOfCells.size();
                 batchRowStart = newBatchRowStart;
-                setProgress(job, querySource, -1 /* batchRowStart * 100 / totalRows */);
+                setProgress(job, buildProgressMessage(), -1 /* batchRowStart * 100 / totalRows */);
             }
 
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
@@ -115,15 +134,10 @@ public class DBQueryResultImportReader implements TableDataReader {
                     }
 
                     nextRow = 0;
-                    if (processedRows % 100 == 0) {
-                        setProgress(job, querySource, progress++);
-                    }
-                    if (processedRows % 10000 == 0) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("[[ {} rows processed... ]]", processedRows);
-                        }
-                    }
                 }
+
+                currentCount++;
+                setProgress(job, buildProgressMessage(), calculateProgress());
                 return result;
             } else {
                 if (logger.isDebugEnabled()) {
@@ -204,8 +218,18 @@ public class DBQueryResultImportReader implements TableDataReader {
 
     }
 
-    private static void setProgress(ImportingJob job, String querySource, int percent) {
-        job.setProgress(percent, "Reading " + querySource);
+    private int calculateProgress() {
+        // only use `totalCount` if it is available; otherwise progress can not be tracked
+        return useTotalForProgress ? (int) (((double) currentCount / totalCount) * 100) : -1;
+    }
+
+    private String buildProgressMessage() {
+        String totalFormatted = useTotalForProgress ? totalCount.toString() : "?";
+        return "Reading " + querySource + " (" + currentCount + " / " + totalFormatted + ")";
+    }
+
+    private static void setProgress(ImportingJob job, String message, int percent) {
+        job.setProgress(percent, message);
     }
 
     public List<DatabaseColumn> getColumns() {
