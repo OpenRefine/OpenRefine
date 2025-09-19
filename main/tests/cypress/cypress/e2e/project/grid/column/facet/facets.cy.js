@@ -389,4 +389,32 @@ describe(__filename, function () {
     cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body').should('not.be.visible');
   });
 
+  it('Test navigating expression history with arrow keys across dialog reopen', function () {
+    cy.loadAndVisitProject('food.small');
+    cy.columnActionClick('Water', ['Facet', 'Text facet']);
+
+    // --- First expression ---
+    cy.getFacetContainer('Water').find('a[bind="changeButton"]').click();
+    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
+      .clear()
+      .typeExpression('value.toNumber()');
+    cy.get('.dialog-footer button').contains('OK').click();
+
+    // --- Second expression ---
+    cy.getFacetContainer('Water').find('a[bind="changeButton"]').click();
+    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
+      .clear()
+      .typeExpression('value.length()');
+    cy.get('.dialog-footer button').contains('OK').click();
+
+    // --- Reopen to test history navigation ---
+    cy.getFacetContainer('Water').find('a[bind="changeButton"]').click();
+    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
+      .focus()
+      .type('{home}{uparrow}') // should retrieve first expression
+      .type('{uparrow}')
+      .should('have.value', 'value.toNumber()')
+      .type('{end}{downarrow}') // should go back to second expression
+      .should('have.value', 'value.length()');
+  });
 });
