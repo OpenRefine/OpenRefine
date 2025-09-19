@@ -136,12 +136,40 @@ ExporterManager.stripNonFileChars = function(name) {
 
 ExporterManager.handlers.exportRows = function(format, ext) {
   Refine.wrapCSRF(function(csrfToken) {
-    let form = ExporterManager.prepareExportRowsForm(format, true, ext, csrfToken);
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
+    const name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
+    const url = "command/core/export-rows/" + name + ((ext) ? ("." + ext) : "") + "?" + $.param({csrf_token: csrfToken});
+    const jsonData = {
+      project: theProject.id,
+      format: format,
+      engine: JSON.stringify(ui.browsingEngine.getJSON()),
+    };
+    $.ajax({
+      url: url,
+      data: jsonData,
+      type: "POST",
+      success: function(data, _textStatus, xhr) {
+        const filename = getResponseFilename(xhr.getResponseHeader("Content-Disposition"));
+        const blob = new Blob([data], {type: xhr.getResponseHeader("Content-Type")});
+        const anchor = document.createElement("a");
+        anchor.href = window.URL.createObjectURL(blob);
+        anchor.download = filename;
+        anchor.click();
+        anchor.remove();
+      },
+      error: function(_xhr, _textStatus, errorThrown) {
+        alert(errorThrown);
+      }
+    });
   });
 };
+
+function getResponseFilename(contentDisposition) {
+  for (let part of contentDisposition.split(";")) {
+    if (part.includes("filename=")) {
+      return part.replace("filename=", "").trim();
+    }
+  }
+}
 
 ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext, csrfToken) {
   let name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
