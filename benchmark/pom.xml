@@ -132,7 +132,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.11.3</version>
+          <version>3.12.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>

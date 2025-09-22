@@ -257,7 +257,7 @@
         <!-- Plugin for creating Javadocs; goal for preparing docs for upload to github: javadoc:aggregate -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.11.3</version>
+        <version>3.12.0</version>
         <configuration>
             <bottom>
                     <![CDATA[Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. Generated from source code published under the BSD Clause-3 license. For more information, see the <a href="https://openrefine.org">OpenRefine website</a>]]></bottom>
