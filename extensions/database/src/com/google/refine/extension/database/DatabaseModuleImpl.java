@@ -82,7 +82,7 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
     }
 
     public static int getImportPreviewBatchSize() {
-      int batchSize = Integer.parseInt(DEFAULT_PREVIEW_BATCH_SIZE);
+        int batchSize = Integer.parseInt(DEFAULT_PREVIEW_BATCH_SIZE);
         if (extensionProperties == null) {
             return batchSize;
         }
