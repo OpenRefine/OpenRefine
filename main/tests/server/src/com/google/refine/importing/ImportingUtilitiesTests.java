@@ -30,6 +30,7 @@ package com.google.refine.importing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -37,15 +38,18 @@ import static org.testng.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -58,9 +62,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.fileupload.FileUploadBase;
@@ -137,9 +141,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String result = ImportingUtilities.normalizePath(urlPath);
         FileSystem fileSystem = FileSystem.getCurrent();
         if (fileSystem == FileSystem.WINDOWS) {
-            Assert.assertEquals(urlPathFixed, result);
+            assertEquals(result, urlPathFixed);
         } else {
-            Assert.assertEquals(urlPath, result);
+            assertEquals(result, urlPath);
         }
     }
 
@@ -152,9 +156,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String result = ImportingUtilities.normalizePath(urlPath);
         FileSystem fileSystem = FileSystem.getCurrent();
         if (fileSystem == FileSystem.WINDOWS) {
-            Assert.assertEquals(urlPathFixed, result);
+            assertEquals(result, urlPathFixed);
         } else {
-            Assert.assertEquals(urlPath, result);
+            assertEquals(result, urlPath);
         }
     }
 
@@ -200,9 +204,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String RESPONSE_BODY = "{code:401,message:Unauthorised}";
 
         MockWebServer server = new MockWebServer();
-        MockResponse mockResponse = new MockResponse();
-        mockResponse.setBody(RESPONSE_BODY);
-        mockResponse.setResponseCode(401);
+        MockResponse mockResponse = new MockResponse.Builder()
+                .body(RESPONSE_BODY)
+                .code(401)
+                .build();
         server.start();
         server.enqueue(mockResponse);
         HttpUrl url = server.url("/random");
@@ -228,24 +233,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ImportingJob job = ImportingManager.createJob();
         Map<String, String> parameters = ParsingUtilities.parseParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
-        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
-                    new ImportingUtilities.Progress() {
-
-                        @Override
-                        public void setProgress(String message, int percent) {
-                            if (message != null) {
-                                JSONUtilities.safePut(progress, "message", message);
-                            }
-                            JSONUtilities.safePut(progress, "percent", percent);
-                        }
-
-                        @Override
-                        public boolean isCanceled() {
-                            return job.canceled;
-                        }
-                    });
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, getDummyProgress());
             fail("No Exception was thrown");
         } catch (Exception exception) {
             assertEquals(exception.getMessage(), MESSAGE);
@@ -279,24 +268,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ImportingJob job = ImportingManager.createJob();
         Map<String, String> parameters = ParsingUtilities.parseParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
-        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+
         try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
-                    new ImportingUtilities.Progress() {
-
-                        @Override
-                        public void setProgress(String message, int percent) {
-                            if (message != null) {
-                                JSONUtilities.safePut(progress, "message", message);
-                            }
-                            JSONUtilities.safePut(progress, "percent", percent);
-                        }
-
-                        @Override
-                        public boolean isCanceled() {
-                            return job.canceled;
-                        }
-                    });
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, getDummyProgress());
             fail("No Exception was thrown");
         } catch (Exception exception) {
             assertEquals(exception.getMessage(), message);
@@ -351,27 +325,15 @@ public class ImportingUtilitiesTests extends ImporterTest {
         tmp.deleteOnExit();
         FileUtils.copyFile(new File(filepath), tmp);
 
-        Progress dummyProgress = new Progress() {
-
-            @Override
-            public void setProgress(String message, int percent) {
-            }
-
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
-        };
-
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(fileRecord, "origin", "upload");
         JSONUtilities.safePut(fileRecord, "declaredEncoding", "UTF-8");
-        JSONUtilities.safePut(fileRecord, "declaredMimeType", "application/x-zip-compressed");
+        JSONUtilities.safePut(fileRecord, "declaredMimeType", "application/zip");
         JSONUtilities.safePut(fileRecord, "fileName", filename);
         JSONUtilities.safePut(fileRecord, "location", tmp.getName());
 
-        assertTrue(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
+        assertTrue(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, getDummyProgress()));
         assertEquals(fileRecords.size(), 2);
         assertEquals(fileRecords.get(0).get("fileName").asText(), "movies-condensed.tsv");
         assertEquals(fileRecords.get(0).get("archiveFileName").asText(), "movies.zip");
@@ -418,9 +380,71 @@ public class ImportingUtilitiesTests extends ImporterTest {
         assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
     }
 
+    /**
+     * Test regression from issue 7314 to make sure we can import a compressed file which is NOT an archive.
+     *
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void importCompressedNonArchive() throws IOException {
+        String filename = "persons.csv.gz";
+        String filepath = ClassLoader.getSystemResource(filename).getPath();
+        // Make a copy in our data directory where it's expected
+        File tmp = File.createTempFile("openrefine-test-persons", ".csv.gz", job.getRawDataDir());
+        tmp.deleteOnExit();
+        FileUtils.copyFile(new File(filepath), tmp);
+
+        ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
+        ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(fileRecord, "origin", "upload");
+        JSONUtilities.safePut(fileRecord, "declaredEncoding", "UTF-8");
+        JSONUtilities.safePut(fileRecord, "declaredMimeType", "application/gzip");
+        JSONUtilities.safePut(fileRecord, "fileName", filename);
+        JSONUtilities.safePut(fileRecord, "location", tmp.getName());
+
+        // False return just means "not an archive"
+        assertFalse(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, getDummyProgress()));
+        assertEquals(fileRecords.size(), 1);
+        assertEquals(fileRecords.get(0).get("fileName").asText(), "persons.csv.gz");
+        assertEquals(fileRecords.get(0).has("archiveFileName"), false);
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "separator", ",");
+        JSONUtilities.safePut(options, "includeArchiveFileName", true); // not an archive, so ignored
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
+        ImportingParserBase parser = new SeparatorBasedImporter();
+        List<Exception> exceptions = new ArrayList<Exception>();
+        parser.parse(
+                project,
+                metadata,
+                job,
+                JSONUtilities.getObjectList(fileRecords),
+                "csv",
+                -1,
+                options,
+                exceptions);
+        assertEquals(exceptions.size(), 0);
+        project.update();
+
+        assertEquals(project.columnModel.columns.get(0).getName(), "File");
+        assertEquals(project.rows.get(0).getCell(0).getValue(), "persons.csv.gz");
+        assertEquals(project.columnModel.columns.get(1).getName(), "Name");
+        assertEquals(project.rows.get(0).getCell(1).getValue(), "Person1");
+
+        assertEquals(project.rows.size(), 3);
+
+        ArrayNode importOptionsArray = metadata.getImportOptionMetadata();
+        assertEquals(importOptionsArray.size(), 1);
+        ObjectNode importOptions = (ObjectNode) importOptionsArray.get(0);
+        assertEquals(importOptions.get("fileSource").asText(), "persons.csv.gz");
+        assertTrue(importOptions.get("includeFileSources").asBoolean());
+    }
+
     @Test
     public void importUnsupportedZipFile() throws IOException {
-        for (String basename : new String[] { "unsupportedPPMD", "notazip" }) {
+        for (String basename : new String[] { "unsupportedPPMD" }) {
             testInvalidZipFile(basename);
         }
     }
@@ -432,18 +456,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
         File tmp = File.createTempFile("openrefine-test-" + basename, ".zip", job.getRawDataDir());
         tmp.deleteOnExit();
         FileUtils.copyFile(new File(filepath), tmp);
-
-        Progress dummyProgress = new Progress() {
-
-            @Override
-            public void setProgress(String message, int percent) {
-            }
-
-            @Override
-            public boolean isCanceled() {
-                return false;
-            }
-        };
 
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
@@ -457,10 +469,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         assertThrows("Failed to throw for " + filename, IOException.class,
-                () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
+                () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, getDummyProgress()));
         assertThrows("Failed to throw for " + filename, FileUploadBase.InvalidContentTypeException.class,
                 () -> ImportingUtilities.retrieveContentFromPostRequest(request,
-                        new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
+                        new Properties(), job.getRawDataDir(), fileRecord, getDummyProgress()));
         assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
     }
@@ -482,10 +494,11 @@ public class ImportingUtilitiesTests extends ImporterTest {
             // Write two copies of the data to test reading concatenated streams
             Files.write(tmp.toPath(), contents, StandardOpenOption.APPEND);
 
-            InputStream is = ImportingUtilities.tryOpenAsCompressedFile(tmp, null, null);
-            Assert.assertNotNull(is, "Failed to open compressed file: " + filename);
+            File uncompressedFile = ImportingUtilities.uncompressFile(job.getRawDataDir(), tmp, "", "",
+                    ParsingUtilities.mapper.createObjectNode(), getDummyProgress());
+            Assert.assertNotNull(uncompressedFile, "Failed to open compressed file: " + filename);
 
-            reader = new InputStreamReader(is); // TODO: This needs an encoding
+            reader = new InputStreamReader(new FileInputStream(uncompressedFile), StandardCharsets.UTF_8);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
             Assert.assertEquals(StreamSupport.stream(records.spliterator(), false).count(), LINES * 2,
@@ -505,7 +518,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         };
         for (Object[] test : cases) {
             assertEquals(ImportingUtilities.isCompressed(new File(ClassLoader.getSystemResource((String) test[0]).getFile())), test[1],
-                    "Wrong value for isCompressed of: " + test);
+                    "Wrong value for isCompressed of: " + Arrays.toString(test));
         }
 
     }
@@ -523,10 +536,12 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @Test
     public void testTrailingSpaceInUrl() throws IOException, FileUploadException {
         try (MockWebServer server = new MockWebServer()) {
+            server.start();
             String url = server.url("input.csv ").toString();
-            server.enqueue(new MockResponse()
-                    .setHttp2ErrorCode(404)
-                    .setStatus("HTTP/1.1 404 Not Found"));
+            server.enqueue(new MockResponse.Builder()
+                    .code(404)
+                    .status("HTTP/1.1 404 Not Found")
+                    .build());
 
             String message = String.format("HTTP error %d : %s for URL %s", 404,
                     "Not Found", url.trim());
@@ -549,20 +564,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
             ImportingJob job = ImportingManager.createJob();
             Map<String, String> parameters = ParsingUtilities.parseParameters(req);
             ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
-            Progress dummyProgress = new Progress() {
-
-                @Override
-                public void setProgress(String message, int percent) {
-                }
-
-                @Override
-                public boolean isCanceled() {
-                    return false;
-                }
-            };
 
             try {
-                ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, dummyProgress);
+                ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                        getDummyProgress());
                 fail("No Exception was thrown");
             } catch (ClientProtocolException exception) {
                 assertEquals(exception.getMessage(), message);
@@ -577,7 +582,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         JSONUtilities.safePut(fileRecord, "fileName", fileName);
 
-        assertEquals(fileName, ImportingUtilities.getFileName(fileRecord));
+        assertEquals(ImportingUtilities.getFileName(fileRecord), fileName);
     }
 
     @Test
@@ -647,30 +652,27 @@ public class ImportingUtilitiesTests extends ImporterTest {
         JSONUtilities.safePut(config, "retrievalRecord", retrievalRecord);
         JSONUtilities.safePut(config, "state", "loading-raw-data");
 
-        final ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
-        JSONUtilities.safePut(config, "progress", progress);
-
-        ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
-                new ImportingUtilities.Progress() {
-
-                    @Override
-                    public void setProgress(String message, int percent) {
-                        if (message != null) {
-                            JSONUtilities.safePut(progress, "message", message);
-                        }
-                        JSONUtilities.safePut(progress, "percent", percent);
-                    }
-
-                    @Override
-                    public boolean isCanceled() {
-                        return job.canceled;
-                    }
-                });
+        ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, getDummyProgress());
 
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(0).get("format").asText());
         assertEquals(expectedFormat, JSONUtilities.getArray(retrievalRecord, "files").get(1).get("format").asText());
     }
 
+    private ImportingUtilities.Progress getDummyProgress() {
+        return new ImportingUtilities.Progress() {
+
+            @Override
+            public void setProgress(String message, int percent) {
+            }
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+        };
+    }
+
+    // TODO: This isn't synchronized with what's actually used in production
     private void importFlowSettings() {
         // Register Format guessers
         ImportingManager.registerFormatGuesser("text", new TextFormatGuesser());

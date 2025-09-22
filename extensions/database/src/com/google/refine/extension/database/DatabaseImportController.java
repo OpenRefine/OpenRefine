@@ -390,6 +390,7 @@ public class DatabaseImportController implements ImportingController {
 
         List<DatabaseColumn> columns = databaseService.getColumns(dbQueryInfo.getDbConfig(), dbQueryInfo.getQuery());
 
+        Integer count = databaseService.getCount(dbQueryInfo.getDbConfig(), dbQueryInfo.getQuery());
         setProgress(job, querySource, -1);
 
         JSONUtilities.safePut(options, "ignoreLines", 0); // number of blank lines at the beginning to ignore
@@ -401,7 +402,7 @@ public class DatabaseImportController implements ImportingController {
                 project,
                 metadata,
                 job,
-                new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize()),
+                new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize(), count),
                 querySource,
                 limit,
                 options,
@@ -413,7 +414,6 @@ public class DatabaseImportController implements ImportingController {
         }
 
         setProgress(job, querySource, 100);
-
     }
 
     private static int getCreateBatchSize() {

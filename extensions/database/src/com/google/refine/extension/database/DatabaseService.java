@@ -149,6 +149,45 @@ public abstract class DatabaseService {
         return parsedQueryOut;
     }
 
+    String buildCountQuery(String query) {
+        if (logger.isDebugEnabled()) {
+            logger.info("<<< original input query::{} >>>", query);
+        }
+
+        String trimmedQuery = query.trim();
+        final int len = trimmedQuery.length();
+        String parsedQuery = trimmedQuery.endsWith(";") ? trimmedQuery.substring(0, len - 1) : trimmedQuery;
+
+        String parsedQueryOut = String.format("SELECT COUNT(*) FROM (%s) AS TOTAL;", parsedQuery.trim());
+
+        if (logger.isDebugEnabled()) {
+            logger.info("<<<Final input query::{} >>>", parsedQueryOut);
+        }
+
+        return parsedQueryOut;
+    }
+
+    Integer getCount(DatabaseConfiguration dbConfig, String query) {
+        String countQuery = buildCountQuery(query);
+
+        try {
+            List<DatabaseRow> dbRows = getRows(dbConfig, countQuery);
+
+            if (dbRows != null && !dbRows.isEmpty()) {
+                DatabaseRow row = dbRows.get(0);
+                List<String> rowValues = row.getValues();
+
+                if (rowValues != null && !rowValues.isEmpty()) {
+                    return Integer.parseInt(rowValues.get(0));
+                }
+            }
+        } catch (DatabaseServiceException | NumberFormatException e) {
+            logger.error("Error when retrieving count from db: {}", e.getMessage());
+        }
+
+        return null;
+    }
+
     public abstract List<DatabaseColumn> getColumns(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException;
 
     public abstract List<DatabaseRow> getRows(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException;
