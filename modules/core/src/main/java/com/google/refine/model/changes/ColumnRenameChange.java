@@ -84,39 +84,6 @@ public class ColumnRenameChange extends ColumnChange {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    // @Override
-    // public void save(Writer writer, Properties options) throws IOException {
-    // writer.write("oldColumnName=");
-    // writer.write(_oldColumnName);
-    // writer.write('\n');
-    // writer.write("newColumnName=");
-    // writer.write(_newColumnName);
-    // writer.write('\n');
-    // writer.write("/ec/\n"); // end of change marker
-    // }
-
-    // static public Change load(LineNumberReader reader, Pool pool) throws Exception {
-    // String oldColumnName = null;
-    // String newColumnName = null;
-
-    // String line;
-    // while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
-    // int equal = line.indexOf('=');
-    // CharSequence field = line.subSequence(0, equal);
-    // String value = line.substring(equal + 1);
-
-    // if ("oldColumnName".equals(field)) {
-    // oldColumnName = value;
-    // } else if ("newColumnName".equals(field)) {
-    // newColumnName = value;
-    // }
-    // }
-
-    // ColumnRenameChange change = new ColumnRenameChange(oldColumnName, newColumnName);
-
-    // return change;
-    // }
-
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         String oldColumnName = null;
         String newColumnName = null;
@@ -139,16 +106,16 @@ public class ColumnRenameChange extends ColumnChange {
 
     private static String escape(String s) {
         return s
-                .replace("\\", "\\\\") // escape backslashes
-                .replace("\n", "\\n") // escape newlines
-                .replace("\r", "\\r"); // handle Windows-style line breaks too
+                .replace("\\", "\\\\")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r");
     }
 
     private static String unescape(String s) {
         return s
                 .replace("\\n", "\n")
                 .replace("\\r", "\r")
-                .replace("\\\\", "\\"); // unescape backslashes last
+                .replace("\\\\", "\\");
     }
 
 }
