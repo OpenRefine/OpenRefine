@@ -65,18 +65,36 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
         logger.trace("Database Extension module initialization completed");
     }
 
-    public static String getImportCreateBatchSize() {
+    public static int getImportCreateBatchSize() {
+        int batchSize = Integer.parseInt(DEFAULT_CREATE_PROJ_BATCH_SIZE);
         if (extensionProperties == null) {
-            return DEFAULT_CREATE_PROJ_BATCH_SIZE;
+            return batchSize;
         }
-        return extensionProperties.getProperty("create.batchSize", DEFAULT_CREATE_PROJ_BATCH_SIZE);
+        String propBatchSize = extensionProperties.getProperty("create.batchSize", DEFAULT_CREATE_PROJ_BATCH_SIZE);
+        if (propBatchSize != null && !propBatchSize.isEmpty()) {
+            try {
+                batchSize = Integer.parseInt(propBatchSize);
+            } catch (NumberFormatException nfe) {
+
+            }
+        }
+        return batchSize;
     }
 
-    public static String getImportPreviewBatchSize() {
+    public static int getImportPreviewBatchSize() {
+      int batchSize = Integer.parseInt(DEFAULT_PREVIEW_BATCH_SIZE);
         if (extensionProperties == null) {
-            return DEFAULT_PREVIEW_BATCH_SIZE;
+            return batchSize;
         }
-        return extensionProperties.getProperty("preview.batchSize", DEFAULT_PREVIEW_BATCH_SIZE);
+        String propBatchSize = extensionProperties.getProperty("preview.batchSize", DEFAULT_PREVIEW_BATCH_SIZE);
+        if (propBatchSize != null && !propBatchSize.isEmpty()) {
+            try {
+                batchSize = Integer.parseInt(propBatchSize);
+            } catch (NumberFormatException nfe) {
+
+            }
+        }
+        return batchSize;
     }
 
     private void readModuleProperty() {

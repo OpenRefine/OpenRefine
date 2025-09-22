@@ -273,7 +273,7 @@ public class DatabaseImportController implements ImportingController {
                 project,
                 metadata,
                 job,
-                new DBQueryResultPreviewReader(job, databaseService, querySource, columns, dbQueryInfo, 100),
+                new DBQueryResultPreviewReader(job, databaseService, querySource, columns, dbQueryInfo, DatabaseModuleImpl.getImportPreviewBatchSize()),
                 querySource,
                 limit,
                 options,
@@ -402,7 +402,7 @@ public class DatabaseImportController implements ImportingController {
                 project,
                 metadata,
                 job,
-                new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize(), count),
+                new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, DatabaseModuleImpl.getImportCreateBatchSize(), count),
                 querySource,
                 limit,
                 options,
@@ -414,19 +414,7 @@ public class DatabaseImportController implements ImportingController {
         }
 
         setProgress(job, querySource, 100);
-    }
 
-    private static int getCreateBatchSize() {
-        String propBatchSize = DatabaseModuleImpl.getImportCreateBatchSize();
-        int batchSize = 100;
-        if (propBatchSize != null && !propBatchSize.isEmpty()) {
-            try {
-                batchSize = Integer.parseInt(propBatchSize);
-            } catch (NumberFormatException nfe) {
-
-            }
-        }
-        return batchSize;
     }
 
     /**
