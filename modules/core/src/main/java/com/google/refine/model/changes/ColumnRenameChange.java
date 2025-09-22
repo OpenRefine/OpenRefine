@@ -74,13 +74,48 @@ public class ColumnRenameChange extends ColumnChange {
     @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("oldColumnName=");
-        writer.write(_oldColumnName);
+        writer.write(escape(_oldColumnName));
         writer.write('\n');
+
         writer.write("newColumnName=");
-        writer.write(_newColumnName);
+        writer.write(escape(_newColumnName));
         writer.write('\n');
+
         writer.write("/ec/\n"); // end of change marker
     }
+
+    // @Override
+    // public void save(Writer writer, Properties options) throws IOException {
+    // writer.write("oldColumnName=");
+    // writer.write(_oldColumnName);
+    // writer.write('\n');
+    // writer.write("newColumnName=");
+    // writer.write(_newColumnName);
+    // writer.write('\n');
+    // writer.write("/ec/\n"); // end of change marker
+    // }
+
+    // static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    // String oldColumnName = null;
+    // String newColumnName = null;
+
+    // String line;
+    // while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
+    // int equal = line.indexOf('=');
+    // CharSequence field = line.subSequence(0, equal);
+    // String value = line.substring(equal + 1);
+
+    // if ("oldColumnName".equals(field)) {
+    // oldColumnName = value;
+    // } else if ("newColumnName".equals(field)) {
+    // newColumnName = value;
+    // }
+    // }
+
+    // ColumnRenameChange change = new ColumnRenameChange(oldColumnName, newColumnName);
+
+    // return change;
+    // }
 
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         String oldColumnName = null;
@@ -89,18 +124,31 @@ public class ColumnRenameChange extends ColumnChange {
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
             int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
+            String field = line.substring(0, equal);
             String value = line.substring(equal + 1);
 
             if ("oldColumnName".equals(field)) {
-                oldColumnName = value;
+                oldColumnName = unescape(value);
             } else if ("newColumnName".equals(field)) {
-                newColumnName = value;
+                newColumnName = unescape(value);
             }
         }
 
-        ColumnRenameChange change = new ColumnRenameChange(oldColumnName, newColumnName);
-
-        return change;
+        return new ColumnRenameChange(oldColumnName, newColumnName);
     }
+
+    private static String escape(String s) {
+        return s
+                .replace("\\", "\\\\") // escape backslashes
+                .replace("\n", "\\n") // escape newlines
+                .replace("\r", "\\r"); // handle Windows-style line breaks too
+    }
+
+    private static String unescape(String s) {
+        return s
+                .replace("\\n", "\n")
+                .replace("\\r", "\r")
+                .replace("\\\\", "\\"); // unescape backslashes last
+    }
+
 }
