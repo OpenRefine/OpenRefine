@@ -127,7 +127,7 @@
     <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
-    <license-plugin.version>2.6.0</license-plugin.version>
+    <license-plugin.version>2.7.0</license-plugin.version>
     <org-jvnet-localizer-plugin.version>1.31</org-jvnet-localizer-plugin.version>
   </properties>
 
