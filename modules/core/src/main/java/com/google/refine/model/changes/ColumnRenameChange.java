@@ -93,7 +93,7 @@ public class ColumnRenameChange extends ColumnChange {
                 // This might be a continuation line from corrupted legacy data
                 continue;
             }
-            
+
             String field = line.substring(0, equal);
             String value = line.substring(equal + 1);
 
@@ -108,8 +108,8 @@ public class ColumnRenameChange extends ColumnChange {
     }
 
     /**
-     * Process a field value, handling both new escaped format and legacy format.
-     * For legacy format, handle potential corruption from newline characters.
+     * Process a field value, handling both new escaped format and legacy format. For legacy format, handle potential
+     * corruption from newline characters.
      */
     private static String processFieldValue(String value, LineNumberReader reader) throws IOException {
         // Check if this is the new escaped format
@@ -122,21 +122,21 @@ public class ColumnRenameChange extends ColumnChange {
     }
 
     /**
-     * Handle potentially corrupted legacy values by reading additional lines
-     * until we find a proper field or end marker.
+     * Handle potentially corrupted legacy values by reading additional lines until we find a proper field or end
+     * marker.
      */
     private static String handleLegacyValue(String initialValue, LineNumberReader reader) throws IOException {
         StringBuilder result = new StringBuilder(initialValue);
-        
+
         // Mark current position in case we need to reset
         reader.mark(4096);
         String nextLine;
-        
+
         while ((nextLine = reader.readLine()) != null) {
             // Check if this line looks like a proper field or end marker
-            if ("/ec/".equals(nextLine) || 
-                (nextLine.contains("=") && 
-                 (nextLine.startsWith("oldColumnName=") || nextLine.startsWith("newColumnName=")))) {
+            if ("/ec/".equals(nextLine) ||
+                    (nextLine.contains("=") &&
+                            (nextLine.startsWith("oldColumnName=") || nextLine.startsWith("newColumnName=")))) {
                 // This is a proper line, reset reader to before this line
                 reader.reset();
                 break;
@@ -146,7 +146,7 @@ public class ColumnRenameChange extends ColumnChange {
                 reader.mark(4096); // Mark after each line we consume
             }
         }
-        
+
         return result.toString();
     }
 
@@ -155,12 +155,12 @@ public class ColumnRenameChange extends ColumnChange {
      */
     private static boolean containsEscapeSequences(String value) {
         return value.contains("\\n")
-            || value.contains("\\r")
-            || value.contains("\\t")
-            || value.contains("\\b")
-            || value.contains("\\f")
-            || value.matches(".*\\\\u[0-9a-fA-F]{4}.*")
-            || value.contains("\\\\");
+                || value.contains("\\r")
+                || value.contains("\\t")
+                || value.contains("\\b")
+                || value.contains("\\f")
+                || value.matches(".*\\\\u[0-9a-fA-F]{4}.*")
+                || value.contains("\\\\");
     }
 
     /**
@@ -171,15 +171,27 @@ public class ColumnRenameChange extends ColumnChange {
         StringBuilder sb = new StringBuilder();
         for (char c : s.toCharArray()) {
             switch (c) {
-                case '\\': sb.append("\\\\"); break;
-                case '\n': sb.append("\\n");  break;
-                case '\r': sb.append("\\r");  break;
-                case '\t': sb.append("\\t");  break;
-                case '\b': sb.append("\\b");  break;
-                case '\f': sb.append("\\f");  break;
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case '\n':
+                    sb.append("\\n");
+                    break;
+                case '\r':
+                    sb.append("\\r");
+                    break;
+                case '\t':
+                    sb.append("\\t");
+                    break;
+                case '\b':
+                    sb.append("\\b");
+                    break;
+                case '\f':
+                    sb.append("\\f");
+                    break;
                 default:
                     if (c < 0x20 || c > 0x7E) {
-                        sb.append(String.format("\\u%04x", (int)c));
+                        sb.append(String.format("\\u%04x", (int) c));
                     } else {
                         sb.append(c);
                     }
@@ -199,11 +211,26 @@ public class ColumnRenameChange extends ColumnChange {
             if (c == '\\' && i + 1 < s.length()) {
                 char next = s.charAt(i + 1);
                 switch (next) {
-                    case 'n': sb.append('\n'); i++; break;
-                    case 'r': sb.append('\r'); i++; break;
-                    case 't': sb.append('\t'); i++; break;
-                    case 'b': sb.append('\b'); i++; break;
-                    case 'f': sb.append('\f'); i++; break;
+                    case 'n':
+                        sb.append('\n');
+                        i++;
+                        break;
+                    case 'r':
+                        sb.append('\r');
+                        i++;
+                        break;
+                    case 't':
+                        sb.append('\t');
+                        i++;
+                        break;
+                    case 'b':
+                        sb.append('\b');
+                        i++;
+                        break;
+                    case 'f':
+                        sb.append('\f');
+                        i++;
+                        break;
                     case 'u':
                         if (i + 5 < s.length()) {
                             String hex = s.substring(i + 2, i + 6);
@@ -211,8 +238,14 @@ public class ColumnRenameChange extends ColumnChange {
                             i += 5;
                         }
                         break;
-                    case '\\': sb.append('\\'); i++; break;
-                    default: sb.append(next); i++; break;
+                    case '\\':
+                        sb.append('\\');
+                        i++;
+                        break;
+                    default:
+                        sb.append(next);
+                        i++;
+                        break;
                 }
             } else {
                 sb.append(c);
