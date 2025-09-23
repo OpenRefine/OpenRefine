@@ -81,7 +81,7 @@
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.6</butterfly.version>
     <slf4j.version>2.0.17</slf4j.version>
-    <log4j.version>2.25.1</log4j.version>
+    <log4j.version>2.25.2</log4j.version>
     <jetty.version>10.0.16</jetty.version>
     <okhttp.version>5.1.0</okhttp.version>
     <jena.version>4.10.0</jena.version>
