@@ -112,7 +112,6 @@ public class ColumnRenameChange extends ColumnChange {
      * corruption from newline characters.
      */
     private static String processFieldValue(String value, LineNumberReader reader) throws IOException {
-        // Check if this is the new escaped format
         if (containsEscapeSequences(value)) {
             return unescape(value);
         } else {
@@ -143,7 +142,7 @@ public class ColumnRenameChange extends ColumnChange {
             } else {
                 // This might be a continuation of the corrupted value
                 result.append("\n").append(nextLine);
-                reader.mark(4096); // Mark after each line we consume
+                reader.mark(4096);
             }
         }
 
