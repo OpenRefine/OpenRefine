@@ -106,7 +106,7 @@
     <univocity-csv.version>2.9.1</univocity-csv.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
     <commons-io.version>2.20.0</commons-io.version>
-    <guava.version>33.4.8-jre</guava.version>
+    <guava.version>33.5.0-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <juniversalchardet.version>2.5.0</juniversalchardet.version>
     <testng.version>7.11.0</testng.version>
