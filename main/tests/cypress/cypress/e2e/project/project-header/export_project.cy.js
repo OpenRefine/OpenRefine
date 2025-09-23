@@ -108,6 +108,55 @@ describe(__filename, function () {
     });
 
   });
+  it('Test error for wide (>256col) project to XLS format', function () {
+    const WIDTH = 257;
+    const WIDE_FIXTURE = [
+      Array.from({length: WIDTH}, (e, i)=> "column"+i),
+      Array.from({length: WIDTH}, (e, i)=> "row0cell"+i),
+    ];
+    cy.loadAndVisitProject(WIDE_FIXTURE, Date.now());
+
+    cy.get('#export-button').click();
+    triggerLoadEvent();
+    cy.get('.menu-container a')
+      .contains('Excel (.xls)')
+      .click();
+
+    cy.get('body').contains('HTTP ERROR 400 Maximum number of columns exceeded for export format (256)');
+
+  });
+  it('Test too many rows error for export to XLS format', function () {
+    // zero-th row contains column names, so +1
+    const TALL_FIXTURE = Array.from({length: 65536+1}, (e, i)=> ["row"+i]);
+
+    cy.loadAndVisitProject(TALL_FIXTURE, Date.now());
+
+    cy.get('#export-button').click();
+    triggerLoadEvent();
+    cy.get('.menu-container a')
+      .contains('Excel (.xls)')
+      .click();
+
+    cy.get('body').contains('HTTP ERROR 400 Maximum number of rows exceeded for export format (65536)');
+
+  });
+  it('Test cell value too long error for export to XLS format', function () {
+    const TALL_FIXTURE = [
+      ["column"],
+      ["cell value too long".padEnd(32768, ".")]
+    ]
+
+    cy.loadAndVisitProject(TALL_FIXTURE, Date.now());
+
+    cy.get('#export-button').click();
+    triggerLoadEvent();
+    cy.get('.menu-container a')
+      .contains('Excel (.xls)')
+      .click();
+
+    cy.get('body').contains('HTTP ERROR 400 Maximum size (32767) of cell');
+
+  });
   it('Export a project through "Excel 2007+ (.xlsx)"', function () {
 
     cy.loadAndVisitProject(fixture, Date.now());
