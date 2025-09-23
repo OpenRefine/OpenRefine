@@ -48,8 +48,8 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
 
     public static Properties extensionProperties;
 
-    private static String DEFAULT_CREATE_PROJ_BATCH_SIZE = "100";
-    private static String DEFAULT_PREVIEW_BATCH_SIZE = "100";
+    static String DEFAULT_CREATE_BATCH_SIZE = "100";
+    static String DEFAULT_PREVIEW_BATCH_SIZE = "100";
 
     @Override
     public void init(ServletConfig config)
@@ -65,35 +65,36 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
         logger.trace("Database Extension module initialization completed");
     }
 
-    public static int getImportCreateBatchSize() {
-        int batchSize = Integer.parseInt(DEFAULT_CREATE_PROJ_BATCH_SIZE);
-        if (extensionProperties == null) {
-            return batchSize;
-        }
-        String propBatchSize = extensionProperties.getProperty("create.batchSize", DEFAULT_CREATE_PROJ_BATCH_SIZE);
-        if (propBatchSize != null && !propBatchSize.isEmpty()) {
-            try {
-                batchSize = Integer.parseInt(propBatchSize);
-            } catch (NumberFormatException nfe) {
-
-            }
-        }
-        return batchSize;
+    public static int getCreateBatchSize() {
+        return getBatchSize("create.batchSize", DEFAULT_CREATE_BATCH_SIZE);
     }
 
-    public static int getImportPreviewBatchSize() {
-        int batchSize = Integer.parseInt(DEFAULT_PREVIEW_BATCH_SIZE);
+    public static int getPreviewBatchSize() {
+        return getBatchSize("preview.batchSize", DEFAULT_PREVIEW_BATCH_SIZE);
+    }
+
+    private static int getBatchSize(String propertyName, String defaultValue) {
+        int batchSize = Integer.parseInt(defaultValue);
+
         if (extensionProperties == null) {
             return batchSize;
         }
-        String propBatchSize = extensionProperties.getProperty("preview.batchSize", DEFAULT_PREVIEW_BATCH_SIZE);
+
+        String propBatchSize = extensionProperties.getProperty(propertyName, defaultValue);
+
         if (propBatchSize != null && !propBatchSize.isEmpty()) {
             try {
                 batchSize = Integer.parseInt(propBatchSize);
             } catch (NumberFormatException nfe) {
-
+                logger.warn("Error parsing {} property as Integer ({})", propertyName, propBatchSize);
             }
         }
+
+        if (batchSize < 1) {
+            logger.warn("{} property is invalid ({}), using default ({})", propertyName, batchSize, defaultValue);
+            batchSize = Integer.parseInt(defaultValue);
+        }
+
         return batchSize;
     }
 
