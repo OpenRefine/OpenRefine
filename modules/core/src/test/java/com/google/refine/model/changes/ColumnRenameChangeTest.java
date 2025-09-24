@@ -1,3 +1,4 @@
+
 package com.google.refine.model.changes;
 
 import static org.testng.Assert.assertEquals;
@@ -35,12 +36,11 @@ public class ColumnRenameChangeTest extends RefineTest {
     @BeforeMethod
     public void setUp() throws Exception {
         project = createProject(
-            new String[] { "original_column", "other_column" },
-            new Serializable[][] {
-                { "data1", "value1" },
-                { "data2", "value2" }
-            }
-        );
+                new String[] { "original_column", "other_column" },
+                new Serializable[][] {
+                        { "data1", "value1" },
+                        { "data2", "value2" }
+                });
     }
 
     @AfterMethod
@@ -82,11 +82,10 @@ public class ColumnRenameChangeTest extends RefineTest {
         change.save(writer, new Properties());
         String serialized = writer.toString();
         assertEquals(
-            serialized,
-            "oldColumnName=col\\nwith\\nlines\n" +
-            "newColumnName=new\\ncol\n" +
-            "/ec/\n"
-        );
+                serialized,
+                "oldColumnName=col\\nwith\\nlines\n" +
+                        "newColumnName=new\\ncol\n" +
+                        "/ec/\n");
 
         LineNumberReader reader = new LineNumberReader(new StringReader(serialized));
         ColumnRenameChange crc = (ColumnRenameChange) ColumnRenameChange.load(reader, new Pool());
@@ -106,11 +105,10 @@ public class ColumnRenameChangeTest extends RefineTest {
         change.save(writer, new Properties());
         String serialized = writer.toString();
         assertEquals(
-            serialized,
-            "oldColumnName=col\\rwith\\rcarriage\n" +
-            "newColumnName=new\\rcol\n" +
-            "/ec/\n"
-        );
+                serialized,
+                "oldColumnName=col\\rwith\\rcarriage\n" +
+                        "newColumnName=new\\rcol\n" +
+                        "/ec/\n");
 
         LineNumberReader reader = new LineNumberReader(new StringReader(serialized));
         ColumnRenameChange crc = (ColumnRenameChange) ColumnRenameChange.load(reader, new Pool());
@@ -128,10 +126,10 @@ public class ColumnRenameChangeTest extends RefineTest {
         Writer writer = new StringWriter();
         change.save(writer, new Properties());
         String serialized = writer.toString();
-        
+
         // Print actual value for debugging
         System.out.println("Actual serialized: " + serialized);
-        
+
         // Just test the round trip without checking exact format
         LineNumberReader reader = new LineNumberReader(new StringReader(serialized));
         ColumnRenameChange crc = (ColumnRenameChange) ColumnRenameChange.load(reader, new Pool());
@@ -141,10 +139,9 @@ public class ColumnRenameChangeTest extends RefineTest {
 
     @Test
     public void testLegacyFormatCompatibility() throws Exception {
-        String legacy =
-            "oldColumnName=simpleOld\n" +
-            "newColumnName=simpleNew\n" +
-            "/ec/\n";
+        String legacy = "oldColumnName=simpleOld\n" +
+                "newColumnName=simpleNew\n" +
+                "/ec/\n";
         LineNumberReader reader = new LineNumberReader(new StringReader(legacy));
         ColumnRenameChange crc = (ColumnRenameChange) ColumnRenameChange.load(reader, new Pool());
 
@@ -154,12 +151,11 @@ public class ColumnRenameChangeTest extends RefineTest {
 
     @Test
     public void testCorruptedLegacyRecovery() throws Exception {
-        String corrupted =
-            "oldColumnName=part1\n" +
-            "part2\n" +
-            "newColumnName=new1\n" +
-            "new2\n" +
-            "/ec/\n";
+        String corrupted = "oldColumnName=part1\n" +
+                "part2\n" +
+                "newColumnName=new1\n" +
+                "new2\n" +
+                "/ec/\n";
         LineNumberReader reader = new LineNumberReader(new StringReader(corrupted));
         ColumnRenameChange crc = (ColumnRenameChange) ColumnRenameChange.load(reader, new Pool());
 
@@ -193,7 +189,7 @@ public class ColumnRenameChangeTest extends RefineTest {
     public void testLoadFromResource() throws Exception {
         // Skip this test if resource doesn't exist
         InputStream in = getClass().getClassLoader()
-            .getResourceAsStream("changes/column_rename_legacy.txt");
+                .getResourceAsStream("changes/column_rename_legacy.txt");
         if (in != null) {
             LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
             reader.readLine();
@@ -202,20 +198,20 @@ public class ColumnRenameChangeTest extends RefineTest {
             assertNotNull(crc);
         }
     }
-    
-    @Test 
+
+    @Test
     public void testNewlineColumnNameRename() throws Exception {
         // Test the actual issue - column with newline being renamed
         ColumnRenameChange change = new ColumnRenameChange("a\nb", "new name");
-        
+
         // Test serialization/deserialization works
         Writer writer = new StringWriter();
         change.save(writer, new Properties());
         String serialized = writer.toString();
-        
+
         LineNumberReader reader = new LineNumberReader(new StringReader(serialized));
         ColumnRenameChange loaded = (ColumnRenameChange) ColumnRenameChange.load(reader, new Pool());
-        
+
         assertEquals(loaded.getOldColumnName(), "a\nb");
         assertEquals(loaded.getNewColumnName(), "new name");
     }
