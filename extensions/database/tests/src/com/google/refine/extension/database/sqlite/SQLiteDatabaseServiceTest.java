@@ -60,7 +60,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
             @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
             throws DatabaseServiceException, SQLException {
 
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseName(sqliteDbName);
         testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);

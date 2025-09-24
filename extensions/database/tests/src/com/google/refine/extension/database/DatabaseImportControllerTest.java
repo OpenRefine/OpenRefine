@@ -60,7 +60,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
 
     @BeforeMethod
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
         FileProjectManager.initialize(dir);
@@ -243,7 +243,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     public void beforeTest(
             @Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName, @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable) {
 
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         // Much of the below is ignored, but required by validation
         // in {@link DatabaseImportController#getQueryInfo}

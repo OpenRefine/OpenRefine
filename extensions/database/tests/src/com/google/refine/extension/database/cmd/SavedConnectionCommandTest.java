@@ -66,7 +66,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
 
     @BeforeMethod
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
         FileProjectManager.initialize(dir);

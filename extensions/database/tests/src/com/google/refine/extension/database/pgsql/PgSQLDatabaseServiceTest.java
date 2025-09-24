@@ -32,7 +32,7 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests {
             @Optional(DEFAULT_PGSQL_PORT) String pgSqlDbPort, @Optional(DEFAULT_PGSQL_USER) String pgSqlDbUser,
             @Optional(DEFAULT_PGSQL_PASSWORD) String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String pgSqlTestTable) {
 
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(pgSqlDbHost);
         testDbConfig.setDatabaseName(pgSqlDbName);
