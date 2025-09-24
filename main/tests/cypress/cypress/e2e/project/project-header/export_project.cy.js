@@ -144,7 +144,7 @@ describe(__filename, function () {
     const TALL_FIXTURE = [
       ["column"],
       ["cell value too long".padEnd(32768, ".")]
-    ]
+    ];
 
     cy.loadAndVisitProject(TALL_FIXTURE, Date.now());
 
