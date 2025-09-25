@@ -48,8 +48,8 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
 
     public static Properties extensionProperties;
 
-    static String DEFAULT_CREATE_BATCH_SIZE = "100";
-    static String DEFAULT_PREVIEW_BATCH_SIZE = "100";
+    static final int DEFAULT_CREATE_BATCH_SIZE = 100;
+    static final int DEFAULT_PREVIEW_BATCH_SIZE = 100;
 
     @Override
     public void init(ServletConfig config)
@@ -73,14 +73,14 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
         return getBatchSize("preview.batchSize", DEFAULT_PREVIEW_BATCH_SIZE);
     }
 
-    private static int getBatchSize(String propertyName, String defaultValue) {
-        int batchSize = Integer.parseInt(defaultValue);
+    private static int getBatchSize(String propertyName, int defaultValue) {
+        int batchSize = defaultValue;
 
         if (extensionProperties == null) {
             return batchSize;
         }
 
-        String propBatchSize = extensionProperties.getProperty(propertyName, defaultValue);
+        String propBatchSize = extensionProperties.getProperty(propertyName);
 
         if (propBatchSize != null && !propBatchSize.isEmpty()) {
             try {
@@ -92,7 +92,7 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
 
         if (batchSize < 1) {
             logger.warn("{} property is invalid ({}), using default ({})", propertyName, batchSize, defaultValue);
-            batchSize = Integer.parseInt(defaultValue);
+            batchSize = defaultValue;
         }
 
         return batchSize;

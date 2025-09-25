@@ -34,15 +34,20 @@ public class DatabaseModuleImplTest {
                 { "create.batchSize", "500", "create", 500, "Should return the correct create batch size" },
                 { "preview.batchSize", "200", "preview", 200, "Should return the correct preview batch size" },
                 // Invalid value tests
-                { "create.batchSize", "not-a-number", "create", Integer.parseInt(DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE),
+                { "create.batchSize", "not-a-number", "create", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
                         "Should return default create batch size for invalid input" },
-                { "preview.batchSize", "invalid", "preview", Integer.parseInt(DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE),
+                { "preview.batchSize", "not-a-number", "preview", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
                         "Should return default preview batch size for invalid input" },
+                // Invalid value tests - Decimal value tests
+                { "create.batchSize", "2.5", "create", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
+                        "Should return default create batch size when value is decimal" },
+                { "preview.batchSize", "2.5", "preview", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
+                        "Should return default preview batch size when value is decimal" },
                 // Value less than one tests
-                { "create.batchSize", "-5", "create", Integer.parseInt(DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE),
+                { "create.batchSize", "-5", "create", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
                         "Should return default create batch size when value is less than 1" },
-                { "preview.batchSize", "-5", "preview", Integer.parseInt(DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE),
-                        "Should return default preview batch size when value is less than 1" }
+                { "preview.batchSize", "-5", "preview", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
+                        "Should return default preview batch size when value is less than 1" },
         };
     }
 
@@ -67,9 +72,9 @@ public class DatabaseModuleImplTest {
     public Object[][] provideNullPropertiesTestData() {
         return new Object[][] {
                 // methodToTest, expectedValue, message
-                { "create", Integer.parseInt(DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE),
+                { "create", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
                         "Should return default create batch size when properties are null" },
-                { "preview", Integer.parseInt(DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE),
+                { "preview", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
                         "Should return default preview batch size when properties are null" }
         };
     }
