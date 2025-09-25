@@ -74,28 +74,26 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
     }
 
     private static int getBatchSize(String propertyName, int defaultValue) {
-        int batchSize = defaultValue;
-
         if (extensionProperties == null) {
-            return batchSize;
+            return defaultValue;
         }
 
         String propBatchSize = extensionProperties.getProperty(propertyName);
+        if (propBatchSize == null || propBatchSize.isEmpty()) {
+            return defaultValue;
+        }
 
-        if (propBatchSize != null && !propBatchSize.isEmpty()) {
-            try {
-                batchSize = Integer.parseInt(propBatchSize);
-            } catch (NumberFormatException nfe) {
-                logger.warn("Error parsing {} property as Integer ({})", propertyName, propBatchSize);
+        try {
+            int batchSize = Integer.parseInt(propBatchSize);
+
+            if (batchSize > 0) {
+                return batchSize;
             }
+        } catch (NumberFormatException nfe) {
+            logger.warn("Error parsing {} property as Integer ({})", propertyName, propBatchSize);
         }
 
-        if (batchSize < 1) {
-            logger.warn("{} property is invalid ({}), using default ({})", propertyName, batchSize, defaultValue);
-            batchSize = defaultValue;
-        }
-
-        return batchSize;
+        return defaultValue;
     }
 
     private void readModuleProperty() {
