@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -25,6 +26,7 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests {
 
     private DatabaseConfiguration testDbConfig;
     private String testTable;
+    private AutoCloseable closeable;
 
     @BeforeTest
     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable" })
@@ -32,7 +34,7 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests {
             @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
             @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable) {
 
-        MockitoAnnotations.openMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
 
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(mySqlDbHost);
@@ -48,6 +50,11 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests {
 
         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
 
+    }
+
+    @AfterTest
+    public void afterTest() throws Exception {
+        closeable.close();
     }
 
     @Test

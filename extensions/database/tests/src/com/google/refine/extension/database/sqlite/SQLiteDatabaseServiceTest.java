@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -53,6 +54,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
 
     private DatabaseConfiguration testDbConfig;
     private String testTable;
+    private AutoCloseable closeable;
 
     @BeforeTest
     @Parameters({ "sqliteDbName", "sqliteTestTable" })
@@ -60,7 +62,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
             @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
             throws DatabaseServiceException, SQLException {
 
-        MockitoAnnotations.openMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseName(sqliteDbName);
         testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
@@ -68,6 +70,11 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
         testTable = sqliteTestTable;
 
         DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
+    }
+
+    @AfterTest
+    public void afterTest() throws Exception {
+        closeable.close();
     }
 
     @Test
