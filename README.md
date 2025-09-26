@@ -5,6 +5,7 @@
 [![Snapshot release](https://github.com/OpenRefine/OpenRefine/actions/workflows/snapshot_release.yml/badge.svg)](https://github.com/OpenRefine/OpenRefine/actions/workflows/snapshot_release.yml) [![Coverage Status](https://coveralls.io/repos/github/OpenRefine/OpenRefine/badge.svg?branch=master)](https://coveralls.io/github/OpenRefine/OpenRefine?branch=master) [![Translation progress](https://hosted.weblate.org/widgets/openrefine/-/svg-badge.svg)](https://hosted.weblate.org/engage/openrefine/?utm_source=widget)
 [![Sponsor on GitHub](https://img.shields.io/badge/Sponsor-GitHub-blue)](https://github.com/sponsors/OpenRefine)
 [![Donate](https://img.shields.io/badge/Donate-OpenRefine-blue)](https://openrefine.org/donate)
+[![OpenRefine Store](https://img.shields.io/badge/🛍️Shop-OpenRefine_Store-blue)](https://store.openrefine.org)
 
 OpenRefine is a Java-based power tool that allows you to load data, understand it,
 clean it up, reconcile it, and augment it with data coming from
