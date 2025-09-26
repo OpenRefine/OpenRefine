@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.exporters;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -204,6 +205,26 @@ public class XlsxExporterTests extends RefineTest {
             org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(9999);
             Assert.assertEquals(cell0.toString(), "row0cell9999");
         }
+    }
+
+    @Test
+    public void test65536Rows() throws IOException {
+        CreateGrid(65536, 1);
+        SUT.export(project, options, engine, stream);
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row = ws.getRow(65536);
+            org.apache.poi.ss.usermodel.Cell cell = row.getCell(0);
+            Assert.assertEquals(cell.toString(), "row65535cell0");
+        }
+    }
+
+    @Test
+    public void testOversizeCell() throws IOException {
+        CreateGrid(2, 2);
+        project.rows.get(1).setCell(1, new Cell("cell value too long" + ".".repeat(32768), null));
+        assertThrows(ExporterException.class, () -> SUT.export(project, options, engine, stream));
     }
 
     // helper methods

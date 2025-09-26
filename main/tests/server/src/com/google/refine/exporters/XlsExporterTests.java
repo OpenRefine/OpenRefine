@@ -37,6 +37,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -151,16 +152,33 @@ public class XlsExporterTests extends RefineTest {
     @Test
     public void test257Columns() throws IOException {
         CreateGrid(2, 257);
+        assertThrows(ExporterException.class, () -> SUT.export(project, options, engine, stream));
+    }
 
+    @Test
+    public void test65535Rows() throws IOException {
+        CreateGrid(65535, 1);
         SUT.export(project, options, engine, stream);
 
         try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
-            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
-            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(255);
-            // FIXME: This is not a good error reporting mechanism, but it's what there today
-            Assert.assertEquals(cell0.toString(), "ERROR: TOO MANY COLUMNS");
+            org.apache.poi.ss.usermodel.Row row = ws.getRow(65535);
+            org.apache.poi.ss.usermodel.Cell cell = row.getCell(0);
+            Assert.assertEquals(cell.toString(), "row65534cell0");
         }
+    }
+
+    @Test
+    public void test65536Rows() throws IOException {
+        CreateGrid(65536, 1);
+        assertThrows(ExporterException.class, () -> SUT.export(project, options, engine, stream));
+    }
+
+    @Test
+    public void testOversizeCell() throws IOException {
+        CreateGrid(2, 2);
+        project.rows.get(1).setCell(1, new Cell("cell value too long" + ".".repeat(32768), null));
+        assertThrows(ExporterException.class, () -> SUT.export(project, options, engine, stream));
     }
 
     @Test

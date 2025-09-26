@@ -27,7 +27,9 @@
 
 package com.google.refine.exporters.sql;
 
-public class SqlExporterException extends RuntimeException {
+import com.google.refine.exporters.ExporterException;
+
+public class SqlExporterException extends ExporterException {
 
     /**
      * 
@@ -36,7 +38,6 @@ public class SqlExporterException extends RuntimeException {
 
     public SqlExporterException(String message) {
         super(message);
-        // TODO Auto-generated constructor stub
     }
 
 }

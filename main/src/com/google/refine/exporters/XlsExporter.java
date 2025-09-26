@@ -75,6 +75,9 @@ public class XlsExporter implements StreamExporter {
             OutputStream outputStream) throws IOException {
 
         final Workbook wb = xml ? new SXSSFWorkbook() : new HSSFWorkbook();
+        final int maxRows = getSpreadsheetVersion().getMaxRows();
+        final int maxColumns = getSpreadsheetVersion().getMaxColumns();
+        final int maxTextLength = getSpreadsheetVersion().getMaxTextLength();
 
         TabularSerializer serializer = new TabularSerializer() {
 
@@ -100,15 +103,15 @@ public class XlsExporter implements StreamExporter {
 
             @Override
             public void addRow(List<CellData> cells, boolean isHeader) {
+                if (rowCount >= maxRows) {
+                    throw new ExporterException(String.format("Maximum number of rows exceeded for export format (%d)", maxRows));
+                }
                 Row r = s.createRow(rowCount++);
-                int maxColumns = getSpreadsheetVersion().getMaxColumns();
-                int maxTextLength = getSpreadsheetVersion().getMaxTextLength();
 
                 for (int i = 0; i < cells.size(); i++) {
                     Cell c = r.createCell(i);
                     if (i == (maxColumns - 1) && cells.size() > maxColumns) {
-                        c.setCellValue("ERROR: TOO MANY COLUMNS");
-                        break;
+                        throw new ExporterException(String.format("Maximum number of columns exceeded for export format (%d)", maxColumns));
                     } else {
                         CellData cellData = cells.get(i);
 
@@ -125,8 +128,9 @@ public class XlsExporter implements StreamExporter {
                             } else {
                                 String s = cellData.text;
                                 if (s.length() > maxTextLength) {
-                                    // The maximum length of cell contents (text) is 32,767 characters
-                                    s = s.substring(0, maxTextLength);
+                                    throw new ExporterException(
+                                            String.format("Maximum size (%d) of cell [%d, %d] exceeded for export format", maxTextLength,
+                                                    rowCount, i));
                                 }
                                 c.setCellValue(s);
                             }
@@ -157,7 +161,7 @@ public class XlsExporter implements StreamExporter {
     }
 
     /**
-     * @return POI <code></code>SpreadsheetVersion</code> with metadata about row and column limits
+     * @return POI <code></code>SpreadsheetVersion</code> with metadata about cell, row and column limits
      */
     SpreadsheetVersion getSpreadsheetVersion() {
         return xml ? SpreadsheetVersion.EXCEL2007 : SpreadsheetVersion.EXCEL97;

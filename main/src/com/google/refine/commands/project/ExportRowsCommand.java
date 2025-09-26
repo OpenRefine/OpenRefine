@@ -56,20 +56,15 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 import com.google.refine.exporters.CsvExporter;
 import com.google.refine.exporters.Exporter;
+import com.google.refine.exporters.ExporterException;
 import com.google.refine.exporters.ExporterRegistry;
 import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.WriterExporter;
-import com.google.refine.exporters.sql.SqlExporterException;
 import com.google.refine.model.Project;
 
 public class ExportRowsCommand extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
-
-    /**
-     * This command uses POST but is left CSRF-unprotected as it does not incur a state change. TODO: add CSRF
-     * protection anyway, as it does not cost much and could still have prevented an XSS vulnerability
-     */
 
     @Deprecated(since = "3.9")
     @SuppressWarnings("unchecked")
@@ -152,12 +147,18 @@ public class ExportRowsCommand extends Command {
                 respondException(response, new RuntimeException("Unknown exporter type"));
             }
         } catch (Exception e) {
-            // Use generic error handling rather than our JSON handling
+            // Restore headers and use generic error handling rather than our JSON handling
+            response.setContentType("text/html; charset=utf-8");
+            response.setHeader("Content-Disposition", "inline");
             logger.info("error:{}", e.getMessage());
-            if (e instanceof SqlExporterException) {
+            // It's something semi-expected so return an abbreviated error message
+            if (e instanceof ExporterException) {
                 response.sendError(HttpStatus.SC_BAD_REQUEST, e.getMessage());
+            } else {
+                // This will return an HTML error page with a full stack trace, which is unsightly, but informative when
+                // we hit unexpected errors
+                throw new ServletException(e);
             }
-            throw new ServletException(e);
         } finally {
             ProjectManager.singleton.setBusy(false);
         }
