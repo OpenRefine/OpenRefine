@@ -46,6 +46,8 @@ import com.google.refine.util.ParsingUtilities;
 
 public class SavedConnectionCommandTest extends DBExtensionTests {
 
+    private AutoCloseable mocks;
+
     @Mock
     private HttpServletRequest request;
 
@@ -66,7 +68,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
 
     @BeforeMethod
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
         FileProjectManager.initialize(dir);
@@ -84,7 +86,10 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
     }
 
     @AfterMethod
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        if (mocks != null) {
+            mocks.close();
+        }
         SUT = null;
         request = null;
         response = null;
