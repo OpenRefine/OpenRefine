@@ -4,7 +4,6 @@ package com.google.refine.extension.database.pgsql;
 import java.sql.Connection;
 import java.util.List;
 
-import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -32,7 +31,6 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests {
             @Optional(DEFAULT_PGSQL_PORT) String pgSqlDbPort, @Optional(DEFAULT_PGSQL_USER) String pgSqlDbUser,
             @Optional(DEFAULT_PGSQL_PASSWORD) String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String pgSqlTestTable) {
 
-        MockitoAnnotations.initMocks(this);
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(pgSqlDbHost);
         testDbConfig.setDatabaseName(pgSqlDbName);
