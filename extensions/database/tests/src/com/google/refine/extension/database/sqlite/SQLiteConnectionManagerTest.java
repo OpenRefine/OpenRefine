@@ -32,7 +32,7 @@ package com.google.refine.extension.database.sqlite;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.mockito.MockitoAnnotations;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -54,8 +54,6 @@ public class SQLiteConnectionManagerTest extends DBExtensionTests {
     public void beforeTest(@Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName,
             @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
             throws DatabaseServiceException, SQLException {
-
-        MockitoAnnotations.initMocks(this);
 
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseName(sqliteDbName);

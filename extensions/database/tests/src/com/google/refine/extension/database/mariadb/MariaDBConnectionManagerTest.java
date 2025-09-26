@@ -4,7 +4,7 @@ package com.google.refine.extension.database.mariadb;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.mockito.MockitoAnnotations;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -26,8 +26,6 @@ public class MariaDBConnectionManagerTest extends DBExtensionTests {
     public void beforeTest(@Optional(DEFAULT_MARIADB_NAME) String mariaDbName, @Optional(DEFAULT_MARIADB_HOST) String mariaDbHost,
             @Optional(DEFAULT_MARIADB_PORT) String mariaDbPort, @Optional(DEFAULT_MARIADB_USER) String mariaDbUser,
             @Optional(DEFAULT_MARIADB_PASSWORD) String mariaDbPassword, @Optional(DEFAULT_TEST_TABLE) String mariaDbTestTable) {
-
-        MockitoAnnotations.initMocks(this);
 
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(mariaDbHost);

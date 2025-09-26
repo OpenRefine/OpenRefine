@@ -33,7 +33,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.mockito.MockitoAnnotations;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -60,7 +60,6 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
             @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
             throws DatabaseServiceException, SQLException {
 
-        MockitoAnnotations.initMocks(this);
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseName(sqliteDbName);
         testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
