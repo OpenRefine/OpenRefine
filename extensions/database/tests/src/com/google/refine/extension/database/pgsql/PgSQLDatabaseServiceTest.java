@@ -4,7 +4,6 @@ package com.google.refine.extension.database.pgsql;
 import java.sql.Connection;
 import java.util.List;
 
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
