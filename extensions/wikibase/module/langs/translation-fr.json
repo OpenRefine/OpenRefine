@@ -13,7 +13,7 @@
     "wikibase-schema/statements-header": "Déclarations",
     "wikibase-schema/terms-header": "Termes",
     "wikibase-schema/empty-terms": "pas de libellé, description ou alias ajouté",
-    "wikibase-schema/add-item-button": "ajouter un élément",
+    "wikibase-schema/add-item-button": "Ajouter un élément",
     "wikibase-schema/add-term": "ajouter un terme",
     "wikibase-schema/remove": "supprimer",
     "wikibase-schema/add-statement": "ajouter une déclaration",
