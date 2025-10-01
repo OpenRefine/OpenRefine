@@ -22,7 +22,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
       - id: set-matrix
@@ -53,7 +53,7 @@ jobs:
         run: ./refine build
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
 
@@ -199,7 +199,7 @@ jobs:
         gpg-passphrase: GPG_PASSPHRASE
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3' 
 
@@ -254,7 +254,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.9.0
+      uses: shogo82148/actions-upload-release-asset@v1.9.1
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip
@@ -282,7 +282,7 @@ jobs:
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.9.0
+      uses: shogo82148/actions-upload-release-asset@v1.9.1
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}.tar.gz
@@ -299,7 +299,7 @@ jobs:
     - name: Upload Release Asset Mac
       id: upload-release-asset-mac
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.9.0
+      uses: shogo82148/actions-upload-release-asset@v1.9.1
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}.dmg
@@ -387,7 +387,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java-installer
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.9.0
+      uses: shogo82148/actions-upload-release-asset@v1.9.1
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}.exe
