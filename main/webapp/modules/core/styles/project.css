@@ -128,9 +128,3 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #facet-panel, #history-panel {
   overflow: auto;
 }
-
-.data-table-header .column-header-resizer-left,
-.data-table-header .column-header-resizer-right,
-.data-table-header .ui-sortable-handle {
-  cursor: col-resize;
-}
