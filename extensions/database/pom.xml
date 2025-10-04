@@ -102,6 +102,7 @@
       <version>8.0.33</version>
       <exclusions>
         <exclusion>
+          <!-- Only needed for the X DevAPI features -->
           <groupId>com.google.protobuf</groupId>
           <artifactId>protobuf-java</artifactId>
         </exclusion>
