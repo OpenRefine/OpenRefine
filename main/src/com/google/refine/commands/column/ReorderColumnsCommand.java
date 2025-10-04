@@ -53,8 +53,9 @@ public class ReorderColumnsCommand extends EngineDependentCommand {
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
 
         String columnNames = request.getParameter("columnNames");
+        String isPureReorder = request.getParameter("isPureReorder");
         return new ColumnReorderOperation(
                 ParsingUtilities.mapper.readValue(columnNames, new TypeReference<List<String>>() {
-                }));
+                }), "true".equals(isPureReorder));
     }
 }
