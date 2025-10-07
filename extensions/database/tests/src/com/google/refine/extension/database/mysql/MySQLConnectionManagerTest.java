@@ -72,4 +72,8 @@ public class MySQLConnectionManagerTest extends DBExtensionTests {
         }
     }
 
+    @Test
+    public void testDriverPath() throws ClassNotFoundException {
+        Class.forName(MySQLDatabaseService.DB_DRIVER);
+    }
 }
