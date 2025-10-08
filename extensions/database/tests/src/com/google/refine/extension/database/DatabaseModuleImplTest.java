@@ -29,37 +29,37 @@ public class DatabaseModuleImplTest {
     @DataProvider(name = "batchSizeTestData")
     public Object[][] provideBatchSizeTestData() {
         return new Object[][] {
-                // propertyName, propertyValue, methodToTest, expectedValue, message
+                // propertyName, propertyValue, expectedValue, message
                 // Valid value tests
-                { "create.batchSize", "500", "create", 500, "Should return the correct create batch size" },
-                { "preview.batchSize", "200", "preview", 200, "Should return the correct preview batch size" },
+                { "create.batchSize", "500", 500, "Should return the correct create batch size" },
+                { "preview.batchSize", "200", 200, "Should return the correct preview batch size" },
                 // Invalid value tests
-                { "create.batchSize", "not-a-number", "create", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
+                { "create.batchSize", "not-a-number", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
                         "Should return default create batch size for invalid input" },
-                { "preview.batchSize", "not-a-number", "preview", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
+                { "preview.batchSize", "not-a-number", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
                         "Should return default preview batch size for invalid input" },
                 // Invalid value tests - Decimal value tests
-                { "create.batchSize", "2.5", "create", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
+                { "create.batchSize", "2.5", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
                         "Should return default create batch size when value is decimal" },
-                { "preview.batchSize", "2.5", "preview", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
+                { "preview.batchSize", "2.5", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
                         "Should return default preview batch size when value is decimal" },
                 // Value less than one tests
-                { "create.batchSize", "-5", "create", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
+                { "create.batchSize", "-5", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
                         "Should return default create batch size when value is less than 1" },
-                { "preview.batchSize", "-5", "preview", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
+                { "preview.batchSize", "-5", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
                         "Should return default preview batch size when value is less than 1" },
         };
     }
 
     @Test(dataProvider = "batchSizeTestData")
-    public void testBatchSizes(String propertyName, String propertyValue, String methodType,
+    public void testBatchSizes(String propertyName, String propertyValue,
             int expectedValue, String message) throws Exception {
         Properties testProps = new Properties();
         testProps.setProperty(propertyName, propertyValue);
         DatabaseModuleImpl.extensionProperties = testProps;
 
         int result;
-        if ("create".equals(methodType)) {
+        if ("create.batchSize".equals(propertyName)) {
             result = DatabaseModuleImpl.getCreateBatchSize();
         } else {
             result = DatabaseModuleImpl.getPreviewBatchSize();
@@ -71,20 +71,20 @@ public class DatabaseModuleImplTest {
     @DataProvider(name = "nullPropertiesTestData")
     public Object[][] provideNullPropertiesTestData() {
         return new Object[][] {
-                // methodToTest, expectedValue, message
-                { "create", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
+                // propertyName, expectedValue, message
+                { "create.batchSize", DatabaseModuleImpl.DEFAULT_CREATE_BATCH_SIZE,
                         "Should return default create batch size when properties are null" },
-                { "preview", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
+                { "preview.batchSize", DatabaseModuleImpl.DEFAULT_PREVIEW_BATCH_SIZE,
                         "Should return default preview batch size when properties are null" }
         };
     }
 
     @Test(dataProvider = "nullPropertiesTestData")
-    public void testBatchSizesWithNullProperties(String methodType, int expectedValue, String message) throws Exception {
+    public void testBatchSizesWithNullProperties(String propertyName, int expectedValue, String message) throws Exception {
         DatabaseModuleImpl.extensionProperties = null;
 
         int result;
-        if ("create".equals(methodType)) {
+        if ("create.batchSize".equals(propertyName)) {
             result = DatabaseModuleImpl.getCreateBatchSize();
         } else {
             result = DatabaseModuleImpl.getPreviewBatchSize();
