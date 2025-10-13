@@ -121,7 +121,7 @@
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.6.1</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
-    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
     <surefire.version>3.5.4</surefire.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
