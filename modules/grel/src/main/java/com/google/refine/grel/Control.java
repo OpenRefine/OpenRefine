@@ -44,6 +44,8 @@ import com.google.refine.expr.Evaluable;
 /**
  * Interface of GREL controls such as if, forEach, forNonBlank, with. A control can decide which part of the code to
  * execute and can affect the environment bindings. Functions, on the other hand, can't do either.
+ * <p>
+ * TODO: Add extension name either here or to registration?
  */
 public interface Control {
 
@@ -52,14 +54,21 @@ public interface Control {
     public String checkArguments(Evaluable[] args);
 
     @JsonProperty("description")
-    public String getDescription();
+    default String getDescription() {
+        // Fallback for a pre-2018 Control which implements Jsonizable
+        return Function.getStringFromJsonizable(this, "description");
+    }
 
     @JsonProperty("params")
     @JsonInclude(Include.NON_EMPTY)
-    default public String getParams() {
-        return "";
+    default String getParams() {
+        // Fallback for a pre-2018 Control which implements Jsonizable
+        return Function.getStringFromJsonizable(this, "params");
     }
 
     @JsonProperty("returns")
-    public String getReturns();
+    default String getReturns() {
+        // Fallback for a pre-2018 Control which implements Jsonizable
+        return Function.getStringFromJsonizable(this, "returns");
+    }
 }
