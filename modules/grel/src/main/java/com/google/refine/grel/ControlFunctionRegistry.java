@@ -182,6 +182,11 @@ public class ControlFunctionRegistry {
         return s_functionToName.get(f);
     }
 
+    /**
+     * @deprecated since 4.0. Use {@link #getFunctionMap()}. Scheduled for speedy removal since internal usage stopped
+     *             in 2018.
+     */
+    @Deprecated(since = "4.0")
     static public Set<Entry<String, Function>> getFunctionMapping() {
         return s_nameToFunction.entrySet();
     }
@@ -198,6 +203,11 @@ public class ControlFunctionRegistry {
         return s_controlToName.get(f);
     }
 
+    /**
+     * @deprecated since 4.0. Use {@link #getControlMap()}. Scheduled for speedy removal since internal usage stopped
+     *             in 2018.
+     */
+    @Deprecated(since = "3.10")
     static public Set<Entry<String, Control>> getControlMapping() {
         return s_nameToControl.entrySet();
     }
@@ -206,11 +216,14 @@ public class ControlFunctionRegistry {
         return Collections.unmodifiableMap(s_nameToControl);
     }
 
+    // TODO: Add extension name to registration? Use "core" for default of internal registrations below
+    // Perhaps also group into categories?
     static public void registerFunction(String name, Function f) {
         s_nameToFunction.put(name, f);
         s_functionToName.put(f, name);
     }
 
+    // TODO: Add extension name to registration?
     static public void registerControl(String name, Control c) {
         s_nameToControl.put(name, c);
         s_controlToName.put(c, name);
