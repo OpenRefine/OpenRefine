@@ -48,8 +48,8 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
 
     public static Properties extensionProperties;
 
-    private static String DEFAULT_CREATE_PROJ_BATCH_SIZE = "100";
-    private static String DEFAULT_PREVIEW_BATCH_SIZE = "100";
+    static final int DEFAULT_CREATE_BATCH_SIZE = 100;
+    static final int DEFAULT_PREVIEW_BATCH_SIZE = 100;
 
     @Override
     public void init(ServletConfig config)
@@ -65,18 +65,35 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
         logger.trace("Database Extension module initialization completed");
     }
 
-    public static String getImportCreateBatchSize() {
-        if (extensionProperties == null) {
-            return DEFAULT_CREATE_PROJ_BATCH_SIZE;
-        }
-        return extensionProperties.getProperty("create.batchSize", DEFAULT_CREATE_PROJ_BATCH_SIZE);
+    public static int getCreateBatchSize() {
+        return getBatchSize("create.batchSize", DEFAULT_CREATE_BATCH_SIZE);
     }
 
-    public static String getImportPreviewBatchSize() {
+    public static int getPreviewBatchSize() {
+        return getBatchSize("preview.batchSize", DEFAULT_PREVIEW_BATCH_SIZE);
+    }
+
+    private static int getBatchSize(String propertyName, int defaultValue) {
         if (extensionProperties == null) {
-            return DEFAULT_PREVIEW_BATCH_SIZE;
+            return defaultValue;
         }
-        return extensionProperties.getProperty("preview.batchSize", DEFAULT_PREVIEW_BATCH_SIZE);
+
+        String propBatchSize = extensionProperties.getProperty(propertyName);
+        if (propBatchSize == null || propBatchSize.isEmpty()) {
+            return defaultValue;
+        }
+
+        try {
+            int batchSize = Integer.parseInt(propBatchSize);
+
+            if (batchSize > 0) {
+                return batchSize;
+            }
+        } catch (NumberFormatException nfe) {
+            logger.warn("Error parsing {} property as Integer ({})", propertyName, propBatchSize);
+        }
+
+        return defaultValue;
     }
 
     private void readModuleProperty() {
