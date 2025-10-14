@@ -77,13 +77,11 @@ public class ParsingUtilities {
 
     public static JsonFactory jsonFactory = JsonFactory.builder()
             .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+            .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
+            .streamReadConstraints(StreamReadConstraints.builder()
+                    .maxStringLength(Integer.MAX_VALUE) // for https://github.com/OpenRefine/OpenRefine/issues/6680
+                    .build())
             .build();
-    static {
-        jsonFactory.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-        jsonFactory.setStreamReadConstraints(StreamReadConstraints.builder()
-                .maxStringLength(Integer.MAX_VALUE) // for https://github.com/OpenRefine/OpenRefine/issues/6680
-                .build());
-    }
     public static final ObjectMapper mapper = new ObjectMapper(jsonFactory);
     static {
         SimpleModule module = new SimpleModule();
