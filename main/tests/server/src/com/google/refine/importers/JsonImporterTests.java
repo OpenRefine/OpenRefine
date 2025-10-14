@@ -456,9 +456,9 @@ public class JsonImporterTests extends ImporterTest {
         // Test that INCLUDE_SOURCE_IN_LOCATION is enabled in JSONTreeReader
         // This allows error messages to show user data instead of "REDACTED"
         String invalidJson = "{\"test\": invalid}";
-        
+
         JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(invalidJson.getBytes("UTF-8")));
-        
+
         try {
             while (parser.hasNext()) {
                 parser.next();
@@ -468,8 +468,8 @@ public class JsonImporterTests extends ImporterTest {
             // The error message should contain source data when INCLUDE_SOURCE_IN_LOCATION is enabled
             // When disabled, it would show "REDACTED"
             String errorMessage = e.getMessage();
-            Assert.assertFalse(errorMessage.contains("REDACTED"), 
-                "Error message should not contain REDACTED when INCLUDE_SOURCE_IN_LOCATION is enabled");
+            Assert.assertFalse(errorMessage.contains("REDACTED"),
+                    "Error message should not contain REDACTED when INCLUDE_SOURCE_IN_LOCATION is enabled");
         }
     }
 
