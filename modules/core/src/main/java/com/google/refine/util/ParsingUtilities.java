@@ -75,10 +75,11 @@ import org.apache.commons.io.IOUtils;
 
 public class ParsingUtilities {
 
-    public static JsonFactory jsonFactory = new JsonFactory();
+    public static JsonFactory jsonFactory = JsonFactory.builder()
+            .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+            .build();
     static {
         jsonFactory.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-        jsonFactory.configure(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION, true);
         jsonFactory.setStreamReadConstraints(StreamReadConstraints.builder()
                 .maxStringLength(Integer.MAX_VALUE) // for https://github.com/OpenRefine/OpenRefine/issues/6680
                 .build());
