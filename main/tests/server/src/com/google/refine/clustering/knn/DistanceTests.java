@@ -66,6 +66,8 @@ public class DistanceTests {
     @Mock
     private Evaluable testEvaluable;
 
+    private AutoCloseable mocks;
+
     @DataProvider(name = "user-defined-distance-expressions")
     private String[][] userDefinedKeyerExpressions() {
         return new String[][] {
@@ -77,9 +79,16 @@ public class DistanceTests {
 
     @BeforeMethod
     public void setupMocks() throws ParsingException {
-        MockitoAnnotations.openMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
         when(testParser.parse(anyString(), eq("testparser"))).thenReturn(testEvaluable);
         when(testEvaluable.evaluate(any())).thenAnswer(AdditionalAnswers.returnsElementsOf(testLengths));
+    }
+
+    @AfterMethod
+    public void afterMethod() throws Exception {
+        if (mocks != null) {
+            mocks.close();
+        }
     }
 
     @BeforeMethod

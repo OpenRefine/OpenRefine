@@ -64,6 +64,8 @@ public class UserDefinedKeyerTests {
     @Mock
     private Evaluable testEvaluable;
 
+    private AutoCloseable mocks;
+
     // some sample test cases taken from KeyerTests
     @DataProvider(name = "user-defined-keyer-test-cases")
     private String[][] userDefinedKeyerTestCases() {
@@ -89,10 +91,17 @@ public class UserDefinedKeyerTests {
 
     @BeforeMethod
     public void setupMocks() throws ParsingException {
-        MockitoAnnotations.openMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
         when(testParser.parse(anyString(), eq("testparser"))).thenReturn(testEvaluable);
         when(testEvaluable.evaluate(any())).thenAnswer(AdditionalAnswers
                 .returnsElementsOf(testStrings.stream().map(s -> s + " world").collect(Collectors.toList())));
+    }
+
+    @AfterMethod
+    public void afterMethod() throws Exception {
+        if (mocks != null) {
+            mocks.close();
+        }
     }
 
     @BeforeMethod

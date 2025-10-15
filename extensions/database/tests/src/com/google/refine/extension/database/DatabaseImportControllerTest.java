@@ -58,9 +58,11 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     // System under test
     private DatabaseImportController SUT = null;
 
+    private AutoCloseable mocks;
+
     @BeforeMethod
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
         FileProjectManager.initialize(dir);
@@ -78,7 +80,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     }
 
     @AfterMethod
-    public void tearDown() {
+    public void tearDown() throws Exception {
         SUT = null;
         request = null;
         response = null;
@@ -87,6 +89,10 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         ImportingManager.disposeJob(job.id);
         job = null;
         // options = null;
+
+        if (mocks != null) {
+            mocks.close();
+        }
     }
 
     @Test
@@ -242,8 +248,6 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     @Parameters({ "sqliteDbName", "sqliteTestTable" })
     public void beforeTest(
             @Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName, @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable) {
-
-        MockitoAnnotations.initMocks(this);
 
         // Much of the below is ignored, but required by validation
         // in {@link DatabaseImportController#getQueryInfo}

@@ -64,9 +64,11 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
     // System under test
     private SavedConnectionCommand SUT = null;
 
+    private AutoCloseable mocks;
+
     @BeforeMethod
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
         FileProjectManager.initialize(dir);
@@ -84,7 +86,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
     }
 
     @AfterMethod
-    public void tearDown() {
+    public void tearDown() throws Exception {
         SUT = null;
         request = null;
         response = null;
@@ -93,6 +95,10 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
         // ImportingManager.disposeJob(job.id);
         // job = null;
         // options = null;
+
+        if (mocks != null) {
+            mocks.close();
+        }
     }
 
     @BeforeTest
@@ -101,7 +107,6 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
             @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
             @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable) {
 
-        // MockitoAnnotations.initMocks(this);
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(mySqlDbHost);
         testDbConfig.setDatabaseName(mySqlDbName);
