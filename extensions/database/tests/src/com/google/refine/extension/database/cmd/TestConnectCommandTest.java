@@ -40,7 +40,7 @@ public class TestConnectCommandTest extends DBExtensionTests {
     private DatabaseConfiguration testDbConfig;
     // private String testTable;
 
-    private AutoCloseable closeable;
+    private AutoCloseable mocks;
 
     @BeforeTest
     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable" })
@@ -48,7 +48,7 @@ public class TestConnectCommandTest extends DBExtensionTests {
             @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
             @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable) {
 
-        closeable = MockitoAnnotations.openMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
 
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(mySqlDbHost);
@@ -68,7 +68,9 @@ public class TestConnectCommandTest extends DBExtensionTests {
 
     @AfterTest
     public void afterTest() throws Exception {
-        closeable.close();
+        if (mocks != null) {
+            mocks.close();
+        }
     }
 
     @Test

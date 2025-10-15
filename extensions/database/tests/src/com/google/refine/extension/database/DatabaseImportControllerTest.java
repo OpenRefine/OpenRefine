@@ -58,11 +58,11 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     // System under test
     private DatabaseImportController SUT = null;
 
-    private AutoCloseable closeable;
+    private AutoCloseable mocks;
 
     @BeforeMethod
     public void setUp() throws IOException {
-        closeable = MockitoAnnotations.openMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
         FileProjectManager.initialize(dir);
@@ -90,7 +90,9 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         job = null;
         // options = null;
 
-        closeable.close();
+        if (mocks != null) {
+            mocks.close();
+        }
     }
 
     @Test
