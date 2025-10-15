@@ -210,7 +210,7 @@ public class JsonImporter extends TreeImportingParserBase {
 
         final static Logger logger = LoggerFactory.getLogger("JsonParser");
 
-        JsonFactory factory = new JsonFactory();
+        JsonFactory factory = JsonFactory.builder().enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION).build();
         JsonParser parser = null;
 
         private JsonToken current = null;

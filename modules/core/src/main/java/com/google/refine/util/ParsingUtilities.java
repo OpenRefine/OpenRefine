@@ -58,6 +58,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.StreamReadConstraints;
+import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,13 +75,14 @@ import org.apache.commons.io.IOUtils;
 
 public class ParsingUtilities {
 
-    public static JsonFactory jsonFactory = new JsonFactory();
-    static {
-        jsonFactory.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-        jsonFactory.setStreamReadConstraints(StreamReadConstraints.builder()
-                .maxStringLength(Integer.MAX_VALUE) // for https://github.com/OpenRefine/OpenRefine/issues/6680
-                .build());
-    }
+    public static JsonFactory jsonFactory = JsonFactory.builder()
+            .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+            .build()
+            .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false)
+            .setStreamReadConstraints(StreamReadConstraints.builder()
+                    .maxStringLength(Integer.MAX_VALUE) // for https://github.com/OpenRefine/OpenRefine/issues/6680
+                    .build());
+
     public static final ObjectMapper mapper = new ObjectMapper(jsonFactory);
     static {
         SimpleModule module = new SimpleModule();

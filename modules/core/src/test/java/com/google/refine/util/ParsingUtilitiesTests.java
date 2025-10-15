@@ -46,6 +46,7 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.core.JsonParser;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -156,5 +157,31 @@ public class ParsingUtilitiesTests extends RefineTest {
         expectedResult.put("param2", "value2");
 
         Assert.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testJsonFactoryIncludesSourceInLocation() throws Exception {
+        // Test that INCLUDE_SOURCE_IN_LOCATION is enabled in the jsonFactory
+        // This allows error messages to show user data instead of "REDACTED"
+        String invalidJson = "{\"test\": invalid}";
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(invalidJson.getBytes());
+
+        try {
+            JsonParser parser = ParsingUtilities.jsonFactory.createParser(inputStream);
+            // Try to parse the invalid JSON - this should throw an exception
+            while (parser.nextToken() != null) {
+                // Keep parsing
+            }
+            Assert.fail("Expected JsonParseException was not thrown");
+        } catch (Exception e) {
+            // The error message should contain source data when INCLUDE_SOURCE_IN_LOCATION is enabled
+            // When disabled, it would show "REDACTED"
+            String errorMessage = e.getMessage();
+            Assert.assertFalse(errorMessage.contains("REDACTED"),
+                    "Error message should not contain REDACTED when INCLUDE_SOURCE_IN_LOCATION is enabled");
+            // Verify that the error message contains location information
+            Assert.assertTrue(errorMessage.contains("line:") || errorMessage.contains("column:"),
+                    "Error message should contain location information (line/column)");
+        }
     }
 }
