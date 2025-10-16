@@ -327,7 +327,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     private void importArchive(String filename, String mimeType) throws IOException {
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
-        String suffix = filename.substring(filename.lastIndexOf(".") + 1);
+        String suffix = filename.substring(filename.lastIndexOf("."));
         File tmp = File.createTempFile("openrefine-test-movies", suffix, job.getRawDataDir());
         tmp.deleteOnExit();
         FileUtils.copyFile(new File(filepath), tmp);

@@ -819,15 +819,19 @@ public class ImportingUtilities {
                         }
                     } else if (ArchiveStreamFactory.SEVEN_Z.equals(format)) {
                         // SevenZFile requires a SeekableByteChannel also, but has slightly different methods
-                        SevenZFile zf = new SevenZFile.Builder().setSeekableByteChannel(fc.position(0)).get();
-                        for (SevenZArchiveEntry entry : zf.getEntries()) {
-                            if (progress.isCanceled()) {
-                                break;
-                            }
-                            if (!entry.isDirectory()) {
-                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
-                                        zf.getInputStream(entry));
-                                JSONUtilities.append(fileRecords, fileRecord2);
+                        try (SevenZFile zf = new SevenZFile.Builder().setSeekableByteChannel(fc.position(0)).get()) {
+                            for (SevenZArchiveEntry entry : zf.getEntries()) {
+                                if (progress.isCanceled()) {
+                                    break;
+                                }
+                                if (!entry.isDirectory()) {
+                                    try (InputStream entryStream = zf.getInputStream(entry)) {
+                                        ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress,
+                                                entry.getName(),
+                                                entryStream);
+                                        JSONUtilities.append(fileRecords, fileRecord2);
+                                    }
+                                }
                             }
                         }
                     } else {
