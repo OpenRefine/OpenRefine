@@ -488,7 +488,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     public void testImportCompressedFiles() throws IOException, URISyntaxException {
         final String FILENAME_BASE = "persons";
         final int LINES = 4;
-        String[] suffixes = { "", ".csv.gz", ".csv.bz2", ".csv.Z", ".csv.lzma", ".csv.xz" };
+        String[] suffixes = { "", ".csv.gz", ".csv.bz2", ".csv.Z", ".csv.lzma", ".csv.xz", ".csv.zst" };
         InputStreamReader reader = null;
         for (String suffix : suffixes) {
             String filename = FILENAME_BASE + suffix;
@@ -529,6 +529,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 { "persons.csv.lzma", true },
                 { "persons.csv.xz", true },
                 { "movies.7z", true },
+                { "persons.csv.zst", true },
                 { "unsupportedPPMD.zip", true },
         };
         for (Object[] test : cases) {
