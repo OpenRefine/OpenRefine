@@ -83,14 +83,19 @@ public class DefaultImportingController extends Command implements ImportingCont
         Map<String, String> parameters = ParsingUtilities.parseParameters(request);
         String subCommand = parameters.get("subCommand");
         if ("load-raw-data".equals(subCommand)) {
+            // TODO: We want to cap the amount of work that we do before the preview process is complete we only need
+            // enough rows to preview
             doLoadRawData(request, response, parameters);
         } else if ("update-file-selection".equals(subCommand)) {
+            // TODO: Here we need only 1) a list of file names and 2) our best guess as to their format
             doUpdateFileSelection(request, response, parameters);
         } else if ("initialize-parser-ui".equals(subCommand)) {
+            // TODO: We only need enough rows to preview here (from our selected files in the previous step)
             doInitializeParserUI(request, response, parameters);
         } else if ("update-format-and-options".equals(subCommand)) {
             doUpdateFormatAndOptions(request, response, parameters);
         } else if ("create-project".equals(subCommand)) {
+            // Here is where we finally need all the data for real
             doCreateProject(request, response, parameters);
         } else {
             respondStatusError(response, "No such sub command");
