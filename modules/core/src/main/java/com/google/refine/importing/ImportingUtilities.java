@@ -111,16 +111,15 @@ import com.google.refine.util.ParsingUtilities;
 
 public class ImportingUtilities {
 
-    public static final int BUFFER_SIZE = 128 * 1024;
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
 
     final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
 
-    static public interface Progress {
+    public interface Progress {
 
-        public void setProgress(String message, int percent);
+        void setProgress(String message, int percent);
 
-        public boolean isCanceled();
+        boolean isCanceled();
     }
 
     /**
@@ -293,7 +292,7 @@ public class ImportingUtilities {
             }
         });
 
-        List<FileItem> tempFiles = (List<FileItem>) upload.parseRequest(request);
+        List<FileItem> tempFiles = upload.parseRequest(request);
 
         progress.setProgress("Uploading data ...", -1);
         parts: for (FileItem fileItem : tempFiles) {
@@ -726,7 +725,7 @@ public class ImportingUtilities {
 
     public static boolean isCompressed(File file) throws IOException {
         // Check for common compressed file types to protect ourselves from binary data
-        try (final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));) {
+        try (final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
             byte[] magic = new byte[4];
             is.mark(100);
             int count = is.read(magic);
@@ -738,12 +737,12 @@ public class ImportingUtilities {
             }
             is.reset();
             is.mark(100);
-            try (CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream(is);) {
+            try (CompressorInputStream ignored = new CompressorStreamFactory().createCompressorInputStream(is)) {
                 return true;
             } catch (CompressorException e) {
                 // Not technically compressed, but binary formats as well (e.g. zip)
                 is.reset();
-                try (ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream(is);) {
+                try (ArchiveInputStream ignored = new ArchiveStreamFactory().createArchiveInputStream(is)) {
                     return true;
                 } catch (StreamingNotSupportedException e1) {
                     // This is a recognized archive format, but one that doesn't support streaming
@@ -779,10 +778,11 @@ public class ImportingUtilities {
         try (
                 FileInputStream fis = new FileInputStream(file);
                 FileChannel fc = fis.getChannel();
-                final BufferedInputStream is = new BufferedInputStream(fis);) {
+                final BufferedInputStream is = new BufferedInputStream(fis)) {
             is.mark(100);
             try {
                 // Use a CompressorStreamFactory configured to decompress concatenated streams
+                // FIXME: This variable looks misnamed
                 CompressorInputStream in = new CompressorStreamFactory(true).createCompressorInputStream(is);
                 try {
                     is.reset();
@@ -912,7 +912,7 @@ public class ImportingUtilities {
         try (
                 final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
                 // Use a CompressorStreamFactory configured to decompress concatenated streams
-                CompressorInputStream uncompressedIS = new CompressorStreamFactory(true).createCompressorInputStream(is);) {
+                CompressorInputStream uncompressedIS = new CompressorStreamFactory(true).createCompressorInputStream(is)) {
 
             File file2 = allocateFile(rawDataDir, fileName);
 
