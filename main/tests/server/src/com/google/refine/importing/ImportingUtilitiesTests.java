@@ -50,6 +50,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -316,6 +317,11 @@ public class ImportingUtilitiesTests extends ImporterTest {
         importArchive("movies.7z", "application/x-7z-compressed");
     }
 
+    @Test
+    public void importCompressedTarArchive() throws IOException {
+        importArchive("movies.tar.gz", "application/x-tar+gzip");
+    }
+
     /**
      * This tests both exploding a zip or 7z archive into it's constituent files as well as importing them all (both)
      * and making sure that the recording of archive names and file names works correctly.
@@ -479,7 +485,14 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, getDummyProgress()));
         assertThrows("Failed to throw for " + filename, FileUploadBase.InvalidContentTypeException.class,
                 () -> ImportingUtilities.retrieveContentFromPostRequest(request,
+                        Collections.emptyMap(), job.getRawDataDir(), fileRecord, getDummyProgress()));
+        assertThrows("Failed to throw for " + filename, IOException.class,
+                () -> ImportingUtilities.loadDataAndPrepareJob(request, response, Collections.emptyMap(), job, fileRecord));
+        // This tests a deprecated method and can be removed when it is removed
+        assertThrows("Failed to throw for " + filename, FileUploadBase.InvalidContentTypeException.class,
+                () -> ImportingUtilities.retrieveContentFromPostRequest(request,
                         new Properties(), job.getRawDataDir(), fileRecord, getDummyProgress()));
+        // This tests a deprecated method and can be removed when it is removed
         assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
     }
@@ -530,6 +543,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 { "persons.csv.xz", true },
                 { "movies.7z", true },
                 { "persons.csv.zst", true },
+                { "movies.tar.gz", true },
                 { "unsupportedPPMD.zip", true },
         };
         for (Object[] test : cases) {
