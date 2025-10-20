@@ -80,17 +80,13 @@ public class DBQueryResultPreviewReader implements TableDataReader {
     @Override
     public List<Object> getNextRowOfCells() throws IOException {
 
-        // logger.info("Entry::getNextRowOfCells");
-
         try {
-
             if (!usedHeaders) {
                 List<Object> row = new ArrayList<Object>(dbColumns.size());
                 for (DatabaseColumn cd : dbColumns) {
                     row.add(cd.getName());
                 }
                 usedHeaders = true;
-                // logger.debug("Exit::getNextRowOfCells return header::row:" + row);
                 return row;
             }
 
@@ -98,14 +94,10 @@ public class DBQueryResultPreviewReader implements TableDataReader {
                 int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
                 batchRowStart = newBatchRowStart;
-                setProgress(job, querySource, -1 /* batchRowStart * 100 / totalRows */);
-                // logger.info("getNextRowOfCells:: rowsOfCellsIsNull::rowsOfCells size:" + rowsOfCells.size() +
-                // ":batchRowStart:" + batchRowStart + " ::nextRow:" + nextRow);
+                setProgress(job, querySource, -1);
             }
 
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
-                // logger.info("Exit::getNextRowOfCells :rowsOfCellsNotNull::rowsOfCells size:" + rowsOfCells.size() +
-                // ":batchRowStart:" + batchRowStart + " ::nextRow:" + nextRow);
                 return rowsOfCells.get(nextRow++ - batchRowStart);
             } else {
                 if (logger.isDebugEnabled()) {
@@ -119,9 +111,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
             logger.error("DatabaseServiceException::preview:{}", e.getMessage());
             IOException ioEx = new IOException(e.getMessage(), e);
             throw ioEx;
-
         }
-
     }
 
     /**
@@ -132,7 +122,6 @@ public class DBQueryResultPreviewReader implements TableDataReader {
      * @throws DatabaseServiceException
      */
     private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
-        // logger.info("Entry getRowsOfCells::startRow:" + startRow);
 
         List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
 
@@ -179,15 +168,14 @@ public class DBQueryResultPreviewReader implements TableDataReader {
                     }
 
                 }
-                rowsOfCells.add(rowOfCells);
 
+                rowsOfCells.add(rowOfCells);
             }
 
         }
-        end = dbRows.size() < batchSize + 1;
-        // logger.info("Exit::getRowsOfCells::rowsOfCells:{}", rowsOfCells);
-        return rowsOfCells;
 
+        end = dbRows.size() < batchSize + 1;
+        return rowsOfCells;
     }
 
     private static void setProgress(ImportingJob job, String querySource, int percent) {

@@ -104,14 +104,12 @@ public class DBQueryResultImportReader implements TableDataReader {
     public List<Object> getNextRowOfCells() throws IOException {
 
         try {
-
             if (!usedHeaders) {
                 List<Object> row = new ArrayList<Object>(dbColumns.size());
                 for (DatabaseColumn cd : dbColumns) {
                     row.add(cd.getName());
                 }
                 usedHeaders = true;
-                // logger.info("Exit::getNextRowOfCells return header::row:" + row);
                 return row;
             }
 
@@ -120,7 +118,7 @@ public class DBQueryResultImportReader implements TableDataReader {
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
                 processedRows = processedRows + rowsOfCells.size();
                 batchRowStart = newBatchRowStart;
-                setProgress(job, buildProgressMessage(), -1 /* batchRowStart * 100 / totalRows */);
+                setProgress(job, buildProgressMessage(), -1);
             }
 
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
@@ -149,9 +147,7 @@ public class DBQueryResultImportReader implements TableDataReader {
         } catch (DatabaseServiceException e) {
             logger.error("DatabaseServiceException::{}", e);
             throw new IOException(e);
-
         }
-
     }
 
     /**
@@ -161,12 +157,10 @@ public class DBQueryResultImportReader implements TableDataReader {
      * @throws DatabaseServiceException
      */
     private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
-        // logger.info("Entry getRowsOfCells::startRow:" + startRow);
 
         List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
 
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
-        // logger.info("batchSize::" + batchSize + " startRow::" + startRow + " query::" + query );
 
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
 
@@ -208,14 +202,12 @@ public class DBQueryResultImportReader implements TableDataReader {
                 }
 
                 rowsOfCells.add(rowOfCells);
-
             }
 
         }
-        end = dbRows.size() < batchSize + 1;
-        // logger.info("Exit::getRowsOfCells::rowsOfCells:{}", rowsOfCells);
-        return rowsOfCells;
 
+        end = dbRows.size() < batchSize + 1;
+        return rowsOfCells;
     }
 
     private int calculateProgress() {
