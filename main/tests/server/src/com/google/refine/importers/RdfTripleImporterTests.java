@@ -142,7 +142,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         Project expectedProject = createProject(
                 new String[] { "subject", "http://rdf.mybase.com/ns/common.topic.alias" },
                 new Serializable[][] {
-                        { "http://rdf.mybase.com/ns/en.bob_dylan", "Robert Zimmerman@en" },
+                        { "http://rdf.mybase.com/ns/en.bob_dylan", "\"Robert Zimmerman\"@en" },
                 });
         assertProjectEquals(project, expectedProject);
     }
@@ -182,8 +182,8 @@ public class RdfTripleImporterTests extends ImporterTest {
         for (Row row : project.rows) {
             if (row.cells.size() == 3) {
                 Assert.assertEquals(row.cells.get(0).value, "http://example.org/buecher/baum");
-                Assert.assertEquals(row.cells.get(1).value, "The Tree@en");
-                Assert.assertEquals(row.cells.get(2).value, "Das Buch ist außergewöhnlich@de");
+                Assert.assertEquals(row.cells.get(1).value, "\"The Tree\"@en");
+                Assert.assertEquals(row.cells.get(2).value, "\"Das Buch ist außergewöhnlich\"@de");
             }
         }
     }
