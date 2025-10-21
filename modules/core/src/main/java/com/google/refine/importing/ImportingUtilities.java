@@ -820,20 +820,21 @@ public class ImportingUtilities {
 
     /*
      * Apache Compress docs recommend using ZipFile over ZipArchiveInputStream, which is what ArchiveStreamFactory
-     * returns so we handle it separately
+     * returns, so we handle it separately
      */
     private static void explodeZip(File rawDataDir, ObjectNode archiveFileRecord, ArrayNode fileRecords, Progress progress, FileChannel fc)
             throws IOException {
-        ZipFile zf = new ZipFile.Builder().setSeekableByteChannel(fc.position(0)).get();
-        for (Iterator<ZipArchiveEntry> it = zf.getEntries().asIterator(); it.hasNext();) {
-            ZipArchiveEntry entry = it.next();
-            if (progress.isCanceled()) {
-                break;
-            }
-            if (!entry.isDirectory()) {
-                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
-                        zf.getInputStream(entry));
-                JSONUtilities.append(fileRecords, fileRecord2);
+        try (ZipFile zf = new ZipFile.Builder().setSeekableByteChannel(fc.position(0)).get()) {
+            for (Iterator<ZipArchiveEntry> it = zf.getEntries().asIterator(); it.hasNext();) {
+                ZipArchiveEntry entry = it.next();
+                if (progress.isCanceled()) {
+                    break;
+                }
+                if (!entry.isDirectory()) {
+                    ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
+                            zf.getInputStream(entry));
+                    JSONUtilities.append(fileRecords, fileRecord2);
+                }
             }
         }
     }
