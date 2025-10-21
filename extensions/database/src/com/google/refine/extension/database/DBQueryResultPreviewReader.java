@@ -178,7 +178,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
 
         }
 
-        end = dbRows.size() < batchSize + 1;
+        end = dbRows.size() < batchSize;
         return rowsOfCells;
     }
 
