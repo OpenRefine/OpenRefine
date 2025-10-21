@@ -92,7 +92,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
             }
 
             // load new batch from db
-            if (rowsOfCells == null || (nextRow >= batchRowStart + rowsOfCells.size() && !end)) {
+            if (rowsOfCells == null || nextRow - batchRowStart >= rowsOfCells.size()) {
                 int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
                 batchRowStart = newBatchRowStart;
@@ -126,6 +126,10 @@ public class DBQueryResultPreviewReader implements TableDataReader {
      * @throws DatabaseServiceException
      */
     private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
+        // if end was already reached, do not query db again
+        if (end) {
+            return new ArrayList<>();
+        }
 
         // build query to retrieve next batch from db
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
