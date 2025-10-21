@@ -52,7 +52,7 @@ public class MySQLDatabaseService extends DatabaseService {
 
     private static final Logger logger = LoggerFactory.getLogger("MySQLDatabaseService");
     public static final String DB_NAME = "mysql";
-    public static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
+    public static final String DB_DRIVER = com.mysql.cj.jdbc.Driver.class.getCanonicalName();
 
     private static MySQLDatabaseService instance;
 
