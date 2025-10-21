@@ -74,6 +74,9 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.StreamingNotSupportedException;
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorException;
@@ -112,11 +115,11 @@ public class ImportingUtilities {
 
     final public static List<String> allowedProtocols = Arrays.asList("http", "https", "ftp", "sftp");
 
-    static public interface Progress {
+    public interface Progress {
 
-        public void setProgress(String message, int percent);
+        void setProgress(String message, int percent);
 
-        public boolean isCanceled();
+        boolean isCanceled();
     }
 
     /**
@@ -289,7 +292,7 @@ public class ImportingUtilities {
             }
         });
 
-        List<FileItem> tempFiles = (List<FileItem>) upload.parseRequest(request);
+        List<FileItem> tempFiles = upload.parseRequest(request);
 
         progress.setProgress("Uploading data ...", -1);
         parts: for (FileItem fileItem : tempFiles) {
@@ -405,24 +408,21 @@ public class ImportingUtilities {
                         }
                         downloadCount++;
                     } else {
-                        // Fallback handling for non HTTP connections (only FTP?)
+                        // Fallback handling for non-HTTP connections (only FTP?)
                         URLConnection urlConnection = url.openConnection();
                         urlConnection.setConnectTimeout(5000);
                         urlConnection.connect();
-                        InputStream stream2 = urlConnection.getInputStream();
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding",
-                                urlConnection.getContentEncoding());
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType",
-                                urlConnection.getContentType());
-                        try {
+                        try (InputStream stream2 = urlConnection.getInputStream()) {
+                            JSONUtilities.safePut(fileRecord, "declaredEncoding",
+                                    urlConnection.getContentEncoding());
+                            JSONUtilities.safePut(fileRecord, "declaredMimeType",
+                                    urlConnection.getContentType());
                             if (saveStream(stream2, url, rawDataDir, progress,
                                     update, fileRecord, fileRecords,
                                     urlConnection.getContentLength())) {
                                 archiveCount++;
                             }
                             downloadCount++;
-                        } finally {
-                            stream2.close();
                         }
                     }
                 } else {
@@ -547,7 +547,7 @@ public class ImportingUtilities {
         Path normalizedFile = file.toPath().normalize();
         // For CVE-2018-19859, issue #1840
         if (!normalizedFile.startsWith(dir.toPath().normalize() + File.separator)) {
-            throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
+            throw new IllegalArgumentException("Archives with files escaping their root directory are not allowed.");
         }
 
         Path normalizedParent = normalizedFile.getParent();
@@ -725,7 +725,7 @@ public class ImportingUtilities {
 
     public static boolean isCompressed(File file) throws IOException {
         // Check for common compressed file types to protect ourselves from binary data
-        try (final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));) {
+        try (final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
             byte[] magic = new byte[4];
             is.mark(100);
             int count = is.read(magic);
@@ -737,12 +737,15 @@ public class ImportingUtilities {
             }
             is.reset();
             is.mark(100);
-            try (CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream(is);) {
+            try (CompressorInputStream ignored = new CompressorStreamFactory().createCompressorInputStream(is)) {
                 return true;
             } catch (CompressorException e) {
                 // Not technically compressed, but binary formats as well (e.g. zip)
                 is.reset();
-                try (ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream(is);) {
+                try (ArchiveInputStream ignored = new ArchiveStreamFactory().createArchiveInputStream(is)) {
+                    return true;
+                } catch (StreamingNotSupportedException e1) {
+                    // This is a recognized archive format, but one that doesn't support streaming
                     return true;
                 } catch (ArchiveException ex) {
                     return false;
@@ -752,6 +755,7 @@ public class ImportingUtilities {
     }
 
     // FIXME: This is wasteful of space and time. We should try to process on the fly
+    // (also for preview, we don't want the user to wait while we unpack the entire thing)
     static private boolean explodeArchive(
             File rawDataDir,
             File file,
@@ -759,8 +763,6 @@ public class ImportingUtilities {
             ObjectNode archiveFileRecord,
             ArrayNode fileRecords,
             final Progress progress) throws IOException {
-
-        ArchiveInputStream archiveInputStream = null;
 
         String myMimeType = Strings.nullToEmpty(mimeType);
         String filename = file.getName();
@@ -773,15 +775,15 @@ public class ImportingUtilities {
 
         try (
                 FileInputStream fis = new FileInputStream(file);
-                FileChannel fc = fis.getChannel();
-                final BufferedInputStream is = new BufferedInputStream(fis);) {
+                final BufferedInputStream is = new BufferedInputStream(fis)) {
             is.mark(100);
-            try {
-                // Use a CompressorStreamFactory configured to decompress concatenated streams
-                CompressorInputStream in = new CompressorStreamFactory(true).createCompressorInputStream(is);
+            try ( // Use a CompressorStreamFactory configured to decompress concatenated streams
+                    BufferedInputStream in = new BufferedInputStream(new CompressorStreamFactory(true).createCompressorInputStream(is));) {
                 try {
-                    is.reset();
-                    archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(is);
+                    try (ArchiveInputStream archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(in)) {
+                        explodeArchiveFromInputStream(rawDataDir, archiveFileRecord, fileRecords, progress, archiveInputStream);
+                    }
+                    return true;
                 } catch (ArchiveException e) {
                     // Not a recognized archive type
                     return false;
@@ -796,40 +798,76 @@ public class ImportingUtilities {
                     // It's not an archive format that we recognize
                     return false;
                 }
-                try {
+                try (FileChannel fc = fis.getChannel()) {
                     if (ArchiveStreamFactory.ZIP.equals(format)) {
-                        // Apache docs recommend ZipFile over ZipArchiveInputStream, which is what the factory returns
-                        // so we handle it separately, similar to 7Zip with a SeekableByteChannel
-                        ZipFile zf = new ZipFile.Builder().setSeekableByteChannel(fc.position(0)).get();
-                        for (Iterator<ZipArchiveEntry> it = zf.getEntries().asIterator(); it.hasNext();) {
-                            ZipArchiveEntry entry = it.next();
-                            if (progress.isCanceled()) {
-                                break;
-                            }
-                            if (!entry.isDirectory()) {
-                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
-                                        zf.getInputStream(entry));
-                                JSONUtilities.append(fileRecords, fileRecord2);
-                            }
-                        }
+                        explodeZip(rawDataDir, archiveFileRecord, fileRecords, progress, fc);
+                    } else if (ArchiveStreamFactory.SEVEN_Z.equals(format)) {
+                        explode7zip(rawDataDir, archiveFileRecord, fileRecords, progress, fc);
                     } else {
+                        // Not one of our two special cases, so just go through generic archive extraction
                         is.reset();
-                        archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(is);
-                        ArchiveEntry te;
-                        while (!progress.isCanceled() && (te = archiveInputStream.getNextEntry()) != null) {
-                            if (!te.isDirectory()) {
-                                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, te.getName(),
-                                        archiveInputStream);
-                                JSONUtilities.append(fileRecords, fileRecord2);
-                            }
+                        try (ArchiveInputStream archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(is)) {
+                            explodeArchiveFromInputStream(rawDataDir, archiveFileRecord, fileRecords, progress, archiveInputStream);
                         }
                     }
+                    return true;
                 } catch (ArchiveException ex) {
-                    throw new IOException("Error expanding archive", ex);
+                    throw new IOException("Error expanding archive: " + file, ex);
                 }
             }
         }
-        return true;
+    }
+
+    /*
+     * Apache Compress docs recommend using ZipFile over ZipArchiveInputStream, which is what ArchiveStreamFactory
+     * returns, so we handle it separately
+     */
+    private static void explodeZip(File rawDataDir, ObjectNode archiveFileRecord, ArrayNode fileRecords, Progress progress, FileChannel fc)
+            throws IOException {
+        try (ZipFile zf = new ZipFile.Builder().setSeekableByteChannel(fc.position(0)).get()) {
+            for (Iterator<ZipArchiveEntry> it = zf.getEntries().asIterator(); it.hasNext();) {
+                ZipArchiveEntry entry = it.next();
+                if (progress.isCanceled()) {
+                    break;
+                }
+                if (!entry.isDirectory()) {
+                    ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, entry.getName(),
+                            zf.getInputStream(entry));
+                    JSONUtilities.append(fileRecords, fileRecord2);
+                }
+            }
+        }
+    }
+
+    // SevenZFile requires a SeekableByteChannel like ZipFile, but has slightly different methods
+    private static void explode7zip(File rawDataDir, ObjectNode archiveFileRecord, ArrayNode fileRecords, Progress progress, FileChannel fc)
+            throws IOException {
+        try (SevenZFile zf = new SevenZFile.Builder().setSeekableByteChannel(fc.position(0)).get()) {
+            for (SevenZArchiveEntry entry : zf.getEntries()) {
+                if (progress.isCanceled()) {
+                    break;
+                }
+                if (!entry.isDirectory()) {
+                    try (InputStream entryStream = zf.getInputStream(entry)) {
+                        ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress,
+                                entry.getName(), entryStream);
+                        JSONUtilities.append(fileRecords, fileRecord2);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void explodeArchiveFromInputStream(File rawDataDir, ObjectNode archiveFileRecord, ArrayNode fileRecords,
+            Progress progress, ArchiveInputStream archiveInputStream) throws IOException {
+        ArchiveEntry te;
+        while (!progress.isCanceled() && (te = archiveInputStream.getNextEntry()) != null) {
+            if (!te.isDirectory()) {
+                ObjectNode fileRecord2 = processArchiveEntry(rawDataDir, archiveFileRecord, progress, te.getName(),
+                        archiveInputStream);
+                JSONUtilities.append(fileRecords, fileRecord2);
+            }
+        }
     }
 
     private static ObjectNode processArchiveEntry(File rawDataDir, ObjectNode archiveFileRecord, Progress progress, String entryName,
@@ -890,7 +928,7 @@ public class ImportingUtilities {
         try (
                 final BufferedInputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()));
                 // Use a CompressorStreamFactory configured to decompress concatenated streams
-                CompressorInputStream uncompressedIS = new CompressorStreamFactory(true).createCompressorInputStream(is);) {
+                CompressorInputStream uncompressedIS = new CompressorStreamFactory(true).createCompressorInputStream(is)) {
 
             File file2 = allocateFile(rawDataDir, fileName);
 

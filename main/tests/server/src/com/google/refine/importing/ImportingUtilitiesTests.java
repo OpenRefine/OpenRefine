@@ -50,6 +50,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -87,7 +88,6 @@ import com.google.refine.importers.ImportingParserBase;
 import com.google.refine.importers.LineBasedFormatGuesser;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importers.TextFormatGuesser;
-import com.google.refine.importing.ImportingUtilities.Progress;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -107,9 +107,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                 "{\"projectName\":\"acme\",\"projectTags\":[],\"created\":\"2017-12-18T13:28:40.659\",\"modified\":\"2017-12-20T09:28:06.654\",\"creator\":\"\",\"contributors\":\"\",\"subject\":\"\",\"description\":\"\",\"rowCount\":50,\"customMetadata\":{}}");
         ProjectMetadata pm = ImportingUtilities.createProjectMetadata(optionObj);
-        Assert.assertEquals(pm.getName(), "acme");
-        Assert.assertEquals(pm.getEncoding(), "UTF-8");
-        Assert.assertTrue(pm.getTags().length == 0);
+        assertEquals(pm.getName(), "acme");
+        assertEquals(pm.getEncoding(), "UTF-8");
+        assertEquals(pm.getTags().length, 0);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
@@ -250,7 +250,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String message = "Unsupported protocol: file";
 
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        StringBody stringBody = new StringBody(url.toString(), ContentType.MULTIPART_FORM_DATA);
+        StringBody stringBody = new StringBody(url, ContentType.MULTIPART_FORM_DATA);
         builder = builder.addPart("download", stringBody);
         HttpEntity entity = builder.build();
 
@@ -260,7 +260,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         HttpServletRequest req = mock(HttpServletRequest.class);
         when(req.getContentType()).thenReturn(entity.getContentType());
-        when(req.getParameter("download")).thenReturn(url.toString());
+        when(req.getParameter("download")).thenReturn(url);
         when(req.getMethod()).thenReturn("POST");
         when(req.getContentLength()).thenReturn((int) entity.getContentLength());
         when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
@@ -307,21 +307,34 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     }
 
+    @Test
+    public void importZipArchive() throws IOException {
+        importArchive("movies.zip", "application/zip");
+    }
+
+    @Test
+    public void import7zArchive() throws IOException {
+        importArchive("movies.7z", "application/x-7z-compressed");
+    }
+
+    @Test
+    public void importCompressedTarArchive() throws IOException {
+        importArchive("movies.tar.gz", "application/x-tar+gzip");
+    }
+
     /**
-     * This tests both exploding a zip archive into it's constituent files as well as importing them all (both) and
-     * making sure that the recording of archive names and file names works correctly.
+     * This tests both exploding a zip or 7z archive into it's constituent files as well as importing them all (both)
+     * and making sure that the recording of archive names and file names works correctly.
      * <p>
      * It's kind of a lot to have in one test, but it's a sequence of steps that need to be done in order.
      *
      * @throws IOException
      */
-    @SuppressWarnings("unchecked")
-    @Test
-    public void importArchive() throws IOException {
-        String filename = "movies.zip";
+    private void importArchive(String filename, String mimeType) throws IOException {
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
-        File tmp = File.createTempFile("openrefine-test-movies", ".zip", job.getRawDataDir());
+        String suffix = filename.substring(filename.lastIndexOf("."));
+        File tmp = File.createTempFile("openrefine-test-movies", suffix, job.getRawDataDir());
         tmp.deleteOnExit();
         FileUtils.copyFile(new File(filepath), tmp);
 
@@ -329,14 +342,15 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(fileRecord, "origin", "upload");
         JSONUtilities.safePut(fileRecord, "declaredEncoding", "UTF-8");
-        JSONUtilities.safePut(fileRecord, "declaredMimeType", "application/zip");
+
+        JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
         JSONUtilities.safePut(fileRecord, "fileName", filename);
         JSONUtilities.safePut(fileRecord, "location", tmp.getName());
 
         assertTrue(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, getDummyProgress()));
         assertEquals(fileRecords.size(), 2);
         assertEquals(fileRecords.get(0).get("fileName").asText(), "movies-condensed.tsv");
-        assertEquals(fileRecords.get(0).get("archiveFileName").asText(), "movies.zip");
+        assertEquals(fileRecords.get(0).get("archiveFileName").asText(), filename);
         assertEquals(fileRecords.get(1).get("fileName").asText(), "movies.tsv");
 
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
@@ -358,7 +372,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         project.update();
 
         assertEquals(project.columnModel.columns.get(0).getName(), "Archive");
-        assertEquals(project.rows.get(0).getCell(0).getValue(), "movies.zip");
+        assertEquals(project.rows.get(0).getCell(0).getValue(), filename);
         assertEquals(project.columnModel.columns.get(1).getName(), "File");
         assertEquals(project.rows.get(0).getCell(1).getValue(), "movies-condensed.tsv");
         assertEquals(project.columnModel.columns.get(2).getName(), "name");
@@ -370,14 +384,14 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ArrayNode importOptionsArray = metadata.getImportOptionMetadata();
         assertEquals(importOptionsArray.size(), 2);
         ObjectNode importOptions = (ObjectNode) importOptionsArray.get(0);
-        assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
+        assertEquals(importOptions.get("archiveFileName").asText(), filename);
         assertEquals(importOptions.get("fileSource").asText(), "movies-condensed.tsv");
         assertTrue(importOptions.get("includeFileSources").asBoolean());
         assertTrue(importOptions.get("includeArchiveFileName").asBoolean());
 
         importOptions = (ObjectNode) importOptionsArray.get(1);
         assertEquals(importOptions.get("fileSource").asText(), "movies.tsv");
-        assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
+        assertEquals(importOptions.get("archiveFileName").asText(), filename);
     }
 
     /**
@@ -385,7 +399,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
      *
      * @throws IOException
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void importCompressedNonArchive() throws IOException {
         String filename = "persons.csv.gz";
@@ -472,7 +485,14 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, getDummyProgress()));
         assertThrows("Failed to throw for " + filename, FileUploadBase.InvalidContentTypeException.class,
                 () -> ImportingUtilities.retrieveContentFromPostRequest(request,
+                        Collections.emptyMap(), job.getRawDataDir(), fileRecord, getDummyProgress()));
+        assertThrows("Failed to throw for " + filename, IOException.class,
+                () -> ImportingUtilities.loadDataAndPrepareJob(request, response, Collections.emptyMap(), job, fileRecord));
+        // This tests a deprecated method and can be removed when it is removed
+        assertThrows("Failed to throw for " + filename, FileUploadBase.InvalidContentTypeException.class,
+                () -> ImportingUtilities.retrieveContentFromPostRequest(request,
                         new Properties(), job.getRawDataDir(), fileRecord, getDummyProgress()));
+        // This tests a deprecated method and can be removed when it is removed
         assertThrows("Failed to throw for " + filename, IOException.class,
                 () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
     }
@@ -481,7 +501,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     public void testImportCompressedFiles() throws IOException, URISyntaxException {
         final String FILENAME_BASE = "persons";
         final int LINES = 4;
-        String[] suffixes = { "", ".csv.gz", ".csv.bz2" };
+        String[] suffixes = { "", ".csv.gz", ".csv.bz2", ".csv.Z", ".csv.lzma", ".csv.xz", ".csv.zst" };
         InputStreamReader reader = null;
         for (String suffix : suffixes) {
             String filename = FILENAME_BASE + suffix;
@@ -491,8 +511,11 @@ public class ImportingUtilitiesTests extends ImporterTest {
             tmp.deleteOnExit();
             byte[] contents = Files.readAllBytes(filePath);
             Files.write(tmp.toPath(), contents);
-            // Write two copies of the data to test reading concatenated streams
-            Files.write(tmp.toPath(), contents, StandardOpenOption.APPEND);
+            // Write two copies of the data for compressors which support concatenated streams
+            boolean concatenationSupported = suffix.endsWith(".gz") || suffix.endsWith(".bz2") || suffix.endsWith(".xz");
+            if (concatenationSupported) {
+                Files.write(tmp.toPath(), contents, StandardOpenOption.APPEND);
+            }
 
             File uncompressedFile = ImportingUtilities.uncompressFile(job.getRawDataDir(), tmp, "", "",
                     ParsingUtilities.mapper.createObjectNode(), getDummyProgress());
@@ -501,7 +524,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
             reader = new InputStreamReader(new FileInputStream(uncompressedFile), StandardCharsets.UTF_8);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
-            Assert.assertEquals(StreamSupport.stream(records.spliterator(), false).count(), LINES * 2,
+            int linecount = concatenationSupported ? LINES * 2 : LINES;
+            assertEquals(StreamSupport.stream(records.spliterator(), false).count(), linecount,
                     "row count mismatch for " + filename);
         }
         reader.close();
@@ -514,6 +538,12 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 { "persons.csv", false },
                 { "persons.csv.gz", true },
                 { "persons.csv.bz2", true },
+                { "persons.csv.Z", true },
+                { "persons.csv.lzma", true },
+                { "persons.csv.xz", true },
+                { "movies.7z", true },
+                { "persons.csv.zst", true },
+                { "movies.tar.gz", true },
                 { "unsupportedPPMD.zip", true },
         };
         for (Object[] test : cases) {

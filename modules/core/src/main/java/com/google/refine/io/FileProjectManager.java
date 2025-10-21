@@ -173,7 +173,7 @@ public class FileProjectManager extends ProjectManager {
         TarArchiveInputStream tin = new TarArchiveInputStream(inputStream);
         TarArchiveEntry tarEntry = null;
 
-        while ((tarEntry = tin.getNextTarEntry()) != null) {
+        while ((tarEntry = tin.getNextEntry()) != null) {
             File destEntry = new File(destDir, tarEntry.getName());
             if (!destEntry.toPath().normalize().startsWith(destDir.toPath().normalize())) {
                 throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
@@ -187,11 +187,8 @@ public class FileProjectManager extends ProjectManager {
             if (tarEntry.isDirectory()) {
                 destEntry.mkdirs();
             } else {
-                FileOutputStream fout = new FileOutputStream(destEntry);
-                try {
+                try (FileOutputStream fout = new FileOutputStream(destEntry)) {
                     tin.transferTo(fout);
-                } finally {
-                    fout.close();
                 }
             }
         }
