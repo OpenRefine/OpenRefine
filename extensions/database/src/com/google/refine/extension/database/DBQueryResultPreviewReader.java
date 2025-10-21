@@ -81,6 +81,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
     public List<Object> getNextRowOfCells() throws IOException {
 
         try {
+            // on first call get column names for header
             if (!usedHeaders) {
                 List<Object> row = new ArrayList<Object>(dbColumns.size());
                 for (DatabaseColumn cd : dbColumns) {
@@ -90,6 +91,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
                 return row;
             }
 
+            // load new batch from db
             if (rowsOfCells == null || (nextRow >= batchRowStart + rowsOfCells.size() && !end)) {
                 int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
@@ -97,6 +99,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
                 setProgress(job, querySource, -1);
             }
 
+            // return next row
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
                 return rowsOfCells.get(nextRow++ - batchRowStart);
             } else {
@@ -108,6 +111,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
             }
 
         } catch (DatabaseServiceException e) {
+            // rethrow exception as IOException
             logger.error("DatabaseServiceException::preview:{}", e.getMessage());
             IOException ioEx = new IOException(e.getMessage(), e);
             throw ioEx;

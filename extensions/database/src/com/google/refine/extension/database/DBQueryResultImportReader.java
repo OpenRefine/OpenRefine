@@ -104,6 +104,7 @@ public class DBQueryResultImportReader implements TableDataReader {
     public List<Object> getNextRowOfCells() throws IOException {
 
         try {
+            // on first call get column names for header
             if (!usedHeaders) {
                 List<Object> row = new ArrayList<Object>(dbColumns.size());
                 for (DatabaseColumn cd : dbColumns) {
@@ -113,6 +114,7 @@ public class DBQueryResultImportReader implements TableDataReader {
                 return row;
             }
 
+            // load new batch from db
             if (rowsOfCells == null || (nextRow >= batchRowStart + rowsOfCells.size() && !end)) {
                 int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
@@ -121,8 +123,11 @@ public class DBQueryResultImportReader implements TableDataReader {
                 setProgress(job, buildProgressMessage(), -1);
             }
 
+            // return next row
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
                 List<Object> result = rowsOfCells.get(nextRow++ - batchRowStart);
+
+                // pre-load next batch before returning last row of current batch
                 if (nextRow >= batchSize) {
                     rowsOfCells = getRowsOfCells(processedRows);
                     processedRows = processedRows + rowsOfCells.size();
@@ -145,6 +150,7 @@ public class DBQueryResultImportReader implements TableDataReader {
             }
 
         } catch (DatabaseServiceException e) {
+            // rethrow exception as IOException
             logger.error("DatabaseServiceException::{}", e);
             throw new IOException(e);
         }
