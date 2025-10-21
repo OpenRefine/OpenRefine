@@ -53,7 +53,7 @@ public class MariaDBDatabaseService extends DatabaseService {
 
     private static final Logger logger = LoggerFactory.getLogger("MariaDBDatabaseService");
     public static final String DB_NAME = "mariadb";
-    public static final String DB_DRIVER = "org.mariadb.jdbc.Driver";
+    public static final String DB_DRIVER = org.mariadb.jdbc.Driver.class.getCanonicalName();
     private static MariaDBDatabaseService instance;
 
     private MariaDBDatabaseService() {
