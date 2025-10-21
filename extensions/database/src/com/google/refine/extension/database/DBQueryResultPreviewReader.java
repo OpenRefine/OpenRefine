@@ -127,55 +127,57 @@ public class DBQueryResultPreviewReader implements TableDataReader {
      */
     private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
 
-        List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
-
+        // build query to retrieve next batch from db
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
         if (logger.isDebugEnabled()) {
             logger.debug("batchSize::" + batchSize + " startRow::" + startRow + " query::" + query);
         }
 
+        // retrieve next batch from db
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
+        if (dbRows == null || dbRows.isEmpty()) {
+            end = true;
+            return new ArrayList<>();
+        }
 
-        if (dbRows != null && !dbRows.isEmpty() && dbRows.size() > 0) {
+        // parse db rows
+        List<List<Object>> rowsOfCells = new ArrayList<>(dbRows.size());
+        for (DatabaseRow dbRow : dbRows) {
+            List<String> row = dbRow.getValues();
+            List<Object> rowOfCells = new ArrayList<>(row.size());
 
-            for (DatabaseRow dbRow : dbRows) {
-                List<String> row = dbRow.getValues();
-                List<Object> rowOfCells = new ArrayList<Object>(row.size());
+            for (int j = 0; j < row.size() && j < dbColumns.size(); j++) {
 
-                for (int j = 0; j < row.size() && j < dbColumns.size(); j++) {
-
-                    String text = row.get(j);
-                    if (text == null || text.isEmpty()) {
-                        rowOfCells.add(null);
-                    } else {
-                        DatabaseColumn col = dbColumns.get(j);
-                        if (col.getType() == DatabaseColumnType.NUMBER) {
-                            try {
-                                rowOfCells.add(Long.parseLong(text));
-                                continue;
-                            } catch (NumberFormatException e) {
-                            }
-
-                        } else if (col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT) {
-                            try {
-                                double d = Double.parseDouble(text);
-                                if (!Double.isInfinite(d) && !Double.isNaN(d)) {
-                                    rowOfCells.add(d);
-                                    continue;
-                                }
-                            } catch (NumberFormatException e) {
-                            }
-
+                String text = row.get(j);
+                if (text == null || text.isEmpty()) {
+                    rowOfCells.add(null);
+                } else {
+                    DatabaseColumn col = dbColumns.get(j);
+                    if (col.getType() == DatabaseColumnType.NUMBER) {
+                        try {
+                            rowOfCells.add(Long.parseLong(text));
+                            continue;
+                        } catch (NumberFormatException e) {
                         }
 
-                        rowOfCells.add(text);
+                    } else if (col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT) {
+                        try {
+                            double d = Double.parseDouble(text);
+                            if (!Double.isInfinite(d) && !Double.isNaN(d)) {
+                                rowOfCells.add(d);
+                                continue;
+                            }
+                        } catch (NumberFormatException e) {
+                        }
+
                     }
 
+                    rowOfCells.add(text);
                 }
 
-                rowsOfCells.add(rowOfCells);
             }
 
+            rowsOfCells.add(rowOfCells);
         }
 
         end = dbRows.size() < batchSize;
