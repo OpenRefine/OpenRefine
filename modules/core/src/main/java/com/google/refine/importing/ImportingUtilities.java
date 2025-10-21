@@ -806,8 +806,9 @@ public class ImportingUtilities {
                     } else {
                         // Not one of our two special cases, so just go through generic archive extraction
                         is.reset();
-                        ArchiveInputStream archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(is);
-                        explodeArchiveFromInputStream(rawDataDir, archiveFileRecord, fileRecords, progress, archiveInputStream);
+                        try (ArchiveInputStream archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(is)) {
+                            explodeArchiveFromInputStream(rawDataDir, archiveFileRecord, fileRecords, progress, archiveInputStream);
+                        }
                     }
                     return true;
                 } catch (ArchiveException ex) {
@@ -866,7 +867,6 @@ public class ImportingUtilities {
                 JSONUtilities.append(fileRecords, fileRecord2);
             }
         }
-        archiveInputStream.close();
     }
 
     private static ObjectNode processArchiveEntry(File rawDataDir, ObjectNode archiveFileRecord, Progress progress, String entryName,
