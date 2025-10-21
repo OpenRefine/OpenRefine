@@ -53,7 +53,7 @@ public class PgSQLDatabaseService extends DatabaseService {
 
     private static final Logger logger = LoggerFactory.getLogger("PgSQLDatabaseService");
     public static final String DB_NAME = "postgresql";
-    public static final String DB_DRIVER = "org.postgresql.Driver";
+    public static final String DB_DRIVER = org.postgresql.Driver.class.getCanonicalName();
     private static PgSQLDatabaseService instance;
 
     private PgSQLDatabaseService() {
