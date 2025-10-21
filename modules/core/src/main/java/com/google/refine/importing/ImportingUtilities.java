@@ -777,12 +777,12 @@ public class ImportingUtilities {
                 FileInputStream fis = new FileInputStream(file);
                 final BufferedInputStream is = new BufferedInputStream(fis)) {
             is.mark(100);
-            try {
-                // Use a CompressorStreamFactory configured to decompress concatenated streams
-                BufferedInputStream in = new BufferedInputStream(new CompressorStreamFactory(true).createCompressorInputStream(is));
+            try ( // Use a CompressorStreamFactory configured to decompress concatenated streams
+                    BufferedInputStream in = new BufferedInputStream(new CompressorStreamFactory(true).createCompressorInputStream(is));) {
                 try {
-                    ArchiveInputStream archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(in);
-                    explodeArchiveFromInputStream(rawDataDir, archiveFileRecord, fileRecords, progress, archiveInputStream);
+                    try (ArchiveInputStream archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(in)) {
+                        explodeArchiveFromInputStream(rawDataDir, archiveFileRecord, fileRecords, progress, archiveInputStream);
+                    }
                     return true;
                 } catch (ArchiveException e) {
                     // Not a recognized archive type
