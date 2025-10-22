@@ -56,7 +56,7 @@ describe(__filename, function () {
     
     const projectFile = 'cypress/fixtures/food-small-csv.openrefine.tar.zip';
     cy.get('#project-upload-form input#project-tar-file-input').selectFile(
-      projectFile
+      projectFile, {force: true}
     );
     cy.get('#project-tar-file-delete').click({force: true});
 
