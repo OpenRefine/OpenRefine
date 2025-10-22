@@ -8,7 +8,7 @@ describe('Add column with URLs of matched entities', () => {
     cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
     
     // we're using here the reconciled and matched project, so rows are reconciled and matched to their best candidate
-    cy.get('#project-tar-file-input').attachFile('openrefine-demo-sandbox-csv.openrefine.tar.gz.zip')
+    cy.get('#project-tar-file-input').selectFile('cypress/fixtures/openrefine-demo-sandbox-csv.openrefine.tar.gz.zip')
     cy.get('#import-project-button').click();
     cy.getCell(0, 'Item').should('to.contain', 'Choose new match');
     cy.columnActionClick('Item', [

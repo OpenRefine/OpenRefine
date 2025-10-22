@@ -8,8 +8,6 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-import 'cypress-file-upload';
-
 /**
  * Check that a column is reconciled
  */
@@ -73,10 +71,9 @@ Cypress.Commands.add('visitOpenRefine', (options) => {
 Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
   cy.navigateTo('Create project');
 
-  const uploadFile = { filePath: fixtureFile, mimeType: 'application/csv' };
   cy.get(
     '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
-  ).attachFile(uploadFile);
+  ).selectFile(fixtureFile);
   cy.get(
     '.create-project-ui-source-selection-tab-body.selected button.button-primary'
   ).click();

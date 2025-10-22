@@ -9,7 +9,7 @@ describe('Match each cell to its best candidate', () => {
         cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
 
         //we're using here the "no automatch" project, so rows are reconciled, but nothing has been matched yet
-        cy.get('#project-tar-file-input').attachFile('reconciled-project-no-automatch.zip')
+        cy.get('#project-tar-file-input').selectFile('cypress/fixtures/reconciled-project-no-automatch.zip')
         cy.get('#import-project-button').click();
 
         // before matching, ensure we have no matches, and candidates

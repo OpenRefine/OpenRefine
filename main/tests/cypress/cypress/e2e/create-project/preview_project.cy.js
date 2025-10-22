@@ -3,7 +3,7 @@
  */
 function navigateToProjectPreview() {
   cy.visitOpenRefine();
-  cy.createProjectThroughUserInterface('food.mini.csv');
+  cy.createProjectThroughUserInterface('cypress/fixtures/food.mini.csv');
   cy.get('.create-project-ui-panel').contains('Configure parsing options');
   cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
   cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
@@ -14,7 +14,7 @@ function navigateToProjectPreview() {
 describe(__filename, function () {
   it('Tests Parsing Options related to column separation', function () {
     cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food.mini.csv');
+    cy.createProjectThroughUserInterface('cypress/fixtures/food.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     // Since the quotes in our input file aren't escaped, they aren't legal for any separator except comma(,)
@@ -56,7 +56,7 @@ describe(__filename, function () {
   });
   it('Ensures navigation works from project-preview page', function () {
     cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food.mini.csv');
+    cy.createProjectThroughUserInterface('cypress/fixtures/food.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     cy.navigateTo('Language settings');
@@ -78,7 +78,7 @@ describe(__filename, function () {
 
   it('Ensures the working of Start-Over Button', function () {
     cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food.mini.csv');
+    cy.createProjectThroughUserInterface('cypress/fixtures/food.mini.csv');
     cy.get('.create-project-ui-panel').should(
       'to.contain',
       'Configure parsing options'
@@ -97,7 +97,7 @@ describe(__filename, function () {
 
   it('Tests ignore-first of parsing options', function () {
     cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food.mini.csv');
+    cy.createProjectThroughUserInterface('cypress/fixtures/food.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
@@ -200,7 +200,7 @@ describe(__filename, function () {
 
   it('Tests save blank columns of parsing options', function () {
     cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food-blank-column.mini.csv');
+    cy.createProjectThroughUserInterface('cypress/fixtures/food-blank-column.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
     
     cy.get('table.data-table > tbody > tr:nth-child(1) > td:nth-child(1)').should('to.contain', '1.');

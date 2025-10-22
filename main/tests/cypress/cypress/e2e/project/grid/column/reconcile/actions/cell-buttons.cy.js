@@ -9,7 +9,7 @@ describe('In-cell reconciliation buttons', () => {
         cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
 
         //we're using here the "no automatch" project, so rows are reconciled and we have more than 3 matched candidates
-        cy.get('#project-tar-file-input').attachFile('reconciled-project-no-match.zip')
+        cy.get('#project-tar-file-input').selectFile('cypress/fixtures/reconciled-project-no-match.zip')
         cy.get('#import-project-button').click();
 
         cy.getCell(0, 'entity').find('.data-table-recon-visibility').should('not.contain', 'See more');
@@ -22,7 +22,7 @@ describe('In-cell reconciliation buttons', () => {
         cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
 
         //we're using here the "no automatch" project, so rows are reconciled and we have more than 3 matched candidates
-        cy.get('#project-tar-file-input').attachFile('reconciled-project-no-automatch.zip')
+        cy.get('#project-tar-file-input').selectFile('cypress/fixtures/reconciled-project-no-automatch.zip')
         cy.get('#import-project-button').click();
 
         //confirming that we have see more options
@@ -56,7 +56,7 @@ describe('In-cell reconciliation buttons', () => {
         cy.visitOpenRefine();
         cy.navigateTo('Import project');
         cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
-        cy.get('#project-tar-file-input').attachFile('reconciled-project-no-automatch.zip')
+        cy.get('#project-tar-file-input').selectFile('cypress/fixtures/reconciled-project-no-automatch.zip')
         cy.get('#import-project-button').click();
 
         // Set a smaller page number to make sure there are multiple pages
