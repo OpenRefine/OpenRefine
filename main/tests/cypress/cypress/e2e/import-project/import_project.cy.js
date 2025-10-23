@@ -13,12 +13,8 @@ describe(__filename, function () {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
     // make sure the dataset was loaded properly
-    const projectFile = {
-      filePath: 'food-small-csv.openrefine.tar.zip',
-      mimeType: 'application/gzip',
-    };
-    cy.get('#project-upload-form input#project-tar-file-input').attachFile(
-      projectFile
+    cy.get('#project-upload-form input#project-tar-file-input').selectFile(
+      'cypress/fixtures/food-small-csv.openrefine.tar.zip'
     );
     cy.get('#project-upload-form').submit();
 
@@ -31,12 +27,8 @@ describe(__filename, function () {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
     // make sure the dataset was loaded properly
-    const projectFile = {
-      filePath: 'food-small-csv.openrefine.tar.zip',
-      mimeType: 'application/gzip',
-    };
-    cy.get('#project-upload-form input#project-tar-file-input').attachFile(
-      projectFile
+    cy.get('#project-upload-form input#project-tar-file-input').selectFile(
+      'cypress/fixtures/food-small-csv.openrefine.tar.zip'
     );
 
     // rename
@@ -62,16 +54,13 @@ describe(__filename, function () {
   it('Delete a file', function () {
     cy.visitOpenRefine();
     
-    const projectFile = {
-      filePath: 'food-small-csv.openrefine.tar.zip',
-      mimeType: 'application/gzip',
-    };
-    cy.get('#project-upload-form input#project-tar-file-input').attachFile(
-      projectFile
+    const projectFile = 'cypress/fixtures/food-small-csv.openrefine.tar.zip';
+    cy.get('#project-upload-form input#project-tar-file-input').selectFile(
+      projectFile, {force: true}
     );
     cy.get('#project-tar-file-delete').click({force: true});
 
     // Verify the project has been deleted
-    cy.get('#project-tar-file-input').should('not.contain', projectFile.filePath);
+    cy.get('#project-tar-file-input').should('not.contain', projectFile);
   });
 });

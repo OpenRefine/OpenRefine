@@ -21,7 +21,7 @@ describe('Export to QuickStatements', () => {
     cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
     
     // load a project with a predefined schema
-    cy.get('#project-tar-file-input').attachFile('wikidata-schema.tar.gz.zip')
+    cy.get('#project-tar-file-input').selectFile('cypress/fixtures/wikidata-schema.tar.gz.zip')
     cy.get('#import-project-button').click();
 
     cy.getCell(0, 'item').should('to.contain', 'Choose new match');

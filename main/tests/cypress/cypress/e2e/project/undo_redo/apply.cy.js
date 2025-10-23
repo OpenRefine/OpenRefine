@@ -15,8 +15,7 @@ describe(__filename, function () {
       .click();
       
     // JSON for operations that will be applied
-    const recipeFile = { filePath: 'recipe.json', mimeType: 'application/json' };
-    cy.get('#file-input[type="file"]').attachFile(recipeFile);
+    cy.get('#file-input[type="file"]').selectFile('cypress/fixtures/recipe.json');
     
     cy.get('.dialog-container button[bind="applyButton"]').click();
 
@@ -63,8 +62,7 @@ describe(__filename, function () {
       .click();
       
     // JSON for operations that will be applied
-    const recipeFile = { filePath: 'recipe_without_column_reference.json', mimeType: 'application/json' };
-    cy.get('#file-input[type="file"]').attachFile(recipeFile);
+    cy.get('#file-input[type="file"]').selectFile('cypress/fixtures/recipe_without_column_reference.json');
     
     cy.get('.dialog-container button[bind="applyButton"]').click();
 

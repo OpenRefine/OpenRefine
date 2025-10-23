@@ -13,13 +13,9 @@ describe(__filename, function () {
       'Locate one or more files on your computer to upload'
     );
     // add file
-    const csvFile = {
-      filePath: 'food.mini.csv',
-      mimeType: 'application/csv',
-    };
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
-    ).attachFile(csvFile);
+    ).selectFile('cypress/fixtures/food.mini.csv');
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     )
@@ -48,13 +44,9 @@ describe(__filename, function () {
       'Locate one or more files on your computer to upload'
     );
     // add file
-    const tsvFile = {
-      filePath: 'shop.mini.tsv',
-      mimeType: 'text/tab-separated-values',
-    };
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
-    ).attachFile(tsvFile);
+    ).selectFile('cypress/fixtures/shop.mini.tsv');
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     )
@@ -144,7 +136,7 @@ describe(__filename, function () {
 
   it('Test project renaming', function () {
     cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food.mini.csv');
+    cy.createProjectThroughUserInterface('cypress/fixtures/food.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
     cy.get(
         '.default-importing-wizard-header input[bind="projectNameInput"]'
@@ -161,7 +153,7 @@ describe(__filename, function () {
   
   it('Test project tagging by adding various tags', function () {
     cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food.mini.csv');
+    cy.createProjectThroughUserInterface('cypress/fixtures/food.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
     const uniqueProjectName = Date.now();
     const uniqueTagName1 = 'tag1_' + Date.now();
@@ -270,13 +262,9 @@ describe(__filename, function () {
       'Locate one or more files on your computer to upload'
     );
     // add file
-    const xmlFile = {
-      filePath: 'AAT-with-xsi.xml',
-      mimeType: 'text/xml',
-    };
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
-    ).attachFile(xmlFile);
+    ).selectFile('cypress/fixtures/AAT-with-xsi.xml');
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     )
@@ -331,13 +319,9 @@ describe(__filename, function () {
       'Locate one or more files on your computer to upload'
     );
     // add file
-    const xmlFile = {
-      filePath: 'AAT.xml',
-      mimeType: 'text/xml',
-    };
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
-    ).attachFile(xmlFile);
+    ).selectFile('cypress/fixtures/AAT.xml');
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     )

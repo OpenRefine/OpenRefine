@@ -18,13 +18,9 @@ describe(__filename, function () {
       'Locate one or more files on your computer to upload'
     );
     // add file
-    const csvFile = {
-      filePath: 'doaj-article-sample.csv',
-      mimeType: 'application/csv',
-    };
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
-    ).attachFile(csvFile);
+    ).selectFile('cypress/fixtures/doaj-article-sample.csv');
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     )
