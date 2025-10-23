@@ -32,6 +32,7 @@ package com.google.refine.extension.database;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,10 +95,8 @@ public class DBQueryResultImportReader implements TableDataReader {
         this.dbColumns = columns;
         this.databaseService = databaseService;
         this.dbQueryInfo = dbQueryInfo;
-        if (logger.isDebugEnabled()) {
-            logger.debug("batchSize:" + batchSize);
-            logger.debug("count: " + count);
-        }
+
+        logger.debug("Init with batchSize:{} and count:{}", batchSize, count);
     }
 
     @Override
@@ -111,6 +110,7 @@ public class DBQueryResultImportReader implements TableDataReader {
                     row.add(cd.getName());
                 }
                 usedHeaders = true;
+                logger.debug("Return header on first call: {}", row.stream().map(Object::toString).collect(Collectors.joining(",")));
                 return row;
             }
 
@@ -118,6 +118,7 @@ public class DBQueryResultImportReader implements TableDataReader {
             if (rowsOfCells == null || (nextRow >= batchRowStart + rowsOfCells.size() && !end)) {
                 int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
+                logger.debug("Retrieved next {} rows from db.", rowsOfCells.size());
                 processedRows = processedRows + rowsOfCells.size();
                 batchRowStart = newBatchRowStart;
                 setProgress(job, buildProgressMessage(), -1);
@@ -127,15 +128,13 @@ public class DBQueryResultImportReader implements TableDataReader {
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
                 List<Object> result = rowsOfCells.get(nextRow++ - batchRowStart);
 
-                // pre-load next batch before returning last row of current batch
+                // preload next batch before returning last row of current batch
                 if (nextRow >= batchSize) {
                     rowsOfCells = getRowsOfCells(processedRows);
+                    logger.debug("Preloaded next {} rows from db.", rowsOfCells.size());
                     processedRows = processedRows + rowsOfCells.size();
 
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("[[ Returning last row in batch:nextRow::{}, processedRows:{} ]]", nextRow, processedRows);
-                    }
-
+                    logger.debug("[[ Returning last row in batch:nextRow::{}, processedRows:{} ]]", nextRow, processedRows);
                     nextRow = 0;
                 }
 
@@ -143,9 +142,7 @@ public class DBQueryResultImportReader implements TableDataReader {
                 setProgress(job, buildProgressMessage(), calculateProgress());
                 return result;
             } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("[[processedRows:{} ]]", processedRows);
-                }
+                logger.debug("Reached end of table at {} rows.", currentCount);
                 return null;
             }
 
@@ -163,10 +160,12 @@ public class DBQueryResultImportReader implements TableDataReader {
      * @throws DatabaseServiceException
      */
     private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
+        logger.debug("Query db for next batch: [{},{}]", startRow + 1, startRow + batchSize);
 
         List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
 
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
+        logger.debug("batchSize::{} startRow::{} query::{}", batchSize, startRow, query);
 
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
 

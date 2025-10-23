@@ -31,7 +31,9 @@ package com.google.refine.extension.database;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +75,8 @@ public class DBQueryResultPreviewReader implements TableDataReader {
         this.dbColumns = columns;
         this.databaseService = databaseService;
         this.dbQueryInfo = dbQueryInfo;
-        logger.debug("DBQueryResultPreviewReader::batchSize:" + batchSize);
 
+        logger.debug("Init with batchSize:{}", batchSize);
     }
 
     @Override
@@ -88,6 +90,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
                     row.add(cd.getName());
                 }
                 usedHeaders = true;
+                logger.debug("Return header on first call: {}", row.stream().map(Object::toString).collect(Collectors.joining(",")));
                 return row;
             }
 
@@ -95,6 +98,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
             if (rowsOfCells == null || nextRow - batchRowStart >= rowsOfCells.size()) {
                 int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
+                logger.debug("Retrieved next {} rows from db.", rowsOfCells.size());
                 batchRowStart = newBatchRowStart;
                 setProgress(job, querySource, -1);
             }
@@ -103,10 +107,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
                 return rowsOfCells.get(nextRow++ - batchRowStart);
             } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("nextRow:{}, batchRowStart:{}", nextRow, batchRowStart);
-                }
-
+                logger.debug("Reached end of table at {} rows.", nextRow);
                 return null;
             }
 
@@ -126,16 +127,17 @@ public class DBQueryResultPreviewReader implements TableDataReader {
      * @throws DatabaseServiceException
      */
     private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
+        logger.debug("Query db for next batch: [{},{}]", startRow + 1, startRow + batchSize);
+
         // if end was already reached, do not query db again
         if (end) {
-            return new ArrayList<>();
+            logger.debug("No more batches to query, reached end of table.");
+            return Collections.emptyList();
         }
 
         // build query to retrieve next batch from db
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
-        if (logger.isDebugEnabled()) {
-            logger.debug("batchSize::" + batchSize + " startRow::" + startRow + " query::" + query);
-        }
+        logger.debug("batchSize::{} startRow::{} query::{}", batchSize, startRow, query);
 
         // retrieve next batch from db
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
