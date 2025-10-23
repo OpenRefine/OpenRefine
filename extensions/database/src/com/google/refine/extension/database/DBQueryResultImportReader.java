@@ -31,6 +31,7 @@ package com.google.refine.extension.database;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -115,7 +116,7 @@ public class DBQueryResultImportReader implements TableDataReader {
             }
 
             // load new batch from db
-            if (rowsOfCells == null || (nextRow >= batchRowStart + rowsOfCells.size() && !end)) {
+            if (rowsOfCells == null || nextRow - batchRowStart >= rowsOfCells.size()) {
                 int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
                 logger.debug("Retrieved next {} rows from db.", rowsOfCells.size());
@@ -162,56 +163,64 @@ public class DBQueryResultImportReader implements TableDataReader {
     private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
         logger.debug("Query db for next batch: [{},{}]", startRow + 1, startRow + batchSize);
 
-        List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
+        // if end was already reached, do not query db again
+        if (end) {
+            logger.debug("No more batches to query, reached end of table.");
+            return Collections.emptyList();
+        }
 
+        // build query to retrieve next batch from db
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
         logger.debug("batchSize::{} startRow::{} query::{}", batchSize, startRow, query);
 
+        // retrieve next batch from db
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
-
-        if (dbRows != null && !dbRows.isEmpty() && dbRows.size() > 0) {
-
-            for (DatabaseRow dbRow : dbRows) {
-                List<String> row = dbRow.getValues();
-                List<Object> rowOfCells = new ArrayList<Object>(row.size());
-
-                for (int j = 0; j < row.size() && j < dbColumns.size(); j++) {
-
-                    String text = row.get(j);
-                    if (text == null || text.isEmpty()) {
-                        rowOfCells.add(null);
-                    } else {
-                        DatabaseColumn col = dbColumns.get(j);
-                        if (col.getType() == DatabaseColumnType.NUMBER) {
-                            try {
-                                rowOfCells.add(Long.parseLong(text));
-                                continue;
-                            } catch (NumberFormatException e) {
-                            }
-
-                        } else if (col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT) {
-                            try {
-                                double d = Double.parseDouble(text);
-                                if (!Double.isInfinite(d) && !Double.isNaN(d)) {
-                                    rowOfCells.add(d);
-                                    continue;
-                                }
-                            } catch (NumberFormatException e) {
-                            }
-
-                        }
-
-                        rowOfCells.add(text);
-                    }
-
-                }
-
-                rowsOfCells.add(rowOfCells);
-            }
-
+        if (dbRows == null || dbRows.isEmpty()) {
+            end = true;
+            return new ArrayList<>();
         }
 
-        end = dbRows.size() < batchSize + 1;
+        // parse db rows
+        List<List<Object>> rowsOfCells = new ArrayList<>(dbRows.size());
+        for (DatabaseRow dbRow : dbRows) {
+            List<String> row = dbRow.getValues();
+            List<Object> rowOfCells = new ArrayList<>(row.size());
+
+            for (int j = 0; j < row.size() && j < dbColumns.size(); j++) {
+
+                String text = row.get(j);
+                if (text == null || text.isEmpty()) {
+                    rowOfCells.add(null);
+                } else {
+                    DatabaseColumn col = dbColumns.get(j);
+                    if (col.getType() == DatabaseColumnType.NUMBER) {
+                        try {
+                            rowOfCells.add(Long.parseLong(text));
+                            continue;
+                        } catch (NumberFormatException e) {
+                        }
+
+                    } else if (col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT) {
+                        try {
+                            double d = Double.parseDouble(text);
+                            if (!Double.isInfinite(d) && !Double.isNaN(d)) {
+                                rowOfCells.add(d);
+                                continue;
+                            }
+                        } catch (NumberFormatException e) {
+                        }
+
+                    }
+
+                    rowOfCells.add(text);
+                }
+
+            }
+
+            rowsOfCells.add(rowOfCells);
+        }
+
+        end = dbRows.size() < batchSize;
         return rowsOfCells;
     }
 
