@@ -60,9 +60,7 @@ public class DBQueryResultImportReader implements TableDataReader {
     private boolean usedHeaders = false;
     private DatabaseService databaseService;
     private DatabaseQueryInfo dbQueryInfo;
-    private int processedRows = 0;
     private final Integer totalCount;
-    private int currentCount = 0;
     private final boolean useTotalForProgress;
 
     /**
@@ -112,6 +110,7 @@ public class DBQueryResultImportReader implements TableDataReader {
                 }
                 usedHeaders = true;
                 logger.debug("Return header on first call: {}", row.stream().map(Object::toString).collect(Collectors.joining(",")));
+                setProgress(job, buildProgressMessage(), -1);
                 return row;
             }
 
@@ -120,19 +119,16 @@ public class DBQueryResultImportReader implements TableDataReader {
                 int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
                 logger.debug("Retrieved next {} rows from db.", rowsOfCells.size());
-                processedRows = processedRows + rowsOfCells.size();
                 batchRowStart = newBatchRowStart;
-                setProgress(job, buildProgressMessage(), -1);
             }
 
             // return next row
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
                 List<Object> result = rowsOfCells.get(nextRow++ - batchRowStart);
-                currentCount++;
                 setProgress(job, buildProgressMessage(), calculateProgress());
                 return result;
             } else {
-                logger.debug("Reached end of table at {} rows.", currentCount);
+                logger.debug("Reached end of table at {} rows.", nextRow);
                 return null;
             }
 
@@ -215,12 +211,12 @@ public class DBQueryResultImportReader implements TableDataReader {
 
     private int calculateProgress() {
         // only use `totalCount` if it is available; otherwise progress can not be tracked
-        return useTotalForProgress ? (int) (((double) currentCount / totalCount) * 100) : -1;
+        return useTotalForProgress ? (int) (((double) nextRow / totalCount) * 100) : -1;
     }
 
     private String buildProgressMessage() {
         String totalFormatted = useTotalForProgress ? totalCount.toString() : "?";
-        return "Reading " + querySource + " (" + currentCount + " / " + totalFormatted + ")";
+        return "Reading " + querySource + " (" + nextRow + " / " + totalFormatted + ")";
     }
 
     private static void setProgress(ImportingJob job, String message, int percent) {
