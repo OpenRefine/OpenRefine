@@ -128,17 +128,6 @@ public class DBQueryResultImportReader implements TableDataReader {
             // return next row
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
                 List<Object> result = rowsOfCells.get(nextRow++ - batchRowStart);
-
-                // preload next batch before returning last row of current batch
-                if (nextRow >= batchSize) {
-                    rowsOfCells = getRowsOfCells(processedRows);
-                    logger.debug("Preloaded next {} rows from db.", rowsOfCells.size());
-                    processedRows = processedRows + rowsOfCells.size();
-
-                    logger.debug("[[ Returning last row in batch:nextRow::{}, processedRows:{} ]]", nextRow, processedRows);
-                    nextRow = 0;
-                }
-
                 currentCount++;
                 setProgress(job, buildProgressMessage(), calculateProgress());
                 return result;
