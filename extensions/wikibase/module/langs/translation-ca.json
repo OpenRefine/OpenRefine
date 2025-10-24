@@ -303,7 +303,7 @@
     "warnings-messages/file-names-already-exist-on-wiki/title": "Conflicte de noms entre fitxers nous i existents al wiki",
     "warnings-messages/invalid-characters-in-file-name/body": "Noms de fitxer com <span class=\"wb-issue-preformat\">{example_filename}</span> contenen el caràcter <span class=\"wb-issue-preformat\">{invalid_character}</span> que no pot formar part dels noms de fitxer en un wiki.",
     "warnings-messages/file-name-too-long/body": "Els noms de fitxer no poden tenir més de {max_length} caràcters. Alguns noms de fitxer en aquest lot són massa llargs, com <span class=\"wb-issue-preformat\">{example_filename}</span>.",
-    "warnings-messages/missing-file-name-extension/body": "Els noms de fitxer proporcionats per als fitxers a pujar han d'acabar amb una extensió de fitxer, que no és el cas dels noms de fitxer com <span class=\"wb-issue-preformat\">{example_filename}.",
+    "warnings-messages/missing-file-name-extension/body": "Els noms de fitxer proporcionats per als fitxers a pujar han d'acabar amb una extensió de fitxer, que no és el cas dels noms de fitxer com <span class=\"wb-issue-preformat\">{example_filename}</span>.",
     "warnings-messages/replaced-characters-in-filename/title": "Se substituiran alguns caràcters especials en els noms dels fitxers",
     "wikibase-statement-settings/dialog-header": "Configuració de la declaració",
     "wikibase-statement-settings/mode-label": "Mode d'edició",
@@ -347,5 +347,18 @@
     "wikibase-schema-management-dialog/rename": "Canvia el nom",
     "wikibase-schema-management-dialog/enter-new-schema-name": "Introduïu un nom nou per a l'esquema",
     "wikibase-schema-management-dialog/invalid-schema": "Esquema no vàlid.",
-    "perform-wikibase-edits/wikibase-editing-results": "Resultats d'edició de Wikibase"
+    "perform-wikibase-edits/wikibase-editing-results": "Resultats d'edició de Wikibase",
+    "wikibase-extension/editing-results-facet": "Faceta d'edició de resultats",
+    "warnings-messages/new-item-requires-property-to-have-certain-values-with-suggested-value/title": "{property_entity} requereix que la propietat {added_property_entity} tingui el valor {item_entity}.",
+    "warnings-messages/new-item-requires-property-to-have-certain-values-with-suggested-value/body": "La propietat {added_property_entity} ha de tenir el valor definit com a {item_entity}, com ara a l'element {example_entity}.",
+    "warnings-messages/existing-item-requires-property-to-have-certain-values-with-suggested-value/title": "{property_entity} requereix la propietat {added_property_entity} amb el valor definit com a {item_entity}.",
+    "warnings-messages/existing-item-requires-property-to-have-certain-values-with-suggested-value/body": "En entitats com ara {example_entity}, la propietat {added_property_entity} ha de tenir un valor definit com a {item_entity}. Si l'entitat ja té declaracions amb la propietat {added_property_entity} i amb els valors adequats a {wikibase_name}, aquest avís es pot ignorar.",
+    "warnings-messages/new-media-chunked-upload/title": "Pujada de fitxers grans",
+    "warnings-messages/new-media-chunked-upload/body": "Alguns fitxers són grans i poden trigar molt a carregar-se. Si s'interromp la càrrega, és possible que es publiquin fitxers sense la informació necessària. Si això passa, reviseu els fitxers carregats.",
+    "warnings-messages/new-media-missing-property/title": "Els nous fitxers multimedia requereixen la propietat {property_entity}",
+    "warnings-messages/new-media-missing-property/body": "Per carregar nous fitxers multimèdia cal proporcionar {property_entity}. No s'ha proporcionat cap propietat.",
+    "warnings-messages/upload-new-file-version/title": "Pujada d'una nova versió del fitxer",
+    "warnings-messages/upload-new-file-version/body": "Alguns fitxers, com ara <span class=\"wb-issue-preformat\">{example_filename}</span>, s'han comparat amb fitxers existents. Això penjarà noves versions d'aquests fitxers.",
+    "warnings-messages/label-too-long/title": "Subtítols que superen la longitud màxima",
+    "warnings-messages/label-too-long/body": "Els subtítols no poden tenir més de {max_length} caràcters. Alguns subtítols d'aquest lot són massa llargs, com ara el de <span class=\"wb-issue-preformat\">{example_entity</span> a l'idioma <span class=\"wb-issue-preformat\">{lang_code</span>, que té una longitud de {length} caràcters."
 }
