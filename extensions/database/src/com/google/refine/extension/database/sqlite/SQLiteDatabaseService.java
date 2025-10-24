@@ -52,7 +52,7 @@ import com.google.refine.extension.database.model.DatabaseRow;
 public class SQLiteDatabaseService extends DatabaseService {
 
     public static final String DB_NAME = "sqlite";
-    public static final String DB_DRIVER = "org.sqlite.JDBC";
+    public static final String DB_DRIVER = org.sqlite.JDBC.class.getCanonicalName();
     private static final Logger logger = LoggerFactory.getLogger("SQLiteDatabaseService");
     private static SQLiteDatabaseService instance;
 
