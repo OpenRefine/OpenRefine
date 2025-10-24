@@ -43,7 +43,6 @@ function ReconStandardServicePanel(column, service, container) {
 ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
   var dismissBusy = self.showBusyReconciling();
-
   Refine.postCSRF(
     "command/core/guess-types-of-column?" + $.param({
       project: theProject.id, 
