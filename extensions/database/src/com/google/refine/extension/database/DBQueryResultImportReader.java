@@ -108,7 +108,9 @@ public class DBQueryResultImportReader implements TableDataReader {
                 setProgress(job, buildProgressMessage(), -1);
 
                 List<Object> header = dbColumns.stream().map(DatabaseColumn::getName).collect(Collectors.toList());
-                logger.debug("Return header on first call: {}", header.stream().map(Object::toString).collect(Collectors.joining(",")));
+                logger.atDebug().setMessage("Return header on first call: {}")
+                        .addArgument(() -> header.stream().map(Object::toString).collect(Collectors.joining(",")))
+                        .log();
                 return header;
             }
 
