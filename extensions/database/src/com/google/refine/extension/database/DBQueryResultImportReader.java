@@ -58,8 +58,8 @@ public class DBQueryResultImportReader implements TableDataReader {
     private boolean lastBatch = false;
     private List<List<Object>> rowsOfCells = null;
     private boolean usedHeaders = false;
-    private DatabaseService databaseService;
-    private DatabaseQueryInfo dbQueryInfo;
+    private final DatabaseService databaseService;
+    private final DatabaseQueryInfo dbQueryInfo;
     private final Integer totalCount;
     private final boolean useTotalForProgress;
 
@@ -282,5 +282,4 @@ public class DBQueryResultImportReader implements TableDataReader {
     public int getBatchSize() {
         return batchSize;
     }
-
 }
