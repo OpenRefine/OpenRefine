@@ -104,14 +104,12 @@ public class DBQueryResultImportReader implements TableDataReader {
         try {
             // on first call get column names for header
             if (!usedHeaders) {
-                List<Object> row = new ArrayList<Object>(dbColumns.size());
-                for (DatabaseColumn cd : dbColumns) {
-                    row.add(cd.getName());
-                }
                 usedHeaders = true;
-                logger.debug("Return header on first call: {}", row.stream().map(Object::toString).collect(Collectors.joining(",")));
                 setProgress(job, buildProgressMessage(), -1);
-                return row;
+
+                List<Object> header = dbColumns.stream().map(DatabaseColumn::getName).collect(Collectors.toList());
+                logger.debug("Return header on first call: {}", header.stream().map(Object::toString).collect(Collectors.joining(",")));
+                return header;
             }
 
             // load new batch from db
