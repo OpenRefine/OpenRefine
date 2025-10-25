@@ -134,7 +134,7 @@ public class DBQueryResultImportReader implements TableDataReader {
 
         } catch (DatabaseServiceException e) {
             // rethrow exception as IOException
-            logger.error("DatabaseServiceException::{}", e);
+            logger.error("DatabaseServiceException", e);
             throw new IOException(e);
         }
     }
