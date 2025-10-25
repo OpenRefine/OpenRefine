@@ -162,7 +162,7 @@ public class DBQueryResultImportReader implements TableDataReader {
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
         if (dbRows == null || dbRows.isEmpty()) {
             end = true;
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         // parse db rows
