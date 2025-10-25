@@ -84,7 +84,7 @@ public class DBQueryResultImportReaderTest {
         int sizeOfLastBatch = tableCount % batchSize;
         while (reader.getNextRowOfCells() != null) {
             count--;
-            assertEquals(reader.isEnd(), count < sizeOfLastBatch,
+            assertEquals(reader.isLastBatch(), count < sizeOfLastBatch,
                     "end should only be set after querying last batch, but was set after " + (tableCount - count) + " rows");
         }
 

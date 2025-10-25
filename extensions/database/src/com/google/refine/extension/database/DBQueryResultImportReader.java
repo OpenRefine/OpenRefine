@@ -55,7 +55,7 @@ public class DBQueryResultImportReader implements TableDataReader {
 
     private int nextRow = 0; // 0-based
     private int batchRowStart = 0; // 0-based
-    private boolean end = false;
+    private boolean lastBatch = false;
     private List<List<Object>> rowsOfCells = null;
     private boolean usedHeaders = false;
     private DatabaseService databaseService;
@@ -149,8 +149,8 @@ public class DBQueryResultImportReader implements TableDataReader {
         logger.debug("Query db for next batch: [{},{}]", startRow + 1, startRow + batchSize);
 
         // if end was already reached, do not query db again
-        if (end) {
-            logger.debug("No more batches to query, reached end of table.");
+        if (lastBatch) {
+            logger.debug("No more batches to query, reached end of query result.");
             return Collections.emptyList();
         }
 
@@ -161,7 +161,7 @@ public class DBQueryResultImportReader implements TableDataReader {
         // retrieve next batch from db
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
         if (dbRows == null || dbRows.isEmpty()) {
-            end = true;
+            lastBatch = true;
             return Collections.emptyList();
         }
 
@@ -205,7 +205,7 @@ public class DBQueryResultImportReader implements TableDataReader {
             rowsOfCells.add(rowOfCells);
         }
 
-        end = dbRows.size() < batchSize;
+        lastBatch = dbRows.size() < batchSize;
         return rowsOfCells;
     }
 
@@ -247,12 +247,12 @@ public class DBQueryResultImportReader implements TableDataReader {
         this.batchRowStart = batchRowStart;
     }
 
-    public boolean isEnd() {
-        return end;
+    public boolean isLastBatch() {
+        return lastBatch;
     }
 
-    public void setEnd(boolean end) {
-        this.end = end;
+    public void setLastBatch(boolean lastBatch) {
+        this.lastBatch = lastBatch;
     }
 
     public List<List<Object>> getRowsOfCells() {
