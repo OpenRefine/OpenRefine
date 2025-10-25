@@ -142,10 +142,9 @@ public class DBQueryResultImportReader implements TableDataReader {
     /**
      * @param startRow
      * @return
-     * @throws IOException
      * @throws DatabaseServiceException
      */
-    private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
+    private List<List<Object>> getRowsOfCells(int startRow) throws DatabaseServiceException {
         logger.debug("Query db for next batch: [{},{}]", startRow + 1, startRow + batchSize);
 
         // if end was already reached, do not query db again
