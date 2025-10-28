@@ -234,9 +234,6 @@ DataTableView.prototype.render = function() {
   this._renderDataTables(elmts.table[0], elmts.tableHeader[0], elmts.colGroup);
   this._div.empty().append(html);
 
-  // Enable drag-and-drop reordering now that headers are in DOM
-  this._enableHeaderDrag();
-
   // show/hide null values in cells
   $(".data-table-null").toggle(self._shownulls);
 
@@ -571,8 +568,7 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
     var th = trHead.appendChild(document.createElement("th"));
-    $(th).addClass("column-header").attr('title', column.name).attr('data-col-name', column.name); // enable sortable to read names
-
+    $(th).addClass("column-header").attr('title', column.name);
     var col = $('<col>')
         .attr('span', 1)
         .data('name', column.name)
@@ -609,34 +605,6 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
     createColumnHeader(columns[i], i);
   }
 }
-
-// --- enable drag-and-drop using jQuery UI Sortable ---
-DataTableView.prototype._enableHeaderDrag = function() {
-  var $headerRow = this._div.find("thead tr");
-  if ($headerRow.data("ui-sortable")) return; // already enabled
-
-  $headerRow.sortable({
-    axis: "x",
-    containment: "parent",
-    items: "> th:not(:first-child)", // skip the "All" column
-    cancel: ".column-header-menu, .column-header-resizer-left, .column-header-resizer-right",
-    helper: "clone",
-    start: function(_, ui) {
-      ui.placeholder.width(ui.helper.width());
-    },
-    update: function() {
-      var newOrder = $headerRow.children("th:not(:first-child)")
-                       .map(function() { return $(this).data("col-name"); })
-                       .get();
-      Refine.postCoreProcess(
-        "reorder-columns",
-        null,
-        { columnNames: JSON.stringify(newOrder) },
-        { modelsChanged: true }
-      );
-    }
-  }).disableSelection();
-};
 
 DataTableView.prototype._addResizingControls = function(th, index) {
   var self = this;
