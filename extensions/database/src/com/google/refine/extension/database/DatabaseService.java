@@ -51,7 +51,7 @@ public abstract class DatabaseService {
 
     public static class DBType {
 
-        private static Map<String, DatabaseService> databaseServiceMap = new HashMap<String, DatabaseService>();
+        private static final Map<String, DatabaseService> databaseServiceMap = new HashMap<>();
 
         static {
             try {

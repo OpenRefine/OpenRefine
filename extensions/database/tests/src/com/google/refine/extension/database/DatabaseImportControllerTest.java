@@ -96,28 +96,23 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     }
 
     @Test
-    public void testDoGet() {
+    public void testDoGet() throws IOException, ServletException {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
-        try {
-            when(response.getWriter()).thenReturn(pw);
+        when(response.getWriter()).thenReturn(pw);
 
-            SUT.doGet(request, response);
+        SUT.doGet(request, response);
 
-            String result = sw.getBuffer().toString().trim();
-            ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-            String code = json.get("status").asText();
-            String message = json.get("message").asText();
-            Assert.assertNotNull(code);
-            Assert.assertNotNull(message);
-            Assert.assertEquals(code, "error");
-            Assert.assertEquals(message, "GET not implemented");
+        String result = sw.getBuffer().toString().trim();
+        ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
+        String code = json.get("status").asText();
+        String message = json.get("message").asText();
+        Assert.assertNotNull(code);
+        Assert.assertNotNull(message);
+        Assert.assertEquals(code, "error");
+        Assert.assertEquals(message, "GET not implemented");
 
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
     @Test
@@ -167,8 +162,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         Assert.assertEquals(status, "ok");
     }
 
-    // 2025-01-02: disabled because flaky
-    @Test(enabled = false)
+    @Test
     public void testDoPostParsePreview() throws IOException, ServletException {
 
         StringWriter sw = new StringWriter();
