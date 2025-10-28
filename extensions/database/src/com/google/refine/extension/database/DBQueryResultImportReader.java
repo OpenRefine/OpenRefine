@@ -31,7 +31,9 @@ package com.google.refine.extension.database;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,14 +55,12 @@ public class DBQueryResultImportReader implements TableDataReader {
 
     private int nextRow = 0; // 0-based
     private int batchRowStart = 0; // 0-based
-    private boolean end = false;
+    private boolean lastBatch = false;
     private List<List<Object>> rowsOfCells = null;
     private boolean usedHeaders = false;
-    private DatabaseService databaseService;
-    private DatabaseQueryInfo dbQueryInfo;
-    private int processedRows = 0;
+    private final DatabaseService databaseService;
+    private final DatabaseQueryInfo dbQueryInfo;
     private final Integer totalCount;
-    private int currentCount = 0;
     private final boolean useTotalForProgress;
 
     /**
@@ -94,138 +94,128 @@ public class DBQueryResultImportReader implements TableDataReader {
         this.dbColumns = columns;
         this.databaseService = databaseService;
         this.dbQueryInfo = dbQueryInfo;
-        if (logger.isDebugEnabled()) {
-            logger.debug("batchSize:" + batchSize);
-            logger.debug("count: " + count);
-        }
+
+        logger.debug("Init with batchSize:{} and count:{}", batchSize, count);
     }
 
     @Override
     public List<Object> getNextRowOfCells() throws IOException {
 
         try {
-
+            // on first call get column names for header
             if (!usedHeaders) {
-                List<Object> row = new ArrayList<Object>(dbColumns.size());
-                for (DatabaseColumn cd : dbColumns) {
-                    row.add(cd.getName());
-                }
                 usedHeaders = true;
-                // logger.info("Exit::getNextRowOfCells return header::row:" + row);
-                return row;
+                setProgress(job, buildProgressMessage(), -1);
+
+                List<Object> header = dbColumns.stream().map(DatabaseColumn::getName).collect(Collectors.toList());
+                logger.atDebug().setMessage("Return header on first call: {}")
+                        .addArgument(() -> header.stream().map(Object::toString).collect(Collectors.joining(",")))
+                        .log();
+                return header;
             }
 
-            if (rowsOfCells == null || (nextRow >= batchRowStart + rowsOfCells.size() && !end)) {
+            // load new batch from db
+            if (rowsOfCells == null || nextRow - batchRowStart >= rowsOfCells.size()) {
                 int newBatchRowStart = batchRowStart + (rowsOfCells == null ? 0 : rowsOfCells.size());
                 rowsOfCells = getRowsOfCells(newBatchRowStart);
-                processedRows = processedRows + rowsOfCells.size();
+                logger.debug("Retrieved next {} rows from db.", rowsOfCells.size());
                 batchRowStart = newBatchRowStart;
-                setProgress(job, buildProgressMessage(), -1 /* batchRowStart * 100 / totalRows */);
             }
 
+            // return next row
             if (rowsOfCells != null && nextRow - batchRowStart < rowsOfCells.size()) {
                 List<Object> result = rowsOfCells.get(nextRow++ - batchRowStart);
-                if (nextRow >= batchSize) {
-                    rowsOfCells = getRowsOfCells(processedRows);
-                    processedRows = processedRows + rowsOfCells.size();
-
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("[[ Returning last row in batch:nextRow::{}, processedRows:{} ]]", nextRow, processedRows);
-                    }
-
-                    nextRow = 0;
-                }
-
-                currentCount++;
                 setProgress(job, buildProgressMessage(), calculateProgress());
                 return result;
             } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("[[processedRows:{} ]]", processedRows);
-                }
+                logger.debug("Reached end of table at {} rows.", nextRow);
                 return null;
             }
 
         } catch (DatabaseServiceException e) {
-            logger.error("DatabaseServiceException::{}", e);
+            // rethrow exception as IOException
+            logger.error("DatabaseServiceException", e);
             throw new IOException(e);
-
         }
-
     }
 
     /**
      * @param startRow
      * @return
-     * @throws IOException
      * @throws DatabaseServiceException
      */
-    private List<List<Object>> getRowsOfCells(int startRow) throws IOException, DatabaseServiceException {
-        // logger.info("Entry getRowsOfCells::startRow:" + startRow);
+    private List<List<Object>> getRowsOfCells(int startRow) throws DatabaseServiceException {
+        logger.debug("Query db for next batch: [{},{}]", startRow, startRow + batchSize - 1); // 0-based
 
-        List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
+        // if end was already reached, do not query db again
+        if (lastBatch) {
+            logger.debug("No more batches to query, reached end of query result.");
+            return Collections.emptyList();
+        }
 
+        // build query to retrieve next batch from db
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
-        // logger.info("batchSize::" + batchSize + " startRow::" + startRow + " query::" + query );
+        logger.debug("batchSize::{} startRow::{} query::{}", batchSize, startRow, query);
 
+        // retrieve next batch from db
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
+        if (dbRows == null || dbRows.isEmpty()) {
+            lastBatch = true;
+            return Collections.emptyList();
+        }
 
-        if (dbRows != null && !dbRows.isEmpty() && dbRows.size() > 0) {
+        // parse db rows
+        List<List<Object>> rowsOfCells = new ArrayList<>(dbRows.size());
+        for (DatabaseRow dbRow : dbRows) {
+            List<String> row = dbRow.getValues();
+            List<Object> rowOfCells = new ArrayList<>(row.size());
 
-            for (DatabaseRow dbRow : dbRows) {
-                List<String> row = dbRow.getValues();
-                List<Object> rowOfCells = new ArrayList<Object>(row.size());
+            for (int j = 0; j < row.size() && j < dbColumns.size(); j++) {
 
-                for (int j = 0; j < row.size() && j < dbColumns.size(); j++) {
-
-                    String text = row.get(j);
-                    if (text == null || text.isEmpty()) {
-                        rowOfCells.add(null);
-                    } else {
-                        DatabaseColumn col = dbColumns.get(j);
-                        if (col.getType() == DatabaseColumnType.NUMBER) {
-                            try {
-                                rowOfCells.add(Long.parseLong(text));
-                                continue;
-                            } catch (NumberFormatException e) {
-                            }
-
-                        } else if (col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT) {
-                            try {
-                                double d = Double.parseDouble(text);
-                                if (!Double.isInfinite(d) && !Double.isNaN(d)) {
-                                    rowOfCells.add(d);
-                                    continue;
-                                }
-                            } catch (NumberFormatException e) {
-                            }
-
+                String text = row.get(j);
+                if (text == null || text.isEmpty()) {
+                    rowOfCells.add(null);
+                } else {
+                    DatabaseColumn col = dbColumns.get(j);
+                    if (col.getType() == DatabaseColumnType.NUMBER) {
+                        try {
+                            rowOfCells.add(Long.parseLong(text));
+                            continue;
+                        } catch (NumberFormatException e) {
                         }
 
-                        rowOfCells.add(text);
+                    } else if (col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT) {
+                        try {
+                            double d = Double.parseDouble(text);
+                            if (!Double.isInfinite(d) && !Double.isNaN(d)) {
+                                rowOfCells.add(d);
+                                continue;
+                            }
+                        } catch (NumberFormatException e) {
+                        }
+
                     }
 
+                    rowOfCells.add(text);
                 }
-
-                rowsOfCells.add(rowOfCells);
 
             }
 
+            rowsOfCells.add(rowOfCells);
         }
-        end = dbRows.size() < batchSize + 1;
-        // logger.info("Exit::getRowsOfCells::rowsOfCells:{}", rowsOfCells);
-        return rowsOfCells;
 
+        lastBatch = dbRows.size() < batchSize;
+        return rowsOfCells;
     }
 
     private int calculateProgress() {
         // only use `totalCount` if it is available; otherwise progress can not be tracked
-        return useTotalForProgress ? (int) (((double) currentCount / totalCount) * 100) : -1;
+        return useTotalForProgress ? (int) (((double) nextRow / totalCount) * 100) : -1;
     }
 
     private String buildProgressMessage() {
         String totalFormatted = useTotalForProgress ? totalCount.toString() : "?";
-        return "Reading " + querySource + " (" + currentCount + " / " + totalFormatted + ")";
+        return "Reading " + querySource + " (" + nextRow + " / " + totalFormatted + ")";
     }
 
     private static void setProgress(ImportingJob job, String message, int percent) {
@@ -256,12 +246,12 @@ public class DBQueryResultImportReader implements TableDataReader {
         this.batchRowStart = batchRowStart;
     }
 
-    public boolean isEnd() {
-        return end;
+    public boolean isLastBatch() {
+        return lastBatch;
     }
 
-    public void setEnd(boolean end) {
-        this.end = end;
+    public void setLastBatch(boolean lastBatch) {
+        this.lastBatch = lastBatch;
     }
 
     public List<List<Object>> getRowsOfCells() {
@@ -291,5 +281,4 @@ public class DBQueryResultImportReader implements TableDataReader {
     public int getBatchSize() {
         return batchSize;
     }
-
 }
