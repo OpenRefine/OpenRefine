@@ -79,6 +79,11 @@ public class ExpressionUtils {
         bindings.put("row", new WrappedRow(project, rowIndex, row));
         bindings.put("cells", new CellTuple(project, row));
 
+        // ----- CHANGE IS HERE -----
+        if (project != null && project.columnModel != null) {
+            bindings.put("columnNames", project.columnModel.getColumnNames());
+        }
+
         if (columnName != null) {
             bindings.put("columnName", columnName);
         }
