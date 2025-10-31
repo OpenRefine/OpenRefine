@@ -54,16 +54,21 @@ public class SQLiteDatabaseService extends DatabaseService {
     public static final String DB_NAME = "sqlite";
     public static final String DB_DRIVER = org.sqlite.JDBC.class.getCanonicalName();
     private static final Logger logger = LoggerFactory.getLogger("SQLiteDatabaseService");
-    private static SQLiteDatabaseService instance;
+    private static final SQLiteDatabaseService instance;
+
+    static {
+        SQLType.registerSQLDriver(DB_NAME, DB_DRIVER, false);
+        instance = new SQLiteDatabaseService();
+        if (logger.isDebugEnabled()) {
+            logger.debug("SQLiteDatabaseService Instance: {}", instance);
+        }
+    }
+
+    // Instance creation disabled for singleton
+    private SQLiteDatabaseService() {
+    }
 
     public static SQLiteDatabaseService getInstance() {
-        if (instance == null) {
-            SQLType.registerSQLDriver(DB_NAME, DB_DRIVER, false);
-            instance = new SQLiteDatabaseService();
-            if (logger.isDebugEnabled()) {
-                logger.debug("SQLiteDatabaseService Instance: {}", instance);
-            }
-        }
         return instance;
     }
 

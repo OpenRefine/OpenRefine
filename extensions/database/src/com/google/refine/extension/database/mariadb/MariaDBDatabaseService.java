@@ -54,19 +54,20 @@ public class MariaDBDatabaseService extends DatabaseService {
     private static final Logger logger = LoggerFactory.getLogger("MariaDBDatabaseService");
     public static final String DB_NAME = "mariadb";
     public static final String DB_DRIVER = org.mariadb.jdbc.Driver.class.getCanonicalName();
-    private static MariaDBDatabaseService instance;
+    private static final MariaDBDatabaseService instance;
+
+    static {
+        SQLType.registerSQLDriver(DB_NAME, DB_DRIVER);
+        instance = new MariaDBDatabaseService();
+        if (logger.isDebugEnabled()) {
+            logger.debug("MariaDBDatabaseService Instance: {}", instance);
+        }
+    }
 
     private MariaDBDatabaseService() {
     }
 
     public static MariaDBDatabaseService getInstance() {
-        if (instance == null) {
-            SQLType.registerSQLDriver(DB_NAME, DB_DRIVER);
-            instance = new MariaDBDatabaseService();
-            if (logger.isDebugEnabled()) {
-                logger.debug("MariaDBDatabaseService Instance: {}", instance);
-            }
-        }
         return instance;
     }
 
