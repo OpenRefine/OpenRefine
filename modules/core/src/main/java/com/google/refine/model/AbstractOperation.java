@@ -35,7 +35,6 @@ package com.google.refine.model;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,7 +54,7 @@ import com.google.refine.process.QuickHistoryEntryProcess;
  * the operation before it is carried out, such as the names of the columns it applies to, the configuration of any
  * facets to be observed by the operation, and so on. Any data obtained from executing the operation on the project
  * should be stored in a {@link Change} instead.
- * 
+ * <p>
  * Operations need to be (de)serializable in JSON via Jackson, used for project persistence and in the extract/apply
  * dialog of the history panel. Validation of the operation's parameters should not happen during deserialization, but
  * in the {@link #validate()} method.
@@ -67,7 +66,7 @@ abstract public class AbstractOperation {
     /**
      * Checks whether the parameters of this operation are suitably filled. Those checks should not happen in the
      * deserialization constructor as it would risk rejecting JSON certain representations at project loading time.
-     * 
+     *
      * @throws IllegalArgumentException
      *             if any parameter is missing or inconsistent
      */
@@ -75,7 +74,17 @@ abstract public class AbstractOperation {
 
     }
 
-    public Process createProcess(Project project, Properties options) throws Exception {
+    /**
+     * Create a background process for the current operation on the given project. This is used for long-running
+     * operations like Fetch URL.
+     *
+     * @param project
+     *            the project
+     * @return newly created process
+     * @throws Exception
+     *             if the process creation failed
+     */
+    public Process createProcess(Project project) throws Exception {
         return new QuickHistoryEntryProcess(project, getBriefDescription(null)) {
 
             @Override
@@ -98,6 +107,8 @@ abstract public class AbstractOperation {
         return OperationRegistry.s_opClassToName.get(this.getClass());
     }
 
+    // TODO: We don't really want to serialize the natural language description if we're going to support exchange among
+    // users
     @JsonProperty("description")
     public String getJsonDescription() {
         return getBriefDescription(null);
@@ -123,9 +134,9 @@ abstract public class AbstractOperation {
     }
 
     /**
-     * Compute a new version of this operation metadata, with renamed columns. This is a best-effort transformation:
-     * some column references might fail to be updated, for instance if they are embedded into expressions that cannot
-     * be fully analyzed. As a fall-back solution, the same operation can be returned.
+     * Compute a new version of this operation metadata with renamed columns. This is a best-effort transformation: some
+     * column references might fail to be updated, for instance, if they are embedded into expressions that cannot be
+     * fully analyzed. As a fall-back solution, the same operation can be returned.
      * 
      * @param newColumnNames
      *            a map from old to new column names
