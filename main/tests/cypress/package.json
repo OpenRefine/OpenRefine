@@ -19,7 +19,7 @@
         "cypress": "15.5.0"
     },
     "devDependencies": {
-        "eslint": "^9.33.0",
+        "eslint": "^9.39.0",
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-cypress": "^5.1.1",
