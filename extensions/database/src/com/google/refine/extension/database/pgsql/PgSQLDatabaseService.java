@@ -54,19 +54,20 @@ public class PgSQLDatabaseService extends DatabaseService {
     private static final Logger logger = LoggerFactory.getLogger("PgSQLDatabaseService");
     public static final String DB_NAME = "postgresql";
     public static final String DB_DRIVER = org.postgresql.Driver.class.getCanonicalName();
-    private static PgSQLDatabaseService instance;
+    private static final PgSQLDatabaseService instance;
+
+    static {
+        SQLType.registerSQLDriver(DB_NAME, DB_DRIVER);
+        instance = new PgSQLDatabaseService();
+        if (logger.isDebugEnabled()) {
+            logger.debug("PgSQLDatabaseService Instance: {}", instance);
+        }
+    }
 
     private PgSQLDatabaseService() {
     }
 
     public static PgSQLDatabaseService getInstance() {
-        if (instance == null) {
-            SQLType.registerSQLDriver(DB_NAME, DB_DRIVER);
-            instance = new PgSQLDatabaseService();
-            if (logger.isDebugEnabled()) {
-                logger.debug("PgSQLDatabaseService Instance: {}", instance);
-            }
-        }
         return instance;
     }
 

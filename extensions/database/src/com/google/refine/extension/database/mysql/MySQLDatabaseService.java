@@ -54,19 +54,20 @@ public class MySQLDatabaseService extends DatabaseService {
     public static final String DB_NAME = "mysql";
     public static final String DB_DRIVER = com.mysql.cj.jdbc.Driver.class.getCanonicalName();
 
-    private static MySQLDatabaseService instance;
+    private static final MySQLDatabaseService instance;
+
+    static {
+        SQLType.registerSQLDriver(DB_NAME, DB_DRIVER, false);
+        instance = new MySQLDatabaseService();
+        if (logger.isDebugEnabled()) {
+            logger.debug("MySQLDatabaseService Instance: {}", instance);
+        }
+    }
 
     private MySQLDatabaseService() {
     }
 
     public static MySQLDatabaseService getInstance() {
-        if (instance == null) {
-            SQLType.registerSQLDriver(DB_NAME, DB_DRIVER, false);
-            instance = new MySQLDatabaseService();
-            if (logger.isDebugEnabled()) {
-                logger.debug("MySQLDatabaseService Instance: {}", instance);
-            }
-        }
         return instance;
     }
 
