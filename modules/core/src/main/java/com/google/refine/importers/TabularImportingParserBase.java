@@ -229,6 +229,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
      *
      * @deprecated 2025-05-23 Use {@link ImporterUtilities#deleteColumns(Project, List)}
      */
+    @Deprecated(since = "3.9")
     static public void deleteEmptyColumns(List<Boolean> columnsHasData, Project project) throws ModelException {
         project.columnModel.update(); // make sure all our cell indexes are up to date
         for (int c = 0; c < columnsHasData.size(); c++) {
