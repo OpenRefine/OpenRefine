@@ -85,7 +85,7 @@ table.data-table.fixed-width-preview-data-table>tbody>tr>td.column-header.even {
   top: 50px;
   left: -7px;
   border: 1px solid red;
-  background: #fffee0 url(../../images/close.png) no-repeat center center;
+  background: #fffee0 url(../../images/close.svg) no-repeat center center;
   width: 13px;
   height: 13px;
   cursor: pointer;
