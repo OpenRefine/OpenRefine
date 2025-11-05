@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="68" height="19" viewBox="0 0 68 19">
+    <defs>
+        <!-- Two rectangle variants so widths/strokes differ but total size is always 17×17 -->
+        <rect id="boxThin"  width="16" height="16" rx="2" ry="2" stroke-width="1" fill="#ffffff" stroke="#e3e9ff"/>
+        <rect id="boxThick" width="15" height="15" rx="2" ry="2" stroke-width="2" fill="#e3e9ff" stroke="#4f7be6"/>
+
+        <polyline id="arrowLeft" points="11.5,5 5.5,9.5 11.5,14" stroke-width="2.5" fill="none"/>
+        <!-- formula for mirroring horizontally: translate(<minX+maxX>,0) scale(-1, 1) -->
+        <g id="arrowRight" transform="translate(17,0) scale(-1,1)">
+            <use href="#arrowLeft"/>
+        </g>
+    </defs>
+
+    <use href="#boxThin" x="0.5" y="1.5"/>
+    <use href="#arrowLeft" stroke="#4f7be6"/>
+
+    <use href="#boxThick" x="18" y="2"/>
+    <use href="#arrowLeft" transform="translate(17,0)" stroke="#1111cc"/>
+
+    <use href="#boxThin" x="34.5" y="1.5"/>
+    <use href="#arrowRight" transform="translate(34,0)" stroke="#4f7be6"/>
+
+    <use href="#boxThick" x="52" y="2"/>
+    <use href="#arrowRight" transform="translate(51,0)" stroke="#1111cc"/>
+</svg>
