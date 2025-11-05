@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34" height="19" viewBox="0 0 34 19">
+    <defs>
+        <rect id="box" width="16" height="16" rx="2" ry="2" stroke="#a8b6fd" stroke-width="1" />
+        <polygon id="arrow" points="4,7 8.5,12 13,7" />
+
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="50%">
+            <stop offset="0%" stop-color="#d3d3d3" />
+            <stop offset="100%" stop-color="#ffffff" />
+        </linearGradient>
+    </defs>
+
+    <!-- Left box -->
+    <use href="#box" x="0.5" y="1.5" fill="#ffffff" />
+    <use href="#arrow" fill="#1111cc" />
+
+    <!-- Right box -->
+    <use href="#box" x="17.5" y="1.5" fill="url(#grad1)" />
+    <use href="#arrow" transform="translate(17,0)" fill="#4272db" />
+</svg>
