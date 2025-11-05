@@ -142,7 +142,7 @@ li.facet-state-minimize a.facet-title-minimize:hover {
 
 .facet-body-scrollable {
   padding-bottom: 8px;
-  background: url(../../images/facet-resize-handle.png) center bottom no-repeat;
+  background: url(../../images/facet-resize-handle.svg) center bottom no-repeat;
 }
 
 .facet-body-inner {
