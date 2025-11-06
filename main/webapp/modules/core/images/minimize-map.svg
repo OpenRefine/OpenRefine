@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="12" viewBox="0 0 48 12">
+    <defs>
+        <!-- Two rectangle variants so widths/strokes differ but total size is always 12×12 -->
+        <rect id="boxEmpty"  width="11" height="11" rx="1" ry="1" fill="#ffffff" stroke="#bbccff" stroke-width="1"/>
+        <rect id="boxFilled" width="12" height="12" rx="1" ry="1" fill="#88aaee"/>
+
+        <line id="minus" x1="2" x2="10" y1="8" y2="8" stroke-width="2"/>
+        <g id="plus">
+            <line x1="26" x2="34" y1="6" y2="6" stroke-width="2"/>
+            <line x1="30" x2="30" y1="2" y2="10" stroke-width="2"/>
+        </g>
+    </defs>
+
+    <use href="#boxEmpty" x="0.5" y="0.5"/>
+    <use href="#minus" stroke="#88aaee"/>
+
+    <use href="#boxFilled" x="12" y="0"/>
+    <use href="#minus" transform="translate(12,0)" stroke="#ffffff"/>
+
+    <use href="#boxEmpty" x="24.5" y="0.5"/>
+    <use href="#plus" stroke="#88aaee"/>
+
+    <use href="#boxFilled" x="36" y="0"/>
+    <use href="#plus" transform="translate(12,0)" stroke="#ffffff"/>
+</svg>
