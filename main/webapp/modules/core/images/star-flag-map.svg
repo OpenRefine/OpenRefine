@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33">
+    <defs>
+        <polygon id="star"
+                 points="8.5,0.5 10.152,5.848 15.5,5.848 11.174,9.152 12.826,14.5 8.5,11.195 4.174,14.5 5.826,9.152 1.5,5.848 6.848,5.848 8.5,0.5"
+                 stroke-width="1" stroke-linejoin="round"/>
+
+        <g id="flag">
+            <!-- flag -->
+            <path d="M 13.899,17.6
+                     C 8.465,17.6 8.410,21.234 2.110,19.844
+                     L 1.507,26.648
+                     C 7.019,28.987 8.202,23.285 12.526,24.749
+                     Z"
+                  stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"/>
+            <!-- pole -->
+            <line x1="14.493" y1="18" x2="11.593" y2="31"
+                  stroke-width="2" stroke-linecap="round"/>
+        </g>
+    </defs>
+
+    <!-- Stars -->
+    <use href="#star"
+         fill="#fff033"
+         stroke="#28569c"/>
+
+    <use href="#star"
+         transform="translate(17,0)"
+         fill="#ffffff"
+         stroke="#b1d3ff"/>
+
+    <!-- Flags-->
+    <use href="#flag"
+         fill="#fff033"
+         stroke="#28569c"/>
+
+    <use href="#flag"
+         transform="translate(17, 0)"
+         fill="#ffffff"
+         stroke="#b1d3ff"/>
+</svg>

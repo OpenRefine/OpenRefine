@@ -385,7 +385,7 @@ a.data-table-star-on, a.data-table-star-off, a.data-table-flag-on, a.data-table-
   display: block;
   width: 16px;
   height: 16px;
-  background-image: url('../../images/star-flag-map.png');
+  background-image: url('../../images/star-flag-map.svg');
   background-repeat: no-repeat;
   text-decoration: none;
 }
