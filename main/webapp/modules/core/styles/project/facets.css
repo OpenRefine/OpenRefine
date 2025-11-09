@@ -324,7 +324,7 @@ img.facet-choice-link {
   width: 22px;
   height: 18px;
   padding: 0px;
-  background-image: url("../../images/scatterplot-icons.png");
+  background-image: url("../../images/scatterplot-icons.svg");
 }
 
 .scatterplot-selectors .scatterplot-rot-selector label.rot-ccw-label {
@@ -343,7 +343,7 @@ img.facet-choice-link {
   width: 22px;
   height: 18px;
   padding: 0px;
-  background-image: url("../../images/scatterplot-icons.png");
+  background-image: url("../../images/scatterplot-icons.svg");
 }
 
 .scatterplot-selectors .scatterplot-dot-selector label.dot-small-label {
