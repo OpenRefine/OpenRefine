@@ -362,7 +362,7 @@ a.data-table-recon-match, a.data-table-recon-match-similar {
   display: block;
   width: 16px;
   height: 16px;
-  background-image: url('../../images/checks-map.png');
+  background-image: url('../../images/checks-map.svg');
   background-repeat: no-repeat;
   background-position: -16px 0;
   text-decoration: none;

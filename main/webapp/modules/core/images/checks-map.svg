@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33">
+    <defs>
+        <rect id="box"
+              width="12"
+              height="12"
+              rx="1"
+              ry="1"
+              stroke-width="1" />
+
+        <polyline id="big-checkmark"
+                  points="4.25,7.55 7.25,10.75 12.75,4.25"
+                  stroke-width="1.5"
+                  fill="none" />
+
+        <g id="double-checkmark">
+            <polyline points="3.9,21.15 6.3,23.25 10,19.25"
+                      stroke-width="1.5"
+                      fill="none" />
+            <polyline points="7,25.65 9.4,27.75 13.1,23.75"
+                      stroke-width="1.5"
+                      fill="none" />
+        </g>
+    </defs>
+
+    <!-- filled box with big checkmark -->
+    <use href="#box"
+         x="2.5" y="1.5"
+         stroke="#88aaee"
+         fill="#88aaee" />
+    <use href="#big-checkmark"
+         stroke="#ffffff" />
+
+    <!-- white box with big checkmark -->
+    <use href="#box"
+         x="18.5" y="1.5"
+         stroke="#bbccff"
+         fill="#ffffff" />
+    <use href="#big-checkmark"
+         transform="translate(16,0)"
+         stroke="#88aaee" />
+
+    <!-- filled box with double checkmark -->
+    <use href="#box"
+         x="2.5" y="17.5"
+         stroke="#88aaee"
+         fill="#88aaee" />
+    <use href="#double-checkmark"
+         stroke="#ffffff" />
+
+    <!-- white box with double checkmark -->
+    <use href="#box"
+         x="18.5" y="17.5"
+         stroke="#bbccff"
+         fill="#ffffff" />
+    <use href="#double-checkmark"
+         transform="translate(16,0)"
+         stroke="#88aaee" />
+</svg>
