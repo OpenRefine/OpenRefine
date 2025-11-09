@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="9" height="18" viewBox="0 0 9 18">
+    <defs>
+        <rect id="slider"
+              x="0.5" y="1.5"
+              width="8" height="15"
+              rx="2" ry="2"
+              stroke-width="1" />
+    </defs>
+
+    <!-- white background -->
+    <use href="#slider"
+         fill="#ffffff"
+         stroke="#ffffff" />
+
+    <!-- double lines in the middle of handle -->
+    <line x1="3.5" y1="4" x2="3.5" y2="14"
+          stroke-width="1" stroke="#000000" />
+    <line x1="5.5" y1="4" x2="5.5" y2="14"
+          stroke-width="1" stroke="#000000" />
+
+    <!-- shade lines -->
+    <polyline points="7.5,2 7.5,15.5 1,15.5"
+              fill="none"
+              stroke-width="1" stroke="#cccccc" stroke-linejoin="round" />
+
+    <!-- add border of the handle on top -->
+    <use href="#slider"
+         fill="none"
+         stroke="#666666" />
+</svg>
