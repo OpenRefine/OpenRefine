@@ -576,6 +576,7 @@ DataTableView.prototype._renderTableHeader = function(tableHeader, colGroup) {
     $(th).addClass("column-header")
          .attr('title', columnTitle)
          .attr('data-col-name', column.name); // enable sortable to read names;
+
     var col = $('<col>')
         .attr('span', 1)
         .data('name', column.name)
