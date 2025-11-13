@@ -177,5 +177,8 @@
     "wikibase-extension/manage-wikibase-account": "Manage Wikidata account…",
     "wikibase-extension/import-wikibase-schema": "Import schema…",
     "wikibase-extension/edit-wikibase-schema": "Edit Wikidata schema",
-    "wikibase-extension/menu-label": "Wikidata"
+    "wikibase-extension/menu-label": "Wikidata",
+    "wikibase-extension/select-wikibase-instance": "Manage Wikibase instances…",
+    "wikibase-extension/editing-results-facet": "Editing results facet",
+    "wikibase-extension/qs-file": "QuickStatements file"
 }
