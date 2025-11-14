@@ -96,6 +96,22 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
         return defaultValue;
     }
 
+    /**
+     * @deprecated use {@link #getCreateBatchSize()} instead.
+     */
+    @Deprecated(since = "3.10")
+    public static String getImportCreateBatchSize() {
+        return String.valueOf(getCreateBatchSize());
+    }
+
+    /**
+     * @deprecated use {@link #getPreviewBatchSize()} instead.
+     */
+    @Deprecated(since = "3.10")
+    public static String getImportPreviewBatchSize() {
+        return String.valueOf(getPreviewBatchSize());
+    }
+
     private void readModuleProperty() {
         // The module path
         File f = getPath();
