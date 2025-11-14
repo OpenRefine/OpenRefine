@@ -47,7 +47,7 @@ import com.google.refine.importing.ImportingJob;
 /**
  * @deprecated use {@link DBQueryResultImportReader} instead.
  */
-@Deprecated(since = "3.9")
+@Deprecated(since = "3.10")
 public class DBQueryResultPreviewReader implements TableDataReader {
 
     private static final Logger logger = LoggerFactory.getLogger("DBQueryResultPreviewReader");

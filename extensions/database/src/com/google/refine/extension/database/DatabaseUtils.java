@@ -58,7 +58,7 @@ public class DatabaseUtils {
     /**
      * @deprecated as it is unused. Determine size of {@link #getSavedConnections()} result instead.
      */
-    @Deprecated(since = "3.9")
+    @Deprecated(since = "3.10")
     public static int getSavedConnectionsSize() {
         List<DatabaseConfiguration> scList = getSavedConnections();
         if (scList == null || scList.isEmpty()) {
@@ -147,7 +147,7 @@ public class DatabaseUtils {
     /**
      * @deprecated as it is unused. Use {@link #decrypt(String)} instead.
      */
-    @Deprecated(since = "3.9")
+    @Deprecated(since = "3.10")
     public static List<DatabaseConfiguration> decryptAll(List<DatabaseConfiguration> savedConnections) {
         List<DatabaseConfiguration> dbConfigs = new ArrayList<DatabaseConfiguration>(savedConnections.size());
 
@@ -190,7 +190,7 @@ public class DatabaseUtils {
     /**
      * @deprecated as it is unused. Use {@link #deleteSavedConnections(String)} instead.
      */
-    @Deprecated(since = "3.9")
+    @Deprecated(since = "3.10")
     public static void deleteAllSavedConnections() {
         if (logger.isDebugEnabled()) {
             logger.debug("delete All Saved Connections called...");

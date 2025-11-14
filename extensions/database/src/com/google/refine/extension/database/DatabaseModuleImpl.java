@@ -99,7 +99,7 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
     /**
      * @deprecated use {@link #getCreateBatchSize()} instead.
      */
-    @Deprecated(since = "3.9")
+    @Deprecated(since = "3.10")
     public static String getImportCreateBatchSize() {
         return String.valueOf(getCreateBatchSize());
     }
@@ -107,7 +107,7 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
     /**
      * @deprecated use {@link #getPreviewBatchSize()} instead.
      */
-    @Deprecated(since = "3.9")
+    @Deprecated(since = "3.10")
     public static String getImportPreviewBatchSize() {
         return String.valueOf(getPreviewBatchSize());
     }
