@@ -66,7 +66,7 @@ a.facet-title-remove {
   height: 12px;
   margin: 2px 0 0 0;
   text-decoration: none;
-  background-image: url(../../images/close-map.png);
+  background-image: url(../../images/close-map.svg);
   background-repeat: no-repeat;
   background-position: 0px 0px;
 }
@@ -86,7 +86,7 @@ a.facet-title-minimize {
   height: 12px;
   margin: 2px 0 0 0;
   text-decoration: none;
-  background-image: url(../../images/minimize-map.png);
+  background-image: url(../../images/minimize-map.svg);
   background-repeat: no-repeat;
   background-position: -0px 0px;
 }
@@ -142,7 +142,7 @@ li.facet-state-minimize a.facet-title-minimize:hover {
 
 .facet-body-scrollable {
   padding-bottom: 8px;
-  background: url(../../images/facet-resize-handle.png) center bottom no-repeat;
+  background: url(../../images/facet-resize-handle.svg) center bottom no-repeat;
 }
 
 .facet-body-inner {
@@ -324,7 +324,7 @@ img.facet-choice-link {
   width: 22px;
   height: 18px;
   padding: 0px;
-  background-image: url("../../images/scatterplot-icons.png");
+  background-image: url("../../images/scatterplot-icons.svg");
 }
 
 .scatterplot-selectors .scatterplot-rot-selector label.rot-ccw-label {
@@ -343,7 +343,7 @@ img.facet-choice-link {
   width: 22px;
   height: 18px;
   padding: 0px;
-  background-image: url("../../images/scatterplot-icons.png");
+  background-image: url("../../images/scatterplot-icons.svg");
 }
 
 .scatterplot-selectors .scatterplot-dot-selector label.dot-small-label {

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="73" height="49" viewBox="0 0 73 49">
+    <!-- arrows -->
+    <polyline
+            points="9.46,10.64 16.18,17.36 22.54,10.99"
+            fill="none"
+            stroke="#000000"
+            stroke-width="1"
+            stroke-linecap="round" />
+    <polyline
+            points="34.5,8.25 34.5,17.75 43.5,17.75"
+            fill="none"
+            stroke="#000000"
+            stroke-width="1"
+            stroke-linecap="round" />
+    <polyline
+            points="62.36,5.46 55.64,12.18 62.01,18.54"
+            fill="none"
+            stroke="#000000"
+            stroke-width="1"
+            stroke-linecap="round" />
+
+    <!-- circles -->
+    <circle cx="16" cy="34" r="1.5" />
+    <circle cx="38" cy="34" r="2.5" />
+    <circle cx="59" cy="34" r="3.5" />
+</svg>

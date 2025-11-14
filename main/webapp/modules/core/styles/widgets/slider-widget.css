@@ -71,13 +71,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .slider-widget-bracket.left {
-  background: url(../../images/slider-handle.png) no-repeat center right;
+  background: url(../../images/slider-handle.svg) no-repeat center right;
   margin-left: -8px;
   cursor: e-resize;
 }
 
 .slider-widget-bracket.right {
-  background: url(../../images/slider-handle.png) no-repeat center left;
+  background: url(../../images/slider-handle.svg) no-repeat center left;
   margin-left: -4px;
   cursor: w-resize;
 }
