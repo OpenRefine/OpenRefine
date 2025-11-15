@@ -178,7 +178,7 @@ jobs:
 
   mac_test_and_deploy:
     if: github.repository == 'OpenRefine/OpenRefine'
-    runs-on: macos-13
+    runs-on: macos-15-intel
 
     outputs: 
       version_number_string: ${{ steps.version_string_variable.outputs.output_value }}
