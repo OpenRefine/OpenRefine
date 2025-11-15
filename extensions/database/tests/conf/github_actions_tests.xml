@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.1.dtd" >
 <suite name="DatabaseExtensionUnitTestSuite">
     <parameter name = "mySqlDbName" value="test_db"/> 
     <parameter name = "mySqlDbHost" value="127.0.0.1"/> 
