@@ -120,7 +120,7 @@
     <dependency>
       <groupId>org.tukaani</groupId>
       <artifactId>xz</artifactId>
-      <version>1.10</version>
+      <version>1.11</version>
     </dependency>
     <dependency>
       <groupId>com.github.luben</groupId>
