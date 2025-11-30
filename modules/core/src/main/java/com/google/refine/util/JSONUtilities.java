@@ -143,10 +143,13 @@ public class JSONUtilities {
     }
 
     static public int getIntElement(ArrayNode a, int i, int def) {
-        if (a.get(i) != null) {
-            return a.get(i).asInt(def);
+        // Check for null array or invalid index
+        if (a == null || i < 0 || i >= a.size()) {
+            return def;
         }
-        return def;
+    
+        JsonNode value = a.get(i);
+        return value != null ? value.asInt(def) : def;
     }
 
     static public void append(ArrayNode sheetRecords, ObjectNode sheetRecord) {
