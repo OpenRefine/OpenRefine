@@ -1,3 +1,11 @@
 {
-    "java.completion.importOrder": ["#", "java", "javax", "", "com.google.refine", "org.openrefine"],
+    "java.completion.importOrder": [
+        "#",
+        "java",
+        "javax",
+        "",
+        "com.google.refine",
+        "org.openrefine"
+    ],
+    "java.compile.nullAnalysis.mode": "automatic",
 }
