@@ -5,25 +5,25 @@ const TO_DIR = 'modules/core/3rdparty';
 
 if (!fs.existsSync(TO_DIR)) {
     fs.mkdirSync(TO_DIR);
-    console.log('Directory '+TO_DIR+' created.');
+    console.log('Directory ' + TO_DIR + ' created.');
 }
 
 try {
     const data = fs.readFileSync('dependencies.json', 'utf8');
     const dependencies = JSON.parse(data);
 
+    // mkdir for all 'directories' listed in 'dependencies.json' (relative to TO_DIR)
     const DIRS = dependencies.directories;
     for (const dir of DIRS) {
         const path = TO_DIR+'/'+dir;
         if (!fs.existsSync(path)) {
             fs.mkdirSync(path);
-            console.log('Directory '+path+' created.');
+            console.log('Directory ' + path + ' created.');
         }
     }
 
-    // paths are relative to the FROM_DIR and TO_DIR
+    // cp 'files' listed in 'dependencies.json' (from / to paths are relative to FROM_DIR / TO_DIR)
     const PATHS = dependencies.files;
-
     for (const item of PATHS) {
         const from = item.from;
         const fromPath = FROM_DIR + '/' + from;
@@ -37,7 +37,6 @@ try {
     }
 
 } catch (err) {
-    console.log(`Error reading depedencies.json: ${err}`);
+    console.log(`Error reading dependencies.json: ${err}`);
     process.exit(-1);
-    
 }
