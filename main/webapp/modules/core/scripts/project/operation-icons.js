@@ -52,7 +52,7 @@ OperationIconRegistry.setIcon('core/recon', 'images/operations/reconcile.svg');
 OperationIconRegistry.setIcon('core/recon-mark-new-topics', 'images/operations/recon-mark-new-topics.svg');
 OperationIconRegistry.setIcon('core/recon-match-best-candidates', 'images/operations/recon-match-best-candidates.svg');
 OperationIconRegistry.setIcon('core/recon-discard-judgments', 'images/operations/recon-discard-judgments.svg');
-OperationIconRegistry.setIcon('core/recon-match-specific-topic-to-cells', 'images/operation/recon-match-specific-topic-to-cells.svg');
+OperationIconRegistry.setIcon('core/recon-match-specific-topic-to-cells', 'images/operations/recon-match-specific-topic-to-cells.svg');
 OperationIconRegistry.setIcon('core/recon-judge-similar-cells', 'images/operations/recon-match-specific-topic-to-cells.svg');
 OperationIconRegistry.setIcon('core/recon-clear-similar-cells', 'images/operations/delete.svg');
 OperationIconRegistry.setIcon('core/recon-copy-across-columns', 'images/operations/recon-copy-across-columns.svg');
