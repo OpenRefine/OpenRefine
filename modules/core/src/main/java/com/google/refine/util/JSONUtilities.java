@@ -147,7 +147,7 @@ public class JSONUtilities {
         if (a == null || i < 0 || i >= a.size()) {
             return def;
         }
-    
+
         JsonNode value = a.get(i);
         return value != null ? value.asInt(def) : def;
     }
