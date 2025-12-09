@@ -1,3 +1,4 @@
+
 package com.google.refine.util;
 
 import static org.testng.Assert.assertEquals;
