@@ -26,11 +26,14 @@ changelog:
     - title: Linux-specific
       labels:
         - "Platform: Linux"
-    - title: Dependency updates
+    - title: Dependency updates (manually remove or move to end and remove this note)
       labels:
         - dependencies
       authors:
         - dependabot # TODO: Do we want to exclude automated dependency updates altogether?
+        - dependabot[bot] # not sure what/which name form(s) we need here
+        - app/dependabot
+        - app/dependabot-preview
     - title: Other Changes
       labels:
         - "*"
