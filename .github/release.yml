@@ -4,10 +4,10 @@ changelog:
   exclude:
     labels:
       - ignore-for-release
-    authors:
-      - dependabot
-      - app/dependabot
-      - app/dependabot-preview
+#    authors:
+#      - dependabot
+#      - app/dependabot
+#      - app/dependabot-preview
   categories:
     - title: Breaking Changes 🛠
       labels:
@@ -28,11 +28,11 @@ changelog:
     - title: Linux-specific
       labels:
         - "Platform: Linux"
-    - title: Other Changes
-      labels:
-        - "*" # TODO: will this wildcard work if it's before other labels?
     - title: Dependency updates
       labels:
         - dependencies
       authors:
-        - dependabot
+        - dependabot # TODO: Do we want to exclude automated dependency updates altogether?
+    - title: Other Changes
+      labels:
+        - "*"
