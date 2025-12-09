@@ -1,0 +1,36 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+#    authors:
+#      - dependabot
+#      - app/dependabot
+#      - app/dependabot-preview
+  categories:
+    - title: Breaking Changes 🛠
+      labels:
+        - breaking-change # TODO: Not a label currently
+        - "Needs: Release Note" # This doesn't have the same semantics but needs manual editing
+    - title: Exciting New Features 🎉
+      labels:
+        - "Type: Feature Request"
+    - title: Bug Fixes 🐛🕷
+      labels:
+        - "Type: Bug"
+    - title: Windows-specific
+      labels:
+        - "Platform: Windows"
+    - title: Mac-specific
+      labels:
+        - "Platform: macOS"
+    - title: Linux-specific
+      labels:
+        - "Platform: Linux"
+    - title: Dependency updates
+      labels:
+        - dependencies
+      authors:
+        - dependabot # TODO: Do we want to exclude automated dependency updates altogether?
+    - title: Other Changes
+      labels:
+        - "*"
