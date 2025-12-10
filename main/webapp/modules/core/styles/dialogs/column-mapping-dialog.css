@@ -18,7 +18,7 @@
 
 .column-mapping-form {
     max-height: 80vh;
-    overflow: scroll;
+    overflow: auto;
 
     div.grid-layout.layout-normal {
         margin: 0;
