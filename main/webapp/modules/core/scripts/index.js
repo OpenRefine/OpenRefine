@@ -87,7 +87,7 @@ $(function() {
         "command/core/get-version",
         null,
         function(data) {
-          var OpenRefineVersion = data;
+          OpenRefineVersion = data;
 
           $("#openrefine-version").prepend($.i18n('core-index/refine-version', OpenRefineVersion.full_version));
           $("#openrefine-extensions").text($.i18n('core-index/refine-extensions', OpenRefineVersion.module_names.join(", ")));
