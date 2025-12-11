@@ -1,0 +1,3 @@
+{
+    "java.completion.importOrder": ["#", "java", "javax", "", "com.google.refine", "org.openrefine"],
+}
