@@ -331,7 +331,9 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .addClass("searchable")
       .text(project.name)
       .attr("href", "project?project=" + project.id)
+      .attr("target", "_blank")
       .appendTo($(tr.insertCell(tr.cells.length)));
+
       
     var tagsCell = $(tr.insertCell(tr.cells.length));
     var tags = project.tags;
