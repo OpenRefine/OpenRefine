@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -133,5 +134,28 @@ abstract public class AbstractOperation {
      */
     public AbstractOperation renameColumns(Map<String, String> newColumnNames) {
         return this;
+    }
+
+    /**
+     * Determine whether this operation relies on any of the input column names
+     *
+     * @param columnNames a list of column names
+     * @return boolean
+     */
+    public boolean dependsOnAny(Set<String> columnNames) {
+        Set<String> allDependencies = new HashSet<>();
+
+        Optional<Set<String>> columnDependencies = this.getColumnDependencies();
+        if (columnDependencies.isPresent()) {
+            allDependencies.addAll(columnDependencies.get());
+        }
+
+        Optional<ColumnsDiff> columnsDiff = this.getColumnsDiff();
+        if (columnsDiff.isPresent()) {
+            allDependencies.addAll(columnsDiff.get().getImpliedDependencies());
+        }
+
+        allDependencies.retainAll(columnNames);
+        return !allDependencies.isEmpty();
     }
 }

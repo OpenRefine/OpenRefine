@@ -35,6 +35,7 @@ package com.google.refine.commands.history;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -88,6 +89,7 @@ public class ApplyOperationsCommand extends Command {
             Project project = getProject(request);
             String jsonString = request.getParameter("operations");
 
+            // map of recipe names to project names
             Map<String, String> renames = Map.of();
             String renamesJson = request.getParameter("renames");
             if (renamesJson != null) {
@@ -97,10 +99,29 @@ public class ApplyOperationsCommand extends Command {
 
             Recipe recipe = ParsingUtilities.mapper.readValue(jsonString, Recipe.class);
             recipe.validate();
+            // right here might be a good place to remove any operations that reference unused columns
+            // find columns with a missing rename
+            Set<String> unusedColumns = new HashSet<>();
+            // collect unused columns into a single set
+            for (Map.Entry<String, String> entry : renames.entrySet()) {
+                if (entry.getValue() == null) {
+                    unusedColumns.add(entry.getKey());
+                }
+            }
+
+            // foreach operation:
+            // - get all columns
+            // - diff against set of required columns
+            if (!unusedColumns.isEmpty()) {
+                recipe = recipe.removeUnnecessaryOperations(unusedColumns);
+                for (String name : unusedColumns) {
+                    renames.remove(name);
+                }
+            }
+
             if (!renames.isEmpty()) {
                 recipe = recipe.renameColumns(renames);
             }
-
             // deduplicate internal column names to make sure they don't conflict with the ones in the project
             if (!recipe.getInternalColumns().isEmpty()) {
                 recipe = recipe.avoidInternalColumnCollisions(project.columnModel.getColumnNames().stream().collect(Collectors.toSet()));

@@ -72,7 +72,6 @@ function ColumnMappingDialog(operations, analyzedOperations) {
     let select = $('<select></select>')
       .attr('value', defaultValue)
       .data('originalName', columnName)
-      .attr('required', 'true')
       .attr('name', name);
     if (defaultValue === '') {
       $('<option></option>')
@@ -117,7 +116,6 @@ function ColumnMappingDialog(operations, analyzedOperations) {
              .attr('value', defaultValue)
              .data('originalName', columnName)
              .data('expectedToExist', false)
-             .attr('required', 'true')
              .attr('name', name))
       );
     tr.appendTo(elmts.newColumnsTableBody);
@@ -146,7 +144,7 @@ function ColumnMappingDialog(operations, analyzedOperations) {
             }
           },
           onError: function(e) {
-            elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));   
+            elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));
           },
         }
     );
@@ -174,10 +172,11 @@ function ColumnMappingDialog(operations, analyzedOperations) {
       let inputElem = $(child);
       let fromColumn = inputElem.data('originalName');
       let toColumn = inputElem.val();
-      if (!columnExists(toColumn)) {
+      if (toColumn !== null && !columnExists(toColumn)) {
         errorFound = true;
         inputElem.addClass('invalid');
       } else {
+        // still include nulls so we can filter out unused columns in the backend
         renames[fromColumn] = toColumn;
       }
     });
@@ -185,11 +184,12 @@ function ColumnMappingDialog(operations, analyzedOperations) {
       let inputElem = $(child);
       let fromColumn = inputElem.data('originalName');
       let toColumn = inputElem.val();
-      if (columnExists(toColumn)) {
+      if (toColumn !== null && columnExists(toColumn)) {
         errorFound = true;
         inputElem.addClass('invalid');
         alert($.i18n('core-project/error-created-column', toColumn));
       } else {
+        // still include nulls so we can filter out unused columns in the backend
         renames[fromColumn] = toColumn;
       }
     });

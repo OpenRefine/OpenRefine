@@ -185,6 +185,20 @@ public class Recipe {
     }
 
     /**
+     * Takes a list of column names and returns a new version of this recipe with all operations
+     * that operate on those columns removed
+     *
+     * @param unusedColumns
+     * @return
+     */
+    public Recipe removeUnnecessaryOperations(Set<String> unusedColumns) {
+        List<AbstractOperation> result = operations.stream()
+            .filter(o -> !o.dependsOnAny(unusedColumns))
+            .collect(Collectors.toList());
+        return new Recipe(result);
+    }
+
+    /**
      * In preparation for applying the recipe to a project, ensure that the internal column names in the recipe are
      * disjoint from the columns present in the project. The conflicting column names are deduplicated by adding a
      * number at the end of the column such that there is no conflict anymore.
