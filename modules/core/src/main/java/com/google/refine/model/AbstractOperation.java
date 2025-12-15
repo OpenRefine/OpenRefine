@@ -139,7 +139,8 @@ abstract public class AbstractOperation {
     /**
      * Determine whether this operation relies on any of the input column names
      *
-     * @param columnNames a list of column names
+     * @param columnNames
+     *            a list of column names
      * @return boolean
      */
     public boolean dependsOnAny(Set<String> columnNames) {
