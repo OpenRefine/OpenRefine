@@ -127,4 +127,10 @@ public class SQLiteConnectionManager {
         }
     }
 
+    /**
+     * @deprecated for 3.10. No longer does anything and will be removed.
+     */
+    @Deprecated(since = "3.10")
+    public void shutdown() {
+    }
 }
