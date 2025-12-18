@@ -179,17 +179,16 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     MenuSystem.dismissAll();
 
     if (applyOthers) {
-      Refine.postCoreProcess(
-        "mass-edit",
-        {},
+      Refine.postOperation(
         {
+          op: "core/mass-edit",
           columnName: Refine.cellIndexToColumn(self._cellIndex).name,
           expression: "value",
-          edits: JSON.stringify([{
+          edits: [{
             from: [ originalContent ],
             to: value,
             type: type
-          }])
+          }]
         },
         { cellsChanged: true }
       );

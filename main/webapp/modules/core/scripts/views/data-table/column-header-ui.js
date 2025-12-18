@@ -298,6 +298,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             return;
           }
           if (newColumnName.length > 0) {
+            // not using Refine.postOperation as we need to compute the new engine configuration
             Refine.postCoreProcess(
                 "rename-column",
                 {

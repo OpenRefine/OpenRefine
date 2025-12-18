@@ -16,13 +16,17 @@ const AddRowsDialog = (function (path) {
     }
 
     serialize() {
-      return JSON.stringify({});
+      return JSON.stringify(this.asJSON());
+    }
+
+    asJSON() {
+        return {};
     }
   }
 
   return {
-    prependBlankRow: () => _submit([ new Row().serialize() ], 0),
-    appendBlankRow: () => _submit([ new Row().serialize() ], theProject.metadata.rowCount),
+    prependBlankRow: () => _submit([ new Row().asJSON() ], 0),
+    appendBlankRow: () => _submit([ new Row().asJSON() ], theProject.metadata.rowCount),
     initDialog: initDialog,
   };
 
@@ -54,7 +58,7 @@ const AddRowsDialog = (function (path) {
       let index = $form.find("select#add-rows-position").val();
 
       const rowCount = parseInt($form.find("input#add-rows-count").val());
-      const data = Array(rowCount).fill(new Row().serialize());
+      const data = Array(rowCount).fill(new Row().asJSON());
 
       _submit(data, index);
     });
@@ -78,12 +82,11 @@ const AddRowsDialog = (function (path) {
    * @private
    */
   function _submit(data, index) {
-    return Refine.postCoreProcess(
-      "add-rows",
-      null,
+    return Refine.postOperation(
       {
-        "rows[]": data,
-        "index": index,
+        op: "core/row-addition",
+        rows: data,
+        insertionIndex: index
       },
       { modelsChanged: true },
       {
