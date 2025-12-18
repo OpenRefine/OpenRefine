@@ -2,5 +2,16 @@
     "wikibase-extension/menu-label": "Wikibase",
     "wikibase-extension/select-wikibase-instance": "管理Wikibase站臺…",
     "wikibase-extension/import-wikibase-schema": "匯入模式…",
-    "wikibase-extension/edit-wikibase-schema": "編輯 Wikibase 模式"
+    "wikibase-extension/edit-wikibase-schema": "編輯 Wikibase 模式",
+    "wikibase-extension/manage-wikibase-account": "管理 Wikibase 帳號…",
+    "wikibase-extension/perform-edits-on-wikibase": "上傳編輯到 Wikibase…",
+    "wikibase-extension/editing-results-facet": "編輯結果切面",
+    "wikibase-extension/export-to-qs": "匯出至 QuickStatements",
+    "wikibase-extension/qs-file": "QuickStatements 檔案",
+    "wikibase-extension/wikibase-edits": "Wikibase 編輯…",
+    "wikibase-extension/export-schema": "匯出資料庫結構",
+    "wikibase-extension/export-wikibase-schema": "匯出 Wikibase 資料庫結構",
+    "wikibase-extension/wikibase-schema": "Wikibase 資料庫結構",
+    "wikibase-extension/quickstatements-export-name": "QuickStatements",
+    "wikibase-management/dialog-header": "管理 Wikibase 站臺"
 }
