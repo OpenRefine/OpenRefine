@@ -332,6 +332,18 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .text(project.name)
       .attr("href", "project?project=" + project.id)
       .appendTo($(tr.insertCell(tr.cells.length)));
+
+       nameLink.on("click", function (e) {
+       // If user middle-clicks OR Ctrl/Cmd-click → allow default behavior (new tab)
+       if (e.which === 2 || e.metaKey || e.ctrlKey) {
+        return;
+       }
+
+       e.preventDefault();
+       window.location = $(this).attr("href");
+       });
+
+
       
     var tagsCell = $(tr.insertCell(tr.cells.length));
     var tags = project.tags;
@@ -470,3 +482,4 @@ Refine.actionAreas.push({
   label: $.i18n('core-index-open/open-proj'),
   uiClass: Refine.OpenProjectUI
 });
+
