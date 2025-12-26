@@ -64,6 +64,13 @@ class ValidateHostHandler extends HandlerWrapper {
 
     public boolean isValidHost(String host) {
 
+        // Defensive check: the Host header can be null or blank in malformed
+        // or non-browser HTTP requests. Such requests must be rejected to
+        // avoid unexpected behavior or bypassing host validation.
+        if (host == null || host.isBlank()) {
+            return false;
+        }
+
         // Allow loopback IPv4 and IPv6 addresses, as well as localhost
         if (LOOPBACK_PATTERN.matcher(host).find()) {
             return true;
