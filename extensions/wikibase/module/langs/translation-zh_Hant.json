@@ -14,5 +14,7 @@
     "wikibase-extension/wikibase-schema": "Wikibase 資料庫結構",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
     "wikibase-management/dialog-header": "管理 Wikibase 站臺",
-    "wikibase-addition/explain-add-manifest-via-url": "輸入 Wikibase 顯現網址 (建議，這對於追蹤最新顯現有幫助)："
+    "wikibase-addition/explain-add-manifest-via-url": "輸入 Wikibase 顯現網址 (建議，這對於追蹤最新顯現有幫助)：",
+    "wikibase-addition/add-wikibase": "新增 Wikibase",
+    "wikibase-addition/cancel": "取消"
 }
