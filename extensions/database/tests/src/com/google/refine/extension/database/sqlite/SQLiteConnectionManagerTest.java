@@ -80,11 +80,7 @@ public class SQLiteConnectionManagerTest extends DBExtensionTests {
         Connection conn = SQLiteConnectionManager.getInstance().getConnection(testDbConfig);
         Assert.assertNotNull(conn);
 
-        SQLiteConnectionManager.getInstance().shutdown();
-
-        if (conn != null) {
-            Assert.assertTrue(conn.isClosed());
-        }
-
+        conn.close();
+        Assert.assertTrue(conn.isClosed());
     }
 }

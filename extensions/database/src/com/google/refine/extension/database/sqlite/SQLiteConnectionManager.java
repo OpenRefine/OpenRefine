@@ -48,7 +48,6 @@ public class SQLiteConnectionManager {
     private static final Logger logger = LoggerFactory.getLogger("SQLiteConnectionManager");
     private static SQLiteConnectionManager instance;
     private final SQLType type;
-    private Connection connection;
 
     private SQLiteConnectionManager() {
         type = SQLType.forName(SQLiteDatabaseService.DB_NAME);
@@ -107,56 +106,31 @@ public class SQLiteConnectionManager {
      * @return boolean
      */
     public boolean testConnection(DatabaseConfiguration dbConfig) throws DatabaseServiceException {
-        try {
-            boolean connResult = false;
-
-            Connection conn = getConnection(dbConfig);
-            if (conn != null) {
-                connResult = true;
-                conn.close();
-            }
-
-            return connResult;
-        } catch (SQLException e) {
-            logger.error("Test connection Failed!", e);
-            throw new DatabaseServiceException(e);
-        }
+        Connection conn = getConnection(dbConfig);
+        return conn != null;
     }
 
     /**
-     * Get a connection form the connection pool.
+     * Get a connection from the connection pool.
      *
      * @return connection from the pool
      */
     public Connection getConnection(DatabaseConfiguration databaseConfiguration) throws DatabaseServiceException {
         try {
-            if (connection != null) {
-                connection.close();
-            }
-
-            Class.forName(type.getClassPath());
             String dbURL = getDatabaseUrl(databaseConfiguration);
-            connection = DriverManager.getConnection(dbURL);
-
+            Connection connection = DriverManager.getConnection(dbURL);
             logger.debug("*** Acquired New  connection for ::{} **** ", dbURL);
-
             return connection;
-        } catch (ClassNotFoundException e) {
-            logger.error("Jdbc Driver not found", e);
-            throw new DatabaseServiceException(e.getMessage());
         } catch (SQLException e) {
             logger.error("SQLException::Couldn't get a Connection!", e);
             throw new DatabaseServiceException(e);
         }
     }
 
+    /**
+     * @deprecated for 3.10. No longer does anything and will be removed.
+     */
+    @Deprecated(since = "3.10")
     public void shutdown() {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                logger.warn("Non-Managed connection could not be closed. Whoops!", e);
-            }
-        }
     }
 }
