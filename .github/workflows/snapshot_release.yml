@@ -58,7 +58,7 @@ jobs:
           node-version: '20'
 
       - name: Restore Tests dependency cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/cache
@@ -254,7 +254,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.9.1
+      uses: shogo82148/actions-upload-release-asset@v1.9.2
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip
@@ -263,7 +263,7 @@ jobs:
 
     - name: Upload build artifact for Windows (with Java)
       id: upload-build-artifact-win-with-java
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: "./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip"
         name: openrefine-win-with-java-archive-${{ steps.version_string_variable.outputs.output_value }}
@@ -274,7 +274,7 @@ jobs:
 
     - name: Upload build artifact for Windows (with Java) for Installer
       id: upload-build-artifact-win-with-java-for-installer
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: installertemp-win-with-java-${{ steps.version_string_variable.outputs.output_value }}
         path: ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}/openrefine-${{ steps.version_string_variable.outputs.output_value }}
@@ -282,7 +282,7 @@ jobs:
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.9.1
+      uses: shogo82148/actions-upload-release-asset@v1.9.2
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}.tar.gz
@@ -291,7 +291,7 @@ jobs:
 
     - name: Upload build artifact for Linux
       id: upload-build-artifact-linux
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: "./packaging/target/openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}.tar.gz"
         name: openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}
@@ -299,7 +299,7 @@ jobs:
     - name: Upload Release Asset Mac
       id: upload-release-asset-mac
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.9.1
+      uses: shogo82148/actions-upload-release-asset@v1.9.2
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}.dmg
@@ -308,7 +308,7 @@ jobs:
 
     - name: Upload build artifact for Mac
       id: upload-build-artifact-mac
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: "./packaging/target/openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}.dmg"
         name: openrefine-mac-${{ steps.version_string_variable.outputs.output_value }}
@@ -330,7 +330,7 @@ jobs:
 
     - name: Download build artifact for Windows Installer (with Java)
       id: download-build-artifact-win-with-java
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: installertemp-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
         path: ./packaging/target/openrefine-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
@@ -379,7 +379,7 @@ jobs:
 
     - name: Upload the installer as an artifact
       id: upload-build-artifact-win-with-java-installer
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: "./packaging/target/openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}.exe"
         name: openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
@@ -387,7 +387,7 @@ jobs:
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java-installer
       if: github.event_name == 'release'
-      uses: shogo82148/actions-upload-release-asset@v1.9.1
+      uses: shogo82148/actions-upload-release-asset@v1.9.2
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
         asset_path: ./packaging/target/openrefine-win-with-java-installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}.exe
