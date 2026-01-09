@@ -101,6 +101,17 @@ SchemaAlignment.setUpTabs = function() {
         .attr('src', 'images/large-spinner.gif')
         .attr('width', '16px')
         .appendTo(issuesButton);
+  // Add refresh icon to Issues tab
+  this.issuesRefreshIcon = $('<span></span>')
+        .addClass('wbs-refresh-icon')
+        .addClass('wbs-icon')
+        .attr('title', $.i18n('wikibase-schema/refresh-issues'))
+        .appendTo(issuesButton)
+        .on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          SchemaAlignment.preview();
+        });
   var previewButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
         .attr('href', '#wikibase-preview-panel')
@@ -110,6 +121,17 @@ SchemaAlignment.setUpTabs = function() {
         .attr('src', 'images/large-spinner.gif')
         .attr('width', '16px')
         .appendTo(previewButton);
+  // Add refresh icon to Preview tab
+  this.previewRefreshIcon = $('<span></span>')
+        .addClass('wbs-refresh-icon')
+        .addClass('wbs-icon')
+        .attr('title', $.i18n('wikibase-schema/refresh-preview'))
+        .appendTo(previewButton)
+        .on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          SchemaAlignment.preview();
+        });
 
   this._unsavedIndicator = $('<span></span>')
         .html('&nbsp;*')
