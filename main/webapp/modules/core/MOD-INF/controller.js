@@ -385,7 +385,7 @@ function init() {
   var commonModules = [
       "3rdparty/jquery.js",
       "3rdparty/jquery-migrate.js",
-      "externals/jquery-ui/jquery-ui.js",
+      "3rdparty/jquery-ui/jquery-ui.js",
       "3rdparty/js.cookie.js",
       "3rdparty/underscore.js",
 
@@ -456,7 +456,7 @@ function init() {
     "index/styles",
     module,
     [
-      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
+      "3rdparty/jquery-ui/css/ui-lightness/jquery-ui.css",
       "3rdparty/select2/select2.css",
       "3rdparty/tablesorter/theme.blue.css",
 
@@ -570,7 +570,7 @@ function init() {
     module,
     [
       "externals/suggest/css/suggest-4_3.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
+      "3rdparty/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
       "styles/theme.css",
@@ -624,7 +624,7 @@ function init() {
     module,
     [
       "externals/suggest/css/suggest-4_3.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
+      "3rdparty/jquery-ui/css/ui-lightness/jquery-ui.css",
 
       "styles/theme.css",
       "styles/jquery-ui-overrides.css",
