@@ -164,6 +164,7 @@ import com.google.refine.grel.controls.IsNonBlank;
 import com.google.refine.grel.controls.IsNotNull;
 import com.google.refine.grel.controls.IsNull;
 import com.google.refine.grel.controls.IsNumeric;
+import com.google.refine.grel.controls.Reduce;
 import com.google.refine.grel.controls.With;
 
 public class ControlFunctionRegistry {
@@ -349,6 +350,7 @@ public class ControlFunctionRegistry {
         registerFunction("facetCount", new FacetCount());
 
         registerControl("if", new If());
+        registerControl("reduce", new Reduce());
         registerControl("with", new With());
         registerControl("forEach", new ForEach());
         registerControl("forEachIndex", new ForEachIndex());
