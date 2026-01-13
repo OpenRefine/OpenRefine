@@ -125,7 +125,7 @@ public class Reduce implements Control {
         if (args.length != 5) {
             return ControlEvalError.expects_five_args(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[1] instanceof VariableExpr)) {
-            return ControlEvalError.expects_second_arg_var_name(ControlFunctionRegistry.getControlName(this));
+            return ControlEvalError.expects_second_arg_index_var_name(ControlFunctionRegistry.getControlName(this));
         } else if (!(args[2] instanceof VariableExpr)) {
             return ControlEvalError.expects_third_arg_element_var_name(ControlFunctionRegistry.getControlName(this));
         }
@@ -139,7 +139,7 @@ public class Reduce implements Control {
 
     @Override
     public String getParams() {
-        return "expression e, variable v, expression initial, expression func";
+        return "expression e, variable v, variable acc, expression initial, expression func";
     }
 
     @Override
