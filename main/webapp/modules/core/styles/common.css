@@ -127,7 +127,8 @@ a img {
 }
 
 .button, a.button, input[type="file"]::file-selector-button {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   overflow: visible;
   font-size: 1em;
   line-height: 1.4;
@@ -184,8 +185,24 @@ a img {
 }
 
 .button img, a.button img {
-  padding-left: 3px;
+  margin-right: 5px;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
 }
+
+
+
+/* Reserve icon space when no icon exists */
+.button:not(:has(img))::before,
+a.button:not(:has(img))::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+
 
 .button-menu, a.button-menu {
   background: url(../images/down-arrow.svg) no-repeat right 6px;
