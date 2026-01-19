@@ -11,7 +11,7 @@
   "type": "module",
   "dependencies": {
     "@wikimedia/jquery.i18n": "1.0.9",
-    "jquery": "3.7.1",
+    "jquery": "4.0.0",
     "jquery-migrate": "3.6.0",
     "jquery-ui": "1.13.3",
     "js-cookie": "3.0.5",
