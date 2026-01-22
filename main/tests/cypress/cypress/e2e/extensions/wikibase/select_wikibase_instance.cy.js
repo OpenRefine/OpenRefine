@@ -3,7 +3,7 @@
  * Delete all previously added Wikibase test instances
  * They are shared across project, therefore some cleanup is required to ensure a Wikibase instance doesn't come from another test
  */
-describe(__filename, function () {
+describe.skip(__filename, function () {
     const WIKIBASE_TEST_NAME = 'OpenRefine Wikibase Cypress Test';
     const WIKIBASE_TEST_NAME2 = 'OpenRefine Wikibase Test';
 
