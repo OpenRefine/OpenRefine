@@ -286,7 +286,7 @@
       <plugin>
         <groupId>net.revelc.code</groupId>
         <artifactId>impsort-maven-plugin</artifactId>
-        <version>1.13.0</version>
+        <version>1.9.0</version>
         <configuration>
           <groups>java.,javax.,*,com.google.refine,org.openrefine</groups>
           <staticGroups>java,*</staticGroups>
