@@ -10,15 +10,17 @@ updates:
     interval: "weekly"
   open-pull-requests-limit: 15
   ignore:
-  - dependency-name: com.thoughtworks.xstream:xstream
-    versions:
-    - "> 1.4.12"
-    - "< 2"
-  - dependency-name: "org.eclipse.jetty:jetty-*"
-    versions:
-      - ">= 10.0.0"
-  - dependency-name: "formatter-maven-plugin"
-  - dependency-name: "impsort-maven-plugin"
+    - dependency-name: com.thoughtworks.xstream:xstream
+      versions:
+      - "> 1.4.12"
+      - "< 2"
+    - dependency-name: "org.eclipse.jetty:jetty-*"
+      versions:
+        - ">= 10.0.0"
+    - dependency-name: "formatter-maven-plugin"
+    - dependency-name: "impsort-maven-plugin"
+      versions:
+        - ">= 1.10.0" # Requires Java 17 and we build with Java 11 for distribution
   target-branch: "master"
    
 # For main webapp
