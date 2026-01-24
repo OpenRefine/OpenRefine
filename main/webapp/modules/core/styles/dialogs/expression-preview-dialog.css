@@ -43,6 +43,10 @@ textarea.expression-preview-code {
 
 .expression-preview-parsing-status {
   color: var(--light-grey);
+  min-height: 5em;
+  max-width: 150px; 
+  white-space: pre-wrap; 
+  overflow-wrap: break-word;
 }
 
 .expression-preview-parsing-status.error {
