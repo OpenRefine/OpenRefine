@@ -84,6 +84,9 @@ public class Reduce implements Control {
                 }
 
                 Object result = expr.evaluate(bindings);
+                if (ExpressionUtils.isError(result)) {
+                    return result;
+                }
                 bindings.put(accumulatorVariable, result);
             }
         } else if (inputList instanceof ArrayNode) {
@@ -100,6 +103,9 @@ public class Reduce implements Control {
                 }
 
                 Object result = expr.evaluate(bindings);
+                if (ExpressionUtils.isError(result)) {
+                    return result;
+                }
                 bindings.put(accumulatorVariable, result);
             }
         } else {
@@ -113,6 +119,9 @@ public class Reduce implements Control {
                 }
 
                 Object result = expr.evaluate(bindings);
+                if (ExpressionUtils.isError(result)) {
+                    return result;
+                }
                 bindings.put(accumulatorVariable, result);
             }
         }
