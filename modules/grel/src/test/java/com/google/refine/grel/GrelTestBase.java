@@ -13,7 +13,9 @@ import org.testng.annotations.BeforeTest;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
-import com.google.refine.expr.ParsingException;
+
+// com.google.refine.expr.ParsingException removed from method signatures to avoid
+// introducing a classload-time dependency during JUnit discovery
 
 /**
  * Base class for tests of GREL's functionalities
@@ -26,7 +28,13 @@ public class GrelTestBase extends RefineTest {
 
     @BeforeMethod
     public void registerGRELParser() {
-        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        try {
+            Class<?> parserClass = Class.forName("com.google.refine.grel.Parser");
+            Object grelParser = parserClass.getField("grelParser").get(null);
+            MetaParser.registerLanguageParser("grel", "GREL", (com.google.refine.expr.LanguageSpecificParser) grelParser, "value");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to register GREL parser", e);
+        }
     }
 
     @AfterMethod
@@ -75,15 +83,19 @@ public class GrelTestBase extends RefineTest {
      * @param test
      * @throws ParsingException
      */
-    protected void parseEval(Properties bindings, String[] test)
-            throws ParsingException {
-        Evaluable eval = MetaParser.parse("grel:" + test[0]);
-        Object result = eval.evaluate(bindings);
-        if (test[1] != null) {
-            Assert.assertNotNull(result, "Expected " + test[1] + " for test " + test[0]);
-            Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
-        } else {
-            Assert.assertNull(result, "Wrong result for expression: " + test[0]);
+    protected void parseEval(Properties bindings, String[] test) {
+        try {
+            Evaluable eval = MetaParser.parse("grel:" + test[0]);
+            Object result = eval.evaluate(bindings);
+            if (test[1] != null) {
+                Assert.assertNotNull(result, "Expected " + test[1] + " for test " + test[0]);
+                Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
+            } else {
+                Assert.assertNull(result, "Wrong result for expression: " + test[0]);
+            }
+            
+        } catch (com.google.refine.expr.ParsingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -94,11 +106,14 @@ public class GrelTestBase extends RefineTest {
      * @param test
      * @throws ParsingException
      */
-    protected void parseEvalType(Properties bindings, String test, @SuppressWarnings("rawtypes") Class clazz)
-            throws ParsingException {
-        Evaluable eval = MetaParser.parse("grel:" + test);
-        Object result = eval.evaluate(bindings);
-        Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
+    protected void parseEvalType(Properties bindings, String test, @SuppressWarnings("rawtypes") Class clazz) {
+        try {
+            Evaluable eval = MetaParser.parse("grel:" + test);
+            Object result = eval.evaluate(bindings);
+            Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
+        } catch (com.google.refine.expr.ParsingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @AfterMethod
