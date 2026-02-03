@@ -43,7 +43,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       },
       { expression: expression },
       { cellsChanged: true },
-      { onDone },
+      { onDone: onDone },
     );
   };
 
