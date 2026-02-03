@@ -134,7 +134,7 @@ Refine.OpenProjectUI.prototype._openSearchInput = function() {
   const icon = $('#search-icon');
   const input = $('#search-input');
   input.attr("placeholder", $.i18n("core-index-open/search-placeholder"));
-  icon.click(function () {
+  icon.on("click", function () {
     if (input.is(':hidden')) {
       // $("#tagsUl").hide();
       $("#search-input").show();
