@@ -129,64 +129,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   overflow: auto;
 }
 
-/* ============================
-   Dropdown Menu Alignment Fix
-   ============================ */
-
-/* Container for aligned dropdown menus */
-.aligned-menu {
-  list-style: none;
-  padding: 6px 0;
-  margin: 0;
-  background: #f8f8f8;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  width: 220px;
-  font-size: 1.3em;
+#facet-panel, #history-panel {
+  overflow: auto;
 }
 
-/* Each menu item */
-.aligned-menu li {
-  margin: 2px 0;
-}
-
-/* Links inside menu items */
-.aligned-menu a {
+#project-controls .button,
+#project-controls a.button,
+#extension-bar .button,
+#extension-bar a.button {
   display: inline-flex;
   align-items: center;
-  width: 100%;
-  padding: 5px 8px;
-  color: #222;
-  text-decoration: none;
-  border-radius: 3px;
 }
 
-/* Hover effect */
-.aligned-menu a:hover {
-  background-color: #f0f0f0;
-  text-decoration: underline;
-}
-
-/* Reserve space for icon - ensures text starts at same position */
-.aligned-menu a::before {
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-right: 8px;
+#project-controls .button img,
+#project-controls a.button img,
+#extension-bar .button img,
+#extension-bar a.button img {
+  margin-right: 5px;
   flex-shrink: 0;
 }
-
-/* If an icon exists, hide the pseudo-element */
-.aligned-menu a:has(img)::before {
-  display: none;
-}
-
-/* Icon styling */
-.aligned-menu a img {
-  width: 16px;
-  height: 16px;
-  margin-right: 8px;
-  flex-shrink: 0;
-}
-
