@@ -289,31 +289,29 @@ Refine.DatabaseImportController.prototype._getPreviewData = function(callback, n
     var result = {};
 
     $.post(
-      "command/core/get-models?" + $.param({ "importingJobID" : this._jobID }),
-      null,
-      function(data) {
-        for (var n in data) {
-          if (data.hasOwnProperty(n)) {
-            result[n] = data[n];
-          }
+      "command/core/get-models?" + $.param({ "importingJobID" : this._jobID })
+    ).fail(( jqXHR, textStatus, errorThrown) => {
+      console.error( jqXHR, textStatus, errorThrown);
+    }).done(function(data) {
+      for (var n in data) {
+        if (data.hasOwnProperty(n)) {
+          result[n] = data[n];
         }
+      }
 
-        $.post(
-          "command/core/get-rows?" + $.param({
-            "importingJobID" : self._jobID,
-            "start" : 0,
-            "limit" : numRows || 100 // More than we parse for preview anyway
-          }),
-          null,
-          function(data) {
-            result.rowModel = data;
-            callback(result);
-          },
-          "json"
-        );
-      },
-      "json"
-    );
+      $.post(
+        "command/core/get-rows?" + $.param({
+          "importingJobID" : self._jobID,
+          "start" : 0,
+          "limit" : numRows || 100 // More than we parse for preview anyway
+        })
+      ).fail(( jqXHR, textStatus, errorThrown) => {
+        console.error( jqXHR, textStatus, errorThrown);
+      }).done(function(data) {
+        result.rowModel = data;
+        callback(result);
+      });
+    });
 };
 
 Refine.DatabaseImportController.prototype._createProject = function() {

@@ -113,7 +113,7 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
     // If it fails, try with JSONP
     $.ajax(
         url,
-        { "dataType" : "jsonp",
+        { "dataType" : "jsonp", // Fallback only
            "timeout": 5000
         }
     )

@@ -259,14 +259,13 @@ Refine.setPreference = function(key, newValue) {
 
   Refine.wrapCSRF(function(token) {
     $.ajax({
-      async: false,
+      async: false, // TODO: Synchronous call (one of few/only)
       type: "POST",
       url: "command/core/set-preference?" + $.param({ name: key }),
       data: {
         "value" : JSON.stringify(newValue),
         csrf_token: token
       },
-      success: function(data) { },
       dataType: "json"
     });
   });
@@ -415,6 +414,7 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
 
     Refine.clearAjaxInProgress();
 
+    // FIXME: Add defensive error checking for malformed response
     if (o.code == "error") {
       if ("onError" in callbacks) {
         try {

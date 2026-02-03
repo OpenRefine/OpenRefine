@@ -75,16 +75,14 @@ TemplatingExporterDialog.prototype._createDialog = function() {
 
 TemplatingExporterDialog.prototype._getSavedTemplate = function(f) {
     $.getJSON(
-        "command/core/get-preference?" + $.param({ project: theProject.id, name: "exporters.templating.template" }),
-        null,
-        function(data) {
-            if (data.value !== null) {
-                f(JSON.parse(data.value));
-            } else {
-                f(null);
-            }
-        }
-    );
+        "command/core/get-preference?" + $.param({ project: theProject.id, name: "exporters.templating.template" })
+    ).done(function(data) {
+      if (data.value !== null) {
+        f(JSON.parse(data.value));
+      } else {
+        f(null);
+      }
+    });
 };
 
 TemplatingExporterDialog.prototype._createDefaultTemplate = function() {
@@ -127,7 +125,7 @@ TemplatingExporterDialog.prototype._dismiss = function() {
 
 TemplatingExporterDialog.prototype._updatePreview = function() {
     var self = this;
-    Refine.postCSRF(
+    Refine.postCSRF( // TODO: Non-JSON call
         "command/core/export-rows/preview.txt",
         {
             "project" : theProject.id, 

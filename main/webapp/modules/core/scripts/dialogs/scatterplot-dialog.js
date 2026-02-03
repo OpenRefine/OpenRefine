@@ -99,6 +99,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
         var params = {
             project: theProject.id
         };
+        // This command evaluates expressions, so needs CSRF protection, even though it's a GET
         Refine.wrapCSRF(function(csrfToken) {
           $.getJSON("command/core/get-columns-info?" + $.param(params),function(data) {
               if (data === null || typeof data.length == 'undefined') {

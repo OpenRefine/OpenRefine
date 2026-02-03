@@ -215,7 +215,7 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
                         expression: fullExpr
                     });
 
-                    Refine.wrapCSRF(function (token) {
+                    Refine.wrapCSRF(function (token) { // FIXME: three separate copies of this call
                         $.ajax({
                             type: "POST",
                             url: "command/core/set-preference?" + $.param({
@@ -305,7 +305,7 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
                     _functions[index].expressionLang = lang;
                     _functions[index].expression = fullExpr;
 
-                    Refine.wrapCSRF(function (token) {
+                    Refine.wrapCSRF(function (token) { // FIXME: three separate copies of this call
                         $.ajax({
                             type: "POST",
                             url: "command/core/set-preference?" + $.param({
@@ -344,7 +344,7 @@ ClusteringFunctionsDialog.prototype._deleteFunction = function (index) {
                 success: function (data1) {
                     var _functions = data1.value == null ? [] : JSON.parse(data1.value);
                     _functions.splice(index, 1);
-                    Refine.wrapCSRF(function (token) {
+                    Refine.wrapCSRF(function (token) { // FIXME: three separate copies of this call
                         $.ajax({
                             type: "POST",
                             url: "command/core/set-preference?" + $.param({

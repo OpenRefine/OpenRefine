@@ -131,7 +131,7 @@ ExtendReconciledDataPreviewDialog.getAllProperties = function(url, typeID, onDon
       timeout: 7000,
       error: function () {
         $.ajax(url + "?type=" + typeID, {
-          dataType: "jsonp",
+          dataType: "jsonp", // Fallback to JSONP if JSON doesn't work
           success: onSuccess,
           timeout: 7000,
           error: function () {
