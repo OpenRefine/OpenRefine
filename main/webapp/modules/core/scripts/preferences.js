@@ -76,7 +76,7 @@ function PreferenceUI(tr, key, initialValue) {
           value : JSON.stringify(newValue)
         },
         function(o) {
-          if (o.code == "error") {
+          if (o.code === "error") {
             alert(o.message);
           }
         },
@@ -167,11 +167,8 @@ function populatePreferences(prefs) {
 
 function onLoad() {
   $.post(
-      "command/core/get-all-preferences",
-      null,
-      populatePreferences,
-      "json"
-  );
+      "command/core/get-all-preferences"
+  ).done(populatePreferences);
 }
 
 $(onLoad);
