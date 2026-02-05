@@ -64,7 +64,7 @@ refine.bat
 - `-c <path>` - Path to refine.ini file (default: ./refine.ini)
 - `-d <path>` - Path to the data directory
 - `-H <host>` - Expected host header value
-- `-i <interface>` - Network interface to bind (default: 127.0.1)
+- `-i <interface>` - Network interface to bind (default: 127.0.0.1)
 - `-m <memory>` - JVM min and max memory heap size (default: 1400M)
 - `-p <port>` - Port to listen on (default: 3333)
 - `-v <level>` - Verbosity level [error,warn,info,debug,trace]
