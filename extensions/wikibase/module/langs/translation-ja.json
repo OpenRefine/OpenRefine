@@ -171,7 +171,7 @@
     "warnings-messages/having-conflicts-with-statements/body": "{example_entity}のような項目で、競合するプロパティ {property_entity} を削除する.",
     "warnings-messages/having-conflicts-with-statements/title": "{property_entity} はステートメント {added_property_entity} と競合します.",
     "wikibase-account/owner-only-consumer-remember-me-title": "Consumer証明書はクッキーに保存さます。共有PCでは使用しないでください.",
-    "wikibase-account/password-remember-me-title": "パスワードは保存されません。共有PCでは使用しないでください.",
+    "wikibase-account/password-remember-me-title": "パスワードは保存されません。共有パソコンでは使用しないでください.",
     "wikibase-account/remember-me": "ログイン情報を記憶",
     "wikibase-account/access-secret-placeholder": "アクセスの鍵",
     "wikibase-account/access-secret-label": "アクセスの鍵",
