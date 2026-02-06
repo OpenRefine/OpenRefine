@@ -214,16 +214,80 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
+  var doRemoveColumn = function() {
+    Refine.postCoreProcess(
+      "remove-column",
+      {
+        columnName: column.name
+      },
+      null,
+      { modelsChanged: true, rowIdsPreserved: true }
+    );
+  };
+
+  var doRenameColumn = function() {
+    var frame = $(
+      DOM.loadHTML("core", "scripts/views/data-table/rename-column.html"));
+
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n('core-views/enter-col-name'));
+    elmts.columnNameInput.text();
+    elmts.columnNameInput.attr('aria-label',$.i18n('core-views/new-column-name'));
+    elmts.columnNameInput[0].value = column.name;
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+    elmts.cancelButton.on('click',dismiss);
+    elmts.form.on('submit',function(event) {
+      event.preventDefault();
+      var newColumnName = jQueryTrim(elmts.columnNameInput[0].value);
+      if (newColumnName === column.name) {
+        dismiss();
+        return;
+      }
+      if (newColumnName.length > 0) {
+        Refine.postCoreProcess(
+          "rename-column",
+          {
+            oldColumnName: column.name,
+            newColumnName: newColumnName
+          },
+          null,
+          {
+            modelsChanged: true,
+            rowIdsPreserved: true,
+            recordIdsPreserved: true,
+            engineConfig: ui.browsingEngine.getJSON(true),
+          },
+          {
+            onDone: function (response) {
+              if (response.newEngineConfig !== undefined) {
+                // updateLater is set to true as the update process for the operation
+                // will also take care of updating the facets, so there is no need to
+                // do it twice.
+                ui.browsingEngine.setJSON(response.newEngineConfig, true);
+              }
+              dismiss();
+            }
+          }
+        );
+      }
+    });
+    elmts.columnNameInput.trigger('focus').trigger('select');
+  };
+
   var doMoveColumnTo = function(direction) {
     Refine.postCoreProcess(
       "apply-operations",
       {},
       { operations: JSON.stringify([
-        {
-           op: 'core/column-move-' + direction,
-           columnName: column.name
-        }
-      ]) },
+          {
+            op: 'core/column-move-' + direction,
+            columnName: column.name
+          }
+        ]) },
       { modelsChanged: true, rowIdsPreserved: true }
     );
   };
@@ -547,6 +611,19 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         label: $.i18n('core-views/add-col-recon-val'),
         icon: 'images/operations/data-extension.svg',
         click: doAddColumnByReconciliation
+      },
+      {},
+      {
+        id: "core/rename-column",
+        label: $.i18n('core-views/rename-col'),
+        icon: 'images/operations/rename.svg',
+        click: doRenameColumn
+      },
+      {
+        id: "core/remove-column",
+        label: $.i18n('core-views/remove-col'),
+        icon: 'images/operations/delete.svg',
+        click: doRemoveColumn
       },
       {},
       {
