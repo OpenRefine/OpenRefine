@@ -16,19 +16,19 @@ ManageAccountDialog.display = function (logged_in_username, onSuccess) {
 ManageAccountDialog.tryLoginWithCookies = function (onSuccess) {
   // Try with cookies first.
   const discardWaiter = DialogSystem.showBusy($.i18n('wikibase-account/connecting-to-wikibase'));
-  Refine.postCSRF(
-      "command/wikidata/login",
-      {"wb-api-endpoint": WikibaseManager.getSelectedWikibaseApi()},
-      function (data) {
-        discardWaiter();
-        if (data.logged_in) {
-          onSuccess(data.username);
-          ManageAccountDialog.displayLoggedIn(data.username);
-        } else {
-          // If failed, then login with username/password.
-          ManageAccountDialog.displayPasswordLogin(onSuccess);
-        }
-      });
+  CSRFUtil.post(
+    "command/wikidata/login",
+    {"wb-api-endpoint": WikibaseManager.getSelectedWikibaseApi()},
+  ).done(function (data) {
+    discardWaiter();
+    if (data.logged_in) {
+      onSuccess(data.username);
+      ManageAccountDialog.displayLoggedIn(data.username);
+    } else {
+      // If failed, then login with username/password.
+      ManageAccountDialog.displayPasswordLogin(onSuccess);
+    }
+  });
 };
 
 ManageAccountDialog.initCommon = function (elmts) {
@@ -60,13 +60,13 @@ ManageAccountDialog.displayLoggedIn = function (logged_in_username) {
 
   elmts.logoutButton.on('click',function () {
     frame.hide();
-    Refine.postCSRF(
+    CSRFUtil.post(
         "command/wikidata/login",
         $.param({
           "logout": "true",
           "wb-api-endpoint": WikibaseManager.getSelectedWikibaseApi()
         }),
-        function (data) {
+        ).done(function (data) {
           frame.show();
           if (!data.logged_in) {
             dismiss();
@@ -121,10 +121,10 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
     let formArr = elmts.loginForm.serializeArray();
     let username = elmts.usernameInput.val();
     formArr.push({name: "wb-api-endpoint", value: WikibaseManager.getSelectedWikibaseApi()});
-    Refine.postCSRF(
+    CSRFUtil.post(
         "command/wikidata/login",
         $.param(formArr),
-        function (data) {
+        ).done(function (data) {
           if (data.logged_in) {
             dismiss();
             onSuccess(data.username);
@@ -177,10 +177,10 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (onSuccess) {
     frame.hide();
     let formArr = elmts.loginForm.serializeArray();
     formArr.push({name: "wb-api-endpoint", value: WikibaseManager.getSelectedWikibaseApi()});
-    Refine.postCSRF(
+    CSRFUtil.post(
         "command/wikidata/login",
         $.param(formArr),
-        function (data) {
+        ).done(function (data) {
           if (data.logged_in) {
             dismiss();
             onSuccess(data.username);

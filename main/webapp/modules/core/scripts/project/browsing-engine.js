@@ -273,45 +273,43 @@ BrowsingEngine.prototype.update = function(onDone) {
   this._elmts.controls.css("display", "none");
   this._elmts.indicator.css("display", "block");
 
-  Refine.postCSRF(
+  CSRFUtil.post(
     "command/core/compute-facets?" + $.param({ project: theProject.id }),
-    { engine: JSON.stringify(this.getJSON(true)) },
-    function(data) {
-      if(data.code === "error") {
-        var clearErr = $('#err-text').remove();
-        var err = $('<div id="err-text">')
-                  .text(data.message)
-                  .appendTo(self._elmts.errors);
-         self._elmts.errors.css("display", "block");
-        if (onDone) {
-          onDone();
-        }
-        return;
-      }
-      var facetData = data.facets;
-
-      for (var i = 0; i < facetData.length; i++) {
-        const column = theProject.columnModel.columns.find(col => col.name === facetData[i].columnName);
-        self._facets[i].facet.updateState(facetData[i], column);
-      }
-
-      self._elmts.indicator.css("display", "none");
-      self._elmts.errors.css("display", "none");
-      if (self._facets.length > 0) {
-        self._elmts.header.show();
-        self._elmts.controls.css("display", "block");
-
-        self.resize();
-      } else {
-        self._elmts.help.show();
-      }
-
+    { engine: JSON.stringify(this.getJSON(true)) }
+  ).done(function(data) {
+    if(data.code === "error") {
+      var clearErr = $('#err-text').remove();
+      var err = $('<div id="err-text">')
+        .text(data.message)
+        .appendTo(self._elmts.errors);
+      self._elmts.errors.css("display", "block");
       if (onDone) {
         onDone();
       }
-    },
-    "json"
-  );
+      return;
+    }
+    var facetData = data.facets;
+
+    for (var i = 0; i < facetData.length; i++) {
+      const column = theProject.columnModel.columns.find(col => col.name === facetData[i].columnName);
+      self._facets[i].facet.updateState(facetData[i], column);
+    }
+
+    self._elmts.indicator.css("display", "none");
+    self._elmts.errors.css("display", "none");
+    if (self._facets.length > 0) {
+      self._elmts.header.show();
+      self._elmts.controls.css("display", "block");
+
+      self.resize();
+    } else {
+      self._elmts.help.show();
+    }
+
+    if (onDone) {
+      onDone();
+    }
+  });
 };
 
 BrowsingEngine.prototype.reset = function() {

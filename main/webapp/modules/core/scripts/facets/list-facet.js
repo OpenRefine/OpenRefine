@@ -744,21 +744,19 @@ class ListFacet extends Facet {
 
       if (!isNaN(n)) {
         var self = this;
-        Refine.postCSRF(
+        Refine.postCSRF2(
           "command/core/set-preference",
           {
             name : "ui.browsing.listFacet.limit",
             value : JSON.stringify(n)
-          },
-          function(o) {
-            if (o.code === "ok") {
-              ui.browsingEngine.update();
-            } else if (o.code === "error") {
-              alert(o.message);
-            }
-          },
-          "json"
-        );      
+          }
+        ).done(function(o) {
+          if (o.code === "ok") {
+            ui.browsingEngine.update();
+          } else if (o.code === "error") {
+            alert(o.message);
+          }
+        });
       }
     }
   };

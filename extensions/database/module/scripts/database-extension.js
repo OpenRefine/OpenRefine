@@ -50,67 +50,59 @@ DatabaseExtension.handleSavedConnectionClicked = function(menuKey, connectionNam
 
 DatabaseExtension.handleConnectClicked = function(connectionName) {
     
-     $.get(
-             "command/database/saved-connection" + '?' + $.param({"connectionName": connectionName}),
-             null,
-             
-             function(savedDatabaseConfig) {
-                 
-                 if(savedDatabaseConfig){
-                   
-                     var savedConfig = savedDatabaseConfig.savedConnections[0];
-                     var databaseConfig = {};
-                     databaseConfig.connectionName = savedConfig.connectionName;
-                     databaseConfig.databaseType = savedConfig.databaseType;
-                     databaseConfig.databaseServer = savedConfig.databaseHost;
-                     databaseConfig.databasePort = savedConfig.databasePort;
-                     databaseConfig.databaseUser = savedConfig.databaseUser;
-                     databaseConfig.databasePassword = savedConfig.databasePassword;
-                     databaseConfig.initialDatabase = savedConfig.databaseName;
-                     databaseConfig.initialSchema = savedConfig.databaseSchema;
-                    
-                        Refine.postCSRF(
-                                "command/database/connect",
-                                 databaseConfig,
-                                 
-                                 function(databaseInfo) {
-                                    
-                                    if(databaseInfo){
-                                        DatabaseExtension.currentConnection.databaseInfo;
-                                        $( "#currentConnectionNameInput" ).val(databaseConfig.connectionName);
-                                  $( "#currentDatabaseTypeInput" ).val(databaseConfig.databaseType);
-                                  $( "#currentDatabaseUserInput" ).val(databaseConfig.databaseUser);
-                                  $( "#currentDatabasePasswordInput" ).val(databaseConfig.databasePassword);
-                                  $( "#currentDatabaseHostInput" ).val(databaseConfig.databaseServer);
-                                  $( "#currentDatabasePortInput" ).val(databaseConfig.databasePort);
-                                  $( "#currentInitialDatabaseInput" ).val(databaseConfig.initialDatabase);
-                                  
-                                  var connectionParam = "Connection[" + databaseConfig.connectionName + "] :: "
-                                          + "jdbc:"
-                                        + databaseConfig.databaseType + "://"
-                                        + databaseConfig.databaseServer + ":"
-                                        + databaseConfig.databasePort + "/"
-                                        + databaseConfig.initialDatabase;
-                                 
-                                  $( "#connectionParameterSpan" ).text(connectionParam);
-                                        $( "#newConnectionDiv" ).hide();
-                                        $( "#sqlEditorDiv" ).show();
-                                       
-                                    }else{
-                                        window.alert("Unable to establish connection to database");
-                                    }
-                                        
-                                },
-                                "json",
-                                function( jqXhr, textStatus, errorThrown ){
-                                    alert( textStatus + ':' + errorThrown );
-                     });
-                   
-                 }
-                     
-             },
-             "json"
-   );
+     $.get("command/database/saved-connection" + '?' + $.param({"connectionName": connectionName})
+     ).done(function(savedDatabaseConfig) {
+
+       if(savedDatabaseConfig){
+
+         var savedConfig = savedDatabaseConfig.savedConnections[0];
+         var databaseConfig = {};
+         databaseConfig.connectionName = savedConfig.connectionName;
+         databaseConfig.databaseType = savedConfig.databaseType;
+         databaseConfig.databaseServer = savedConfig.databaseHost;
+         databaseConfig.databasePort = savedConfig.databasePort;
+         databaseConfig.databaseUser = savedConfig.databaseUser;
+         databaseConfig.databasePassword = savedConfig.databasePassword;
+         databaseConfig.initialDatabase = savedConfig.databaseName;
+         databaseConfig.initialSchema = savedConfig.databaseSchema;
+
+         CSRFUtil.post(
+           "command/database/connect",
+           databaseConfig
+           ).fail(function( jqXhr, textStatus, errorThrown ){
+           alert( textStatus + ':' + errorThrown );
+         }).done(function(databaseInfo) {
+
+           if(databaseInfo){
+             DatabaseExtension.currentConnection.databaseInfo;
+             $( "#currentConnectionNameInput" ).val(databaseConfig.connectionName);
+             $( "#currentDatabaseTypeInput" ).val(databaseConfig.databaseType);
+             $( "#currentDatabaseUserInput" ).val(databaseConfig.databaseUser);
+             $( "#currentDatabasePasswordInput" ).val(databaseConfig.databasePassword);
+             $( "#currentDatabaseHostInput" ).val(databaseConfig.databaseServer);
+             $( "#currentDatabasePortInput" ).val(databaseConfig.databasePort);
+             $( "#currentInitialDatabaseInput" ).val(databaseConfig.initialDatabase);
+
+             var connectionParam = "Connection[" + databaseConfig.connectionName + "] :: "
+               + "jdbc:"
+               + databaseConfig.databaseType + "://"
+               + databaseConfig.databaseServer + ":"
+               + databaseConfig.databasePort + "/"
+               + databaseConfig.initialDatabase;
+
+             $( "#connectionParameterSpan" ).text(connectionParam);
+             $( "#newConnectionDiv" ).hide();
+             $( "#sqlEditorDiv" ).show();
+
+           }else{
+             window.alert("Unable to establish connection to database");
+           }
+
+         });
+
+       }
+
+     });
 };
 
 DatabaseExtension.handleDeleteConnectionClicked = function(connectionName) {
@@ -140,29 +132,26 @@ DatabaseExtension.handleDeleteConnectionClicked = function(connectionName) {
 
 DatabaseExtension.handleEditConnectionClicked = function(connectionName) {
   $.get(
-    "command/database/saved-connection" + '?' + $.param({ "connectionName": connectionName }),
-    null,
-    function(savedDatabaseConfig) {
-      if (savedDatabaseConfig) {
-        var savedConfig = savedDatabaseConfig.savedConnections[0];
+    "command/database/saved-connection" + '?' + $.param({ "connectionName": connectionName })
+  ).done(function(savedDatabaseConfig) {
+    if (savedDatabaseConfig) {
+      var savedConfig = savedDatabaseConfig.savedConnections[0];
 
-        $( "#connectionName" ).val(savedConfig.connectionName);
-        $( "select#databaseTypeSelect" ).val(savedConfig.databaseType);
-        Refine.DatabaseSourceUI.prototype._updateDatabaseType(savedConfig.databaseType);
-        
-        $( "#databaseHost" ).val(savedConfig.databaseHost);
-        $( "#databasePort" ).val(savedConfig.databasePort);
-        $( "#databaseUser" ).val(savedConfig.databaseUser);
-        $( "#databasePassword" ).val(savedConfig.databasePassword);
-        $( "#initialDatabase" ).val(savedConfig.databaseName);
-        $( "#initialSchema" ).val(savedConfig.databaseSchema);
-        $( "#newConnectionControlDiv" ).hide();
-        $( "#editConnectionControlDiv" ).show();
-        $( "#newConnectionDiv" ).show();
-        $('#sqlEditorDiv').hide();
-        $("#connectionName").attr('readonly', 'readonly');
-      }
-    },
-    "json"
-  );
+      $( "#connectionName" ).val(savedConfig.connectionName);
+      $( "select#databaseTypeSelect" ).val(savedConfig.databaseType);
+      Refine.DatabaseSourceUI.prototype._updateDatabaseType(savedConfig.databaseType);
+
+      $( "#databaseHost" ).val(savedConfig.databaseHost);
+      $( "#databasePort" ).val(savedConfig.databasePort);
+      $( "#databaseUser" ).val(savedConfig.databaseUser);
+      $( "#databasePassword" ).val(savedConfig.databasePassword);
+      $( "#initialDatabase" ).val(savedConfig.databaseName);
+      $( "#initialSchema" ).val(savedConfig.databaseSchema);
+      $( "#newConnectionControlDiv" ).hide();
+      $( "#editConnectionControlDiv" ).show();
+      $( "#newConnectionDiv" ).show();
+      $('#sqlEditorDiv').hide();
+      $("#connectionName").attr('readonly', 'readonly');
+    }
+  });
 }

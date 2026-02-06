@@ -44,43 +44,40 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
   var dismissBusy = self.showBusyReconciling();
 
-  Refine.postCSRF(
+  CSRFUtil.post(
     "command/core/guess-types-of-column?" + $.param({
       project: theProject.id, 
       columnName: this._column.name,
       service: this._service.url
-    }),
-    null, 
-    function(data) {
-      if (data.code && data.code === 'ok') {
-        self._types = data.types;
+    })
+  ).done(function(data) {
+    if (data.code && data.code === 'ok') {
+      self._types = data.types;
 
-        if (self._types.length === 0 || "defaultTypes" in self._service) {
-          var defaultTypes = {};
-          $.each(self._service.defaultTypes, function() {
-            defaultTypes[this.id] = this.name;
-          });
-          $.each(self._types, function() {
-            delete defaultTypes[typeof this == "string" ? this : this.id];
-          });
-          for (var id in defaultTypes) {
-            if (defaultTypes.hasOwnProperty(id)) {
-              self._types.push({
-                id: id,
-                name: defaultTypes[id]
-              });
-            }
+      if (self._types.length === 0 || "defaultTypes" in self._service) {
+        var defaultTypes = {};
+        $.each(self._service.defaultTypes, function() {
+          defaultTypes[this.id] = this.name;
+        });
+        $.each(self._types, function() {
+          delete defaultTypes[typeof this == "string" ? this : this.id];
+        });
+        for (var id in defaultTypes) {
+          if (defaultTypes.hasOwnProperty(id)) {
+            self._types.push({
+              id: id,
+              name: defaultTypes[id]
+            });
           }
         }
-      } else {
-        alert('Guess Types query failed ' + data.code + ' : ' + data.message);
       }
+    } else {
+      alert('Guess Types query failed ' + data.code + ' : ' + data.message);
+    }
 
-      dismissBusy();
-      f();
-    },
-    "json"
-  );
+    dismissBusy();
+    f();
+  });
 };
 
 ReconStandardServicePanel.prototype._constructUI = function() {

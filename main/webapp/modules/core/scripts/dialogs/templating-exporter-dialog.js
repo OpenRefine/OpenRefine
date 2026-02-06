@@ -125,29 +125,29 @@ TemplatingExporterDialog.prototype._dismiss = function() {
 
 TemplatingExporterDialog.prototype._updatePreview = function() {
     var self = this;
-    Refine.postCSRF( // TODO: Non-JSON call
-        "command/core/export-rows/preview.txt",
-        {
-            "project" : theProject.id, 
-            "format" : "template",
-            "engine" : JSON.stringify(ui.browsingEngine.getJSON()),
-            "sorting" : JSON.stringify(ui.dataTableView.getSorting()),
-            "prefix" : this._elmts.prefixTextarea[0].value,
-            "suffix" : this._elmts.suffixTextarea[0].value,
-            "separator" : this._elmts.separatorTextarea[0].value,
-            "template" : this._elmts.templateTextarea[0].value,
-            "preview" : true,
-            "limit" : "20"
+    CSRFUtil.post({
+        url: "command/core/export-rows/preview.txt",
+        data: {
+          "project": theProject.id,
+          "format": "template",
+          "engine": JSON.stringify(ui.browsingEngine.getJSON()),
+          "sorting": JSON.stringify(ui.dataTableView.getSorting()),
+          "prefix": this._elmts.prefixTextarea[0].value,
+          "suffix": this._elmts.suffixTextarea[0].value,
+          "separator": this._elmts.separatorTextarea[0].value,
+          "template": this._elmts.templateTextarea[0].value,
+          "preview": true,
+          "limit": "20"
         },
-        function (data) {
-            self._elmts.previewTextarea[0].value = data;
-        },
-        "text",
-        function (jqXhr, textStatus, errorMessage) {
-          if (jqXhr.status === 500) {
-            self._elmts.previewTextarea[0].value = $.i18n('core-dialogs/missing-bad-template');
-          }
+        dataType: "text", // return data is text
+      }
+    ).fail(function(jqXhr, textStatus, errorMessage) {
+        if (jqXhr.status === 500) {
+          self._elmts.previewTextarea[0].value = $.i18n('core-dialogs/missing-bad-template');
         }
+      }).done(function(data) {
+        self._elmts.previewTextarea[0].value = data;
+      }
     );
 };
 

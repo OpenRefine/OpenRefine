@@ -82,6 +82,7 @@ ProcessPanel.prototype.update = function(updateOptions, onDone) {
   }
 
   var self = this;
+  // TODO: See if this can be replaced with jQuery or Promise code
   Ajax.chainGetJSON(
       "command/core/get-processes?" + $.param({ project: theProject.id }), null,
       function(data) {
@@ -137,15 +138,12 @@ ProcessPanel.prototype.undo = function() {
 
 ProcessPanel.prototype._cancelAll = function() {
   var self = this;
-  Refine.postCSRF(
-    "command/core/cancel-processes?" + $.param({ project: theProject.id }), 
-    { },
-    function(o) {
-        self._data = null;
-        self._runOnDones();
-    },
-    "json"
-  );
+  CSRFUtil.post(
+    "command/core/cancel-processes?" + $.param({ project: theProject.id })
+  ).done(function(o) {
+    self._data = null;
+    self._runOnDones();
+  });
 };
 
 ProcessPanel.prototype._render = function(newData) {
@@ -213,11 +211,9 @@ ProcessPanel.prototype._render = function(newData) {
     } else {
       if (window.confirm($.i18n('core-project/last-op-er')+'\n' + messages +
             '\n\n'+$.i18n('core-project/continue-remaining'))) {
-        Refine.postCSRF(
+        CSRFUtil.post(
           "command/core/apply-operations?" + $.param({ project: theProject.id }), 
-          { operations: '[]' },
-          function(o) {},
-          "json"
+          { operations: '[]' }
         );
       } else {
         self._cancelAll();

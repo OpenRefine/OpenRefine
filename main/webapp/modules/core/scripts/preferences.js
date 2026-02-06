@@ -38,7 +38,13 @@ var Refine = {
 
 I18NUtil.init("core");
 
+/**
+ * @deprecated use CSRFUtil.getCSRF().then(onCSRF)
+ */
 Refine.wrapCSRF = CSRFUtil.wrapCSRF;
+/**
+ * @deprecated use CSRFUtil.post()
+ */
 Refine.postCSRF = CSRFUtil.postCSRF;
 
 function deDupUserMetaData(arrObj)  {
@@ -69,46 +75,42 @@ function PreferenceUI(tr, key, initialValue) {
       }
       $(td1).text(newValue);
 
-      Refine.postCSRF(
+      Refine.postCSRF2(
         "command/core/set-preference",
         {
           name : key,
           value : JSON.stringify(newValue)
-        },
-        function(o) {
-          if (o.code === "error") {
-            alert(o.message);
-          }
-        },
-        "json"
-      );
+        }
+      ).done(function(o) {
+        if (o.code === "error") {
+          alert(o.message);
+        }
+      });
     }
   });
 
   $('<button class="button">').text($.i18n('core-index/delete')).css('margin-left','5px')
       .appendTo(td2).on('click',function() {
     if (window.confirm($.i18n('core-index/delete-key')+" " + key + "?")) {
-      Refine.postCSRF(
+      Refine.postCSRF2(
         "command/core/set-preference",
         {
           name : key
-        },
-        function(o) {
-          if (o.code == "ok") {
-            $(tr).remove();
+        }
+      ).done(function(o) {
+        if (o.code === "ok") {
+          $(tr).remove();
 
-            for (var i = 0; i < preferenceUIs.length; i++) {
-              if (preferenceUIs[i] === self) {
-                preferenceUIs.splice(i, 1);
-                break;
-              }
+          for (var i = 0; i < preferenceUIs.length; i++) {
+            if (preferenceUIs[i] === self) {
+              preferenceUIs.splice(i, 1);
+              break;
             }
-          } else if (o.code == "error") {
-            alert(o.message);
           }
-        },
-        "json"
-      );
+        } else if (o.code === "error") {
+          alert(o.message);
+        }
+      });
     }
   });
 }
@@ -147,19 +149,17 @@ function populatePreferences(prefs) {
             value = deDupUserMetaData(value);
         }
 
-        Refine.postCSRF(
+        Refine.postCSRF2(
           "command/core/set-preference",
           {
             name : key,
             value : JSON.stringify(value)
-          },
-          function(o) {
-            if (o.code == "error") {
-              alert(o.message);
-            }
-          },
-          "json"
-        );
+          }
+        ).done(function(o) {
+          if (o.code === "error") {
+            alert(o.message);
+          }
+        });
       }
     }
   });

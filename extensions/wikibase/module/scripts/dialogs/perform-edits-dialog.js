@@ -125,24 +125,22 @@ PerformEditsDialog.checkAndLaunch = function () {
   var onSaved = function () {
     ManageAccountDialog.ensureLoggedIn(function (logged_in_username) {
       var discardWaiter = DialogSystem.showBusy($.i18n('perform-wikibase-edits/analyzing-edits'));
-      Refine.postCSRF(
+      CSRFUtil.post(
           "command/wikidata/preview-wikibase-schema?" + $.param({project: theProject.id}),
           {
              manifest: JSON.stringify(WikibaseManager.getSelectedWikibase()),
              engine: JSON.stringify(ui.browsingEngine.getJSON()),
              slow_mode: true
-          },
-          function (data) {
-            discardWaiter();
-            if (data['code'] !== 'error') {
-              PerformEditsDialog._updateWarnings(data);
-              PerformEditsDialog.launch(logged_in_username, data['max_severity']);
-            } else {
-              SchemaAlignment.launch();
-            }
-          },
-          "json"
-      );
+          }
+      ).done(function (data) {
+        discardWaiter();
+        if (data['code'] !== 'error') {
+          PerformEditsDialog._updateWarnings(data);
+          PerformEditsDialog.launch(logged_in_username, data['max_severity']);
+        } else {
+          SchemaAlignment.launch();
+        }
+      });
     });
   };
 

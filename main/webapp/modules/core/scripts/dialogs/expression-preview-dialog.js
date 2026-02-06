@@ -218,12 +218,9 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     
     s = this._getLanguage() + ":" + s;
     if (commit) {
-        Refine.postCSRF(
+        CSRFUtil.post(
             "command/core/log-expression?" + $.param({ project: theProject.id }),
-            { expression: s },
-            function(data) {
-            },
-            "json"
+            { expression: s }
         );
     }
     
@@ -352,18 +349,17 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
                 .addClass(entry.starred ? "data-table-star-on" : "data-table-star-off")
                 .appendTo(tr.insertCell(0))
                 .on('click',function() {
-                    Refine.postCSRF(
+                    CSRFUtil.post(
+                      // FIXME: This command returns no response, so JSON handling fails
                         "command/core/toggle-starred-expression",
                         {
                             expression: entry.code
-                        },
-                        function(data) {
-                            entry.starred = !entry.starred;
-                            renderEntry(self,tr,entry);
-                            self._renderStarredExpressionsTab();
-                        },
-                        ""
-                    );
+                        }
+                    ).done(function(data) {
+                        entry.starred = !entry.starred;
+                        renderEntry(self,tr,entry);
+                        self._renderStarredExpressionsTab();
+                    });
                 });
         
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/reuse')+'</a>').appendTo(tr.insertCell(1)).on('click',function() {
@@ -422,15 +418,14 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
             var removeExpressionFooter = $('<div></div>').addClass("dialog-footer").appendTo(removeExpression);
 
             $('<button class="button button-primary" bind="okButton"></button>').html($.i18n('core-buttons/ok')).on('click',function() {
-                Refine.postCSRF(
+                CSRFUtil.post(
+                    // FIXME: This command returns no response, so JSON handling fails
                     "command/core/toggle-starred-expression",
-                    { expression: entry.code, returnList: true },
-                    function(data) {
-                        self._renderStarredExpressions(data);
-                        self._renderExpressionHistoryTab();
-                    },
-                    "json"
-                );
+                    { expression: entry.code, returnList: true }
+                ).done(function(data) {
+                    self._renderStarredExpressions(data);
+                    self._renderExpressionHistoryTab();
+                });
                 DialogSystem.dismissUntil(DialogSystem._layers.length - 1);
             }).appendTo(removeExpressionFooter);
 
@@ -483,22 +478,20 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     if(activeTabName === "Distance"){
         self._renderDistancePreview(this._values[0]);
     } else {
-        Refine.postCSRF(
+        CSRFUtil.post(
             "command/core/preview-expression?" + $.param(params), 
             {
                 expression: this._getLanguage() + ":" + expression,
                 rowIndices: JSON.stringify(this._rowIndices) 
-            },
-            function(data) {
-                if (data.code !== "error") {
-                    self._results = data.results;
-                } else {
-                    self._results = null;
-                }
-                self._renderPreview(expression, data);
-            },
-            "json"
-        );
+            }
+        ).done(function(data) {
+            if (data.code !== "error") {
+                self._results = data.results;
+            } else {
+                self._results = null;
+            }
+            self._renderPreview(expression, data);
+        });
     }
 
     if(self._columnName != null){
@@ -512,7 +505,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
             "blocking-ngram-size" : Number(document.getElementById('blockingChars').value)
         };
 
-        Refine.postCSRF(
+        CSRFUtil.post(
             "command/core/compute-clusters?" + $.param({ project: theProject.id }),
             {
                 engine: JSON.stringify(ui.browsingEngine.getJSON()),
@@ -522,21 +515,19 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
                     'column' : self._columnName,
                     'params' : self._params
                 })
-            },
-            function(data) {
-                var clusters = [];
-                if (data.code !== "error") {
-                    $.each(data, function() {
-                        var cluster = {
-                            choices: this,
-                        };
-                        clusters.push(cluster);
-                    });
-                }
-                self._renderClusters(clusters);
-            },
-            "json"
-        );
+            }
+        ).done(function(data) {
+            var clusters = [];
+            if (data.code !== "error") {
+                $.each(data, function() {
+                    var cluster = {
+                        choices: this,
+                    };
+                    clusters.push(cluster);
+                });
+            }
+            self._renderClusters(clusters);
+        });
     }
 };
 
@@ -703,39 +694,37 @@ ExpressionPreviewDialog.Widget.prototype._renderDistancePreview = function(first
         let newExpression = expression.replace(/value1/g, '"' + value1.toString().replaceAll(' ', '\xa0') + '"')
                                 .replace(/value2/g, '"' + value2.toString().replaceAll(' ', '\xa0') + '"')
                                 .replace(/value/g,"");
-        Refine.postCSRF(
+        CSRFUtil.post(
             "command/core/preview-expression?" + $.param(params), 
             {
                 expression: self._getLanguage() + ":" + newExpression,
                 rowIndices: JSON.stringify(self._rowIndices) 
-            },
-            function(data) {
-                let result;
-                if (data.code !== "error") {
-                    result = data.results[0];
-                    self._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text($.i18n('core-dialogs/no-syntax-err')+".");
-                } else {
-                    result = null;
-                    var message = (data.type === "parser") ? data.message : $.i18n('core-dialogs/internal-err');
-                    self._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
-                }
-                
-                tr.deleteCell(-1);
+            }
+        ).done(function(data) {
+            let result;
+            if (data.code !== "error") {
+                result = data.results[0];
+                self._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text($.i18n('core-dialogs/no-syntax-err')+".");
+            } else {
+                result = null;
+                var message = (data.type === "parser") ? data.message : $.i18n('core-dialogs/internal-err');
+                self._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
+            }
 
-                if (result !== null && result !== undefined) {
-                    if ($.isPlainObject(result)) {
-                        $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + result.message).appendTo(tr.insertCell(2));
-                    } else if(isNaN(result)) {
-                        let message = $.i18n('core-dialogs/should-return-number');
-                        $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + message).appendTo(tr.insertCell(2));
-                    } else {
-                        $('<span>' + result + '</span>').appendTo(tr.insertCell(2));
-                    }
+            tr.deleteCell(-1);
+
+            if (result !== null && result !== undefined) {
+                if ($.isPlainObject(result)) {
+                    $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + result.message).appendTo(tr.insertCell(2));
+                } else if(isNaN(result)) {
+                    let message = $.i18n('core-dialogs/should-return-number');
+                    $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + message).appendTo(tr.insertCell(2));
                 } else {
-                    $('<span>' + result + '</span>').addClass("expression-preview-special-value").appendTo(tr.insertCell(2));
+                    $('<span>' + result + '</span>').appendTo(tr.insertCell(2));
                 }
-            },
-            "json"
-        ); 
+            } else {
+                $('<span>' + result + '</span>').addClass("expression-preview-special-value").appendTo(tr.insertCell(2));
+            }
+        });
     }
 };

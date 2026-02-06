@@ -277,48 +277,41 @@ Refine.DatabaseSourceUI.prototype._executeQuery = function(jdbcQueryInfo) {
     
     var dismiss = DialogSystem.showBusy($.i18n('database-import/checking'));
 
-    Refine.postCSRF(
+    CSRFUtil.post(
       "command/database/test-query",
-      jdbcQueryInfo,
-      function(jdbcConnectionResult) {
-         
-          dismiss();
-          self._controller.startImportingDocument(jdbcQueryInfo);
-              
-      },
-      "json",
-      function( jqXhr, textStatus, errorThrown ){
-       
-        dismiss();
-        alert( textStatus + ':' + errorThrown );
+      jdbcQueryInfo
+    ).fail(function( jqXhr, textStatus, errorThrown ){
+      dismiss();
+      alert( textStatus + ':' + errorThrown );
+    }).done(function(jdbcConnectionResult) {
+      dismiss();
+      self._controller.startImportingDocument(jdbcQueryInfo);
     });
 
 }
 
 Refine.DatabaseSourceUI.prototype._saveConnection = function(jdbcConnectionInfo) {	
     var self = this;
-    Refine.postCSRF(
+    CSRFUtil.post(
       "command/database/saved-connection",
-      jdbcConnectionInfo,
-      function(settings) {
-          if(settings){
-    
-              self._elmts.menuListUl.empty();
-              var items = [];
-              $.each(settings.savedConnections,function(index,savedConnection){
-             
-                  items.push('<li class="sc-list"><a href="#" class="database-menu-item context-menu-one">'
-                    + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
-                    + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
-               })
-              
-              self._elmts.menuListUl.append(items.join(''));
-          }
-    
-      },
-      "json",
-      function( jqXhr, textStatus, errorThrown ){
-        alert( textStatus + ':' + errorThrown );
+      jdbcConnectionInfo
+    ).fail(function (jqXhr, textStatus, errorThrown) {
+      alert(textStatus + ':' + errorThrown);
+    }).done(function (settings) {
+      if (settings) {
+
+        self._elmts.menuListUl.empty();
+        var items = [];
+        $.each(settings.savedConnections,function(index,savedConnection){
+
+          items.push('<li class="sc-list"><a href="#" class="database-menu-item context-menu-one">'
+            + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
+            + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
+        })
+
+        self._elmts.menuListUl.append(items.join(''));
+      }
+
     });
 
 };
@@ -326,90 +319,82 @@ Refine.DatabaseSourceUI.prototype._saveConnection = function(jdbcConnectionInfo)
 Refine.DatabaseSourceUI.prototype._loadSavedConnections = function() {	
     var self = this;
     $.get(
-      "command/database/saved-connection",
-      null,
-      function(settings) {
-          if(settings){
-    
-              self._elmts.menuListUl.empty();
-             
-              var items = [];
-              $.each(settings.savedConnections,function(index,savedConnection){
-                  
-                  items.push('<li class="sc-list"><a href="#" class="database-menu-item context-menu-one">'
-                    + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
-                    + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
+      "command/database/saved-connection"
+    ).done(function(settings) {
+      if(settings){
 
-               })
-             
-              self._elmts.menuListUl.append(items.join(''));
-        
-          }
-        
-      },
-      "json"
-    );
+        self._elmts.menuListUl.empty();
+
+        var items = [];
+        $.each(settings.savedConnections,function(index,savedConnection){
+
+          items.push('<li class="sc-list"><a href="#" class="database-menu-item context-menu-one">'
+            + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
+            + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
+
+        })
+
+        self._elmts.menuListUl.append(items.join(''));
+
+      }
+
+    });
 
 };
 
 Refine.DatabaseSourceUI.prototype._testDatabaseConnect = function(jdbcConnectionInfo) {
     
     var self = this;
-    Refine.postCSRF(
+    CSRFUtil.post(
       "command/database/test-connect",
-      jdbcConnectionInfo,
-      function(jdbcConnectionResult) {
-          if(jdbcConnectionResult && jdbcConnectionResult.connectionResult == true){
-              window.alert("Test Connection Succeeded!");
-          }else{
-              window.alert("Unable to establish connection to database");
-          }
-              
-      },
-      "json",
-      function( jqXhr, textStatus, errorThrown ){
-        alert( textStatus + ':' + errorThrown );
+      jdbcConnectionInfo
+    ).fail(function( jqXhr, textStatus, errorThrown ){
+      alert( textStatus + ':' + errorThrown );
+    }).done(function(jdbcConnectionResult) {
+      if(jdbcConnectionResult && jdbcConnectionResult.connectionResult == true){
+        window.alert("Test Connection Succeeded!");
+      }else{
+        window.alert("Unable to establish connection to database");
+      }
+
     });
 };
 
 Refine.DatabaseSourceUI.prototype._connect = function(jdbcConnectionInfo) {
     
     var self = this;
-    Refine.postCSRF(
+    CSRFUtil.post(
       "command/database/connect",
-      jdbcConnectionInfo,
-      function(databaseInfo) {
-          
-          if(databaseInfo){
-              $( "#currentConnectionNameInput" ).val(jdbcConnectionInfo.connectionName);
-              $( "#currentDatabaseTypeInput" ).val(jdbcConnectionInfo.databaseType);
-              $( "#currentDatabaseUserInput" ).val(jdbcConnectionInfo.databaseUser);
-              $( "#currentDatabasePasswordInput" ).val(jdbcConnectionInfo.databasePassword);
-              $( "#currentDatabaseHostInput" ).val(jdbcConnectionInfo.databaseServer);
-              $( "#currentDatabasePortInput" ).val(jdbcConnectionInfo.databasePort);
-              $( "#currentInitialDatabaseInput" ).val(jdbcConnectionInfo.initialDatabase);
-              
-              var connectionParam = "Connection :: "
-                      + "jdbc:"
-                    + jdbcConnectionInfo.databaseType + "://"
-                    + jdbcConnectionInfo.databaseServer + ":"
-                    + jdbcConnectionInfo.databasePort + "/"
-                    + jdbcConnectionInfo.initialDatabase;
-              
-             
-              $( "#connectionParameterSpan" ).text(connectionParam);
-              $( "#newConnectionDiv" ).hide();
-              $( "#sqlEditorDiv" ).show();
-            
-          }else{
-              window.alert("Unable to establish connection to database");
-              return;
-          }
-              
-      },
-      "json",
-      function( jqXhr, textStatus, errorThrown ){
-        alert( textStatus + ':' + errorThrown );
+      jdbcConnectionInfo
+      ).fail(function( jqXhr, textStatus, errorThrown ){
+      alert( textStatus + ':' + errorThrown );
+    }).done(function(databaseInfo) {
+
+      if(databaseInfo){
+        $( "#currentConnectionNameInput" ).val(jdbcConnectionInfo.connectionName);
+        $( "#currentDatabaseTypeInput" ).val(jdbcConnectionInfo.databaseType);
+        $( "#currentDatabaseUserInput" ).val(jdbcConnectionInfo.databaseUser);
+        $( "#currentDatabasePasswordInput" ).val(jdbcConnectionInfo.databasePassword);
+        $( "#currentDatabaseHostInput" ).val(jdbcConnectionInfo.databaseServer);
+        $( "#currentDatabasePortInput" ).val(jdbcConnectionInfo.databasePort);
+        $( "#currentInitialDatabaseInput" ).val(jdbcConnectionInfo.initialDatabase);
+
+        var connectionParam = "Connection :: "
+          + "jdbc:"
+          + jdbcConnectionInfo.databaseType + "://"
+          + jdbcConnectionInfo.databaseServer + ":"
+          + jdbcConnectionInfo.databasePort + "/"
+          + jdbcConnectionInfo.initialDatabase;
+
+
+        $( "#connectionParameterSpan" ).text(connectionParam);
+        $( "#newConnectionDiv" ).hide();
+        $( "#sqlEditorDiv" ).show();
+
+      }else{
+        window.alert("Unable to establish connection to database");
+      }
+
     });
 
 };

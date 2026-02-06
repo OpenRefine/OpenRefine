@@ -444,7 +444,7 @@ ClusteringDialog.prototype._cluster = function() {
 
     this._elmts.resultSummary.empty();
 
-    Refine.postCSRF(
+    CSRFUtil.post(
         "command/core/compute-clusters?" + $.param({ project: theProject.id }),
         {
             engine: JSON.stringify(ui.browsingEngine.getJSON()),
@@ -454,14 +454,12 @@ ClusteringDialog.prototype._cluster = function() {
                 'column' : this._columnName,
                 'params' : this._params
             })
-        },
-        function(data) {
-            self._updateData(data);
-            $(".clustering-dialog-facet").css("display","block");
-            $('#cluster-and-edit-dialog :input').not('.Checkbox_Choice').prop('disabled', false);
-        },
-        "json"
-    );
+        }
+    ).done(function(data) {
+        self._updateData(data);
+        $(".clustering-dialog-facet").css("display","block");
+        $('#cluster-and-edit-dialog :input').not('.Checkbox_Choice').prop('disabled', false);
+    });
 };
 
 ClusteringDialog.prototype._updateData = function(data) {
