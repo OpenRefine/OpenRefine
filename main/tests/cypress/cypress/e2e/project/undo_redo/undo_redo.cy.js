@@ -105,7 +105,7 @@ describe(__filename, function () {
   // it('Ensure the Undo button disappear after timeout after deleting a column', function () {
   // 	const ORNotificationTimeout = 15000;
   // cy.loadAndVisitProject('food.mini');
-  // 	cy.columnActionClick('NDB_No', ['Remove column']);
+  // 	cy.columnActionClick('NDB_No', ['Edit column', 'Remove this column']);
   // 	cy.get('#notification-container', { timeout: ORNotificationTimeout }).should('not.be.visible');
   // });
 });
