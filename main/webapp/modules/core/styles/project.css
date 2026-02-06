@@ -128,3 +128,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #facet-panel, #history-panel {
   overflow: auto;
 }
+
+#facet-panel, #history-panel {
+  overflow: auto;
+}
+
+#project-controls .button,
+#project-controls a.button,
+#extension-bar .button,
+#extension-bar a.button {
+  display: inline-flex;
+  align-items: center;
+}
+
+#project-controls .button img,
+#project-controls a.button img,
+#extension-bar .button img,
+#extension-bar a.button img {
+  margin-right: 5px;
+  flex-shrink: 0;
+}
