@@ -87,7 +87,7 @@
     <jena.version>4.10.0</jena.version>
     <poi.version>5.5.1</poi.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
-    <commons-fileupload.version>1.5</commons-fileupload.version>
+    <commons-fileupload.version>1.6.0</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-text.version>1.15.0</commons-text.version>
     <commons-validator.version>1.10.1</commons-validator.version>
