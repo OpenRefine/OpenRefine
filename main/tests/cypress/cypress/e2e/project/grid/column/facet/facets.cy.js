@@ -395,26 +395,30 @@ describe(__filename, function () {
 
     // --- First expression ---
     cy.getFacetContainer('Water').find('a[bind="changeButton"]').click();
-    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
-      .clear()
-      .typeExpression('value.toNumber()');
-    cy.get('.dialog-footer button').contains('OK').click();
+    cy.typeExpression('value.toNumber()');
+    cy.confirmDialogPanel();
 
     // --- Second expression ---
     cy.getFacetContainer('Water').find('a[bind="changeButton"]').click();
-    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
-      .clear()
-      .typeExpression('value.length()');
-    cy.get('.dialog-footer button').contains('OK').click();
+    cy.typeExpression('value.length()');
+    cy.confirmDialogPanel();
 
     // --- Reopen to test history navigation ---
     cy.getFacetContainer('Water').find('a[bind="changeButton"]').click();
-    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]')
-      .focus()
-      .type('{home}{uparrow}') // should retrieve first expression
-      .type('{uparrow}')
-      .should('have.value', 'value.toNumber()')
-      .type('{end}{downarrow}') // should go back to second expression
+    cy.get('textarea.expression-preview-code')
+      .as('expressionTextarea')
+      .type('{home}{uparrow}' + // home to beginning of line, up to first history entry
+         '{uparrow}'); // up to second history entry, which is our first expression
+
+    cy.get('@expressionTextarea')
+      .should('have.value', 'value.toNumber()');
+
+    cy.get('@expressionTextarea')
+      .type('{end}{downArrow}'); // move to end of line then down to second expression
+
+    cy.get('@expressionTextarea')
       .should('have.value', 'value.length()');
+
+    cy.confirmDialogPanel();
   });
 });

@@ -241,7 +241,7 @@ DialogSystem.alert = function (error) {
     }
     body.append($('<p>')).append(errorContent);
 
-    let okButton = $('<button></button>').html($.i18n('core-buttons/ok')).on({
+    let okButton = $('<button class="button button-primary" bind="okButton"></button>').html($.i18n('core-buttons/ok')).on({
         'click': () => {
             DialogSystem.dismissUntil(this._level - 1);
         }
