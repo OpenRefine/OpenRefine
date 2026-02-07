@@ -43,12 +43,12 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
     var html = $(ExpressionPreviewDialog.generateWidgetHtml()).appendTo(body);
     
     this._elmts = DOM.bind(html);
-    
-    $('<button class="button"></button>').html($.i18n('core-buttons/ok')).on('click',function() {
+
+    $('<button class="button button-primary" bind="okButton"></button>').html($.i18n('core-buttons/ok')).on('click', function () {
         DialogSystem.dismissUntil(self._level - 1);
         self._onDone(self._previewWidget.getExpression(true));
     }).appendTo(footer);
-    
+
     $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).on('click',function() {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
@@ -430,7 +430,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
                 .appendTo(removeExpression);
             var removeExpressionFooter = $('<div></div>').addClass("dialog-footer").appendTo(removeExpression);
 
-            $('<button class="button"></button>').html($.i18n('core-buttons/ok')).on('click',function() {
+            $('<button class="button button-primary" bind="okButton"></button>').html($.i18n('core-buttons/ok')).on('click',function() {
                 Refine.postCSRF(
                     "command/core/toggle-starred-expression",
                     { expression: entry.code, returnList: true },
