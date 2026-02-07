@@ -192,8 +192,8 @@ Cypress.Commands.add('navigateTo', (target) => {
 Cypress.Commands.add('typeExpression', (expression, options = {}) => {
   cy.get('textarea.expression-preview-code', options).clear();
   cy.get('textarea.expression-preview-code', options).type(expression);
-    const expectedText = expression.length <= 30 ? expression : `${expression.substring(0, 30)} ...`;
-    cy.get('tbody > tr:nth-child(1) > td:nth-child(3)', options).should('contain', expectedText);
+  const expectedText = expression.length <= 30 ? expression : `${expression.substring(0, 30)} ...`;
+  cy.get('tbody > tr:nth-child(1) > td:nth-child(3)', options).should('contain', expectedText);
 });
 
 /**
