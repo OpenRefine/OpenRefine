@@ -219,9 +219,9 @@ class ScatterplotFacet extends Facet {
       self.changePlot();
     });
 
-    this._elmts.selectors.find(".buttonset").buttonset();
+    this._elmts.selectors.find(".buttonset").controlgroup();
     
-    //the function buttonset() groups the input buttons into one but in doing so it creates icon on the input button
+    //the function controlgroup() groups the input buttons into one but in doing so it creates icon on the input button
     //the icon is created using checkboxradio() 
     //to get rid of the icon a class "no-icon" is directly applied to input button and checkboxradio() is called again with option :- icon=false  
     $(".no-icon").checkboxradio("option", "icon", false);

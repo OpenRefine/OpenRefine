@@ -57,17 +57,17 @@ ScatterplotDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_bigDot.attr("title", $.i18n('core-dialogs/big-dot'));
     this._elmts.closeButton.text($.i18n('core-buttons/close'));
     
-    this._elmts.plotSelector.buttonset().on('change',function() {
+    this._elmts.plotSelector.controlgroup().on('change',function() {
         self._plot_method = $(this).find("input:checked").val();
         self._renderMatrix();
     });
 
-    this._elmts.rotationSelector.buttonset().on('change',function() {
+    this._elmts.rotationSelector.controlgroup().on('change',function() {
         self._rotation = $(this).find("input:checked").val();
         self._renderMatrix();
     });
     
-    this._elmts.dotSelector.buttonset().on('change',function() {
+    this._elmts.dotSelector.controlgroup().on('change',function() {
         var dot_size = $(this).find("input:checked").val();
         if (dot_size == "small") {
             self._dot_size = 0.4;
@@ -81,7 +81,7 @@ ScatterplotDialog.prototype._createDialog = function() {
     
     this._level = DialogSystem.showDialog(dialog);
     this._renderMatrix();
-    //the function buttonset() groups the input buttons into one but in doing so it creates icon on the input button
+    //the function controlgroup() groups the input buttons into one but in doing so it creates icon on the input button
     //the icon is created using checkboxradio() 
     //to get rid of the icon a class "no-icon" is directly applied to input button and checkboxradio() is called again with option :- icon=false  
     $(".no-icon").checkboxradio("option", "icon", false);

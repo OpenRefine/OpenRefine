@@ -257,6 +257,7 @@ Refine.getPreference = function(key, defaultValue) {
 Refine.setPreference = function(key, newValue) {
   thePreferences[key] = newValue;
 
+  // TODO: Redundant implementation = use CSRFutil
   Refine.wrapCSRF(function(token) {
     $.ajax({
       async: false,
