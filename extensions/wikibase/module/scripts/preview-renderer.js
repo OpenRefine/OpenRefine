@@ -1,3 +1,21 @@
+function getReconLanguageCode() {
+    var langCode = $.i18n('core-recon/wd-recon-lang');
+    
+    // If the i18n lookup failed, it returns the key itself
+    // Check if the result looks like a translation key rather than a language code
+    if (!langCode || langCode === 'core-recon/wd-recon-lang' || langCode.indexOf('/') !== -1) {
+        return 'en'; // fallback to English
+    }
+    
+    // Additional validation: language codes are typically 2-3 characters
+    // (e.g., 'en', 'fr', 'zh-CN') and don't contain special characters except hyphens
+    if (langCode.length > 10 || /[^a-zA-Z-]/.test(langCode)) {
+        return 'en';
+    }
+    
+    return langCode;
+}
+
 /**
  * renders an item update (an edit on an item) in HTML.
  */
@@ -330,7 +348,7 @@ EditRenderer._renderValue = function(json, container) {
             action: 'wbformatvalue',
             generate: 'text/html',
             datavalue: jsonValue,
-            options: '{"lang":"'+$.i18n('core-recon/wd-recon-lang')+'"}',
+            options: '{"lang":"'+ getReconLanguageCode() +'"}',
             format: 'json'
         };
         if ('property' in json) {
