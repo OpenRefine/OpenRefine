@@ -491,6 +491,7 @@ function init() {
       "externals/suggest/suggest-4_3a.js",
       "scripts/util/i18n.js",
       "scripts/util/csrf.js",
+      "scripts/util/openrefine.js",
       "scripts/project.js",
       "scripts/util/misc.js",
       "scripts/util/url.js",
