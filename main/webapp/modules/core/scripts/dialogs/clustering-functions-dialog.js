@@ -241,12 +241,8 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
     var dismiss = function () { DialogSystem.dismissUntil(level - 1); };
 
     var previewWidget;
-    // TODO: Switch to standard getPreference API
-    $.ajax({
-        url: "command/core/get-preference?" + $.param({
-            name: "ui.clustering.custom" + functionsType + "Functions"
-        }),
-        success: function (data) {
+    OpenRefine.getPreference("ui.clustering.custom" + functionsType + "Functions")
+        .then(function (data) {
             var _functions = data.value == null ? [] : JSON.parse(data.value);
             elmts.functionNameInput[0].value = _functions[index].name;
 
@@ -259,9 +255,7 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
                 _functions[index].expressionLang + ':' + _functions[index].expression,
                 self._columnName
             );
-        },
-        dataType: "json",
-    });
+        });
 
     elmts.cancelButton.on('click', dismiss);
     elmts.form.on('submit', function (event) {
@@ -274,41 +268,25 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
 
         var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
         var edit = function () {
-            // TODO: Switch to standard getPreference API
-            $.ajax({
-                url: "command/core/get-preference?" + $.param({
-                    name: "ui.clustering.custom" + activeTabName + "Functions"
-                }),
-                success: function (data1) {
+            var preferenceName = "ui.clustering.custom" + activeTabName + "Functions";
+            
+            OpenRefine.getPreference(preferenceName)
+                .then(function (data) {
                     var langAndExpr = previewWidget.getExpression();
                     var colonIndex = langAndExpr.indexOf(':');
                     var lang = langAndExpr.substring(0, colonIndex);
                     var fullExpr = langAndExpr.substring(colonIndex + 1);
 
-                    var _functions = data1.value == null ? [] : JSON.parse(data1.value);
+                    var _functions = data.value == null ? [] : JSON.parse(data.value);
                     _functions[index].name = functionName;
                     _functions[index].expressionLang = lang;
                     _functions[index].expression = fullExpr;
 
-                    Refine.wrapCSRF(function (token) { // FIXME: three separate copies of this call
-                        $.ajax({
-                            type: "POST",
-                            url: "command/core/set-preference?" + $.param({
-                                name: "ui.clustering.custom" + activeTabName + "Functions"
-                            }),
-                            data: {
-                                "value": JSON.stringify(_functions),
-                                "csrf_token": token
-                            },
-                            success: function (data) {
-                                self._renderTable();
-                            },
-                            dataType: "json"
+                    OpenRefine.setPreference(preferenceName, JSON.stringify(_functions))
+                        .then(function () {
+                            self._renderTable();
                         });
-                    });
-                },
-                dataType: "json",
-            });
+                });
         }
 
         edit();
@@ -321,34 +299,17 @@ ClusteringFunctionsDialog.prototype._deleteFunction = function (index) {
     var result = confirm($.i18n('core-views/warning-delete-functions'));
     if (result) {
         var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
-        var remove = function () {
-            $.ajax({
-                url: "command/core/get-preference?" + $.param({
-                    name: "ui.clustering.custom" + activeTabName + "Functions"
-                }),
-                success: function (data1) {
-                    var _functions = data1.value == null ? [] : JSON.parse(data1.value);
-                    _functions.splice(index, 1);
-                    Refine.wrapCSRF(function (token) { // FIXME: three separate copies of this call
-                        $.ajax({
-                            type: "POST",
-                            url: "command/core/set-preference?" + $.param({
-                                name: "ui.clustering.custom" + activeTabName + "Functions"
-                            }),
-                            data: {
-                                "value": JSON.stringify(_functions),
-                                "csrf_token": token
-                            },
-                            success: function (data) {
-                                self._renderTable();
-                            },
-                            dataType: "json"
-                        });
+        var preferenceName = "ui.clustering.custom" + activeTabName + "Functions";
+        
+        OpenRefine.getPreference(preferenceName)
+            .then(function (data) {
+                var _functions = data.value == null ? [] : JSON.parse(data.value);
+                _functions.splice(index, 1);
+                
+                OpenRefine.setPreference(preferenceName, JSON.stringify(_functions))
+                    .then(function () {
+                        self._renderTable();
                     });
-                },
-                dataType: "json",
             });
-        }
-        remove();
     }
 };
