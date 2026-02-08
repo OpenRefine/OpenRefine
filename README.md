@@ -7,9 +7,9 @@
 [![Donate](https://img.shields.io/badge/Donate-OpenRefine-blue)](https://openrefine.org/donate)
 [![OpenRefine Store](https://img.shields.io/badge/🛍️Shop-OpenRefine_Store-blue)](https://store.openrefine.org)
 
-OpenRefine is a Java-based power tool that allows you to load data, understand it,
-clean it up, reconcile it, and augment it with data coming from
-the web. All from a web browser and the comfort and privacy of your own computer.
+OpenRefine is a Java-based open source power tool that allows you to load, understand,
+clean, reconcile, and augment data using information from the web.
+All of this is done through a web browser while preserving the comfort and privacy of your own computer.
 
 Official website: **https://openrefine.org**
 
