@@ -629,7 +629,7 @@ ExpressionPreviewDialog.Widget.prototype._renderClusters = function(clusters) {
         };
 
         var maxRenderRows = parseInt(
-            Refine.getPreference("ui.clustering.choices.limit", 5000)
+            thePreferences["ui.clustering.choices.limit"] || 5000
         );
         maxRenderRows = isNaN(maxRenderRows) || maxRenderRows <= 0 ? 5000 : maxRenderRows;
         var totalRows = 0;

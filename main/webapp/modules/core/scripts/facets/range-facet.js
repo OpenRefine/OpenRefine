@@ -43,7 +43,7 @@ class RangeFacet extends Facet {
     this._selectBlank = ("selectBlank" in this._config) ? this._config.selectBlank : true;
     this._selectError = ("selectError" in this._config) ? this._config.selectError : true;
 
-    this._lang = Refine.getPreference('userLang', 'en');
+    this._lang = thePreferences['userLang'] || 'en';
     this._formatter = new Intl.NumberFormat(this._lang, { useGrouping: true, maximumFractionDigits: 2 });
 
     this._baseNumericCount = 0;

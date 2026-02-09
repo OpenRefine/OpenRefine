@@ -47,18 +47,12 @@ var reconMatchSilimilarCellsByDefault = true;
 DataTableCellUI.previewMatchedCells = true;
 
 (function() {
-   
-   $.ajax({
-     url: "command/core/get-preference?" + $.param({
-        name: "cell-ui.previewMatchedCells"
-     }),
-    success: function(data) {
-      if (data.value && data.value == "false") {
-        DataTableCellUI.previewMatchedCells = false;
-     }
-   },
-   dataType: "json",
-  });
+   OpenRefine.getPreference("cell-ui.previewMatchedCells")
+     .then(function(data) {
+       if (data.value && data.value === "false") {
+         DataTableCellUI.previewMatchedCells = false;
+       }
+     });
 })();
 
 DataTableCellUI.prototype._render = function() {

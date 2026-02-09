@@ -107,17 +107,12 @@ $(function() {
   };
 
   var storeNotificationStatus = function(notificationStatus) {
-     Refine.postCSRF2("command/core/set-preference",
-       {
-         name: 'notification.status',
-         value: JSON.stringify(notificationStatus)
-       });
+     OpenRefine.setPreference('notification.status', notificationStatus);
   };
 
   var showNotifications = function() {
-    $.get("command/core/get-preference",
-      { "name": "notification.status" }
-    ).done(function(data) {
+    OpenRefine.getPreference("notification.status")
+      .then(function(data) {
       let notificationStatus = data.value;
       if (notificationStatus === null) {
         // this is the first time we are starting OpenRefine on this workspace.

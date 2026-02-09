@@ -28,22 +28,11 @@ Refine.SetLanguageUI = function(elmt) {
   });
 
 	this._elmts.set_lan_btn.on('click', function(e) {		
-                Refine.wrapCSRF(function(token) {
-                    $.ajax({
-                            url : "command/core/set-preference?",
-                            type : "POST",
-                            async : false,
-                            data : {
-                               name : "userLang",
-                               value : JSON.stringify($("#langDD option:selected").val()),
-                               csrf_token: token 
-                            },
-                            success : function(data) {
-                                    alert($.i18n('core-index-lang/page-reload'));
-                                    location.reload(true);
-                            }
+                OpenRefine.setPreference("userLang", $("#langDD option:selected").val())
+                    .then(function(data) {
+                        alert($.i18n('core-index-lang/page-reload'));
+                        location.reload(true);
                     });
-                });
 	});
 };
 

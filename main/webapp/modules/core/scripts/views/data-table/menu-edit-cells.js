@@ -118,7 +118,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doJoinMultiValueCells = function(separator) {
-    var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
+    var defaultValue = thePreferences["ui.cell.rowSplitDefaultSeparator"] || ",";
     var separator = window.prompt($.i18n('core-views/enter-separator'), defaultValue);
     if (separator !== null) {
       Refine.postCoreProcess(
@@ -131,7 +131,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         null,
         { rowsChanged: true }
       );
-      Refine.setPreference("ui.cell.rowSplitDefaultSeparator", separator);
+      OpenRefine.setPreference("ui.cell.rowSplitDefaultSeparator", separator);
     }
   };
 
@@ -319,7 +319,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
-    var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
+    var defaultValue = thePreferences["ui.cell.rowSplitDefaultSeparator"] || ",";
     elmts.separatorInput[0].value = defaultValue;
     elmts.separatorInput.trigger('focus').trigger('select');
     
@@ -339,7 +339,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
 
         config.regex = elmts.regexInput[0].checked;
-        Refine.setPreference("ui.cell.rowSplitDefaultSeparator", config.separator);
+        OpenRefine.setPreference("ui.cell.rowSplitDefaultSeparator", config.separator);
       } else if (mode === "lengths") {
         var s = "[" + elmts.lengthsTextarea[0].value + "]";
         try {

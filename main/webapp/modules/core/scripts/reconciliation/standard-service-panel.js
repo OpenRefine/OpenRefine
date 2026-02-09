@@ -85,7 +85,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
   this._elmts.or_proc_accessDocumentation.html($.i18n('core-recon/service-documentation'));
-  this._elmts.automatchCheck[0].checked=JSON.parse(Refine.getPreference("ui.reconciliation.automatch", true));
+  this._elmts.automatchCheck[0].checked = (thePreferences["ui.reconciliation.automatch"] !== false);
   this._elmts.or_proc_cellType.html($.i18n('core-recon/cell-type'));
   this._elmts.or_proc_colDetail.html($.i18n('core-recon/col-detail'));
   this._elmts.or_proc_againstType.html($.i18n('core-recon/against-type'));

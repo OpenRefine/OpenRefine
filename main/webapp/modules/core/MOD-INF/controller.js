@@ -416,6 +416,7 @@ function init() {
       "scripts/util/ajax.js",
       "scripts/util/i18n.js",
       "scripts/util/csrf.js",
+      "scripts/util/openrefine.js",
       "scripts/util/menu.js",
       "scripts/util/dialog.js",
       "scripts/util/dom.js",
@@ -617,6 +618,7 @@ function init() {
     commonModules.concat([
       "scripts/util/i18n.js",
       "scripts/util/csrf.js",
+      "scripts/util/openrefine.js",
       "scripts/preferences.js",
     ])
   );

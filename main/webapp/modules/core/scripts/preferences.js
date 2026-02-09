@@ -75,42 +75,33 @@ function PreferenceUI(tr, key, initialValue) {
       }
       $(td1).text(newValue);
 
-      Refine.postCSRF2(
-        "command/core/set-preference",
-        {
-          name : key,
-          value : JSON.stringify(newValue)
-        }
-      ).done(function(o) {
-        if (o.code === "error") {
-          alert(o.message);
-        }
-      });
+      OpenRefine.setPreference(key, newValue)
+        .then(function(o) {
+          if (o.code === "error") {
+            alert(o.message);
+          }
+        });
     }
   });
 
   $('<button class="button">').text($.i18n('core-index/delete')).css('margin-left','5px')
       .appendTo(td2).on('click',function() {
     if (window.confirm($.i18n('core-index/delete-key')+" " + key + "?")) {
-      Refine.postCSRF2(
-        "command/core/set-preference",
-        {
-          name : key
-        }
-      ).done(function(o) {
-        if (o.code === "ok") {
-          $(tr).remove();
+      OpenRefine.setPreference(key, null)
+        .then(function(o) {
+          if (o.code === "ok") {
+            $(tr).remove();
 
-          for (var i = 0; i < preferenceUIs.length; i++) {
-            if (preferenceUIs[i] === self) {
-              preferenceUIs.splice(i, 1);
-              break;
+            for (var i = 0; i < preferenceUIs.length; i++) {
+              if (preferenceUIs[i] === self) {
+                preferenceUIs.splice(i, 1);
+                break;
+              }
             }
+          } else if (o.code === "error") {
+            alert(o.message);
           }
-        } else if (o.code === "error") {
-          alert(o.message);
-        }
-      });
+        });
     }
   });
 }
@@ -149,17 +140,12 @@ function populatePreferences(prefs) {
             value = deDupUserMetaData(value);
         }
 
-        Refine.postCSRF2(
-          "command/core/set-preference",
-          {
-            name : key,
-            value : JSON.stringify(value)
-          }
-        ).done(function(o) {
-          if (o.code === "error") {
-            alert(o.message);
-          }
-        });
+        OpenRefine.setPreference(key, value)
+          .then(function(o) {
+            if (o.code === "error") {
+              alert(o.message);
+            }
+          });
       }
     }
   });
