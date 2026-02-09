@@ -759,7 +759,6 @@
     "core-dialogs/sql-exporter-allow-null-header": "לאפשר ריקים/null",
     "core-dialogs/sql-exporter-default-header": "ברירת מחדל",
     "core-index/refine-extensions": "הרחבות: $1",
-    "core-views/remove-col2": "הסרת עמודה",
     "core-views/expand": "הצגת עמודה ‚$1’",
     "core-views/expand-left": "הצגת כל העמודות משמאל",
     "core-views/expand-right": "הצגת כל העמודות מימין"

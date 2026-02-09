@@ -941,6 +941,5 @@
     "core-index-extensions/extensions-documentation-button": "Documentació",
     "core-index-extensions/extensions-discovery-button": "Descobreix extensions",
     "core-index-extensions/extensions-table-bundled": "Incorporades",
-    "core-index-extensions/extensions-table-name": "Extensió",
-    "core-views/remove-col2": "Elimina la columna"
+    "core-index-extensions/extensions-table-name": "Extensió"
 }

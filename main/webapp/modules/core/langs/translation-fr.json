@@ -933,7 +933,6 @@
     "core-dialogs/remove-duplicate-rows-col-select": "Sélectionner les colonnes utilisées pour identifier les lignes en double",
     "core-buttons/no-criteria-selected": "Au moins une colonne doit être sélectionnée pour identifier les doublons.",
     "core-project/applied-n-operations": "$1 opérations réalisées",
-    "core-views/remove-col2": "Retirer la colonne",
     "core-views/keep-only-matching": "Conserver que les lignes correspondantes",
     "core-project/columns-in-the-project": "Dans le projet",
     "core-project/error-created-column": "Le nom \"$1\" de la colonne créée ne doit pas exister dans le projet, car l'application de la recette la créera."
