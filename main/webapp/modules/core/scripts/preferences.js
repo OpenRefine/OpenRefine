@@ -87,6 +87,7 @@ function PreferenceUI(tr, key, initialValue) {
   $('<button class="button">').text($.i18n('core-index/delete')).css('margin-left','5px')
       .appendTo(td2).on('click',function() {
     if (window.confirm($.i18n('core-index/delete-key')+" " + key + "?")) {
+      // TODO: Create a deletePreference() function
       OpenRefine.setPreference(key, null)
         .then(function(o) {
           if (o.code === "ok") {

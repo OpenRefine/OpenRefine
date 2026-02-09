@@ -241,6 +241,7 @@ Refine.reinitializeProjectData = function(f, fError) {
       }
     }
 
+    // TODO: This cache isn't updated if multiple sessions are active
     if (preferences) {
       thePreferences = preferences;
     }
@@ -255,6 +256,7 @@ Refine.getPreference = function(key, defaultValue) {
   return thePreferences[key];
 }
 
+// TODO: Refactor this to use standard library function
 Refine.setPreference = function(key, newValue) {
   thePreferences[key] = newValue;
 

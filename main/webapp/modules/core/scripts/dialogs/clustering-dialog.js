@@ -174,8 +174,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.closeButton.on('click',function() { self._dismiss(); });
 
     self._level = DialogSystem.showDialog(dialog);
-    var checkedValue = thePreferences["ui.clustering.auto-update"] === true;
-    document.getElementById("autoId").checked = checkedValue;
+    document.getElementById("autoId").checked = thePreferences["ui.clustering.auto-update"] === true;
     
     self._renderClusteringFunctions();
 };

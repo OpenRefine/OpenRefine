@@ -90,5 +90,4 @@ WikibaseTemplateManager.loadTemplates = function(onDone) {
 // saves all the templates to the backend
 WikibaseTemplateManager.saveTemplates = function() {
   OpenRefine.setPreference("wikibase.templates", [WikibaseTemplateManager.templates]);
-
 }
