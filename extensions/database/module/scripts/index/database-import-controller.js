@@ -52,7 +52,7 @@ Refine.DatabaseImportController.prototype.startImportingDocument = function(quer
       "command/core/create-importing-job"
     ).done(function(data) {
       // FIXME: This needs a different style function call in the Ajax library
-      Refine.wrapCSRF(function(token) {
+      CSRFUtil.getCSRF().then(function(token) {
         $.post(
           "command/core/importing-controller?" + $.param({
             "controller": "database/database-import-controller",
@@ -243,7 +243,7 @@ Refine.DatabaseImportController.prototype._updatePreview = function() {
     this._queryInfo.options = JSON.stringify(this.getOptions());
     //alert("options:" + this._queryInfo.options);
 
-    Refine.wrapCSRF(function(token) {
+    CSRFUtil.getCSRF().then(function(token) {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "database/database-import-controller",
@@ -325,7 +325,7 @@ Refine.DatabaseImportController.prototype._createProject = function() {
     options.projectName = projectName;
 
     this._queryInfo.options = JSON.stringify(options);
-    Refine.wrapCSRF(function(token) {
+    CSRFUtil.getCSRF().then(function(token) {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "database/database-import-controller",

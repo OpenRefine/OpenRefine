@@ -355,7 +355,7 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
   var dismissBusy = DialogSystem.showBusy($.i18n('core-index-import/inspecting-files'));
   const sortCriteria = $('#sortCriteria').val();
   const sortOrder = $('#sortOrder').val();
-  Refine.wrapCSRF(function(token) {
+  CSRFUtil.getCSRF().then(function(token) {
     $.post(
         "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",

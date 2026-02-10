@@ -146,7 +146,7 @@ class ScatterplotFacet extends Facet {
     });
 
     this._elmts.plotDiv.width(this._config.l + "px").height(this._config.l + "px");
-    Refine.wrapCSRF(function(csrfToken) {
+    CSRFUtil.getCSRF().then(function(csrfToken) {
       self._elmts.plotBaseImg.attr("src", self._formulateBaseImageUrl(csrfToken))
         .attr("width", self._config.l)
         .attr("height", self._config.l);
@@ -341,7 +341,7 @@ class ScatterplotFacet extends Facet {
 
   changePlot() {
     let self = this;
-    Refine.wrapCSRF(function(csrfToken) {
+    CSRFUtil.getCSRF().then(function(csrfToken) {
       self._elmts.plotBaseImg.attr("src", self._formulateBaseImageUrl(csrfToken));
       self._elmts.plotImg.attr("src", self._formulateCurrentImageUrl(csrfToken));
       self._elmts.exportPlotLink.attr("href", self._formulateExportImageUrl(csrfToken));
@@ -366,7 +366,7 @@ class ScatterplotFacet extends Facet {
     this._elmts.statusDiv.show();
 
     let self = this;
-    Refine.wrapCSRF(function(csrfToken) {
+    CSRFUtil.getCSRF().then(function(csrfToken) {
       self._elmts.plotImg.attr("src", self._formulateCurrentImageUrl(csrfToken));
       self._elmts.exportPlotLink.attr("href", self._formulateExportImageUrl(csrfToken));
     });

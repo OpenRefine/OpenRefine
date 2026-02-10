@@ -54,7 +54,7 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     this._elmts.previewTextarea.attr('aria-label',$.i18n('core-dialogs/template-preview'))
     
     this._elmts.exportButton.on('click',function() {
-      Refine.wrapCSRF(function(csrfToken) {
+      CSRFUtil.getCSRF().then(function(csrfToken) {
         self._export(csrfToken);
         self._dismiss();
       });

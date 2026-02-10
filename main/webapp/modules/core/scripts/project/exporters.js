@@ -135,7 +135,7 @@ ExporterManager.stripNonFileChars = function(name) {
 };
 
 ExporterManager.handlers.exportRows = function(format, ext) {
-  Refine.wrapCSRF(function(csrfToken) {
+  CSRFUtil.getCSRF().then(function(csrfToken) {
     let form = ExporterManager.prepareExportRowsForm(format, true, ext, csrfToken);
     document.body.appendChild(form);
     form.submit();

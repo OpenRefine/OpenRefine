@@ -74,12 +74,12 @@ Refine.DefaultImportingController.prototype._startOver = function() {
 Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, sortCriteria, sortOrder, callback) {
     var self = this;
 
-    Refine.wrapCSRF(function(token) {
-        $.post(
-            "command/core/create-importing-job",
-            { csrf_token: token }, // TODO: Can't use postCSRF because token is a query param?
-        ).fail(() => {}
-        ).done(function(data) {
+    CSRFUtil.getCSRF().then(function(token) {
+      $.post(
+          "command/core/create-importing-job",
+          { csrf_token: token }, // TODO: Can't use postCSRF because token is a query param?
+      ).fail(() => {}
+      ).done(function(data) {
                 var jobID = self._jobID = data.jobID;
 
                 var url =  "command/core/importing-controller?" + $.param({
@@ -185,7 +185,7 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
   if (!(format in this._parserOptions)) {
     var self = this;
     var dismissBusy = DialogSystem.showBusy($.i18n('core-index-import/inspecting'));
-    Refine.wrapCSRF(function(token) {
+    CSRFUtil.getCSRF().then(function(token) {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "core/default-importing-controller",
@@ -225,7 +225,7 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
 
 Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(options, callback, finallyCallBack) {
   var self = this;
-  Refine.wrapCSRF(function(token) {
+  CSRFUtil.getCSRF().then(function(token) {
     $.post(
       "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
@@ -305,7 +305,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
     var options = this._formatParserUI.getOptions();
     options.projectName = projectName;
     options.projectTags = projectTags;
-    Refine.wrapCSRF(function(token) {
+    CSRFUtil.getCSRF().then(function(token) {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "core/default-importing-controller",
