@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.10-SNAPSHOT</version>
+    <version>3.10-beta2</version>
   </parent>
 
   <properties>
