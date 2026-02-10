@@ -56,13 +56,19 @@ describe(__filename, function () {
         cy.get('input[bind="functionNameInput"]').should('be.visible').type('length of the cell');
         cy.get('button[bind="okButton"]').click();
         
-        cy.get('.main-text').should('have.text', 'length of the cell');
-        cy.get(".sub-text").should('have.text',"value.length()")
+        cy.get('.main-text').last().should('have.text', 'length of the cell');
+        cy.get(".sub-text").last().should('have.text',"value.length()")
 
         cy.get('.dialog-footer').find('button').contains('OK').click();
 
-        cy.get('#keyingFunctionSelectorId').select('UserDefinedKeyer');
-        cy.get('#keyingFunctionSelectorId option:selected').should('have.text', 'length of the cell')
+        cy.get('#keyingFunctionSelectorId')
+          .find('option')
+          .then(options => {
+            const count = Cypress.$(options).length;
+            // Select the last item and make sure it matches our desired value
+            cy.get('#keyingFunctionSelectorId').select(count - 1);
+            cy.get('#keyingFunctionSelectorId option:selected').should('have.text', 'length of the cell')
+        });
 
         cy.get('.dialog-container').within(() => {
             // check lines to be merged
@@ -87,6 +93,19 @@ describe(__filename, function () {
             ['MOUNT ZION'],
             ['GRAVEL HILLtesting'],
         ]);
+
+        // Remove the function we added to return to our original state
+        cy.columnActionClick('location', ['Edit cells', 'Cluster and edit']);
+        cy.get('.dialog-body button[bind="manageFunctionsBtn"]').click();
+        cy.get('#clustering-functions-tabs-keying')
+          .find('table > tbody > tr')
+          .last()
+          .find('button')
+          .contains('Remove')
+          .click();
+        cy.get('.dialog-footer').find('button').contains('OK').click();
+
+        cy.get('.dialog-footer button[bind="closeButton"]').click();
     });
     
     it('Test the different clustering options for rendering and expected inputs', function () {
