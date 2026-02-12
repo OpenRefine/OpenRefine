@@ -186,10 +186,8 @@ public class OdsImporter extends TabularImportingParserBase {
 
             TabularImportingParserBase.readTable(
                     project,
-                    metadata,
                     job,
                     dataReader,
-                    fileSource + "#" + table.getTableName(),
                     limit,
                     options,
                     exceptions);
