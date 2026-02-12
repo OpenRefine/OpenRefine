@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class OdsImporter extends TabularImportingParserBase {
                 File file = ImportingUtilities.getFile(job, fileRecord);
                 InputStream is = new FileInputStream(file);
                 odfDoc = OdfDocument.loadDocument(is);
-                List<OdfTable> tables = odfDoc.getTableList();
+                List<OdfTable> tables = odfDoc.getTableList(false);
                 int sheetCount = tables.size();
 
                 for (int i = 0; i < sheetCount; i++) {
@@ -125,7 +126,7 @@ public class OdsImporter extends TabularImportingParserBase {
             return;
         }
 
-        List<OdfTable> tables = odfDoc.getTableList();
+        List<OdfTable> tables = odfDoc.getTableList(false);
 
         int sheetCount = tables.size();
         if (sheetCount == 0) {
@@ -207,7 +208,7 @@ public class OdsImporter extends TabularImportingParserBase {
         } else if ("float".equals(cellType)) {
             value = cell.getDoubleValue();
         } else if ("date".equals(cellType)) {
-            value = ParsingUtilities.toDate(cell.getDateValue());
+            value = cell.getLocalDateTimeValue().atZone(ZoneId.systemDefault()).toOffsetDateTime();
         } else if ("currency".equals(cellType)) {
             value = cell.getCurrencyValue();
         } else if ("percentage".equals(cellType)) {
@@ -219,10 +220,10 @@ public class OdsImporter extends TabularImportingParserBase {
             if ("".equals(value)) {
                 value = null;
             } else {
-                logger.warn("Null cell type with non-empty value: " + value);
+                logger.warn("Null cell type with non-empty value: {}", value);
             }
         } else {
-            logger.warn("Unexpected cell type " + cellType);
+            logger.warn("Unexpected cell type {}", cellType);
             value = cell.getDisplayText();
         }
         return value;
