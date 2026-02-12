@@ -164,8 +164,8 @@ public class OdsImporter extends TabularImportingParserBase {
                     OdfTableRow row = table.getRowByIndex(nextRow++);
                     int maxCol = 0;
                     if (row != null) {
-                        int lastCell = row.getCellCount();
-                        for (int cellIndex = 0; cellIndex <= lastCell; cellIndex++) {
+                        int cellCount = row.getCellCount();
+                        for (int cellIndex = 0; cellIndex < cellCount; cellIndex++) {
                             Cell cell = null;
 
                             OdfTableCell sourceCell = row.getCellByIndex(cellIndex);
