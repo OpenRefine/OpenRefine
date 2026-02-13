@@ -1201,11 +1201,24 @@ SchemaAlignment._addReference = function(container, json) {
   SchemaAlignment._plusButton($.i18n('wikibase-schema/add-reference-snak'), addSnakButton);
 
   if (snaks) {
-     for (var i = 0; i != snaks.length; i++) {
-        SchemaAlignment._addQualifier(qualifierContainer, snaks[i]);
-     }
+   for (var i = 0; i != snaks.length; i++) {
+      SchemaAlignment._addQualifier(qualifierContainer, snaks[i]);
+   }
   } else {
-     SchemaAlignment._addQualifier(qualifierContainer, null);
+
+   var defaultProperties = ["P854", "P1476", "P813", "P123"];
+
+   for (var j = 0; j < defaultProperties.length; j++) {
+      SchemaAlignment._addQualifier(qualifierContainer, {
+         prop: {
+            type: "wbpropconstant",
+            pid: defaultProperties[j],
+            label: defaultProperties[j],
+            datatype: "string"
+         },
+         value: null
+      });
+   }
   }
 };
 
