@@ -1206,20 +1206,51 @@ SchemaAlignment._addReference = function(container, json) {
    }
   } else {
 
-   var defaultProperties = ["P854", "P1476", "P813", "P123"];
+    var endpoint = WikibaseManager.getSelectedWikibaseApi();
 
-   for (var j = 0; j < defaultProperties.length; j++) {
-      SchemaAlignment._addQualifier(qualifierContainer, {
-         prop: {
-            type: "wbpropconstant",
-            pid: defaultProperties[j],
-            label: defaultProperties[j],
-            datatype: "string"
-         },
-         value: null
-      });
-   }
-  }
+    $.ajax({
+        url: endpoint,
+        data: {
+            action: "wbsearchentities",
+            format: "json",
+            language: $.i18n("core-recon/wd-recon-lang"),
+            type: "property",
+            search: ""
+        },
+        dataType: "json",
+        success: function(data) {
+
+            if (data.search && data.search.length > 0) {
+
+                var suggestions = data.search.slice(0, 4); // take first 4 properties
+
+                for (var i = 0; i < suggestions.length; i++) {
+
+                    SchemaAlignment._addQualifier(qualifierContainer, {
+                        prop: {
+                            type: "wbpropconstant",
+                            pid: suggestions[i].id,
+                            label: suggestions[i].label,
+                            datatype: null
+                        },
+                        value: null
+                    });
+
+                }
+
+            } else {
+                // fallback if nothing returned
+                SchemaAlignment._addQualifier(qualifierContainer, null);
+            }
+        },
+        error: function() {
+            // fallback if API fails
+            SchemaAlignment._addQualifier(qualifierContainer, null);
+        }
+    });
+}
+
+
 };
 
 SchemaAlignment._referenceToJSON = function(reference) {
