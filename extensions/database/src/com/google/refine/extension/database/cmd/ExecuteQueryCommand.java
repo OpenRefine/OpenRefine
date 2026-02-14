@@ -47,9 +47,10 @@ import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
 import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.util.ParsingUtilities;
+
 /**
- * @deprecated This command is currently unused and is planned for removal in a future release.
- *             It is still registered as command/database/execute-query for backward compatibility.
+ * @deprecated This command is currently unused and is planned for removal in a future release. It is still registered
+ *             as command/database/execute-query for backward compatibility.
  */
 @Deprecated
 public class ExecuteQueryCommand extends DatabaseCommand {
