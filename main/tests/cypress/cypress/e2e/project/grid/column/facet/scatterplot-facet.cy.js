@@ -54,4 +54,41 @@ describe(__filename, function () {
       cy.get('label[title="Big dot size"]').should('to.exist');
       cy.get('.scatterplot-export-plot > a').contains('Export plot').should('to.exist');
   });
+
+  it('Test scatterplot facet with log scale selection', function () {
+    cy.loadAndVisitProject('food.small', 'food-small');
+    cy.castColumnTo('Water', 'number');
+    cy.castColumnTo('Energ_Kcal', 'number');
+
+    // Create scatterplot facet
+    cy.columnActionClick('Energ_Kcal', ['Facet', 'Scatterplot facet']);
+    cy.get(
+      '.scatterplot-matrix-table a[title="Water (x) vs. Energ_Kcal (y)"]'
+    ).click();
+
+    // Get the facet container
+    cy.getFacetContainer('Water (x) vs. Energ_Kcal (y)').should('to.exist');
+
+    // Switch to log scale
+    cy.getFacetContainer('Water (x) vs. Energ_Kcal (y)')
+      .find('input[value="log"]')
+      .check();
+
+    // Wait for the plot to update with log scale
+    cy.wait(500);
+
+    // Make a selection on the scatterplot
+    // The plot image has class 'facet-scatterplot-image'
+    cy.getFacetContainer('Water (x) vs. Energ_Kcal (y)')
+      .find('.facet-scatterplot-plot')
+      .trigger('mousedown', 10, 10)
+      .trigger('mousemove', 100, 100)
+      .trigger('mouseup');
+
+    // Wait for the facet to update
+    cy.wait(500);
+
+    // Verify that some rows are filtered (not all 199 rows)
+    cy.get('#summary-bar').should('not.contain', '199 rows');
+  });
 });
