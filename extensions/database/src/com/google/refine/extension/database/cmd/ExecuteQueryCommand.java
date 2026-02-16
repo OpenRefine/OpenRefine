@@ -52,7 +52,7 @@ import com.google.refine.util.ParsingUtilities;
  * @deprecated This command is currently unused and is planned for removal in a future release. It is still registered
  *             as command/database/execute-query for backward compatibility.
  */
-@Deprecated
+@Deprecated(since = "3.10")
 public class ExecuteQueryCommand extends DatabaseCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("ExecuteQueryCommand");
