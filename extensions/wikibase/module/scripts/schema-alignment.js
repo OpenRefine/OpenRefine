@@ -115,7 +115,7 @@ SchemaAlignment.setUpTabs = function() {
   this.commonRefreshIcon = $('<button type="button"></button>')
         .addClass('wbs-refresh-icon')
         .addClass('wbs-icon')
-        .attr('title', $.i18n('wikibase-schema/refresh-preview'))
+        .attr('title', $.i18n('wikibase-schema/refresh-schema'))
         .css('margin-left', '10px')
         .appendTo($('#extension-bar-menu-container'))
         .on('click', function(e) {
