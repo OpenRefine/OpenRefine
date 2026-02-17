@@ -171,6 +171,26 @@
   opacity: 0.7;
 }
 
+.wbs-refresh-icon {
+  margin-left: 5px;
+  cursor: pointer;
+  opacity: 0.6;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.wbs-refresh-icon:hover {
+  opacity: 1;
+}
+
+.wbs-refresh-icon.wbs-icon {
+  background-image: url('../images/refresh-icon.svg');
+  background-size: 16px 16px;
+  width: 16px;
+  height: 16px;
+}
+
 
 .wbs-remove .wbs-icon {
   background-image: linear-gradient(transparent, transparent), url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2224%22%20height=%2224%22%20viewBox=%220%200%2024%2024%22%3E%20%3Cg%20id=%22remove%22%3E%20%3Cpath%20id=%22trash-can%22%20d=%22M12%2010h-1v6h1v-6zm-2%200H9v6h1v-6zm4%200h-1v6h1v-6zm0-4V5H9v1H6v3h1v7.966l1%201.03v-.073V18h6.984l.016-.018v.015l1-1.03V9h1V6h-3zm1%2011H8V9h7v8zm1-9H7V7h9v1z%22/%3E%20%3C/g%3E%20%3C/svg%3E");

@@ -111,6 +111,19 @@ SchemaAlignment.setUpTabs = function() {
         .attr('width', '16px')
         .appendTo(previewButton);
 
+  // Add common refresh icon to extension bar
+  this.commonRefreshIcon = $('<button type="button"></button>')
+        .addClass('wbs-refresh-icon')
+        .addClass('wbs-icon')
+        .attr('title', $.i18n('wikibase-schema/refresh-schema'))
+        .css('margin-left', '10px')
+        .appendTo($('#extension-bar-menu-container'))
+        .on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          SchemaAlignment.preview();
+        });
+
   this._unsavedIndicator = $('<span></span>')
         .html('&nbsp;*')
         .attr('title', $.i18n('wikibase-schema/unsaved-changes-alt'))

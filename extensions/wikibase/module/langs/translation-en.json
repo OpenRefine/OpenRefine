@@ -41,6 +41,7 @@
     "wikibase-schema/schema-tab-header": "Schema",
     "wikibase-schema/warnings-tab-header": "Issues",
     "wikibase-schema/edits-preview-tab-header": "Preview",
+    "wikibase-schema/refresh-schema": "Refresh Schema",
     "wikibase-schema/statements-header": "Statements",
     "wikibase-schema/terms-header": "Terms",
     "wikibase-schema/captions-header": "Captions",
