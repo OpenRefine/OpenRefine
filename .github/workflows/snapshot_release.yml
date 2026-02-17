@@ -42,11 +42,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-      - name: Set up Java 11
+      - name: Set up Java 17
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 11
+          java-version: 17
           cache: 'maven'
 
       - name: Build OpenRefine
@@ -128,11 +128,11 @@ jobs:
       run: |
         echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
 
-    - name: Set up Java 11
+    - name: Set up Java 17
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
-        java-version: 11
+        java-version: 17
         cache: 'maven'
         server-id: ossrh-staging-api
         server-username: CENTRAL_USER
