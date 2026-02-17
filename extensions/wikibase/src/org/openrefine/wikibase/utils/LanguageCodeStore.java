@@ -33,29 +33,65 @@ public class LanguageCodeStore {
 
     private static final Logger logger = LoggerFactory.getLogger(LanguageCodeStore.class);
 
-    private static Map<String, Set<String>> apiEndpointToLangCodes = new HashMap<>();
-
-    public static Set<String> getLanguageCodes(String mediaWikiApiEndpoint) {
-        if (mediaWikiApiEndpoint == null) return DEFAULT_LANGUAGE_CODES;
-
-        if (apiEndpointToLangCodes.containsKey(mediaWikiApiEndpoint)) {
-            return apiEndpointToLangCodes.get(mediaWikiApiEndpoint);
-        }
-
-        try {
-            Set<String> langCodes = fetchLangCodes(mediaWikiApiEndpoint);
-            apiEndpointToLangCodes.put(mediaWikiApiEndpoint, langCodes);
-        } catch (IOException e) {
-            logger.error("An error occurred when fetching language codes from: "
-                    + mediaWikiApiEndpoint + ", fall back to the default language codes", e);
-            apiEndpointToLangCodes.put(mediaWikiApiEndpoint, DEFAULT_LANGUAGE_CODES);
-        }
-        return apiEndpointToLangCodes.get(mediaWikiApiEndpoint);
+    /**
+     * Wikibase content language context: term (labels/descriptions/aliases) vs monolingual text (claim values).
+     * Term allows fewer codes than monolingual text.
+     */
+    public enum LanguageCodeContext {
+        TERM,
+        MONOLINGUALTEXT
     }
 
-    private static Set<String> fetchLangCodes(String mediaWikiApiEndpoint) throws IOException {
-        String url = mediaWikiApiEndpoint +
-                "?action=query&meta=wbcontentlanguages&wbclprop=code&wbclcontext=monolingualtext&format=json";
+    /**
+     * Key: API endpoint. Value: map from context to set of language codes.
+     */
+    private static Map<String, Map<LanguageCodeContext, Set<String>>> apiEndpointToLangCodes = new HashMap<>();
+
+    /**
+     * Returns language codes for monolingual text. For backward compatibility.
+     * Prefer {@link #getLanguageCodes(String, LanguageCodeContext)} when context is known.
+     */
+    public static Set<String> getLanguageCodes(String mediaWikiApiEndpoint) {
+        return getLanguageCodes(mediaWikiApiEndpoint, LanguageCodeContext.MONOLINGUALTEXT);
+    }
+
+    /**
+     * Returns the set of language codes allowed for the given context (term or monolingual text)
+     * for the given Wikibase API endpoint. Uses cached result when available; on fetch error
+     * returns the default list for that context (Wikidata fallback only).
+     */
+    public static Set<String> getLanguageCodes(String mediaWikiApiEndpoint, LanguageCodeContext context) {
+        if (mediaWikiApiEndpoint == null) {
+            return getDefaultLanguageCodes(context);
+        }
+        apiEndpointToLangCodes.putIfAbsent(mediaWikiApiEndpoint, new HashMap<>());
+        Map<LanguageCodeContext, Set<String>> byContext = apiEndpointToLangCodes.get(mediaWikiApiEndpoint);
+        if (byContext.containsKey(context)) {
+            return byContext.get(context);
+        }
+        try {
+            Set<String> langCodes = fetchLangCodes(mediaWikiApiEndpoint, context);
+            byContext.put(context, langCodes);
+            return langCodes;
+        } catch (IOException e) {
+            logger.error("An error occurred when fetching language codes from: "
+                    + mediaWikiApiEndpoint + " (context=" + context + "), fall back to the default language codes", e);
+            Set<String> fallback = getDefaultLanguageCodes(context);
+            byContext.put(context, fallback);
+            return fallback;
+        }
+    }
+
+    private static Set<String> getDefaultLanguageCodes(LanguageCodeContext context) {
+        // TERM fallback uses monolingual list until DEFAULT_TERM_LANGUAGE_CODES is added (issue #7659).
+        return DEFAULT_LANGUAGE_CODES;
+    }
+
+    private static Set<String> fetchLangCodes(String mediaWikiApiEndpoint, LanguageCodeContext context)
+            throws IOException {
+        String wbclcontext = (context == LanguageCodeContext.TERM) ? "term" : "monolingualtext";
+        String url = mediaWikiApiEndpoint
+                + "?action=query&meta=wbcontentlanguages&wbclprop=code&wbclcontext=" + wbclcontext + "&format=json";
         OkHttpClient client = HttpClient.getClient();
         Request request = new Request.Builder().url(url).build();
         Response response = client.newCall(request).execute();
