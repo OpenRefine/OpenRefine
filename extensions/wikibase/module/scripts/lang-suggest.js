@@ -2,17 +2,50 @@
  * LANGUAGE SUGGEST *
  ********************/
 
-// This list was manually copied from Wikidata on 2019-05-31. It can be updated with the following command:
-//
-// curl "https://www.wikidata.org/w/api.php?action=query&meta=wbcontentlanguages&wbclcontext=monolingualtext&format=json&formatversion=2" | jq ".query.wbcontentlanguages[].code" | tr '\n' ','
-//
-// See https://stackoverflow.com/questions/46507037/how-to-get-all-allowed-languages-for-wikidata/46562061#46562061
-// I don't think it is worth making every OpenRefine client perform this query at every startup, because it typically does
-// not change very often.
-//
-// This is the list of language codes accepted for monolingualtext values. The language codes for terms are more restrictive.
-// TODO: in the future, store different lists for term languages and monolingual text languages.
-DEFAULT_LANGUAGES = [
+// Fallback lists when the API fails (Wikidata-only). Term context (labels/descriptions/aliases) allows fewer codes than monolingualtext.
+// Update with wbclcontext=term or wbclcontext=monolingualtext in the API URL.
+DEFAULT_LANGUAGES_TERM = [
+  "aa", "aae", "ab", "abr", "abs", "ace", "acf", "acm", "ady", "ady-cyrl", "aeb", "aeb-arab", "aeb-latn", "af", "agq", "aig", "ak",
+  "aln", "als", "alt", "am", "ami", "an", "ang", "ann", "anp", "apc", "ar", "arc", "arn", "arq", "ary", "arz", "as",
+  "ase", "ast", "atj", "av", "avk", "awa", "ay", "az", "azb", "ba", "bag", "ban", "ban-bali", "bar", "bas", "bat-smg", "bax",
+  "bbc", "bbc-latn", "bbj", "bcc", "bci", "bcl", "bdr", "be", "be-tarask", "be-x-old", "bew", "bfd", "bfw", "bg", "bgc", "bgn", "bh",
+  "bho", "bi", "bjn", "bkc", "bkh", "bkm", "blk", "bm", "bn", "bo", "bol", "bpy", "bqi", "bqz", "br", "brh", "bs",
+  "btm", "bto", "bug", "bug-bugi", "bxr", "byv", "ca", "cak", "cal", "cbk-zam", "ccp", "cdo", "cdo-hant", "cdo-latn", "ce", "ceb", "ch",
+  "chn", "cho", "chr", "chy", "ckb", "cnh", "co", "cop", "cps", "cpx", "cpx-hans", "cpx-hant", "cpx-latn", "cr", "crh", "crh-cyrl", "crh-latn",
+  "crh-ro", "cs", "csb", "cu", "cv", "cy", "da", "dag", "de", "de-at", "de-ch", "de-formal", "dga", "din", "diq", "dlg", "dsb",
+  "dso", "dtp", "dty", "dua", "dv", "dz", "ee", "efi", "egl", "el", "eml", "en", "en-ca", "en-gb", "en-us", "eo", "es",
+  "es-419", "es-formal", "et", "eto", "etu", "eu", "ewo", "ext", "fa", "fat", "ff", "fi", "fit", "fiu-vro", "fj", "fkv", "fmp",
+  "fo", "fon", "fr", "frc", "frp", "frr", "fur", "fvr", "fy", "ga", "gaa", "gag", "gan", "gan-hans", "gan-hant", "gcf", "gcr",
+  "gd", "gju-arab", "gju-deva", "gl", "gld", "glk", "gn", "gom", "gom-deva", "gom-latn", "gor", "got", "gpe", "grc", "gsw", "gu", "guc",
+  "gur", "guw", "gv", "gya", "ha", "hak", "hak-hans", "hak-hant", "hak-latn", "haw", "he", "hi", "hif", "hif-latn", "hil", "hke", "hno",
+  "ho", "hoc", "hoc-latn", "hr", "hrx", "hsb", "hsn", "ht", "hu", "hu-formal", "hy", "hyw", "hz", "ia", "iba", "ibb", "id",
+  "ie", "ig", "igl", "ii", "ik", "ike-cans", "ike-latn", "ilo", "inh", "io", "is", "isu", "isv-cyrl", "isv-latn", "it", "iu", "ja",
+  "jam", "jbo", "jut", "jv", "jv-java", "ka", "kaa", "kab", "kai", "kaj", "kbd", "kbd-cyrl", "kbp", "kcg", "kea", "ker", "kg",
+  "kge", "kgg", "khw", "ki", "kiu", "kj", "kjh", "kjp", "kk", "kk-arab", "kk-cn", "kk-cyrl", "kk-kz", "kk-latn", "kk-tr", "kl", "km",
+  "kn", "knc", "ko", "ko-kp", "koi", "kr", "krc", "kri", "krj", "krl", "ks", "ks-arab", "ks-deva", "ksf", "ksh", "ksw", "ku",
+  "ku-arab", "ku-latn", "kum", "kus", "kv", "kw", "ky", "la", "lad", "lb", "lbe", "lem", "lez", "lfn", "lg", "li", "lij",
+  "liv", "ljp", "lki", "lld", "lmo", "ln", "lns", "lo", "loz", "lrc", "lt", "ltg", "lua", "lus", "luz", "lv", "lzh",
+  "lzz", "mad", "mag", "mai", "map-bms", "mcn", "mcp", "mdf", "mg", "mh", "mhr", "mi", "min", "mk", "ml", "mn", "mnc",
+  "mnc-latn", "mnc-mong", "mni", "mnw", "mo", "mos", "mr", "mrh", "mrj", "ms", "ms-arab", "mt", "mua", "mui", "mul", "mus", "mwl",
+  "my", "myv", "mzn", "na", "nah", "nan", "nan-hani", "nan-hant", "nan-latn-pehoeji", "nan-latn-tailo", "nap", "nb", "nds", "nds-nl", "ne", "new", "ng",
+  "nge", "nia", "nit", "niu", "nl", "nl-informal", "nla", "nmg", "nmz", "nn", "nnh", "nnz", "no", "nod", "nog", "nov", "nqo",
+  "nr", "nrm", "nso", "nup", "nv", "ny", "nyn", "nyo", "nys", "oc", "ojb", "olo", "om", "or", "os", "osa-latn", "ota",
+  "pa", "pag", "pam", "pap", "pap-aw", "pcd", "pcm", "pdc", "pdt", "pfl", "pi", "pih", "pl", "pms", "pnb", "pnt", "ppl",
+  "prg", "ps", "pt", "pt-br", "pwn", "qu", "quc", "qug", "rgn", "rif", "rki", "rm", "rmc", "rmf", "rmy", "rn", "ro",
+  "roa-rup", "roa-tara", "rsk", "ru", "rue", "rup", "ruq", "ruq-cyrl", "ruq-latn", "rut", "rw", "rwr", "ryu", "sa", "sah", "sas", "sat",
+  "sc", "scn", "sco", "sd", "sdc", "sdh", "se", "se-fi", "se-no", "se-se", "sei", "ses", "sg", "sgs", "sh", "sh-cyrl", "sh-latn",
+  "shi", "shi-latn", "shi-tfng", "shn", "shy", "shy-latn", "si", "simple", "sjd", "sje", "sju", "sk", "skr", "skr-arab", "sl", "sli", "sm",
+  "sma", "smj", "smn", "sms", "sn", "so", "sq", "sr", "sr-ec", "sr-el", "srn", "sro", "srq", "ss", "st", "stq", "sty",
+  "su", "sv", "sw", "syl", "szl", "szy", "ta", "tay", "tcy", "tdd", "te", "tet", "tg", "tg-cyrl", "tg-latn", "th", "thq",
+  "ti", "tig", "tk", "tl", "tly", "tly-cyrl", "tn", "to", "tok", "tpi", "tpv", "tr", "tru", "trv", "ts", "tt", "tt-cyrl",
+  "tt-latn", "ttj", "tum", "tvu", "tw", "ty", "tyv", "tzm", "udm", "ug", "ug-arab", "ug-latn", "uk", "ur", "uz", "uz-cyrl", "uz-latn",
+  "ve", "vec", "vep", "vi", "vls", "vmf", "vmw", "vo", "vot", "vro", "vut", "wa", "wal", "war", "wes", "wls", "wlx",
+  "wo", "wuu", "wuu-hans", "wuu-hant", "wya", "xal", "xh", "xmf", "xsy", "yas", "yat", "yav", "ybb", "yi", "yo", "yrl", "yua",
+  "yue", "yue-hans", "yue-hant", "za", "zea", "zgh", "zgh-latn", "zh", "zh-classical", "zh-cn", "zh-hans", "zh-hant", "zh-hk", "zh-min-nan", "zh-mo", "zh-my", "zh-sg",
+  "zh-tw", "zh-yue", "zu"
+];
+
+DEFAULT_LANGUAGES_MONOLINGUALTEXT = [
   "aa", "ab", "abs", "ace", "ady", "ady-cyrl", "aeb", "aeb-arab", "aeb-latn", "af", "ak", "aln", "als", "am", "an", "ang", "anp",
   "ar", "arc", "arn", "arq", "ary", "arz", "as", "ase", "ast", "atj", "av", "avk", "awa", "ay", "az", "azb", "ba", "ban", "bar",
   "bbc", "bbc-latn", "bcc", "bcl", "be", "be-tarask", "bg", "bgn", "bh", "bho", "bi", "bjn", "bm", "bn", "bo", "bpy", "bqi", "br",
@@ -58,6 +91,7 @@ $.suggest("langsuggest", {
         format: "json",
       },
       success: function (data) {
+        var context = self.options.languageContext || "monolingualtext";
         self.getLanguageCodes(function (languageCodes) {
           var array = [];
           for (var key in data.languagesearch) {
@@ -66,26 +100,30 @@ $.suggest("langsuggest", {
             }
           }
           self.response(array);
-        });
+        }, context);
       },
     });
   },
 
+  // Cache: apiEndpointToLangCodes[endpoint][context] -> array of language codes
   apiEndpointToLangCodes: {},
 
-  getLanguageCodes: function (callback) {
+  getLanguageCodes: function (callback, context) {
     var self = this;
+    context = context || "monolingualtext";
     var selectedApi = WikibaseManager.getSelectedWikibaseApi();
-    if (self.apiEndpointToLangCodes[selectedApi]) {
-      callback(self.apiEndpointToLangCodes[selectedApi]);
+    var fallback = context === "term" ? DEFAULT_LANGUAGES_TERM : DEFAULT_LANGUAGES_MONOLINGUALTEXT;
+    if (!self.apiEndpointToLangCodes[selectedApi]) {
+      self.apiEndpointToLangCodes[selectedApi] = {};
+    }
+    if (self.apiEndpointToLangCodes[selectedApi][context]) {
+      callback(self.apiEndpointToLangCodes[selectedApi][context]);
     } else {
-      // try fetching the language codes
-      // action=query&meta=wbcontentlanguages&wbclcontext=monolingualtext&format=json
       $.ajax({
         type: "POST",
         dataType: "jsonp",
         url: WikibaseManager.getSelectedWikibaseApi() +
-            "?action=query&meta=wbcontentlanguages&wbclcontext=monolingualtext&format=json",
+            "?action=query&meta=wbcontentlanguages&wbclprop=code&wbclcontext=" + context + "&format=json",
         success: function (data) {
           var result = [];
           var langs = data.query.wbcontentlanguages;
@@ -94,12 +132,12 @@ $.suggest("langsuggest", {
               result.push(langs[lang].code);
             }
           }
-          self.apiEndpointToLangCodes[selectedApi] = result;
+          self.apiEndpointToLangCodes[selectedApi][context] = result;
           callback(result);
         },
         error: function () {
-          self.apiEndpointToLangCodes[selectedApi] = DEFAULT_LANGUAGES;
-          callback(DEFAULT_LANGUAGES);
+          self.apiEndpointToLangCodes[selectedApi][context] = fallback;
+          callback(fallback);
         },
       });
     }
