@@ -39,6 +39,7 @@ import org.openrefine.wikibase.schema.validation.PathElement;
 import org.openrefine.wikibase.schema.validation.PathElement.Type;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
+import org.openrefine.wikibase.utils.LanguageCodeStore.LanguageCodeContext;
 import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
 
 /**
@@ -76,7 +77,9 @@ public class WbNameDescExpr {
             validation.addError("Missing value");
         } else {
             validation.enter();
+            validation.setLanguageContext(LanguageCodeContext.TERM);
             value.validate(validation);
+            validation.clearLanguageContext();
             validation.leave();
         }
     }
