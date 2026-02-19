@@ -107,6 +107,17 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
   } else {
     options.limit = -1;
   }
+  if (this._optionContainerElmts.samplingCheckbox[0].checked) {
+    var method = this._optionContainerElmts.samplingMethod[0].value;
+    var factor = this._optionContainerElmts.samplingFactor[0].value;
+    options.sampling = {
+      method: method,
+      factor: factor
+    };
+  } else {
+    delete options.sampling;
+  }
+
   options.storeBlankRows = this._optionContainerElmts.storeBlankRowsCheckbox[0].checked;
   options.storeBlankColumns = this._optionContainerElmts.storeBlankColumnsCheckbox[0].checked;
 
@@ -162,6 +173,11 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   $('#or-import-discard').text($.i18n('core-index-parser/discard-initial'));
   $('#or-import-rows').text($.i18n('core-index-parser/rows-data'));
   $('#or-import-load').text($.i18n('core-index-parser/load-at-most'));
+  $('#or-import-enable-sampling').text($.i18n('core-index-parser/sample-rows'));
+  $('#or-import-apply-sampling').text($.i18n('core-index-parser/sample-apply'));
+  $('#or-sample-method-bernoulli').text($.i18n('core-index-parser/sample-method-bernoulli'));
+  $('#or-sample-method-reservoir').text($.i18n('core-index-parser/sample-method-reservoir'));
+  $('#or-sample-method-systematic').text($.i18n('core-index-parser/sample-method-systematic'));
   $('#or-import-rows2').text($.i18n('core-index-parser/rows-data'));
   $('#or-import-parseCell').html($.i18n('core-index-parser/parse-cell'));
   $('#or-import-quote').html($.i18n('core-index-parser/use-quote'));
@@ -204,7 +220,22 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
           self._optionContainerElmts.columnNamesInput.prop('disabled', true);
       }
   });
-  
+
+  var updateSamplingMethod = function(method) {
+    var samplingFactorInput = self._optionContainerElmts.samplingFactor;
+    if (method === "bernoulli") {
+      $('#or-import-sampling-factor').text($.i18n('core-index-parser/sample-factor-bernoulli'));
+      samplingFactorInput.attr("min", 0).attr("max", 100);
+    } else if (method === "reservoir") {
+      $('#or-import-sampling-factor').text($.i18n('core-index-parser/sample-factor-reservoir'));
+      samplingFactorInput.removeAttr("max").attr("min", 1);
+    } else if (method === "systematic") {
+      $('#or-import-sampling-factor').text($.i18n('core-index-parser/sample-factor-systematic'));
+      samplingFactorInput.removeAttr("max").attr("min", 1);
+    }
+  }
+  this._optionContainerElmts.samplingMethod.on("change", (event) => { updateSamplingMethod(event.target.value); });
+
   var columnSeparatorValue = (this._config.separator == ",") ? 'comma' :
     ((this._config.separator == "\\t") ? 'tab' : 'custom');
   this._optionContainer.find(
@@ -227,6 +258,26 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
     this._optionContainerElmts.skipCheckbox.prop("checked", true);
     this._optionContainerElmts.skipInput.value[0].value = this._config.skipDataLines.toString();
   }
+  var sampling = this._config.sampling;
+  if (sampling != null) {
+    this._optionContainerElmts.samplingCheckbox.prop("checked", true);
+
+    var method = sampling.method;
+    if (method != null) {
+      this._optionContainerElmts.samplingMethod[0].value = method;
+      updateSamplingMethod(method);
+    }
+
+    var factor = sampling.factor;
+    if (factor != null) {
+        this._optionContainerElmts.samplingFactor[0].value = factor;
+    }
+  } else {
+    // sync label with method
+    var method = this._optionContainerElmts.samplingMethod[0].value;
+    updateSamplingMethod(method);
+  }
+
   if (this._config.storeBlankRows) {
     this._optionContainerElmts.storeBlankRowsCheckbox.prop("checked", true);
   }
