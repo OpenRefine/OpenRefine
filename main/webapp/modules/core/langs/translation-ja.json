@@ -406,7 +406,7 @@
     "core-views/add-col-recon-col": "照合カラムから新しいカラムを作る:",
     "core-views/create-topic-cells": "このセルと同じ全セルにマッチする新項目を作成",
     "core-views/add-based-col": "このカラムに基づいてカラムを追加…",
-    "core-views/rename-col": "カラム名を変更する…",
+    "core-views/rename-col": "このカラム名を変更…",
     "core-views/facet-empty-string": "空の文字列ファセット",
     "core-views/by-judg": "照合判断（judgement）",
     "core-views/scatterplot-facet": "散布図ファセット…",

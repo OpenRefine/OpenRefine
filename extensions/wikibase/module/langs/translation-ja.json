@@ -360,5 +360,6 @@
     "warnings-messages/label-too-long/body": "キャプションは {max_length} 文字を超えることができません。<span class=\"wb-issue-preformat\">{lang_code}</span> の <span class=\"wb-issue-preformat\">{example_entity}</span> は、{length} 文字の長さがあります。",
     "warnings-messages/new-media-missing-property/body": "新規メディアファイルをアプロードするには、{property_entity}を指定する必要があります.",
     "wikibase-extension/editing-results-facet": "結果ファセットを編集",
-    "warnings-messages/new-media-missing-property/title": "新規メディアにはプロパティが必要です {property_entity}"
+    "warnings-messages/new-media-missing-property/title": "新規メディアにはプロパティが必要です {property_entity}",
+    "wikibase-schema/refresh-schema": "スキーマを更新"
 }
