@@ -75,7 +75,7 @@ describe(__filename, function () {
       .check();
 
     // Wait for the plot to update with log scale
-    cy.wait(500);
+    cy.get('body[ajax_in_progress="false"]');
 
     // Make a selection on the scatterplot
     // The plot image has class 'facet-scatterplot-image'
@@ -86,7 +86,7 @@ describe(__filename, function () {
       .trigger('mouseup');
 
     // Wait for the facet to update
-    cy.wait(500);
+    cy.get('body[ajax_in_progress="false"]');
 
     // Verify that some rows are filtered (not all 199 rows)
     cy.get('#summary-bar').should('not.contain', '199 rows');

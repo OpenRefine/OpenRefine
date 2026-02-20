@@ -476,40 +476,33 @@ public class ScatterplotFacet implements Facet {
                 double range_x = max_x - min_x;
                 double range_y = max_y - min_y;
 
-                @Override
-                protected boolean checkValues(double x, double y) {
-                    // Convert selection from normalized (0-1) visual coordinates to data space.
-                    // When log scale is used, the visual coordinates are in log space,
-                    // so we need to convert using the inverse of the log transformation.
-                    
-                    double from_x_data, to_x_data, from_y_data, to_y_data;
-                    
+                double from_x_data;
+                double to_x_data;
+                double from_y_data;
+                double to_y_data;
+
+                {
                     if (config.dim_x == ScatterplotFacet.LOG) {
-                        // Convert normalized selection to pixel, then to data space using inverse log
-                        // Visual position v = n * l (where n is normalized 0-1)
-                        // In log space: v = log10(relative + 1) * l / log10(range + 1)
-                        // Solving for relative: relative = 10^(v/l * log10(range + 1)) - 1
-                        // Data value = min + relative
-                        double from_v_x = config.from_x * config.l;
-                        double to_v_x = config.to_x * config.l;
-                        from_x_data = min_x + Math.pow(10, from_v_x / config.l * Math.log10(range_x + 1)) - 1;
-                        to_x_data = min_x + Math.pow(10, to_v_x / config.l * Math.log10(range_x + 1)) - 1;
+                        double log_range_x = Math.log10(range_x + 1);
+                        from_x_data = min_x + Math.pow(10, config.from_x * log_range_x) - 1;
+                        to_x_data = min_x + Math.pow(10, config.to_x * log_range_x) - 1;
                     } else {
-                        // Linear: data = min + n * range
                         from_x_data = min_x + config.from_x * range_x;
                         to_x_data = min_x + config.to_x * range_x;
                     }
-                    
+
                     if (config.dim_y == ScatterplotFacet.LOG) {
-                        double from_v_y = config.from_y * config.l;
-                        double to_v_y = config.to_y * config.l;
-                        from_y_data = min_y + Math.pow(10, from_v_y / config.l * Math.log10(range_y + 1)) - 1;
-                        to_y_data = min_y + Math.pow(10, to_v_y / config.l * Math.log10(range_y + 1)) - 1;
+                        double log_range_y = Math.log10(range_y + 1);
+                        from_y_data = min_y + Math.pow(10, config.from_y * log_range_y) - 1;
+                        to_y_data = min_y + Math.pow(10, config.to_y * log_range_y) - 1;
                     } else {
                         from_y_data = min_y + config.from_y * range_y;
                         to_y_data = min_y + config.to_y * range_y;
                     }
+                }
 
+                @Override
+                protected boolean checkValues(double x, double y) {
                     return x >= from_x_data && x <= to_x_data && y >= from_y_data && y <= to_y_data;
                 };
             };
