@@ -845,7 +845,7 @@ SchemaAlignment._addNameDesc = function(item, json) {
 
   $('<div></div>').addClass('wbs-right').appendTo(namedesc);
   var value_container = $('<div></div>').addClass('wbs-namedesc-value').appendTo(namedesc);
-  SchemaAlignment._initField(value_container, "monolingualtext", value);
+  SchemaAlignment._initField(value_container, "monolingualtext", value, undefined, { languageContext: "term" });
 
   var override_container = $('<div></div>').addClass('wbs-namedesc-override').appendTo(namedesc);
   var label = $('<label></label>').appendTo(override_container);
@@ -1326,9 +1326,9 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
 
 };
 
-SchemaAlignment._initField = function(inputContainer, mode, initialValue, changedCallback) {
+SchemaAlignment._initField = function(inputContainer, mode, initialValue, changedCallback, options) {
   var input = $('<input></input>').appendTo(inputContainer);
- 
+
   if (! changedCallback) {
     changedCallback = SchemaAlignment._hasChanged;
   }
@@ -1402,7 +1402,8 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
    } else if (mode === "language") {
      input.attr("placeholder", "lang");
      input.addClass("wbs-language-input");
-     input.langsuggest().on("fb-select", function(evt, data) {
+     var langSuggestOptions = (options && options.languageContext) ? { languageContext: options.languageContext } : {};
+     input.langsuggest(langSuggestOptions).on("fb-select", function(evt, data) {
         inputContainer.data("jsonValue", {
             type: "wblanguageconstant",
             id: data.id,
@@ -1439,7 +1440,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         changedCallback();
      };
 
-     SchemaAlignment._initField(inputContainerLanguage, "language", langValue, propagateValue);
+     SchemaAlignment._initField(inputContainerLanguage, "language", langValue, propagateValue, options || { languageContext: "monolingualtext" });
      SchemaAlignment._initField(inputContainerValue, "string", strValue, propagateValue);
 
    } else if (mode === "quantity") {
