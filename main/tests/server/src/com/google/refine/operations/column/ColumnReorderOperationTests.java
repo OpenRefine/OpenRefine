@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -45,9 +47,11 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationDescription;
 import com.google.refine.operations.OperationRegistry;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ColumnReorderOperationTests extends RefineTest {
@@ -71,15 +75,34 @@ public class ColumnReorderOperationTests extends RefineTest {
 
     @Test
     public void serializeColumnReorderOperation() {
-        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b", "c", "a"));
+        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b", "c", "a"), false);
         TestUtils.isSerializedTo(op, "{\"op\":\"core/column-reorder\","
                 + "\"description\":" + new TextNode(OperationDescription.column_reorder_brief()).toString() + ","
+                + "\"isPureReorder\": false,"
                 + "\"columnNames\":[\"b\",\"c\",\"a\"]}");
     }
 
     @Test
+    public void deserializeLegacyFormat() throws JsonMappingException, JsonProcessingException {
+        ColumnReorderOperation op = ParsingUtilities.mapper.readValue("{\"op\":\"core/column-reorder\","
+                + "\"columnNames\":[\"b\",\"c\",\"a\"]}", ColumnReorderOperation.class);
+        assertEquals(op._columnNames, List.of("b", "c", "a"));
+        assertEquals(op._isPureReorder, false);
+    }
+
+    @Test
+    public void deserializeNewFormat() throws JsonMappingException, JsonProcessingException {
+        String json = "{\"op\":\"core/column-reorder\","
+                + "\"description\":" + new TextNode(OperationDescription.column_reorder_brief()).toString() + ","
+                + "\"isPureReorder\": true,"
+                + "\"columnNames\":[\"b\",\"c\",\"a\"]}";
+        ColumnReorderOperation op = ParsingUtilities.mapper.readValue(json, ColumnReorderOperation.class);
+        TestUtils.isSerializedTo(op, json);
+    }
+
+    @Test
     public void testValidate() {
-        AbstractOperation op = new ColumnReorderOperation(null);
+        AbstractOperation op = new ColumnReorderOperation(null, false);
         assertThrows(IllegalArgumentException.class, () -> op.validate());
     }
 
@@ -89,7 +112,7 @@ public class ColumnReorderOperationTests extends RefineTest {
         int bCol = project.columnModel.getColumnByName("b").getCellIndex();
         int cCol = project.columnModel.getColumnByName("c").getCellIndex();
 
-        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("a"));
+        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("a"), false);
         assertEquals(op.getColumnDependencies().get(), Set.of("a"));
         assertEquals(op.getColumnsDiff(), Optional.empty());
 
@@ -112,8 +135,8 @@ public class ColumnReorderOperationTests extends RefineTest {
     }
 
     @Test
-    public void testReorder() throws Exception {
-        ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"));
+    public void testMixedReorder() throws Exception {
+        ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"), false);
         assertEquals(SUT.getColumnDependencies().get(), Set.of("b", "c"));
         assertEquals(SUT.getColumnsDiff(), Optional.empty());
 
@@ -129,11 +152,40 @@ public class ColumnReorderOperationTests extends RefineTest {
     }
 
     @Test
+    public void testPureReorder() throws Exception {
+        ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"), true);
+        assertEquals(SUT.getColumnDependencies().get(), Set.of("b", "c"));
+        assertEquals(SUT.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
+
+        runOperation(SUT, project);
+
+        Project expected = createProject(
+                new String[] { "c", "b", "a" },
+                new Serializable[][] {
+                        { "e", "d", "1|2" },
+                        { "g", "f", "3" },
+                });
+        assertProjectEquals(project, expected);
+    }
+
+    @Test
     public void testRename() {
-        ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"));
+        ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"), false);
 
         ColumnReorderOperation renamed = SUT.renameColumns(Map.of("a", "a2", "b", "b2"));
 
         assertEquals(renamed._columnNames, List.of("c", "b2"));
+        assertEquals(renamed._isPureReorder, false);
     }
+
+    @Test
+    public void testRenamePureReorder() {
+        ColumnReorderOperation SUT = new ColumnReorderOperation(Arrays.asList("c", "b"), true);
+
+        ColumnReorderOperation renamed = SUT.renameColumns(Map.of("a", "a2", "b", "b2"));
+
+        assertEquals(renamed._columnNames, List.of("c", "b2"));
+        assertEquals(renamed._isPureReorder, true);
+    }
+
 }
