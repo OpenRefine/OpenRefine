@@ -154,7 +154,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
-        return Optional.of(ColumnsDiff.builder().addColumn(resultsColumnName, null).build());
+        if (resultsColumnName != null) {
+            return Optional.of(ColumnsDiff.builder().addColumn(resultsColumnName, null).build());
+        } else {
+            return Optional.of(ColumnsDiff.empty());
+        }
     }
 
     @Override
@@ -166,7 +170,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 editGroupsUrlSchema,
                 maxEditsPerMinute,
                 tagTemplate,
-                newColumnNames.getOrDefault(resultsColumnName, resultsColumnName));
+                resultsColumnName == null ? null : newColumnNames.getOrDefault(resultsColumnName, resultsColumnName));
     }
 
     @Override
