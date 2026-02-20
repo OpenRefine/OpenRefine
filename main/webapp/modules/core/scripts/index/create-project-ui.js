@@ -55,15 +55,19 @@ Refine.CreateProjectUI = function(elmt) {
   
   $('#create-project-progress-cancel-button').text($.i18n('core-buttons/cancel'));
   $('#create-project-error-ok-button').html($.i18n('core-buttons/ok'));
-  
-  $.get(
-    "command/core/get-importing-configuration",
-    null,
-    function(data) {
+
+  $.ajax({
+    url: "command/core/get-importing-configuration",
+    data: null,
+    error: function(xhr, status, error) {
+      alert("FAILED to load import config: " + xhr.responseText);
+    },
+    success: function (data, status, jqXHR) {
       Refine.importingConfig = data.config;
       self._initializeUI();
     },
-    "json"
+    dataType: "json"
+    }
   );
 };
 
@@ -186,23 +190,23 @@ Refine.CreateProjectUI.prototype.showImportProgressPanel = function(progressMess
 Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID, checkDone, callback, onError) {
   var self = this;
   $.post(
-    "command/core/get-importing-job-status?" + $.param({ "jobID": jobID }),
-    null,
-    function(data) {
+      "command/core/get-importing-job-status?" + $.param({"jobID": jobID})
+  ).fail(() => {}     // TODO: add error function
+  ).done( function (data, textStatus, jqXHR) {
       if (!(data)) {
         self.showImportJobError("Unknown error");
         window.clearInterval(timerID);
         return;
-      } else if (data.code == "error" || !("job" in data)) {
+      } else if (data.code === "error" || !("job" in data)) {
         self.showImportJobError(data.message || "Unknown error");
         window.clearInterval(timerID);
         return;
       }
 
       var job = data.job;
-      if (job.config.state == "error") {
+      if (job.config.state === "error") {
         window.clearInterval(timerID);
-        
+
         onError(job);
       } else if (checkDone(job)) {
         $('#create-project-progress-bar-body').removeClass('indefinite').css("width", "100%"); // show progress as done
@@ -226,10 +230,10 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
           if (secondsRemaining > 1) {
             if (secondsRemaining > 60) {
               $('#create-project-progress-timing').text(
-                  $.i18n('core-index-create/min-remaining', Math.ceil(secondsRemaining / 60)));
+                $.i18n('core-index-create/min-remaining', Math.ceil(secondsRemaining / 60)));
             } else {
               $('#create-project-progress-timing').text(
-                  $.i18n('core-index-create/sec-remaining', Math.ceil(secondsRemaining) ));
+                $.i18n('core-index-create/sec-remaining', Math.ceil(secondsRemaining)));
             }
           } else {
             $('#create-project-progress-timing').text($.i18n('core-index-create/almost-done'));
@@ -250,8 +254,7 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
           }
         }
       }
-    },
-    "json"
+    }
   );
 };
 

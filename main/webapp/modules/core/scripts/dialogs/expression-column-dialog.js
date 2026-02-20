@@ -11,7 +11,7 @@ var doTextTransform = function(columnName, expression, onError, repeat, repeatCo
       },
       null,
       { cellsChanged: true, rowIdsPreserved: true },
-      { onDone }
+      { onDone: onDone }
     );
 };
 
