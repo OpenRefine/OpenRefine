@@ -941,5 +941,6 @@
     "core-import-formats/text/wiki": "Wikitext",
     "core-import-formats/text": "Text files",
     "core-import-formats/binary": "Binary files",
+    "core-import-formats/binary/parquet": "Apache Parquet files",
     "core-import-formats/service": "Services"
 }
