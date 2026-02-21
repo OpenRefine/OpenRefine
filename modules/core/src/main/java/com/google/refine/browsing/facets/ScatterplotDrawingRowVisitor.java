@@ -54,8 +54,8 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
 
     int col_x;
     int col_y;
-    int dim_x;
-    int dim_y;
+    ScatterplotFacet.LinLog dim_x;
+    ScatterplotFacet.LinLog dim_y;
 
     double l;
     double dot;
@@ -72,7 +72,7 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
 
     public ScatterplotDrawingRowVisitor(
             int col_x, int col_y, double min_x, double max_x, double min_y, double max_y,
-            int size, int dim_x, int dim_y, int rotation, double dot, Color color) {
+            int size, ScatterplotFacet.LinLog dim_x, ScatterplotFacet.LinLog dim_y, ScatterplotFacet.Rotation rotation, double dot, Color color) {
         this.col_x = col_x;
         this.col_y = col_y;
         this.min_x = min_x;
