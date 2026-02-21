@@ -72,7 +72,8 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
 
     public ScatterplotDrawingRowVisitor(
             int col_x, int col_y, double min_x, double max_x, double min_y, double max_y,
-            int size, ScatterplotFacet.LinLog dim_x, ScatterplotFacet.LinLog dim_y, ScatterplotFacet.Rotation rotation, double dot, Color color) {
+            int size, ScatterplotFacet.LinLog dim_x, ScatterplotFacet.LinLog dim_y, ScatterplotFacet.Rotation rotation, double dot,
+            Color color) {
         this.col_x = col_x;
         this.col_y = col_y;
         this.min_x = min_x;

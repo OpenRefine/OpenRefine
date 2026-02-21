@@ -77,23 +77,20 @@ public class ScatterplotFacet implements Facet {
 
     public enum LinLog {
         @JsonProperty("lin")
-        LIN,
-        @JsonProperty("log")
+        LIN, @JsonProperty("log")
         LOG;
     }
 
     public enum Rotation {
         @JsonProperty("none")
-        NO_ROTATION,
-        @JsonProperty("cw")
-        ROTATE_CW,
-        @JsonProperty("ccw")
+        NO_ROTATION, @JsonProperty("cw")
+        ROTATE_CW, @JsonProperty("ccw")
         ROTATE_CCW;
     }
 
     /*
      * Configuration, from the client side
-     *
+     * @formatter:off
      * An example of the JSON representation of the configuration:
       * {
           "name": "Water (x) vs. Energ_Kcal (y)",
@@ -112,6 +109,7 @@ public class ScatterplotFacet implements Facet {
           "from_y": 0.3933333333333333,
           "to_y": 0.5933333333333334
        }
+       * @formatter:on
      */
     public static class ScatterplotFacetConfig implements FacetConfig {
 
