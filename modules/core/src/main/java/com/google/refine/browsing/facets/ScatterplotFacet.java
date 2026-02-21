@@ -143,9 +143,34 @@ public class ScatterplotFacet implements Facet {
             return dim_x == LIN ? "lin" : "log";
         }
 
+        @JsonProperty(DIM_X)
+        public void setDimX(String dim) {
+            dim_x = "log".equals(dim) ? LOG : LIN;
+        }
+
         @JsonProperty(DIM_Y)
         public String getDimY() {
             return dim_y == LIN ? "lin" : "log";
+        }
+
+        @JsonProperty(DIM_Y)
+        public void setDimY(String dim) {
+            dim_y = "log".equals(dim) ? LOG : LIN;
+        }
+
+        @JsonProperty(ROTATION)
+        @JsonInclude(Include.NON_NULL)
+        public String getRotationName() {
+            if (rotation == ROTATE_CW) return "cw";
+            else if (rotation == ROTATE_CCW) return "ccw";
+            else return null;
+        }
+
+        @JsonProperty(ROTATION)
+        public void setRotation(Object rotationValue) {
+            if (rotationValue != null) {
+                this.rotation = getRotation(rotationValue.toString());
+            }
         }
 
         @Override
