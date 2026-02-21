@@ -144,8 +144,6 @@ public class ScatterplotFacet implements Facet {
             return rotation == Rotation.NO_ROTATION ? null : rotation.toString();
         }
 
-        protected double l = 1.0; // FIXME: l and size are aliases for each other which should be set during deserialization
-
         @JsonProperty(DOT)
         protected double dot;
 
@@ -246,7 +244,6 @@ public class ScatterplotFacet implements Facet {
             newConfig.dim_x = dim_x;
             newConfig.dim_y = dim_y;
             newConfig.rotation = rotation;
-            newConfig.l = l;
             newConfig.dot = dot;
             newConfig.color_str = color_str;
             newConfig.from_x = from_x;
@@ -434,7 +431,7 @@ public class ScatterplotFacet implements Facet {
     public void initializeFromConfig(ScatterplotFacetConfig configuration, Project project) {
         config = configuration;
 
-        t = createRotationMatrix(config.rotation, config.l);
+        t = createRotationMatrix(config.rotation, config.size);
 
         if (!config.columnName_x.isEmpty()) {
             Column x_column = project.columnModel.getColumnByName(config.columnName_x);
@@ -488,15 +485,15 @@ public class ScatterplotFacet implements Facet {
             return new DualExpressionsNumberComparisonRowFilter(
                     eval_x, config.columnName_x, columnIndex_x, eval_y, config.columnName_y, columnIndex_y) {
 
-                double from_x_pixels = config.from_x * config.l;
-                double to_x_pixels = config.to_x * config.l;
-                double from_y_pixels = config.from_y * config.l;
-                double to_y_pixels = config.to_y * config.l;
+                double from_x_pixels = config.from_x * config.size;
+                double to_x_pixels = config.to_x * config.size;
+                double from_y_pixels = config.from_y * config.size;
+                double to_y_pixels = config.to_y * config.size;
 
                 @Override
                 protected boolean checkValues(double x, double y) {
                     Point2D.Double p = new Point2D.Double(x, y);
-                    p = translateCoordinates(p, min_x, max_x, min_y, max_y, config.dim_x, config.dim_y, config.l, t);
+                    p = translateCoordinates(p, min_x, max_x, min_y, max_y, config.dim_x, config.dim_y, config.size, t);
                     return p.x >= from_x_pixels && p.x <= to_x_pixels && p.y >= from_y_pixels && p.y <= to_y_pixels;
                 };
             };
