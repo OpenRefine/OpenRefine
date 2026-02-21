@@ -184,4 +184,53 @@ public class ScatterplotFacetTests extends RefineTest {
         TestUtils.isSerializedTo(renamed, configJsonRenamed);
     }
 
+    /**
+     * Regression test: log-scale upper-right selection must match high-value rows,
+     * not return 0 rows. Verifies that getRowFilter() correctly inverts the log
+     * coordinate transform from translateCoordinates().
+     */
+    @Test
+    public void testLogScaleUpperRightSelection() throws Exception {
+        // Data: row 0 has high values, row 1 has low/negative values
+        Project project = createProject(
+                new String[] { "my column", "e" },
+                new Serializable[][] {
+                        { 89.2, 89.2 },
+                        { 1.0, 1.0 },
+                        { "blah", "blah" },
+                        { 0.4, 0.4 }
+                });
+        Engine engine = new Engine(project);
+
+        // Select upper-right region (from_x=0.7, to_x=1.0, from_y=0.7, to_y=1.0) with log scale
+        String logConfigJson = "{\n" +
+                "  \"to_x\": 1.0,\n" +
+                "  \"to_y\": 1.0,\n" +
+                "  \"dot\": 1,\n" +
+                "  \"from_x\": 0.7,\n" +
+                "  \"l\": 150,\n" +
+                "  \"type\": \"scatterplot\",\n" +
+                "  \"from_y\": 0.7,\n" +
+                "  \"dim_y\": \"log\",\n" +
+                "  \"ex\": \"value\",\n" +
+                "  \"dim_x\": \"log\",\n" +
+                "  \"ey\": \"value\",\n" +
+                "  \"cx\": \"my column\",\n" +
+                "  \"cy\": \"e\",\n" +
+                "  \"name\": \"my column (x) vs. e (y)\"\n" +
+                "}";
+
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(logConfigJson, ScatterplotFacetConfig.class);
+        ScatterplotFacet facet = config.apply(project);
+        facet.computeChoices(project, engine.getAllFilteredRows());
+
+        RowFilter filter = facet.getRowFilter(project);
+        // Row 0 (89.2, 89.2) is in upper-right, must be matched
+        assertTrue(filter.filterRow(project, 0, project.rows.get(0)));
+        // Row 1 (1.0, 1.0) is in lower-left, must not be matched
+        assertFalse(filter.filterRow(project, 1, project.rows.get(1)));
+        // Row 3 (0.4, 0.4) is in lower-left, must not be matched
+        assertFalse(filter.filterRow(project, 3, project.rows.get(3)));
+    }
+
 }

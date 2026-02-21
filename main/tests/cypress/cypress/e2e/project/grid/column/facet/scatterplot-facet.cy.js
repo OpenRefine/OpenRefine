@@ -69,16 +69,19 @@ describe(__filename, function () {
     // Get the facet container
     cy.getFacetContainer('Water (x) vs. Energ_Kcal (y)').should('to.exist');
 
-    // Switch to log scale
+    // Switch to log scale by clicking the label (the input is hidden behind the label)
+    cy.getFacetContainer('Water (x) vs. Energ_Kcal (y)')
+      .find('label.dim-log-label')
+      .click();
+    // Verify the log radio is now selected
     cy.getFacetContainer('Water (x) vs. Energ_Kcal (y)')
       .find('input[value="log"]')
-      .check();
+      .should('be.checked');
 
     // Wait for the plot to update with log scale
     cy.get('body[ajax_in_progress="false"]');
 
-    // Make a selection on the scatterplot
-    // The plot image has class 'facet-scatterplot-image'
+    // Make a selection on the scatterplot (top-left area of the plot)
     cy.getFacetContainer('Water (x) vs. Energ_Kcal (y)')
       .find('.facet-scatterplot-plot')
       .trigger('mousedown', 10, 10)
@@ -88,7 +91,8 @@ describe(__filename, function () {
     // Wait for the facet to update
     cy.get('body[ajax_in_progress="false"]');
 
-    // Verify that some rows are filtered (not all 199 rows)
+    // Verify that some rows are filtered: not all 199 rows, and not 0 rows
     cy.get('#summary-bar').should('not.contain', '199 rows');
+    cy.get('#summary-bar').should('not.contain', '0 rows');
   });
 });
