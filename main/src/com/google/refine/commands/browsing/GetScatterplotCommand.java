@@ -44,7 +44,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,18 +85,12 @@ public class GetScatterplotCommand extends Command {
 
             response.setHeader("Content-Type", "image/png");
 
-            ServletOutputStream sos = null;
-
-            try {
-                sos = response.getOutputStream();
+            try (ServletOutputStream sos = response.getOutputStream()) {
                 draw(sos, project, engine, conf);
-            } finally {
-                sos.close();
             }
 
             logger.trace("Drawn scatterplot in {} ms", Long.toString(System.currentTimeMillis() - start));
         } catch (Exception e) {
-            e.printStackTrace();
             respondException(response, e);
         }
     }
@@ -108,12 +101,12 @@ public class GetScatterplotCommand extends Command {
         public int size = 100;
         @JsonProperty(ScatterplotFacet.DOT)
         double dot = 100;
-        @JsonIgnore
-        public int dim_x = ScatterplotFacet.LIN;
-        @JsonIgnore
-        public int dim_y = ScatterplotFacet.LIN;
+        @JsonProperty(ScatterplotFacet.DIM_X)
+        public ScatterplotFacet.LinLog dim_x = ScatterplotFacet.LinLog.LIN;
+        @JsonProperty(ScatterplotFacet.DIM_Y)
+        public ScatterplotFacet.LinLog dim_y = ScatterplotFacet.LinLog.LIN;
         @JsonProperty(ScatterplotFacet.ROTATION)
-        public int rotation = ScatterplotFacet.NO_ROTATION;
+        public ScatterplotFacet.Rotation rotation = ScatterplotFacet.Rotation.NO_ROTATION;
         @JsonProperty(ScatterplotFacet.COLOR)
         public String color_str = "000000";
         @JsonProperty(ScatterplotFacet.BASE_COLOR)
@@ -127,31 +120,6 @@ public class GetScatterplotCommand extends Command {
         @JsonProperty(ScatterplotFacet.Y_EXPRESSION)
         public String expression_y = "value";
 
-        @JsonProperty(ScatterplotFacet.DIM_X)
-        public String getDimX() {
-            return dim_x == ScatterplotFacet.LIN ? "lin" : "log";
-        }
-
-        @JsonProperty(ScatterplotFacet.DIM_Y)
-        public String getDimY() {
-            return dim_y == ScatterplotFacet.LIN ? "lin" : "log";
-        }
-
-        @JsonProperty(ScatterplotFacet.DIM_X)
-        public void setDimX(String dim) {
-            dim_x = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
-        }
-
-        @JsonProperty(ScatterplotFacet.DIM_Y)
-        public void setDimY(String dim) {
-            dim_y = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
-        }
-
-        // rotation can be set to "none" (a JSON string) in which case it should be ignored
-        @JsonProperty(ScatterplotFacet.ROTATION)
-        public void setRotation(Object rotation) {
-            this.rotation = ScatterplotFacet.ScatterplotFacetConfig.getRotation(rotation.toString());
-        }
     }
 
     public void draw(OutputStream output, Project project, Engine engine, PlotterConfig o) throws IOException {
@@ -171,7 +139,7 @@ public class GetScatterplotCommand extends Command {
 
         Color base_color = o.base_color_str != null ? new Color(Integer.parseInt(o.base_color_str, 16)) : null;
 
-        if (o.columnName_x.length() > 0) {
+        if (!o.columnName_x.isEmpty()) {
             Column x_column = project.columnModel.getColumnByName(o.columnName_x);
             if (x_column != null) {
                 columnIndex_x = x_column.getCellIndex();

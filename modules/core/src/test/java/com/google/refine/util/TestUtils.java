@@ -84,7 +84,7 @@ public class TestUtils {
             JsonNode jsonA = mapper.readValue(expected, JsonNode.class);
             JsonNode jsonB = mapper.readValue(actual, JsonNode.class);
             if (!jsonA.equals(jsonB)) {
-                jsonDiff(expected, actual);
+                jsonDiff(actual, expected);
                 fail("Objects above are not equal as JSON strings.");
             }
         } catch (Exception e) {

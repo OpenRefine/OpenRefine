@@ -141,7 +141,7 @@ public class ScatterplotFacetTests extends RefineTest {
         TestUtils.isSerializedTo(config, configJson);
     }
 
-    @Test
+    @Test(enabled = true)
     public void serializeScatterplotFacet() throws JsonParseException, JsonMappingException, IOException {
         Project project = createProject(
                 new String[] { "my column", "e" },
