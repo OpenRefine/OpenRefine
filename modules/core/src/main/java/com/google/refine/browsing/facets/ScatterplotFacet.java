@@ -161,9 +161,12 @@ public class ScatterplotFacet implements Facet {
         @JsonProperty(ROTATION)
         @JsonInclude(Include.NON_NULL)
         public String getRotationName() {
-            if (rotation == ROTATE_CW) return "cw";
-            else if (rotation == ROTATE_CCW) return "ccw";
-            else return null;
+            if (rotation == ROTATE_CW)
+                return "cw";
+            else if (rotation == ROTATE_CCW)
+                return "ccw";
+            else
+                return null;
         }
 
         @JsonProperty(ROTATION)
