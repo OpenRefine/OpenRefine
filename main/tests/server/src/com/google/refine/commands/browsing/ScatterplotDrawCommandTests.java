@@ -104,31 +104,31 @@ public class ScatterplotDrawCommandTests extends CommandTestBase {
     public void testParseConfig() throws JsonParseException, JsonMappingException, IOException {
         GetScatterplotCommand.PlotterConfig config = ParsingUtilities.mapper.readValue(configJson,
                 GetScatterplotCommand.PlotterConfig.class);
-        Assert.assertEquals("a", config.columnName_x);
-        Assert.assertEquals("b", config.columnName_y);
-        Assert.assertEquals(ScatterplotFacet.LOG, config.dim_x);
-        Assert.assertEquals(ScatterplotFacet.LIN, config.dim_y);
+        Assert.assertEquals(config.columnName_x, "a");
+        Assert.assertEquals(config.columnName_y, "b");
+        Assert.assertEquals(config.dim_x, ScatterplotFacet.LinLog.LOG);
+        Assert.assertEquals(config.dim_y, ScatterplotFacet.LinLog.LIN);
     }
 
     @Test
     public void testParseConfigWithNone() throws JsonParseException, JsonMappingException, IOException {
         GetScatterplotCommand.PlotterConfig config = ParsingUtilities.mapper.readValue(configJsonWithNone,
                 GetScatterplotCommand.PlotterConfig.class);
-        Assert.assertEquals(ScatterplotFacet.NO_ROTATION, config.rotation);
+        Assert.assertEquals(config.rotation, ScatterplotFacet.Rotation.NO_ROTATION);
     }
 
     @Test
     public void testParseConfigWithCW() throws JsonParseException, JsonMappingException, IOException {
         GetScatterplotCommand.PlotterConfig config = ParsingUtilities.mapper.readValue(configJsonWithCW,
                 GetScatterplotCommand.PlotterConfig.class);
-        Assert.assertEquals(ScatterplotFacet.ROTATE_CW, config.rotation);
+        Assert.assertEquals(config.rotation, ScatterplotFacet.Rotation.ROTATE_CW);
     }
 
     @Test
     public void testParseConfigWithCCW() throws JsonParseException, JsonMappingException, IOException {
         GetScatterplotCommand.PlotterConfig config = ParsingUtilities.mapper.readValue(configJsonWithCCW,
                 GetScatterplotCommand.PlotterConfig.class);
-        Assert.assertEquals(ScatterplotFacet.ROTATE_CCW, config.rotation);
+        Assert.assertEquals(config.rotation, ScatterplotFacet.Rotation.ROTATE_CCW);
     }
 
 }

@@ -75,15 +75,41 @@ import com.google.refine.util.NotImplementedException;
 
 public class ScatterplotFacet implements Facet {
 
-    public static final int LIN = 0;
-    public static final int LOG = 1;
+    public enum LinLog {
+        @JsonProperty("lin")
+        LIN, @JsonProperty("log")
+        LOG;
+    }
 
-    public static final int NO_ROTATION = 0;
-    public static final int ROTATE_CW = 1;
-    public static final int ROTATE_CCW = 2;
+    public enum Rotation {
+        @JsonProperty("none")
+        NO_ROTATION, @JsonProperty("cw")
+        ROTATE_CW, @JsonProperty("ccw")
+        ROTATE_CCW;
+    }
 
     /*
      * Configuration, from the client side
+     * @formatter:off
+     * An example of the JSON representation of the configuration:
+      * {
+          "name": "Water (x) vs. Energ_Kcal (y)",
+          "cx": "Water",
+          "cy": "Energ_Kcal",
+          "l": 150,
+          "ex": "value",
+          "ey": "value",
+          "dot": 0.8,
+          "dim_x": "lin",
+          "dim_y": "lin",
+          "r": "ccw",
+          "type": "scatterplot",
+          "from_x": 0.8,
+          "to_x": 1,
+          "from_y": 0.3933333333333333,
+          "to_y": 0.5933333333333334
+       }
+       * @formatter:on
      */
     public static class ScatterplotFacetConfig implements FacetConfig {
 
@@ -101,23 +127,28 @@ public class ScatterplotFacet implements Facet {
 
         @JsonProperty(SIZE)
         protected int size;
-        @JsonIgnore
-        protected int dim_x;
-        @JsonIgnore
-        protected int dim_y;
-        @JsonIgnore
-        protected String rotation_str;
-        @JsonIgnore
-        protected int rotation;
+        @JsonProperty(DIM_X)
+        protected LinLog dim_x = LinLog.LIN;
+        @JsonProperty(DIM_Y)
+        protected LinLog dim_y = LinLog.LIN;
 
-        @JsonIgnore
-        protected double l = 1.;
+        @JsonProperty(ROTATION)
+        protected Rotation rotation = Rotation.NO_ROTATION;
+
+        @JsonProperty(value = ROTATION)
+        @JsonInclude(Include.NON_NULL)
+        public String getRotation() {
+            // Don't serialize default value
+            return rotation == Rotation.NO_ROTATION ? null : rotation.toString();
+        }
+
         @JsonProperty(DOT)
         protected double dot;
 
         @JsonIgnore
         protected String color_str = "000000";
 
+        // TODO: Dead code?
         @JsonIgnore
         protected Color getColor() {
             return new Color(Integer.parseInt(color_str, 16));
@@ -138,32 +169,11 @@ public class ScatterplotFacet implements Facet {
             return from_x > 0 || to_x < 1 || from_y > 0 || to_y < 1;
         }
 
-        @JsonProperty(DIM_X)
-        public String getDimX() {
-            return dim_x == LIN ? "lin" : "log";
-        }
-
-        @JsonProperty(DIM_Y)
-        public String getDimY() {
-            return dim_y == LIN ? "lin" : "log";
-        }
-
         @Override
         public ScatterplotFacet apply(Project project) {
             ScatterplotFacet facet = new ScatterplotFacet();
             facet.initializeFromConfig(this, project);
             return facet;
-        }
-
-        public static int getRotation(String rotation) {
-            rotation = rotation.toLowerCase();
-            if ("cw".equals(rotation) || "right".equals(rotation)) {
-                return ScatterplotFacet.ROTATE_CW;
-            } else if ("ccw".equals(rotation) || "left".equals(rotation)) {
-                return ScatterplotFacet.ROTATE_CCW;
-            } else {
-                return NO_ROTATION;
-            }
         }
 
         @Override
@@ -231,9 +241,7 @@ public class ScatterplotFacet implements Facet {
             newConfig.size = size;
             newConfig.dim_x = dim_x;
             newConfig.dim_y = dim_y;
-            newConfig.rotation_str = rotation_str;
             newConfig.rotation = rotation;
-            newConfig.l = l;
             newConfig.dot = dot;
             newConfig.color_str = color_str;
             newConfig.from_x = from_x;
@@ -336,12 +344,14 @@ public class ScatterplotFacet implements Facet {
 
     @JsonProperty(DIM_X)
     public int getDimX() {
-        return config.dim_x;
+        // TODO: Not sure why this is serialized like this, but we'll match the tests for now
+        return config.dim_x.ordinal();
     }
 
-    @JsonProperty(DIM_Y)
+    @JsonProperty(value = DIM_Y)
     public int getDimY() {
-        return config.dim_y;
+        // TODO: Not sure why this is serialized like this, but we'll match the tests for now
+        return config.dim_y.ordinal();
     }
 
     @JsonProperty(DOT)
@@ -349,9 +359,9 @@ public class ScatterplotFacet implements Facet {
         return config.dot;
     }
 
-    @JsonProperty(ROTATION)
-    public double getRotation() {
-        return config.rotation;
+    @JsonProperty(value = ROTATION)
+    public int getRotation() {
+        return config.rotation.ordinal();
     }
 
     @JsonProperty(COLOR)
@@ -419,9 +429,9 @@ public class ScatterplotFacet implements Facet {
     public void initializeFromConfig(ScatterplotFacetConfig configuration, Project project) {
         config = configuration;
 
-        t = createRotationMatrix(config.rotation, config.l);
+        t = createRotationMatrix(config.rotation, config.size);
 
-        if (config.columnName_x.length() > 0) {
+        if (!config.columnName_x.isEmpty()) {
             Column x_column = project.columnModel.getColumnByName(config.columnName_x);
             if (x_column != null) {
                 columnIndex_x = x_column.getCellIndex();
@@ -442,7 +452,7 @@ public class ScatterplotFacet implements Facet {
             errorMessage_x = e.getMessage();
         }
 
-        if (config.columnName_y.length() > 0) {
+        if (!config.columnName_y.isEmpty()) {
             Column y_column = project.columnModel.getColumnByName(config.columnName_y);
             if (y_column != null) {
                 columnIndex_y = y_column.getCellIndex();
@@ -473,15 +483,15 @@ public class ScatterplotFacet implements Facet {
             return new DualExpressionsNumberComparisonRowFilter(
                     eval_x, config.columnName_x, columnIndex_x, eval_y, config.columnName_y, columnIndex_y) {
 
-                double from_x_pixels = config.from_x * config.l;
-                double to_x_pixels = config.to_x * config.l;
-                double from_y_pixels = config.from_y * config.l;
-                double to_y_pixels = config.to_y * config.l;
+                double from_x_pixels = config.from_x * config.size;
+                double to_x_pixels = config.to_x * config.size;
+                double from_y_pixels = config.from_y * config.size;
+                double to_y_pixels = config.to_y * config.size;
 
                 @Override
                 protected boolean checkValues(double x, double y) {
                     Point2D.Double p = new Point2D.Double(x, y);
-                    p = translateCoordinates(p, min_x, max_x, min_y, max_y, config.dim_x, config.dim_y, config.l, t);
+                    p = translateCoordinates(p, min_x, max_x, min_y, max_y, config.dim_x, config.dim_y, config.size, t);
                     return p.x >= from_x_pixels && p.x <= to_x_pixels && p.y >= from_y_pixels && p.y <= to_y_pixels;
                 };
             };
@@ -573,10 +583,6 @@ public class ScatterplotFacet implements Facet {
         return url;
     }
 
-    public static int getAxisDim(String type) {
-        return ("log".equals(type.toLowerCase())) ? LOG : LIN;
-    }
-
     public static NumericBinIndex getBinIndex(Project project, Column column, Evaluable eval, String expression) {
         return getBinIndex(project, column, eval, expression, "row-based");
     }
@@ -603,13 +609,13 @@ public class ScatterplotFacet implements Facet {
 
     private static double s_rotateScale = 1 / Math.sqrt(2.0);
 
-    public static AffineTransform createRotationMatrix(int rotation, double l) {
-        if (rotation == ScatterplotFacet.ROTATE_CW) {
+    public static AffineTransform createRotationMatrix(Rotation rotation, double l) {
+        if (rotation == Rotation.ROTATE_CW) {
             AffineTransform t = AffineTransform.getTranslateInstance(0, l / 2);
             t.scale(s_rotateScale, s_rotateScale);
             t.rotate(-Math.PI / 4);
             return t;
-        } else if (rotation == ScatterplotFacet.ROTATE_CCW) {
+        } else if (rotation == Rotation.ROTATE_CCW) {
             AffineTransform t = AffineTransform.getTranslateInstance(l / 2, 0);
             t.scale(s_rotateScale, s_rotateScale);
             t.rotate(Math.PI / 4);
@@ -622,14 +628,14 @@ public class ScatterplotFacet implements Facet {
     public static Point2D.Double translateCoordinates(
             Point2D.Double p,
             double min_x, double max_x, double min_y, double max_y,
-            int dim_x, int dim_y, double l, AffineTransform t) {
+            LinLog dim_x, LinLog dim_y, double l, AffineTransform t) {
 
         double x = p.x;
         double y = p.y;
 
         double relative_x = x - min_x;
         double range_x = max_x - min_x;
-        if (dim_x == ScatterplotFacet.LOG) {
+        if (dim_x == LinLog.LOG) {
             x = Math.log10(relative_x + 1) * l / Math.log10(range_x + 1);
         } else {
             x = relative_x * l / range_x;
@@ -637,7 +643,7 @@ public class ScatterplotFacet implements Facet {
 
         double relative_y = y - min_y;
         double range_y = max_y - min_y;
-        if (dim_y == ScatterplotFacet.LOG) {
+        if (dim_y == LinLog.LOG) {
             y = Math.log10(relative_y + 1) * l / Math.log10(range_y + 1);
         } else {
             y = relative_y * l / range_y;
