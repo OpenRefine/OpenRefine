@@ -73,6 +73,24 @@ public class ScatterplotFacetTests extends RefineTest {
             "          \"name\": \"my column (x) vs. e (y)\"\n" +
             "        }";
 
+    public static String configJsonLog = "{\n" +
+            "          \"to_x\": 1,\n" +
+            "          \"to_y\": 1,\n" +
+            "          \"dot\": 1,\n" +
+            "          \"from_x\": 0.21333333333333335,\n" +
+            "          \"l\": 150,\n" +
+            "          \"type\": \"scatterplot\",\n" +
+            "          \"from_y\": 0.26666666666666666,\n" +
+            "          \"dim_y\": \"log\",\n" +
+            "          \"ex\": \"value\",\n" +
+            "          \"dim_x\": \"log\",\n" +
+            "          \"r\": \"cw\",\n" +
+            "          \"ey\": \"value\",\n" +
+            "          \"cx\": \"my column\",\n" +
+            "          \"cy\": \"e\",\n" +
+            "          \"name\": \"my column (x) vs. e (y)\"\n" +
+            "        }";
+
     public static String configJsonRenamed = "{\n" +
             "          \"to_x\": 1,\n" +
             "          \"to_y\": 1,\n" +
@@ -139,6 +157,15 @@ public class ScatterplotFacetTests extends RefineTest {
     public void serializeScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson);
+    }
+
+    @Test
+    public void deserializeLogAndRotationConfig() throws JsonParseException, JsonMappingException, IOException {
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJsonLog, ScatterplotFacetConfig.class);
+        assertEquals(config.dim_x, ScatterplotFacet.LOG);
+        assertEquals(config.dim_y, ScatterplotFacet.LOG);
+        assertEquals(config.rotation, ScatterplotFacet.ROTATE_CW);
+        TestUtils.isSerializedTo(config, configJsonLog);
     }
 
     @Test
