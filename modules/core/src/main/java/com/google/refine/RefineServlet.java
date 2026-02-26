@@ -64,7 +64,7 @@ import com.google.refine.io.FileProjectManager;
 
 public class RefineServlet extends Butterfly {
 
-    static private String ASSIGNED_VERSION = "3.10.0";
+    static private String ASSIGNED_VERSION = "3.10-SNAPSHOT";
 
     static public String VERSION = "";
     static public String REVISION = "";
