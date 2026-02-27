@@ -114,7 +114,7 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
     public void serializeReconJudgeSimilarCellsOperationMatch() throws IOException {
         String json = "{\"op\":\"core/recon-judge-similar-cells\","
                 + "\"description\":"
-                + new TextNode(OperationDescription.recon_judge_similar_cells_matched_brief("Douglas Adams", "Q42", "A", "foo")).toString()
+                + new TextNode(OperationDescription.recon_judge_similar_cells_matched_brief("Douglas Adams", "Q42", "foo", "A")).toString()
                 + ","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"A\","
