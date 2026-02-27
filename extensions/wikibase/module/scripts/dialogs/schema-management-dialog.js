@@ -18,7 +18,7 @@ SchemaManagementDialog.prototype.launch = function () {
     DialogSystem.dismissUntil(level - 1);
   });
   let self = this;
-  elmts.fileInput.on('change', async function () {
+  elmts.fileInput.on('change', async function (event) {
     const file = event.target.files.item(0)
     const text = await file.text();
     
