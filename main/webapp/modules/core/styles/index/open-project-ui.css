@@ -246,3 +246,11 @@ ul#tagsUl li a {
   text-align: center;
   font-size: x-large;
 }
+
+/* Tablesorter overrides */
+
+.tablesorter-blue {
+  border-width: 1px; /* fixes missing bottom border */
+  margin: 5px; /* aligns table with the tags bar and footer content */
+  max-width: calc(100% - 12px); /* prevents horizontal overflow */
+}
