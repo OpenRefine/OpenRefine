@@ -129,7 +129,7 @@ public class ParsingUtilities {
     /**
      * @deprecated for 3.9. Use {@link #parseParameters(HttpServletRequest request)} instead.
      */
-    @Deprecated(since="3.9")
+    @Deprecated(since = "3.9")
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();
 
@@ -146,7 +146,7 @@ public class ParsingUtilities {
     /**
      * @deprecated for 3.9. Use {@link #parseParameters(HttpServletRequest request)} instead.
      */
-    @Deprecated(since="3.9")
+    @Deprecated(since = "3.9")
     static public Properties parseParameters(Properties p, String str) {
         if (str != null) {
             String[] pairs = str.split("&");
@@ -289,8 +289,10 @@ public class ParsingUtilities {
      * Converts an old-style Java Date to an OffsetDateTime, assuming the date is represented in the current default
      * system zone (which is what you get if the date was parsed using `Calendar.getDefault()`).
      * 
-     * @param date the Date to convert
-     * @return OffsetDateTime representing the same instant as the given Date, but with an offset corresponding to the current default system zone
+     * @param date
+     *            the Date to convert
+     * @return OffsetDateTime representing the same instant as the given Date, but with an offset corresponding to the
+     *         current default system zone
      */
     public static OffsetDateTime toDate(Date date) {
         return date.toInstant().atZone(defaultZone).toOffsetDateTime();
@@ -300,8 +302,10 @@ public class ParsingUtilities {
      * Converts an old-style Java Calendar to an OffsetDateTime, assuming the date is represented in the current default
      * system zone (which is what you get if the date was parsed using `Calendar.getDefault()`).
      * 
-     * @param date the Calendar to convert
-     * @return OffsetDateTime representing the same instant as the given Calendar, but with an offset corresponding to the current default system zone
+     * @param date
+     *            the Calendar to convert
+     * @return OffsetDateTime representing the same instant as the given Calendar, but with an offset corresponding to
+     *         the current default system zone
      */
     public static OffsetDateTime toDate(Calendar date) {
         return date.toInstant().atZone(defaultZone).toOffsetDateTime();
