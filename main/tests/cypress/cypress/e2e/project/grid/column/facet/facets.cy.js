@@ -399,12 +399,21 @@ describe(__filename, function () {
     cy.confirmDialogPanel();
 
     // --- Second expression ---
+    // Intercept log-expression so we can wait for it to complete before opening the next dialog,
+    // ensuring both expressions are in the server-side history when get-expression-history is called.
+    cy.intercept('POST', '**/command/core/log-expression*').as('logExpression');
     cy.getFacetContainer('Water').find('a[bind="changeButton"]').click();
     cy.typeExpression('value.length()');
     cy.confirmDialogPanel();
+    cy.wait('@logExpression'); // wait for the expression to be saved before reopening
 
     // --- Reopen to test history navigation ---
+    // Intercept get-expression-history so we can wait for the history to be loaded
+    // before attempting keyboard navigation. Without this wait the arrow keys have
+    // no effect because _expressionHistory is still empty (it's populated asynchronously).
+    cy.intercept('GET', '**/command/core/get-expression-history*').as('getHistory');
     cy.getFacetContainer('Water').find('a[bind="changeButton"]').click();
+    cy.wait('@getHistory'); // wait for history to be loaded before typing arrow keys
     cy.get('textarea.expression-preview-code')
       .as('expressionTextarea')
       .type('{home}{uparrow}' + // home to beginning of line, up to first history entry
