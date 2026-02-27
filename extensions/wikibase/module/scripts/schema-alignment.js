@@ -31,6 +31,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+function getReconLanguageCode() {
+    var langCode = $.i18n('core-recon/wd-recon-lang');
+    
+    // If the i18n lookup failed, it returns the key itself
+    // Check if the result looks like a translation key rather than a language code
+    if (!langCode || langCode === 'core-recon/wd-recon-lang' || langCode.indexOf('/') !== -1) {
+        return 'en'; // fallback to English
+    }
+    
+    // Additional validation: language codes are typically 2-3 characters
+    // (e.g., 'en', 'fr', 'zh-CN') and don't contain special characters except hyphens
+    if (langCode.length > 10 || /[^a-zA-Z-]/.test(langCode)) {
+        return 'en';
+    }
+    
+    return langCode;
+}
 function serviceLogoFromReconConfig(reconConfig) {
   var serviceUrl = null;
   var service = null;
@@ -252,7 +269,7 @@ SchemaAlignment._rerenderTabs = function() {
   for (let entityType of entityTypes) {
     var reconServiceTemplate = WikibaseManager.getSelectedWikibaseReconEndpoint(entityType);
     if (reconServiceTemplate != null) {
-      var reconServiceURL = reconServiceTemplate.replace("${lang}", $.i18n("core-recon/wd-recon-lang"));
+      var reconServiceURL = reconServiceTemplate.replace("${lang}", getReconLanguageCode());
       ReconciliationManager.getOrRegisterServiceFromUrl(reconServiceURL, function (service)  {
         SchemaAlignment._reconService[entityType] = service;
       }, false);
@@ -1285,7 +1302,7 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
   var suggestConfig = {
     mediawiki_endpoint: endpoint,
     entity_type: 'property',
-    language: $.i18n("core-recon/wd-recon-lang"),
+    language: getReconLanguageCode(),
     view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType('property')+'{{id}}'
   };
   
@@ -1353,7 +1370,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     var suggestConfig = {
       mediawiki_endpoint: endpoint,
       entity_type: entityType,
-      language: $.i18n("core-recon/wd-recon-lang"),
+      language: getReconLanguageCode(),
       view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType(entityType)+'{{id}}'
     };
     
