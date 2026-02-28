@@ -45,7 +45,7 @@ import com.google.refine.expr.Evaluable;
  * Interface of GREL controls such as if, forEach, forNonBlank, with. A control can decide which part of the code to
  * execute and can affect the environment bindings. Functions, on the other hand, can't do either.
  * <p>
- *     TODO: Add extension name either here or to registration?
+ * TODO: Add extension name either here or to registration?
  */
 public interface Control {
 

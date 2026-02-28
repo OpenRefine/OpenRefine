@@ -204,8 +204,8 @@ public class ControlFunctionRegistry {
     }
 
     /**
-     * @deprecated since 4.0. Use {@link #getControlMap()}. Scheduled for speedy removal since internal usage stopped
-     *             in 2018.
+     * @deprecated since 4.0. Use {@link #getControlMap()}. Scheduled for speedy removal since internal usage stopped in
+     *             2018.
      */
     @Deprecated(since = "3.10")
     static public Set<Entry<String, Control>> getControlMapping() {
