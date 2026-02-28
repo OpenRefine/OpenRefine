@@ -33,30 +33,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
-import java.io.StringReader;
 import java.util.Properties;
 
+import clojure.java.api.Clojure;
 import clojure.lang.IFn;
-import clojure.lang.RT;
 
 /**
  * A parser for expressions written in Clojure.
  */
 public class ClojureParser implements LanguageSpecificParser {
 
+    // final IFn READ_STRING = Clojure.var("clojure.core", "read-string");
+//        final IFn REQUIRE = Clojure.var("clojure.core", "require");
+//        Object ignored = REQUIRE.invoke(Clojure.read("clojure.set"));
+    final IFn EVAL = Clojure.var("clojure.core", "eval");
+
     @Override
     public Evaluable parse(String source, String languagePrefix) throws ParsingException {
         try {
-//                    RT.load("clojure/core"); // Make sure RT is initialized
-            Object foo = RT.CURRENT_NS; // Make sure RT is initialized
-            IFn fn = (IFn) clojure.lang.Compiler.load(new StringReader(
-                    "(fn [value cell cells row rowIndex value1 value2] " + source + ")"));
-
-            // TODO: We should to switch from using Compiler.load
-            // because it's technically an internal interface
-//                    Object code = CLOJURE_READ_STRING.invoke(
-//                            "(fn [value cell cells row rowIndex] " + s + ")"
-//                            );
+            // Although declared to return an Object, in our case we know it will be an IFn of arity 6
+            IFn fn = (IFn) EVAL.invoke(Clojure.read("(fn [value cell cells row rowIndex value1 value2] " + source + ")"));
 
             return new Evaluable() {
 
