@@ -40,6 +40,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -53,7 +54,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.MetaParser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -71,16 +71,6 @@ public class FunctionTests extends GrelTestBase {
     }
 
     @BeforeMethod
-    public void registerGRELParser() {
-        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-    }
-
-    @AfterMethod
-    public void unregisterGRELParser() {
-        MetaParser.unregisterLanguageParser("grel");
-    }
-
-    @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         project = createProjectWithColumns("FunctionTests", "Column A");
         bindings = new Properties();
@@ -89,7 +79,7 @@ public class FunctionTests extends GrelTestBase {
         // Five rows of a's and five of 1s
         for (int i = 0; i < 10; i++) {
             Row row = new Row(1);
-            row.setCell(0, new Cell(i < 5 ? "a" : new Integer(1), null));
+            row.setCell(0, new Cell(i < 5 ? "a" : Integer.valueOf(1), null));
             project.rows.add(row);
         }
     }
@@ -108,9 +98,9 @@ public class FunctionTests extends GrelTestBase {
 
     @Test
     public void testFacetCount() {
-        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"), Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"), Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"), Integer.valueOf(5));
+        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"), 5);
+        Assert.assertEquals(invoke("facetCount", 1, "value", "Column A"), 5);
+        Assert.assertEquals(invoke("facetCount", 2, "value+1", "Column A"), 5);
     }
 
     @Test
@@ -125,9 +115,9 @@ public class FunctionTests extends GrelTestBase {
                 "fingerprint", "get", "parseJson", "partition", "rpartition",
                 "slice", "substring", // synonyms for Slice
                 "unicode", "unicodeType"));
-        Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
+        Set<String> returnsFalse = new HashSet<>(List.of("hasField"));
 
-        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMap().entrySet()) {
             Function func = entry.getValue();
             Object result = func.call(bindings, new Object[0]);
             if (returnsNull.contains(ControlFunctionRegistry.getFunctionName(func))) {
@@ -147,11 +137,11 @@ public class FunctionTests extends GrelTestBase {
                 "fingerprint", "get", "now", "parseJson", "partition", "rpartition",
                 "slice", "substring", // synonyms for Slice
                 "unicode", "unicodeType"));
-        Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
-        Set<String> exempt = new HashSet<>(Arrays.asList(
+        Set<String> returnsFalse = new HashSet<>(List.of("hasField"));
+        Set<String> exempt = new HashSet<>(List.of(
                 "jsonize" // returns literal string "null"
         ));
-        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMap().entrySet()) {
             Function func = entry.getValue();
             // No functions take 8 arguments, so they should all error
             Object result = func.call(bindings, new Object[] { null, null, null, null, null, null, null, null });
@@ -173,7 +163,7 @@ public class FunctionTests extends GrelTestBase {
         Set<String> twoArgs = new HashSet<>(
                 Arrays.asList("atan2", "factn", "greatestCommonDenominator", "leastCommonMultiple", "max", "min", "mod", "pow", "quotient",
                         "randomNumber"));
-        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMap().entrySet()) {
             Function func = entry.getValue();
             if (oneArgs.contains(ControlFunctionRegistry.getFunctionName(func))) {
                 Object result = func.call(bindings, new Object[] { null });
