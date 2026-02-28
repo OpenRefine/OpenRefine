@@ -36,6 +36,7 @@ package com.google.refine.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -50,7 +51,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -119,6 +119,7 @@ public class ParsingUtilities {
      * @param request
      *            HttpServletRequest containing parameters.
      * @return Map containing parameter names and their first values.
+     * @since 3.9
      */
     public static Map<String, String> parseParameters(HttpServletRequest request) {
         return request.getParameterMap().entrySet().stream()
@@ -126,9 +127,9 @@ public class ParsingUtilities {
     }
 
     /**
-     * @deprecated Use {@link #parseParameters(HttpServletRequest request)} instead.
+     * @deprecated for 3.9. Use {@link #parseParameters(HttpServletRequest request)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "3.9")
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();
 
@@ -143,9 +144,9 @@ public class ParsingUtilities {
     }
 
     /**
-     * @deprecated Use {@link #parseParameters(HttpServletRequest request)} instead.
+     * @deprecated for 3.9. Use {@link #parseParameters(HttpServletRequest request)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "3.9")
     static public Properties parseParameters(Properties p, String str) {
         if (str != null) {
             String[] pairs = str.split("&");
@@ -160,32 +161,37 @@ public class ParsingUtilities {
     }
 
     /**
-     * @deprecated Use {@link #parseParameters(HttpServletRequest request)} instead.
+     * @deprecated for 3.9. Use {@link #parseParameters(HttpServletRequest request)} instead.
      */
     @Deprecated
     static public Properties parseParameters(String str) {
         return (str == null) ? null : parseParameters(new Properties(), str);
     }
 
+    /**
+     * @deprecated for 4.0 by tfmorris. Use equivalent Apache HTTP utilities
+     */
+    @Deprecated(since = "4.0")
     static public String inputStreamToString(InputStream is) throws IOException {
-        return inputStreamToString(is, "UTF-8");
+        return IOUtils.toString(is, StandardCharsets.UTF_8);
     }
 
+    /**
+     * @deprecated for 4.0 by tfmorris. Use equivalent Apache HTTP utilities
+     */
+    @Deprecated(since = "4.0")
     static public String inputStreamToString(InputStream is, String encoding) throws IOException {
-        InputStream uncompressedStream = is;
-        // Historical special case only used by tests. Probably can be removed.
-        if ("gzip".equals(encoding)) {
-            uncompressedStream = new GZIPInputStream(is);
-            encoding = "UTF-8";
-        }
-        return IOUtils.toString(uncompressedStream, encoding);
+        return IOUtils.toString(is, encoding);
     }
 
     private static final URLCodec codec = new URLCodec();
 
     /**
      * Encode a string as UTF-8.
+     *
+     * @deprecated for 4.0. Unused internally. Use StandardCharsets.UTF_8.encode(s)
      */
+    @Deprecated(since = "4.0")
     static public String encode(String s) {
         try {
             return codec.encode(s, "UTF-8");
@@ -196,13 +202,15 @@ public class ParsingUtilities {
 
     /**
      * Decode a string from UTF-8 encoding.
+     *
+     * @deprecated for 4.0. Only internal usage is in a deprecated method in this module. Will be removed at the next
+     *             release.
      */
+    @Deprecated(since = "4.0")
     static public String decode(String s) {
         try {
             return codec.decode(s, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return s; // should not happen
-        } catch (DecoderException e) {
+        } catch (UnsupportedEncodingException | DecoderException e) {
             return s; // should not happen
         }
     }
@@ -238,7 +246,7 @@ public class ParsingUtilities {
         // Accept timestamps with an explicit time zone
         try {
             return OffsetDateTime.parse(s);
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException ignored) {
 
         }
 
@@ -247,7 +255,7 @@ public class ParsingUtilities {
         try {
             LocalDateTime localTime = LocalDateTime.parse(s);
             return OffsetDateTime.of(localTime, ZoneId.systemDefault().getRules().getOffset(localTime));
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException ignored) {
 
         }
         return null;
@@ -282,7 +290,9 @@ public class ParsingUtilities {
      * system zone (which is what you get if the date was parsed using `Calendar.getDefault()`).
      * 
      * @param date
-     * @return
+     *            the Date to convert
+     * @return OffsetDateTime representing the same instant as the given Date, but with an offset corresponding to the
+     *         current default system zone
      */
     public static OffsetDateTime toDate(Date date) {
         return date.toInstant().atZone(defaultZone).toOffsetDateTime();
@@ -293,7 +303,9 @@ public class ParsingUtilities {
      * system zone (which is what you get if the date was parsed using `Calendar.getDefault()`).
      * 
      * @param date
-     * @return
+     *            the Calendar to convert
+     * @return OffsetDateTime representing the same instant as the given Calendar, but with an offset corresponding to
+     *         the current default system zone
      */
     public static OffsetDateTime toDate(Calendar date) {
         return date.toInstant().atZone(defaultZone).toOffsetDateTime();
