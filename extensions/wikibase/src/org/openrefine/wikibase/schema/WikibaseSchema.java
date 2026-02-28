@@ -114,10 +114,11 @@ public class WikibaseSchema implements OverlayModel {
 
     /**
      * Checks that this schema is complete.
-     * 
+     *
      * @param validationContext
      */
     public void validate(ValidationState validationContext) {
+        validationContext.setMediaWikiApiEndpoint(this.getMediaWikiApiEndpoint());
         int index = 0;
         for (WbExpression<? extends EntityEdit> entityEdit : entityEditExprs) {
             if (entityEdit == null) {

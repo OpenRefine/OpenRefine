@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import com.google.refine.model.ColumnModel;
 
+import org.openrefine.wikibase.utils.LanguageCodeStore.LanguageCodeContext;
+
 /**
  * A sort of logger which can be used when traversing a schema and logging issues about it. By using the
  * {@link #enter()} and {@link #leave()} methods appropriately, it keeps track of the path taken to arrive at the
@@ -21,6 +23,18 @@ public class ValidationState {
     private final List<Optional<PathElement>> currentPath;
     private final List<ValidationError> validationErrors;
     private final ColumnModel columnModel;
+
+    /**
+     * Language context for validating language codes (term vs monolingual text). Null means use default (monolingual
+     * text).
+     */
+    private LanguageCodeContext languageContext;
+
+    /**
+     * MediaWiki API endpoint of the Wikibase instance, used when validating language codes. Null means use static
+     * default lists.
+     */
+    private String mediaWikiApiEndpoint;
 
     public ValidationState(ColumnModel columnModel) {
         currentPath = new ArrayList<>();
@@ -84,6 +98,42 @@ public class ValidationState {
      */
     public List<ValidationError> getValidationErrors() {
         return validationErrors;
+    }
+
+    /**
+     * Returns the current language context for validating language codes (term vs monolingual text). Defaults to
+     * {@link LanguageCodeContext#MONOLINGUALTEXT} when not set.
+     */
+    public LanguageCodeContext getLanguageContext() {
+        return languageContext != null ? languageContext : LanguageCodeContext.MONOLINGUALTEXT;
+    }
+
+    /**
+     * Sets the language context for subsequent validation (e.g. term for labels/descriptions/aliases).
+     */
+    public void setLanguageContext(LanguageCodeContext context) {
+        this.languageContext = context;
+    }
+
+    /**
+     * Clears the language context so the default (monolingual text) is used again.
+     */
+    public void clearLanguageContext() {
+        this.languageContext = null;
+    }
+
+    /**
+     * Returns the MediaWiki API endpoint of the Wikibase instance, or null to use static default language lists.
+     */
+    public String getMediaWikiApiEndpoint() {
+        return mediaWikiApiEndpoint;
+    }
+
+    /**
+     * Sets the MediaWiki API endpoint used when validating language codes against the Wikibase instance.
+     */
+    public void setMediaWikiApiEndpoint(String mediaWikiApiEndpoint) {
+        this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
     }
 
 }

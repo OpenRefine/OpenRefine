@@ -40,6 +40,7 @@ import org.openrefine.wikibase.schema.validation.PathElement.Type;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 import org.openrefine.wikibase.updates.ItemEditBuilder;
 import org.openrefine.wikibase.updates.MediaInfoEditBuilder;
+import org.openrefine.wikibase.utils.LanguageCodeStore.LanguageCodeContext;
 
 /**
  * An expression that represent a term (label, description or alias). The structure is slightly different from other
@@ -76,7 +77,9 @@ public class WbNameDescExpr {
             validation.addError("Missing value");
         } else {
             validation.enter();
+            validation.setLanguageContext(LanguageCodeContext.TERM);
             value.validate(validation);
+            validation.clearLanguageContext();
             validation.leave();
         }
     }

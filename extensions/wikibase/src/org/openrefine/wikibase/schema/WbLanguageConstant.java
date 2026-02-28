@@ -24,6 +24,8 @@
 
 package org.openrefine.wikibase.schema;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.interfaces.WikimediaLanguageCodes;
@@ -31,12 +33,13 @@ import org.wikidata.wdtk.datamodel.interfaces.WikimediaLanguageCodes;
 import org.openrefine.wikibase.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikibase.schema.validation.ValidationState;
 import org.openrefine.wikibase.utils.LanguageCodeStore;
+import org.openrefine.wikibase.utils.LanguageCodeStore.LanguageCodeContext;
 
 /**
- * A constant that represents a Wikimedia language code.
- * 
- * @author Antonin Delpeuch
+ * A constant that represents a Wikimedia language code. The normalized code is set during validation (using the
+ * current language context and API endpoint); validation must run before evaluation or equality checks.
  *
+ * @author Antonin Delpeuch
  */
 public class WbLanguageConstant extends WbConstantExpr<String> {
 
@@ -46,17 +49,23 @@ public class WbLanguageConstant extends WbConstantExpr<String> {
 
     @JsonCreator
     public WbLanguageConstant(@JsonProperty("id") String langId, @JsonProperty("label") String langLabel) {
-        _langId = normalizeLanguageCode(langId);
-        _langLabel = langLabel;
         _origLangId = langId;
+        _langLabel = langLabel;
     }
 
     @Override
     public void validate(ValidationState validation) {
-        if (_origLangId != null && _langId == null) {
-            validation.addError("Invalid language code '" + _origLangId + "'");
-        } else if (_langId == null) {
+        if (_origLangId == null) {
             validation.addError("Empty language field");
+        } else {
+            String endpoint = validation.getMediaWikiApiEndpoint();
+            LanguageCodeContext context = validation.getLanguageContext();
+            String normalized = normalizeLanguageCode(_origLangId, endpoint, context);
+            if (normalized == null) {
+                validation.addError("Invalid language code '" + _origLangId + "'");
+            } else {
+                _langId = normalized;
+            }
         }
         if (_langLabel == null) {
             validation.addError("Empty text field");
@@ -64,13 +73,13 @@ public class WbLanguageConstant extends WbConstantExpr<String> {
     }
 
     public static String normalizeLanguageCode(String lang) {
-        return normalizeLanguageCode(lang, null);
+        return normalizeLanguageCode(lang, null, LanguageCodeContext.MONOLINGUALTEXT);
     }
 
     /**
      * Checks that a language code is valid and returns its preferred version (converting deprecated language codes to
-     * their better values).
-     * 
+     * their better values). Uses monolingual-text context. Prefer the three-arg overload when context is known.
+     *
      * @param lang
      *            a Wikimedia language code
      * @param mediaWikiApiEndpoint
@@ -78,8 +87,25 @@ public class WbLanguageConstant extends WbConstantExpr<String> {
      * @return the normalized code, or null if the code is invalid.
      */
     public static String normalizeLanguageCode(String lang, String mediaWikiApiEndpoint) {
+        return normalizeLanguageCode(lang, mediaWikiApiEndpoint, LanguageCodeContext.MONOLINGUALTEXT);
+    }
+
+    /**
+     * Checks that a language code is valid for the given context and returns its preferred version (converting
+     * deprecated language codes to their better values).
+     *
+     * @param lang
+     *            a Wikimedia language code
+     * @param mediaWikiApiEndpoint
+     *            the MediaWiki API endpoint of the Wikibase
+     * @param context
+     *            term (labels/descriptions/aliases) or monolingual text (claim values)
+     * @return the normalized code, or null if the code is invalid.
+     */
+    public static String normalizeLanguageCode(String lang, String mediaWikiApiEndpoint,
+            LanguageCodeContext context) {
         try {
-            if (LanguageCodeStore.getLanguageCodes(mediaWikiApiEndpoint).contains(lang)) {
+            if (LanguageCodeStore.getLanguageCodes(mediaWikiApiEndpoint, context).contains(lang)) {
                 return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
             } else {
                 return null;
@@ -117,12 +143,13 @@ public class WbLanguageConstant extends WbConstantExpr<String> {
             return false;
         }
         WbLanguageConstant otherConstant = (WbLanguageConstant) other;
-        return _langId.equals(otherConstant.getLang()) && _langLabel.equals(otherConstant.getLabel());
+        return Objects.equals(_origLangId, otherConstant._origLangId)
+                && Objects.equals(_langLabel, otherConstant._langLabel);
     }
 
     @Override
     public int hashCode() {
-        return _langId.hashCode();
+        return Objects.hash(_origLangId, _langLabel);
     }
 
 }
