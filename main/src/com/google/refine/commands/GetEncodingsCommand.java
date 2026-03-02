@@ -27,10 +27,9 @@ public class GetEncodingsCommand extends Command {
             Charset charset = entry.getValue();
 
             Map<String, Object> encoding = Map.of(
-                "code", code,
-                "name", charset.displayName(),
-                "aliases", new ArrayList<>(charset.aliases())
-            );
+                    "code", code,
+                    "name", charset.displayName(),
+                    "aliases", new ArrayList<>(charset.aliases()));
 
             encodings.add(encoding);
         }
