@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Adapted from https://github.com/gephi/gephi/blob/6ac653758063f74c56a7b93db800978ead3ea95d/modules/application/src/main/app-resources/codesign.sh
 # Author: Mathieu Bastian
