@@ -4,11 +4,10 @@ on:
   push:
     branches:
       - 'master'
-      - '4.0'
     paths-ignore:
       - 'docs/**'
   release:
-    types: [created, published]
+    types: [ published ]
 
 jobs:
   prepare_e2e_test_matrix:
