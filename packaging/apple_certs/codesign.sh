@@ -1,8 +1,9 @@
 #!/bin/bash
+set -e
 
 # Adapted from https://github.com/gephi/gephi/blob/6ac653758063f74c56a7b93db800978ead3ea95d/modules/application/src/main/app-resources/codesign.sh
 # Author: Mathieu Bastian
-# License: https://opensource.org/licenses/CDDL-1.0
+# License: https://opensource.org/licenses/CDDL-1.0
 
 function codesignJarsInDir {
   local dir="$1"
@@ -27,7 +28,7 @@ function codesignJarsInDir {
 
             # Issue 4568: replace "libjffi-1.2.jnilib" by a version of it that
             # was compiled on a newer Xcode SDK.
-            # This is a temporary measure until this is fixed upstream:
+            # This is a temporary measure until this is fixed upstream (still open Mar 2026):
             # https://github.com/jnr/jffi/issues/123
             if [ $(basename "${libfile}") == "libjffi-1.2.jnilib" ]; then
                 local our_libjffi="$(dirname ${BASH_SOURCE})/libjffi-1.2.jnilib" 
