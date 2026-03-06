@@ -19,21 +19,24 @@ import org.slf4j.LoggerFactory;
 /**
  * A store for the allowed language codes for terms and monolingual text values in Wikibase.
  * <p>
- * The store holds codes for two contexts: <em>term</em> (labels, descriptions, aliases) and
- * <em>monolingual text</em> (claim values). Term allows fewer codes than monolingual text.
- * The API endpoint is passed in by callers; there is no hardcoded base URL, so this works for
- * any Wikibase instance.
+ * The store holds codes for two contexts: <em>term</em> (labels, descriptions, aliases) and <em>monolingual text</em>
+ * (claim values). Term allows fewer codes than monolingual text. The API endpoint is passed in by callers; there is no
+ * hardcoded base URL, so this works for any Wikibase instance.
  * </p>
  * <p>
- * The static default lists ({@link #DEFAULT_TERM_LANGUAGE_CODES} and {@link #DEFAULT_LANGUAGE_CODES}) are used only
- * as fallbacks when the endpoint is null or the API request fails. They apply to Wikidata only.
+ * The static default lists ({@link #DEFAULT_TERM_LANGUAGE_CODES} and {@link #DEFAULT_LANGUAGE_CODES}) are used only as
+ * fallbacks when the endpoint is null or the API request fails. They apply to Wikidata only.
  * </p>
  * <p>
  * Queries to update the default lists (Wikidata):
  * </p>
  * <ul>
- *   <li>Term: curl "https://www.wikidata.org/w/api.php?action=query&amp;meta=wbcontentlanguages&amp;wbclprop=code&amp;wbclcontext=term&amp;format=json" | jq ".query.wbcontentlanguages[].code" | sed -e "s/$/,/"</li>
- *   <li>Monolingual text: curl "https://www.wikidata.org/w/api.php?action=query&amp;meta=wbcontentlanguages&amp;wbclprop=code&amp;wbclcontext=monolingualtext&amp;format=json" | jq ".query.wbcontentlanguages[].code" | sed -e "s/$/,/"</li>
+ * <li>Term: curl
+ * "https://www.wikidata.org/w/api.php?action=query&amp;meta=wbcontentlanguages&amp;wbclprop=code&amp;wbclcontext=term&amp;format=json"
+ * | jq ".query.wbcontentlanguages[].code" | sed -e "s/$/,/"</li>
+ * <li>Monolingual text: curl
+ * "https://www.wikidata.org/w/api.php?action=query&amp;meta=wbcontentlanguages&amp;wbclprop=code&amp;wbclcontext=monolingualtext&amp;format=json"
+ * | jq ".query.wbcontentlanguages[].code" | sed -e "s/$/,/"</li>
  * </ul>
  *
  * @author Antonin Delpeuch
@@ -43,12 +46,11 @@ public class LanguageCodeStore {
     private static final Logger logger = LoggerFactory.getLogger(LanguageCodeStore.class);
 
     /**
-     * Wikibase content language context: term (labels/descriptions/aliases) vs monolingual text (claim values).
-     * Term allows fewer codes than monolingual text.
+     * Wikibase content language context: term (labels/descriptions/aliases) vs monolingual text (claim values). Term
+     * allows fewer codes than monolingual text.
      */
     public enum LanguageCodeContext {
-        TERM,
-        MONOLINGUALTEXT
+        TERM, MONOLINGUALTEXT
     }
 
     /**
@@ -57,17 +59,17 @@ public class LanguageCodeStore {
     private static Map<String, Map<LanguageCodeContext, Set<String>>> apiEndpointToLangCodes = new HashMap<>();
 
     /**
-     * Returns language codes for monolingual text. For backward compatibility.
-     * Prefer {@link #getLanguageCodes(String, LanguageCodeContext)} when context is known.
+     * Returns language codes for monolingual text. For backward compatibility. Prefer
+     * {@link #getLanguageCodes(String, LanguageCodeContext)} when context is known.
      */
     public static Set<String> getLanguageCodes(String mediaWikiApiEndpoint) {
         return getLanguageCodes(mediaWikiApiEndpoint, LanguageCodeContext.MONOLINGUALTEXT);
     }
 
     /**
-     * Returns the set of language codes allowed for the given context (term or monolingual text)
-     * for the given Wikibase API endpoint. Uses cached result when available; on fetch error
-     * returns the default list for that context (Wikidata fallback only).
+     * Returns the set of language codes allowed for the given context (term or monolingual text) for the given Wikibase
+     * API endpoint. Uses cached result when available; on fetch error returns the default list for that context
+     * (Wikidata fallback only).
      */
     public static Set<String> getLanguageCodes(String mediaWikiApiEndpoint, LanguageCodeContext context) {
         if (mediaWikiApiEndpoint == null) {
@@ -116,8 +118,8 @@ public class LanguageCodeStore {
     }
 
     /**
-     * Fallback language codes for term context (labels, descriptions, aliases).
-     * Used only when API fetch fails; Wikidata-only. Update with wbclcontext=term.
+     * Fallback language codes for term context (labels, descriptions, aliases). Used only when API fetch fails;
+     * Wikidata-only. Update with wbclcontext=term.
      */
     private static Set<String> DEFAULT_TERM_LANGUAGE_CODES = new HashSet<>(Arrays.asList(
             "aa",
@@ -751,8 +753,7 @@ public class LanguageCodeStore {
             "zh-sg",
             "zh-tw",
             "zh-yue",
-            "zu"
-    ));
+            "zu"));
 
     private static Set<String> DEFAULT_LANGUAGE_CODES = new HashSet<>(Arrays.asList(
             "aa",
@@ -2160,6 +2161,5 @@ public class LanguageCodeStore {
             "zu",
             "zun",
             "zxx",
-            "zza"
-    ));
+            "zza"));
 }

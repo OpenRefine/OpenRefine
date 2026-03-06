@@ -36,8 +36,7 @@ public class LanguageCodeStoreTest {
     @Test
     public void testNullEndpointUsesDefaultLists() {
         Set<String> term = LanguageCodeStore.getLanguageCodes(null, LanguageCodeStore.LanguageCodeContext.TERM);
-        Set<String> monolingual =
-                LanguageCodeStore.getLanguageCodes(null, LanguageCodeStore.LanguageCodeContext.MONOLINGUALTEXT);
+        Set<String> monolingual = LanguageCodeStore.getLanguageCodes(null, LanguageCodeStore.LanguageCodeContext.MONOLINGUALTEXT);
         assertFalse(term.isEmpty());
         assertFalse(monolingual.isEmpty());
         assertTrue(term.contains("en"));
@@ -47,8 +46,7 @@ public class LanguageCodeStoreTest {
     @Test
     public void testTermAndMonolingualTextDiffer() {
         Set<String> term = LanguageCodeStore.getLanguageCodes(null, LanguageCodeStore.LanguageCodeContext.TERM);
-        Set<String> monolingual =
-                LanguageCodeStore.getLanguageCodes(null, LanguageCodeStore.LanguageCodeContext.MONOLINGUALTEXT);
+        Set<String> monolingual = LanguageCodeStore.getLanguageCodes(null, LanguageCodeStore.LanguageCodeContext.MONOLINGUALTEXT);
         assertTrue(monolingual.size() > term.size(),
                 "Monolingual text should allow more language codes than term context");
     }

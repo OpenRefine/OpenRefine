@@ -36,8 +36,8 @@ import org.openrefine.wikibase.utils.LanguageCodeStore;
 import org.openrefine.wikibase.utils.LanguageCodeStore.LanguageCodeContext;
 
 /**
- * A constant that represents a Wikimedia language code. The normalized code is set during validation (using the
- * current language context and API endpoint); validation must run before evaluation or equality checks.
+ * A constant that represents a Wikimedia language code. The normalized code is set during validation (using the current
+ * language context and API endpoint); validation must run before evaluation or equality checks.
  *
  * @author Antonin Delpeuch
  */
