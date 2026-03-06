@@ -163,7 +163,7 @@ public class ParsingUtilities {
     /**
      * @deprecated for 3.9. Use {@link #parseParameters(HttpServletRequest request)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "3.9")
     static public Properties parseParameters(String str) {
         return (str == null) ? null : parseParameters(new Properties(), str);
     }
@@ -189,7 +189,7 @@ public class ParsingUtilities {
     /**
      * Encode a string as UTF-8.
      *
-     * @deprecated for 4.0. Unused internally. Use StandardCharsets.UTF_8.encode(s)
+     * @deprecated for 4.0. Unused internally. Use {@code java.net.URLEncoder.encode(s, StandardCharsets.UTF_8)} instead.
      */
     @Deprecated(since = "4.0")
     static public String encode(String s) {
