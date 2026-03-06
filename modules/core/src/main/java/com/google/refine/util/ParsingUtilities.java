@@ -189,7 +189,8 @@ public class ParsingUtilities {
     /**
      * Encode a string as UTF-8.
      *
-     * @deprecated for 4.0. Unused internally. Use {@code java.net.URLEncoder.encode(s, StandardCharsets.UTF_8)} instead.
+     * @deprecated for 4.0. Unused internally. Use {@code java.net.URLEncoder.encode(s, StandardCharsets.UTF_8)}
+     *             instead.
      */
     @Deprecated(since = "4.0")
     static public String encode(String s) {
