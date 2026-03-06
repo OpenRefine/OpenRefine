@@ -50,6 +50,7 @@ public class WbLanguageConstant extends WbConstantExpr<String> {
     @JsonCreator
     public WbLanguageConstant(@JsonProperty("id") String langId, @JsonProperty("label") String langLabel) {
         _origLangId = langId;
+        _langId = langId;
         _langLabel = langLabel;
     }
 
