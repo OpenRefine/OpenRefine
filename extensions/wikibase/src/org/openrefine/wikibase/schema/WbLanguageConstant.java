@@ -50,8 +50,8 @@ public class WbLanguageConstant extends WbConstantExpr<String> {
     @JsonCreator
     public WbLanguageConstant(@JsonProperty("id") String langId, @JsonProperty("label") String langLabel) {
         _origLangId = langId;
-        _langId = langId;
         _langLabel = langLabel;
+        _langId = langId;
     }
 
     @Override
@@ -144,13 +144,12 @@ public class WbLanguageConstant extends WbConstantExpr<String> {
             return false;
         }
         WbLanguageConstant otherConstant = (WbLanguageConstant) other;
-        return Objects.equals(_origLangId, otherConstant._origLangId)
-                && Objects.equals(_langLabel, otherConstant._langLabel);
+        return Objects.equals(getLang(), otherConstant.getLang());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_origLangId, _langLabel);
+        return Objects.hash(getLang());
     }
 
 }
