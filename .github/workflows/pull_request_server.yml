@@ -46,7 +46,7 @@ jobs:
   linux_server_tests:
     strategy:
       matrix:
-        java: [ 21 ]
+        java: [ 25 ] # We only test a single version so coverage stats don't bounce around.
 
     runs-on: ubuntu-latest
 
