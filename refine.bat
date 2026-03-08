@@ -239,12 +239,12 @@ for /f "delims=.-_ tokens=1-2" %%v in ("%JAVA_VERSION%") do (
   )
 )
 echo Java %JAVA_RELEASE% (%JAVA_VERSION%)
-if %JAVA_RELEASE% LSS 11 (
-    echo OpenRefine requires Java version 11 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version.
+if %JAVA_RELEASE% LSS 17 (
+    echo OpenRefine requires Java version 17 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version.
     exit /B 1
 )
-if %JAVA_RELEASE% GTR 21 (
-    echo WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 21.
+if %JAVA_RELEASE% GTR 25 (
+    echo WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 25.
 )
 
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
