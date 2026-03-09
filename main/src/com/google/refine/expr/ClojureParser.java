@@ -43,7 +43,6 @@ import clojure.lang.IFn;
  */
 public class ClojureParser implements LanguageSpecificParser {
 
-
     final IFn EVAL = Clojure.var("clojure.core", "eval");
 
     @Override
