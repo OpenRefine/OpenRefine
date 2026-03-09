@@ -43,15 +43,13 @@ import clojure.lang.IFn;
  */
 public class ClojureParser implements LanguageSpecificParser {
 
-    // final IFn READ_STRING = Clojure.var("clojure.core", "read-string");
-//        final IFn REQUIRE = Clojure.var("clojure.core", "require");
-//        Object ignored = REQUIRE.invoke(Clojure.read("clojure.set"));
+
     final IFn EVAL = Clojure.var("clojure.core", "eval");
 
     @Override
     public Evaluable parse(String source, String languagePrefix) throws ParsingException {
         try {
-            // Although declared to return an Object, in our case we know it will be an IFn of arity 6
+            // Although declared to return an Object, in our case we know it will be an IFn of arity 7
             IFn fn = (IFn) EVAL.invoke(Clojure.read("(fn [value cell cells row rowIndex value1 value2] " + source + ")"));
 
             return new Evaluable() {
