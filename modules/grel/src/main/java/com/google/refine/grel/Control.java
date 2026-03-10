@@ -53,12 +53,28 @@ public interface Control {
 
     public String checkArguments(Evaluable[] args);
 
+    /**
+     * Get a brief description of what the Control does to be used in the Help tab of the Expression Editor.
+     * <p>
+     * TODO: This is not currently localized, but should be.
+     *
+     * @return a brief description of what the function does
+     */
     @JsonProperty("description")
     default String getDescription() {
         // Fallback for a pre-2018 Control which implements Jsonizable
         return Function.getStringFromJsonizable(this, "description");
     }
 
+    /**
+     * Get a string describing the parameters for this Control to be used in the Help tab of the Expression Editor. This
+     * is not currently structured in any way but should be a human-readable description of the parameters for this
+     * function.
+     * <p>
+     * TODO: Adding structured parameter info would help support smart editing.
+     *
+     * @return a string describing the parameters for this function
+     */
     @JsonProperty("params")
     @JsonInclude(Include.NON_EMPTY)
     default String getParams() {
@@ -66,6 +82,15 @@ public interface Control {
         return Function.getStringFromJsonizable(this, "params");
     }
 
+    /**
+     * Get a string describing the return type for this Control, to be used in the Help tab of the Expression Editor.
+     * <p>
+     * TODO: This is currently just a string, but in the future we may want to add more structure here to allow for
+     * better automation of handling return values (e.g. automatically generating output display based on return type,
+     * etc.).
+     *
+     * @return a string describing the return type for this function
+     */
     @JsonProperty("returns")
     default String getReturns() {
         // Fallback for a pre-2018 Control which implements Jsonizable

@@ -54,31 +54,54 @@ public interface Function {
 
     public Object call(Properties bindings, Object[] args);
 
+    /**
+     * Get a brief description of what the function does to be used in the Help tab of the Expression Editor.
+     * <p>
+     * TODO: This is not currently localized, but should be.
+     *
+     * @return a brief description of what the function does
+     */
     @JsonProperty("description")
     default public String getDescription() {
-        // TODO: This should be localized (I18N)
+        // Fallback for a pre-2018 Function which implements Jsonizable
         return getStringFromJsonizable(this, "description");
     }
 
-    // TODO: Apparently this is optional in the new design, which seems error prone
-    // TODO: We'd probably like this to include type info in a more usable form than a row string to help automate
-    // parameter checking
+    /**
+     * Get a string describing the parameters for this function to be used in the Help tab of the Expression Editor.
+     * This is not currently structured in any way but should be a human-readable description of the parameters for this
+     * function.
+     * <p>
+     * TODO: Adding structured parameter info would help support smart editing.
+     *
+     * @return a string describing the parameters for this function
+     */
     @JsonProperty("params")
     default public String getParams() {
+        // Fallback for a pre-2018 Function which implements Jsonizable
         return getStringFromJsonizable(this, "params");
     }
 
+    /**
+     * Get a string describing the return type for this function, to be used in the Help tab of the Expression Editor.
+     * <p>
+     * TODO: This is currently just a string, but in the future we may want to add more structure here to allow for
+     * better automation of handling return values (e.g. automatically generating output display based on return type,
+     * etc.).
+     * 
+     * @return a string describing the return type for this function
+     */
     @JsonProperty("returns")
     default public String getReturns() {
-        // TODO: in the future, add return type info here to help automate handling
+        // Fallback for a pre-2018 Function which implements Jsonizable
         return getStringFromJsonizable(this, "returns");
     }
 
+    // @formatter:off
     /**
      * Helper method for legacy Fucntion/Control implementations.
      * <p>
      * The implementation for a typical Function/Control looked something like this:
-     * @formatter:off
      * <pre>
      * public void write(JSONWriter writer, Properties options) throws JSONException {
      *     writer.object();
@@ -87,16 +110,14 @@ public interface Function {
      *     writer.key("returns"); writer.value("string");
      *     writer.endObject();
      * }
-     * @formatter:on
      * </pre>
+     *
      * The Jsonizable interface is defined as:
      * <pre>
-     * @formatter:off
      * package com.google.refine;
      * public interface Jsonizable {
      *     public void write(org.json.JSONWriter writer, Properties options) throws org.json.JSONException;
      * }
-     * @formatter:on
      * </pre>
      * 
      * @param jsonizable
@@ -108,6 +129,7 @@ public interface Function {
      * @return the string value for the give key. If there was an error or the key was missing, return an error message
      *         or empty string as appropriate.
      */
+    // @formatter:on
     static String getStringFromJsonizable(Object jsonizable, String key) {
         try (StringWriter jsonStringWriter = new StringWriter()) {
             boolean found = false;
