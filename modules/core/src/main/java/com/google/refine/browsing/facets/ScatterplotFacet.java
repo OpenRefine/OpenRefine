@@ -627,32 +627,25 @@ public class ScatterplotFacet implements Facet {
             double min_x, double max_x, double min_y, double max_y,
             LinLog dim_x, LinLog dim_y, double l, AffineTransform t) {
 
-        double x = p.x;
-        double y = p.y;
+        p.x = scale(p.x, min_x, max_x, dim_x, l);
+        p.y = scale(p.y, min_y, max_y, dim_y, l);
 
-        double relative_x = x - min_x;
-        double range_x = max_x - min_x;
-        if (dim_x == LinLog.LOG) {
-            x = Math.log10(relative_x + 1) * l / Math.log10(range_x + 1);
-        } else {
-            x = relative_x * l / range_x;
-        }
-
-        double relative_y = y - min_y;
-        double range_y = max_y - min_y;
-        if (dim_y == LinLog.LOG) {
-            y = Math.log10(relative_y + 1) * l / Math.log10(range_y + 1);
-        } else {
-            y = relative_y * l / range_y;
-        }
-
-        p.x = x;
-        p.y = y;
         if (t != null) {
             t.transform(p, p);
         }
 
         return p;
+    }
+
+    private static double scale(double value, double min, double max, LinLog dim, double size) {
+        double relative_x = value - min;
+        double range_x = max - min;
+        if (dim == LinLog.LOG) {
+            value = Math.log10(relative_x + 1) * size / Math.log10(range_x + 1);
+        } else {
+            value = relative_x * size / range_x;
+        }
+        return value;
     }
 
 }
