@@ -135,7 +135,7 @@ public class ScatterplotFacet implements Facet {
         protected LinLog dim_y = LinLog.LIN;
 
         @JsonProperty(value = ROTATION)
-        protected Rotation rotation;
+        protected Rotation rotation = Rotation.NO_ROTATION; // Default value "none" if missing
 
         @JsonProperty(value = ROTATION)
         @JsonInclude(Include.NON_NULL)
@@ -638,12 +638,12 @@ public class ScatterplotFacet implements Facet {
     }
 
     private static double scale(double value, double min, double max, LinLog dim, double size) {
-        double relative_x = value - min;
-        double range_x = max - min;
+        double relative = value - min;
+        double range = max - min;
         if (dim == LinLog.LOG) {
-            value = Math.log10(relative_x + 1) * size / Math.log10(range_x + 1);
+            value = Math.log10(relative + 1) * size / Math.log10(range + 1);
         } else {
-            value = relative_x * size / range_x;
+            value = relative * size / range;
         }
         return value;
     }
