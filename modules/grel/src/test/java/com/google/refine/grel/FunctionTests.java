@@ -62,6 +62,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.NoopFunction;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -183,9 +184,17 @@ public class FunctionTests extends GrelTestBase {
         }
     }
 
+    @Test
+    void testZeroParamNewStyle() {
+        // Make sure that a new style function which doesn't implement getParams(), like Now() previously,
+        // still works and returns an empty string for params instead of erroring.
+        Function noop = new NoopFunction();
+        assertEquals(noop.getParams(), "");
+    }
+
     /*
-     * Test a pre-Jackson (late 2018) legacy function to verify that we can get the necessary help text
-     * from it to construct the help tab in the transform dialog.
+     * Test a pre-Jackson (late 2018) legacy function to verify that we can get the necessary help text from it to
+     * construct the help tab in the transform dialog.
      */
     @Test
     void testLegacyFunction() throws Exception {
