@@ -58,6 +58,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.eclipse.jetty.compression.server.CompressionConfig;
+import org.eclipse.jetty.compression.server.CompressionHandler;
 import org.eclipse.jetty.ee8.servlet.ServletHolder;
 import org.eclipse.jetty.ee8.webapp.WebAppContext;
 import org.eclipse.jetty.jmx.MBeanContainer;
@@ -66,7 +68,6 @@ import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.util.Scanner;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceFactory;
@@ -225,17 +226,19 @@ class RefineServer extends Server {
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(maxFormContentSize);
 
-        // Create and configure GzipHandler.
-        GzipHandler gzipHandler = new GzipHandler();
-        statsHandler.setHandler(gzipHandler);
-        gzipHandler.setMinGzipSize(1024); // Don't bother compressing tiny pages
+        // Create and configure CompressionHandler.
+        CompressionHandler compressionHandler = new CompressionHandler();
+        CompressionConfig compressionConfig = CompressionConfig.builder().build();
+        compressionHandler.putConfiguration("/*", compressionConfig);
+
+        statsHandler.setHandler(compressionHandler);
 
         if ("*".equals(host)) {
-            gzipHandler.setHandler(context);
+            compressionHandler.setHandler(context);
         } else {
             ValidateHostHandler wrapper = new ValidateHostHandler(host);
             wrapper.setHandler(context);
-            gzipHandler.setHandler(wrapper);
+            compressionHandler.setHandler(wrapper);
         }
 
         this.setStopAtShutdown(true);
