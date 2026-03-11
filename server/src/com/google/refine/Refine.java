@@ -41,6 +41,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -62,6 +63,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.unixdomain.server.UnixDomainServerConnector;
 import org.eclipse.jetty.util.Scanner;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -80,6 +82,7 @@ public class Refine {
     static private int port;
     static private String host;
     static private String iface;
+    static private String socket;
 
     final static Logger logger = LoggerFactory.getLogger("refine");
 
@@ -106,6 +109,7 @@ public class Refine {
         port = Configurations.getInteger("refine.port", DEFAULT_PORT);
         iface = Configurations.get("refine.interface", DEFAULT_IFACE);
         host = Configurations.get("refine.host", iface);
+        socket = Configurations.get("refine.socket", null);
         if ("0.0.0.0".equals(host)) {
             host = "*";
         }
@@ -119,29 +123,35 @@ public class Refine {
     public void init(String[] args) throws Exception {
 
         RefineServer server = new RefineServer();
-        server.init(iface, port, host);
-        String contextPath = server.getURI().getPath();
+        server.init(iface, port, host, socket);
 
-        boolean headless = Configurations.getBoolean("refine.headless", false);
-        if (headless) {
-            System.setProperty("java.awt.headless", "true");
-            logger.info("Running in headless mode");
-        } else {
-            try {
-                RefineClient client = new RefineClient();
-                if ("*".equals(host)) {
-                    if ("0.0.0.0".equals(iface)) {
-                        logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
-                        client.init("localhost", port, contextPath);
+        // if a Unix domain socket was defined, don't try to launch a client
+        // most browsers don't know how to open a UDS.
+        if (socket == null) {
+            String contextPath = server.getURI().getPath();
+
+            boolean headless = Configurations.getBoolean("refine.headless", false);
+            if (headless) {
+                System.setProperty("java.awt.headless", "true");
+                logger.info("Running in headless mode");
+            } else {
+                try {
+                    RefineClient client = new RefineClient();
+                    if ("*".equals(host)) {
+                        if ("0.0.0.0".equals(iface)) {
+                            logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
+                            client.init("localhost", port, contextPath);
+                        } else {
+                            client.init(iface, port, contextPath);
+                        }
                     } else {
-                        client.init(iface, port, contextPath);
+                        client.init(host, port, contextPath);
                     }
-                } else {
-                    client.init(host, port, contextPath);
+                } catch (Exception e) {
+                    logger.warn(
+                            "Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host
+                                    + ":" + port + "/ to start using Refine.");
                 }
-            } catch (Exception e) {
-                logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host
-                        + ":" + port + "/ to start using Refine.");
             }
         }
 
@@ -173,22 +183,32 @@ class RefineServer extends Server {
 
     private ThreadPoolExecutor threadPool;
 
-    public void init(String iface, int port, String host) throws Exception {
+    public void init(String iface, int port, String host, String socket) throws Exception {
         logger.info("Java runtime version {} from java.home: {}", Runtime.version().toString(), System.getProperty("java.home", ""));
         logger.info("Java VM: {} {} {} {}", System.getProperty("java.vm.vendor", ""), System.getProperty("java.vm.name", ""),
                 System.getProperty("java.vm.version", ""), System.getProperty("java.vm.info", ""));
-        logger.info("Starting Server bound to http://{}:{}", iface, port);
         logger.info("refine.memory size: {} JVM Max heap: {} MBytes", Configurations.get("refine.memory", "<default>"),
                 Runtime.getRuntime().maxMemory() / 1024 / 1024.0);
 
         HttpConfiguration httpConfig = new HttpConfiguration();
         httpConfig.setSendServerVersion(false);
         HttpConnectionFactory httpFactory = new HttpConnectionFactory(httpConfig);
-        ServerConnector connector = new ServerConnector(this, httpFactory);
-        connector.setPort(port);
-        connector.setHost(iface);
-        connector.setIdleTimeout(Configurations.getInteger("server.connection.max_idle_time", 60000));
-        this.addConnector(connector);
+
+        int maxIdleTime = Configurations.getInteger("server.connection.max_idle_time", 60000);
+        if (socket == null) {
+            ServerConnector connector = new ServerConnector(this, httpFactory);
+            connector.setPort(port);
+            connector.setHost(iface);
+            connector.setIdleTimeout(maxIdleTime);
+            this.addConnector(connector);
+            logger.info("Starting Server bound to http://{}:{}", iface, port);
+        } else {
+            UnixDomainServerConnector connector = new UnixDomainServerConnector(this, httpFactory);
+            connector.setUnixDomainPath(Path.of(socket));
+            connector.setIdleTimeout(maxIdleTime);
+            this.addConnector(connector);
+            logger.info("Starting Server bound to Unix domain socket at {}", socket);
+        }
 
         File webapp = new File(Configurations.get("refine.webapp", "main/webapp"));
 
