@@ -143,7 +143,6 @@ public class TsvExporterTests extends RefineTest {
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
 
-
     @Test
     public void exportTsvWithBackslash() throws IOException {
         CreateGrid(3, 3);
@@ -157,7 +156,6 @@ public class TsvExporterTests extends RefineTest {
                 "row1cell0\t" + testCell + "\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
-
 
     @Test
     public void exportTsvWithQuote() throws IOException {

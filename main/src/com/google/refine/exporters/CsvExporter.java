@@ -58,8 +58,6 @@ import com.google.refine.util.ParsingUtilities;
 public class CsvExporter implements WriterExporter {
 
     static CsvFormat DEFAULT_FORMAT = new CsvWriterSettings().getFormat();
-    static TsvFormat TSV_FORMAT = new TsvWriterSettings().getFormat();
-    static char DEFAULT_SEPARATOR = DEFAULT_FORMAT.getDelimiter();
     static String DEFAULT_LINE_ENDING = DEFAULT_FORMAT.getLineSeparatorString();
 
     final static Logger logger = LoggerFactory.getLogger("CsvExporter");
@@ -81,6 +79,19 @@ public class CsvExporter implements WriterExporter {
         protected String lineSeparator = DEFAULT_LINE_ENDING;
         @JsonProperty("quoteAll")
         protected boolean quoteAll = false;
+    }
+
+    /**
+     * A TsvFormat that does not escape any characters.
+     * <p>
+     * There does not appear to be a config setting to do this.
+     */
+    private static class NoEscapeTsvFormat extends TsvFormat {
+
+        @Override
+        public boolean isEscapeChar(char ch) {
+            return false;
+        }
     }
 
     @Override
@@ -112,6 +123,8 @@ public class CsvExporter implements WriterExporter {
         AbstractWriter csvWriter;
         if ("\t".equals(separator)) {
             TsvWriterSettings tsvSettings = new TsvWriterSettings();
+            // TODO: We need an export setting to control whether we escape output
+            tsvSettings.setFormat(new NoEscapeTsvFormat());
             csvWriter = new TsvWriter(writer, tsvSettings);
         } else {
             CsvWriterSettings settings = new CsvWriterSettings();
