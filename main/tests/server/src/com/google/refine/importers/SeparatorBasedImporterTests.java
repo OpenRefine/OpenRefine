@@ -465,14 +465,14 @@ public class SeparatorBasedImporterTests extends ImporterTest {
     public void ignoreQuotes(String sep) {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
-        String input = "data1" + inputSeparator + "data2\"" + inputSeparator + "data3" + inputSeparator + "data4";
+        String input = "data1" + inputSeparator + "\"data2" + inputSeparator + "data3\"" + inputSeparator + "data4";
         prepareOptions(sep, -1, 0, 0, 0, false, true);
         parseOneFile(SUT, new StringReader(input));
 
         Project expectedProject = createProject(
                 new String[] { numberedColumn(1), numberedColumn(2), numberedColumn(3), numberedColumn(4) },
                 new Serializable[][] {
-                        { "data1", "data2\"", "data3", "data4" },
+                        { "data1", "\"data2", "data3\"", "data4" },
                 });
         assertProjectEquals(project, expectedProject);
     }

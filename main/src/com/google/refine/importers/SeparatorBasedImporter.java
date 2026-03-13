@@ -113,6 +113,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         }
         sep = StringEscapeUtils.unescapeJava(sep);
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
+        // The below was added in 2013 as a backend-only option with no front end support (or tests)
+        // TODO: Rationalize and either fully support or remove
         boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
 
         // TODO: Perhaps ask user to declare explicitly if they want TSV or weird CSV with \t separator hybrid?
@@ -159,7 +161,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             CsvParserSettings settings = new CsvParserSettings();
             CsvFormat format = settings.getFormat();
             format.setDelimiter(sep);
-            format.setQuote(quote);
+            format.setQuote(processQuotes ? quote : '\0');
             settings.setMaxColumns(MAX_COLUMNS);
             settings.setLineSeparatorDetectionEnabled(true);
             settings.setIgnoreLeadingWhitespaces(false);
