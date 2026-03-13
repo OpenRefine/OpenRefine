@@ -143,7 +143,6 @@ public class TsvExporterTests extends RefineTest {
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
 
-
     @Test
     public void exportTsvWithBackslash() throws IOException {
         CreateGrid(3, 3);
@@ -152,12 +151,11 @@ public class TsvExporterTests extends RefineTest {
         project.rows.get(1).cells.set(1, new Cell(testCell, null));
         SUT.export(project, options, engine, writer);
 
-        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
+        assertEqualsSystemLineEnding(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
                 "row0cell0\trow0cell1\trow0cell2\n" +
                 "row1cell0\t" + testCell + "\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
-
 
     @Test
     public void exportTsvWithQuote() throws IOException {
