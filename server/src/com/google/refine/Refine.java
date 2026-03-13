@@ -41,10 +41,9 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.BindException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -331,20 +330,15 @@ class RefineServer extends Server {
 
         scanner.addListener(new Scanner.BulkListener() {
 
-            // This was just deprecated in Jetty 12.1 so hopefully we have a little time to deal with it.
             @Override
-            public void filesChanged(Set<String> set) {
-                try {
-                    logger.info("Stopping context: " + contextRoot.getAbsolutePath());
-                    context.stop();
+            public void pathsChanged(Map<Path, Scanner.Notification> changeSet) throws Exception {
+                logger.info("Stopping context: {}", contextRoot.getAbsolutePath());
+                context.stop();
 
-                    logger.info("Starting context: " + contextRoot.getAbsolutePath());
-                    context.start();
+                logger.info("Starting context: {}", contextRoot.getAbsolutePath());
+                context.start();
 
-                    configure(context);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
+                configure(context);
             }
         });
 
