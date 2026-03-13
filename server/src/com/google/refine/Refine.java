@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.BindException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
@@ -69,8 +68,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.util.Scanner;
-import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -266,19 +263,6 @@ class RefineServer extends Server {
         }
 
         configure(context);
-    }
-
-    @Override
-    public Resource getDefaultStyleSheet() {
-        String name = "jetty-dir.css";
-        // TODO WORKAROUND: Default style sheet isn't where Jetty thinks it should be
-        // Look in the context instead
-        URL url = this.getContext().getClass().getResource(name);
-        if (url == null) {
-            throw new IllegalStateException("Missing server resource: " + name);
-        } else {
-            return ResourceFactory.root().newMemoryResource(url);
-        }
     }
 
     @Override
