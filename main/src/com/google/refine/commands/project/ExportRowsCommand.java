@@ -67,7 +67,6 @@ public class ExportRowsCommand extends Command {
     private static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
 
     @Deprecated(since = "3.9")
-    @SuppressWarnings("unchecked")
     static public Properties getRequestParameters(HttpServletRequest request) {
         Properties options = new Properties();
 
@@ -82,7 +81,7 @@ public class ExportRowsCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // This command triggers evaluation expression and therefore requires CSRF-protection
+        // This command triggers expression evaluation and therefore requires CSRF-protection
         if (!hasValidCSRFToken(request)) {
             respondCSRFError(response);
             return;
@@ -134,12 +133,14 @@ public class ExportRowsCommand extends Command {
                 response.setCharacterEncoding(encoding != null ? encoding : "UTF-8");
                 Writer writer = encoding == null ? response.getWriter() : new OutputStreamWriter(response.getOutputStream(), encoding);
 
+                // Legacy exporters are supported by the default method implementation for the new export() method
                 ((WriterExporter) exporter).export(project, params, engine, writer);
                 writer.close();
             } else if (exporter instanceof StreamExporter) {
                 response.setCharacterEncoding("UTF-8");
 
                 OutputStream stream = response.getOutputStream();
+                // Legacy exporters are supported by the default method implementation for the new export() method
                 ((StreamExporter) exporter).export(project, params, engine, stream);
                 stream.close();
             } else {

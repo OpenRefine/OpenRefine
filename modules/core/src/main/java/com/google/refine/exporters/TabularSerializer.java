@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * An interface to be implemented by exporters which use
- * {@link CustomizableTabularExporterUtilities#exportRows(com.google.refine.model.Project, com.google.refine.browsing.Engine, java.util.Properties, TabularSerializer)}
+ * {@link CustomizableTabularExporterUtilities#exportRows(com.google.refine.model.Project, com.google.refine.browsing.Engine, String, TabularSerializer)}
  *
  */
 public interface TabularSerializer {
