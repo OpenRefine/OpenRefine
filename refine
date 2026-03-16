@@ -116,9 +116,9 @@ check_running() {
             RUNNING=`no_proxy=127.0.0.1 wget -O - $URL| grep "$CHECK_STR"` 
         fi    
         
-        # if [ -z "${RUNNING}" ] ; then
-        #     error "OpenRefine isn't running on $URL. Maybe a proxy issue?"
-        # fi
+        if [ -z "${RUNNING}" ] ; then
+            error "OpenRefine isn't running on $URL. Maybe a proxy issue?"
+        fi
     else
         RUNNING=""
     fi
