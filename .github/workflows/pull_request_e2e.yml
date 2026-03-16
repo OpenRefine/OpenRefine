@@ -7,11 +7,9 @@ on:
       - 'main/webapp/modules/core/langs/**'
       - 'extensions/database/module/langs/**'
       - 'extensions/pc-axis/module/langs/**'
-      - 'extensions/phonetic/module/langs/**'
-      - 'extensions/wikidata/module/langs/**'
+      - 'extensions/wikibase/module/langs/**'
     branches:
       - master
-      - '4.0'
 
 permissions: read-all
 
