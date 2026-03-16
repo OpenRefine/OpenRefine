@@ -125,33 +125,32 @@ public class Refine {
         RefineServer server = new RefineServer();
         server.init(iface, port, host, socket);
 
-        // if a Unix domain socket was defined, don't try to launch a client
-        // most browsers don't know how to open a UDS.
-        if (socket == null) {
-            String contextPath = server.getURI().getPath();
+        String contextPath = server.getURI().getPath();
 
-            boolean headless = Configurations.getBoolean("refine.headless", false);
-            if (headless) {
-                System.setProperty("java.awt.headless", "true");
-                logger.info("Running in headless mode");
-            } else {
-                try {
-                    RefineClient client = new RefineClient();
-                    if ("*".equals(host)) {
-                        if ("0.0.0.0".equals(iface)) {
-                            logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
-                            client.init("localhost", port, contextPath);
-                        } else {
-                            client.init(iface, port, contextPath);
-                        }
+        boolean headless = Configurations.getBoolean("refine.headless", false);
+        if (headless) {
+            System.setProperty("java.awt.headless", "true");
+            logger.info("Running in headless mode");
+        } else if (socket != null) {
+            logger.info(
+                    "Server is bound to a Unix Domain Socket, most browsers don't know how to connect to one. Skipping launching a browser.");
+        } else {
+            try {
+                RefineClient client = new RefineClient();
+                if ("*".equals(host)) {
+                    if ("0.0.0.0".equals(iface)) {
+                        logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
+                        client.init("localhost", port, contextPath);
                     } else {
-                        client.init(host, port, contextPath);
+                        client.init(iface, port, contextPath);
                     }
-                } catch (Exception e) {
-                    logger.warn(
-                            "Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host
-                                    + ":" + port + "/ to start using Refine.");
+                } else {
+                    client.init(host, port, contextPath);
                 }
+            } catch (Exception e) {
+                logger.warn(
+                        "Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host
+                                + ":" + port + "/ to start using Refine.");
             }
         }
 
