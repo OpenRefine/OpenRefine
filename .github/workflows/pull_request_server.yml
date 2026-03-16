@@ -12,13 +12,8 @@ on:
       - 'extensions/jython/src/**'
       - 'extensions/jython/tests/**'
       - 'extensions/jython/pom.xml'
-      - 'extensions/sample/src/**'
-      - 'extensions/sample/pom.xml'
       - 'extensions/pc-axis/src/**'
       - 'extensions/pc-axis/pom.xml'
-      - 'extensions/phonetic/src/**'
-      - 'extensions/phonetic/tests/**'
-      - 'extensions/phonetic/pom.xml'
       - 'extensions/wikibase/src/**'
       - 'extensions/wikibase/tests/**'
       - 'extensions/wikibase/pom.xml'
@@ -38,7 +33,6 @@ on:
       - 'refine.ini'
     branches:
       - master
-      - '4.0'
 
 permissions: read-all
 
@@ -129,17 +123,6 @@ jobs:
           github-token: ${{ env.COVERALLS_TOKEN }}
           format: jacoco
           flag-name: Java-${{ matrix.java }}-database
-          fail-on-error: false
-          parallel: true
-
-      - name: Coveralls phonetic
-        uses: coverallsapp/github-action@v2
-        with:
-          base-path: extensions/phonetic/src
-          files: extensions/phonetic/target/site/jacoco/jacoco.xml
-          github-token: ${{ env.COVERALLS_TOKEN }}
-          format: jacoco
-          flag-name: Java-${{ matrix.java }}-phonetic
           fail-on-error: false
           parallel: true
 
