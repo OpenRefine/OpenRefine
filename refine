@@ -35,7 +35,7 @@ Options
     -i <interface>                The network interface OpenRefine should bind to. Default: 127.0.0.1.
     -m <memory>                   JVM min and max memory heap size. Default: 1400M.
     -p <port>                     Port that OpenRefine will listen to. Default: 3333.
-    -s <path>                     Path to unix domain socket at which the server will listen (interface and port will be ignored).
+    -s <path>                     Path to Unix domain socket at which the server will listen
     -v <level>                    Verbosity level [error,warn,info,debug,trace]. Default: info.
     -w <path>                     Path to the webapp. Default: main/webapp.
     -x <name=value>               Additional configuration parameters to pass to OpenRefine.
