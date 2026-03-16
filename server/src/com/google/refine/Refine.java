@@ -183,6 +183,10 @@ class RefineServer extends Server {
 
     private ThreadPoolExecutor threadPool;
 
+    public void init(String iface, int port, String host) throws Exception {
+        this.init(iface, port, host, null);
+    }
+
     public void init(String iface, int port, String host, String socket) throws Exception {
         logger.info("Java runtime version {} from java.home: {}", Runtime.version().toString(), System.getProperty("java.home", ""));
         logger.info("Java VM: {} {} {} {}", System.getProperty("java.vm.vendor", ""), System.getProperty("java.vm.name", ""),
