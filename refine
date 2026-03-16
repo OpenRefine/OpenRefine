@@ -93,8 +93,24 @@ check_downloaders() {
 
 check_running() {
     check_downloaders
-    URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
+
     CHECK_STR="<title>OpenRefine</title>"
+    URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
+
+    if [ -n "$REFINE_SOCKET" ] ; then
+        if [ "$CURL" ] ; then
+            RUNNING=`curl --unix-socket $REFINE_SOCKET --noproxy 127.0.0.1 -s http://localhost | grep "$CHECK_STR"`
+        else
+            # wget does not support connecting to unix domain sockets
+            # instead use a simple filesystem check to determine whether a file exists at the socket path
+            if [ -e "$REFINE_SOCKET" ] ; then
+                RUNNING="0"
+            else
+                RUNNING=""
+            fi
+        fi
+        return
+    fi
 
     if [ "$CURL" ] ; then
         curl --noproxy 127.0.0.1 -s -S -f $URL > /dev/null 2>&1
@@ -107,7 +123,7 @@ check_running() {
         if [ "$?" = "4" ] ; then
             NOT_RUNNING="1"
         fi
-    fi    
+    fi
 
     if [ -z "${NOT_RUNNING}" ] ; then
         if [ "$CURL" ] ; then
@@ -361,6 +377,36 @@ test() {
     $MVN test
 }
 
+uds_tests() {
+    add_option "-Drefine.headless=true"
+    add_option "-Drefine.socket=/tmp/openrefine_test.sock"
+    REFINE_SOCKET="/tmp/openrefine_test.sock"
+    check_running
+
+    if [ "$RUNNING" ] ; then
+        echo "An OpenRefine server is already running. Please shut it down so that we can start a test server."
+        exit
+    fi
+    echo "Starting OpenRefine server"
+
+    run fork > /dev/null
+
+    echo "Waiting for OpenRefine to load..."
+    sleep 5
+    check_running
+
+    if [ ! "$RUNNING" ] ; then
+        fail "OpenRefine failed to start on Unix Domain Socket."
+    else
+        echo ""
+        echo "Killing OpenRefine"
+        /bin/kill $REFINE_PID
+        echo "Cleaning up"
+        rm -rf "$REFINE_DATA_DIR"
+        return 0
+    fi
+}
+
 
 e2e_tests() {
     get_revision
@@ -435,8 +481,6 @@ e2e_tests() {
     echo ""
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
-    echo "Cleaning up"
-    rm -rf "$REFINE_DATA_DIR"
 
     if [ "$UI_TEST_SUCCESS" = "0" ] ; then
         error "The UI test suite failed."
@@ -748,6 +792,7 @@ case "$ACTION" in
   test) test $1;;
   tests) test $1;;
   e2e_tests) e2e_tests;;
+  uds_tests) uds_tests;;
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
