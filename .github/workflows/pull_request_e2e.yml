@@ -7,7 +7,7 @@ on:
       - 'main/webapp/modules/core/langs/**'
       - 'extensions/database/module/langs/**'
       - 'extensions/pc-axis/module/langs/**'
-      - 'extensions/wikidata/module/langs/**'
+      - 'extensions/wikibase/module/langs/**'
     branches:
       - master
 
