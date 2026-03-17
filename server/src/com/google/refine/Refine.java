@@ -125,8 +125,6 @@ public class Refine {
         RefineServer server = new RefineServer();
         server.init(iface, port, host, socket);
 
-        String contextPath = server.getURI().getPath();
-
         boolean headless = Configurations.getBoolean("refine.headless", false);
         if (headless) {
             System.setProperty("java.awt.headless", "true");
@@ -137,6 +135,7 @@ public class Refine {
         } else {
             try {
                 RefineClient client = new RefineClient();
+                String contextPath = server.getURI().getPath();
                 if ("*".equals(host)) {
                     if ("0.0.0.0".equals(iface)) {
                         logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
