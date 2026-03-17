@@ -52,7 +52,7 @@
     "database-parsing/updating-preview": "更新预览…",
     "database-source/alert-db-port-invalid-character": "数据库端口错误：输入中的非法字符。 只允许使用数值。",
     "database-source/databaseUserLabel": "用户",
-    "database-source/databaseSchemaLabel": "架构",
+    "database-source/databaseSchemaLabel": "模式",
     "database-source/databasePortPlaceholder": "输入数据库端口，例如 3306",
     "database-source/databaseNamePlaceholder": "输入数据库名称",
     "database-source/newConnectionButtonDiv": "新连接",
