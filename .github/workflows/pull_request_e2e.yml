@@ -72,10 +72,6 @@ jobs:
           npm i -g yarn
           yarn install
 
-      - name: Test Unix Domain Socket connectivity
-        run: | 
-          ./refine uds_tests
-
       - name: Test with Cypress on ${{ matrix.browser }}
         run: | 
           echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
@@ -88,3 +84,22 @@ jobs:
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs.paths }}
           CYPRESS_GROUP: ${{ matrix.specs.group }}
+  misc_integration_test:
+    name: Misc integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+
+      - name: Build OpenRefine
+        run: ./refine build
+
+      - name: Test Unix Domain Socket connectivity
+        run: | 
+          ./refine uds_tests
