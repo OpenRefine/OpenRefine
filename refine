@@ -35,6 +35,7 @@ Options
     -i <interface>                The network interface OpenRefine should bind to. Default: 127.0.0.1.
     -m <memory>                   JVM min and max memory heap size. Default: 1400M.
     -p <port>                     Port that OpenRefine will listen to. Default: 3333.
+    -s <path>                     Path to Unix domain socket at which the server will listen
     -v <level>                    Verbosity level [error,warn,info,debug,trace]. Default: info.
     -w <path>                     Path to the webapp. Default: main/webapp.
     -x <name=value>               Additional configuration parameters to pass to OpenRefine.
@@ -92,8 +93,24 @@ check_downloaders() {
 
 check_running() {
     check_downloaders
-    URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
+
     CHECK_STR="<title>OpenRefine</title>"
+    URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
+
+    if [ -n "$REFINE_SOCKET" ] ; then
+        if [ "$CURL" ] ; then
+            RUNNING=`curl --unix-socket $REFINE_SOCKET --noproxy 127.0.0.1 -s http://localhost | grep "$CHECK_STR"`
+        else
+            # wget does not support connecting to unix domain sockets
+            # instead use a simple filesystem check to determine whether a file exists at the socket path
+            if [ -e "$REFINE_SOCKET" ] ; then
+                RUNNING="0"
+            else
+                RUNNING=""
+            fi
+        fi
+        return
+    fi
 
     if [ "$CURL" ] ; then
         curl --noproxy 127.0.0.1 -s -S -f $URL > /dev/null 2>&1
@@ -106,7 +123,7 @@ check_running() {
         if [ "$?" = "4" ] ; then
             NOT_RUNNING="1"
         fi
-    fi    
+    fi
 
     if [ -z "${NOT_RUNNING}" ] ; then
         if [ "$CURL" ] ; then
@@ -360,6 +377,36 @@ test() {
     $MVN test
 }
 
+uds_tests() {
+    add_option "-Drefine.headless=true"
+    add_option "-Drefine.socket=/tmp/openrefine_test.sock"
+    REFINE_SOCKET="/tmp/openrefine_test.sock"
+    check_running
+
+    if [ "$RUNNING" ] ; then
+        echo "An OpenRefine server is already running. Please shut it down so that we can start a test server."
+        exit
+    fi
+    echo "Starting OpenRefine server"
+
+    run fork > /dev/null
+
+    echo "Waiting for OpenRefine to load..."
+    sleep 5
+    check_running
+
+    if [ ! "$RUNNING" ] ; then
+        fail "OpenRefine failed to start on Unix Domain Socket."
+    else
+        echo ""
+        echo "Killing OpenRefine"
+        /bin/kill $REFINE_PID
+        echo "Cleaning up"
+        rm -rf "$REFINE_DATA_DIR"
+        return 0
+    fi
+}
+
 
 e2e_tests() {
     get_revision
@@ -434,8 +481,6 @@ e2e_tests() {
     echo ""
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
-    echo "Cleaning up"
-    rm -rf "$REFINE_DATA_DIR"
 
     if [ "$UI_TEST_SUCCESS" = "0" ] ; then
         error "The UI test suite failed."
@@ -501,6 +546,10 @@ run() {
 
     if [ "$REFINE_WEBAPP" ] ; then
         add_option "-Drefine.webapp=$REFINE_WEBAPP"
+    fi
+
+    if [ "$REFINE_SOCKET" ] ; then
+        add_option "-Drefine.socket=$REFINE_SOCKET"
     fi
 
     if [ "$REFINE_PORT" ] ; then
@@ -603,6 +652,7 @@ for ((i=0; i<${#args[@]}; i+=1)); do
   arg="${args[i]}"
   case "$arg" in
     -h) usage;;
+    -s) ((i+=1)); REFINE_SOCKET="${args[i]}"; continue;;
     -p) ((i+=1)); REFINE_PORT="${args[i]}"; continue;;
     -H) ((i+=1)); REFINE_HOST="${args[i]}"; continue;;
     -i) ((i+=1)); REFINE_INTERFACE="${args[i]}"; continue;;
@@ -664,27 +714,29 @@ if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
 fi
 add_option "-Drefine.max_form_content_size=$REFINE_MAX_FORM_CONTENT_SIZE"
 
-if [ -z "$REFINE_PORT" ] ; then
-    REFINE_PORT="3333"
-fi
-
-if [ -z "$REFINE_INTERFACE" ] ; then
-    REFINE_INTERFACE="127.0.0.1"
-fi
-
-if [ -z "$REFINE_HOST" ] ; then
-    if [ "$REFINE_INTERFACE" = "0.0.0.0" ] ; then
-        REFINE_HOST='*'
-    else
-        REFINE_HOST="$REFINE_INTERFACE"
+if [ -z "$REFINE_SOCKET" ] ; then
+    if [ -z "$REFINE_PORT" ] ; then
+        REFINE_PORT="3333"
     fi
-fi
-
-if [ "$REFINE_HOST" = '*' ] ; then
-    echo No host specified while binding to interface 0.0.0.0, guessing localhost.
-    REFINE_HOST_INTERNAL="localhost"
-else
-    REFINE_HOST_INTERNAL="$REFINE_HOST"
+    
+    if [ -z "$REFINE_INTERFACE" ] ; then
+        REFINE_INTERFACE="127.0.0.1"
+    fi
+    
+    if [ -z "$REFINE_HOST" ] ; then
+        if [ "$REFINE_INTERFACE" = "0.0.0.0" ] ; then
+            REFINE_HOST='*'
+        else
+            REFINE_HOST="$REFINE_INTERFACE"
+        fi
+    fi
+    
+    if [ "$REFINE_HOST" = '*' ] ; then
+        echo No host specified while binding to interface 0.0.0.0, guessing localhost.
+        REFINE_HOST_INTERNAL="localhost"
+    else
+        REFINE_HOST_INTERNAL="$REFINE_HOST"
+    fi
 fi
 
 if [ -z "$REFINE_WEBAPP" ] ; then
@@ -740,6 +792,7 @@ case "$ACTION" in
   test) test $1;;
   tests) test $1;;
   e2e_tests) e2e_tests;;
+  uds_tests) uds_tests;;
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
