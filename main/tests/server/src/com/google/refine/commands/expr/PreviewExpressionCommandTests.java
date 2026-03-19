@@ -94,6 +94,25 @@ public class PreviewExpressionCommandTests extends CommandTestBase {
     }
 
     @Test
+    public void testEvalError() throws ServletException, IOException {
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("cellIndex")).thenReturn("1");
+        when(request.getParameter("expression")).thenReturn("grel:toNumber(value)");
+        when(request.getParameter("rowIndices")).thenReturn("[0,2]");
+
+        command.doPost(request, response);
+        String result = writer.toString();
+        // The response should have code "ok" with individual error messages,
+        // not null values that hide the errors
+        com.fasterxml.jackson.databind.JsonNode json = com.google.refine.util.ParsingUtilities.mapper.readTree(result);
+        assert json.get("code").asText().equals("ok");
+        for (com.fasterxml.jackson.databind.JsonNode r : json.get("results")) {
+            assert r == null || !r.isObject() || r.has("message") : "Error results should have a message field, not be null";
+        }
+    }
+
+    @Test
     public void testParseError() throws ServletException, IOException {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter("project")).thenReturn(Long.toString(project.id));

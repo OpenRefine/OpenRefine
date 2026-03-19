@@ -110,6 +110,22 @@ describe(__filename, function () {
     ).should('to.contain', 'Error:');
   });
 
+  // Regression test for https://github.com/OpenRefine/OpenRefine/issues/3012
+  it('Test that Python expression errors are shown, not hidden as null', function () {
+    cy.loadAndVisitProject('food.mini');
+    loadExpressionPanel();
+    cy.selectPython();
+    cy.typeExpression('return value.toNumber()');
+
+    cy.get(
+      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
+    ).should('to.contain', 'Error:');
+    // Ensure the error is NOT shown as null
+    cy.get(
+      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
+    ).should('not.to.contain', 'null');
+  });
+
   it('Test a Clojure language error', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
