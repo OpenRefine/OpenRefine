@@ -83,6 +83,10 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         super(useInputStream);
     }
 
+    protected TabularImportingParserBase(ImportMode importMode) {
+        super(importMode);
+    }
+
     /**
      * @param project
      * @param metadata
