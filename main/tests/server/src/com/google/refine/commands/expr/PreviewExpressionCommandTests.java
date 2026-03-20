@@ -27,22 +27,33 @@
 
 package com.google.refine.commands.expr;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
 
 import javax.servlet.ServletException;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.commands.Command;
 import com.google.refine.commands.CommandTestBase;
+import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.LanguageSpecificParser;
 import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.Parser;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class PreviewExpressionCommandTests extends CommandTestBase {
@@ -93,22 +104,46 @@ public class PreviewExpressionCommandTests extends CommandTestBase {
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
 
+    /**
+     * Tests that when an evaluator's evaluate() method throws an uncaught exception, the error is surfaced to the user
+     * instead of being silently swallowed. This is the specific scenario fixed by converting the catch block from
+     * {@code // ignore} to {@code result = new EvalError(e)}.
+     */
     @Test
-    public void testEvalError() throws ServletException, IOException {
-        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
-        when(request.getParameter("cellIndex")).thenReturn("1");
-        when(request.getParameter("expression")).thenReturn("grel:toNumber(value)");
-        when(request.getParameter("rowIndices")).thenReturn("[0,2]");
+    public void testExceptionDuringEvalIsSurfacedAsError()
+            throws ServletException, IOException, ParsingException {
+        var throwingEval = mock(Evaluable.class);
+        when(throwingEval.evaluate(any()))
+                .thenThrow(new RuntimeException("simulated evaluator crash"));
 
-        command.doPost(request, response);
-        String result = writer.toString();
-        // The response should have code "ok" with individual error messages,
-        // not null values that hide the errors
-        com.fasterxml.jackson.databind.JsonNode json = com.google.refine.util.ParsingUtilities.mapper.readTree(result);
-        assert json.get("code").asText().equals("ok");
-        for (com.fasterxml.jackson.databind.JsonNode r : json.get("results")) {
-            assert r == null || !r.isObject() || r.has("message") : "Error results should have a message field, not be null";
+        var throwingParser = mock(LanguageSpecificParser.class);
+        when(throwingParser.parse(anyString(), anyString())).thenReturn(throwingEval);
+
+        MetaParser.registerLanguageParser("throwing", "Throwing", throwingParser, "value");
+        try {
+            when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+            when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+            when(request.getParameter("cellIndex")).thenReturn("1");
+            when(request.getParameter("expression")).thenReturn("throwing:value");
+            when(request.getParameter("rowIndices")).thenReturn("[0,1,2]");
+
+            command.doPost(request, response);
+            var json = ParsingUtilities.mapper.readTree(writer.toString());
+            assertEquals(json.get("code").asText(), "ok");
+
+            var results = json.get("results");
+            assertEquals(results.size(), 3);
+            for (JsonNode r : results) {
+                // Before the fix, result would be null (silently swallowed).
+                // After the fix, result should be an error object with a message.
+                assertNotNull(r, "Result should not be null when evaluation throws");
+                assertTrue(r.isObject(), "Result should be an error object");
+                assertTrue(r.has("message"), "Error result should have a message field");
+                assertTrue(r.get("message").asText().contains("simulated evaluator crash"),
+                        "Error message should contain the exception text");
+            }
+        } finally {
+            MetaParser.unregisterLanguageParser("throwing");
         }
     }
 
