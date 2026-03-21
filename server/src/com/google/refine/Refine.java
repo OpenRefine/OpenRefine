@@ -267,7 +267,7 @@ class RefineServer extends Server {
         // are in execution for the given timeout before attempting to stop
         // NOTE: this is *not* a blocking method, it just sets a parameter
         // that _server.stop() will rely on
-        // (increased from 3000 to 300000 as part of Jetty 9 update)
+        // (increased from 3000 to 30000 as part of Jetty 9 update)
         this.setStopTimeout(30000);
 
         // Enable context autoreloading
