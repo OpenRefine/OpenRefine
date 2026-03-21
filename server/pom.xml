@@ -167,7 +167,6 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-unixdomain-server</artifactId>
-      <version>${jetty.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty.ee8</groupId>
@@ -204,10 +203,6 @@
     <dependency>
       <groupId>org.eclipse.jetty.compression</groupId>
       <artifactId>jetty-compression-zstandard</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.compression</groupId>
-      <artifactId>jetty-compression-server</artifactId>
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>

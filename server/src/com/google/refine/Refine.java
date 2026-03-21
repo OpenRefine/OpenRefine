@@ -43,6 +43,9 @@ import java.net.BindException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -314,18 +317,18 @@ class RefineServer extends Server {
     }
 
     static private void scanForUpdates(final File contextRoot, final WebAppContext context) {
-        logger.info("Starting autoreloading scanner... ");
+        List<Path> scanList = new ArrayList<>();
 
         File webInf = new File(contextRoot, "WEB-INF");
-        Stream<Path> scanList = Stream.concat(
-                Stream.concat(
-                        Stream.of(Path.of(webInf.getPath(), "web.xml")),
-                        findFiles(new File(contextRoot, "classes"), ".class")),
-                findFiles(new File(contextRoot, "lib"), ".jar"));
+        scanList.add(Path.of(webInf.getPath(), "web.xml"));
+        scanList.addAll(findFilePaths(new File(webInf, "classes"), ".class"));
+        scanList.addAll(findFilePaths(new File(webInf, "lib"), ".jar"));
+
+        logger.info("Starting autoreloading scanner... ");
 
         Scanner scanner = new Scanner();
         scanner.setScanInterval(Configurations.getInteger("refine.scanner.period", 1));
-        scanner.setScanDirs(scanList.collect(Collectors.toList()));
+        scanner.setScanDirs(scanList);
         scanner.setReportExistingFilesOnStartup(false);
 
         scanner.addListener(new Scanner.BulkListener() {
@@ -349,12 +352,12 @@ class RefineServer extends Server {
         }
     }
 
-    static private Stream<Path> findFiles(File baseDir, final String extension) {
-        try {
-            return Files.find(baseDir.toPath(), 999, (p, bfa) -> bfa.isRegularFile()
-                    && p.getFileName().toString().endsWith(extension));
+    static private List<Path> findFilePaths(File baseDir, final String extension) {
+        try (Stream<Path> files = Files.find(baseDir.toPath(), 999, (p, bfa) -> bfa.isRegularFile()
+                && p.getFileName().toString().endsWith(extension))) {
+            return files.collect(Collectors.toList());
         } catch (IOException e) {
-            return Stream.empty();
+            return Collections.emptyList();
         }
     }
 
