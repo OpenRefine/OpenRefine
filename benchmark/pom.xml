@@ -19,7 +19,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>main</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -37,6 +36,16 @@
       <artifactId>jmh-generator-annprocess</artifactId>
       <version>${jmh.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openrefine.dependencies</groupId>
+      <artifactId>vicino</artifactId>
+      <version>${vicino.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${commons-text.version}</version>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>

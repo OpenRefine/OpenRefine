@@ -354,7 +354,7 @@ function registerLanguages() {
 function registerDistances() {
    var DF = Packages.com.google.refine.clustering.knn.DistanceFactory;
    var VicinoDistance = Packages.com.google.refine.clustering.knn.VicinoDistance;
-   DF.put("levenshtein", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.LevenshteinDistance()));
+  DF.put("levenshtein", new Packages.com.google.refine.clustering.knn.ApacheLevenshteinDistance());
    DF.put("ppm", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.PPMDistance()));
 }
 
