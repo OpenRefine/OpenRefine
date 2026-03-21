@@ -90,7 +90,7 @@ class ValidateHostHandler extends Handler.Wrapper {
             throws Exception {
         String host = request.getHeaders().get("Host");
         if (isValidHost(host)) {
-            super.handle(request, response, callback);
+            return super.handle(request, response, callback);
         } else {
             // Return HTTP 404 Not Found, since we are
             // not serving content for the requested URL
