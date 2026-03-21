@@ -291,6 +291,7 @@
           <groups>java.,javax.,*,com.google.refine,org.openrefine</groups>
           <staticGroups>java,*</staticGroups>
           <removeUnused>true</removeUnused>
+          <compliance>17</compliance>
         </configuration>
         <executions>
           <execution>
