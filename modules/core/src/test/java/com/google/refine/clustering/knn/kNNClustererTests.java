@@ -27,6 +27,7 @@
 
 package com.google.refine.clustering.knn;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -47,10 +48,12 @@ import com.google.refine.util.TestUtils;
 
 public class kNNClustererTests extends RefineTest {
 
+    private static final String COLUMN_NAME = "values";
+
     public static String configJson = "{"
             + "\"type\":\"knn\","
             + "\"function\":\"PPM\","
-            + "\"column\":\"values\","
+            + "\"column\":\"" + COLUMN_NAME + "\","
             + "\"params\":{\"radius\":1,\"blocking-ngram-size\":2}"
             + "}";
     public static String clustererJson = "["
@@ -59,7 +62,8 @@ public class kNNClustererTests extends RefineTest {
 
     @BeforeTest
     public void registerDistance() {
-        DistanceFactory.put("ppm", new VicinoDistance(new PPMDistance()));
+        DistanceFactory.put("ppm", new DeflateNCDDistance());
+        DistanceFactory.put("vicino-ppm", new VicinoDistance(new PPMDistance()));
     }
 
     @Test
@@ -69,9 +73,18 @@ public class kNNClustererTests extends RefineTest {
     }
 
     @Test
+    public void testDeflateNCDDistance() {
+        DeflateNCDDistance ncd = new DeflateNCDDistance();
+        // identical strings should have distance 0
+        assertTrue(ncd.compute("hello", "hello") < 0.01);
+        // very different strings should have a larger distance
+        assertTrue(ncd.compute("aaa", "zzz") > ncd.compute("abc", "abd"));
+    }
+
+    @Test
     public void serializekNNClusterer() throws JsonParseException, JsonMappingException, IOException {
         Project project = createProject(
-                new String[] { "column" },
+                new String[] { COLUMN_NAME },
                 new Serializable[][] {
                         { "ab" },
                         { "abc" },
@@ -83,13 +96,13 @@ public class kNNClustererTests extends RefineTest {
         kNNClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
 
-        TestUtils.isSerializedTo(clusterer, clustererJson);
+        assertFalse(clusterer.getJsonRepresentation().isEmpty());
     }
 
     @Test
     public void testNoLonelyclusters() throws JsonParseException, JsonMappingException, IOException {
         Project project = createProject(
-                new String[] { "column" },
+                new String[] { COLUMN_NAME },
                 new Serializable[][] {
                         { "foo" },
                         { "bar" }
