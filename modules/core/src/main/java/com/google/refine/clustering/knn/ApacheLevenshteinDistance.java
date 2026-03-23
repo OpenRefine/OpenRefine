@@ -34,7 +34,7 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
  */
 public class ApacheLevenshteinDistance implements SimilarityDistance {
 
-    private final LevenshteinDistance distance = new LevenshteinDistance();
+    private final LevenshteinDistance distance = LevenshteinDistance.getDefaultInstance();
 
     @Override
     public double compute(String a, String b) {
