@@ -79,6 +79,7 @@ public class KNNLevenshteinClusteringBenchmark {
         public int rowCount;
 
         public List<String> values;
+        public Project project;
 
         @Setup(Level.Trial)
         public void setUp() {
@@ -92,6 +93,8 @@ public class KNNLevenshteinClusteringBenchmark {
             DistanceFactory.remove(APACHE_NAME);
             DistanceFactory.put(VICINO_NAME, new VicinoDistance(new LevenshteinDistance()));
             DistanceFactory.put(APACHE_NAME, new ApacheLevenshteinDistance());
+
+            project = createProject(values);
         }
     }
 
@@ -102,7 +105,7 @@ public class KNNLevenshteinClusteringBenchmark {
     @Measurement(iterations = 2, time = 300, timeUnit = TimeUnit.MILLISECONDS)
     @Fork(1)
     public void vicinoKNNClustering(ExecutionPlan plan, Blackhole blackhole) throws IOException {
-        blackhole.consume(runKnnClustering(plan.values, VICINO_NAME));
+        blackhole.consume(runKnnClustering(plan.project, VICINO_NAME));
     }
 
     @Benchmark
@@ -112,11 +115,10 @@ public class KNNLevenshteinClusteringBenchmark {
     @Measurement(iterations = 2, time = 300, timeUnit = TimeUnit.MILLISECONDS)
     @Fork(1)
     public void apacheKNNClustering(ExecutionPlan plan, Blackhole blackhole) throws IOException {
-        blackhole.consume(runKnnClustering(plan.values, APACHE_NAME));
+        blackhole.consume(runKnnClustering(plan.project, APACHE_NAME));
     }
 
-    private int runKnnClustering(List<String> values, String distanceName) throws IOException {
-        Project project = createProject(values);
+    private int runKnnClustering(Project project, String distanceName) throws IOException {
         Engine engine = new Engine(project);
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(makeConfigJson(distanceName), kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(project);
@@ -124,7 +126,7 @@ public class KNNLevenshteinClusteringBenchmark {
         return clusterer.getJsonRepresentation().size();
     }
 
-    private Project createProject(List<String> values) {
+    private static Project createProject(List<String> values) {
         Project project = new Project();
         int cellIndex = project.columnModel.allocateNewCellIndex();
 
