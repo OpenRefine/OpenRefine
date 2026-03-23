@@ -27,12 +27,14 @@
 
 package com.google.refine.clustering.knn;
 
+import org.apache.commons.text.similarity.LevenshteinDistance;
+
 /**
  * Wrapper around Apache Commons Text Levenshtein implementation.
  */
 public class ApacheLevenshteinDistance implements SimilarityDistance {
 
-    private final org.apache.commons.text.similarity.LevenshteinDistance distance = new org.apache.commons.text.similarity.LevenshteinDistance();
+    private final LevenshteinDistance distance = new LevenshteinDistance();
 
     @Override
     public double compute(String a, String b) {
