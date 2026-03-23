@@ -34,6 +34,7 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import edu.mit.simile.vicino.distances.LevenshteinDistance;
 import edu.mit.simile.vicino.distances.PPMDistance;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -47,10 +48,12 @@ import com.google.refine.util.TestUtils;
 
 public class kNNClustererTests extends RefineTest {
 
+    private static final String COLUMN_NAME = "values";
+
     public static String configJson = "{"
             + "\"type\":\"knn\","
             + "\"function\":\"PPM\","
-            + "\"column\":\"values\","
+            + "\"column\":\"" + COLUMN_NAME + "\","
             + "\"params\":{\"radius\":1,\"blocking-ngram-size\":2}"
             + "}";
     public static String clustererJson = "["
@@ -59,7 +62,7 @@ public class kNNClustererTests extends RefineTest {
     public static String levenshteinConfigJson = "{"
             + "\"type\":\"knn\","
             + "\"function\":\"levenshtein\","
-            + "\"column\":\"values\","
+            + "\"column\":\"" + COLUMN_NAME + "\","
             + "\"params\":{\"radius\":1,\"blocking-ngram-size\":2}"
             + "}";
 
@@ -67,6 +70,22 @@ public class kNNClustererTests extends RefineTest {
     public void registerDistance() {
         DistanceFactory.put("ppm", new VicinoDistance(new PPMDistance()));
         DistanceFactory.put("levenshtein", new ApacheLevenshteinDistance());
+        DistanceFactory.put("vicino-levenshtein", new VicinoDistance(new LevenshteinDistance()));
+    }
+
+    private static String makeConfigJson(String function, int radius, int blockingNgramSize) {
+        return "{"
+                + "\"type\":\"knn\","
+                + "\"function\":\"" + function + "\","
+                + "\"column\":\"" + COLUMN_NAME + "\","
+                + "\"params\":{\"radius\":" + radius + ",\"blocking-ngram-size\":" + blockingNgramSize + "}"
+                + "}";
+    }
+
+    private Project createClusteringProject(Serializable[]... rows) {
+        return createProject(
+                new String[] { COLUMN_NAME },
+                rows);
     }
 
     @Test
@@ -77,14 +96,11 @@ public class kNNClustererTests extends RefineTest {
 
     @Test
     public void serializekNNClusterer() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(
-                new String[] { "column" },
-                new Serializable[][] {
-                        { "ab" },
-                        { "abc" },
-                        { "c" },
-                        { "ĉ" }
-                });
+        Project project = createClusteringProject(
+                new Serializable[] { "ab" },
+                new Serializable[] { "abc" },
+                new Serializable[] { "c" },
+                new Serializable[] { "ĉ" });
 
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(project);
@@ -95,14 +111,11 @@ public class kNNClustererTests extends RefineTest {
 
     @Test
     public void serializekNNClustererLevenshtein() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(
-                new String[] { "column" },
-                new Serializable[][] {
-                        { "ab" },
-                        { "abc" },
-                        { "c" },
-                        { "ĉ" }
-                });
+        Project project = createClusteringProject(
+                new Serializable[] { "ab" },
+                new Serializable[] { "abc" },
+                new Serializable[] { "c" },
+                new Serializable[] { "ĉ" });
 
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(levenshteinConfigJson, kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(project);
@@ -112,13 +125,52 @@ public class kNNClustererTests extends RefineTest {
     }
 
     @Test
+    public void testLevenshteinWithLargerRadius() throws JsonParseException, JsonMappingException, IOException {
+        Project project = createClusteringProject(
+                new Serializable[] { "ab" },
+                new Serializable[] { "abc" },
+                new Serializable[] { "abcd" },
+                new Serializable[] { "xyz" });
+
+        String apacheJson = makeConfigJson("levenshtein", 2, 2);
+        String vicinoJson = makeConfigJson("vicino-levenshtein", 2, 2);
+        assertSameClusters(project, apacheJson, vicinoJson);
+    }
+
+    @Test
+    public void testLevenshteinWithNgramSize1() throws JsonParseException, JsonMappingException, IOException {
+        Project project = createClusteringProject(
+                new Serializable[] { "ab" },
+                new Serializable[] { "abc" },
+                new Serializable[] { "c" },
+                new Serializable[] { "ĉ" });
+
+        String apacheJson = makeConfigJson("levenshtein", 1, 1);
+        String vicinoJson = makeConfigJson("vicino-levenshtein", 1, 1);
+        assertSameClusters(project, apacheJson, vicinoJson);
+    }
+
+    private void assertSameClusters(Project project, String apacheConfigJson, String vicinoConfigJson)
+            throws JsonParseException, JsonMappingException, IOException {
+        kNNClustererConfig apacheConfig = ParsingUtilities.mapper.readValue(apacheConfigJson, kNNClustererConfig.class);
+        kNNClusterer apacheClusterer = apacheConfig.apply(project);
+        apacheClusterer.computeClusters(new Engine(project));
+
+        kNNClustererConfig vicinoConfig = ParsingUtilities.mapper.readValue(vicinoConfigJson, kNNClustererConfig.class);
+        kNNClusterer vicinoClusterer = vicinoConfig.apply(project);
+        vicinoClusterer.computeClusters(new Engine(project));
+
+        String apacheJson = ParsingUtilities.mapper.writeValueAsString(apacheClusterer);
+        String vicinoJson = ParsingUtilities.mapper.writeValueAsString(vicinoClusterer);
+        TestUtils.assertEqualsAsJson(apacheJson, vicinoJson);
+    }
+
+    @Test
     public void testNoLonelyclusters() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(
-                new String[] { "column" },
-                new Serializable[][] {
-                        { "foo" },
-                        { "bar" }
-                });
+        Project project = createClusteringProject(
+                new Serializable[] { "foo" },
+                new Serializable[] { "bar" });
+
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
         kNNClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));

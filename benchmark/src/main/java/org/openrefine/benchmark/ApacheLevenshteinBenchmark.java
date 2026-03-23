@@ -50,7 +50,7 @@ import org.openjdk.jmh.infra.Blackhole;
 
 public class ApacheLevenshteinBenchmark {
 
-    private static final Path LARGE_DATASET_PATH = Path.of("/main/tests/data/acm_large.txt");
+    private static final Path LARGE_DATASET_PATH = Path.of("main/tests/data/acm_large.txt");
     private static final Path CONTRACTS_DATASET_PATH = Path.of("main/tests/data/government_contracts.csv");
     private static final int MIN_DATASET_SIZE = 5000;
 
@@ -70,12 +70,12 @@ public class ApacheLevenshteinBenchmark {
             if (dataset.size() < MIN_DATASET_SIZE) {
                 dataset = generateSyntheticDataset(MIN_DATASET_SIZE, rnd);
             }
+            vicinoDistance = new edu.mit.simile.vicino.distances.LevenshteinDistance();
+            apacheDistance = new org.apache.commons.text.similarity.LevenshteinDistance();
         }
 
         @Setup(Level.Invocation)
         public void setUp() {
-            vicinoDistance = new edu.mit.simile.vicino.distances.LevenshteinDistance();
-            apacheDistance = new org.apache.commons.text.similarity.LevenshteinDistance();
             int idx = rnd.nextInt(dataset.size());
             left = dataset.get(idx);
             right = dataset.get((idx + 1) % dataset.size());
