@@ -413,6 +413,10 @@
       <version>${log4j.version}</version>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>blue.strategic.parquet</groupId>
+      <artifactId>parquet-floor</artifactId>
+      <version>1.57</version>
+    </dependency>
   </dependencies>
 </project>
