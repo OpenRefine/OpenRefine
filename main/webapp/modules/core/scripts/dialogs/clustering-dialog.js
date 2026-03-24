@@ -434,6 +434,12 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 };
 
 ClusteringDialog.prototype._cluster = function() {
+    // Clear any existing poll timer from a previous clustering call
+    if (this._pollTimerID) {
+        window.clearTimeout(this._pollTimerID);
+        this._pollTimerID = null;
+    }
+
     $('#cluster-and-edit-dialog :input').prop('disabled', true);
     $(".clustering-dialog-facet").css("display","none");
     var self = this;

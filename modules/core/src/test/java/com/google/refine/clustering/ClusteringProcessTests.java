@@ -1,3 +1,4 @@
+
 package com.google.refine.clustering;
 
 import static org.testng.Assert.assertEquals;

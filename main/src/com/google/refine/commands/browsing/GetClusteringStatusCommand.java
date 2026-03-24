@@ -1,3 +1,4 @@
+
 package com.google.refine.commands.browsing;
 
 import java.io.IOException;
@@ -32,12 +33,10 @@ public class GetClusteringStatusCommand extends Command {
             process.updateProgress();
 
             if (process.isFailed()) {
-                ComputeClustersCommand.removeActiveProcess(project.id);
                 ObjectNode result = ParsingUtilities.mapper.createObjectNode();
                 result.put("status", "error");
                 respondJSON(response, result);
             } else if (process.isCompleted()) {
-                ComputeClustersCommand.removeActiveProcess(project.id);
                 respondJSON(response, ParsingUtilities.mapper.createObjectNode()
                         .put("status", "done")
                         .set("clusters", ParsingUtilities.mapper.valueToTree(process.getClusterer())));
