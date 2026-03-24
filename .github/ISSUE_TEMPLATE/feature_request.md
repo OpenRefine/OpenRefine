@@ -6,14 +6,28 @@ labels: ["Type: Feature Request", "Status: Pending Review"]
 assignees: ''
 
 ---
+### Use case or need
+<!-- Describe what you are trying to achieve and in what context.
+Focus on your workflow rather than a solution. What is difficult today? -->
 
-<!-- Please provide a clear and concise description of your problem or unsatisfied needs. Ex. I'm always frustrated when [...] or, It would be easier if OpenRefine did [...]. This comment can be deleted, if desired, but it will be hidden in your final submission. Please make sure that your new text is outside the enclosing angle brackets. -->
+### What would improve?
+<!-- What would a good outcome look like for you? 
+Describe the expected improvement from a user perspective. -->
 
-### Acceptance criteria or proposed solution
-<!-- Please describe the requirement and acceptance criteria for this feature. If you have a proposal for how this need could be met, please provide a clear and concise description of what you want to happen. -->
+### Proposed solution (optional)
+<!-- If you have ideas on how this could be implemented, describe them here.
+This is optional: focusing on the need is enough. -->
 
 ### Alternatives considered
-<!-- If there alternative solutions that you have considered or think should be considered, please list them here -->
+<!-- Any other approaches or workarounds you have tried -->
 
 ### Additional context
-<!-- Add any other context or screenshots about the feature request here. -->
+<!-- Links, screenshots, examples, related discussions -->
+
+---
+_This issue may be edited as the conversation evolves._
+### Discussion notes
+<!-- Used to capture clarifications, decisions, and updates as the conversation evolves -->
+
+### Open questions
+<!-- Points that need discussion before implementation -->
