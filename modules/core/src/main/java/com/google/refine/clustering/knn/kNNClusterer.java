@@ -179,6 +179,7 @@ public class kNNClusterer extends Clusterer {
 
     @Override
     public void computeClusters(Engine engine) {
+        _stage = "scanning-rows";
         BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance, _params);
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(_project, visitor);
@@ -189,6 +190,7 @@ public class kNNClusterer extends Clusterer {
         }
 
         _progress = 50; // row iteration complete
+        _stage = "finding-clusters";
         _clusters = visitor.getClusters();
     }
 

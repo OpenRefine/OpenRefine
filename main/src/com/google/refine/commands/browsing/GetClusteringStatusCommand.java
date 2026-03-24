@@ -44,6 +44,7 @@ public class GetClusteringStatusCommand extends Command {
                 ObjectNode result = ParsingUtilities.mapper.createObjectNode();
                 result.put("status", "running");
                 result.put("progress", process.getClusterer().getProgress());
+                result.put("stage", process.getClusterer().getStage());
                 respondJSON(response, result);
             } else {
                 // Pending (queued but not started)

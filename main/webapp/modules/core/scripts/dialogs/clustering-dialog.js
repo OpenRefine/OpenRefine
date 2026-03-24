@@ -96,9 +96,9 @@ ClusteringDialog.prototype._createDialog = function() {
         let container = self._elmts.tableContainer;
         self._elmts.facetContainer.empty();
         container.empty().html(
-            '<div style="display: flex; height: inherit; justify-content: center; align-items: center;">' + '<div>' +
+            '<div style="display: flex; flex-direction: column; height: inherit; justify-content: center; align-items: center;">' + '<div>' +
             $.i18n('core-dialogs/click-cluster', self._columnName) + '</div>' + '<div">' +
-            '<button class="button" bind="clusterButton" id="clusterButtonId" >' +
+            '<button class="button" bind="clusterButton" id="clusterButtonId" style="margin-top: 5px;">' +
             $.i18n('core-facets/cluster') + '</button>' + '</div></div>'
         );
         let elmts = DOM.bind(container);
@@ -491,10 +491,19 @@ ClusteringDialog.prototype._pollClusteringStatus = function() {
             function(data) {
                 if (data.status === "running" || data.status === "pending") {
                     var pct = data.progress || 0;
+                    var stage = data.stage || "";
                     self._elmts.progressBarBody.css("width", pct + "%");
-                    self._elmts.progressMessage.text(
-                        pct > 0 ? $.i18n('core-dialogs/clustering-progress', pct) : $.i18n('core-dialogs/clustering')
-                    );
+                    var msg;
+                    if (stage && pct > 0) {
+                        msg = $.i18n('core-dialogs/clustering-stage-progress', $.i18n('core-dialogs/clustering-stage-' + stage), pct);
+                    } else if (stage) {
+                        msg = $.i18n('core-dialogs/clustering-stage', $.i18n('core-dialogs/clustering-stage-' + stage));
+                    } else if (pct > 0) {
+                        msg = $.i18n('core-dialogs/clustering-progress', pct);
+                    } else {
+                        msg = $.i18n('core-dialogs/clustering');
+                    }
+                    self._elmts.progressMessage.text(msg);
                     self._pollClusteringStatus();
                 } else if (data.status === "done") {
                     self._onClusteringDone(data.clusters);
@@ -525,8 +534,9 @@ ClusteringDialog.prototype._cancelClustering = function() {
         {},
         function() {
             self._onClusteringFinished();
-            self._elmts.tableContainer.html(
-                '<div style="margin: 2em; font-size: 110%; color: #888;">' +
+            self._addClusterMessage();
+            self._elmts.tableContainer.find('div:first').prepend(
+                '<div style="margin-bottom: 0.5em; font-size: 110%; color: #888;">' +
                 $.i18n('core-dialogs/clustering-cancelled') + '</div>'
             );
         },
