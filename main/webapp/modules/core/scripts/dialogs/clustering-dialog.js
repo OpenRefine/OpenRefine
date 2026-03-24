@@ -444,6 +444,16 @@ ClusteringDialog.prototype._cluster = function() {
 
     this._elmts.resultSummary.empty();
 
+    // Show progress panel
+    this._elmts.progressPanel.removeClass("hidden");
+    this._elmts.progressBarBody.css("width", "0%");
+    this._elmts.progressMessage.text($.i18n('core-dialogs/clustering'));
+    this._elmts.cancelClusteringButton
+        .text($.i18n('core-dialogs/cancel-clustering'))
+        .prop('disabled', false)
+        .off('click')
+        .on('click', function() { self._cancelClustering(); });
+
     Refine.postCSRF(
         "command/core/compute-clusters?" + $.param({ project: theProject.id }),
         {
@@ -456,12 +466,81 @@ ClusteringDialog.prototype._cluster = function() {
             })
         },
         function(data) {
-            self._updateData(data);
-            $(".clustering-dialog-facet").css("display","block");
-            $('#cluster-and-edit-dialog :input').not('.Checkbox_Choice').prop('disabled', false);
+            if (data.code === "pending") {
+                self._pollClusteringStatus();
+            } else {
+                // Unexpected response — treat as legacy synchronous result
+                self._onClusteringDone(data);
+            }
         },
         "json"
     );
+};
+
+ClusteringDialog.prototype._pollClusteringStatus = function() {
+    var self = this;
+    this._pollTimerID = window.setTimeout(function() {
+        $.getJSON(
+            "command/core/get-clustering-status?" + $.param({ project: theProject.id }),
+            function(data) {
+                if (data.status === "running" || data.status === "pending") {
+                    var pct = data.progress || 0;
+                    self._elmts.progressBarBody.css("width", pct + "%");
+                    self._elmts.progressMessage.text(
+                        pct > 0 ? $.i18n('core-dialogs/clustering-progress', pct) : $.i18n('core-dialogs/clustering')
+                    );
+                    self._pollClusteringStatus();
+                } else if (data.status === "done") {
+                    self._onClusteringDone(data.clusters);
+                } else if (data.status === "error") {
+                    self._onClusteringFinished();
+                    self._elmts.tableContainer.html(
+                        '<div style="margin: 2em; color: #c00;">Clustering failed. Please try again.</div>'
+                    );
+                } else {
+                    // idle or cancelled
+                    self._onClusteringFinished();
+                }
+            }
+        ).fail(function() {
+            self._onClusteringFinished();
+        });
+    }, 500);
+};
+
+ClusteringDialog.prototype._cancelClustering = function() {
+    var self = this;
+    if (this._pollTimerID) {
+        window.clearTimeout(this._pollTimerID);
+        this._pollTimerID = null;
+    }
+    Refine.postCSRF(
+        "command/core/cancel-clustering?" + $.param({ project: theProject.id }),
+        {},
+        function() {
+            self._onClusteringFinished();
+            self._elmts.tableContainer.html(
+                '<div style="margin: 2em; font-size: 110%; color: #888;">' +
+                $.i18n('core-dialogs/clustering-cancelled') + '</div>'
+            );
+        },
+        "json"
+    );
+};
+
+ClusteringDialog.prototype._onClusteringDone = function(data) {
+    this._onClusteringFinished();
+    this._updateData(data);
+    $(".clustering-dialog-facet").css("display","block");
+};
+
+ClusteringDialog.prototype._onClusteringFinished = function() {
+    this._elmts.progressPanel.addClass("hidden");
+    $('#cluster-and-edit-dialog :input').not('.Checkbox_Choice').prop('disabled', false);
+    if (this._pollTimerID) {
+        window.clearTimeout(this._pollTimerID);
+        this._pollTimerID = null;
+    }
 };
 
 ClusteringDialog.prototype._updateData = function(data) {
@@ -592,6 +671,15 @@ ClusteringDialog.prototype._export = function() {
 };
 
 ClusteringDialog.prototype._dismiss = function() {
+    if (this._pollTimerID) {
+        window.clearTimeout(this._pollTimerID);
+        this._pollTimerID = null;
+        // Fire and forget cancel
+        Refine.postCSRF(
+            "command/core/cancel-clustering?" + $.param({ project: theProject.id }),
+            {}, function() {}, "json"
+        );
+    }
     DialogSystem.dismissUntil(this._level - 1);
 };
 

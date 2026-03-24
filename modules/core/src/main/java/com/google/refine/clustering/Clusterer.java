@@ -41,8 +41,22 @@ public abstract class Clusterer {
 
     protected Project _project;
     protected int _colindex;
+    protected volatile boolean _canceled = false;
+    protected volatile int _progress = 0; // 0..100
 
     public abstract void computeClusters(Engine engine);
+
+    public void cancel() {
+        _canceled = true;
+    }
+
+    public boolean isCanceled() {
+        return _canceled;
+    }
+
+    public int getProgress() {
+        return _progress;
+    }
 
     protected void initializeFromConfig(Project project, ClustererConfig c) {
         _project = project;
