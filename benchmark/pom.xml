@@ -19,7 +19,11 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>main</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openrefine.dependencies</groupId>
+      <artifactId>vicino</artifactId>
+      <version>${vicino.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
