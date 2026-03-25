@@ -193,22 +193,6 @@ public class CsvExporterTests extends RefineTest {
                 ",row2cell1,row2cell2\n");
     }
 
-    // all date type cells are in unified format
-    /**
-     * @Ignore
-     * @Test public void exportDateColumnsPreVersion28(){ CreateGrid(1,2); Calendar calendar = Calendar.getInstance();
-     *       Date date = new Date();
-     * 
-     *       when(options.getProperty("printColumnHeader")).thenReturn("false"); project.rows.get(0).cells.set(0, new
-     *       Cell(calendar, null)); project.rows.get(0).cells.set(1, new Cell(date, null));
-     * 
-     *       try { SUT.export(project, options, engine, writer); } catch (IOException e) { Assert.fail(); }
-     * 
-     *       String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
-     *       ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
-     * 
-     *       assertEqualsSystemLineEnding(writer.toString(), expectedOutput); }
-     */
     // helper methods
 
     protected void CreateColumns(int noOfColumns) {
