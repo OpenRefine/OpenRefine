@@ -103,6 +103,11 @@
       <version>${commons-lang3.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${commons-text.version}</version>
+    </dependency>
+    <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>${commons-fileupload.version}</version>
@@ -120,7 +125,7 @@
     <dependency>
       <groupId>org.tukaani</groupId>
       <artifactId>xz</artifactId>
-      <version>1.11</version>
+      <version>1.12</version>
     </dependency>
     <dependency>
       <groupId>com.github.luben</groupId>

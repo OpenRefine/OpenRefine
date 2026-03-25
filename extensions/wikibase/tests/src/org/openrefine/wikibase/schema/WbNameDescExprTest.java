@@ -128,4 +128,18 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
         expr.validate(validationState);
         Assert.assertTrue(validationState.getValidationErrors().isEmpty());
     }
+
+    @Test
+    public void testValidateRejectsInvalidForTermLanguageInNameDesc() throws ModelException {
+        // Name/desc uses term context; "und" is valid for monolingualtext but not for term
+        WbNameDescExpr nameDescWithUnd = new WbNameDescExpr(WbNameDescExpr.NameDescType.LABEL,
+                new WbMonolingualExpr(new WbLanguageConstant("und", "Undefined"), new WbStringConstant("label")));
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column A"), true);
+        ValidationState validationState = new ValidationState(columnModel);
+        validationState.setMediaWikiApiEndpoint(null);
+        nameDescWithUnd.validate(validationState);
+        Assert.assertFalse(validationState.getValidationErrors().isEmpty(),
+                "Name/desc with language 'und' (invalid for term) should produce a validation error");
+    }
 }

@@ -2,45 +2,139 @@
  * LANGUAGE SUGGEST *
  ********************/
 
-// This list was manually copied from Wikidata on 2019-05-31. It can be updated with the following command:
-//
-// curl "https://www.wikidata.org/w/api.php?action=query&meta=wbcontentlanguages&wbclcontext=monolingualtext&format=json&formatversion=2" | jq ".query.wbcontentlanguages[].code" | tr '\n' ','
-//
-// See https://stackoverflow.com/questions/46507037/how-to-get-all-allowed-languages-for-wikidata/46562061#46562061
-// I don't think it is worth making every OpenRefine client perform this query at every startup, because it typically does
-// not change very often.
-//
-// This is the list of language codes accepted for monolingualtext values. The language codes for terms are more restrictive.
-// TODO: in the future, store different lists for term languages and monolingual text languages.
-DEFAULT_LANGUAGES = [
-  "aa", "ab", "abs", "ace", "ady", "ady-cyrl", "aeb", "aeb-arab", "aeb-latn", "af", "ak", "aln", "als", "am", "an", "ang", "anp",
-  "ar", "arc", "arn", "arq", "ary", "arz", "as", "ase", "ast", "atj", "av", "avk", "awa", "ay", "az", "azb", "ba", "ban", "bar",
-  "bbc", "bbc-latn", "bcc", "bcl", "be", "be-tarask", "bg", "bgn", "bh", "bho", "bi", "bjn", "bm", "bn", "bo", "bpy", "bqi", "br",
-  "brh", "bs", "btm", "bto", "bug", "bxr", "ca", "cbk-zam", "cdo", "ce", "ceb", "ch", "cho", "chr", "chy", "ckb", "co", "cps", "cr",
-  "crh", "crh-cyrl", "crh-latn", "cs", "csb", "cu", "cv", "cy", "da", "de", "de-at", "de-ch", "din", "diq", "dsb", "dtp", "dty",
-  "dv", "dz", "ee", "egl", "el", "eml", "en", "en-ca", "en-gb", "eo", "es", "es-419", "et", "eu", "ext", "fa", "ff", "fi", "fit",
-  "fj", "fo", "fr", "frc", "frp", "frr", "fur", "fy", "ga", "gag", "gan", "gan-hans", "gan-hant", "gcr", "gd", "gl", "glk", "gn",
-  "gom", "gom-deva", "gom-latn", "gor", "got", "grc", "gsw", "gu", "gv", "ha", "hak", "haw", "he", "hi", "hif", "hif-latn", "hil",
-  "ho", "hr", "hrx", "hsb", "ht", "hu", "hy", "hyw", "hz", "ia", "id", "ie", "ig", "ii", "ik", "ike-cans", "ike-latn", "ilo", "inh",
-  "io", "is", "it", "iu", "ja", "jam", "jbo", "jut", "jv", "ka", "kaa", "kab", "kbd", "kbd-cyrl", "kbp", "kea", "kg", "khw", "ki",
-  "kiu", "kj", "kjp", "kk", "kk-arab", "kk-cn", "kk-cyrl", "kk-kz", "kk-latn", "kk-tr", "kl", "km", "kn", "ko", "ko-kp", "koi",
-  "kr", "krc", "kri", "krj", "krl", "ks", "ks-arab", "ks-deva", "ksh", "ku", "ku-arab", "ku-latn", "kum", "kv", "kw", "ky", "la",
-  "lad", "lb", "lbe", "lez", "lfn", "lg", "li", "lij", "liv", "lki", "lmo", "ln", "lo", "loz", "lrc", "lt", "ltg", "lus", "luz", "lv",
-  "lzh", "lzz", "mai", "map-bms", "mdf", "mg", "mh", "mhr", "mi", "min", "mk", "ml", "mn", "mni", "mnw", "mo", "mr", "mrj", "ms", "mt",
-  "mus", "mwl", "my", "myv", "mzn", "na", "nah", "nan", "nap", "nb", "nds", "nds-nl", "ne", "new", "ng", "niu", "nl", "nn", "no", "nod",
-  "nov", "nqo", "nrm", "nso", "nv", "ny", "nys", "oc", "olo", "om", "or", "os", "ota", "pa", "pag", "pam", "pap", "pcd", "pdc", "pdt",
-  "pfl", "pi", "pih", "pl", "pms", "pnb", "pnt", "prg", "ps", "pt", "pt-br", "qu", "qug", "rgn", "rif", "rm", "rmy", "rn", "ro",
-  "roa-tara", "ru", "rue", "rup", "ruq", "ruq-cyrl", "ruq-latn", "rw", "rwr", "sa", "sah", "sat", "sc", "scn", "sco", "sd", "sdc",
-  "sdh", "se", "sei", "ses", "sg", "sgs", "sh", "shi", "shi-latn", "shi-tfng", "shn", "shy-latn", "si", "sje", "sk", "skr", "skr-arab",
-  "sl", "sli", "sm", "sma", "smj", "smn", "sms", "sn", "so", "sq", "sr", "sr-ec", "sr-el", "srn", "srq", "ss", "st", "stq", "sty", "su",
-  "sv", "sw", "szl", "ta", "tay", "tcy", "te", "tet", "tg", "tg-cyrl", "tg-latn", "th", "ti", "tk", "tl", "tly", "tn", "to", "tpi", "tr",
-  "tru", "ts", "tt", "tt-cyrl", "tt-latn", "tum", "tw", "ty", "tyv", "tzm", "udm", "ug", "ug-arab", "ug-latn", "uk", "ur", "uz", "uz-cyrl",
-  "uz-latn", "ve", "vec", "vep", "vi", "vls", "vmf", "vo", "vot", "vro", "wa", "war", "wo", "wuu", "xal", "xh", "xmf", "xsy", "yi", "yo",
-  "yue", "za", "zea", "zgh", "zh", "zh-cn", "zh-hans", "zh-hant", "zh-hk", "zh-mo", "zh-my", "zh-sg", "zh-tw", "zu", "und", "mis",
-  "mul", "zxx", "abe", "abq", "ami", "bnn", "brx", "chn", "cnr", "cop", "el-cy", "ett", "eya", "fkv", "fos", "fr-ca", "frm", "fro",
-  "fuf", "gez", "gmy", "hai", "haz", "hbo", "kjh", "koy", "lag", "lkt", "lld", "mid", "mnc", "moe", "non", "nr", "nxm", "ood", "otk",
-  "pjt", "ppu", "pwn", "pyu", "quc", "qya", "rar", "shy", "sia", "sjd", "sjk", "sjn", "sjt", "sju", "ssf", "syc", "tlb", "trv", "tzl",
-  "uga", "umu", "uun", "xpu", "yap", "zun"];
+// Fallback lists when the API fails (Wikidata-only). Term context (labels/descriptions/aliases) allows fewer codes than monolingualtext.
+// Update with wbclcontext=term or wbclcontext=monolingualtext in the API URL.
+DEFAULT_LANGUAGES_TERM = [
+  "aa", "aae", "ab", "abr", "abs", "ace", "acf", "acm", "ady", "ady-cyrl", "aeb", "aeb-arab", "aeb-latn", "af", "agq", "aig", "ak",
+  "aln", "als", "alt", "am", "ami", "an", "ang", "ann", "anp", "apc", "ar", "arc", "arn", "arq", "ary", "arz", "as",
+  "ase", "ast", "atj", "av", "avk", "awa", "ay", "az", "azb", "ba", "bag", "ban", "ban-bali", "bar", "bas", "bat-smg", "bax",
+  "bbc", "bbc-latn", "bbj", "bcc", "bci", "bcl", "bdr", "be", "be-tarask", "be-x-old", "bew", "bfd", "bfw", "bg", "bgc", "bgn", "bh",
+  "bho", "bi", "bjn", "bkc", "bkh", "bkm", "blk", "bm", "bn", "bo", "bol", "bpy", "bqi", "bqz", "br", "brh", "bs",
+  "btm", "bto", "bug", "bug-bugi", "bxr", "byv", "ca", "cak", "cal", "cbk-zam", "ccp", "cdo", "cdo-hant", "cdo-latn", "ce", "ceb", "ch",
+  "chn", "cho", "chr", "chy", "ckb", "cnh", "co", "cop", "cps", "cpx", "cpx-hans", "cpx-hant", "cpx-latn", "cr", "crh", "crh-cyrl", "crh-latn",
+  "crh-ro", "cs", "csb", "cu", "cv", "cy", "da", "dag", "de", "de-at", "de-ch", "de-formal", "dga", "din", "diq", "dlg", "dsb",
+  "dso", "dtp", "dty", "dua", "dv", "dz", "ee", "efi", "egl", "el", "eml", "en", "en-ca", "en-gb", "en-us", "eo", "es",
+  "es-419", "es-formal", "et", "eto", "etu", "eu", "ewo", "ext", "fa", "fat", "ff", "fi", "fit", "fiu-vro", "fj", "fkv", "fmp",
+  "fo", "fon", "fr", "frc", "frp", "frr", "fur", "fvr", "fy", "ga", "gaa", "gag", "gan", "gan-hans", "gan-hant", "gcf", "gcr",
+  "gd", "gju-arab", "gju-deva", "gl", "gld", "glk", "gn", "gom", "gom-deva", "gom-latn", "gor", "got", "gpe", "grc", "gsw", "gu", "guc",
+  "gur", "guw", "gv", "gya", "ha", "hak", "hak-hans", "hak-hant", "hak-latn", "haw", "he", "hi", "hif", "hif-latn", "hil", "hke", "hno",
+  "ho", "hoc", "hoc-latn", "hr", "hrx", "hsb", "hsn", "ht", "hu", "hu-formal", "hy", "hyw", "hz", "ia", "iba", "ibb", "id",
+  "ie", "ig", "igl", "ii", "ik", "ike-cans", "ike-latn", "ilo", "inh", "io", "is", "isu", "isv-cyrl", "isv-latn", "it", "iu", "ja",
+  "jam", "jbo", "jut", "jv", "jv-java", "ka", "kaa", "kab", "kai", "kaj", "kbd", "kbd-cyrl", "kbp", "kcg", "kea", "ker", "kg",
+  "kge", "kgg", "khw", "ki", "kiu", "kj", "kjh", "kjp", "kk", "kk-arab", "kk-cn", "kk-cyrl", "kk-kz", "kk-latn", "kk-tr", "kl", "km",
+  "kn", "knc", "ko", "ko-kp", "koi", "kr", "krc", "kri", "krj", "krl", "ks", "ks-arab", "ks-deva", "ksf", "ksh", "ksw", "ku",
+  "ku-arab", "ku-latn", "kum", "kus", "kv", "kw", "ky", "la", "lad", "lb", "lbe", "lem", "lez", "lfn", "lg", "li", "lij",
+  "liv", "ljp", "lki", "lld", "lmo", "ln", "lns", "lo", "loz", "lrc", "lt", "ltg", "lua", "lus", "luz", "lv", "lzh",
+  "lzz", "mad", "mag", "mai", "map-bms", "mcn", "mcp", "mdf", "mg", "mh", "mhr", "mi", "min", "mk", "ml", "mn", "mnc",
+  "mnc-latn", "mnc-mong", "mni", "mnw", "mo", "mos", "mr", "mrh", "mrj", "ms", "ms-arab", "mt", "mua", "mui", "mul", "mus", "mwl",
+  "my", "myv", "mzn", "na", "nah", "nan", "nan-hani", "nan-hant", "nan-latn-pehoeji", "nan-latn-tailo", "nap", "nb", "nds", "nds-nl", "ne", "new", "ng",
+  "nge", "nia", "nit", "niu", "nl", "nl-informal", "nla", "nmg", "nmz", "nn", "nnh", "nnz", "no", "nod", "nog", "nov", "nqo",
+  "nr", "nrm", "nso", "nup", "nv", "ny", "nyn", "nyo", "nys", "oc", "ojb", "olo", "om", "or", "os", "osa-latn", "ota",
+  "pa", "pag", "pam", "pap", "pap-aw", "pcd", "pcm", "pdc", "pdt", "pfl", "pi", "pih", "pl", "pms", "pnb", "pnt", "ppl",
+  "prg", "ps", "pt", "pt-br", "pwn", "qu", "quc", "qug", "rgn", "rif", "rki", "rm", "rmc", "rmf", "rmy", "rn", "ro",
+  "roa-rup", "roa-tara", "rsk", "ru", "rue", "rup", "ruq", "ruq-cyrl", "ruq-latn", "rut", "rw", "rwr", "ryu", "sa", "sah", "sas", "sat",
+  "sc", "scn", "sco", "sd", "sdc", "sdh", "se", "se-fi", "se-no", "se-se", "sei", "ses", "sg", "sgs", "sh", "sh-cyrl", "sh-latn",
+  "shi", "shi-latn", "shi-tfng", "shn", "shy", "shy-latn", "si", "simple", "sjd", "sje", "sju", "sk", "skr", "skr-arab", "sl", "sli", "sm",
+  "sma", "smj", "smn", "sms", "sn", "so", "sq", "sr", "sr-ec", "sr-el", "srn", "sro", "srq", "ss", "st", "stq", "sty",
+  "su", "sv", "sw", "syl", "szl", "szy", "ta", "tay", "tcy", "tdd", "te", "tet", "tg", "tg-cyrl", "tg-latn", "th", "thq",
+  "ti", "tig", "tk", "tl", "tly", "tly-cyrl", "tn", "to", "tok", "tpi", "tpv", "tr", "tru", "trv", "ts", "tt", "tt-cyrl",
+  "tt-latn", "ttj", "tum", "tvu", "tw", "ty", "tyv", "tzm", "udm", "ug", "ug-arab", "ug-latn", "uk", "ur", "uz", "uz-cyrl", "uz-latn",
+  "ve", "vec", "vep", "vi", "vls", "vmf", "vmw", "vo", "vot", "vro", "vut", "wa", "wal", "war", "wes", "wls", "wlx",
+  "wo", "wuu", "wuu-hans", "wuu-hant", "wya", "xal", "xh", "xmf", "xsy", "yas", "yat", "yav", "ybb", "yi", "yo", "yrl", "yua",
+  "yue", "yue-hans", "yue-hant", "za", "zea", "zgh", "zgh-latn", "zh", "zh-classical", "zh-cn", "zh-hans", "zh-hant", "zh-hk", "zh-min-nan", "zh-mo", "zh-my", "zh-sg",
+  "zh-tw", "zh-yue", "zu"
+];
+
+DEFAULT_LANGUAGES_MONOLINGUALTEXT = [
+  "aa", "aae", "ab", "abe", "abq", "abq-latn", "abr", "abs", "ace", "acf", "ach", "acm", "ada", "adg", "ady", "ady-cyrl",
+  "ady-latn", "ae", "aeb", "aeb-arab", "aeb-latn", "aec", "aee", "aer", "af", "afa", "afh", "agq", "aha", "ahr", "aig", "aii",
+  "ain", "ajg", "ajp", "ajp-arab", "ajp-latn", "ak", "akb", "akk", "akk-latn", "akk-xsux", "akz", "alc", "ale", "ale-cyrl", "alg", "aln",
+  "alq", "als", "alt", "aly", "am", "ami", "amx", "an", "ane", "ang", "ann", "anp", "apa", "apc", "apc-arab", "apc-latn",
+  "apw", "ar", "ar-001", "arc", "are", "arn", "aro", "arp", "arq", "ars", "art", "arw", "ary", "ary-arab", "ary-latn", "arz",
+  "as", "asa", "ase", "ast", "ath", "atj", "atv", "aus", "av", "avk", "awa", "axe", "axl", "ay", "ayh", "az",
+  "az-arab", "az-cyrl", "az-latn", "azb", "azj", "ba", "bad", "bag", "bai", "bal", "bal-latn", "ban", "ban-bali", "bar", "bas", "bat",
+  "bax", "bbc", "bbc-batk", "bbc-latn", "bbj", "bcc", "bci", "bcl", "bdr", "be", "be-tarask", "bej", "bem", "ber", "bew", "bez",
+  "bfa", "bfd", "bfi", "bfq", "bft", "bft-tibt", "bfw", "bfz", "bfz-deva", "bfz-takr", "bg", "bgc", "bgc-arab", "bgc-deva", "bgn", "bgp",
+  "bgq", "bgq-arab", "bgq-deva", "bh", "bha", "bhd", "bhd-deva", "bhd-takr", "bho", "bi", "bik", "bin", "bjn", "bkc", "bkh", "bkm",
+  "bkn", "bla", "blc", "blk", "blo", "blt", "bm", "bn", "bnb", "bnn", "bnt", "bny", "bo", "bol", "bom", "bpy",
+  "bqi", "bqz", "br", "bra", "brh", "brh-latn", "brx", "bs", "bse", "bsk", "bss", "btd", "bth", "btk", "btm", "bto",
+  "bts", "btx", "btz", "bua", "bug", "bug-bugi", "bum", "bvb", "bwr", "bxr", "byn", "byv", "bzj", "bzs", "ca", "cad",
+  "cai", "cak", "cal", "car", "cau", "cay", "cbk", "cbk-zam", "cch", "ccp", "ccp-beng", "cdo", "cdo-hani", "cdo-hant", "cdo-latn", "cdz-beng",
+  "ce", "ceb", "cel", "cgg", "ch", "chb", "chg", "chk", "chm", "chn", "cho", "chp", "chr", "chy", "cic", "ciw",
+  "cja", "cja-arab", "cja-cham", "cja-latn", "cjm", "cjm-arab", "cjm-cham", "cjm-latn", "cjy", "cjy-hans", "cjy-hant", "ckb", "ckb-arab", "ckb-latn", "cko", "ckt",
+  "ckv", "clc", "cmc", "cmg", "cnh", "cnr", "cnr-cyrl", "cnr-latn", "cnx", "co", "coa", "cop", "cpe", "cpf", "cpp", "cps",
+  "cpx", "cpx-hans", "cpx-hant", "cpx-latn", "cr", "cr-cans", "cr-latn", "crb", "crg", "crh", "crh-cyrl", "crh-latn", "crh-ro", "crj", "crk", "crl",
+  "crm", "crp", "crr", "crs", "cs", "csb", "csw", "ctg", "cu", "cus", "cv", "cy", "da", "dag", "dak", "dar",
+  "dav", "day", "dbj", "ddn", "de", "de-1901", "de-at", "de-ch", "del", "den", "dga", "dgr", "din", "diq", "dje", "dkr",
+  "dlg", "dmg", "dmv", "doi", "doi-arab", "doi-deva", "doi-dogr", "dpp", "dra", "drg", "dro", "dru", "dsb", "dso", "dtb", "dtp",
+  "dtr", "dty", "dua", "duf", "dum", "dv", "dyo", "dyu", "dz", "dzg", "ebu", "ee", "efi", "egl", "egy", "eka",
+  "ekp", "el", "el-cy", "elm", "elx", "eml", "en", "en-au", "en-ca", "en-gb", "en-in", "en-jm", "en-nz", "en-uk", "en-us", "enm",
+  "eo", "eo-hsistemo", "eo-xsistemo", "es", "es-419", "es-es", "es-mx", "es-ni", "ess", "esu", "et", "eto", "ett", "etu", "eu", "ewo",
+  "ext", "eya", "fa", "fa-af", "fab", "fan", "fat", "fax", "fay", "ff", "fi", "fil", "fit", "fiu", "fj", "fkv",
+  "fmp", "fo", "fon", "fos", "fr", "fr-ca", "fr-ch", "frc", "frk", "frm", "fro", "frp", "frr", "frs", "fsl", "fud",
+  "fuf", "fur", "fvr", "fy", "ga", "gaa", "gag", "gah", "gan", "gan-hans", "gan-hant", "gay", "gba", "gbb", "gbk", "gbk-deva",
+  "gbk-takr", "gbm", "gbz", "gcf", "gcr", "gd", "gem", "gez", "gil", "gju", "gju-arab", "gju-deva", "gl", "gld", "glh", "glk",
+  "gmh", "gml", "gmy", "gn", "gnq", "goh", "gom", "gom-deva", "gom-latn", "gon", "gor", "got", "gpe", "grb", "grc", "gsg",
+  "gsw", "gsw-fr", "gu", "guc", "gum", "gur", "guw", "guz", "gv", "gwi", "gya", "ha", "ha-arab", "ha-latn", "ha-ne", "hac",
+  "hai", "hak", "hak-hans", "hak-hant", "hak-latn", "hav", "haw", "hax", "haz", "hbo", "he", "hi", "hi-kthi", "hi-latn", "hif", "hif-deva",
+  "hif-latn", "hil", "him", "hit", "hit-latn", "hit-xsux", "hke", "hmn", "hne", "hnj", "hno", "ho", "hoc", "hoc-latn", "hr", "hrx",
+  "hsb", "hsn", "hsn-hans", "hsn-hant", "ht", "hts", "hu", "hup", "hur", "hy", "hyw", "hz", "ia", "iba", "ibb", "id",
+  "ie", "ifu", "ig", "igb", "igl", "ii", "ijo", "ik", "ike-cans", "ike-latn", "ikt", "ilo", "inc", "ine", "inh", "io",
+  "ira", "iro", "is", "ish", "isk-arab", "isk-cyrl", "isk-latn", "ist", "isu", "isv-cyrl", "isv-latn", "it", "iu", "ivb", "izh", "ja",
+  "ja-hani", "ja-hira", "ja-hrkt", "ja-kana", "jac", "jak", "jam", "jax", "jbo", "jdt", "jdt-cyrl", "jgo", "jje", "jmc", "jpr", "jrb",
+  "jut", "jv", "jv-java", "ka", "kaa", "kab", "kac", "kag", "kai", "kaj", "kam", "kar", "kaw", "kbd", "kbd-cyrl", "kbd-latn",
+  "kbl", "kbp", "kcg", "kck", "kde", "kea", "kek", "ken", "ker", "kfo", "kfr", "kg", "kge", "kge-arab", "kgg", "kgp",
+  "kha", "khi", "kho", "khq", "khw", "ki", "kip", "kiu", "kj", "kjh", "kjp", "kk", "kk-arab", "kk-cn", "kk-cyrl", "kk-kz",
+  "kk-latn", "kk-tr", "kkj", "kl", "kld", "kln", "kls", "kls-arab", "kls-latn", "km", "kmb", "kmr", "kmr-arab", "kmr-latn", "kmz", "kn",
+  "knc", "kne", "knn", "knq", "ko", "ko-cn", "ko-hani", "ko-kore", "ko-kp", "koi", "kok", "kos", "koy", "kpe", "kqr", "kqt",
+  "kqv", "kr", "krc", "kri", "krj", "krl", "kro", "kru", "ks", "ks-arab", "ks-deva", "ksb", "ksf", "ksh", "ksw", "ksy-beng",
+  "ku", "ku-arab", "ku-latn", "kum", "kus", "kut", "kv", "kve", "kw", "kwk", "kxd", "kxi", "kxn", "kxv", "ky", "kyw-beng",
+  "kyw-deva", "la", "lad", "lad-hebr", "lad-latn", "lag", "lah", "laj", "lam", "lb", "lbe", "lcm", "ldn", "lem", "lez", "lfn",
+  "lg", "li", "lij", "lij-mc", "lil", "liv", "ljp", "lki", "lkt", "lld", "lmn", "lmo", "ln", "lns", "lo", "lol",
+  "lou", "loz", "lrc", "lsm", "lt", "ltg", "lu", "lua", "lud", "lui", "lun", "luo", "lus", "lut", "luy", "luz",
+  "lv", "lzh", "lzz", "mad", "maf", "mag", "mai", "mak", "mak-bugi", "man", "map", "map-bms", "mas", "maw", "mcn", "mcp",
+  "mde", "mdf", "mdh", "mdr", "men", "mer", "mey", "mfa", "mfe", "mg", "mga", "mgh", "mgo", "mh", "mhk", "mhn",
+  "mhr", "mi", "mic", "mid", "min", "miq", "mis", "mix", "mjx-beng", "mk", "mkh", "ml", "mn", "mn-cyrl", "mn-mong", "mnc",
+  "mnc-latn", "mnc-mong", "mni", "mni-beng", "mnj", "mno", "mnq", "mns", "mnw", "mo", "moe", "moh", "mos", "mr", "mr-modi", "mrh",
+  "mrj", "mrt", "mrv", "ms", "ms-arab", "msi", "mt", "mua", "mui", "mul", "mun", "mus", "mvf", "mvi", "mvi-hira", "mvv",
+  "mwl", "mwr", "mwv", "mww", "mww-latn", "my", "mye", "myn", "myv", "mzn", "na", "nah", "nai", "nan", "nan-hani", "nan-hans",
+  "nan-hant", "nan-latn-pehoeji", "nan-latn-tailo", "nap", "naq", "nb", "nd", "nds", "nds-nl", "ne", "new", "ng", "nge", "nia", "nic", "nit",
+  "niu", "njo", "nl", "nl-be", "nla", "nmg", "nmz", "nn", "nn-hognorsk", "nnh", "nnz", "no", "nod", "nod-thai", "nog", "non",
+  "non-runr", "nov", "nqo", "nr", "nrf-gg", "nrf-je", "nrm", "nsk", "nsl", "nso", "ntd", "nub", "nup", "nus", "nv", "nwc",
+  "nxm", "ny", "nym", "nyn", "nyo", "nys", "nzi", "obt", "oc", "oco", "odt", "ofs", "oj", "ojb", "ojc", "ojp",
+  "ojp-hani", "ojp-hira", "ojs", "ojw", "oka", "olo", "om", "oma", "ood", "or", "os", "osa", "osa-latn", "osi", "osx", "ota",
+  "otk", "oto", "ovd", "owl", "pa", "pa-guru", "paa", "pag", "pal", "pal-phli", "pal-phlp", "pal-phlv", "pam", "pao", "pap", "pap-aw",
+  "paq", "pau", "pbb", "pcd", "pcm", "pdc", "pdt", "peo", "pfl", "pgd", "pgd-arab", "pgd-deva", "pgd-khar", "pgl", "phi", "phl",
+  "phn", "phn-latn", "phn-phnx", "phr", "pi", "pi-sidd", "pih", "pis", "pjt", "pkc", "pko", "pks", "pl", "plv", "plw", "pms",
+  "pnb", "pnt", "pon", "pov", "ppl", "ppu", "pqm", "pra", "prc", "prg", "pro", "prs", "ps", "ps-af", "ps-pk", "psh",
+  "psi", "psu", "psu-arab", "psu-brah", "psu-deva", "psu-guru", "pt", "pt-ao1990", "pt-br", "pt-colb1945", "pt-pt", "pwn", "pyu", "qu", "quc", "qug",
+  "qwh", "qxp", "qxq", "qya", "rag", "rah", "raj", "rap", "rar", "rcf", "rej", "rgn", "rhg", "rhg-arab", "rhg-rohg", "rif",
+  "rki", "rkt", "rm", "rm-puter", "rm-rumgr", "rm-surmiran", "rm-sursilv", "rm-sutsilv", "rm-vallader", "rmc", "rmf", "rmg", "rml", "rml-cyrl", "rmn", "rmo",
+  "rmw", "rmy", "rn", "ro", "ro-md", "roa", "roa-tara", "rof", "rom", "rsk", "rtm", "ru", "ru-petr1708", "rue", "rug", "ruo",
+  "rup", "ruq", "ruq-cyrl", "ruq-latn", "rut", "rw", "rwk", "rwr", "rys", "rys-hira", "ryu", "ryu-hira", "sa", "sa-sidd", "sad", "sah",
+  "sai", "sal", "sam", "saq", "sas", "sat", "sat-beng", "sat-latn", "sat-orya", "saz", "sba", "sbp", "sc", "scl", "scn", "sco",
+  "sd", "sd-deva", "sd-gujr", "sd-khoj", "sd-sind", "sdc", "sdh", "sdh-arab", "sdh-latn", "sdo", "se", "se-fi", "se-no", "se-se", "sea", "see",
+  "seh", "sei", "sel", "sem", "ser", "ses", "sg", "sga", "sgh", "sgh-arab", "sgh-cyrl", "sgh-latn", "sgn", "sgs", "sgy-arab", "sgy-latn",
+  "sh", "sh-cyrl", "sh-latn", "shd", "shi", "shi-latn", "shi-tfng", "shn", "shu", "shy", "shy-arab", "shy-latn", "shy-tfng", "si", "sia", "sid",
+  "sio", "sit", "sjd", "sje", "sjk", "sjn", "sjo", "sjt", "sju", "sk", "skr", "skr-arab", "sl", "sla", "slh", "sli",
+  "slr", "sly", "sm", "sma", "smi", "smj", "smn", "sms", "sn", "sne", "snk", "so", "sog", "son", "spv", "sq",
+  "sr", "sr-cyrl", "sr-ec", "sr-el", "sr-latn", "sr-me", "srh-arab", "srh-cyrl", "srh-latn", "srk", "srn", "sro", "srq", "srr", "ss", "ssa",
+  "ssb", "ssf", "ssy", "st", "sth", "stq", "str", "sty", "su", "suk", "sus", "sux", "sux-latn", "sux-xsux", "suz", "sv",
+  "sva", "sw", "sw-cd", "swb", "sxr", "sxu", "syc", "syl", "syl-beng", "syl-sylo", "syr", "szl", "szy", "ta", "tai", "tao",
+  "tay", "tbl", "tce", "tcy", "tdd", "te", "tem", "teo", "ter", "tet", "tg", "tg-cyrl", "tg-latn", "tgx", "th", "thq",
+  "thr", "tht", "ti", "tig", "tih", "tiv", "tji", "tk", "tkl", "tkr", "tl", "tlb", "tlh", "tlh-latn", "tlh-piqd", "tli",
+  "tly", "tly-cyrl", "tmh", "tmr", "tn", "tnq", "to", "tog", "toi", "tok", "tpi", "tpv", "tr", "trp", "tru", "trv",
+  "trw", "ts", "tsd", "tsg", "tsi", "tsu", "tt", "tt-cyrl", "tt-latn", "ttj", "ttm", "ttt", "tui", "tum", "tup", "tut",
+  "tvl", "tvu", "tw", "twd", "twq", "txa", "txg", "txo-beng", "txo-toto", "txx", "ty", "tyv", "tzl", "tzm", "udm", "ug",
+  "ug-arab", "ug-cyrl", "ug-latn", "uga", "uk", "ulc", "uln", "umb", "umu", "und", "unr", "unr-deva", "unr-nagm", "ur", "urk", "ush",
+  "uun", "uz", "uz-cyrl", "uz-latn", "vai", "ve", "vec", "vep", "vi", "vi-hani", "vls", "vmf", "vmw", "vo", "vot", "vro",
+  "vun", "vut", "wa", "wae", "wak", "wal", "war", "was", "wbl-arab", "wbl-arab-af", "wbl-arab-cn", "wbl-arab-pk", "wbl-cyrl", "wbl-latn", "wbp", "wen",
+  "wes", "wlm", "wls", "wlx", "wo", "wsg", "wsv", "wuu", "wuu-hans", "wuu-hant", "wya", "wyi", "xal", "xbm", "xh", "xmf",
+  "xmm", "xnb", "xno", "xnr", "xnr-deva", "xnr-takr", "xog", "xon", "xpu", "xsu", "xsy", "yah-cyrl", "yah-latn", "yai-cyrl", "yai-latn", "yao",
+  "yap", "yas", "yat", "yav", "ybb", "ydd", "ydg", "yec", "yi", "ykg", "yo", "yoi", "yoi-hira", "yox", "yox-hira", "ypk",
+  "yrk", "yrl", "yua", "yue", "yue-hans", "yue-hant", "za", "zai", "zap", "zbl", "zea", "zen", "zgh", "zgh-latn", "zh", "zh-cn",
+  "zh-hans", "zh-hant", "zh-hk", "zh-mo", "zh-my", "zh-sg", "zh-tw", "zmi", "znd", "zpu", "zu", "zun", "zxx", "zza"
+];
 
 $.suggest("langsuggest", {
   _init: function () {
@@ -58,6 +152,7 @@ $.suggest("langsuggest", {
         format: "json",
       },
       success: function (data) {
+        var context = self.options.languageContext || "monolingualtext";
         self.getLanguageCodes(function (languageCodes) {
           var array = [];
           for (var key in data.languagesearch) {
@@ -66,26 +161,30 @@ $.suggest("langsuggest", {
             }
           }
           self.response(array);
-        });
+        }, context);
       },
     });
   },
 
+  // Cache: apiEndpointToLangCodes[endpoint][context] -> array of language codes
   apiEndpointToLangCodes: {},
 
-  getLanguageCodes: function (callback) {
+  getLanguageCodes: function (callback, context) {
     var self = this;
+    context = context || "monolingualtext";
     var selectedApi = WikibaseManager.getSelectedWikibaseApi();
-    if (self.apiEndpointToLangCodes[selectedApi]) {
-      callback(self.apiEndpointToLangCodes[selectedApi]);
+    var fallback = context === "term" ? DEFAULT_LANGUAGES_TERM : DEFAULT_LANGUAGES_MONOLINGUALTEXT;
+    if (!self.apiEndpointToLangCodes[selectedApi]) {
+      self.apiEndpointToLangCodes[selectedApi] = {};
+    }
+    if (self.apiEndpointToLangCodes[selectedApi][context]) {
+      callback(self.apiEndpointToLangCodes[selectedApi][context]);
     } else {
-      // try fetching the language codes
-      // action=query&meta=wbcontentlanguages&wbclcontext=monolingualtext&format=json
       $.ajax({
         type: "POST",
         dataType: "jsonp",
         url: WikibaseManager.getSelectedWikibaseApi() +
-            "?action=query&meta=wbcontentlanguages&wbclcontext=monolingualtext&format=json",
+            "?action=query&meta=wbcontentlanguages&wbclprop=code&wbclcontext=" + context + "&format=json",
         success: function (data) {
           var result = [];
           var langs = data.query.wbcontentlanguages;
@@ -94,12 +193,12 @@ $.suggest("langsuggest", {
               result.push(langs[lang].code);
             }
           }
-          self.apiEndpointToLangCodes[selectedApi] = result;
+          self.apiEndpointToLangCodes[selectedApi][context] = result;
           callback(result);
         },
         error: function () {
-          self.apiEndpointToLangCodes[selectedApi] = DEFAULT_LANGUAGES;
-          callback(DEFAULT_LANGUAGES);
+          self.apiEndpointToLangCodes[selectedApi][context] = fallback;
+          callback(fallback);
         },
       });
     }

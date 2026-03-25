@@ -23,5 +23,13 @@
     div.grid-layout.layout-normal {
         margin: 0;
     }
+    div.grid-layout.layout-normal>table {
+        width: 100%;
+    }
+    div.grid-layout.layout-normal>table>thead>tr>th, div.grid-layout.layout-normal>table>tbody>tr>td:first-child  {
+        width: 65%;
+        white-space: normal !important;
+        word-break: break-word;
+    }
 }
 
