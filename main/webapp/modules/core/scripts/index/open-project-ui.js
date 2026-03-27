@@ -322,19 +322,33 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         $(tr.insertCell(tr.cells.length))
       );
 
-      var copyProjectLink = $('<a></a>')
+      var duplicateProjectLink = $('<a></a>')
         .addClass("copy-project")
         .attr("href", "javascript:{}")
         .attr("title", "Copy Project")
         .html("<img src='images/copy.svg' style='width: 16px; height: 16px;' />")
         .on('click', function() {
-            //call to logic function here
+
+            if(!confirm("Duplicate project?")){
+              return;
+            }
+
+            Refine.postCSRF(
+              "command/core/duplicate-project",
+              {"project" : project.id},
+              function(data){
+                if (data.code === "ok"){
+                  self._buildTagsAndFetchProjects();
+                } else {
+                  alert("Duplication failed")
+                }
+              },
+              "json"
+            );
         })
         .appendTo(
           $(tr.insertCell(tr.cells.length))
         );
-
-
       
       $('<div></div>')
       .html('<span style="display:none">' + project.modified + '</span>' + project.date)

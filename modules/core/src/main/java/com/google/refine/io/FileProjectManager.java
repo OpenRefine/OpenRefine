@@ -230,6 +230,37 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
+    public void duplicateProject(long projectID) throws IOException {
+
+        // confirm project exists
+        File sourceDir = this.getProjectDir(projectID);
+        if (!sourceDir.exists()) {
+            throw new IOException("Source project does not exist");
+        }
+
+        // create new id + folder for it
+        long newProjectID = Project.generateID();
+        File destDir = this.getProjectDir(newProjectID);
+
+        // copy project files to new folder
+        File[] files = sourceDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                File destFile = new File(destDir, file.getName());
+                Files.copy(file.toPath(), destFile.toPath());
+            }
+        }
+
+        // rename project copy
+        ProjectMetadata metaData = ProjectMetadataUtilities.load(destDir);
+        metaData.setName(metaData.getName() + " (Copy)");
+        ProjectMetadataUtilities.save(metaData, destDir);
+
+        // update workspace
+        _projectsMetadata.put(newProjectID, metaData);
+        this.saveWorkspace();
+    }
+
     /**
      * @deprecated use {@link Files#copy(Path, OutputStream)}
      */
