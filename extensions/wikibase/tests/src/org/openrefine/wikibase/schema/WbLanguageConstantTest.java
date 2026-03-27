@@ -26,10 +26,17 @@ package org.openrefine.wikibase.schema;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
+import com.google.refine.model.ModelException;
+
+import org.openrefine.wikibase.schema.validation.ValidationState;
 import org.openrefine.wikibase.testing.JacksonSerializationTest;
+import org.openrefine.wikibase.utils.LanguageCodeStore.LanguageCodeContext;
 
 public class WbLanguageConstantTest extends WbExpressionTest<String> {
 
@@ -68,5 +75,27 @@ public class WbLanguageConstantTest extends WbExpressionTest<String> {
         hasValidationError("Empty language field", new WbLanguageConstant(null, "Deutsch"));
         hasValidationError("Empty text field", new WbLanguageConstant("de", null));
         hasValidationError("Invalid language code 'invalid_code'", new WbLanguageConstant("invalid_code", "unknown language"));
+    }
+
+    @Test
+    public void testValidationWithTermContextRejectsMonolingualOnlyCode() throws ModelException {
+        // "und" is valid for monolingualtext but not for term (labels/descriptions/aliases)
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.addColumn(0, new Column(0, "column"), true);
+        ValidationState validation = new ValidationState(columnModel);
+        validation.setMediaWikiApiEndpoint(null);
+        validation.setLanguageContext(LanguageCodeContext.TERM);
+        WbLanguageConstant undConstant = new WbLanguageConstant("und", "Undefined");
+        undConstant.validate(validation);
+        assertTrue(validation.getValidationErrors().stream().anyMatch(e -> e.getMessage().contains("und")),
+                "Term context should reject language code 'und'");
+    }
+
+    @Test
+    public void testNormalizeLanguageCodeWithContext() {
+        assertEquals("de", WbLanguageConstant.normalizeLanguageCode("de", null, LanguageCodeContext.TERM));
+        assertEquals("de", WbLanguageConstant.normalizeLanguageCode("de", null, LanguageCodeContext.MONOLINGUALTEXT));
+        assertNull(WbLanguageConstant.normalizeLanguageCode("und", null, LanguageCodeContext.TERM));
+        assertEquals("und", WbLanguageConstant.normalizeLanguageCode("und", null, LanguageCodeContext.MONOLINGUALTEXT));
     }
 }

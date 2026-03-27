@@ -27,7 +27,7 @@
     "database-source/databaseSaveButton": "Save",
     "database-source/databaseTestButton": "Test",
     "database-source/databaseSchemaLabel": "Schema",
-    "database-source/databaseNameLabel": "Database",
+    "database-source/databaseNameLabel": "Database name",
     "database-source/databaseFileNameLabel": "Database file",
     "database-source/databasePasswordLabel": "Password",
     "database-source/databaseUserLabel": "User",

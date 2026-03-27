@@ -12,13 +12,8 @@ on:
       - 'extensions/jython/src/**'
       - 'extensions/jython/tests/**'
       - 'extensions/jython/pom.xml'
-      - 'extensions/sample/src/**'
-      - 'extensions/sample/pom.xml'
       - 'extensions/pc-axis/src/**'
       - 'extensions/pc-axis/pom.xml'
-      - 'extensions/phonetic/src/**'
-      - 'extensions/phonetic/tests/**'
-      - 'extensions/phonetic/pom.xml'
       - 'extensions/wikibase/src/**'
       - 'extensions/wikibase/tests/**'
       - 'extensions/wikibase/pom.xml'
@@ -38,7 +33,6 @@ on:
       - 'refine.ini'
     branches:
       - master
-      - '4.0'
 
 permissions: read-all
 
@@ -46,7 +40,7 @@ jobs:
   linux_server_tests:
     strategy:
       matrix:
-        java: [ 21 ]
+        java: [ 25 ] # We only test a single version so coverage stats don't bounce around.
 
     runs-on: ubuntu-latest
 
@@ -132,17 +126,6 @@ jobs:
           fail-on-error: false
           parallel: true
 
-      - name: Coveralls phonetic
-        uses: coverallsapp/github-action@v2
-        with:
-          base-path: extensions/phonetic/src
-          files: extensions/phonetic/target/site/jacoco/jacoco.xml
-          github-token: ${{ env.COVERALLS_TOKEN }}
-          format: jacoco
-          flag-name: Java-${{ matrix.java }}-phonetic
-          fail-on-error: false
-          parallel: true
-
       - name: Coveralls wikibase
         uses: coverallsapp/github-action@v2
         with:
@@ -171,11 +154,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Set up Java 21
+      - name: Set up Java 25
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 21
+          java-version: 25
           cache: 'maven'
 
       - name: Check Java linting
