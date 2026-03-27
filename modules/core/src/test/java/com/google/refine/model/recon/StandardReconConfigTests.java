@@ -35,6 +35,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +67,9 @@ import com.google.refine.util.TestUtils;
 
 public class StandardReconConfigTests extends RefineTest {
 
+    String QUERY_TEXT = "david lynch";
+    String QUERY_JSON = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+
     @BeforeMethod
     public void registerOperation() {
         ReconConfig.registerReconConfig(getCoreModule(), "standard-service", StandardReconConfig.class);
@@ -77,7 +81,7 @@ public class StandardReconConfigTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    private class StandardReconConfigStub extends StandardReconConfig {
+    private static class StandardReconConfigStub extends StandardReconConfig {
 
         public StandardReconConfigStub() {
             super("", "", "", "", "", false, new ArrayList<ColumnDetail>());
@@ -97,7 +101,7 @@ public class StandardReconConfigTests extends RefineTest {
         StandardReconConfigStub t = new StandardReconConfigStub();
         double r = t.wordDistanceTest("Foo", "Foo bar");
 
-        Assert.assertEquals(0.5, r);
+        Assert.assertEquals(r, 0.5);
     }
 
     @Test
@@ -105,36 +109,38 @@ public class StandardReconConfigTests extends RefineTest {
         StandardReconConfigStub t = new StandardReconConfigStub();
         double r = t.wordDistanceTest("On and On", "On and On and On");
 
-        Assert.assertTrue(!Double.isInfinite(r));
-        Assert.assertTrue(!Double.isNaN(r));
+        Assert.assertFalse(Double.isInfinite(r));
+        Assert.assertFalse(Double.isNaN(r));
     }
 
     @Test
     public void serializeStandardReconConfig() throws Exception {
-        String json = " {\n" +
-                "        \"mode\": \"standard-service\",\n" +
-                "        \"service\": \"https://tools.wmflabs.org/openrefine-wikidata/en/api\",\n" +
-                "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                "        \"type\": {\n" +
-                "                \"id\": \"Q13442814\",\n" +
-                "                \"name\": \"scientific article\"\n" +
-                "        },\n" +
-                "        \"autoMatch\": true,\n" +
-                "        \"columnDetails\": [\n" +
-                "           {\n" +
-                "             \"column\": \"organization_country\",\n" +
-                "             \"propertyName\": \"SPARQL: P17/P297\",\n" +
-                "             \"propertyID\": \"P17/P297\"\n" +
-                "           },\n" +
-                "           {\n" +
-                "             \"column\": \"organization_id\",\n" +
-                "             \"propertyName\": \"SPARQL: P3500|P2427\",\n" +
-                "             \"propertyID\": \"P3500|P2427\"\n" +
-                "           }\n" +
-                "        ],\n" +
-                "        \"limit\": 0\n" +
-                " }";
+        String json = """
+                 {
+                        "mode": "standard-service",
+                        "service": "https://tools.wmflabs.org/openrefine-wikidata/en/api",
+                        "identifierSpace": "http://www.wikidata.org/entity/",
+                        "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                        "type": {
+                                "id": "Q13442814",
+                                "name": "scientific article"
+                        },
+                        "autoMatch": true,
+                        "columnDetails": [
+                           {
+                             "column": "organization_country",
+                             "propertyName": "SPARQL: P17/P297",
+                             "propertyID": "P17/P297"
+                           },
+                           {
+                             "column": "organization_id",
+                             "propertyName": "SPARQL: P3500|P2427",
+                             "propertyID": "P3500|P2427"
+                           }
+                        ],
+                        "limit": 0
+                 }
+                """;
         ReconConfig config = ReconConfig.reconstruct(json);
         TestUtils.isSerializedTo(config, json);
 
@@ -145,31 +151,33 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void serializeStandardReconConfigWithBatchSize() throws Exception {
-        String json = " {\n" +
-                "        \"mode\": \"standard-service\",\n" +
-                "        \"service\": \"https://tools.wmflabs.org/openrefine-wikidata/en/api\",\n" +
-                "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                "        \"type\": {\n" +
-                "                \"id\": \"Q13442814\",\n" +
-                "                \"name\": \"scientific article\"\n" +
-                "        },\n" +
-                "        \"autoMatch\": true,\n" +
-                "        \"batchSize\": 20,\n" +
-                "        \"columnDetails\": [\n" +
-                "           {\n" +
-                "             \"column\": \"organization_country\",\n" +
-                "             \"propertyName\": \"SPARQL: P17/P297\",\n" +
-                "             \"propertyID\": \"P17/P297\"\n" +
-                "           },\n" +
-                "           {\n" +
-                "             \"column\": \"organization_id\",\n" +
-                "             \"propertyName\": \"SPARQL: P3500|P2427\",\n" +
-                "             \"propertyID\": \"P3500|P2427\"\n" +
-                "           }\n" +
-                "        ],\n" +
-                "        \"limit\": 0\n" +
-                " }";
+        String json = """
+                 {
+                        "mode": "standard-service",
+                        "service": "https://tools.wmflabs.org/openrefine-wikidata/en/api",
+                        "identifierSpace": "http://www.wikidata.org/entity/",
+                        "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                        "type": {
+                                "id": "Q13442814",
+                                "name": "scientific article"
+                        },
+                        "autoMatch": true,
+                        "batchSize": 20,
+                        "columnDetails": [
+                           {
+                             "column": "organization_country",
+                             "propertyName": "SPARQL: P17/P297",
+                             "propertyID": "P17/P297"
+                           },
+                           {
+                             "column": "organization_id",
+                             "propertyName": "SPARQL: P3500|P2427",
+                             "propertyID": "P3500|P2427"
+                           }
+                        ],
+                        "limit": 0
+                 }
+                """;
         ReconConfig config = ReconConfig.reconstruct(json);
         TestUtils.isSerializedTo(config, json);
 
@@ -180,17 +188,19 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void testReconstructNoType() throws IOException {
-        String json = "{\"mode\":\"standard-service\","
-                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
-                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
-                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
-                + "\"type\":null,"
-                + "\"autoMatch\":true,"
-                + "\"columnDetails\":["
-                + "    {\"column\":\"_ - id\","
-                + "     \"property\":{\"id\":\"P3153\",\"name\":\"Crossref funder ID\"}}"
-                + "],"
-                + "\"limit\":0}";
+        String json = """
+                {"mode":"standard-service",
+                "service":"https://tools.wmflabs.org/openrefine-wikidata/en/api",
+                "identifierSpace":"http://www.wikidata.org/entity/",
+                "schemaSpace":"http://www.wikidata.org/prop/direct/",
+                "type":null,
+                "autoMatch":true,
+                "columnDetails":[
+                    {"column":"_ - id",
+                     "property":{"id":"P3153","name":"Crossref funder ID"}}
+                ],
+                "limit":0}
+                """;
         StandardReconConfig config = StandardReconConfig.reconstruct(json);
         assertNull(config.typeID);
         assertNull(config.typeName);
@@ -199,18 +209,21 @@ public class StandardReconConfigTests extends RefineTest {
     @Test
     public void testGetBatchSize() throws IOException {
 
-        String json = "{\"mode\":\"standard-service\","
-                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
-                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
-                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
-                + "\"type\":null,"
-                + "\"autoMatch\":true,"
-                + "\"batchSize\":50,"
-                + "\"columnDetails\":["
-                + "    {\"column\":\"_ - id\","
-                + "     \"property\":{\"id\":\"P3153\",\"name\":\"Crossref funder ID\"}}"
-                + "],"
-                + "\"limit\":0}";
+        String json = """
+                {"mode":"standard-service",
+                "service":"https://tools.wmflabs.org/openrefine-wikidata/en/api",
+                "identifierSpace":"http://www.wikidata.org/entity/",
+                "schemaSpace":"http://www.wikidata.org/prop/direct/",
+                "type":null,
+                "autoMatch":true,
+                "batchSize":50,
+                "columnDetails":[
+                    {"column":"_ - id",
+                     "property":{"id":"P3153","name":"Crossref funder ID"}
+                     }
+                ],
+                "limit":0}
+                """;
         StandardReconConfig c = StandardReconConfig.reconstruct(json);
         assertEquals(c.getBatchSize(10), 10);
         assertEquals(c.getBatchSize(120), 12);
@@ -220,30 +233,34 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void testGetColumnDependencies() throws IOException {
-        String json = "{\"mode\":\"standard-service\","
-                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
-                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
-                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
-                + "\"type\":null,"
-                + "\"autoMatch\":true,"
-                + "\"batchSize\":50,"
-                + "\"columnDetails\":["
-                + "    {\"column\":\"_ - id\","
-                + "     \"property\":{\"id\":\"P3153\",\"name\":\"Crossref funder ID\"}}"
-                + "],"
-                + "\"limit\":0}";
+        String json = """
+                {"mode":"standard-service",
+                "service":"https://tools.wmflabs.org/openrefine-wikidata/en/api",
+                "identifierSpace":"http://www.wikidata.org/entity/",
+                "schemaSpace":"http://www.wikidata.org/prop/direct/",
+                "type":null,
+                "autoMatch":true,
+                "batchSize":50,
+                "columnDetails":[
+                    {"column":"_ - id",
+                     "property":{"id":"P3153","name":"Crossref funder ID"}}
+                ],
+                "limit":0}
+                """;
         StandardReconConfig c = StandardReconConfig.reconstruct(json);
         assertEquals(c.getColumnDependencies(), Optional.of(Set.of("_ - id")));
     }
 
     @Test
     public void testReconstructNoIdentifierSchemaSpaces() throws IOException {
-        String json = "{\"mode\":\"standard-service\","
-                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
-                + "\"type\":null,"
-                + "\"autoMatch\":true,"
-                + "\"columnDetails\":[],"
-                + "\"limit\":0}";
+        String json = """
+                {"mode":"standard-service",
+                "service":"https://tools.wmflabs.org/openrefine-wikidata/en/api",
+                "type":null,
+                "autoMatch":true,
+                "columnDetails":[],
+                "limit":0}
+                """;
         StandardReconConfig config = StandardReconConfig.reconstruct(json);
         assertEquals(config.identifierSpace, "http://localhost/identifier");
         assertEquals(config.schemaSpace, "http://localhost/schema");
@@ -257,128 +274,142 @@ public class StandardReconConfigTests extends RefineTest {
                         { "mulholland drive", "david lynch" }
                 });
 
-        String config = " {\n" +
-                "        \"mode\": \"standard-service\",\n" +
-                "        \"service\": \"https://tools.wmflabs.org/openrefine-wikidata/en/api\",\n" +
-                "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                "        \"type\": {\n" +
-                "                \"id\": \"Q1234\",\n" +
-                "                \"name\": \"movie\"\n" +
-                "        },\n" +
-                "        \"autoMatch\": true,\n" +
-                "        \"columnDetails\": [\n" +
-                "           {\n" +
-                "             \"column\": \"director\",\n" +
-                "             \"propertyName\": \"Director\",\n" +
-                "             \"propertyID\": \"P123\"\n" +
-                "           }\n" +
-                "        ]}";
+        String config = """
+                 {
+                        "mode": "standard-service",
+                        "service": "https://tools.wmflabs.org/openrefine-wikidata/en/api",
+                        "identifierSpace": "http://www.wikidata.org/entity/",
+                        "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                        "type": {
+                                "id": "Q1234",
+                                "name": "movie"
+                        },
+                        "autoMatch": true,
+                        "columnDetails": [
+                           {
+                             "column": "director",
+                             "propertyName": "Director",
+                             "propertyID": "P123"
+                           }
+                        ]}
+                """;
         StandardReconConfig r = StandardReconConfig.reconstruct(config);
         Row row = project.rows.get(0);
         ReconJob job = r.createJob(project, 0, row, "title", row.getCell(0));
-        TestUtils.assertEqualsAsJson(job.toString(), "{"
-                + "\"query\":\"mulholland drive\","
-                + "\"type\":\"Q1234\","
-                + "\"properties\":["
-                + "     {\"pid\":\"P123\",\"v\":\"david lynch\"}"
-                + "],"
-                + "\"type_strict\":\"should\"}");
+        TestUtils.assertEqualsAsJson(job.toString(), """
+                {
+                "query":"mulholland drive",
+                "type":"Q1234",
+                "properties":[
+                     {"pid":"P123","v":"david lynch"}
+                ],
+                "type_strict":"should"
+                }
+                """);
     }
 
     @Test
 
     public void batchReconTestSuccessful() throws Exception {
-        String reconResponse = "{\n" +
-                "q0: {\n" +
-                "  result: [\n" +
-                "    {\n" +
-                "    P57: {\n" +
-                "score: 100,\n" +
-                "weighted: 40\n" +
-                "},\n" +
-                "all_labels: {\n" +
-                "score: 59,\n" +
-                "weighted: 59\n" +
-                "},\n" +
-                "score: 70.71428571428572,\n" +
-                "id: \"Q3989262\",\n" +
-                "name: \"The Short Films of David Lynch\",\n" +
-                "type: [\n" +
-                "{\n" +
-                "id: \"Q24862\",\n" +
-                "name: \"short film\"\n" +
-                "},\n" +
-                "{\n" +
-                "id: \"Q202866\",\n" +
-                "name: \"animated film\"\n" +
-                "}\n" +
-                "],\n" +
-                "match: false\n" +
-                "},\n" +
-                "{\n" +
-                "P57: {\n" +
-                "score: 100,\n" +
-                "weighted: 40\n" +
-                "},\n" +
-                "all_labels: {\n" +
-                "score: 44,\n" +
-                "weighted: 44\n" +
-                "},\n" +
-                "score: 60.00000000000001,\n" +
-                "id: \"Q83365219\",\n" +
-                "name: \"What Did Jack Do?\",\n" +
-                "type: [\n" +
-                "{\n" +
-                "id: \"Q24862\",\n" +
-                "name: \"short film\"\n" +
-                "}\n" +
-                "],\n" +
-                "match: false\n" +
-                "    }\n" +
-                "    ]\n" +
-                "  }\n" +
-                "}\n";
+        String reconResponse = """
+                {
+                q0: {
+                  result: [
+                    {
+                    P57: {
+                score: 100,
+                weighted: 40
+                },
+                all_labels: {
+                score: 59,
+                weighted: 59
+                },
+                score: 70.71428571428572,
+                id: "Q3989262",
+                name: "The Short Films of David Lynch",
+                type: [
+                {
+                id: "Q24862",
+                name: "short film"
+                },
+                {
+                id: "Q202866",
+                name: "animated film"
+                }
+                ],
+                match: false
+                },
+                {
+                P57: {
+                score: 100,
+                weighted: 40
+                },
+                all_labels: {
+                score: 44,
+                weighted: 44
+                },
+                score: 60.00000000000001,
+                id: "Q83365219",
+                name: "What Did Jack Do?",
+                type: [
+                {
+                id: "Q24862",
+                name: "short film"
+                }
+                ],
+                match: false
+                    }
+                    ]
+                  }
+                }
+                """;
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
             server.enqueue(new MockResponse.Builder().body(reconResponse).build()); // service returns successfully
             server.enqueue(new MockResponse.Builder().build());
 
-            String configJson = " {\n" +
-                    "        \"mode\": \"standard-service\",\n" +
-                    "        \"service\": \"" + url + "\",\n" +
-                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                    "        \"type\": {\n" +
-                    "                \"id\": \"Q11424\",\n" +
-                    "                \"name\": \"film\"\n" +
-                    "        },\n" +
-                    "        \"autoMatch\": true,\n" +
-                    "        \"columnDetails\": [\n" +
-                    "           {\n" +
-                    "             \"column\": \"director\",\n" +
-                    "             \"propertyName\": \"Director\",\n" +
-                    "             \"propertyID\": \"P57\"\n" +
-                    "           }\n" +
-                    "        ]}";
+            String configJson = """
+                    {
+                     "mode": "standard-service",
+                     "service": "%s",
+                     "identifierSpace": "http://www.wikidata.org/entity/",
+                     "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                     "type": {
+                             "id": "Q11424",
+                             "name": "film"
+                     },
+                     "autoMatch": true,
+                     "columnDetails": [
+                        {
+                          "column": "director",
+                          "propertyName": "Director",
+                          "propertyID": "P57"
+                        }
+                     ]}
+                    """.formatted(url);
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
             StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
-            job.text = "david lynch";
-            job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+            job.text = QUERY_TEXT;
+            job.code = QUERY_JSON;
             List<ReconJob> jobList = new ArrayList<ReconJob>();
             jobList.add(job);
             List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
-            RecordedRequest request1 = server.takeRequest();
-
-            assertNotNull(request1);
-            String query = request1.getBody().utf8();
-            String expected = "queries=" + URLEncoder.encode(
-                    "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
-                    "UTF-8");
-            assertEquals(query, expected);
+            // Check the response we got back
             assertNotNull(returnReconList);
             assertEquals(returnReconList.get(0).getBestCandidate().types[0], "Q24862");
+
+            // Client has already received the response that we queued earlier,
+            // but look at the request that we got to see if it was formatted correctly
+            RecordedRequest request1 = server.takeRequest();
+            assertNotNull(request1);
+            assertNotNull(request1.getBody());
+            String query = request1.getBody().utf8();
+            String expected = "queries=" + URLEncoder.encode(
+                    "{\"q0\":" + QUERY_JSON + "}",
+                    StandardCharsets.UTF_8);
+            assertEquals(query, expected);
+
         }
     }
 
@@ -390,28 +421,30 @@ public class StandardReconConfigTests extends RefineTest {
             HttpUrl url = server.url("/openrefine-wikidata/en/api");
             server.enqueue(new MockResponse.Builder().code(500).build());
 
-            String configJson = " {\n" +
-                    "        \"mode\": \"standard-service\",\n" +
-                    "        \"service\": \"" + url + "\",\n" +
-                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                    "        \"type\": {\n" +
-                    "                \"id\": \"Q11424\",\n" +
-                    "                \"name\": \"film\"\n" +
-                    "        },\n" +
-                    "        \"autoMatch\": true,\n" +
-                    "        \"columnDetails\": [\n" +
-                    "           {\n" +
-                    "             \"column\": \"director\",\n" +
-                    "             \"propertyName\": \"Director\",\n" +
-                    "             \"propertyID\": \"P57\"\n" +
-                    "           }\n" +
-                    "        ]}";
+            String configJson = """
+                    {
+                     "mode": "standard-service",
+                     "service": "%s",
+                     "identifierSpace": "http://www.wikidata.org/entity/",
+                     "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                     "type": {
+                             "id": "Q11424",
+                             "name": "film"
+                     },
+                     "autoMatch": true,
+                     "columnDetails": [
+                        {
+                          "column": "director",
+                          "propertyName": "Director",
+                          "propertyID": "P57"
+                        }
+                     ]}
+                    """.formatted(url);
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
             StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
-            job.text = "david lynch";
-            job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
-            List<ReconJob> jobList = new ArrayList<ReconJob>();
+            job.text = QUERY_TEXT;
+            job.code = QUERY_JSON;
+            List<ReconJob> jobList = new ArrayList<>();
             jobList.add(job);
 
             // calling the batchRecon
@@ -419,10 +452,11 @@ public class StandardReconConfigTests extends RefineTest {
 
             RecordedRequest request1 = server.takeRequest();
             assertNotNull(request1);
+            assertNotNull(request1.getBody());
             String query = request1.getBody().utf8();
             String expected = "queries=" + URLEncoder.encode(
-                    "{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}",
-                    "UTF-8");
+                    "{\"q0\":" + QUERY_JSON + "}",
+                    StandardCharsets.UTF_8);
 
             // assertions
 
@@ -431,10 +465,12 @@ public class StandardReconConfigTests extends RefineTest {
             assertNotNull(returnReconList.get(0));
             assertNotNull(returnReconList.get(0).error);
             // checking for error due to missing result field
-            String reconResponse = "{\n" +
-                    "q0: {\n" +
-                    "  }\n" +
-                    "}\n";
+            String reconResponse = """
+                    {
+                      q0: {
+                      }
+                    }
+                    """;
             server.enqueue(new MockResponse.Builder().body(reconResponse).build()); // service returns successfully
             returnReconList = config.batchRecon(jobList, 1000000000);
             assertEquals(query, expected);
@@ -455,28 +491,30 @@ public class StandardReconConfigTests extends RefineTest {
             server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
             server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
 
-            String configJson = " {\n" +
-                    "        \"mode\": \"standard-service\",\n" +
-                    "        \"service\": \"" + url + "\",\n" +
-                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                    "        \"type\": {\n" +
-                    "                \"id\": \"Q11424\",\n" +
-                    "                \"name\": \"film\"\n" +
-                    "        },\n" +
-                    "        \"autoMatch\": true,\n" +
-                    "        \"columnDetails\": [\n" +
-                    "           {\n" +
-                    "             \"column\": \"director\",\n" +
-                    "             \"propertyName\": \"Director\",\n" +
-                    "             \"propertyID\": \"P57\"\n" +
-                    "           }\n" +
-                    "        ]}";
+            String configJson = """
+                    {
+                    "mode": "standard-service",
+                    "service": "%s",
+                    "identifierSpace": "http://www.wikidata.org/entity/",
+                    "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                    "type": {
+                            "id": "Q11424",
+                            "name": "film"
+                    },
+                    "autoMatch": true,
+                    "columnDetails": [
+                       {
+                         "column": "director",
+                         "propertyName": "Director",
+                         "propertyID": "P57"
+                       }
+                    ]}
+                    """.formatted(url);
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
             StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
-            job.text = "david lynch";
-            job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
-            List<ReconJob> jobList = new ArrayList<ReconJob>();
+            job.text = QUERY_TEXT;
+            job.code = QUERY_JSON;
+            List<ReconJob> jobList = new ArrayList<>();
             jobList.add(job);
 
             // calling the batchRecon
@@ -494,28 +532,30 @@ public class StandardReconConfigTests extends RefineTest {
     public void batchReconTestDNSError() throws Exception {
         HttpUrl url = HttpUrl.parse("https://hewsjsajsajk.com/search?q=ujdjsaoiksa");
 
-        String configJson = " {\n" +
-                "        \"mode\": \"standard-service\",\n" +
-                "        \"service\": \"" + url + "\",\n" +
-                "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
-                "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
-                "        \"type\": {\n" +
-                "                \"id\": \"Q11424\",\n" +
-                "                \"name\": \"film\"\n" +
-                "        },\n" +
-                "        \"autoMatch\": true,\n" +
-                "        \"columnDetails\": [\n" +
-                "           {\n" +
-                "             \"column\": \"director\",\n" +
-                "             \"propertyName\": \"Director\",\n" +
-                "             \"propertyID\": \"P57\"\n" +
-                "           }\n" +
-                "        ]}";
+        String configJson = """
+                {
+                 "mode": "standard-service",
+                 "service": "%s",
+                 "identifierSpace": "http://www.wikidata.org/entity/",
+                 "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                 "type": {
+                         "id": "Q11424",
+                         "name": "film"
+                 },
+                 "autoMatch": true,
+                 "columnDetails": [
+                    {
+                      "column": "director",
+                      "propertyName": "Director",
+                      "propertyID": "P57"
+                    }
+                 ]}
+                """.formatted(url);
         StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
         StandardReconConfig.StandardReconJob job = new StandardReconConfig.StandardReconJob();
-        job.text = "david lynch";
-        job.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
-        List<ReconJob> jobList = new ArrayList<ReconJob>();
+        job.text = QUERY_TEXT;
+        job.code = QUERY_JSON;
+        List<ReconJob> jobList = new ArrayList<>();
         jobList.add(job);
 
         List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
@@ -531,27 +571,33 @@ public class StandardReconConfigTests extends RefineTest {
      */
     @Test
     public void deserializeColumnDetail() throws JsonParseException, JsonMappingException, IOException {
-        String uiJson = "{\"column\":\"director\","
-                + "\"property\":{"
-                + "   \"id\":\"P123\","
-                + "   \"name\":\"Director\""
-                + "}}";
-        String backendJson = "{\"column\":\"director\","
-                + "\"propertyID\":\"P123\","
-                + "\"propertyName\":\"Director\"}";
+        String uiJson = """
+                {"column":"director",
+                "property":{
+                   "id":"P123",
+                   "name":"Director"
+                }}
+                """;
+        String backendJson = """
+                {"column":"director",
+                "propertyID":"P123",
+                "propertyName":"Director"}
+                """;
         ColumnDetail cd = ParsingUtilities.mapper.readValue(uiJson, ColumnDetail.class);
         TestUtils.isSerializedTo(cd, backendJson);
     }
 
     @Test
     public void deserializeReconResult() throws JsonParseException, JsonMappingException, IOException {
-        String json = "{\"score\":100.0,"
-                + "\"match\":false,"
-                + "\"type\":["
-                + "   {\"id\":\"Q17366755\","
-                + "    \"name\":\"hamlet in Alberta\"}],"
-                + "\"id\":\"Q5136635\","
-                + "\"name\":\"Cluny\"}";
+        String json = """
+                {"score":100.0,
+                "match":false,
+                "type":[
+                   {"id":"Q17366755",
+                    "name":"hamlet in Alberta"}],
+                "id":"Q5136635",
+                "name":"Cluny"}
+                """;
         ReconResult rr = ParsingUtilities.mapper.readValue(json, ReconResult.class);
         assertEquals(rr.types.get(0).name, "hamlet in Alberta");
     }
@@ -559,46 +605,45 @@ public class StandardReconConfigTests extends RefineTest {
     // Issue #1913
     @Test
     public void reorderReconciliationResults() throws JsonParseException, JsonMappingException, IOException {
-        String viafJson = " [\n" +
-                "\n" +
-                "    {\n" +
-                "        \"id\": \"18951129\",\n" +
-                "        \"name\": \"Varano, Camilla Battista da 1458-1524\",\n" +
-                "        \"type\": [\n" +
-                "            {\n" +
-                "                \"id\": \"/people/person\",\n" +
-                "                \"name\": \"Person\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"score\": 0.1282051282051282,\n" +
-                "        \"match\": false\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"id\": \"102271932\",\n" +
-                "        \"name\": \"Shamsie, Kamila, 1973-....\",\n" +
-                "        \"type\": [\n" +
-                "            {\n" +
-                "                \"id\": \"/people/person\",\n" +
-                "                \"name\": \"Person\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"score\": 0.23076923076923078,\n" +
-                "        \"match\": false\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"id\": \"63233597\",\n" +
-                "        \"name\": \"Camilla, Duchess of Cornwall, 1947-\",\n" +
-                "        \"type\": [\n" +
-                "            {\n" +
-                "                \"id\": \"/people/person\",\n" +
-                "                \"name\": \"Person\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"score\": 0.14285714285714285,\n" +
-                "        \"match\": false\n" +
-                "    }\n" +
-                "\n" +
-                "]";
+        String viafJson = """
+                 [
+                    {
+                        "id": "18951129",
+                        "name": "Varano, Camilla Battista da 1458-1524",
+                        "type": [
+                            {
+                                "id": "/people/person",
+                                "name": "Person"
+                            }
+                        ],
+                        "score": 0.1282051282051282,
+                        "match": false
+                    },
+                    {
+                        "id": "102271932",
+                        "name": "Shamsie, Kamila, 1973-....",
+                        "type": [
+                            {
+                                "id": "/people/person",
+                                "name": "Person"
+                            }
+                        ],
+                        "score": 0.23076923076923078,
+                        "match": false
+                    },
+                    {
+                        "id": "63233597",
+                        "name": "Camilla, Duchess of Cornwall, 1947-",
+                        "type": [
+                            {
+                                "id": "/people/person",
+                                "name": "Person"
+                            }
+                        ],
+                        "score": 0.14285714285714285,
+                        "match": false
+                    }
+                ]""";
 
         StandardReconConfigStub stub = new StandardReconConfigStub();
         ArrayNode node = ParsingUtilities.mapper.readValue(viafJson, ArrayNode.class);
@@ -609,46 +654,46 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void reorderReconciliationResultsStableSort() throws JsonParseException, JsonMappingException, IOException {
-        String viafJson = " [\n" +
-                "\n" +
-                "    {\n" +
-                "        \"id\": \"18951129\",\n" +
-                "        \"name\": \"Varano, Camilla Battista da 1458-1524\",\n" +
-                "        \"type\": [\n" +
-                "            {\n" +
-                "                \"id\": \"/people/person\",\n" +
-                "                \"name\": \"Person\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"score\": 0.3,\n" +
-                "        \"match\": false\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"id\": \"102271932\",\n" +
-                "        \"name\": \"Shamsie, Kamila, 1973-....\",\n" +
-                "        \"type\": [\n" +
-                "            {\n" +
-                "                \"id\": \"/people/person\",\n" +
-                "                \"name\": \"Person\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"score\": 0.23076923076923078,\n" +
-                "        \"match\": false\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"id\": \"63233597\",\n" +
-                "        \"name\": \"Camilla, Duchess of Cornwall, 1947-\",\n" +
-                "        \"type\": [\n" +
-                "            {\n" +
-                "                \"id\": \"/people/person\",\n" +
-                "                \"name\": \"Person\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"score\": 0.3,\n" +
-                "        \"match\": false\n" +
-                "    }\n" +
-                "\n" +
-                "]";
+        String viafJson = """
+                 [
+                    {
+                        "id": "18951129",
+                        "name": "Varano, Camilla Battista da 1458-1524",
+                        "type": [
+                            {
+                                "id": "/people/person",
+                                "name": "Person"
+                            }
+                        ],
+                        "score": 0.3,
+                        "match": false
+                    },
+                    {
+                        "id": "102271932",
+                        "name": "Shamsie, Kamila, 1973-....",
+                        "type": [
+                            {
+                                "id": "/people/person",
+                                "name": "Person"
+                            }
+                        ],
+                        "score": 0.23076923076923078,
+                        "match": false
+                    },
+                    {
+                        "id": "63233597",
+                        "name": "Camilla, Duchess of Cornwall, 1947-",
+                        "type": [
+                            {
+                                "id": "/people/person",
+                                "name": "Person"
+                            }
+                        ],
+                        "score": 0.3,
+                        "match": false
+                    }
+                ]
+                """;
 
         StandardReconConfigStub stub = new StandardReconConfigStub();
         ArrayNode node = ParsingUtilities.mapper.readValue(viafJson, ArrayNode.class);
