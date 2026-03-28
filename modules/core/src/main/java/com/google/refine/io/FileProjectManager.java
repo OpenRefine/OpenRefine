@@ -254,6 +254,7 @@ public class FileProjectManager extends ProjectManager {
         // rename project copy
         ProjectMetadata metaData = ProjectMetadataUtilities.load(destDir);
         metaData.setName(metaData.getName() + " (Copy)");
+        metaData.setParentProjectID(projectID);
         ProjectMetadataUtilities.save(metaData, destDir);
 
         // update workspace

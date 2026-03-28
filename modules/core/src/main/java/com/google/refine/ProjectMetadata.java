@@ -123,6 +123,9 @@ public class ProjectMetadata {
     @JsonView(JsonViews.SaveMode.class)
     private PreferenceStore _preferenceStore = new PreferenceStore();
 
+    @JsonProperty("parentProjectID")
+    private long _parentProjectID = -1;
+
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
     protected ProjectMetadata(Instant date) {
@@ -369,6 +372,15 @@ public class ProjectMetadata {
                 obj.put("value", valueString);
             }
         }
+    }
+
+    public long getParentProjectID() {
+        return _parentProjectID;
+    }
+
+    public void setParentProjectID(long parentProjectID) {
+        this._parentProjectID = parentProjectID;
+        updateModified();
     }
 
     public void setAnyField(String metaName, String valueString) {
