@@ -124,7 +124,8 @@ public class ProjectMetadata {
     private PreferenceStore _preferenceStore = new PreferenceStore();
 
     @JsonProperty("parentProjectID")
-    private long _parentProjectID = -1;
+    @JsonInclude(Include.NON_DEFAULT)
+    private Long _parentProjectID = null;
 
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
@@ -374,11 +375,11 @@ public class ProjectMetadata {
         }
     }
 
-    public long getParentProjectID() {
+    public Long getParentProjectID() {
         return _parentProjectID;
     }
 
-    public void setParentProjectID(long parentProjectID) {
+    public void setParentProjectID(Long parentProjectID) {
         this._parentProjectID = parentProjectID;
         updateModified();
     }
