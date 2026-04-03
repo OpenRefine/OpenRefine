@@ -357,5 +357,6 @@
     "warnings-messages/existing-item-requires-property-to-have-certain-values-with-suggested-value/body": "Sur des entités telles que {example_entity}, la propriété {added_property_entity} doit avoir une valeur définie sur {item_entity}. Si l'entité a déjà des déclarations avec la propriété {added_property_entity} et avec les valeurs appropriées dans {wikibase_name}, alors cet avertissement peut être ignoré.",
     "warnings-messages/invalid-mediainfo-subject/body": "Les identificateurs d'éléments tels que <span class=\"wb-issue-preformat\">{exemple}</span> ne peuvent pas être utilisés comme sujet pour une modification d'un fichier. Le sujet doit être un Mid.",
     "warnings-messages/invalid-entity-id-format/body": "Les colonnes réconciliées contiennent des identifiants d'entité non valides, tels que <span class=\"wb-issue-preformat\">{exemple}</span>.",
-    "warnings-messages/invalid-item-id-format/body": "Les colonnes réconciliées contiennent des identifiants d'articles non valides, tels que <span class=\"wb-issue-preformat\">{exemple}</span>. Les identifiants d'éléments doivent être des Qids."
+    "warnings-messages/invalid-item-id-format/body": "Les colonnes réconciliées contiennent des identifiants d'articles non valides, tels que <span class=\"wb-issue-preformat\">{exemple}</span>. Les identifiants d'éléments doivent être des Qids.",
+    "wikibase-extension/editing-results-facet": "Facette des résultats de modification"
 }
