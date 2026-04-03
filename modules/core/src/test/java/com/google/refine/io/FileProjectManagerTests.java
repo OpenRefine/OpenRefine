@@ -46,6 +46,7 @@ import org.apache.commons.io.FileUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
@@ -176,18 +177,27 @@ public class FileProjectManagerTests {
     }
 
     @Test
-    public void duplicateProject() throws IOException, Exception{
+    public void duplicateProjectTest() throws IOException, Exception {
+
         FileProjectManager manager = new FileProjectManager(workspaceDir);
-        ProjectMetadata metaOriginal = new ProjectMetadata();
-        metaOriginal.setName("Original");
-        manager.registerProject(new Project(), metaOriginal);
-        manager.saveWorkspace();
-        
-        long idOriginal = manager.getProjectID("Original");
+        ProjectManager previous = ProjectManager.singleton;
+        ProjectManager.singleton = manager;
 
-        manager.duplicateProject(idOriginal);
-        Set<Long> projectIDs = manager.getProjectIds();
+        try {
+            ProjectMetadata metaOriginal = new ProjectMetadata();
+            metaOriginal.setName("Original");
+            manager.registerProject(new Project(), metaOriginal);
+            manager.saveWorkspace();
 
-        assertEquals(projectIDs.size(), 2);
+            long idOriginal = manager.getProjectID("Original");
+            long idDuplicate = manager.duplicateProject(idOriginal);
+
+            Set<Long> projectIDs = manager.getProjectIds();
+
+            assertEquals(projectIDs.size(), 2, "workspace should have two projects");
+            assertNotEquals(idOriginal, idDuplicate, "duplicate must have unique id");
+        } finally {
+            ProjectManager.singleton = previous;
+        }
     }
 }
