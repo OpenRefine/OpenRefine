@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.FileUtils;
@@ -172,5 +173,21 @@ public class FileProjectManagerTests {
         } finally {
             tempDir.delete();
         }
+    }
+
+    @Test
+    public void duplicateProject() throws IOException, Exception{
+        FileProjectManager manager = new FileProjectManager(workspaceDir);
+        ProjectMetadata metaOriginal = new ProjectMetadata();
+        metaOriginal.setName("Original");
+        manager.registerProject(new Project(), metaOriginal);
+        manager.saveWorkspace();
+        
+        long idOriginal = manager.getProjectID("Original");
+
+        manager.duplicateProject(idOriginal);
+        Set<Long> projectIDs = manager.getProjectIds();
+
+        assertEquals(projectIDs.size(), 2);
     }
 }
