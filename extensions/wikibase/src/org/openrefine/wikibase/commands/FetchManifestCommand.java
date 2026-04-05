@@ -19,6 +19,8 @@ import org.openrefine.wikibase.utils.HttpClient;
 
 /**
  * Proxies Wikibase manifests to allow the client to bypass CORS restrictions.
+ * <p>
+ * We don't need User-Agent here because it's just going to recon service not Wikidata
  */
 public class FetchManifestCommand extends Command {
 
@@ -35,14 +37,15 @@ public class FetchManifestCommand extends Command {
             // fetch the contents at the url with a plain get request and return the response
             OkHttpClient client = HttpClient.getClient();
             Request req = new Request.Builder().url(url).build();
-            Response res = client.newCall(req).execute();
-            if (!res.isSuccessful()) {
-                response.sendError(res.code(), res.message());
-                return;
+            try (Response res = client.newCall(req).execute()) {
+                if (!res.isSuccessful()) {
+                    response.sendError(res.code(), res.message());
+                    return;
+                }
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json");
+                response.getWriter().write(res.body().string());
             }
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json");
-            response.getWriter().write(res.body().string());
             response.setStatus(200);
         } catch (Exception e) {
             respondException(response, e);
