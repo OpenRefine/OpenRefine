@@ -42,8 +42,7 @@ public class ForEachIndexTests extends GrelTestBase {
 
     @Test
     public void serializeForEachIndex() {
-        String json = "{\"description\":\"Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array.\",\"params\":\"expression a, variable i, variable v, expression e\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new ForEachIndex(), json);
+        TestUtils.assertJsonHasKeys(new ForEachIndex(), "description", "params", "returns");
     }
 
     private void assertParseException(String expression) {

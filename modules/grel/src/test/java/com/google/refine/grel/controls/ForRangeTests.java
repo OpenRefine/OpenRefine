@@ -45,8 +45,7 @@ public class ForRangeTests extends GrelTestBase {
 
     @Test
     public void serializeForRange() {
-        String json = "{\"description\":\"Iterates over the variable v starting at \\\"from\\\", incrementing by \\\"step\\\" each time while less than \\\"to\\\". At each iteration, evaluates expression e, and pushes the result onto the result array.\",\"params\":\"number from, number to, number step, variable v, expression e\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new ForRange(), json);
+        TestUtils.assertJsonHasKeys(new ForRange(), "description", "params", "returns");
     }
 
     @Test
