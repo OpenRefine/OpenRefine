@@ -1,11 +1,19 @@
 
 package com.google.refine.grel;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.Properties;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -14,6 +22,7 @@ import com.google.refine.RefineTest;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.util.ParsingUtilities;
 
 /**
  * Base class for tests of GREL's functionalities
@@ -80,10 +89,10 @@ public class GrelTestBase extends RefineTest {
         Evaluable eval = MetaParser.parse("grel:" + test[0]);
         Object result = eval.evaluate(bindings);
         if (test[1] != null) {
-            Assert.assertNotNull(result, "Expected " + test[1] + " for test " + test[0]);
-            Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
+            assertNotNull(result, "Expected " + test[1] + " for test " + test[0]);
+            assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
         } else {
-            Assert.assertNull(result, "Wrong result for expression: " + test[0]);
+            assertNull(result, "Wrong result for expression: " + test[0]);
         }
     }
 
@@ -98,7 +107,31 @@ public class GrelTestBase extends RefineTest {
             throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test);
         Object result = eval.evaluate(bindings);
-        Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
+        assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
+    }
+
+    public static void testControlJsonSerialization(Control control, String params, String returns) {
+        try {
+            String json = ParsingUtilities.defaultWriter.writeValueAsString(control);
+            JsonNode obj = ParsingUtilities.mapper.readTree(json);
+            assertTrue(obj.isObject(), "Serialized value is not a JSON object: " + json);
+
+            assertTrue(obj.hasNonNull("description"), "Missing description in JSON: " + json);
+            assertTrue(obj.get("description").isTextual(), "Description is not a JSON string: " + json);
+            String desc = obj.get("description").asText();
+            assertNotNull(desc, "Missing description in JSON");
+            assertFalse(desc.isEmpty());
+
+            assertTrue(obj.hasNonNull("params"), "Missing params in JSON: " + json);
+            assertTrue(obj.get("params").isTextual(), "Params is not a JSON string: " + json);
+            assertEquals(obj.get("params").asText(), params);
+
+            assertTrue(obj.hasNonNull("returns"), "Missing returns in JSON: " + json);
+            assertTrue(obj.get("returns").isTextual(), "Returns is not a JSON string: " + json);
+            assertEquals(obj.get("returns").asText(), returns);
+        } catch (JsonProcessingException e) {
+            fail("Failed to serialize or parse JSON while checking keys", e);
+        }
     }
 
     @AfterMethod

@@ -36,14 +36,12 @@ import org.testng.annotations.Test;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.GrelTestBase;
-import com.google.refine.util.TestUtils;
 
 public class ForEachIndexTests extends GrelTestBase {
 
     @Test
     public void serializeForEachIndex() {
-        String json = "{\"description\":\"Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array.\",\"params\":\"expression a, variable i, variable v, expression e\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new ForEachIndex(), json);
+        testControlJsonSerialization(new ForEachIndex(), "expression a, variable i, variable v, expression e", "array");
     }
 
     private void assertParseException(String expression) {

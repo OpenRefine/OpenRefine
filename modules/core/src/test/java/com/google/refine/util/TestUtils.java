@@ -27,6 +27,7 @@
 
 package com.google.refine.util;
 
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.File;
@@ -34,8 +35,8 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -178,11 +179,25 @@ public class TestUtils {
         }
     }
 
-    public static void assertEqualAsQueries(String expectedQuery, String actualQuery) throws UnsupportedEncodingException {
-        String actualResponse[] = URLDecoder.decode(actualQuery, "UTF-8").split("=");
-        String expected[] = URLDecoder.decode(expectedQuery, "UTF-8").split("=");
+    public static void assertEqualAsQueries(String expectedQuery, String actualQuery) {
+        String actualResponse[] = URLDecoder.decode(actualQuery, StandardCharsets.UTF_8).split("=");
+        String[] expected = URLDecoder.decode(expectedQuery, StandardCharsets.UTF_8).split("=");
 
         Assert.assertEquals(actualResponse[0], expected[0]);
         TestUtils.assertEqualsAsJson(actualResponse[1], expected[1]);
+    }
+
+    public static void assertJsonHasKeys(Object o, String... keys) {
+        try {
+            String json = ParsingUtilities.defaultWriter.writeValueAsString(o);
+            JsonNode obj = mapper.readTree(json);
+            assertTrue(obj.isObject(), "Serialized value is not a JSON object: " + json);
+            for (String key : keys) {
+                assertTrue(obj.has(key), "Key \"" + key + "\" not found in JSON");
+            }
+        } catch (JsonProcessingException e) {
+            fail("Failed to serialize or parse JSON while checking keys", e);
+        }
+
     }
 }
