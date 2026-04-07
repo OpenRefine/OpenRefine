@@ -4,6 +4,7 @@ package com.google.refine.grel;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -13,7 +14,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -92,7 +92,7 @@ public class GrelTestBase extends RefineTest {
             assertNotNull(result, "Expected " + test[1] + " for test " + test[0]);
             assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
         } else {
-            Assert.assertNull(result, "Wrong result for expression: " + test[0]);
+            assertNull(result, "Wrong result for expression: " + test[0]);
         }
     }
 
@@ -107,7 +107,7 @@ public class GrelTestBase extends RefineTest {
             throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test);
         Object result = eval.evaluate(bindings);
-        Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
+        assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
     }
 
     public static void testControlJsonSerialization(Control control, String params, String returns) {
