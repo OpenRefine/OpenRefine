@@ -115,10 +115,19 @@ public class GrelTestBase extends RefineTest {
             String json = ParsingUtilities.defaultWriter.writeValueAsString(control);
             JsonNode obj = ParsingUtilities.mapper.readTree(json);
             assertTrue(obj.isObject(), "Serialized value is not a JSON object: " + json);
+
+            assertTrue(obj.hasNonNull("description"), "Missing description in JSON: " + json);
+            assertTrue(obj.get("description").isTextual(), "Description is not a JSON string: " + json);
             String desc = obj.get("description").asText();
             assertNotNull(desc, "Missing description in JSON");
             assertFalse(desc.isEmpty());
+
+            assertTrue(obj.hasNonNull("params"), "Missing params in JSON: " + json);
+            assertTrue(obj.get("params").isTextual(), "Params is not a JSON string: " + json);
             assertEquals(obj.get("params").asText(), params);
+
+            assertTrue(obj.hasNonNull("returns"), "Missing returns in JSON: " + json);
+            assertTrue(obj.get("returns").isTextual(), "Returns is not a JSON string: " + json);
             assertEquals(obj.get("returns").asText(), returns);
         } catch (JsonProcessingException e) {
             fail("Failed to serialize or parse JSON while checking keys", e);
