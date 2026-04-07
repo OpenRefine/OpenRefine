@@ -39,18 +39,12 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.GrelTestBase;
-import com.google.refine.util.TestUtils;
 
 public class ForRangeTests extends GrelTestBase {
 
     @Test
     public void serializeForRange() {
-        ForRange forRange = new ForRange();
-        TestUtils.assertJsonHasKeys(forRange, "description", "params", "returns");
-        Assert.assertNotNull(forRange.getDescription());
-        Assert.assertFalse(forRange.getDescription().isEmpty());
-        Assert.assertEquals(forRange.getParams(), "number from, number to, number step, var v, expression exp");
-        Assert.assertEquals(forRange.getReturns(), "array");
+        testControlJsonSerialization(new ForRange(), "number from, number to, number step, variable v, expression e", "array");
     }
 
     @Test

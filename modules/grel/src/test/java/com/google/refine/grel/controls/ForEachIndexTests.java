@@ -36,13 +36,12 @@ import org.testng.annotations.Test;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.GrelTestBase;
-import com.google.refine.util.TestUtils;
 
 public class ForEachIndexTests extends GrelTestBase {
 
     @Test
     public void serializeForEachIndex() {
-        TestUtils.assertJsonHasKeys(new ForEachIndex(), "description", "params", "returns");
+        testControlJsonSerialization(new ForEachIndex(), "expression a, variable i, variable v, expression e", "array");
     }
 
     private void assertParseException(String expression) {

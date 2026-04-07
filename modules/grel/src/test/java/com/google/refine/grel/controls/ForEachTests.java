@@ -39,13 +39,12 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.GrelTestBase;
-import com.google.refine.util.TestUtils;
 
 public class ForEachTests extends GrelTestBase {
 
     @Test
     public void serializeForEach() {
-        TestUtils.assertJsonHasKeys(new ForEach(), "description", "params", "returns");
+        testControlJsonSerialization(new ForEach(), "expression a, variable v, expression e", "array");
     }
 
     private void assertParseError(String expression) throws ParsingException {
