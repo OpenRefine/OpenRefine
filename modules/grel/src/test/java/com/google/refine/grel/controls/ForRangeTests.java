@@ -45,7 +45,12 @@ public class ForRangeTests extends GrelTestBase {
 
     @Test
     public void serializeForRange() {
-        TestUtils.assertJsonHasKeys(new ForRange(), "description", "params", "returns");
+        ForRange forRange = new ForRange();
+        TestUtils.assertJsonHasKeys(forRange, "description", "params", "returns");
+        Assert.assertNotNull(forRange.getDescription());
+        Assert.assertFalse(forRange.getDescription().isEmpty());
+        Assert.assertEquals(forRange.getParams(), "number from, number to, number step, var v, expression exp");
+        Assert.assertEquals(forRange.getReturns(), "array");
     }
 
     @Test

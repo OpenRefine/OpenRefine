@@ -180,7 +180,7 @@ public class TestUtils {
         }
     }
 
-    public static void assertEqualAsQueries(String expectedQuery, String actualQuery) throws UnsupportedEncodingException {
+    public static void assertEqualAsQueries(String expectedQuery, String actualQuery) {
         String actualResponse[] = URLDecoder.decode(actualQuery, StandardCharsets.UTF_8).split("=");
         String[] expected = URLDecoder.decode(expectedQuery, StandardCharsets.UTF_8).split("=");
 
@@ -192,11 +192,12 @@ public class TestUtils {
         try {
             String json = ParsingUtilities.defaultWriter.writeValueAsString(o);
             JsonNode obj = mapper.readTree(json);
+            assertTrue(obj.isObject(), "Serialized value is not a JSON object: " + json);
             for (String key : keys) {
                 assertTrue(obj.has(key), "Key \"" + key + "\" not found in JSON");
             }
         } catch (JsonProcessingException e) {
-            fail(e.getMessage());
+            fail("Failed to serialize or parse JSON while checking keys", e);
         }
 
     }
