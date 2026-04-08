@@ -39,14 +39,12 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.GrelTestBase;
-import com.google.refine.util.TestUtils;
 
 public class ForEachTests extends GrelTestBase {
 
     @Test
     public void serializeForEach() {
-        String json = "{\"description\":\"Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression e, and pushes the result onto the result array.\",\"params\":\"expression a, variable v, expression e\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new ForEach(), json);
+        testControlJsonSerialization(new ForEach(), "expression a, variable v, expression e", "array");
     }
 
     private void assertParseError(String expression) throws ParsingException {
@@ -78,7 +76,7 @@ public class ForEachTests extends GrelTestBase {
                 + "\"8706\": {\"parent_area\": 2511, \"generation_high\": 40, \"all_names\": {}, \"id\": 8706, \"codes\": {\"ons\": \"00ABGH\", \"gss\": \"E05000036\", \"unit_id\": \"10936\"}, \"name\": \"Mayesbrook\", \"country\": \"E\", \"type_name\": \"London borough ward\", \"generation_low\": 1, \"country_name\": \"England\", \"type\": \"LBW\"}"
                 + "}";
 
-        String test[] = { "forEach('" + json + "'.parseJson(), v, v.id).sort().join(',')", "2247,2511,8706" };
+        String[] test = { "forEach('" + json + "'.parseJson(), v, v.id).sort().join(',')", "2247,2511,8706" };
         bindings = new Properties();
         bindings.put("v", "");
         parseEval(bindings, test);
@@ -86,7 +84,7 @@ public class ForEachTests extends GrelTestBase {
 
     @Test
     public void testForEachArray() throws ParsingException {
-        String test[] = { "forEach([5,4,3,2.0], v, v*2).join(',')", "10,8,6,4.0" };
+        String[] test = { "forEach([5,4,3,2.0], v, v*2).join(',')", "10,8,6,4.0" };
         bindings = new Properties();
         bindings.put("v", "");
         parseEval(bindings, test);
@@ -94,7 +92,7 @@ public class ForEachTests extends GrelTestBase {
 
     @Test
     public void testForEachJsonArray() throws ParsingException {
-        String test[] = { "forEach('[3,2,1.0]'.parseJson(), v, v*2).join(',')", "6,4,2.0" };
+        String[] test = { "forEach('[3,2,1.0]'.parseJson(), v, v*2).join(',')", "6,4,2.0" };
         bindings = new Properties();
         bindings.put("v", "");
         parseEval(bindings, test);

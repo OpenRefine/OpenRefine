@@ -39,14 +39,12 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.GrelTestBase;
-import com.google.refine.util.TestUtils;
 
 public class FilterTests extends GrelTestBase {
 
     @Test
     public void serializeFilter() {
-        String json = "{\"description\":\"Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array.\",\"params\":\"expression a, variable v, expression test\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Filter(), json);
+        testControlJsonSerialization(new Filter(), "expression a, variable v, expression test", "array");
     }
 
     private void assertEvaluatesToError(String expression) throws ParsingException {
