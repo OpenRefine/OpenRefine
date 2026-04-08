@@ -190,7 +190,7 @@ public class PreviewExpressionCommand extends Command {
                                 }
                             }
                         } catch (Exception e) {
-                            // ignore
+                            result = new EvalError(e);
                         }
                     }
 

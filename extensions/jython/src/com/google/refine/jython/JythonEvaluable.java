@@ -73,7 +73,7 @@ public class JythonEvaluable implements Evaluable {
                 try {
                     return new JythonEvaluable(source, languagePrefix);
                 } catch (PySyntaxError e) {
-                    throw new ParsingException("Syntax error");
+                    throw new ParsingException(e.getMessage(), e);
                 }
             }
 
