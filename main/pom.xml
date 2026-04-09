@@ -220,6 +220,10 @@
       <artifactId>jackson-annotations</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
@@ -230,6 +234,11 @@
       <artifactId>commons-lang3</artifactId>
       <version>${commons-lang3.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -315,11 +324,28 @@
       <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5</artifactId>
       <version>${httpclient5.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.core5</groupId>
       <artifactId>httpcore5</artifactId>
       <version>${httpcore5.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>xtc</groupId>
+      <artifactId>rats-runtime</artifactId>
+      <version>1.15.0</version>
+    </dependency>
+    <dependency>
+      <groupId>de.fau.cs.osr.ptk</groupId>
+      <artifactId>ptk-common</artifactId>
+      <version>3.0.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>1.14.1</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.sweble.wikitext</groupId>
@@ -387,6 +413,24 @@
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
       <version>${okhttp.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>mockwebserver3</artifactId>
+      <version>${okhttp.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp-jvm</artifactId>
+      <version>${okhttp.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okio</groupId>
+      <artifactId>okio-jvm</artifactId>
+      <version>3.16.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
