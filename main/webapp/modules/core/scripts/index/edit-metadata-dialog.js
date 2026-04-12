@@ -26,7 +26,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
       $(td0).text(keyLable);
 
       var td1 = tr.insertCell(1);
-      if (!isCode || key === 'tags') {
+      if (!isCode || key === 'tags' || key === 'parentProjectID') {
         $(td1).text(value);
       } else {
         $('<pre>').append($('<code>').text(value)).appendTo(td1);
@@ -65,7 +65,8 @@ function EditMetadataDialog(metaData, targetRowElem) {
               key !== "rowCount" && 
               key !== "importOptionMetadata" && 
               key !== "id" &&
-              key !== "tags")  {
+              key !== "tags" &&
+              key !== "parentProjectID") {
           $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).on('click',function() {
             var newValue = window.prompt($.i18n('core-index/change-metadata-value')+" " + key, value);
             if (newValue !== null) {
