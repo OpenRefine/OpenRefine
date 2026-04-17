@@ -82,8 +82,8 @@ CSRFUtil.getCSRF = function () {
  * This accepts four forms for compatibility with the previous implementation and $.post():
  *   post(url), post(url, string), post(url, dataObj), post(settingsObj).
  *
- * @param {string} urlOrSettings - The URL to send the request to or a settings object.
- * @param {Object|string} data - The data to send with the request.
+ * @param {string|Object} urlOrSettings - The URL to send the request to or a settings object.
+ * @param {Object|string|undefined} data - The data to send with the request if the first parameter is a URL
  * @returns {jQuery.jqXHR} The jQuery AJAX request object.
  */
 CSRFUtil.post = function (urlOrSettings, data) {

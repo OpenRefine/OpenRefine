@@ -12,7 +12,7 @@
   };
 
   OpenRefine.setPreference = function (name, value) {
-    return CSRFUtil.internalPost({
+    return CSRFUtil.post({
       url: "command/core/set-preference",
       data: {
         name: name,
