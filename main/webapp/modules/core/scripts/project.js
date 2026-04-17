@@ -179,10 +179,13 @@ resizer.hover(
 
 let isDragging = false;
 
+// ✅ MOUSEDOWN
 resizer.on('mousedown', function () {
   isDragging = true;
+  $('body').css('user-select', 'none');
 });
 
+// ✅ MOUSEMOVE
 $(document).on('mousemove', function (e) {
   if (!isDragging) return;
 
@@ -192,14 +195,25 @@ $(document).on('mousemove', function (e) {
   if (newWidth > 500) newWidth = 500;
 
   Refine.setPreference("ui.browsing.facetsHistoryPanelWidth", newWidth);
-  resizeAll();
-});
 
+  // Layout update
+  resize();
+  resizeTabs();
+
+  // 🔥 ONLY THIS WORKS PROPERLY
+  Refine.update({ engineChanged: true });
+});
+// ✅ MOUSEUP
 $(document).on('mouseup', function () {
   isDragging = false;
+  $('body').css('user-select', 'auto');
+
+  resizeAll(); // final alignment
 });
 
+// Add resizer to DOM
 $('body').append(resizer);
+
 // === Facet Panel Resizer END ===
 
   resize();
