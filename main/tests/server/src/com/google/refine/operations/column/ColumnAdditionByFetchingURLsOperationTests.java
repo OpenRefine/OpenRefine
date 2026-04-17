@@ -310,7 +310,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             assertEquals(request1.getUrl().encodedPath(), "/random");
             RecordedRequest request2 = server.takeRequest();
             // verify that path was correctly escaped before request was sent
-            assertEquals(request2.getPath().substring(1), UrlEscapers.urlPathSegmentEscaper().escape(ARABIC));
+            assertEquals(request2.getUrl().encodedPath().substring(1), UrlEscapers.urlPathSegmentEscaper().escape(ARABIC));
         }
     }
 
