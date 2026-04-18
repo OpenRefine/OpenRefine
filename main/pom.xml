@@ -429,7 +429,7 @@
     <dependency>
       <groupId>com.squareup.okio</groupId>
       <artifactId>okio-jvm</artifactId>
-      <version>3.16.4</version>
+      <version>${okio.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -190,8 +190,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.6.3</version>
+      <artifactId>velocity-engine-core</artifactId>
+      <version>${velocity.version}</version>
     </dependency>
 
     <!-- test dependencies -->
@@ -217,7 +217,7 @@
     <dependency>
       <groupId>com.squareup.okio</groupId>
       <artifactId>okio-jvm</artifactId>
-      <version>3.16.4</version>
+      <version>${okio.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
