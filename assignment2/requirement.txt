@@ -1,0 +1,73 @@
+UML, part 1
+Due Tuesday by 4pm Points 2 Submitting a file upload File Types pdf, png, jpeg, and jpg Available after Apr 28 at 4pm
+With your team, generate a UML class diagram for your entire system
+
+Rubric
+UML, part 1
+UML, part 1
+Criteria	Ratings	Pts
+This criterion is linked to a Learning OutcomeCompleteness
+Does the UML class diagram represent the entire system?
+2 pts
+Full Marks
+0 pts
+No Marks
+2 pts
+Total Points: 2
+
+UML, part 2
+Due Tuesday by 4pm Points 3 Submitting a file upload File Types pdf, png, jpeg, and jpg Available after Apr 28 at 4pm
+With your team, decide upon two features that are essential in your system, and imagine that each of the two features will need to undergo some kind of change to be implemented by someone else.
+
+For each of the features, highlight in the UML class diagram where its essence is implemented.
+
+ 
+
+Rubric
+UML, part 2
+UML, part 2
+Criteria	Ratings	Pts
+This criterion is linked to a Learning OutcomeCompleteness, feature 1
+Are all essential aspects of feature 1 accurately highlighted in the UML class diagram?
+1.5 pts
+Full Marks
+0 pts
+No Marks
+1.5 pts
+This criterion is linked to a Learning OutcomeCompleteness, feature 2
+Are all essential aspects of feature 2 accurately highlighted in the UML class diagram?
+1.5 pts
+Full Marks
+0 pts
+No Marks
+1.5 pts
+Total Points: 3
+
+
+UML, part 3
+Due Tuesday by 4pm Points 5 Submitting a file upload File Types pdf Available after Apr 28 at 4pm
+With your team, imagine that each of the two features will need to undergo some kind of change to be implemented by someone else.
+
+Prepare a packet, per feature, that would assist that other person in understanding the feature.
+
+ 
+
+Rubric
+UML, part 3
+UML, part 3
+Criteria	Ratings	Pts
+This criterion is linked to a Learning OutcomeUnderstandability, feature 1
+Do the description and any additional diagrams that were included in the packet sufficiently explain the UML class diagram highlights for feature 1 so someone who is unfamiliar with the code may be able to use it as a suitable start for beginning to understand how to make a future change?
+2.5 pts
+Full Marks
+0 pts
+No Marks
+2.5 pts
+This criterion is linked to a Learning OutcomeUnderstandability, feature 2
+Do the description and any additional diagrams that were included in the packet sufficiently explain the UML class diagram highlights for feature 2 so someone who is unfamiliar with the code may be able to use it as a suitable start for beginning to understand how to make a future change?
+2.5 pts
+Full Marks
+0 pts
+No Marks
+2.5 pts
+Total Points: 5

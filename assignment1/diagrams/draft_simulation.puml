@@ -1,0 +1,20 @@
+@startuml draft_simulation
+skinparam handwritten true
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName "Comic Sans MS"
+skinparam defaultFontSize 14
+title My first draft -- how Cluster & Edit works
+
+actor me as user
+participant "Dialog" as dialog
+participant "Server" as server
+
+user -> dialog : open from column menu
+user -> dialog : click "Cluster"
+dialog -> server : send column + method
+server -> server : group similar values
+server --> dialog : list of clusters
+user -> dialog : pick best value, click Apply
+dialog -> server : save the edits
+@enduml

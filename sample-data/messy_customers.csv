@@ -1,0 +1,26 @@
+id,name,email,city,country,age,signup_date,purchase_amount,category,notes
+1,John Smith,john.smith@gmail.com,New York,USA,28,2023-01-15,1200.00,Electronics,VIP customer
+2,JOHN SMITH,john.smith@gmail.com,new york,United States,28,15/01/2023,1200,electronics,duplicate entry
+3,Jon Smith,johnsmith@gmail.com,New  York,US,28,2023-01-15,1200.00,Electroniics,typo in name and category
+4,Emily Johnson,emily.j@163.com,Los Angeles,USA,35,2023-02-03,880.50,Clothing,
+5, Emily Johnson ,Emily.J@163.com,los angeles,United States,35,03-02-2023,880.5,clothing,extra spaces
+6,Emilly Johnson,emily.j@163.com,LA,US,35,2023/02/03,880.50,Clothng,typo in name and category
+7,Michael Brown,m.brown@hotmail.com,Chicago,USA,41,2023-04-01,3200.00,Electronics,
+8,Micheal Brown,m.brown@hotmail.com,chicago,United States,41,01/04/2023,3200,electronics,common typo
+9,Michael  Brown,M.Brown@Hotmail.com,CHICAGO,US,41,2023-04-01,3200.00,Electronic,extra space in name
+10,Sarah Davis,s.davis@yahoo.com,Houston,USA,26,2023-05-18,670.00,Books,student discount
+11,Sara Davis,s.davis@yahoo.com,houston,United States,26,18-05-2023,670,books,name variant
+12,Sarah  Davis,sdavis@yahoo.com,Huston,US,26,2023/05/18,670.00,book,city typo
+13,Robert Wilson,r.wilson@gmail.com,Phoenix,USA,52,2023-06-09,2100.00,Clothing,
+14,Rob Wilson,r.wilson@gmail.com,phoenix,United States,52,09/06/2023,2100,clothing,nickname
+15,Robert Willson,robert.wilson@gmail.com,PHOENIX,US,52,09-06-2023,2100.00,Clothes,typo in last name
+16,Jennifer Martinez,j.martinez@163.com,San Antonio,USA,30,2023-07-22,980.00,Electronics,
+17,Jenifer Martinez,j.martinez@163.com,san antonio,United States,30,22/07/2023,980,electronics,name typo
+18,Jennifer Martínez,j.martinez@163.com,San  Antonio,US,30,2023-07-22,980.00,Electronic Products,accent variant
+19,David Garcia,d.garcia@qq.com,San Diego,USA,45,2023-08-11,,Home & Garden,missing amount
+20,David  Garcia,d.garcia@qq.com,san diego,United States,,11-08-2023,560.00,Home and Garden,extra space and missing age
+21,Dave Garcia,DGarcia@qq.com,SAN DIEGO,US,45,2023/08/11,560.00,Home,nickname variant
+22,Lisa Anderson,lisa.a@sohu.com,Dallas,USA,38,2023-09-05,1450.00,Food,
+23,Lisa Andersen,lisa.a@sohu.com,dallas,United States,38,05-09-2023,1450,food,last name typo
+24,LISA ANDERSON,Lisa.A@Sohu.com,Dallas,US,38,2023-09-05,1450.00,Foods,all caps
+25,N/A,invalid-email,Unknown,-,999,not-a-date,-999,???,test anomaly row
