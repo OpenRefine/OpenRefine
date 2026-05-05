@@ -1,9 +1,5 @@
 # Feature 1 Packet — Clustering and Edit
 
-> Audience: a developer who has never touched OpenRefine before, but is being asked to extend or change the *Cluster and edit* feature (e.g. add a new clustering method, swap the matching algorithm, change how edits are applied).
-
-This packet is the companion to the Feature 1 highlights (light blue, `#87CEFA`) in `OpenRefine.drawio`. Read it alongside the diagram.
-
 ---
 
 ## 1. What the feature does
@@ -48,26 +44,7 @@ All of the classes named in this packet are filled with **light blue (`#87CEFA`)
 
 The clustering subsystem is two parallel **Strategy** patterns, glued together by an abstract `Clusterer`.
 
-```
-                            ┌──────────────────┐
-                            │  Clusterer       │   abstract;
-                            │  computeClusters │   one method does the work
-                            └────────┬─────────┘
-                                     │
-                ┌────────────────────┴────────────────────┐
-                │                                         │
-        ┌───────▼─────────┐                       ┌───────▼─────────┐
-        │ BinningClusterer│  groups values that   │ kNNClusterer    │  groups values
-        │                 │  hash to the same key │                 │  whose distance < r
-        │  uses Keyer     │                       │ uses Similarity │
-        └───────┬─────────┘                       │ Distance        │
-                │                                 └───────┬─────────┘
-   strategy is a Keyer                       strategy is a SimilarityDistance
-                │                                         │
-   FingerprintKeyer, NGram…,                ApacheLevenshteinDistance,
-   BeiderMorse, Cologne, Daitch,            VicinoDistance,
-   Metaphone3, UserDefinedKeyer             UserDefinedDistance
-```
+![img](3.drawio.png)
 
 The two factories `KeyerFactory` and `DistanceFactory` are static singletons that hold a `Map<String, Keyer>` / `Map<String, SimilarityDistance>` so the clustering code can look up a strategy by its UI-facing name (e.g. `"fingerprint"`, `"ngram-fingerprint"`, `"levenshtein"`).
 
@@ -77,57 +54,13 @@ The two factories `KeyerFactory` and `DistanceFactory` are static singletons tha
 
 ## 5. Sequence diagram — request to compute clusters
 
-```
- Browser                ComputeClustersCommand            ClustererConfig            BinningClusterer/kNNClusterer
-   │                            │                               │                               │
-   │  POST /command/core/       │                               │                               │
-   │     compute-clusters       │                               │                               │
-   │ ─────────────────────────► │                               │                               │
-   │                            │ ParsingUtilities.mapper       │                               │
-   │                            │   .readValue(config, …)       │                               │
-   │                            │ ─────────────────────────────►│                               │
-   │                            │                               │  apply(project) → concrete    │
-   │                            │                               │ ─────────────────────────────►│
-   │                            │ clusterer.computeClusters(    │                               │
-   │                            │   engine)                     │                               │
-   │                            │ ─────────────────────────────────────────────────────────────►│
-   │                            │                               │                  ┌────────────┤
-   │                            │                               │                  │ for each   │
-   │                            │                               │                  │ row, call  │
-   │                            │                               │                  │ Keyer.key  │
-   │                            │                               │                  │ or         │
-   │                            │                               │                  │ Similarity │
-   │                            │                               │                  │ Distance   │
-   │                            │                               │                  │ .compute   │
-   │                            │                               │                  └────────────┤
-   │                            │  list of clusters of          │                               │
-   │                            │  ClusteredEntry               │                               │
-   │ ◄─────────────────────────                                                                  │
-   │  JSON: [[{v,c},{v,c}], …]  │                               │                               │
-```
+![img](1.drawio.png)
 
 ## 6. Sequence diagram — apply chosen edits
 
 The UI sends one `MassEditCommand` per column. The server turns it into a `MassEditOperation`, which when run produces a `MassCellChange` and pushes it onto the project history.
 
-```
- Browser           MassEditCommand        MassEditOperation        Process / History       MassCellChange
-   │                     │                       │                        │                       │
-   │ POST /command/core/ │                       │                        │                       │
-   │     mass-edit-cells │                       │                        │                       │
-   │ ──────────────────► │                       │                        │                       │
-   │                     │ new MassEditOperation │                        │                       │
-   │                     │ ─────────────────────►│                        │                       │
-   │                     │ enqueue process       │                        │                       │
-   │                     │ ──────────────────────┼───────────────────────►│                       │
-   │                     │                       │ createHistoryEntry()   │                       │
-   │                     │                       │                        │ new MassCellChange    │
-   │                     │                       │                        │ ─────────────────────►│
-   │                     │                       │                        │ apply(project)        │
-   │                     │                       │                        │                       │
-   │ ◄──────────────────────────────────────────────────────────────────  │                       │
-   │ {code:"ok", historyEntry: …}                                                                  │
-```
+![img](2.drawio.png)
 
 `EditOneCellCommand` is the single-cell counterpart and is what the dialog also invokes when the user types directly into a single cell of the cluster preview.
 
@@ -172,17 +105,3 @@ The "edit" half is *not* clustering-specific. Two entry points:
 - Many cells (used by the cluster dialog): `MassEditCommand` → `MassEditOperation` → `MassCellChange`.
 
 If you want to record additional metadata per merge (e.g. provenance), you'd extend `MassCellChange` (or add a sibling change type) and update `MassEditOperation.createHistoryEntry()` to emit it. `MassCellChange` is what knows how to undo.
-
-## 8. Things that are easy to miss
-
-- **Two registries, not one.** Keyers live in `KeyerFactory`, distances live in `DistanceFactory`. Each is keyed by string name and populated at startup. If the UI says "function not found", the registration step is what's missing.
-- **`Clusterer` is *re-instantiated per request*.** `computeClusters` is destructive — it mutates the clusterer's internal state. Don't cache one across requests.
-- **`MassEditCommand` ≠ `MassEditOperation`.** The command is the HTTP layer (parses JSON, talks to `Process`); the operation is the undo-redo unit that actually runs. New behaviour goes in the operation, new request shape in the command.
-- **Naming collision.** There is also a `MassChange` and `MassReconChange` in `model/changes/`. They are not the cluster path — `MassCellChange` is.
-
-## 9. Suggested next steps for someone making a change
-
-1. Open `OpenRefine.drawio` and turn on the legend; find your way around the 27 light-blue classes.
-2. Trace the request path with a debugger: breakpoint in `ComputeClustersCommand.doPost`, step into `ClustererConfig.apply`, into the concrete `Clusterer.computeClusters`, into the chosen `Keyer.key` or `SimilarityDistance.compute`.
-3. Trace the apply path: breakpoint in `MassEditCommand.doPost`, step into `MassEditOperation`, then into `MassCellChange.apply`.
-4. Then make your change in the smallest of the strategy classes (a new `Keyer` or a new `SimilarityDistance`). That's the lowest-risk first contribution.
