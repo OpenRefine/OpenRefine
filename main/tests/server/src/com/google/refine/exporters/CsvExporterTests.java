@@ -180,6 +180,22 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
+    public void exportCsvWithLeadingAndTrailingNewline() throws IOException {
+        // Regression test for https://github.com/OpenRefine/OpenRefine/issues/7770
+        // univocity-parsers trims leading/trailing whitespace by default; we must disable that.
+        CreateGrid(3, 3);
+
+        project.rows.get(1).cells.set(1, new Cell("\ntest_2", null));
+        project.rows.get(2).cells.set(1, new Cell("test_trailing\n", null));
+        SUT.export(project, options, engine, writer);
+
+        assertEqualsSystemLineEnding(writer.toString(), "column0,column1,column2\n" +
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,\"\ntest_2\",row1cell2\n" +
+                "row2cell0,\"test_trailing\n\",row2cell2\n");
+    }
+
+    @Test
     public void exportCsvWithEmptyCells() throws IOException {
         CreateGrid(3, 3);
 

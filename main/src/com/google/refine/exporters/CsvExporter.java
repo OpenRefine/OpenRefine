@@ -112,9 +112,14 @@ public class CsvExporter implements WriterExporter {
         AbstractWriter csvWriter;
         if ("\t".equals(separator)) {
             TsvWriterSettings tsvSettings = new TsvWriterSettings();
+            tsvSettings.setIgnoreLeadingWhitespaces(false);
+            tsvSettings.setIgnoreTrailingWhitespaces(false);
+            tsvSettings.getFormat().setLineSeparator(lineSeparator);
             csvWriter = new TsvWriter(writer, tsvSettings);
         } else {
             CsvWriterSettings settings = new CsvWriterSettings();
+            settings.setIgnoreLeadingWhitespaces(false);
+            settings.setIgnoreTrailingWhitespaces(false);
             settings.setQuoteAllFields(quoteAll); // CSV only
             settings.getFormat().setLineSeparator(lineSeparator);
             settings.getFormat().setDelimiter(separator);
