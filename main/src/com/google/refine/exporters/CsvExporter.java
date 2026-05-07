@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
+import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -45,7 +46,6 @@ import com.univocity.parsers.common.AbstractWriter;
 import com.univocity.parsers.csv.CsvFormat;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
-import com.univocity.parsers.tsv.TsvFormat;
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
 import org.slf4j.Logger;
@@ -58,8 +58,6 @@ import com.google.refine.util.ParsingUtilities;
 public class CsvExporter implements WriterExporter {
 
     static CsvFormat DEFAULT_FORMAT = new CsvWriterSettings().getFormat();
-    static TsvFormat TSV_FORMAT = new TsvWriterSettings().getFormat();
-    static char DEFAULT_SEPARATOR = DEFAULT_FORMAT.getDelimiter();
     static String DEFAULT_LINE_ENDING = DEFAULT_FORMAT.getLineSeparatorString();
 
     final static Logger logger = LoggerFactory.getLogger("CsvExporter");
@@ -94,7 +92,7 @@ public class CsvExporter implements WriterExporter {
                 options = ParsingUtilities.mapper.readValue(optionsString, Configuration.class);
             } catch (IOException e) {
                 // Ignore and keep options null.
-                e.printStackTrace();
+                logger.warn("Invalid options string ignored: {}", optionsString, e);
             }
         }
         if (options.separator == null) {
@@ -112,7 +110,8 @@ public class CsvExporter implements WriterExporter {
         AbstractWriter csvWriter;
         if ("\t".equals(separator)) {
             TsvWriterSettings tsvSettings = new TsvWriterSettings();
-            csvWriter = new TsvWriter(writer, tsvSettings);
+            // TODO: We need an export setting to control whether we escape output
+            csvWriter = new TsvWriter(new DoubleBackslashFilterWriter(writer), tsvSettings);
         } else {
             CsvWriterSettings settings = new CsvWriterSettings();
             settings.setQuoteAllFields(quoteAll); // CSV only
@@ -156,4 +155,70 @@ public class CsvExporter implements WriterExporter {
     public String getContentType() {
         return "text/plain";
     }
+
+    /**
+     * A hacky filter class to work around the fact that the TSV writer doesn't have a setting to not escape backlashes,
+     * so we have to filter the doubled up backslashes after the fact, leaving escaped \t \n \r alone.
+     */
+    private static class DoubleBackslashFilterWriter extends FilterWriter {
+
+        private boolean pendingBackslash = false;
+
+        protected DoubleBackslashFilterWriter(Writer out) {
+            super(out);
+        }
+
+        @Override
+        public void write(int c) throws IOException {
+            writeChar((char) c);
+        }
+
+        @Override
+        public void write(char[] cbuf, int off, int len) throws IOException {
+            for (int i = off; i < off + len; i++) {
+                writeChar(cbuf[i]);
+            }
+        }
+
+        @Override
+        public void write(String str, int off, int len) throws IOException {
+            for (int i = off; i < off + len; i++) {
+                writeChar(str.charAt(i));
+            }
+        }
+
+        @Override
+        public void flush() throws IOException {
+            flushPendingBackslash();
+            super.flush();
+        }
+
+        @Override
+        public void close() throws IOException {
+            flushPendingBackslash();
+            super.close();
+        }
+
+        private void writeChar(char c) throws IOException {
+            if (c == '\\') {
+                if (pendingBackslash) {
+                    out.write('\\');
+                    pendingBackslash = false;
+                } else {
+                    pendingBackslash = true;
+                }
+            } else {
+                flushPendingBackslash();
+                out.write(c);
+            }
+        }
+
+        private void flushPendingBackslash() throws IOException {
+            if (pendingBackslash) {
+                out.write('\\');
+                pendingBackslash = false;
+            }
+        }
+    }
+
 }

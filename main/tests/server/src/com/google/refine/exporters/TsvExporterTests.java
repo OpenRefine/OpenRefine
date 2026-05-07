@@ -131,7 +131,7 @@ public class TsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportTsvWithComma() throws IOException {
+    public void exportTsvWithTab() throws IOException {
         CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, new Cell("with\t tab", null));
@@ -140,6 +140,20 @@ public class TsvExporterTests extends RefineTest {
         assertEqualsSystemLineEnding(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
                 "row0cell0\trow0cell1\trow0cell2\n" +
                 "row1cell0\twith\\t tab\trow1cell2\n" +
+                "row2cell0\trow2cell1\trow2cell2\n");
+    }
+
+    @Test
+    public void exportTsvWithBackslash() throws IOException {
+        CreateGrid(3, 3);
+
+        String testCell = "cell has a \\ backslash";
+        project.rows.get(1).cells.set(1, new Cell(testCell, null));
+        SUT.export(project, options, engine, writer);
+
+        assertEqualsSystemLineEnding(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
+                "row0cell0\trow0cell1\trow0cell2\n" +
+                "row1cell0\t" + testCell + "\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
 
