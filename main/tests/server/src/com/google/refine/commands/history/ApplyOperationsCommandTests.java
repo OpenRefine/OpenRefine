@@ -146,8 +146,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        String response = writer.toString();
-        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        String responseText = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(responseText, JsonNode.class);
         assertEquals(node.get("code").toString(), "\"error\"");
     }
 
@@ -159,8 +159,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        String response = writer.toString();
-        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        String responseText = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(responseText, JsonNode.class);
         assertEquals(node.get("code").toString(), "\"error\"");
     }
 
@@ -295,6 +295,7 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
     @Test
     public void testValidWithRenames() throws Exception {
         String renamesJSON = "{"
+                + "  \"foo\": \"foo\","
                 + "  \"bar\": \"bar_orig\""
                 + "}";
 
