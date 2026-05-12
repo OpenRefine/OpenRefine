@@ -211,7 +211,42 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
         assertEquals(renamed._baseColumnName, "vegetables");
         assertEquals(renamed._newColumnName, "json");
-        assertEquals(renamed._urlExpression, "grel:\"https://example.com/api?city=\" + value");
+        assertEquals(renamed._urlExpression, "grel:\"https://example.com/api?city=\"+value");
+    }
+
+    @Test
+    public void testRenameWithEscapedBackslashOnlyRenamingBaseColumn() {
+        ColumnAdditionByFetchingURLsOperation SUT = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                "fruits",
+                "grel:value+\"\\\\\\\\\"",
+                OnError.StoreError,
+                "results",
+                1,
+                5,
+                true,
+                null);
+
+        ColumnAdditionByFetchingURLsOperation renamed = SUT.renameColumns(Map.of("fruits", "vegetables"));
+
+        assertEquals(renamed.getUrlExpression(), "grel:value+\"\\\\\\\\\"");
+    }
+
+    @Test
+    public void testRenameWithEscapedBackslashAndDependentColumnRename() {
+        ColumnAdditionByFetchingURLsOperation SUT = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                "fruits",
+                "grel:cells['city'].value+\"\\\\\\\\\"",
+                OnError.StoreError,
+                "results",
+                1,
+                5,
+                true,
+                null);
+
+        ColumnAdditionByFetchingURLsOperation renamed = SUT.renameColumns(Map.of("city", "town"));
+
+        assertTrue(renamed.getUrlExpression().contains("town"));
+        assertTrue(renamed.getUrlExpression().contains("\\\\"));
     }
 
     /**

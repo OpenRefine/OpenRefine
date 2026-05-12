@@ -57,6 +57,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.ExpressionRenamingUtils;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationDescription;
 
@@ -145,27 +146,17 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
     @Override
     public TextTransformOperation renameColumns(Map<String, String> newColumnNames) {
-        String renamedExpression;
-        try {
-            Evaluable evaluable = MetaParser.parse(_expression);
-            Optional<Set<String>> dependencies = evaluable.getColumnDependencies(Optional.of(_columnName));
-            boolean needsExpressionRename = dependencies.isPresent()
-                    && dependencies.get().stream()
-                            .filter(columnName -> !_columnName.equals(columnName))
-                            .anyMatch(newColumnNames::containsKey);
-            if (needsExpressionRename) {
-                Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
-                renamedExpression = renamedEvaluable.getFullSource();
-            } else {
-                renamedExpression = _expression;
-            }
-        } catch (ParsingException e) {
+        Optional<String> renamedExpression = ExpressionRenamingUtils.renameExpressionIfNeeded(
+                _expression,
+                Optional.of(_columnName),
+                newColumnNames);
+        if (renamedExpression.isEmpty()) {
             return this;
         }
         return new TextTransformOperation(
                 _engineConfig.renameColumnDependencies(newColumnNames),
                 newColumnNames.getOrDefault(_columnName, _columnName),
-                renamedExpression,
+                renamedExpression.get(),
                 _onError,
                 _repeat,
                 _repeatCount);

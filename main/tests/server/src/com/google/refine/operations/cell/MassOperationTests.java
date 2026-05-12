@@ -29,6 +29,7 @@ package com.google.refine.operations.cell;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
+import static org.testng.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -228,6 +229,27 @@ public class MassOperationTests extends RefineTest {
                 + "  \"op\": \"core/mass-edit\""
                 + "}";
         TestUtils.isSerializedTo(renamed, expectedJSON);
+    }
+
+    @Test
+    public void testRenameWithEscapedBackslashOnlyRenamingBaseColumn() {
+        MassEditOperation SUT = new MassEditOperation(defaultEngineConfig, "foo", "grel:value+\"\\\\\\\\\"", editsWithFromBlank);
+
+        AbstractOperation renamed = SUT.renameColumns(Map.of("foo", "foo2"));
+
+        assertEquals(((MassEditOperation) renamed).getExpression(), "grel:value+\"\\\\\\\\\"");
+    }
+
+    @Test
+    public void testRenameWithEscapedBackslashAndDependentColumnRename() {
+        MassEditOperation SUT = new MassEditOperation(defaultEngineConfig, "foo", "grel:cells['bar'].value+\"\\\\\\\\\"",
+                editsWithFromBlank);
+
+        AbstractOperation renamed = SUT.renameColumns(Map.of("bar", "bar2"));
+        String renamedExpression = ((MassEditOperation) renamed).getExpression();
+
+        assertTrue(renamedExpression.contains("bar2"));
+        assertTrue(renamedExpression.contains("\\\\"));
     }
 
     // Not yet testing for mass edit from OR Error

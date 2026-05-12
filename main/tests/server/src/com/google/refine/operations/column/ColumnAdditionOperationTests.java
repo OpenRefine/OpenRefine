@@ -29,6 +29,7 @@ package com.google.refine.operations.column;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
+import static org.testng.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -158,7 +159,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     @Test
     public void testRenameColumns() {
         String description = OperationDescription.column_addition_brief("organization_json", 3, "employments",
-                "grel:value.parseJson().get(\"employment-summary\").join('###')");
+                "grel:value.parseJson()[\"employment-summary\"].join('###')");
         String expectedJSON = "{"
                 + "   \"op\":\"core/column-addition\","
                 + "   \"description\":" + new TextNode(description).toString() + ","
@@ -166,7 +167,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 + "   \"newColumnName\":\"organization_json\","
                 + "   \"columnInsertIndex\":3,"
                 + "   \"baseColumnName\":\"employments\","
-                + "   \"expression\":\"grel:value.parseJson().get(\\\"employment-summary\\\").join('###')\","
+                + "   \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
 
@@ -180,6 +181,37 @@ public class ColumnAdditionOperationTests extends RefineTest {
 
         AbstractOperation result = SUT.renameColumns(Map.of("job_titles", "employments", "new_column", "organization_json"));
         TestUtils.isSerializedTo(result, expectedJSON);
+    }
+
+    @Test
+    public void testRenameWithEscapedBackslashOnlyRenamingBaseColumn() {
+        ColumnAdditionOperation SUT = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                "job_titles",
+                "grel:value+\"\\\\\\\\\"",
+                OnError.SetToBlank,
+                "new_column",
+                3);
+
+        ColumnAdditionOperation renamed = (ColumnAdditionOperation) SUT.renameColumns(Map.of("job_titles", "employments"));
+
+        assertEquals(renamed.getExpression(), "grel:value+\"\\\\\\\\\"");
+    }
+
+    @Test
+    public void testRenameWithEscapedBackslashAndDependentColumnRename() {
+        ColumnAdditionOperation SUT = new ColumnAdditionOperation(
+                EngineConfig.reconstruct("{}"),
+                "job_titles",
+                "grel:cells['company'].value+\"\\\\\\\\\"",
+                OnError.SetToBlank,
+                "new_column",
+                3);
+
+        ColumnAdditionOperation renamed = (ColumnAdditionOperation) SUT.renameColumns(Map.of("company", "organization"));
+
+        assertTrue(renamed.getExpression().contains("organization"));
+        assertTrue(renamed.getExpression().contains("\\\\"));
     }
 
     @Test
