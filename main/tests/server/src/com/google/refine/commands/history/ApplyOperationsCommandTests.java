@@ -95,8 +95,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        String responseText = writer.toString();
-        JsonNode node = ParsingUtilities.mapper.readValue(responseText, JsonNode.class);
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
         assertEquals(node.get("code").asText(), "ok");
         assertEquals(node.get("historyEntries").get(0).get("description").asText(),
                 OperationDescription.column_rename_brief("foo", "foo2"));
@@ -131,8 +131,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        String responseText = writer.toString();
-        JsonNode node = ParsingUtilities.mapper.readValue(responseText, JsonNode.class);
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
         assertEquals(node.get("code").asText(), "ok");
         assertEquals(node.get("historyEntries").get(0).get("description").asText(),
                 OperationDescription.column_rename_brief("bar", "foo_2"));
@@ -146,8 +146,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        String responseText = writer.toString();
-        JsonNode node = ParsingUtilities.mapper.readValue(responseText, JsonNode.class);
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
         assertEquals(node.get("code").toString(), "\"error\"");
     }
 
@@ -159,8 +159,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        String responseText = writer.toString();
-        JsonNode node = ParsingUtilities.mapper.readValue(responseText, JsonNode.class);
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
         assertEquals(node.get("code").toString(), "\"error\"");
     }
 
@@ -270,6 +270,46 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
         String response = writer.toString();
         JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
         assertEquals(node.get("code").asText(), "ok");
+    }
+
+    @Test
+    public void testEscapedBackslashInExpressionWithNonIdentityRenames() throws Exception {
+        String json = "[{"
+                + "   \"op\":\"core/text-transform\","
+                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "   \"columnName\":\"bar\","
+                + "   \"expression\":\"grel:if(value==\\\"\\\\\\\\\\\",\\\"Backslash warning\\\",\\\"\\\")\","
+                + "   \"onError\":\"set-to-blank\","
+                + "   \"repeat\": false,"
+                + "   \"repeatCount\": 0"
+                + "}]";
+        String renamesJSON = "{"
+                + "  \"bar\": \"bar_orig\""
+                + "}";
+
+        project = createProject(new String[] { "foo", "bar_orig" },
+                new Serializable[][] {
+                        { 1, "\\" },
+                        { 2, "x" }
+                });
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("operations")).thenReturn(json);
+        when(request.getParameter("renames")).thenReturn(renamesJSON);
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").asText(), "ok");
+
+        Project expectedProject = createProject(new String[] { "foo", "bar_orig" },
+                new Serializable[][] {
+                        { 1, "Backslash warning" },
+                        { 2, "" }
+                });
+        assertProjectEquals(project, expectedProject);
     }
 
     @Test

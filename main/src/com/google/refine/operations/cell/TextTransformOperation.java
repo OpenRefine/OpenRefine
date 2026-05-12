@@ -148,8 +148,17 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         String renamedExpression;
         try {
             Evaluable evaluable = MetaParser.parse(_expression);
-            Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
-            renamedExpression = renamedEvaluable.getFullSource();
+            Optional<Set<String>> dependencies = evaluable.getColumnDependencies(Optional.of(_columnName));
+            boolean needsExpressionRename = dependencies.isPresent()
+                    && dependencies.get().stream()
+                            .filter(columnName -> !_columnName.equals(columnName))
+                            .anyMatch(newColumnNames::containsKey);
+            if (needsExpressionRename) {
+                Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
+                renamedExpression = renamedEvaluable.getFullSource();
+            } else {
+                renamedExpression = _expression;
+            }
         } catch (ParsingException e) {
             return this;
         }
