@@ -68,10 +68,16 @@ public final class ExpressionRenamingUtils {
             Map<String, String> newColumnNames) throws ParsingException {
         Optional<Set<String>> dependencies = evaluable.getColumnDependencies(baseColumnName);
         return dependencies.isPresent() && dependencies.get().stream()
-                .filter(columnName -> baseColumnName.map(base -> !base.equals(columnName)).orElse(true))
-                .anyMatch(columnName -> {
-                    String newName = newColumnNames.get(columnName);
-                    return newName != null && !newName.equals(columnName);
-                });
+                .filter(columnName -> !isBaseColumn(columnName, baseColumnName))
+                .anyMatch(columnName -> isNonIdentityRename(columnName, newColumnNames));
+    }
+
+    private static boolean isBaseColumn(String columnName, Optional<String> baseColumnName) {
+        return baseColumnName.isPresent() && baseColumnName.get().equals(columnName);
+    }
+
+    private static boolean isNonIdentityRename(String columnName, Map<String, String> newColumnNames) {
+        String newName = newColumnNames.get(columnName);
+        return newName != null && !newName.equals(columnName);
     }
 }

@@ -29,7 +29,6 @@ package com.google.refine.operations.column;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
-import static org.testng.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -210,8 +209,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
 
         ColumnAdditionOperation renamed = (ColumnAdditionOperation) SUT.renameColumns(Map.of("company", "organization"));
 
-        assertTrue(renamed.getExpression().contains("organization"));
-        assertTrue(renamed.getExpression().contains("\\\\"));
+        assertEquals(renamed.getExpression(), "grel:cells.get(\"organization\").value + \"\\\\\"");
     }
 
     @Test

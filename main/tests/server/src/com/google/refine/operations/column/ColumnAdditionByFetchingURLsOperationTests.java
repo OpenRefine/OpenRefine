@@ -245,8 +245,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
         ColumnAdditionByFetchingURLsOperation renamed = SUT.renameColumns(Map.of("city", "town"));
 
-        assertTrue(renamed.getUrlExpression().contains("town"));
-        assertTrue(renamed.getUrlExpression().contains("\\\\"));
+        assertEquals(renamed.getUrlExpression(), "grel:cells.get(\"town\").value + \"\\\\\"");
     }
 
     /**

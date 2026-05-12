@@ -29,7 +29,6 @@ package com.google.refine.operations.cell;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
-import static org.testng.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -248,8 +247,7 @@ public class MassOperationTests extends RefineTest {
         AbstractOperation renamed = SUT.renameColumns(Map.of("bar", "bar2"));
         String renamedExpression = ((MassEditOperation) renamed).getExpression();
 
-        assertTrue(renamedExpression.contains("bar2"));
-        assertTrue(renamedExpression.contains("\\\\"));
+        assertEquals(renamedExpression, "grel:cells.get(\"bar2\").value + \"\\\\\"");
     }
 
     // Not yet testing for mass edit from OR Error
