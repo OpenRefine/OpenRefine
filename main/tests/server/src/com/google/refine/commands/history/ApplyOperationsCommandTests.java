@@ -95,8 +95,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        String response = writer.toString();
-        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        String responseText = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(responseText, JsonNode.class);
         assertEquals(node.get("code").asText(), "ok");
         assertEquals(node.get("historyEntries").get(0).get("description").asText(),
                 OperationDescription.column_rename_brief("foo", "foo2"));
@@ -131,8 +131,8 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        String response = writer.toString();
-        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        String responseText = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(responseText, JsonNode.class);
         assertEquals(node.get("code").asText(), "ok");
         assertEquals(node.get("historyEntries").get(0).get("description").asText(),
                 OperationDescription.column_rename_brief("bar", "foo_2"));
