@@ -155,25 +155,17 @@ public class LoadLanguageCommand extends Command {
             logger.error("Security: Attempt to escape the langs directory to read another file");
             return null;
         }
-        FileInputStream fisLang = null;
-
-        try {
-            fisLang = new FileInputStream(langFile);
+        try (FileInputStream fisLang = new FileInputStream(langFile);
+                Reader reader = new BufferedReader(new InputStreamReader(fisLang, "UTF-8"))) {
+            return ParsingUtilities.mapper.readValue(reader, ObjectNode.class);
         } catch (FileNotFoundException e) {
             // Could be normal if we've got a list of languages as fallbacks
             logger.info("Language file " + strMessage + " not found");
             logger.debug("Exception details: " + e.getMessage());
-
         } catch (SecurityException e) {
             logger.error("Language file " + strMessage + " cannot be read (security)", e);
-        }
-        if (fisLang != null) {
-            try {
-                Reader reader = new BufferedReader(new InputStreamReader(fisLang, "UTF-8"));
-                return ParsingUtilities.mapper.readValue(reader, ObjectNode.class);
-            } catch (Exception e) {
-                logger.error("Language file " + strMessage + " cannot be read (io)", e);
-            }
+        } catch (Exception e) {
+            logger.error("Language file " + strMessage + " cannot be read (io)", e);
         }
         return null;
     }
