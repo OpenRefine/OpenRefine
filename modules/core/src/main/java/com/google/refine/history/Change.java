@@ -81,7 +81,7 @@ public interface Change {
             if (options.getPool() != null) {
                 properties.put("pool", options.getPool());
             }
-            save(writer, properties);
         }
+        save(writer, properties);
     };
 }

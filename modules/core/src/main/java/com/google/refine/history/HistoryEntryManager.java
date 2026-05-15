@@ -46,7 +46,7 @@ public interface HistoryEntryManager {
      * @param historyEntry
      * @param writer
      * @param options
-     * @since = 4.0
+     * @since 4.0
      */
     public void save(HistoryEntry historyEntry, Writer writer, SaveOptions options);
 
