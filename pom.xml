@@ -68,8 +68,8 @@
 
 
   <properties>
-    <java.minversion>17</java.minversion>
-    <java.maxversion>25</java.maxversion>
+    <java.minversion>21</java.minversion>
+    <java.maxversion>26</java.maxversion>
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
