@@ -41,9 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import com.google.refine.history.Change;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
@@ -293,7 +293,7 @@ public class DataExtensionChange implements Change {
     }
 
     @Override
-    public void save(Writer writer, Properties options) throws IOException {
+    public void save(Writer writer, SaveOptions options) throws IOException {
         writer.write("baseColumnName=");
         writer.write(_baseColumnName);
         writer.write('\n');

@@ -43,12 +43,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+// TODO: Should this class be defined somewhere higher up?
+import com.google.refine.history.SaveOptions;
 
 public class ColumnModel {
 
@@ -209,7 +211,7 @@ public class ColumnModel {
         return null;
     }
 
-    synchronized public void save(Writer writer, Properties options) throws IOException {
+    synchronized public void save(Writer writer, SaveOptions options) throws IOException {
         writer.write("maxCellIndex=");
         writer.write(Integer.toString(_maxCellIndex));
         writer.write('\n');

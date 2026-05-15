@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.history;
 
 import java.io.Writer;
-import java.util.Properties;
 
 public interface HistoryEntryManager {
 
@@ -42,7 +41,14 @@ public interface HistoryEntryManager {
 
     public void saveChange(HistoryEntry historyEntry) throws Exception;
 
-    public void save(HistoryEntry historyEntry, Writer writer, Properties options);
+    /**
+     *
+     * @param historyEntry
+     * @param writer
+     * @param options
+     * @since = 4.0
+     */
+    public void save(HistoryEntry historyEntry, Writer writer, SaveOptions options);
 
     public void delete(HistoryEntry historyEntry);
 }

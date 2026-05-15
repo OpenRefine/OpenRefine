@@ -35,7 +35,6 @@ package com.google.refine.history;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Properties;
 
 import com.google.refine.model.Project;
 
@@ -50,5 +49,5 @@ public interface Change {
 
     public void revert(Project project);
 
-    public void save(Writer writer, Properties options) throws IOException;
+    public void save(Writer writer, SaveOptions options) throws IOException;
 }

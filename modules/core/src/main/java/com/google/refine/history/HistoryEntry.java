@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -142,7 +141,7 @@ public class HistoryEntry {
         return operation == null ? null : operation.getOperationId();
     }
 
-    public void save(Writer writer, Properties options) {
+    public void save(Writer writer, SaveOptions options) {
         _manager.save(this, writer, options);
     }
 
