@@ -58,7 +58,7 @@ public interface Change {
     @Deprecated(since = "4.0", forRemoval = true)
     default void save(Writer writer, Properties options) throws IOException {
         throw new UnsupportedOperationException("Calling old-style API for new Changes is not supported");
-    };
+    }
 
     /**
      * Save a change to the given writer, using the given options. The default implementation of this method will call
@@ -83,5 +83,5 @@ public interface Change {
             }
         }
         save(writer, properties);
-    };
+    }
 }

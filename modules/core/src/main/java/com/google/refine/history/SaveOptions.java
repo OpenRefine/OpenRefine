@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * Copyright (C) 2026, OpenRefine contributors
  * All rights reserved.
@@ -36,7 +35,7 @@ import com.google.refine.util.Pool;
  * This used to be done with a raw Properties object with magic keys, but since 4.0 we use this more strongly typed
  * version.
  * 
- * @since = 4.0
+ * @since 4.0
  */
 public class SaveOptions {
 

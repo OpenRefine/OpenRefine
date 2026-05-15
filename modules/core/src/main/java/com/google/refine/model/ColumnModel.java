@@ -49,9 +49,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-// TODO: Should this class be defined somewhere higher up?
 import com.google.refine.history.SaveOptions;
 
+// TODO: Should this class be defined somewhere higher up?
 public class ColumnModel {
 
     @JsonProperty("columns")
