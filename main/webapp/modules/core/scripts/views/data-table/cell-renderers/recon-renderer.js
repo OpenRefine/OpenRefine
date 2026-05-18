@@ -119,7 +119,20 @@ class ReconCellRenderer {
             .appendTo(liSpan);
 
             if ((service) && (service.view) && (service.view.url)) {
-              a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
+              const candidateUrl = encodeURI(
+                service.view.url.replace("{{id}}", candidate.id)
+              );
+
+              a.attr("href", candidateUrl);
+
+              a.on('mousedown', function(evt) {
+                if (evt.button === 1) {
+                  evt.preventDefault();
+                  evt.stopPropagation();
+                  window.open(candidateUrl, "_blank");
+                  return false;
+                }
+              });
             }
 
             self.previewOnHover(service, candidate, liSpan.parent(), liSpan, true, rowIndex, cellIndex, cell, cellUI);
