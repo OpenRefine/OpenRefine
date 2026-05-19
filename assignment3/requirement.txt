@@ -1,0 +1,67 @@
+Social context, part 1
+Due May 8 by 4pm Points 2 Submitting a file upload File Types pdf Available after May 5 at 4pm
+Individually, identify three open issues that you would like to work on.  Briefly discuss each issue and motivate why you want to work on it.  Note that, at this stage, you do not actually have to do any problem solving, programming, submitting of a pull request, etc.   All we need for now is for you, on your own, to identify three issues.
+
+Make sure that your document includes a clickable link for each issue that links to its location in the issue tracker.
+
+Rubric
+Social context, part 1
+Social context, part 1
+Criteria	Ratings	Pts
+This criterion is linked to a Learning OutcomeCompleteness
+The document identifies and briefly discusses three issues; the document includes links for each issue back to the issue tracker.
+1 pts
+This criterion is linked to a Learning OutcomeMotivation
+The choice of issues is properly motivated: what criteria did you individually use to identify the issues, why do you think these criteria are useful at this time in the overall project, and how do the chosen issues match the criteria?
+1 pts
+Total Points: 2
+
+Please find issues on https://github.com/OpenRefine/OpenRefine/issues
+
+
+Social context, part 2
+Due Tuesday by 4pm Points 3 Submitting a file upload File Types pdf Available after May 5 at 4pm
+With your team, discuss the issues that each individual team member has identified, and select and motivate your choice of four open issues that you would like to work on as a team next.  Briefly discuss each issue and motivate why you want to work on it.  Note that, at this stage, you do not actually have to do any problem solving, programming, submitting of a pull request, etc.   All we need for now is your team identifying the four issues.
+
+Make sure that your document includes a clickable link for each issue that links to its location in the issue tracker.
+
+Rubric
+Social context, part 2
+Social context, part 2
+Criteria	Ratings	Pts
+This criterion is linked to a Learning OutcomeCompleteness
+The document identifies and briefly discusses four issues; the document includes links for each issue back to the issue tracker.
+1 pts
+This criterion is linked to a Learning OutcomeMotivation
+The choice of issues is properly motivated: what criteria did the team use to identify the issues, why does the team think these criteria are useful at this time in the overall project, and how do the chosen issues match the criteria?
+1 pts
+This criterion is linked to a Learning OutcomeLevel of integation
+Does the final choice of four issues reflect the joint views of the team members (as evidenced by how much these issues reflect not just the choices of one team member, but that of multiple, as well as how the discussion of the issues has improved)?
+1 pts
+Total Points: 3
+
+
+Social context, part 3
+Due Tuesday by 4pm Points 5 Submitting a file upload File Types pdf Available after May 5 at 4pm
+With your team, answer the questions in the document social context Download social context
+.  Make sure to answer the questions as a group.  Each answer should be formulated by at least two and ideally more of the team members.  A single look rarely uncovers the entire truth.
+
+Rubric
+Social context, part 3
+Social context, part 3
+Criteria	Ratings	Pts
+This criterion is linked to a Learning OutcomeUnderstandability
+Do the answers sufficiently explain the social context so someone who is unfamiliar with the project may be able to use it as a suitable start for beginning to understand the project and how to make contributions to it?
+4 pts
+Full Marks
+0 pts
+No Marks
+4 pts
+This criterion is linked to a Learning OutcomeInsightfulness
+What do the insights reveal about the state of the project at a higher level than the individual answers provided to the prior questions?
+1 pts
+Full Marks
+0 pts
+No Marks
+1 pts
+Total Points: 5
