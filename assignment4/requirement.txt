@@ -1,0 +1,67 @@
+Design patterns
+Due Tuesday by 4pm Points 10 Submitting a file upload File Types pdf Available after May 12 at 4pm
+As a team, identify five different design patterns inside your system.  At least two of the patterns that you identify should be behavioral in nature.  Please highlight where in the system each design pattern exists, discuss whether it is used exactly as it is supposed to or whether the code deviates from the exact definition, and describe why you think the developers used it for that particular part of the system (what benefits does it provide in this context).
+
+Note, the Singleton, Iterator, and Factory Method patterns are not eligible.
+
+ 
+
+Rubric
+Design patterns
+Design patterns
+Criteria	Ratings	Pts
+This criterion is linked to a Learning OutcomeVariety
+The five different design patterns are all of a different kind and at least two of the patterns are behavioral in nature.
+2 pts
+Full Marks
+0 pts
+No Marks
+2 pts
+This criterion is linked to a Learning OutcomeAccuracy
+Each design pattern is precisely documented in terms of where it resides in the code (0.8 point per design pattern).
+4 pts
+Full Marks
+0 pts
+No Marks
+4 pts
+This criterion is linked to a Learning OutcomeExplanation
+Each design pattern is well explained as to why the developers used it (0.8 point per design pattern).
+4 pts
+Full Marks
+0 pts
+No Marks
+4 pts
+Total Points: 10
+
+
+
+Submit two pull requests
+Due Tuesday by 4pm Points 10 Submitting a file upload File Types pdf Available after May 12 at 4pm
+With your team, code up two issues and submit a pull request for each.  The pull requests should involve meaningful code fixes (not just commentary, not just re-aligning existing code, not just renaming something, ...).  The actual code changes can be small.
+
+To Canvas, submit a brief document that includes the following, per issue and associate pull request:
+
+title
+a link to the issue
+a link to your pull request
+ 
+
+Rubric
+Submit first pull request
+Submit first pull request
+Criteria	Ratings	Pts
+This criterion is linked to a Learning OutcomeCompliance
+The pull requests follow conventions established by the community (i.e., they meet the expectations laid out by the community as part of the overall social context).
+5 pts
+Full Marks
+0 pts
+No Marks
+5 pts
+This criterion is linked to a Learning OutcomeMeaningfulness
+The pull requests make meaningful contribution to the system (i.e., they do not just fix a typo in the documentation).
+5 pts
+Full Marks
+0 pts
+No Marks
+5 pts
+Total Points: 10
