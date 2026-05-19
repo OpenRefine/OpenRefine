@@ -37,6 +37,29 @@ describe(__filename, function () {
     cy.get('#projects-list table').contains(project1).should('not.be.visible');
   });
 
+  it('Clears the search input when a tag (including "All") is selected', function () {
+    // Regression test for #7632: the search box should not retain text after
+    // the user switches to a tag filter, otherwise the visible rows and the
+    // input contents disagree.
+    const project1 = 'Project A';
+    const project2 = 'Project B';
+    cy.loadProject('food.mini', project1, 'TestTagOne');
+    cy.loadProject('food.mini', project2, 'TestTagTwo');
+    cy.visitOpenRefine();
+    cy.navigateTo('Open project');
+
+    cy.get('#search-icon').click();
+    cy.get('#search-input').type('Project A');
+    cy.wait(800); // typing timeout is 500 msec
+    cy.get('#projects-list table').contains(project2).should('not.be.visible');
+
+    // Click the "All" tag — search input should be cleared and all rows shown.
+    cy.get('#projectTags ul').children().contains('All').click();
+    cy.get('#search-input').should('have.value', '');
+    cy.get('#projects-list table').contains(project1).should('be.visible');
+    cy.get('#projects-list table').contains(project2).should('be.visible');
+  });
+
   it('Ensure projects are being filtered through search', function () {
     const project1 = 'Project A';
     const project2 = 'Project B';
