@@ -38,18 +38,17 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.EngineConfig;
-import com.google.refine.commands.EngineDependentCommand;
+import com.google.refine.commands.OperationCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.row.RowReorderOperation;
 import com.google.refine.sorting.SortingConfig;
 
-public class ReorderRowsCommand extends EngineDependentCommand {
+public class ReorderRowsCommand extends OperationCommand {
 
     @Override
     protected AbstractOperation createOperation(Project project,
-            HttpServletRequest request, EngineConfig engineConfig) throws Exception {
+            HttpServletRequest request) throws Exception {
 
         String mode = request.getParameter("mode");
         SortingConfig sorting = null;
