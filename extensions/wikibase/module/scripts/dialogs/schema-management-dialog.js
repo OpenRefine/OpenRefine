@@ -23,32 +23,29 @@ SchemaManagementDialog.prototype.launch = function () {
     const text = await file.text();
     
     elmts.errorField.empty();
-    // validate JSON structure
-    Refine.postCSRF(
+    // validate JSON structure
+    CSRFUtil.post(
       "command/wikidata/parse-wikibase-schema",
-      { template: text },
-      function(data) {
-        // success
-        const parsedTemplate = JSON.parse(text);
-        if (data.object_type === 'template') {
-          WikibaseTemplateManager.addTemplate(self.activeWikibase, parsedTemplate.name, parsedTemplate.schema);
-        } else {
-          // legacy case: importing a schema generated before OpenRefine 3.7.
-          // We need to additionally prompt the user for a name.
-          let name = prompt($.i18n('wikibase-schema-management-dialog/enter-new-schema-name'));
-          if (name) {
-             WikibaseTemplateManager.addTemplate(self.activeWikibase, name, parsedTemplate);
-          }
+      { template: text }
+    ).fail(function(error) {
+      elmts.errorField.text($.i18n('wikibase-schema-management-dialog/invalid-schema'));
+    }).done(function(data) {
+      // success
+      const parsedTemplate = JSON.parse(text);
+      if (data.object_type === 'template') {
+        WikibaseTemplateManager.addTemplate(self.activeWikibase, parsedTemplate.name, parsedTemplate.schema);
+      } else {
+        // legacy case: importing a schema generated before OpenRefine 3.7.
+        // We need to additionally prompt the user for a name.
+        let name = prompt($.i18n('wikibase-schema-management-dialog/enter-new-schema-name'));
+        if (name) {
+          WikibaseTemplateManager.addTemplate(self.activeWikibase, name, parsedTemplate);
         }
-        WikibaseTemplateManager.saveTemplates();
-        elmts.fileInput.val('');
-        self.populateDialog();
-      },
-      "json",
-      function(error) {
-        elmts.errorField.text($.i18n('wikibase-schema-management-dialog/invalid-schema'));
       }
-    );
+      WikibaseTemplateManager.saveTemplates();
+      elmts.fileInput.val('');
+      self.populateDialog();
+    });
 
   });
 };

@@ -93,26 +93,23 @@ function ApplyOperationsDialog() {
     var dismissBusy = null;
     var done = false;
 
-    Refine.postCSRF(
+    CSRFUtil.post(
         "command/core/get-column-dependencies",
-        { operations: JSON.stringify(operations) },
-        function(response) {
-          done = true;
-          if (dismissBusy) {
-            dismissBusy();
-          }
-          if (response.code === "ok") {
-            DialogSystem.dismissUntil(level - 1);
-            new ColumnMappingDialog(operations, response);
-          } else {
-            elmts.errorContainer.text($.i18n('core-project/json-invalid', response.message));
-          }
-        },
-        "json",
-        function(e) {
-          elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));   
-        },
-    );
+        { operations: JSON.stringify(operations) }
+    ).fail(function(e) {
+      elmts.errorContainer.text($.i18n('core-project/json-invalid', e.message));
+    }).done(function(response) {
+      done = true;
+      if (dismissBusy) {
+        dismissBusy();
+      }
+      if (response.code === "ok") {
+        DialogSystem.dismissUntil(level - 1);
+        new ColumnMappingDialog(operations, response);
+      } else {
+        elmts.errorContainer.text($.i18n('core-project/json-invalid', response.message));
+      }
+    });
 
     window.setTimeout(function() {
       if (!done) {

@@ -70,11 +70,8 @@ WikibaseTemplateManager.renameTemplate = function (wikibaseName, oldTemplateName
 
 // loads all the templates from the backend
 WikibaseTemplateManager.loadTemplates = function(onDone) {
-  $.ajax({
-    url: "command/core/get-preference?" + $.param({
-      name: "wikibase.templates"
-    }),
-    success: function (data) {
+  OpenRefine.getPreference("wikibase.templates")
+    .then(function (data) {
       WikibaseTemplateManager.templates = {};
       if (data.value && data.value !== "null" && data.value !== "[]") {
         // the object is wrapped into an array because the backend does not
@@ -87,26 +84,10 @@ WikibaseTemplateManager.loadTemplates = function(onDone) {
       if (onDone) {
         onDone();
       }
-    },
-    dataType: "json"
-  });
+    });
 }
 
 // saves all the templates to the backend
 WikibaseTemplateManager.saveTemplates = function() {
-  Refine.wrapCSRF(function (token) {
-    $.ajax({
-      async: false,
-      type: "POST",
-      url: "command/core/set-preference?" + $.param({
-        name: "wikibase.templates"
-      }),
-      data: {
-        "value": JSON.stringify([WikibaseTemplateManager.templates]),
-        csrf_token: token
-      },
-      dataType: "json"
-    });
-  });
-
+  OpenRefine.setPreference("wikibase.templates", [WikibaseTemplateManager.templates]);
 }

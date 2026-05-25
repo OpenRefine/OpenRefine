@@ -43,6 +43,7 @@ I18NUtil.init("core");
  * Requests a CSRF token and calls the supplied callback.
  * @public
  * @param {function(string)} onCSRF - The callback to call with the token.
+ * @deprecated use CSRFUtil.getCSRF().then(onCSRF)
  */
 Refine.wrapCSRF = CSRFUtil.wrapCSRF;
 
@@ -54,7 +55,7 @@ Refine.wrapCSRF = CSRFUtil.wrapCSRF;
  * @param {function(object)} success - The callback to call on success.
  * @param {string} dataType - The type of data expected in the response.
  * @param {function(object)} failCallback - The callback to call on failure.
- * @returns {jQuery.jqXHR} The jQuery AJAX request object.
+ * @deprecated use CSRFUtil.post()
  */
 Refine.postCSRF = CSRFUtil.postCSRF;
 
@@ -240,6 +241,7 @@ Refine.reinitializeProjectData = function(f, fError) {
       }
     }
 
+    // TODO: This cache isn't updated if multiple sessions are active
     if (preferences) {
       thePreferences = preferences;
     }
@@ -254,21 +256,16 @@ Refine.getPreference = function(key, defaultValue) {
   return thePreferences[key];
 }
 
+// TODO: Refactor this to use standard library function
 Refine.setPreference = function(key, newValue) {
   thePreferences[key] = newValue;
 
-  Refine.wrapCSRF(function(token) {
-    $.ajax({
-      async: false,
-      type: "POST",
-      url: "command/core/set-preference?" + $.param({ name: key }),
-      data: {
-        "value" : JSON.stringify(newValue),
-        csrf_token: token
-      },
-      success: function(data) { },
-      dataType: "json"
-    });
+  CSRFUtil.post({
+    async: false,
+    url: "command/core/set-preference?" + $.param({name: key}),
+    data: {
+      "value": JSON.stringify(newValue),
+    }
   });
 }
 
@@ -283,19 +280,17 @@ Refine._renameProject = function() {
     return;
   }
 
-  Refine.postCSRF(
+  CSRFUtil.post(
     "command/core/rename-project",
-    { "project" : theProject.id, "name" : name },
-    function (data) {
-      if (data && typeof data.code != "undefined" && data.code == "ok") {
-        theProject.metadata.name = name;
-        Refine.setTitle();
-      } else {
-        alert($.i18n('core-index/error-rename')+" " + data.message);
-      }
-    },
-    "json"
-  );
+    { "project" : theProject.id, "name" : name }
+  ).done(function (data) {
+    if (data && typeof data.code != "undefined" && data.code === "ok") {
+      theProject.metadata.name = name;
+      Refine.setTitle();
+    } else {
+      alert($.i18n('core-index/error-rename')+" " + data.message);
+    }
+  });
 };
 
 /*
@@ -415,6 +410,7 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
 
     Refine.clearAjaxInProgress();
 
+    // FIXME: Add defensive error checking for malformed response
     if (o.code == "error") {
       if ("onError" in callbacks) {
         try {
@@ -458,12 +454,12 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
   var runChange = function() {
     Refine.setAjaxInProgress();
 
-    Refine.postCSRF(
-        "command/" + moduleName + "/" + command + "?" + $.param(params),
-        body,
-        onDone,
-        "json"
-    );
+    CSRFUtil.post({
+        url: "command/" + moduleName + "/" + command + "?" + $.param(params),
+        data: body,
+        dataType: "json" // Auto datatype detection doesn't work here and guesss string instead of JSON
+      }
+    ).done(onDone);
 
     window.setTimeout(function() {
       if (!done) {
@@ -581,30 +577,28 @@ Refine.fetchRows = function(paginationOptions, limit, onDone, sorting) {
 
   $.post(
     "command/core/get-rows?" + $.param({ ...paginationOptions, project: theProject.id, limit: limit }),
-    body,
-    function(data) {
-      if(data.code === "error") {
-        data = theProject.rowModel;
-      }
-      theProject.rowModel = data;
+    body
+  ).done(function(data) {
+    if(data.code === "error") {
+      data = theProject.rowModel;
+    }
+    theProject.rowModel = data;
 
-      // Un-pool objects
-      for (var r = 0; r < data.rows.length; r++) {
-        var row = data.rows[r];
-        for (var c = 0; c < row.cells.length; c++) {
-          var cell = row.cells[c];
-          if ((cell) && ("r" in cell)) {
-            cell.r = data.pool.recons[cell.r];
-          }
+    // Un-pool objects
+    for (var r = 0; r < data.rows.length; r++) {
+      var row = data.rows[r];
+      for (var c = 0; c < row.cells.length; c++) {
+        var cell = row.cells[c];
+        if ((cell) && ("r" in cell)) {
+          cell.r = data.pool.recons[cell.r];
         }
       }
+    }
 
-      if (onDone) {
-        onDone();
-      }
-    },
-    "json"
-  );
+    if (onDone) {
+      onDone();
+    }
+  });
 };
 
 Refine.getPermanentLink = function() {

@@ -76,31 +76,22 @@ ClusteringFunctionsDialog.prototype._renderTable = function () {
     this._elmts.or_dialog_keying.html($.i18n('core-dialogs/keying-functions'));
     this._elmts.or_dialog_distance.html($.i18n('core-dialogs/distance-functions'));
 
-    var renderKeyingFunctions = function () {
-        $.ajax({
-            url: "command/core/get-preference?" + $.param({
-                name: "ui.clustering.customKeyingFunctions"
-            }),
-            success: function (data) {
-                var functions = data.value == null ? [] : JSON.parse(data.value);
-                self._renderFunctions("Keying", functions);
-            },
-            dataType: "json",
-        });
+    var parseFunctionsPreferenceValue = function (value) {
+        return value == null ? [] : JSON.parse(value);
     }
+    var renderKeyingFunctions = function () {
+        return OpenRefine.getPreference("ui.clustering.customKeyingFunctions").then(function (data) {
+            var keyingFunctions = parseFunctionsPreferenceValue(data.value);
+            self._renderFunctions("Keying", keyingFunctions);
+        });
+    };
 
     var renderDistanceFunctions = function () {
-        $.ajax({
-            url: "command/core/get-preference?" + $.param({
-                name: "ui.clustering.customDistanceFunctions"
-            }),
-            success: function (data) {
-                var functions = data.value == null ? [] : JSON.parse(data.value);
-                self._renderFunctions("Distance", functions);
-            },
-            dataType: "json",
+        return OpenRefine.getPreference("ui.clustering.customDistanceFunctions").then(function (data) {
+            var distanceFunctions = parseFunctionsPreferenceValue(data.value);
+            self._renderFunctions("Distance", distanceFunctions);
         });
-    }
+    };
 
     renderKeyingFunctions();
     renderDistanceFunctions();
@@ -198,42 +189,34 @@ ClusteringFunctionsDialog.prototype._addFunction = function (column) {
         }
 
         var add = function () {
-            $.ajax({
-                url: "command/core/get-preference?" + $.param({
-                    name: "ui.clustering.custom" + activeTabName + "Functions"
-                }),
-                success: function (data1) {
-                    var langAndExpr = previewWidget.getExpression();
-                    var colonIndex = langAndExpr.indexOf(':');
-                    var lang = langAndExpr.substring(0, colonIndex);
-                    var fullExpr = langAndExpr.substring(colonIndex + 1);
+            var preferenceName = "ui.clustering.custom" + activeTabName + "Functions";
 
-                    var _functions = data1.value == null ? [] : JSON.parse(data1.value);
-                    _functions.push({
-                        name: functionName,
-                        expressionLang: lang,
-                        expression: fullExpr
-                    });
+            var parseExpression = function (langAndExpr) {
+                var colonIndex = langAndExpr.indexOf(':');
+                return {
+                    lang: langAndExpr.substring(0, colonIndex),
+                    expr: langAndExpr.substring(colonIndex + 1)
+                };
+            };
 
-                    Refine.wrapCSRF(function (token) {
-                        $.ajax({
-                            type: "POST",
-                            url: "command/core/set-preference?" + $.param({
-                                name: "ui.clustering.custom" + activeTabName + "Functions"
-                            }),
-                            data: {
-                                "value": JSON.stringify(_functions),
-                                "csrf_token": token
-                            },
-                            success: function (data) {
-                                self._renderTable();
-                            },
-                            dataType: "json"
-                        });
-                    });
-                },
-                dataType: "json",
-            });
+            OpenRefine.getPreference(preferenceName)
+              .then(function (data) {
+                  var parsed = parseExpression(previewWidget.getExpression());
+
+                  var rawValue = data && data.value;
+                  var functions = rawValue == null ? [] : JSON.parse(rawValue);
+
+                  functions.push({
+                      name: functionName,
+                      expressionLang: parsed.lang,
+                      expression: parsed.expr
+                  });
+
+                  OpenRefine.setPreference(preferenceName, JSON.stringify(functions))
+                    .then( function () {
+                      self._renderTable();
+                  });
+              });
         }
 
         add();
@@ -258,11 +241,8 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
     var dismiss = function () { DialogSystem.dismissUntil(level - 1); };
 
     var previewWidget;
-    $.ajax({
-        url: "command/core/get-preference?" + $.param({
-            name: "ui.clustering.custom" + functionsType + "Functions"
-        }),
-        success: function (data) {
+    OpenRefine.getPreference("ui.clustering.custom" + functionsType + "Functions")
+        .then(function (data) {
             var _functions = data.value == null ? [] : JSON.parse(data.value);
             elmts.functionNameInput[0].value = _functions[index].name;
 
@@ -275,9 +255,7 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
                 _functions[index].expressionLang + ':' + _functions[index].expression,
                 self._columnName
             );
-        },
-        dataType: "json",
-    });
+        });
 
     elmts.cancelButton.on('click', dismiss);
     elmts.form.on('submit', function (event) {
@@ -290,40 +268,25 @@ ClusteringFunctionsDialog.prototype._editFunction = function (column, functionsT
 
         var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
         var edit = function () {
-            $.ajax({
-                url: "command/core/get-preference?" + $.param({
-                    name: "ui.clustering.custom" + activeTabName + "Functions"
-                }),
-                success: function (data1) {
+            var preferenceName = "ui.clustering.custom" + activeTabName + "Functions";
+            
+            OpenRefine.getPreference(preferenceName)
+                .then(function (data) {
                     var langAndExpr = previewWidget.getExpression();
                     var colonIndex = langAndExpr.indexOf(':');
                     var lang = langAndExpr.substring(0, colonIndex);
                     var fullExpr = langAndExpr.substring(colonIndex + 1);
 
-                    var _functions = data1.value == null ? [] : JSON.parse(data1.value);
+                    var _functions = data.value == null ? [] : JSON.parse(data.value);
                     _functions[index].name = functionName;
                     _functions[index].expressionLang = lang;
                     _functions[index].expression = fullExpr;
 
-                    Refine.wrapCSRF(function (token) {
-                        $.ajax({
-                            type: "POST",
-                            url: "command/core/set-preference?" + $.param({
-                                name: "ui.clustering.custom" + activeTabName + "Functions"
-                            }),
-                            data: {
-                                "value": JSON.stringify(_functions),
-                                "csrf_token": token
-                            },
-                            success: function (data) {
-                                self._renderTable();
-                            },
-                            dataType: "json"
+                    OpenRefine.setPreference(preferenceName, JSON.stringify(_functions))
+                        .then(function () {
+                            self._renderTable();
                         });
-                    });
-                },
-                dataType: "json",
-            });
+                });
         }
 
         edit();
@@ -336,34 +299,17 @@ ClusteringFunctionsDialog.prototype._deleteFunction = function (index) {
     var result = confirm($.i18n('core-views/warning-delete-functions'));
     if (result) {
         var activeTabName = $("#clustering-functions-tabs").find(".ui-tabs-active a").text().split(' ')[0];
-        var remove = function () {
-            $.ajax({
-                url: "command/core/get-preference?" + $.param({
-                    name: "ui.clustering.custom" + activeTabName + "Functions"
-                }),
-                success: function (data1) {
-                    var _functions = data1.value == null ? [] : JSON.parse(data1.value);
-                    _functions.splice(index, 1);
-                    Refine.wrapCSRF(function (token) {
-                        $.ajax({
-                            type: "POST",
-                            url: "command/core/set-preference?" + $.param({
-                                name: "ui.clustering.custom" + activeTabName + "Functions"
-                            }),
-                            data: {
-                                "value": JSON.stringify(_functions),
-                                "csrf_token": token
-                            },
-                            success: function (data) {
-                                self._renderTable();
-                            },
-                            dataType: "json"
-                        });
+        var preferenceName = "ui.clustering.custom" + activeTabName + "Functions";
+        
+        OpenRefine.getPreference(preferenceName)
+            .then(function (data) {
+                var _functions = data.value == null ? [] : JSON.parse(data.value);
+                _functions.splice(index, 1);
+                
+                OpenRefine.setPreference(preferenceName, JSON.stringify(_functions))
+                    .then(function () {
+                        self._renderTable();
                     });
-                },
-                dataType: "json",
             });
-        }
-        remove();
     }
 };

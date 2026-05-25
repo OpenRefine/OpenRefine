@@ -113,7 +113,7 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
     // If it fails, try with JSONP
     $.ajax(
         url,
-        { "dataType" : "jsonp",
+        { "dataType" : "jsonp", // Fallback only
            "timeout": 5000
         }
     )
@@ -147,23 +147,10 @@ ReconciliationManager.unregisterService = function(service, f) {
 };
 
 ReconciliationManager.save = function(f) {
-  Refine.wrapCSRF(function(token) {
-    $.ajax({
-        async: false,
-        type: "POST",
-        url: "command/core/set-preference?" + $.param({ 
-        name: "reconciliation.standardServices" 
-        }),
-        data: {
-          "value" : JSON.stringify(ReconciliationManager.standardServices), 
-          csrf_token: token
-        },
-        success: function(data) {
-        if (f) { f(); }
-        },
-        dataType: "json"
+  OpenRefine.setPreference("reconciliation.standardServices", ReconciliationManager.standardServices)
+    .then(function(data) {
+      if (f) { f(); }
     });
-  });
 };
 
 ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f, silent) {
@@ -188,19 +175,13 @@ ReconciliationManager.ensureDefaultServicePresent = function() {
 
 (function() {
 
-  $.ajax({
-    async: false,
-    url: "command/core/get-preference?" + $.param({ 
-      name: "reconciliation.standardServices" 
-    }),
-    success: function(data) {
+  OpenRefine.getPreference("reconciliation.standardServices")
+    .then(function(data) {
       if (data.value && data.value != "null" && data.value != "[]") {
         ReconciliationManager.standardServices = JSON.parse(data.value);
         ReconciliationManager._rebuildMap();
       } else {
         ReconciliationManager.ensureDefaultServicePresent();
       }
-    },
-    dataType: "json"
-  });
+    });
 })();

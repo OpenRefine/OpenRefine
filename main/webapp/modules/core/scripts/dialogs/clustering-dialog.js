@@ -41,7 +41,7 @@ function ClusteringDialog(column, expression) {
 
     this._facets = [];
 
-    let checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
+    let checkedValue = thePreferences["ui.clustering.auto-update"] === true;
     this._createDialog();
     if (checkedValue === true) {
         this._cluster();
@@ -159,10 +159,10 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.autoCheckbox.on("change", function() {
         let checkbox = document.getElementById("autoId");
         if (checkbox.checked) {
-            Refine.setPreference("ui.clustering.auto-update", true);
+            OpenRefine.setPreference("ui.clustering.auto-update", true);
             self._cluster();
         } else {
-            Refine.setPreference("ui.clustering.auto-update", false);
+            OpenRefine.setPreference("ui.clustering.auto-update", false);
         }
     });
 
@@ -174,8 +174,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.closeButton.on('click',function() { self._dismiss(); });
 
     self._level = DialogSystem.showDialog(dialog);
-    var checkedValue = JSON.parse(Refine.getPreference("ui.clustering.auto-update", false));
-    document.getElementById("autoId").checked = checkedValue;
+    document.getElementById("autoId").checked = thePreferences["ui.clustering.auto-update"] === true;
     
     self._renderClusteringFunctions();
 };
@@ -215,39 +214,32 @@ ClusteringDialog.prototype._renderClusteringFunctions = function() {
           if (i == 0) {
              option.prop('selected', 'true');
           }
-       }
-        $.ajax({
-            url: "command/core/get-preference?" + $.param({
-                name: "ui.clustering.customKeyingFunctions"
-            }),
-            success: function (data) {
-                var functions = data.value == null ? [] : JSON.parse(data.value);
-                for(var i = 0; i < functions.length; i++){
-                    var option = $('<option></option>')
-                        .val("UserDefinedKeyer")
-                        .text(functions[i].name)
-                        .data('expression', functions[i].expressionLang + ':' + functions[i].expression)
-                        .appendTo(self._elmts.keyingFunctionSelector);
-
-                }
-            },
-            dataType: "json",
-        });
-        $.ajax({
-            url: "command/core/get-preference?" + $.param({
-                name: "ui.clustering.customDistanceFunctions"
-            }),
-            success: function (data) {
-                var functions = data.value == null ? [] : JSON.parse(data.value);
-                for(var i = 0; i < functions.length; i++){
-                    var option = $('<option></option>')
-                        .val("UserDefinedDistance")
-                        .text(functions[i].name)
-                        .data('expression', functions[i].expressionLang + ':' + functions[i].expression)
-                        .appendTo(self._elmts.distanceFunctionSelector);
-                }
-            },
-            dataType: "json",
+        }
+        
+        Promise.all([
+            OpenRefine.getPreference("ui.clustering.customKeyingFunctions"),
+            OpenRefine.getPreference("ui.clustering.customDistanceFunctions")
+        ]).then(function(results) {
+            var keyingData = results[0];
+            var distanceData = results[1];
+            
+            var keyingFunctions = keyingData.value == null ? [] : JSON.parse(keyingData.value);
+            for(var i = 0; i < keyingFunctions.length; i++){
+                var option = $('<option></option>')
+                    .val("UserDefinedKeyer")
+                    .text(keyingFunctions[i].name)
+                    .data('expression', keyingFunctions[i].expressionLang + ':' + keyingFunctions[i].expression)
+                    .appendTo(self._elmts.keyingFunctionSelector);
+            }
+            
+            var distanceFunctions = distanceData.value == null ? [] : JSON.parse(distanceData.value);
+            for(var i = 0; i < distanceFunctions.length; i++){
+                var option = $('<option></option>')
+                    .val("UserDefinedDistance")
+                    .text(distanceFunctions[i].name)
+                    .data('expression', distanceFunctions[i].expressionLang + ':' + distanceFunctions[i].expression)
+                    .appendTo(self._elmts.distanceFunctionSelector);
+            }
         });
     })
     .fail(function(error) {
@@ -409,7 +401,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
         };
 
         var maxRenderRows = parseInt(
-            Refine.getPreference("ui.clustering.choices.limit", 5000)
+            thePreferences["ui.clustering.choices.limit"] || 5000
         );
         maxRenderRows = isNaN(maxRenderRows) || maxRenderRows <= 0 ? 5000 : maxRenderRows;
         var totalRows = 0;
@@ -444,7 +436,7 @@ ClusteringDialog.prototype._cluster = function() {
 
     this._elmts.resultSummary.empty();
 
-    Refine.postCSRF(
+    CSRFUtil.post(
         "command/core/compute-clusters?" + $.param({ project: theProject.id }),
         {
             engine: JSON.stringify(ui.browsingEngine.getJSON()),
@@ -454,14 +446,12 @@ ClusteringDialog.prototype._cluster = function() {
                 'column' : this._columnName,
                 'params' : this._params
             })
-        },
-        function(data) {
-            self._updateData(data);
-            $(".clustering-dialog-facet").css("display","block");
-            $('#cluster-and-edit-dialog :input').not('.Checkbox_Choice').prop('disabled', false);
-        },
-        "json"
-    );
+        }
+    ).done(function(data) {
+        self._updateData(data);
+        $(".clustering-dialog-facet").css("display","block");
+        $('#cluster-and-edit-dialog :input').not('.Checkbox_Choice').prop('disabled', false);
+    });
 };
 
 ClusteringDialog.prototype._updateData = function(data) {

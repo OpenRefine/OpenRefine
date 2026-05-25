@@ -131,7 +131,7 @@ ExtendReconciledDataPreviewDialog.getAllProperties = function(url, typeID, onDon
       timeout: 7000,
       error: function () {
         $.ajax(url + "?type=" + typeID, {
-          dataType: "jsonp",
+          dataType: "jsonp", // Fallback to JSONP if JSON doesn't work
           success: onSuccess,
           timeout: 7000,
           error: function () {
@@ -203,19 +203,17 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
     this._elmts.previewContainer.empty();
   } else {
     // otherwise, refresh the preview
-    Refine.postCSRF(
-        "command/core/preview-extend-data?" + $.param(params),
-        {
+    CSRFUtil.post(
+      "command/core/preview-extend-data?" + $.param(params),
+      {
         rowIndices: JSON.stringify(this._rowIndices),
         extension: JSON.stringify(this._extension)
-        },
-        function(data) {
-        self._renderPreview(data);
-        },
-        "json",
-        function(data) {
-           alert($.i18n('core-views/internal-err'));
-        });
+      }
+    ).fail(function (data) {
+      alert($.i18n('core-views/internal-err'));
+    }).done(function (data) {
+      self._renderPreview(data);
+    });
   }
 };
 

@@ -34,7 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Refine.ImportProjectUI = function(elmt) {
   elmt.html(DOM.loadHTML("core", "scripts/index/import-project-ui.html"));
 
-  Refine.wrapCSRF(function(token) {
+  CSRFUtil.getCSRF().then(function(token) {
+    // TODO: Does this have to be sent as a query parameter?
      $('#project-upload-form').attr('action', "command/core/import-project?" + $.param({ csrf_token: token}));
   });
   

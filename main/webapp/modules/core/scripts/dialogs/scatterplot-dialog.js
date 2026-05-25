@@ -99,7 +99,8 @@ ScatterplotDialog.prototype._renderMatrix = function() {
         var params = {
             project: theProject.id
         };
-        Refine.wrapCSRF(function(csrfToken) {
+        // This command evaluates expressions, so needs CSRF protection, even though it's a GET
+        CSRFUtil.getCSRF().then(function(csrfToken) {
           $.getJSON("command/core/get-columns-info?" + $.param(params),function(data) {
               if (data === null || typeof data.length == 'undefined') {
                   container.html($.i18n('core-dialogs/error-getColumnInfo'));
@@ -232,4 +233,3 @@ ScatterplotDialog.prototype._dismiss = function() {
     this._active = false;
     DialogSystem.dismissUntil(this._level - 1);
 };
-

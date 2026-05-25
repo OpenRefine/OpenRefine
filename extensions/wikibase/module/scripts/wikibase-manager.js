@@ -221,28 +221,12 @@ WikibaseManager.removeWikibase = function (wikibaseName) {
 WikibaseManager.saveWikibases = function () {
   let manifests = WikibaseManager.getAllWikibaseManifests();
 
-  Refine.wrapCSRF(function (token) {
-    $.ajax({
-      async: false,
-      type: "POST",
-      url: "command/core/set-preference?" + $.param({
-        name: "wikibase.manifests"
-      }),
-      data: {
-        "value": JSON.stringify(manifests),
-        csrf_token: token
-      },
-      dataType: "json"
-    });
-  });
+  OpenRefine.setPreference("wikibase.manifests", manifests);
 };
 
 WikibaseManager.loadWikibases = function (onDone) {
-  $.ajax({
-    url: "command/core/get-preference?" + $.param({
-      name: "wikibase.manifests"
-    }),
-    success: function (data) {
+  OpenRefine.getPreference("wikibase.manifests")
+    .then(function (data) {
       if (data.value && data.value !== "null" && data.value !== "[]") {
         let manifests = JSON.parse(data.value);
         manifests.forEach(function (manifest) {
@@ -268,9 +252,7 @@ WikibaseManager.loadWikibases = function (onDone) {
           onDone();
         }
       }
-    },
-    dataType: "json"
-  });
+    });
 };
 
 WikibaseManager.selectDefaultWikibaseAccordingToSavedSchema = function () {

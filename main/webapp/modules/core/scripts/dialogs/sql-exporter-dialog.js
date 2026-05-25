@@ -347,7 +347,7 @@ function SqlExporterDialog(options) {
       options.limit = 10;
     }
 
-    Refine.wrapCSRF(function(csrfToken) { 
+    CSRFUtil.getCSRF().then(function(csrfToken) { 
       var form = self._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql", csrfToken);
       if (preview) {
         $(form).attr("target", "refine-export");

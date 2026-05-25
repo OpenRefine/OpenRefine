@@ -53,7 +53,7 @@ WikibaseExporterMenuBar.exportTo = function (format) {
       .val(format)
       .appendTo(form);
 
-  Refine.wrapCSRF(function(csrfToken) {
+  CSRFUtil.getCSRF().then(function(csrfToken) {
     $(form).attr("action", "command/core/export-rows/" + targetUrl + "?" + $.param({csrf_token: csrfToken}))
     document.body.appendChild(form);
 
@@ -139,4 +139,3 @@ $(function () {
       }
   );
 });
-

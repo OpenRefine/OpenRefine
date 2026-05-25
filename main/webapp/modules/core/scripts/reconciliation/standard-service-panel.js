@@ -44,43 +44,40 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
   var dismissBusy = self.showBusyReconciling();
 
-  Refine.postCSRF(
+  CSRFUtil.post(
     "command/core/guess-types-of-column?" + $.param({
       project: theProject.id, 
       columnName: this._column.name,
       service: this._service.url
-    }),
-    null, 
-    function(data) {
-      if (data.code && data.code === 'ok') {
-        self._types = data.types;
+    })
+  ).done(function(data) {
+    if (data.code && data.code === 'ok') {
+      self._types = data.types;
 
-        if (self._types.length === 0 || "defaultTypes" in self._service) {
-          var defaultTypes = {};
-          $.each(self._service.defaultTypes, function() {
-            defaultTypes[this.id] = this.name;
-          });
-          $.each(self._types, function() {
-            delete defaultTypes[typeof this == "string" ? this : this.id];
-          });
-          for (var id in defaultTypes) {
-            if (defaultTypes.hasOwnProperty(id)) {
-              self._types.push({
-                id: id,
-                name: defaultTypes[id]
-              });
-            }
+      if (self._types.length === 0 || "defaultTypes" in self._service) {
+        var defaultTypes = {};
+        $.each(self._service.defaultTypes, function() {
+          defaultTypes[this.id] = this.name;
+        });
+        $.each(self._types, function() {
+          delete defaultTypes[typeof this == "string" ? this : this.id];
+        });
+        for (var id in defaultTypes) {
+          if (defaultTypes.hasOwnProperty(id)) {
+            self._types.push({
+              id: id,
+              name: defaultTypes[id]
+            });
           }
         }
-      } else {
-        alert('Guess Types query failed ' + data.code + ' : ' + data.message);
       }
+    } else {
+      alert('Guess Types query failed ' + data.code + ' : ' + data.message);
+    }
 
-      dismissBusy();
-      f();
-    },
-    "json"
-  );
+    dismissBusy();
+    f();
+  });
 };
 
 ReconStandardServicePanel.prototype._constructUI = function() {
@@ -88,7 +85,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
   this._elmts.or_proc_accessDocumentation.html($.i18n('core-recon/service-documentation'));
-  this._elmts.automatchCheck[0].checked=JSON.parse(Refine.getPreference("ui.reconciliation.automatch", true));
+  this._elmts.automatchCheck[0].checked = (thePreferences["ui.reconciliation.automatch"] !== false);
   this._elmts.or_proc_cellType.html($.i18n('core-recon/cell-type'));
   this._elmts.or_proc_colDetail.html($.i18n('core-recon/col-detail'));
   this._elmts.or_proc_againstType.html($.i18n('core-recon/against-type'));
