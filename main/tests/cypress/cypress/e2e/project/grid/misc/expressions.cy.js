@@ -120,6 +120,26 @@ describe(__filename, function () {
     ).should('to.contain', 'Error: No matching method');
   });
 
+  it('Dialog height should remain stable while typing', function () {
+    cy.loadAndVisitProject('food.mini');
+    loadExpressionPanel();
+    cy.get('.dialog-frame').then(($frame) => {
+      const initialHeight = $frame[0].getBoundingClientRect().height;
+      cy.get('textarea.expression-preview-code').clear().type('(');
+      cy.wait(500); 
+      cy.get('.dialog-frame').then(($frame2) => {
+        const heightAfterError = $frame2[0].getBoundingClientRect().height;
+        expect(Math.abs(heightAfterError - initialHeight)).to.be.lessThan(8);
+      });
+      cy.get('textarea.expression-preview-code').clear().type('value.toLowercase()');
+      cy.wait(500);
+      cy.get('.dialog-frame').then(($frame3) => {
+        const heightAfterFix = $frame3[0].getBoundingClientRect().height;
+        expect(Math.abs(heightAfterFix - initialHeight)).to.be.lessThan(8);
+      });
+    });
+  });
+
   it('Test switching from one language to another', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
