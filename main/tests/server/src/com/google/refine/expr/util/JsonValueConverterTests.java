@@ -30,7 +30,10 @@ package com.google.refine.expr.util;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.Test;
 
@@ -81,5 +84,48 @@ public class JsonValueConverterTests {
     @Test
     public void testConvertNoField() throws IOException {
         fieldEquals("{}", null);
+    }
+
+    @Test
+    public void testConvertNullNodeReference() {
+        assertEquals(null, JsonValueConverter.convert(null));
+    }
+
+    @Test
+    public void testConvertBigInteger() {
+        assertEquals(42L, JsonValueConverter.convert(JsonNodeFactory.instance.numberNode(BigInteger.valueOf(42L))));
+    }
+
+    @Test
+    public void testConvertBigDecimal() {
+        assertEquals(3.14, JsonValueConverter.convert(JsonNodeFactory.instance.numberNode(new BigDecimal("3.14"))));
+    }
+
+    @Test
+    public void testConvertComparableNullReference() {
+        assertEquals(null, JsonValueConverter.convertComparable(null));
+    }
+
+    @Test
+    public void testConvertComparableJsonNullNode() {
+        assertEquals(null, JsonValueConverter.convertComparable(JsonNodeFactory.instance.nullNode()));
+    }
+
+    @Test
+    public void testConvertComparablePrimitives() {
+        assertEquals(7, JsonValueConverter.convertComparable(JsonNodeFactory.instance.numberNode(7)));
+        assertEquals(3.14, JsonValueConverter.convertComparable(JsonNodeFactory.instance.numberNode(3.14)));
+        assertEquals("bar", JsonValueConverter.convertComparable(JsonNodeFactory.instance.textNode("bar")));
+        assertEquals(true, JsonValueConverter.convertComparable(JsonNodeFactory.instance.booleanNode(true)));
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testConvertComparableObjectThrows() {
+        JsonValueConverter.convertComparable(JsonNodeFactory.instance.objectNode());
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testConvertComparableArrayThrows() {
+        JsonValueConverter.convertComparable(JsonNodeFactory.instance.arrayNode());
     }
 }
