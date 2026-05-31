@@ -54,6 +54,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -676,5 +677,43 @@ public class StandardReconConfigTests extends RefineTest {
         Recon recon = stub.createNewRecon(2384738L);
         stub.computeFeatures(recon, null);
         assertNotNull(recon.features);
+    }
+
+
+    @Test
+    public void testBreakWordsUsesStopWordsPreference() {
+        StandardReconConfigStub stub = new StandardReconConfigStub();
+        ProjectManager.singleton.getPreferenceStore()
+                .put("stopwords", "the,a,and,of,on,in,at,by,le");
+        Set<String> words =stub.breakWords("Le Petit Prince");
+        Assert.assertEquals(Set.of("petit", "prince"), words);
+        Assert.assertFalse(words.contains("le"));
+        Assert.assertTrue(words.contains("petit"));
+        Assert.assertTrue(words.contains("prince"));
+    }
+
+    @Test
+    public void testBreakWordsUsesStopWordsTrimWhitespace() {
+        StandardReconConfigStub stub = new StandardReconConfigStub();
+        ProjectManager.singleton.getPreferenceStore()
+                .put("stopwords", "the, a, and, of, on,in,at,by, le");
+        Set<String> words =stub.breakWords("Le Petit Prince");
+        Assert.assertEquals(Set.of("petit", "prince"), words);
+        Assert.assertFalse(words.contains("le"));
+        Assert.assertTrue(words.contains("petit"));
+        Assert.assertTrue(words.contains("prince"));
+    }
+
+    @Test
+    public void testBreakWordsDefaultStopWords() {
+        StandardReconConfigStub stub = new StandardReconConfigStub();
+        ProjectManager.singleton.getPreferenceStore()
+                .put("stopwords", null);
+        Set<String> words =stub.breakWords("The Lord of the Rings");
+        Assert.assertEquals(Set.of("lord", "rings"), words);
+        Assert.assertFalse(words.contains("the"));
+        Assert.assertFalse(words.contains("of"));
+        Assert.assertTrue(words.contains("lord"));
+        Assert.assertTrue(words.contains("rings"));
     }
 }
