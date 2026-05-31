@@ -679,13 +679,12 @@ public class StandardReconConfigTests extends RefineTest {
         assertNotNull(recon.features);
     }
 
-
     @Test
     public void testBreakWordsUsesStopWordsPreference() {
         StandardReconConfigStub stub = new StandardReconConfigStub();
         ProjectManager.singleton.getPreferenceStore()
                 .put("stopwords", "the,a,and,of,on,in,at,by,le");
-        Set<String> words =stub.breakWords("Le Petit Prince");
+        Set<String> words = stub.breakWords("Le Petit Prince");
         Assert.assertEquals(Set.of("petit", "prince"), words);
         Assert.assertFalse(words.contains("le"));
         Assert.assertTrue(words.contains("petit"));
@@ -697,7 +696,7 @@ public class StandardReconConfigTests extends RefineTest {
         StandardReconConfigStub stub = new StandardReconConfigStub();
         ProjectManager.singleton.getPreferenceStore()
                 .put("stopwords", "the, a, and, of, on,in,at,by, le");
-        Set<String> words =stub.breakWords("Le Petit Prince");
+        Set<String> words = stub.breakWords("Le Petit Prince");
         Assert.assertEquals(Set.of("petit", "prince"), words);
         Assert.assertFalse(words.contains("le"));
         Assert.assertTrue(words.contains("petit"));
@@ -709,7 +708,7 @@ public class StandardReconConfigTests extends RefineTest {
         StandardReconConfigStub stub = new StandardReconConfigStub();
         ProjectManager.singleton.getPreferenceStore()
                 .put("stopwords", null);
-        Set<String> words =stub.breakWords("The Lord of the Rings");
+        Set<String> words = stub.breakWords("The Lord of the Rings");
         Assert.assertEquals(Set.of("lord", "rings"), words);
         Assert.assertFalse(words.contains("the"));
         Assert.assertFalse(words.contains("of"));

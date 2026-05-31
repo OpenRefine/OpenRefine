@@ -755,16 +755,16 @@ public class StandardReconConfig extends ReconConfig {
 
     static protected Set<String> getStopWords() {
 
-            Object prefValue = (ProjectManager.singleton.getPreferenceStore().get("stopwords"));
-            String stopwordsPref = (prefValue != null) ? prefValue.toString() : null;
-            if(stopwordsPref == null) {
-                stopwordsPref = "the,a,and,of,on,in,at,by";
-            }
-            Set<String> stopWords= new HashSet<>();
-            for(String stopWord: stopwordsPref.split(",")) {
-                stopWords.add(stopWord.trim().toLowerCase());
-            }
-            return stopWords;
+        Object prefValue = (ProjectManager.singleton.getPreferenceStore().get("stopwords"));
+        String stopwordsPref = (prefValue != null) ? prefValue.toString() : null;
+        if (stopwordsPref == null) {
+            stopwordsPref = "the,a,and,of,on,in,at,by";
+        }
+        Set<String> stopWords = new HashSet<>();
+        for (String stopWord : stopwordsPref.split(",")) {
+            stopWords.add(stopWord.trim().toLowerCase());
+        }
+        return stopWords;
     }
 
     static protected Set<String> breakWords(String s) {
