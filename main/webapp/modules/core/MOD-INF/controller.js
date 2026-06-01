@@ -341,6 +341,7 @@ function registerExporters() {
    ER.registerExporter("xlsx", new Packages.com.google.refine.exporters.XlsExporter(true));
    ER.registerExporter("ods", new Packages.com.google.refine.exporters.OdsExporter());
    ER.registerExporter("html", new Packages.com.google.refine.exporters.HtmlTableExporter());
+   ER.registerExporter("md", new Packages.com.google.refine.exporters.MarkdownExporter());
    ER.registerExporter("template", new Packages.com.google.refine.exporters.TemplatingExporter());
    ER.registerExporter("sql", new Packages.com.google.refine.exporters.sql.SqlExporter());
 }
