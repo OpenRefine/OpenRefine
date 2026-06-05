@@ -109,12 +109,36 @@ describe(__filename, function () {
     cy.getFacetContainer('Water').contains('Cluster');
   });
 
-  it('Delete a facet', function () {
+  it('Delete a facet with confirmation dialog', function () {
+
     cy.loadAndVisitProject('food.small');
+
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
-    cy.getFacetContainer('Water').find('a.facet-title-remove').click();
-    cy.get('#refine-tabs-facets > div.browsing-panel-help').should('be.visible');
+    cy.getFacetContainer('Water').should('exist');
+
+    cy.on('window:confirm', (text) => {
+      expect(text).to.eq(
+        'Are you sure you want to remove this facet?'
+      );
+      return false;
+    });
+
+    cy.getFacetContainer('Water')
+      .find('a.facet-title-remove')
+      .click();
+
+    cy.getFacetContainer('Water')
+      .should('exist');
+
+    cy.on('window:confirm', () => true);
+
+    cy.getFacetContainer('Water')
+      .find('a.facet-title-remove')
+      .click();
+
+    cy.getFacetContainer('Water')
+      .should('not.exist');
   });
 
   it('Test editing a facet ("change")', function () {
