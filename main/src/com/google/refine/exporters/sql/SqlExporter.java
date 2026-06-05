@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
@@ -67,7 +67,7 @@ public class SqlExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final Project project, Properties params, Engine engine, final Writer writer)
+    public void export(final Project project, Map<String, String> params, Engine engine, final Writer writer)
             throws IOException {
         if (logger.isDebugEnabled()) {
             logger.debug("export sql with params: {}", params);
@@ -162,7 +162,7 @@ public class SqlExporter implements WriterExporter {
             }
         };
 
-        CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
+        CustomizableTabularExporterUtilities.exportRows(project, engine, params.get("options"), serializer);
     }
 
 }

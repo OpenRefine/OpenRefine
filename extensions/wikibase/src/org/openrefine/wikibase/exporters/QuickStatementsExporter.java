@@ -27,8 +27,8 @@ package org.openrefine.wikibase.exporters;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -76,7 +76,7 @@ public class QuickStatementsExporter implements WriterExporter {
     }
 
     @Override
-    public void export(Project project, Properties options, Engine engine, Writer writer)
+    public void export(Project project, Map<String, String> options, Engine engine, Writer writer)
             throws IOException {
         WikibaseSchema schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
         if (schema == null) {
