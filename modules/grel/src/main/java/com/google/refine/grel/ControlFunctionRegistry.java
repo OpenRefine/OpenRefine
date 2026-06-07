@@ -102,6 +102,7 @@ import com.google.refine.expr.functions.math.Sum;
 import com.google.refine.expr.functions.math.Tan;
 import com.google.refine.expr.functions.math.Tanh;
 import com.google.refine.expr.functions.strings.Chomp;
+import com.google.refine.expr.functions.strings.CollapseWhitespace;
 import com.google.refine.expr.functions.strings.Contains;
 import com.google.refine.expr.functions.strings.Decode;
 import com.google.refine.expr.functions.strings.DetectLanguage;
@@ -259,6 +260,7 @@ public class ControlFunctionRegistry {
         registerFunction("unicodeType", new UnicodeType());
         registerFunction("diff", new Diff());
         registerFunction("chomp", new Chomp());
+        registerFunction("collapseWhitespace", new CollapseWhitespace());
         registerFunction("fingerprint", new Fingerprint());
         registerFunction("ngramFingerprint", new NGramFingerprint());
         registerFunction("phonetic", new Phonetic());
