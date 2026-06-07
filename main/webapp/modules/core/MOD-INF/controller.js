@@ -36,25 +36,16 @@ var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
 var bundle = true;
 
-var templatedFiles = {
-  // Requests with last path segments mentioned here 
-  // will get served from .vt files with the same names
-  "index" : {
-    outputEncodings: true
-  },
-  "preferences" : {
-    outputEncodings: false
-  },
-  "project" : {
-    outputEncodings: true
-  }
-};
+// Requests with last path segments mentioned here
+// will get served from .vt files with the same names
+var templatedFiles = ["index", "preferences", "project"];
 
 function registerCommands() {
   var RS = Packages.com.google.refine.RefineServlet;
 
   RS.registerCommand(module, "get-version", new Packages.com.google.refine.commands.GetVersionCommand());
   RS.registerCommand(module, "get-csrf-token", new Packages.com.google.refine.commands.GetCSRFTokenCommand());
+  RS.registerCommand(module, "get-encodings", new Packages.com.google.refine.commands.GetEncodingsCommand());
 
   RS.registerCommand(module, "get-importing-configuration", new Packages.com.google.refine.commands.importing.GetImportingConfigurationCommand());
   RS.registerCommand(module, "create-importing-job", new Packages.com.google.refine.commands.importing.CreateImportingJobCommand());
@@ -699,7 +690,7 @@ function process(path, request, response) {
       }
       return true;
     } else {
-      if (lastSegment in templatedFiles) {
+      if (templatedFiles.indexOf(lastSegment) !== -1) {
         var context = {};
 
         var params = new Packages.java.util.Properties();
@@ -745,36 +736,7 @@ function process(path, request, response) {
           }
           context.scriptInjection = scriptInjection.join("\n");
         }
-        
-        if (templatedFiles[lastSegment].outputEncodings) {
-          var encodings = [];
-          
-          var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();
-          var keySetArray = sortedCharsetMap.keySet().toArray();
-          for (var key in keySetArray) {
-            if (!keySetArray.hasOwnProperty(key)) {
-              continue;
-            }
-            var code = keySetArray[key];
-            var charset = sortedCharsetMap.get(code);
-            var aliasesArray = charset.aliases().toArray();
-            var aliases = [];
-            for (var key1 in aliasesArray) {
-              if (aliasesArray.hasOwnProperty(key1)) {
-                aliases.push(aliasesArray[key1]);
-              }
-            }
-            
-            encodings.push({
-              code: code,
-              name: charset.displayName(),
-              aliases: aliases
-            });
-          }
-          
-          context.encodingJson = JSON.stringify(encodings);
-        }
-        
+
         send(request, response, path + ".vt", context);
       }
     }
