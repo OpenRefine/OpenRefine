@@ -442,6 +442,7 @@
     "core-project/tab-value": "Tab-separated value",
     "core-project/comma-sep": "Comma-separated value",
     "core-project/html-table": "HTML table",
+    "core-project/markdown-table": "Markdown table",
     "core-project/excel": "Excel (.xls)",
     "core-project/excel-xml": "Excel 2007+ (.xlsx)",
     "core-project/odf": "ODF spreadsheet",
