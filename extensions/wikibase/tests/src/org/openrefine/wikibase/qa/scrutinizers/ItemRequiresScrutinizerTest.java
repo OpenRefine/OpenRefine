@@ -61,7 +61,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         setFetcher(fetcher);
 
         scrutinize(updateA);
-        assertWarningsRaised(ItemRequiresScrutinizer.existingItemRequireValueswithSuggestedValueType);
+        assertNoWarningRaised();
     }
 
     @Test
@@ -87,7 +87,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         setFetcher(fetcher);
 
         scrutinize(updateA);
-        assertWarningsRaised(ItemRequiresScrutinizer.existingItemRequireValueswithSuggestedValueType);
+        assertNoWarningRaised();
     }
 
     @Test

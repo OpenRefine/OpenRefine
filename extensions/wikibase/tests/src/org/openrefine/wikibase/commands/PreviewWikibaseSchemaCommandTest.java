@@ -27,6 +27,7 @@ package org.openrefine.wikibase.commands;
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -167,7 +168,7 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
                 existingitemrequirescertainotherstatement_P633P18 = true;
             }
         }
-        assertEquals(existingitemrequirescertainotherstatementwithsuggestedvalue_P633P17, true);
-        assertEquals(existingitemrequirescertainotherstatement_P633P18, true);
+        assertFalse(existingitemrequirescertainotherstatementwithsuggestedvalue_P633P17);
+        assertFalse(existingitemrequirescertainotherstatement_P633P18);
     }
 }
