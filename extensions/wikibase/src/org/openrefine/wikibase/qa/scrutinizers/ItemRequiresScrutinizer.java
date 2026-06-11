@@ -80,6 +80,10 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
     }
 
     public void scrutinizeStatementEdit(StatementEntityEdit update) {
+        if (!update.isNew()) {
+            return;
+        }
+
         Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()) {
             Snak mainSnak = statement.getClaim().getMainSnak();
