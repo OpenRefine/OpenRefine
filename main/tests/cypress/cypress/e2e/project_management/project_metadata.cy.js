@@ -23,7 +23,7 @@ describe(__filename, function () {
   it('Ensures project-metadata can be edit project name', function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
-    cy.visit(Cypress.env('OPENREFINE_URL'), {
+    cy.visit(Cypress.expose('OPENREFINE_URL'), {
       onBeforeLoad(win) {
         cy.stub(win, 'prompt').returns('testProject');
       },
@@ -40,7 +40,7 @@ describe(__filename, function () {
   it('Ensures project-metadata can be edit tags', function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
-    cy.visit(Cypress.env('OPENREFINE_URL'), {
+    cy.visit(Cypress.expose('OPENREFINE_URL'), {
       onBeforeLoad(win) {
         cy.stub(win, 'prompt').returns('tagTest');
       },
@@ -55,7 +55,7 @@ describe(__filename, function () {
   it('Ensures project-metadata can be edit creator', function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
-    cy.visit(Cypress.env('OPENREFINE_URL'), {
+    cy.visit(Cypress.expose('OPENREFINE_URL'), {
       onBeforeLoad(win) {
         cy.stub(win, 'prompt').returns('testCreator');
       },
@@ -70,7 +70,7 @@ describe(__filename, function () {
   it('Ensures project-metadata can be edit contributors', function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
-    cy.visit(Cypress.env('OPENREFINE_URL'), {
+    cy.visit(Cypress.expose('OPENREFINE_URL'), {
       onBeforeLoad(win) {
         cy.stub(win, 'prompt').returns('testcontributor');
       },
@@ -87,7 +87,7 @@ describe(__filename, function () {
   it('Ensures project-metadata can be edit subject', function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
-    cy.visit(Cypress.env('OPENREFINE_URL'), {
+    cy.visit(Cypress.expose('OPENREFINE_URL'), {
       onBeforeLoad(win) {
         cy.stub(win, 'prompt').returns('testSubject');
       },
@@ -102,7 +102,7 @@ describe(__filename, function () {
   it('Ensures project-metadata can be edit license', function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
-    cy.visit(Cypress.env('OPENREFINE_URL'), {
+    cy.visit(Cypress.expose('OPENREFINE_URL'), {
       onBeforeLoad(win) {
         cy.stub(win, 'prompt').returns('GPL-3');
       },
@@ -117,7 +117,7 @@ describe(__filename, function () {
   it('Ensures project-metadata can be edit homepage', function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
-    cy.visit(Cypress.env('OPENREFINE_URL'), {
+    cy.visit(Cypress.expose('OPENREFINE_URL'), {
       onBeforeLoad(win) {
         cy.stub(win, 'prompt').returns('openrefine.org');
       },

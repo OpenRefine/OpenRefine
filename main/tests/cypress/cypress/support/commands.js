@@ -65,7 +65,7 @@ Cypress.Commands.add('assertTextareaHaveJsonValue', (selector, json) => {
  * Open OpenRefine
  */
 Cypress.Commands.add('visitOpenRefine', (options) => {
-  cy.visit(Cypress.env('OPENREFINE_URL'), options);
+  cy.visit(Cypress.expose('OPENREFINE_URL'), options);
 });
 
 Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
@@ -271,7 +271,7 @@ Cypress.Commands.add('columnActionClick', (columnName, actions) => {
  * Go to a project, given it's id
  */
 Cypress.Commands.add('visitProject', (projectId) => {
-  cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+  cy.visit(Cypress.expose('OPENREFINE_URL') + '/project?project=' + projectId);
   cy.get('#project-title').should('exist');
 });
 
@@ -285,7 +285,7 @@ Cypress.Commands.add(
     'loadAndVisitProject',
     (fixture, projectName = Cypress.currentTest.title +'-'+Date.now()) => {
       cy.loadProject(fixture, projectName, "fooTag").then((projectId) => {
-        cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+        cy.visit(Cypress.expose('OPENREFINE_URL') + '/project?project=' + projectId);
         cy.waitForProjectTable();
       });
     }

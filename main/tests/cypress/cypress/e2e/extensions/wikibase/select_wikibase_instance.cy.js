@@ -159,7 +159,7 @@ describe.skip(__filename, function () {
             .then( () => resetWikibases(savedValue));
     });
     function getPreference(name) {
-        const openRefineUrl = Cypress.env('OPENREFINE_URL');
+        const openRefineUrl = Cypress.expose('OPENREFINE_URL');
         return cy.request({
             method: 'GET',
             url: `${openRefineUrl}/command/core/get-preference?name=${name}`,

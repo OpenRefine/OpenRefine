@@ -21,7 +21,7 @@ describe(__filename, function () {
   it('Ensures a column is renamed in the data-table', function () {
     cy.loadProject('food.mini').then((projectId) => {
       cy.visit(
-        Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+        Cypress.expose('OPENREFINE_URL') + '/project?project=' + projectId);
     });
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
     cy.getFacetContainer('Shrt_Desc').should('exist');
