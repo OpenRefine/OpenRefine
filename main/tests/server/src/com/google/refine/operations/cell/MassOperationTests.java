@@ -230,6 +230,26 @@ public class MassOperationTests extends RefineTest {
         TestUtils.isSerializedTo(renamed, expectedJSON);
     }
 
+    @Test
+    public void testRenameWithEscapedBackslashOnlyRenamingBaseColumn() {
+        MassEditOperation SUT = new MassEditOperation(defaultEngineConfig, "foo", "grel:value+\"\\\\\\\\\"", editsWithFromBlank);
+
+        AbstractOperation renamed = SUT.renameColumns(Map.of("foo", "foo2"));
+
+        assertEquals(((MassEditOperation) renamed).getExpression(), "grel:value+\"\\\\\\\\\"");
+    }
+
+    @Test
+    public void testRenameWithEscapedBackslashAndDependentColumnRename() {
+        MassEditOperation SUT = new MassEditOperation(defaultEngineConfig, "foo", "grel:cells['bar'].value+\"\\\\\\\\\"",
+                editsWithFromBlank);
+
+        AbstractOperation renamed = SUT.renameColumns(Map.of("bar", "bar2"));
+        String renamedExpression = ((MassEditOperation) renamed).getExpression();
+
+        assertEquals(renamedExpression, "grel:cells.get(\"bar2\").value + \"\\\\\"");
+    }
+
     // Not yet testing for mass edit from OR Error
 
     private Project project;

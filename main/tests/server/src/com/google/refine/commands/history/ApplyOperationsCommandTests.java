@@ -226,6 +226,93 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
     }
 
     @Test
+    public void testEscapedBackslashInExpression() throws Exception {
+        String json = "[{"
+                + "   \"op\":\"core/text-transform\","
+                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "   \"columnName\":\"bar\","
+                + "   \"expression\":\"grel:if(value==\\\"\\\\\\\\\\\",\\\"Backslash warning\\\",\\\"\\\")\","
+                + "   \"onError\":\"set-to-blank\","
+                + "   \"repeat\": false,"
+                + "   \"repeatCount\": 0"
+                + "}]";
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("operations")).thenReturn(json);
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").asText(), "ok");
+    }
+
+    @Test
+    public void testEscapedBackslashInExpressionWithIdentityRenames() throws Exception {
+        String json = "[{"
+                + "   \"op\":\"core/text-transform\","
+                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "   \"columnName\":\"bar\","
+                + "   \"expression\":\"grel:if(value==\\\"\\\\\\\\\\\",\\\"Backslash warning\\\",\\\"\\\")\","
+                + "   \"onError\":\"set-to-blank\","
+                + "   \"repeat\": false,"
+                + "   \"repeatCount\": 0"
+                + "}]";
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("operations")).thenReturn(json);
+        when(request.getParameter("renames")).thenReturn("{\"bar\":\"bar\"}");
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").asText(), "ok");
+    }
+
+    @Test
+    public void testEscapedBackslashInExpressionWithNonIdentityRenames() throws Exception {
+        String json = "[{"
+                + "   \"op\":\"core/text-transform\","
+                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "   \"columnName\":\"bar\","
+                + "   \"expression\":\"grel:if(value==\\\"\\\\\\\\\\\",\\\"Backslash warning\\\",\\\"\\\")\","
+                + "   \"onError\":\"set-to-blank\","
+                + "   \"repeat\": false,"
+                + "   \"repeatCount\": 0"
+                + "}]";
+        String renamesJSON = "{"
+                + "  \"bar\": \"bar_orig\""
+                + "}";
+
+        project = createProject(new String[] { "foo", "bar_orig" },
+                new Serializable[][] {
+                        { 1, "\\" },
+                        { 2, "x" }
+                });
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("operations")).thenReturn(json);
+        when(request.getParameter("renames")).thenReturn(renamesJSON);
+
+        command.doPost(request, response);
+
+        String response = writer.toString();
+        JsonNode node = ParsingUtilities.mapper.readValue(response, JsonNode.class);
+        assertEquals(node.get("code").asText(), "ok");
+
+        Project expectedProject = createProject(new String[] { "foo", "bar_orig" },
+                new Serializable[][] {
+                        { 1, "Backslash warning" },
+                        { 2, "" }
+                });
+        assertProjectEquals(project, expectedProject);
+    }
+
+    @Test
     public void testValidWithoutRenames() throws Exception {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter("project")).thenReturn(Long.toString(project.id));
@@ -248,6 +335,7 @@ public class ApplyOperationsCommandTests extends CommandTestBase {
     @Test
     public void testValidWithRenames() throws Exception {
         String renamesJSON = "{"
+                + "  \"foo\": \"foo\","
                 + "  \"bar\": \"bar_orig\""
                 + "}";
 
