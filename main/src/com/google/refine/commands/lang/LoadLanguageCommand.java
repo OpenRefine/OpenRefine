@@ -156,7 +156,7 @@ public class LoadLanguageCommand extends Command {
             return null;
         }
         try (FileInputStream fisLang = new FileInputStream(langFile);
-                Reader reader = new BufferedReader(new InputStreamReader(fisLang, "UTF-8"))) {
+                Reader reader = new BufferedReader(new InputStreamReader(fisLang, StandardCharsets.UTF_8))) {
             return ParsingUtilities.mapper.readValue(reader, ObjectNode.class);
         } catch (FileNotFoundException e) {
             // Could be normal if we've got a list of languages as fallbacks
