@@ -164,7 +164,7 @@ public class LoadLanguageCommand extends Command {
             logger.debug("Exception details: " + e.getMessage());
         } catch (SecurityException e) {
             logger.error("Language file " + strMessage + " cannot be read (security)", e);
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Language file " + strMessage + " cannot be read (io)", e);
         }
         return null;
