@@ -145,7 +145,7 @@ public class LoadLanguageCommand extends Command {
     }
 
     static ObjectNode loadLanguage(RefineServlet servlet, String strModule, String strLang)
-            throws UnsupportedEncodingException {
+static ObjectNode loadLanguage(RefineServlet servlet, String strModule, String strLang) {
         ButterflyModule module = servlet.getModule(strModule);
         String strLangFile = "translation-" + strLang + ".json";
         String strMessage = "[" + strModule + ":" + strLangFile + "]";
