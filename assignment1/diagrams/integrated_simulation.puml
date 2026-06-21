@@ -1,0 +1,31 @@
+@startuml integrated_simulation
+skinparam handwritten true
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName "Comic Sans MS"
+skinparam defaultFontSize 14
+title Integrated Draft -- How Cluster & Edit works
+
+actor User as user
+participant "Column Menu" as menu
+participant "Dialogs" as dialog
+participant "Server Command" as server
+participant "Clustering Engine" as engine
+participant "Data Model\n(Project/Cell)" as proj
+participant "Mass Edit" as massedit
+participant "History" as history
+
+user -> menu : click "Cluster and Edit"
+menu -> dialog : render dialog
+user -> dialog : select clustering method
+dialog -> server : POST column + method
+server -> proj : read cell data
+server -> engine : preprocess & group similar values
+engine --> server : return groups
+server --> dialog : list of clusters (JSON)
+user -> dialog : review, pick best value, click Apply
+dialog -> massedit : POST edits
+massedit -> proj : mutate cells
+massedit -> history : create Change object
+massedit --> dialog : return success
+@enduml
