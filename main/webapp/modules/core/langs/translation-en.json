@@ -379,6 +379,7 @@
     "core-dialogs/remove-duplicate-rows-col-select": "Select columns used to identify duplicate rows",
     "core-buttons/no-criteria-selected": "At least one column needs to be selected to identify duplicates.",
     "core-facets/remove-facet": "Remove this facet",
+    "core-facets/confirm-remove-facet": "Are you sure you want to remove this facet?",
     "core-facets/minimize-facet": "Toggle between the minimization and maximization of this facet",
     "core-facets/reset": "reset",
     "core-facets/invert": "invert",
