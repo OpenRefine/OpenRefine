@@ -147,7 +147,7 @@ public class JythonEvaluableTest {
         assertEquals(evaluable.getLanguagePrefix(), "jython");
     }
 
-    @Test(expectedExceptions = ParsingException.class)
+    @Test(expectedExceptions = ParsingException.class, expectedExceptionsMessageRegExp = ".*SyntaxError.*")
     public void testParseError() throws ParsingException {
         JythonEvaluable.createParser().parse("foo(", "jython");
     }
