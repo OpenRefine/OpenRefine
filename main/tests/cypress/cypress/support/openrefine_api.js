@@ -15,7 +15,7 @@ const path = '/project?project=';
 });
 
 Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
-  const openRefineUrl = Cypress.env('OPENREFINE_URL');
+  const openRefineUrl = Cypress.expose('OPENREFINE_URL');
   return cy
     .request(openRefineUrl + '/command/core/get-csrf-token')
     .then((response) => {
@@ -41,7 +41,7 @@ Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
 });
 
 Cypress.Commands.add('deletePreference', (preferenceName) => {
-  const openRefineUrl = Cypress.env('OPENREFINE_URL');
+  const openRefineUrl = Cypress.expose('OPENREFINE_URL');
   return cy
       .request(openRefineUrl + '/command/core/get-csrf-token')
       .then((response) => {
@@ -65,11 +65,11 @@ Cypress.Commands.add('deletePreference', (preferenceName) => {
 });
 
 Cypress.Commands.add('importProject', (projectTarFile, projectName) => {
-  const openRefineUrl = Cypress.env('OPENREFINE_URL');
+  const openRefineUrl = Cypress.expose('OPENREFINE_URL');
 
 
   cy.get('@token', { log: false }).then((token) => {
-    // cy.request(Cypress.env('OPENREFINE_URL')+'/command/core/get-csrf-token').then((response) => {
+    // cy.request(Cypress.expose('OPENREFINE_URL')+'/command/core/get-csrf-token').then((response) => {
     const openRefineFormat = 'text/line-based/*sv';
 
     // the following code can be used to inject tags in created projects
@@ -147,7 +147,7 @@ Cypress.Commands.add('importProject', (projectTarFile, projectName) => {
 })
 
 Cypress.Commands.add('cleanupProjects', () => {
-  const openRefineUrl = Cypress.env('OPENREFINE_URL');
+  const openRefineUrl = Cypress.expose('OPENREFINE_URL');
   cy.get('@deletetoken', { log: false }).then((token) => {
     cy.get('@loadedProjectIds', { log: false }).then((loadedProjectIds) => {
       for (const projectId of loadedProjectIds) {
@@ -168,7 +168,7 @@ Cypress.Commands.add('cleanupProjects', () => {
 });
 
 Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
-  const openRefineUrl = Cypress.env('OPENREFINE_URL');
+  const openRefineUrl = Cypress.expose('OPENREFINE_URL');
   const openRefineProjectName = projectName ? projectName : 'cypress-test';
 
   let jsonFixture;
@@ -197,7 +197,7 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
   }
   
   cy.get('@token', { log: false }).then((token) => {
-    // cy.request(Cypress.env('OPENREFINE_URL')+'/command/core/get-csrf-token').then((response) => {
+    // cy.request(Cypress.expose('OPENREFINE_URL')+'/command/core/get-csrf-token').then((response) => {
     const openRefineFormat = 'text/line-based/*sv';
 
     // the following code can be used to inject tags in created projects

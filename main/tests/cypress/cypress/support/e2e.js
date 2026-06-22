@@ -40,14 +40,14 @@ beforeEach(() => {
 afterEach(() => {
   // DISABLE_PROJECT_CLEANUP is used to disable projects deletion
   // Mostly used in CI/CD for performances
-  if(parseInt(Cypress.env('DISABLE_PROJECT_CLEANUP')) !== 1){
+  if(parseInt(Cypress.expose('DISABLE_PROJECT_CLEANUP')) !== 1){
     cy.cleanupProjects();
   }
 });
 
 before(() => {
   cy.request(
-    Cypress.env('OPENREFINE_URL') + '/command/core/get-csrf-token'
+    Cypress.expose('OPENREFINE_URL') + '/command/core/get-csrf-token'
   ).then((response) => {
     // store one unique token for block of runs
     token = response.body.token;
