@@ -742,6 +742,7 @@
     "core-import-formats/service": "Dienste",
     "core-import-formats/text/line-based/*sv": "CSV-/ TSV- / trennzeichengetrennte Dateien",
     "core-import-formats/binary": "Binärdateien",
+    "core-import-formats/binary/parquet": "Apache Parquet Dateien",
     "core-import-formats/text": "Textdateien",
     "core-import-formats/text/wiki": "Wikitext",
     "core-import-formats/text/marc": "MARC-Dateien",
