@@ -220,4 +220,66 @@ describe(__filename, function () {
     // The next column should be one further to the left with the empty column gone
     cy.get('table.data-table > tbody > tr:nth-child(1) > td:nth-child(6)').should('to.contain', '717');
   });
+
+  it('Test enable/disable reservoir sampling in parsing options', function () {
+    // given
+    cy.visitOpenRefine();
+    cy.createProjectThroughUserInterface('food.small.csv');
+    cy.get('table.data-table > tbody > tr').should('have.length', 101); // 100 rows + 1 header
+
+    // when -- Reservoir Sampling
+    cy.get('select[bind="samplingMethod"]').select('reservoir');
+    cy.get('input[bind="samplingFactor"]').clear();
+    var reservoirSize = 5;
+    cy.get('input[bind="samplingFactor"]').type(reservoirSize);
+    cy.get('input[bind="samplingCheckbox"]').check();
+    // then sample size = reservoirSize + 1 header
+    cy.get('table.data-table > tbody > tr').should('have.length', reservoirSize + 1);
+
+    // when unchecking sampling
+    cy.get('input[bind="samplingCheckbox"]').uncheck();
+    // then make sure sampling is switched off again
+    cy.get('table.data-table > tbody > tr').should('have.length', 101); // 100 rows + 1 header
+  });
+
+  it('Test enable systematic sampling in parsing options', function () {
+    // given
+    cy.visitOpenRefine();
+    cy.createProjectThroughUserInterface('food.small.csv');
+    cy.get('table.data-table > tbody > tr').should('have.length', 101); // 100 rows + 1 header
+
+    // when -- Systematic Sampling
+    cy.get('select[bind="samplingMethod"]').select('systematic');
+    cy.get('input[bind="samplingFactor"]').clear();
+    var stepSize = 20;
+    cy.get('input[bind="samplingFactor"]').type(stepSize);
+    cy.get('input[bind="samplingCheckbox"]').check();
+
+    // then sample size = 100 rows / stepSize + 1 header
+    cy.get('table.data-table > tbody > tr').should('have.length', Math.ceil(100 / stepSize) + 1);
+  });
+
+  it('Test enable bernoulli sampling in parsing options', function () {
+    // given
+    cy.visitOpenRefine();
+    cy.createProjectThroughUserInterface('food.small.csv');
+    cy.get('table.data-table > tbody > tr').should('have.length', 101); // 100 rows + 1 header
+
+    // when -- Bernoulli Sampling
+    cy.get('select[bind="samplingMethod"]').select('bernoulli');
+    cy.get('input[bind="samplingFactor"]').clear();
+    var percentage = 10;
+    cy.get('input[bind="samplingFactor"]').type('10');
+    cy.get('input[bind="samplingCheckbox"]').check();
+
+    // then sample size varies, so we can only specify a reasonable range
+    // confidence interval for 99.7% between [mean - 3 * stddev, mean + 3 * stddev]
+    var mean = 100 * percentage / 100;
+    var stdDev = Math.sqrt(100 * (percentage / 100) * ((100 - percentage) / 100));
+    // confidence interval for 99.7%
+    var lowerBound = mean - 3 * stdDev;
+    var upperBound = mean + 3 * stdDev;
+    cy.get('table.data-table > tbody > tr').should('have.length.above', lowerBound + 1) // + 1 header
+                                           .and('have.length.below', upperBound + 1); // + 1 header
+  });
 });
