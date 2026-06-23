@@ -60,6 +60,11 @@ ExporterManager.MenuItems = [
     "click": function() { ExporterManager.handlers.exportRows("html", "html"); }
   },
   {
+    "id" : "core/export-markdown",
+    "label": $.i18n('core-project/markdown-table'),
+    "click": function() { ExporterManager.handlers.exportRows("md", "md"); }
+  },
+  {
     "id" : "core/export-excel",
     "label": $.i18n('core-project/excel'),
     "click": function() { ExporterManager.handlers.exportRows("xls", "xls"); }
