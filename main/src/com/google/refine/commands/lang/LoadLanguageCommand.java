@@ -145,7 +145,7 @@ public class LoadLanguageCommand extends Command {
     }
 
     static ObjectNode loadLanguage(RefineServlet servlet, String strModule, String strLang)
-            throws UnsupportedEncodingException {
+static ObjectNode loadLanguage(RefineServlet servlet, String strModule, String strLang) {
         ButterflyModule module = servlet.getModule(strModule);
         String strLangFile = "translation-" + strLang + ".json";
         String strMessage = "[" + strModule + ":" + strLangFile + "]";
@@ -155,25 +155,17 @@ public class LoadLanguageCommand extends Command {
             logger.error("Security: Attempt to escape the langs directory to read another file");
             return null;
         }
-        FileInputStream fisLang = null;
-
-        try {
-            fisLang = new FileInputStream(langFile);
+        try (FileInputStream fisLang = new FileInputStream(langFile);
+                Reader reader = new BufferedReader(new InputStreamReader(fisLang, StandardCharsets.UTF_8))) {
+            return ParsingUtilities.mapper.readValue(reader, ObjectNode.class);
         } catch (FileNotFoundException e) {
             // Could be normal if we've got a list of languages as fallbacks
             logger.info("Language file " + strMessage + " not found");
             logger.debug("Exception details: " + e.getMessage());
-
         } catch (SecurityException e) {
             logger.error("Language file " + strMessage + " cannot be read (security)", e);
-        }
-        if (fisLang != null) {
-            try {
-                Reader reader = new BufferedReader(new InputStreamReader(fisLang, "UTF-8"));
-                return ParsingUtilities.mapper.readValue(reader, ObjectNode.class);
-            } catch (Exception e) {
-                logger.error("Language file " + strMessage + " cannot be read (io)", e);
-            }
+        } catch (IOException e) {
+            logger.error("Language file {} cannot be read (io)", strMessage, e);
         }
         return null;
     }
