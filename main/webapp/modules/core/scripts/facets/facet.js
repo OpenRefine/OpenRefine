@@ -59,17 +59,19 @@ class Facet {
   };
 
   _remove() {
-  	ui.browsingEngine.removeFacet(this);
+	if (!window.confirm($.i18n('core-facets/confirm-remove-facet'))) {
+		return;
+		}
+	ui.browsingEngine.removeFacet(this);
+	this._div = null;
+	this._config = null;
+	this._selection = null;
+	this._blankChoice = null;
+	this._errorChoice = null;
+	this._data = null;
+	this._options = null;
+	};
 
-  	this._div = null;
-  	this._config = null;
-
-  	this._selection = null;
-  	this._blankChoice = null;
-  	this._errorChoice = null;
-  	this._data = null;
-  	this._options = null;
-  };
 
   // Method to be overriden by subclasses to return a value which
   // should generally be unique among all facets currently open. This is to
