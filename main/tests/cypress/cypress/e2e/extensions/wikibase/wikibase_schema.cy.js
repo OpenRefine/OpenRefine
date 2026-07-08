@@ -33,7 +33,7 @@ describe('SchemaAlignment.setUpTabs', () => {
         // Check warnings
         cy.get('.schema-alignment-total-warning-count').should('to.contain', '1');
 
-        
+
         cy.get('#wikibase-schema-panel').click();
 
         // Add 2 items
@@ -44,6 +44,22 @@ describe('SchemaAlignment.setUpTabs', () => {
         cy.get('.schema-alignment-total-warning-count').should('to.contain', '2');
     });
 
-  
+    // Regression test for #7609: the statement-configuration dialog must focus
+    // its first input on open so the user can interact via the keyboard
+    // without having to click into the dialog first.
+    it('focuses the mode select when the statement configuration dialog opens', () => {
+        cy.visitOpenRefine();
+        cy.navigateTo('Import project');
+        cy.get('#project-tar-file-input').selectFile('cypress/fixtures/wikidata-schema.tar.gz.zip');
+        cy.get('#import-project-button').click();
+
+        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
+        cy.get('.menu-container a').contains('Edit Wikibase schema').click();
+        cy.get('#wikibase-schema-panel').click();
+
+        cy.get('.wbs-configure').first().click();
+        cy.get('.dialog-frame').should('be.visible');
+        cy.focused().should('have.id', 'modeId');
+    });
+
   });
-  
