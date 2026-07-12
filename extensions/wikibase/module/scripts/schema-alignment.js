@@ -1131,7 +1131,8 @@ SchemaAlignment._statementToJSON = function (statement) {
  * QUALIFIERS *
  **************/
 
-SchemaAlignment._addQualifier = function(container, json) {
+SchemaAlignment._addQualifier = function(container, json, context) {
+  context = context || 'qualifier';
   var property = null;
   var value = null;
   if (json) {
@@ -1151,7 +1152,15 @@ SchemaAlignment._addQualifier = function(container, json) {
     e.preventDefault();
   });
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
-  SchemaAlignment._initPropertyField(inputContainer, statementContainer, property);
+
+  var getMainsnakPid = function() {
+    var propInput = container.closest('.wbs-statement-group').find('.wbs-prop-input').first();
+    var mainsnakValue = propInput.data('jsonValue');
+    return (mainsnakValue && mainsnakValue.pid) ? mainsnakValue.pid : null;
+  };
+
+
+  SchemaAlignment._initPropertyField(inputContainer, statementContainer, property, context, getMainsnakPid);
   if (value && property) {
     SchemaAlignment._addStatement(statementContainer, property.datatype, {value:value});
   } else {
@@ -1208,17 +1217,17 @@ SchemaAlignment._addReference = function(container, json) {
   var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   var addSnakButton = $('<a></a>').addClass('wbs-add-qualifier')
         .on('click',function(e) {
-      SchemaAlignment._addQualifier(qualifierContainer, null);
+      SchemaAlignment._addQualifier(qualifierContainer, null, 'reference');
       e.preventDefault();
   }).appendTo(toolbar2);
   SchemaAlignment._plusButton($.i18n('wikibase-schema/add-reference-snak'), addSnakButton);
 
   if (snaks) {
      for (var i = 0; i != snaks.length; i++) {
-        SchemaAlignment._addQualifier(qualifierContainer, snaks[i]);
+        SchemaAlignment._addQualifier(qualifierContainer, snaks[i], 'reference');
      }
   } else {
-     SchemaAlignment._addQualifier(qualifierContainer, null);
+     SchemaAlignment._addQualifier(qualifierContainer, null, 'reference');
   }
 };
 
@@ -1277,7 +1286,7 @@ SchemaAlignment._getPropertyType = function(pid, callback) {
      }});
 };
 
-SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, initialValue) {
+SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, initialValue, context, getMainsnakPid) {
   var input = $('<input></input>').appendTo(inputContainer);
   input.attr("placeholder", $.i18n('wikibase-schema/property-placeholder'));
 
@@ -1288,8 +1297,28 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
     language: $.i18n("core-recon/wd-recon-lang"),
     view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType('property')+'{{id}}'
   };
-  
-  input.suggestWikibase(suggestConfig).on("fb-select", function(evt, data) {
+  var widgetName = 'suggestWikibase';
+  if (context === 'qualifier' || context === 'reference') {
+    widgetName = 'suggestWikibaseProperty';
+    suggestConfig.context = context;
+    suggestConfig.get_mainsnak_pid = getMainsnakPid;
+  }
+
+  var suggestWidget = input[widgetName](suggestConfig);
+
+  if (widgetName === 'suggestWikibaseProperty') {
+    input.one('focus', function() {
+      if (!input.val()) {
+        var widgetInstance = input.data(widgetName);
+        if (widgetInstance && typeof widgetInstance.request === 'function') {
+          widgetInstance.request('', 0);
+        }
+      }
+    });
+  }
+
+  suggestWidget.on("fb-select", function(evt, data) {
+    
       SchemaAlignment._getPropertyType(data.id, function(datatype) {
         inputContainer.data("jsonValue", {
           type : "wbpropconstant",

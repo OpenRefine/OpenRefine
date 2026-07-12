@@ -142,6 +142,107 @@
     }
   );
 
+  $.suggest(
+  "suggestWikibaseProperty",
+  $.extend(
+    true,
+    {},
+    $.suggest.suggestWikibase.prototype,
+    {
+      request: function(val, cursor) {
+        var self = this,
+            o = this.options;
+
+        var mainsnakPid = o.get_mainsnak_pid ? o.get_mainsnak_pid() : null;
+
+        if (!mainsnakPid || o._suggesterUnavailable) {
+          return $.suggest.suggestWikibase.prototype.request.call(this, val, cursor);
+        }
+
+        var data = {
+          action: 'wbsgetsuggestions',
+          properties: mainsnakPid,
+          context: o.context,
+          search: val || '',
+          language: o.language,
+          format: 'json',
+          origin: '*',
+          uselang: o.language
+        };
+
+        if (cursor) {
+          data['continue'] = cursor;
+        }
+
+        var url = o.mediawiki_endpoint + "?" + $.param(data, true);
+        var cached = $.suggest.cache[url];
+        if (cached) {
+          this.response(cached, cursor ? cursor : -1, true);
+          return;
+        }
+
+        clearTimeout(this.request.timeout);
+
+        var ajax_options = {
+          url: o.mediawiki_endpoint,
+          data: data,
+          traditional: true,
+          beforeSend: function(xhr) {
+            var calls = self.input.data("request.count.suggest") || 0;
+            if (!calls) {
+              self.trackEvent(self.name, "start_session");
+            }
+            calls += 1;
+            self.trackEvent(self.name, "request", "count", calls);
+            self.input.data("request.count.suggest", calls);
+          },
+          success: function(data) {
+            var translated = {
+                prefix: val,
+                result: (data.search || []).map(result => { return {
+                    id: result.id,
+                    name: result.label,
+                    description: result.description};})
+            };
+            $.suggest.cache[url] = translated;
+            self.response(translated, cursor ? cursor : -1);
+          },
+          error: function(xhr) {
+            o._suggesterUnavailable = true;
+            self.status_error();
+            self.trackEvent(self.name, "request", "error", {
+              url: this.url,
+              response: xhr ? xhr.responseText : ''
+            });
+            $.suggest.suggestWikibase.prototype.request.call(self, val, cursor);
+          },
+          complete: function(xhr) {
+            if (xhr) {
+              self.trackEvent(self.name, "request", "tid",
+              xhr.getResponseHeader("X-Metaweb-TID"));
+            }
+          },
+          dataType: "json",
+          cache: true
+        };
+
+        this.request.timeout = setTimeout(function() {
+          $.ajax(ajax_options);
+        }, o.xhr_delay);
+      }
+    }));
+
+  $.extend(
+    $.suggest.suggestWikibaseProperty,
+    {
+      defaults: $.extend(
+        true,
+        {},
+        $.suggest.suggestWikibase.defaults
+      )
+    }
+  );
+
 })();
 
 
