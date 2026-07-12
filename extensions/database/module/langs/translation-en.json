@@ -61,5 +61,5 @@
     "database-source/alert-db-host-invalid-character": "Database Host Error: Illegal Character in Input. Only Alphanumeric characters allowed",
     "database-source/alert-db-user-invalid-character": "Database User Error: Illegal Character in Input. Only Alphanumeric characters allowed",
     "database-source/alert-db-port-invalid-character": "Database Port Error: Illegal Character in Input. Only Numeric values allowed."
-    
+
 }

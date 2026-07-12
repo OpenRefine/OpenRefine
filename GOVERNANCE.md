@@ -116,7 +116,7 @@ The results must be positive for the person to be elected.
 
 # Policies
 This section does NOT cover OpenRefine project governance. It is currently maintained in this `GOVERNANCE.md` file temporarily until another document or location can hold this information and make it transparent to the community.
- 
+
 The **Code of Conduct Committee, Advisory Committee, and Core Developer Group** hold greater authority within the OpenRefine project, with the ability to represent and make commitments on its behalf. To maintain the community’s trust, these groups are held to a higher standard of transparency and accountability in their decision-making processes.
 This includes transparent and open practices for:
 - Requesting and managing funds
@@ -140,7 +140,7 @@ Unrestricted funds are not linked to a specific deliverable or usage and usually
 Restricted funds are attached to specific deliverables or budget assignments from the grantors and usually come from grant applications. The Advisory Committee must approve grant applications by formal vote before submitting them.
 
 Any contributor can initiate a grant application as a Principal Investigator (PI). The PI
-- Must start a new thread with a subject line starting with `[Grant Opportunity:]` on the forum section named [Community Feedback](https://forum.openrefine.org/c/community/feedback/2) to collect feedback from the community. 
+- Must start a new thread with a subject line starting with `[Grant Opportunity:]` on the forum section named [Community Feedback](https://forum.openrefine.org/c/community/feedback/2) to collect feedback from the community.
 - Must be coordinated with the Advisory Committee.
 - Will hire and supervise the contractors with the support of the Advisory Committee.
 - Must collaborate with other OpenRefine Members (and related working groups) regarding the grant scope.

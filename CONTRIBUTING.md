@@ -29,7 +29,7 @@ like Spanish, Brazilian Portuguese, and French could use help.
 When browsing our [user manual](https://openrefine.org/docs/) or other documentation, feel free to use the edit button to suggest improvements.
 For large changes, you might want to first discuss your proposed changes on the forum and then [prepare your changes locally](https://openrefine.org/docs/technical-reference/documentation-contributions).
 
-##  Contribute code 
+##  Contribute code
 
 You can contribute code in various ways:
 - Fix bugs or implement new features. Follow [our guide towards your first code contribution](https://openrefine.org/docs/technical-reference/code-contributions)
