@@ -1305,15 +1305,19 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
   }
 
   var suggestWidget = input[widgetName](suggestConfig);
+  var showSuggestionsIfEmpty = function() {
+    if (!input.val() && !input.data('dont_hide')) {
+      var widgetInstance = input.data(widgetName);
+      if (widgetInstance && typeof widgetInstance.request === 'function') {
+        widgetInstance.request('', 0);
+      }
+    }
+  };
 
   if (widgetName === 'suggestWikibaseProperty') {
-    input.one('focus', function() {
-      if (!input.val()) {
-        var widgetInstance = input.data(widgetName);
-        if (widgetInstance && typeof widgetInstance.request === 'function') {
-          widgetInstance.request('', 0);
-        }
-      }
+    input.on('focus', showSuggestionsIfEmpty);
+    input.on('fb-textchange', function() {
+      setTimeout(showSuggestionsIfEmpty, 0);
     });
   }
 

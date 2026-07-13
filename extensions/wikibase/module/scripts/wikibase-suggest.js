@@ -149,6 +149,11 @@
     {},
     $.suggest.suggestWikibase.prototype,
     {
+      focus: function(e) {
+        // need this otherwise user can't select if field is empty
+        this.focus_hook(e);
+      },
+
       request: function(val, cursor) {
         var self = this,
             o = this.options;
