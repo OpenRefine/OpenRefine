@@ -150,7 +150,7 @@
     $.suggest.suggestWikibase.prototype,
     {
       focus: function(e) {
-        // need this otherwise user can't select if field is empty
+        // need this otherwise user will not be able select items if field is empty, even if suggestions are being shown
         this.focus_hook(e);
       },
 
@@ -161,13 +161,14 @@
         var mainsnakPid = o.get_mainsnak_pid ? o.get_mainsnak_pid() : null;
 
         if (!mainsnakPid || o._suggesterUnavailable) {
+          // if we don't find a main snak pid, just use suggestWikibase widget's request()
           return $.suggest.suggestWikibase.prototype.request.call(this, val, cursor);
         }
 
         var data = {
           action: 'wbsgetsuggestions',
-          properties: mainsnakPid,
-          context: o.context,
+          properties: mainsnakPid,// pass in the statement's main property pid here
+          context: o.context,// add context
           search: val || '',
           language: o.language,
           format: 'json',
@@ -219,6 +220,7 @@
               url: this.url,
               response: xhr ? xhr.responseText : ''
             });
+            // fallback to suggestWikibase request()
             $.suggest.suggestWikibase.prototype.request.call(self, val, cursor);
           },
           complete: function(xhr) {
