@@ -1132,7 +1132,7 @@ SchemaAlignment._statementToJSON = function (statement) {
  **************/
 
 SchemaAlignment._addQualifier = function(container, json, context) {
-  context = context || 'qualifier';
+  context = context || 'qualifier';// this will make sense later when we use it
   var property = null;
   var value = null;
   if (json) {
@@ -1154,6 +1154,8 @@ SchemaAlignment._addQualifier = function(container, json, context) {
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
 
   var getMainsnakPid = function() {
+    // this function will get the pid of the statement's property
+
     var propInput = container.closest('.wbs-statement-group').find('.wbs-prop-input').first();
     var mainsnakValue = propInput.data('jsonValue');
     return (mainsnakValue && mainsnakValue.pid) ? mainsnakValue.pid : null;
@@ -1161,6 +1163,7 @@ SchemaAlignment._addQualifier = function(container, json, context) {
 
 
   SchemaAlignment._initPropertyField(inputContainer, statementContainer, property, context, getMainsnakPid);
+
   if (value && property) {
     SchemaAlignment._addStatement(statementContainer, property.datatype, {value:value});
   } else {
@@ -1217,7 +1220,7 @@ SchemaAlignment._addReference = function(container, json) {
   var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   var addSnakButton = $('<a></a>').addClass('wbs-add-qualifier')
         .on('click',function(e) {
-      SchemaAlignment._addQualifier(qualifierContainer, null, 'reference');
+      SchemaAlignment._addQualifier(qualifierContainer, null, 'reference');// context set to 'reference'
       e.preventDefault();
   }).appendTo(toolbar2);
   SchemaAlignment._plusButton($.i18n('wikibase-schema/add-reference-snak'), addSnakButton);
@@ -1297,8 +1300,9 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
     language: $.i18n("core-recon/wd-recon-lang"),
     view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType('property')+'{{id}}'
   };
-  var widgetName = 'suggestWikibase';
+  var widgetName = 'suggestWikibase';// default widget
   if (context === 'qualifier' || context === 'reference') {
+    // basically if context is not null, we switch to 'suggestWikibaseProperty', else we use 'suggestWikibase'
     widgetName = 'suggestWikibaseProperty';
     suggestConfig.context = context;
     suggestConfig.get_mainsnak_pid = getMainsnakPid;
@@ -1306,16 +1310,22 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
 
   var suggestWidget = input[widgetName](suggestConfig);
   var showSuggestionsIfEmpty = function() {
+    // this will show suggestions when property fields are empty
     if (!input.val() && !input.data('dont_hide')) {
       var widgetInstance = input.data(widgetName);
+      // probably won't need this if statement, might remove it later
       if (widgetInstance && typeof widgetInstance.request === 'function') {
+        // we pass in an empty search string
         widgetInstance.request('', 0);
       }
     }
   };
 
   if (widgetName === 'suggestWikibaseProperty') {
+    // when user clicks on the empty field, lets show the suggestions
     input.on('focus', showSuggestionsIfEmpty);
+
+    // what if user clears a property? then property field becomes empty again, so we need to show the suggestions again
     input.on('fb-textchange', function() {
       setTimeout(showSuggestionsIfEmpty, 0);
     });
