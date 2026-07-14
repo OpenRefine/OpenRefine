@@ -309,7 +309,7 @@ CustomTabularExporterDialog.prototype._postExport = function(preview) {
   }
   
   var ext = CustomTabularExporterDialog.formats[format].extension;
-  Refine.wrapCSRF(function(csrfToken) {
+  CSRFUtil.getCSRF().then(function(csrfToken) {
     var form = ExporterManager.prepareExportRowsForm(format, !exportAllRowsCheckbox, ext, csrfToken);
 
     if (preview) {

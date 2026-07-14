@@ -74,11 +74,12 @@ Refine.DefaultImportingController.prototype._startOver = function() {
 Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, sortCriteria, sortOrder, callback) {
     var self = this;
 
-    Refine.wrapCSRF(function(token) {
-        $.post(
-            "command/core/create-importing-job",
-            { csrf_token: token },
-            function(data) {
+    CSRFUtil.getCSRF().then(function(token) {
+      $.post(
+          "command/core/create-importing-job",
+          { csrf_token: token }, // TODO: Can't use postCSRF because token is a query param?
+      ).fail(() => {}
+      ).done(function(data) {
                 var jobID = self._jobID = data.jobID;
 
                 var url =  "command/core/importing-controller?" + $.param({
@@ -95,7 +96,7 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
                     cache: false,
                     contentType: false,
                     processData: false,
-                    dataType: "text",
+                    dataType: "text", // Non-JSON POST call to upload data
                     error: function( jqXHR, textStatus, errorThrown){
                         console.log('Error calling load-raw-data: '+textStatus);
                     }
@@ -134,8 +135,7 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
 
                     self._createProjectUI.showSourceSelectionPanel();
                 });
-            },
-            "json"
+            }
         );
     });
 };
@@ -185,7 +185,7 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
   if (!(format in this._parserOptions)) {
     var self = this;
     var dismissBusy = DialogSystem.showBusy($.i18n('core-index-import/inspecting'));
-    Refine.wrapCSRF(function(token) {
+    CSRFUtil.getCSRF().then(function(token) {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "core/default-importing-controller",
@@ -193,21 +193,8 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
             "subCommand": "initialize-parser-ui",
             "format": format,
             "csrf_token": token
-        }),
-        null,
-        function(data) {
-            dismissBusy();
-            if (data.message) {
-              DialogSystem.alert(data.message);
-            }
-            if (data.options) {
-              self._parserOptions[format] = data.options;
-              onDone();
-            }
-        },
-        "json"
-        )
-        .fail(function(xhr, status, text) {
+        })
+        ).fail(function(xhr, status, text) {
             dismissBusy();
             // jQuery won't parse JSON response with a non-200 status code, so we have to do it ourselves
             let response = $.parseJSON(xhr.responseText);
@@ -219,7 +206,17 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
               // Fallback if we had a network error, 500, or received non-JSON
               DialogSystem.alert($.i18n('core-views/check-format'));
             }
-        });
+        }).done(function(data) {
+            dismissBusy();
+            if (data.message) {
+              DialogSystem.alert(data.message);
+            }
+            if (data.options) {
+              self._parserOptions[format] = data.options;
+              onDone();
+            }
+          }
+        );
     });
   } else {
     onDone();
@@ -228,7 +225,7 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
 
 Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(options, callback, finallyCallBack) {
   var self = this;
-  Refine.wrapCSRF(function(token) {
+  CSRFUtil.getCSRF().then(function(token) {
     $.post(
       "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
@@ -239,9 +236,11 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
       {
         "format" : self._format,
         "options" : JSON.stringify(options)
-      },
-      function(o) {
-        if (o.status == 'error') {
+      }
+    ).fail(() => {
+      DialogSystem.alert($.i18n('core-index-parser/update-format-failed'));
+    }).done( function(o) {
+        if (o.status === 'error') {
           if (o.message) {
             DialogSystem.alert(o.message);
           } else {
@@ -249,16 +248,12 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
             $.each(o.errors, function() { messages.push(this.message); });
             DialogSystem.alert(messages.join('\n\n'));
           }
-            if(finallyCallBack){
-              finallyCallBack();
-            }
+          if(finallyCallBack){
+            finallyCallBack();
           }
-          callback(o);
-        },
-        "json"
-    ).fail(() => {
-      DialogSystem.alert($.i18n('core-index-parser/update-format-failed'));
-    });
+        }
+        callback(o);
+      });
   });
 };
 
@@ -267,9 +262,11 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
   var result = {};
 
   $.post(
-    "command/core/get-models?" + $.param({ "importingJobID" : self._jobID }),
-    null,
-    function(data) {
+    "command/core/get-models?" + $.param({ "importingJobID" : self._jobID })
+  ).fail(() => {
+      DialogSystem.alert($.i18n('core-index/model-loading-failed'));
+    }
+  ).done(function(data) {
       for (var n in data) {
         if (data.hasOwnProperty(n)) {
           result[n] = data[n];
@@ -281,18 +278,15 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
           "importingJobID" : self._jobID,
           "start" : 0,
           "limit" : numRows || 100 // More than we parse for preview anyway
-        }),
-        null,
-        function(data) {
+        })
+        ).fail(() => {
+          DialogSystem.alert($.i18n('core-index/rows-loading-failed'));
+        }).done(function(data) {
             result.rowModel = data;
             callback(result);
-        },
-        "json"
-         ).fail(() => {
-           DialogSystem.alert($.i18n('core-index/rows-loading-failed'));
-         });
-    },
-    "json"
+        }
+      )
+    }
   );
 };
 
@@ -311,13 +305,13 @@ Refine.DefaultImportingController.prototype._createProject = function() {
     var options = this._formatParserUI.getOptions();
     options.projectName = projectName;
     options.projectTags = projectTags;
-    Refine.wrapCSRF(function(token) {
+    CSRFUtil.getCSRF().then(function(token) {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "core/default-importing-controller",
             "jobID": self._jobID,
             "subCommand": "create-project",
-            "csrf_token": token
+            "csrf_token": token // TODO: query param CSRF token, so can't use standard call - standardize?
         }),
         {
             "format" : self._format,

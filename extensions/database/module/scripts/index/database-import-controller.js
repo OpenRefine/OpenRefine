@@ -48,39 +48,37 @@ Refine.DatabaseImportController.prototype.startImportingDocument = function(quer
     //alert(queryInfo.query);
     var self = this;
 
-    Refine.postCSRF(
-      "command/core/create-importing-job",
-      null,
-      function(data) {
-        Refine.wrapCSRF(function(token) {
-            $.post(
-            "command/core/importing-controller?" + $.param({
-                "controller": "database/database-import-controller",
-                "subCommand": "initialize-parser-ui",
-                "csrf_token": token
-            }),
-            queryInfo,
+    CSRFUtil.post(
+      "command/core/create-importing-job"
+    ).done(function(data) {
+      // FIXME: This needs a different style function call in the Ajax library
+      CSRFUtil.getCSRF().then(function(token) {
+        $.post(
+          "command/core/importing-controller?" + $.param({
+            "controller": "database/database-import-controller",
+            "subCommand": "initialize-parser-ui",
+            "csrf_token": token
+          }),
+          queryInfo,
 
-            function(data2) {
-                dismiss();
+          function(data2) {
+            dismiss();
 
-                if (data2.status == 'ok') {
-                self._queryInfo = queryInfo;
-                self._jobID = data.jobID;
-                self._options = data2.options;
+            if (data2.status == 'ok') {
+              self._queryInfo = queryInfo;
+              self._jobID = data.jobID;
+              self._options = data2.options;
 
-                self._showParsingPanel();
+              self._showParsingPanel();
 
-                } else {
-                alert(data2.message);
-                }
-            },
-            "json"
-            );
-        });
-      },
-      "json"
-    );
+            } else {
+              alert(data2.message);
+            }
+          },
+          "json"
+        );
+      });
+    });
 };
 
 Refine.DatabaseImportController.prototype.getOptions = function() {
@@ -245,7 +243,7 @@ Refine.DatabaseImportController.prototype._updatePreview = function() {
     this._queryInfo.options = JSON.stringify(this.getOptions());
     //alert("options:" + this._queryInfo.options);
 
-    Refine.wrapCSRF(function(token) {
+    CSRFUtil.getCSRF().then(function(token) {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "database/database-import-controller",
@@ -289,31 +287,29 @@ Refine.DatabaseImportController.prototype._getPreviewData = function(callback, n
     var result = {};
 
     $.post(
-      "command/core/get-models?" + $.param({ "importingJobID" : this._jobID }),
-      null,
-      function(data) {
-        for (var n in data) {
-          if (data.hasOwnProperty(n)) {
-            result[n] = data[n];
-          }
+      "command/core/get-models?" + $.param({ "importingJobID" : this._jobID })
+    ).fail(( jqXHR, textStatus, errorThrown) => {
+      console.error( jqXHR, textStatus, errorThrown);
+    }).done(function(data) {
+      for (var n in data) {
+        if (data.hasOwnProperty(n)) {
+          result[n] = data[n];
         }
+      }
 
-        $.post(
-          "command/core/get-rows?" + $.param({
-            "importingJobID" : self._jobID,
-            "start" : 0,
-            "limit" : numRows || 100 // More than we parse for preview anyway
-          }),
-          null,
-          function(data) {
-            result.rowModel = data;
-            callback(result);
-          },
-          "json"
-        );
-      },
-      "json"
-    );
+      $.post(
+        "command/core/get-rows?" + $.param({
+          "importingJobID" : self._jobID,
+          "start" : 0,
+          "limit" : numRows || 100 // More than we parse for preview anyway
+        })
+      ).fail(( jqXHR, textStatus, errorThrown) => {
+        console.error( jqXHR, textStatus, errorThrown);
+      }).done(function(data) {
+        result.rowModel = data;
+        callback(result);
+      });
+    });
 };
 
 Refine.DatabaseImportController.prototype._createProject = function() {
@@ -329,7 +325,7 @@ Refine.DatabaseImportController.prototype._createProject = function() {
     options.projectName = projectName;
 
     this._queryInfo.options = JSON.stringify(options);
-    Refine.wrapCSRF(function(token) {
+    CSRFUtil.getCSRF().then(function(token) {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "database/database-import-controller",

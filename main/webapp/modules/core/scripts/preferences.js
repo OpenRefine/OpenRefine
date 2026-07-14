@@ -38,7 +38,13 @@ var Refine = {
 
 I18NUtil.init("core");
 
+/**
+ * @deprecated use CSRFUtil.getCSRF().then(onCSRF)
+ */
 Refine.wrapCSRF = CSRFUtil.wrapCSRF;
+/**
+ * @deprecated use CSRFUtil.post()
+ */
 Refine.postCSRF = CSRFUtil.postCSRF;
 
 function deDupUserMetaData(arrObj)  {
@@ -69,32 +75,22 @@ function PreferenceUI(tr, key, initialValue) {
       }
       $(td1).text(newValue);
 
-      Refine.postCSRF(
-        "command/core/set-preference",
-        {
-          name : key,
-          value : JSON.stringify(newValue)
-        },
-        function(o) {
-          if (o.code == "error") {
+      OpenRefine.setPreference(key, newValue)
+        .then(function(o) {
+          if (o.code === "error") {
             alert(o.message);
           }
-        },
-        "json"
-      );
+        });
     }
   });
 
   $('<button class="button">').text($.i18n('core-index/delete')).css('margin-left','5px')
       .appendTo(td2).on('click',function() {
     if (window.confirm($.i18n('core-index/delete-key')+" " + key + "?")) {
-      Refine.postCSRF(
-        "command/core/set-preference",
-        {
-          name : key
-        },
-        function(o) {
-          if (o.code == "ok") {
+      // TODO: Create a deletePreference() function
+      OpenRefine.setPreference(key, null)
+        .then(function(o) {
+          if (o.code === "ok") {
             $(tr).remove();
 
             for (var i = 0; i < preferenceUIs.length; i++) {
@@ -103,12 +99,10 @@ function PreferenceUI(tr, key, initialValue) {
                 break;
               }
             }
-          } else if (o.code == "error") {
+          } else if (o.code === "error") {
             alert(o.message);
           }
-        },
-        "json"
-      );
+        });
     }
   });
 }
@@ -147,19 +141,12 @@ function populatePreferences(prefs) {
             value = deDupUserMetaData(value);
         }
 
-        Refine.postCSRF(
-          "command/core/set-preference",
-          {
-            name : key,
-            value : JSON.stringify(value)
-          },
-          function(o) {
-            if (o.code == "error") {
+        OpenRefine.setPreference(key, value)
+          .then(function(o) {
+            if (o.code === "error") {
               alert(o.message);
             }
-          },
-          "json"
-        );
+          });
       }
     }
   });
@@ -167,11 +154,8 @@ function populatePreferences(prefs) {
 
 function onLoad() {
   $.post(
-      "command/core/get-all-preferences",
-      null,
-      populatePreferences,
-      "json"
-  );
+      "command/core/get-all-preferences"
+  ).done(populatePreferences);
 }
 
 $(onLoad);

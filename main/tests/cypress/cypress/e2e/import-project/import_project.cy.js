@@ -23,6 +23,8 @@ describe(__filename, function () {
     cy.get('div[bind="summaryBarDiv"]').contains('199 rows');
   });
 
+  // TODO: We don't have any tests for cancelling an import (but it may be hard to do due to timing)
+
   it('Import a project, test the renaming', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');

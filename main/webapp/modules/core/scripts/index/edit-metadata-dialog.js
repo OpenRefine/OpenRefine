@@ -44,15 +44,13 @@ function EditMetadataDialog(metaData, targetRowElem) {
               if (newTags !== null) {
                   $(td1).text(newTags);
                   metaData[key] = newTags;
-                  Refine.postCSRF(
+                  CSRFUtil.post(
                       "command/core/set-project-tags",
                       {
                           "project" : project,
                           "old" : oldTags,
                           "new" : newTags
-                      },
-                      function(data) {},
-                      "json"
+                      }
                   );
               }
               
@@ -71,20 +69,18 @@ function EditMetadataDialog(metaData, targetRowElem) {
             if (newValue !== null) {
               $(td1).text(newValue);
               metaData[key] = newValue;
-              Refine.postCSRF(
+              CSRFUtil.post(
                 "command/core/set-project-metadata",
                 {
                   project : project,
                   name : key,
                   value : newValue
-                },
-                function(o) {
-                  if (o.code === "error") {
-                    alert(o.message);
-                  } 
-                },
-                "json"
-              );
+                }
+              ).done(function(o) {
+                if (o.code === "error") {
+                  alert(o.message);
+                }
+              });
             }
             
             Refine.OpenProjectUI.refreshProject(targetRowElem, metaData, project);

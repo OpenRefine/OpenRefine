@@ -180,15 +180,12 @@ HistoryPanel.prototype._onClickHistoryEntry = function(evt, entry, lastDoneID) {
 HistoryPanel.prototype._extractOperations = function() {
   var self = this;
   $.getJSON(
-      "command/core/get-operations?" + $.param({ project: theProject.id }), 
-      null,
-      function(data) {
-        if ("entries" in data) {
-          self._showExtractOperationsDialog(data);
-        }
-      },
-      "jsonp"
-  );
+      "command/core/get-operations?" + $.param({ project: theProject.id })
+  ).done(function(data) {
+    if ("entries" in data) {
+      self._showExtractOperationsDialog(data);
+    }
+  });
 };
 
 HistoryPanel.prototype._showExtractOperationsDialog = function(json) {

@@ -1729,48 +1729,46 @@ SchemaAlignment.preview = function() {
   }
   this.issueSpinner.show();
   this.previewSpinner.show();
-  Refine.postCSRF(
+  console.log("Calling CSRFUtil.postCSRF2", CSRFUtil.postCSRF2);
+  CSRFUtil.post(
     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
-    { schema: JSON.stringify(schema), manifest: JSON.stringify(WikibaseManager.getSelectedWikibase()), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
-    function(data) {
-      self.issueSpinner.hide();
-      self.previewSpinner.hide();
-      if ("edits_preview" in data) {
-        var previewContainer = self._previewPanes[0];
-        EditRenderer.renderEdits(data.edits_preview, previewContainer);
-        self.updateNbEdits(data["edit_count"]);
-      }
-
-      // update the counts in the issues tab
-     var numWarnings = data.warnings ? data.nb_warnings : 0;
-     var numErrors = data.errors ? data.errors.length : 0;
-     var totalCount = numErrors + numWarnings;
-     countsElem.hide();
-     if (totalCount) {
-       countsElem.text(totalCount);
-       countsElem.show();
-     }
-
-     if (data.warnings) {
-         self._updateWarnings(data.warnings);
-     } else {
-         self._updateWarnings([]);
-     }
-
-      if ("code" in data && data.code === "error" && data.reason == 'invalid-schema') {
-         $('.invalid-schema-warning').show();
-         SchemaAlignment._renderSchemaValidationErrors(self.schemaValidationErrorsInPreview, data.errors);
-         SchemaAlignment._renderSchemaValidationErrors(self.schemaValidationErrorsInIssues, data.errors);
-      }
-    },
-    "json",
-    function(error) {
-      self.issueSpinner.hide();
-      self.previewSpinner.hide();
-      console.log("Error while previewing the schema:");
-      console.log(error);
+    { schema: JSON.stringify(schema), manifest: JSON.stringify(WikibaseManager.getSelectedWikibase()), engine: JSON.stringify(ui.browsingEngine.getJSON()) }
+  ).fail(function(error) {
+    self.issueSpinner.hide();
+    self.previewSpinner.hide();
+    console.log("Error while previewing the schema:");
+    console.log(error);
+  }).done(function(data) {
+    self.issueSpinner.hide();
+    self.previewSpinner.hide();
+    if ("edits_preview" in data) {
+      var previewContainer = self._previewPanes[0];
+      EditRenderer.renderEdits(data.edits_preview, previewContainer);
+      self.updateNbEdits(data["edit_count"]);
     }
-  );
+
+    // update the counts in the issues tab
+    var numWarnings = data.warnings ? data.nb_warnings : 0;
+    var numErrors = data.errors ? data.errors.length : 0;
+    var totalCount = numErrors + numWarnings;
+    countsElem.hide();
+    if (totalCount) {
+      countsElem.text(totalCount);
+      countsElem.show();
+    }
+
+    if (data.warnings) {
+      self._updateWarnings(data.warnings);
+    } else {
+      self._updateWarnings([]);
+    }
+
+    if ("code" in data && data.code === "error" && data.reason == 'invalid-schema') {
+      $('.invalid-schema-warning').show();
+      SchemaAlignment._renderSchemaValidationErrors(self.schemaValidationErrorsInPreview, data.errors);
+      SchemaAlignment._renderSchemaValidationErrors(self.schemaValidationErrorsInIssues, data.errors);
+    }
+  });
 };
 
 // Used for injecting tabs in any project where the schema has been defined.

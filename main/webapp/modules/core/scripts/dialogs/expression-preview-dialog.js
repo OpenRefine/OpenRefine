@@ -88,7 +88,7 @@ ExpressionPreviewDialog.Widget = function(
     var language = "grel";
     if (!(expression)) {
         language = Cookies.get("scripting.lang");
-        if (language == "gel") { // backward compatible
+        if (language === "gel") { // backward compatible
             language = "grel";
         }
         
@@ -152,7 +152,7 @@ ExpressionPreviewDialog.Widget = function(
 
             // handle up and down arrow keys
             if (e.key === "ArrowUp") {
-                var isCaratAtBeginning = this.selectionStart == 0 && this.selectionEnd == 0;
+                var isCaratAtBeginning = this.selectionStart === 0 && this.selectionEnd === 0;
                 var hasPreviousHistory = self._currentHistoryIndex < self._expressionHistory.length - 1;
                 if (isCaratAtBeginning && hasPreviousHistory) {
                     // find the previous expression
@@ -163,7 +163,7 @@ ExpressionPreviewDialog.Widget = function(
                     self._elmts.expressionPreviewTextarea[0].selectionEnd = 0;
                 }
             } else if (e.key === "ArrowDown") {
-                var isCaratAtEnd = this.selectionStart == this.value.length && this.selectionEnd == this.value.length;
+                var isCaratAtEnd = this.selectionStart === this.value.length && this.selectionEnd === this.value.length;
                 var hasNextHistory = self._currentHistoryIndex >= 0;
                 // check whether the carat is at the end of the line
                 if (isCaratAtEnd && hasNextHistory) {
@@ -218,12 +218,9 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     
     s = this._getLanguage() + ":" + s;
     if (commit) {
-        Refine.postCSRF(
+        CSRFUtil.post(
             "command/core/log-expression?" + $.param({ project: theProject.id }),
-            { expression: s },
-            function(data) {
-            },
-            "json"
+            { expression: s }
         );
     }
     
@@ -245,13 +242,10 @@ ExpressionPreviewDialog.Widget.prototype._getExpressionString = function() {
 ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
     var self = this;
     $.getJSON(
-        "command/core/get-expression-language-info",
-        null,
-        function(data) {
-            self._renderHelp(data);
-        },
-        "json"
-    );
+        "command/core/get-expression-language-info"
+    ).done(function(data) {
+        self._renderHelp(data);
+    });
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
@@ -331,14 +325,11 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
 ExpressionPreviewDialog.Widget.prototype._renderExpressionHistoryTab = function() {
     var self = this;
     $.getJSON(
-        "command/core/get-expression-history?" + $.param({ project: theProject.id }),
-        null,
-        function(data) {
-            self._renderExpressionHistory(data);
-            self._expressionHistory = data.expressions.map(e => e.code);
-        },
-        "json"
-    );
+        "command/core/get-expression-history?" + $.param({ project: theProject.id })
+    ).done(function(data) {
+        self._renderExpressionHistory(data);
+        self._expressionHistory = data.expressions.map(e => e.code);
+    });
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(data) {
@@ -358,18 +349,17 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
                 .addClass(entry.starred ? "data-table-star-on" : "data-table-star-off")
                 .appendTo(tr.insertCell(0))
                 .on('click',function() {
-                    Refine.postCSRF(
+                    CSRFUtil.post(
+                      // FIXME: This command returns no response, so JSON handling fails
                         "command/core/toggle-starred-expression",
                         {
                             expression: entry.code
-                        },
-                        function(data) {
-                            entry.starred = !entry.starred;
-                            renderEntry(self,tr,entry);
-                            self._renderStarredExpressionsTab();
-                        },
-                        ""
-                    );
+                        }
+                    ).done(function(data) {
+                        entry.starred = !entry.starred;
+                        renderEntry(self,tr,entry);
+                        self._renderStarredExpressionsTab();
+                    });
                 });
         
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/reuse')+'</a>').appendTo(tr.insertCell(1)).on('click',function() {
@@ -400,14 +390,11 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
 ExpressionPreviewDialog.Widget.prototype._renderStarredExpressionsTab = function() {
     var self = this;
     $.getJSON(
-        "command/core/get-starred-expressions",
-        null,
-        function(data) {
-            self._renderStarredExpressions(data);
-        },
-        ""
-    );
-};
+        "command/core/get-starred-expressions"
+    ).done(function(data) {
+        self._renderStarredExpressions(data);
+    });
+}
 
 ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(data) {
     var self = this;
@@ -431,15 +418,14 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
             var removeExpressionFooter = $('<div></div>').addClass("dialog-footer").appendTo(removeExpression);
 
             $('<button class="button button-primary" bind="okButton"></button>').html($.i18n('core-buttons/ok')).on('click',function() {
-                Refine.postCSRF(
+                CSRFUtil.post(
+                    // FIXME: This command returns no response, so JSON handling fails
                     "command/core/toggle-starred-expression",
-                    { expression: entry.code, returnList: true },
-                    function(data) {
-                        self._renderStarredExpressions(data);
-                        self._renderExpressionHistoryTab();
-                    },
-                    "json"
-                );
+                    { expression: entry.code, returnList: true }
+                ).done(function(data) {
+                    self._renderStarredExpressions(data);
+                    self._renderExpressionHistoryTab();
+                });
                 DialogSystem.dismissUntil(DialogSystem._layers.length - 1);
             }).appendTo(removeExpressionFooter);
 
@@ -492,22 +478,20 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     if(activeTabName === "Distance"){
         self._renderDistancePreview(this._values[0]);
     } else {
-        Refine.postCSRF(
+        CSRFUtil.post(
             "command/core/preview-expression?" + $.param(params), 
             {
                 expression: this._getLanguage() + ":" + expression,
                 rowIndices: JSON.stringify(this._rowIndices) 
-            },
-            function(data) {
-                if (data.code != "error") {
-                    self._results = data.results;
-                } else {
-                    self._results = null;
-                }
-                self._renderPreview(expression, data);
-            },
-            "json"
-        );
+            }
+        ).done(function(data) {
+            if (data.code !== "error") {
+                self._results = data.results;
+            } else {
+                self._results = null;
+            }
+            self._renderPreview(expression, data);
+        });
     }
 
     if(self._columnName != null){
@@ -521,7 +505,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
             "blocking-ngram-size" : Number(document.getElementById('blockingChars').value)
         };
 
-        Refine.postCSRF(
+        CSRFUtil.post(
             "command/core/compute-clusters?" + $.param({ project: theProject.id }),
             {
                 engine: JSON.stringify(ui.browsingEngine.getJSON()),
@@ -531,21 +515,19 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
                     'column' : self._columnName,
                     'params' : self._params
                 })
-            },
-            function(data) {
-                var clusters = [];
-                if (data.code != "error") {
-                    $.each(data, function() {
-                        var cluster = {
-                            choices: this,
-                        };
-                        clusters.push(cluster);
-                    });
-                }
-                self._renderClusters(clusters);
-            },
-            "json"
-        );
+            }
+        ).done(function(data) {
+            var clusters = [];
+            if (data.code !== "error") {
+                $.each(data, function() {
+                    var cluster = {
+                        choices: this,
+                    };
+                    clusters.push(cluster);
+                });
+            }
+            self._renderClusters(clusters);
+        });
     }
 };
 
@@ -580,7 +562,7 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
     if (this._results !== null) {
         this._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text($.i18n('core-dialogs/no-syntax-err')+".");
     } else {
-        var message = (data.type == "parser") ? data.message : $.i18n('core-dialogs/internal-err');
+        var message = (data.type === "parser") ? data.message : $.i18n('core-dialogs/internal-err');
         this._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
     }
     
@@ -647,7 +629,7 @@ ExpressionPreviewDialog.Widget.prototype._renderClusters = function(clusters) {
         };
 
         var maxRenderRows = parseInt(
-            Refine.getPreference("ui.clustering.choices.limit", 5000)
+            thePreferences["ui.clustering.choices.limit"] || 5000
         );
         maxRenderRows = isNaN(maxRenderRows) || maxRenderRows <= 0 ? 5000 : maxRenderRows;
         var totalRows = 0;
@@ -712,39 +694,37 @@ ExpressionPreviewDialog.Widget.prototype._renderDistancePreview = function(first
         let newExpression = expression.replace(/value1/g, '"' + value1.toString().replaceAll(' ', '\xa0') + '"')
                                 .replace(/value2/g, '"' + value2.toString().replaceAll(' ', '\xa0') + '"')
                                 .replace(/value/g,"");
-        Refine.postCSRF(
+        CSRFUtil.post(
             "command/core/preview-expression?" + $.param(params), 
             {
                 expression: self._getLanguage() + ":" + newExpression,
                 rowIndices: JSON.stringify(self._rowIndices) 
-            },
-            function(data) {
-                let result;
-                if (data.code != "error") {
-                    result = data.results[0];
-                    self._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text($.i18n('core-dialogs/no-syntax-err')+".");
-                } else {
-                    result = null;
-                    var message = (data.type == "parser") ? data.message : $.i18n('core-dialogs/internal-err');
-                    self._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
-                }
-                
-                tr.deleteCell(-1);
+            }
+        ).done(function(data) {
+            let result;
+            if (data.code !== "error") {
+                result = data.results[0];
+                self._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text($.i18n('core-dialogs/no-syntax-err')+".");
+            } else {
+                result = null;
+                var message = (data.type === "parser") ? data.message : $.i18n('core-dialogs/internal-err');
+                self._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
+            }
 
-                if (result !== null && result !== undefined) {
-                    if ($.isPlainObject(result)) {
-                        $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + result.message).appendTo(tr.insertCell(2));
-                    } else if(isNaN(result)) {
-                        let message = $.i18n('core-dialogs/should-return-number');
-                        $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + message).appendTo(tr.insertCell(2));
-                    } else {
-                        $('<span>' + result + '</span>').appendTo(tr.insertCell(2));
-                    }
+            tr.deleteCell(-1);
+
+            if (result !== null && result !== undefined) {
+                if ($.isPlainObject(result)) {
+                    $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + result.message).appendTo(tr.insertCell(2));
+                } else if(isNaN(result)) {
+                    let message = $.i18n('core-dialogs/should-return-number');
+                    $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + message).appendTo(tr.insertCell(2));
                 } else {
-                    $('<span>' + result + '</span>').addClass("expression-preview-special-value").appendTo(tr.insertCell(2));
+                    $('<span>' + result + '</span>').appendTo(tr.insertCell(2));
                 }
-            },
-            "json"
-        ); 
+            } else {
+                $('<span>' + result + '</span>').addClass("expression-preview-special-value").appendTo(tr.insertCell(2));
+            }
+        });
     }
 };

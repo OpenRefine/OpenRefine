@@ -42,16 +42,13 @@ Refine.OpenProjectUI = function(elmt) {
   if (Host.isLocalhost()) {
     $('#projects-workspace-open').text($.i18n('core-index-open/browse'));
     $('#projects-workspace-open').on('click',function() {
-      Refine.postCSRF(
-        "command/core/open-workspace-dir",
-        {},
-        function (data) {
-          if (data.code != "ok" && "message" in data) {
-            alert(data.message);
-          }
-        },
-        "json"
-      );
+      CSRFUtil.post(
+        "command/core/open-workspace-dir"
+      ).done(function (data) {
+        if (data.code !== "ok" && "message" in data) {
+          alert(data.message);
+        }
+      });
     });
   } else {
     $('#projects-workspace-open').hide();
@@ -63,14 +60,11 @@ Refine.OpenProjectUI = function(elmt) {
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
   var self = this;
   $.getJSON(
-      "command/core/get-all-project-metadata",
-      null,
-      function(data) {
-        self._renderProjects(data);
-        self.resize(); // other version of this function excludes this resize
-      },
-      "json"
-  );
+      "command/core/get-all-project-metadata"
+  ).done(function(data) {
+    self._renderProjects(data);
+    self.resize(); // other version of this function excludes this resize
+  });
 };
 
 Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
@@ -134,7 +128,7 @@ Refine.OpenProjectUI.prototype._openSearchInput = function() {
   const icon = $('#search-icon');
   const input = $('#search-input');
   input.attr("placeholder", $.i18n("core-index-open/search-placeholder"));
-  icon.click(function () {
+  icon.on("click", function () {
     if (input.is(':hidden')) {
       // $("#tagsUl").hide();
       $("#search-input").show();
@@ -198,12 +192,9 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
     $.ajax({
             type : 'GET',
             url : "command/core/get-all-project-metadata",
-            dataType : 'json',
-            success : function(data) {
-                    self._renderProjects(data);
-            },
-            data : {},
             async : false
+    }).done(function(data) {
+      self._renderProjects(data);
     });
 };
 
@@ -293,17 +284,15 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .html("<img src='images/close.svg' />")
       .on('click',function() {
         if (window.confirm($.i18n('core-index-open/del-body', project.name))) {
-          Refine.postCSRF(
+          CSRFUtil.post(
             "command/core/delete-project",
-            { "project" : project.id },
-            function (data) {
-              if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                Refine.TagsManager.allProjectTags = [];
-                self._buildTagsAndFetchProjects();
-              }
-            },
-            "json"
-          );
+            { "project" : project.id }
+          ).done(function (data) {
+            if (data && typeof data.code != 'undefined' && data.code === "ok") {
+              Refine.TagsManager.allProjectTags = [];
+              self._buildTagsAndFetchProjects();
+            }
+          });
         }
         return false;
       }).appendTo(

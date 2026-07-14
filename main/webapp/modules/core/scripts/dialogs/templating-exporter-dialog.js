@@ -54,7 +54,7 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     this._elmts.previewTextarea.attr('aria-label',$.i18n('core-dialogs/template-preview'))
     
     this._elmts.exportButton.on('click',function() {
-      Refine.wrapCSRF(function(csrfToken) {
+      CSRFUtil.getCSRF().then(function(csrfToken) {
         self._export(csrfToken);
         self._dismiss();
       });
@@ -74,17 +74,14 @@ TemplatingExporterDialog.prototype._createDialog = function() {
 };
 
 TemplatingExporterDialog.prototype._getSavedTemplate = function(f) {
-    $.getJSON(
-        "command/core/get-preference?" + $.param({ project: theProject.id, name: "exporters.templating.template" }),
-        null,
-        function(data) {
-            if (data.value !== null) {
-                f(JSON.parse(data.value));
-            } else {
-                f(null);
-            }
+    OpenRefine.getPreference("exporters.templating.template")
+      .then(function(data) {
+        if (data.value !== null) {
+          f(JSON.parse(data.value));
+        } else {
+          f(null);
         }
-    );
+      });
 };
 
 TemplatingExporterDialog.prototype._createDefaultTemplate = function() {
@@ -127,29 +124,29 @@ TemplatingExporterDialog.prototype._dismiss = function() {
 
 TemplatingExporterDialog.prototype._updatePreview = function() {
     var self = this;
-    Refine.postCSRF(
-        "command/core/export-rows/preview.txt",
-        {
-            "project" : theProject.id, 
-            "format" : "template",
-            "engine" : JSON.stringify(ui.browsingEngine.getJSON()),
-            "sorting" : JSON.stringify(ui.dataTableView.getSorting()),
-            "prefix" : this._elmts.prefixTextarea[0].value,
-            "suffix" : this._elmts.suffixTextarea[0].value,
-            "separator" : this._elmts.separatorTextarea[0].value,
-            "template" : this._elmts.templateTextarea[0].value,
-            "preview" : true,
-            "limit" : "20"
+    CSRFUtil.post({
+        url: "command/core/export-rows/preview.txt",
+        data: {
+          "project": theProject.id,
+          "format": "template",
+          "engine": JSON.stringify(ui.browsingEngine.getJSON()),
+          "sorting": JSON.stringify(ui.dataTableView.getSorting()),
+          "prefix": this._elmts.prefixTextarea[0].value,
+          "suffix": this._elmts.suffixTextarea[0].value,
+          "separator": this._elmts.separatorTextarea[0].value,
+          "template": this._elmts.templateTextarea[0].value,
+          "preview": true,
+          "limit": "20"
         },
-        function (data) {
-            self._elmts.previewTextarea[0].value = data;
-        },
-        "text",
-        function (jqXhr, textStatus, errorMessage) {
-          if (jqXhr.status === 500) {
-            self._elmts.previewTextarea[0].value = $.i18n('core-dialogs/missing-bad-template');
-          }
+        dataType: "text", // return data is text
+      }
+    ).fail(function(jqXhr, textStatus, errorMessage) {
+        if (jqXhr.status === 500) {
+          self._elmts.previewTextarea[0].value = $.i18n('core-dialogs/missing-bad-template');
         }
+      }).done(function(data) {
+        self._elmts.previewTextarea[0].value = data;
+      }
     );
 };
 
