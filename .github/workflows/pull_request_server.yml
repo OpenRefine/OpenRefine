@@ -75,7 +75,7 @@ jobs:
         run: |
           echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Java ${{ matrix.java }}
         uses: actions/setup-java@v5
@@ -152,7 +152,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Java 26
         uses: actions/setup-java@v5
