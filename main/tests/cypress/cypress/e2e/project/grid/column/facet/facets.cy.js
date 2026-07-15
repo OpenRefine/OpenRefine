@@ -13,11 +13,11 @@ const clickFacetAction = (facetType, text, action) => {
     .contains(text)
     .parent()
     .invoke('trigger', 'mouseenter'); // include/exclude not visible until we mouse over
-  // start a new chain after the trigger
+  // start a new chain after the trigger, using .find() to scope the query
   cy.getFacetContainer(facetType)
     .contains(text)
-    .siblings()
-    .get(".facet-choice-toggle")
+    .parent()
+    .find('.facet-choice-toggle')
     .contains(action)
     .should('have.css', 'visibility', 'visible') // partially occluded, so "be.visible" won't work
     .click();
@@ -228,6 +228,8 @@ describe(__filename, function () {
     clickFacetAction('Shrt_Desc','ALLSPICE,GROUND', 'include');
     cy.getCell(0, 'Shrt_Desc').should('contain', 'ALLSPICE,GROUND');
     cy.get('#tool-panel').contains('1 matching rows');
+    // Wait for all AJAX (including compute-facets) to complete before the wireEvents wait
+    cy.get('body[ajax_in_progress="false"]');
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
@@ -235,6 +237,8 @@ describe(__filename, function () {
     clickFacetAction('Shrt_Desc','ANISE SEED', 'include');
     cy.getCell(1, 'Shrt_Desc').should('contain', 'ANISE SEED');
     cy.get('#tool-panel').contains('2 matching rows');
+    // Wait for all AJAX (including compute-facets) to complete before the wireEvents wait
+    cy.get('body[ajax_in_progress="false"]');
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
@@ -242,6 +246,8 @@ describe(__filename, function () {
     clickFacetAction('Shrt_Desc','BUTTER OIL,ANHYDROUS', 'include');
     cy.getCell(0, 'Shrt_Desc').should('contain', 'BUTTER OIL,ANHYDROUS');
     cy.get('#tool-panel').contains('3 matching rows');
+    // Wait for all AJAX (including compute-facets) to complete before the wireEvents wait
+    cy.get('body[ajax_in_progress="false"]');
 
     // Wait to ensure action click handler is setup
     // Ref:  window.setTimeout(wireEvents, 100); in list-facet.js
