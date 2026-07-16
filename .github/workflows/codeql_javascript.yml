@@ -31,6 +31,12 @@ jobs:
           java-version: 21
           cache: 'maven'
 
+      - name: Verify Java 21 is active
+        run: |
+          java -version
+          javac -version
+          javac --version | grep '^21\.'
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
