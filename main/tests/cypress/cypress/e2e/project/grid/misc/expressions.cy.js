@@ -86,7 +86,7 @@ describe(__filename, function () {
     cy.selectClojure();
     cy.typeExpression('(;)');
     cy.get('.expression-preview-parsing-status').contains(
-      'Syntax error reading source'
+      'EOF while reading'
     );
   });
 
