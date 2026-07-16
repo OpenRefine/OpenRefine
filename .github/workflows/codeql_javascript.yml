@@ -35,7 +35,7 @@ jobs:
         run: |
           java -version
           javac -version
-          javac --version | grep '^21\.'
+          javac --version | awk '{split($2, v, "."); if (v[1] != "21") exit 1}'
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
