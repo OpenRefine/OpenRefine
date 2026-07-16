@@ -35,7 +35,11 @@ jobs:
         run: |
           java -version
           javac -version
-          javac --version | awk '{split($2, v, "."); if (v[1] != "21") exit 1}'
+          JAVAC_VERSION="$(javac --version | awk '{print $2}')"
+          if [ "${JAVAC_VERSION%%.*}" != "21" ]; then
+            echo "Expected javac major version 21, got ${JAVAC_VERSION}" >&2
+            exit 1
+          fi
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
