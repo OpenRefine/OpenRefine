@@ -20,18 +20,13 @@ describe(__filename, function () {
     ];
     cy.loadAndVisitProject(fixture);
 
-    cy.columnActionClick('Field', [
-      'Transpose',
-      'Columnize by key/value columns…',
-    ]);
+    cy.columnActionClick('Field', ['Transpose', 'Columnize by key/value columns…']);
     cy.get('select[bind="keyColumnSelect"]').select('Field');
     cy.get('select[bind="valueColumnSelect"]').select('Data');
     cy.get('select[bind="noteColumnSelect"]').select('Source');
 
     cy.confirmDialogPanel();
-    cy.assertNotificationContainingText(
-      'Columnize by key column Field and value column Data with note column Source'
-    );
+    cy.assertNotificationContainingText('Columnize by key column Field and value column Data with note column Source');
 
     const expected = [
       ['Name', 'Color', 'IUCN ID', 'Source : Name', 'Source : Color'],
@@ -57,17 +52,12 @@ describe(__filename, function () {
     ];
     cy.loadAndVisitProject(fixture);
 
-    cy.columnActionClick('Field', [
-      'Transpose',
-      'Columnize by key/value columns…',
-    ]);
+    cy.columnActionClick('Field', ['Transpose', 'Columnize by key/value columns…']);
     cy.get('select[bind="keyColumnSelect"]').select('Field');
     cy.get('select[bind="valueColumnSelect"]').select('Data');
 
     cy.confirmDialogPanel();
-    cy.assertNotificationContainingText(
-      'Columnize by key column Field and value column Data'
-    );
+    cy.assertNotificationContainingText('Columnize by key column Field and value column Data');
 
     const expected = [
       ['Wikidata ID', 'Name', 'Color', 'IUCN ID'],

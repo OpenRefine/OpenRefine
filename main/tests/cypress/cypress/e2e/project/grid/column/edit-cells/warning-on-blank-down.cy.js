@@ -13,12 +13,12 @@ describe(__filename, function () {
 
     cy.loadAndVisitProject(fixture);
 
-    //Create Pending Sort
+    // Create Pending Sort
     cy.columnActionClick('b', ['Sort']);
     cy.waitForDialogPanel();
     cy.confirmDialogPanel();
 
-    //Verify Sort occurred
+    // Verify Sort occurred
     cy.assertCellEquals(0, 'b', '2b');
     cy.assertCellEquals(1, 'b', 'also identical');
     cy.assertCellEquals(2, 'b', 'also identical');
@@ -31,7 +31,7 @@ describe(__filename, function () {
     cy.waitForDialogPanel();
     cy.cancelDialogPanel();
 
-    //Verify blank down did not occur
+    // Verify blank down did not occur
     cy.assertCellEquals(0, 'b', '2b');
     cy.assertCellEquals(1, 'b', 'also identical');
     cy.assertCellEquals(2, 'b', 'also identical');

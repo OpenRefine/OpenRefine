@@ -3,7 +3,7 @@ const glob = require('glob');
 // Those specs paths are glob patterns
 const groups = [
   {
-    group: "Project",
+    group: 'Project',
     specs: [
       'cypress/e2e/create-project/**/*.cy.js',
       'cypress/e2e/extensions/**/*.cy.js',
@@ -15,7 +15,7 @@ const groups = [
     ],
   },
   {
-    group: "Column",
+    group: 'Column',
     specs: [
       'cypress/e2e/project/grid/all-column/**/*.cy.js',
       'cypress/e2e/project/grid/column/*.cy.js',
@@ -23,14 +23,14 @@ const groups = [
     ],
   },
   {
-    group: "Facet",
+    group: 'Facet',
     specs: [
       'cypress/e2e/project/grid/column/edit-column/**/*.cy.js',
       'cypress/e2e/project/grid/column/facet/**/*.cy.js',
     ],
   },
   {
-    group: "Reconcile",
+    group: 'Reconcile',
     specs: [
       'cypress/e2e/project/grid/column/reconcile/**/*.cy.js',
       'cypress/e2e/project/grid/column/transpose/**/*.cy.js',
@@ -38,7 +38,7 @@ const groups = [
     ],
   },
   {
-    group: "Misc",
+    group: 'Misc',
     specs: [
       'cypress/e2e/project/grid/misc/**/*.cy.js',
       'cypress/e2e/project/grid/row/**/*.cy.js',
@@ -46,7 +46,7 @@ const groups = [
     ],
   },
   {
-    group: "Undo",
+    group: 'Undo',
     specs: [
       'cypress/e2e/project/project-header/**/*.cy.js',
       'cypress/e2e/project/undo_redo/**/*.cy.js',
@@ -58,8 +58,8 @@ const groups = [
 const mergedGroups = groups.map((group) => {
   return {
     paths: group.specs.join(','),
-    group: group.group
-  }
+    group: group.group,
+  };
 });
 
 // step1 ,find files matched by existing groups
@@ -72,9 +72,7 @@ groups.forEach((group) => {
 });
 
 // step2 , add a last group that contains missed files
-const allSpecFiles = glob.sync(
-  `./main/tests/cypress/cypress/e2e/**/*.cy.js`
-);
+const allSpecFiles = glob.sync(`./main/tests/cypress/cypress/e2e/**/*.cy.js`);
 const missedFiles = [];
 
 for (const file of allSpecFiles) {
@@ -85,10 +83,10 @@ for (const file of allSpecFiles) {
 }
 
 if (missedFiles.length) {
-  let missingPaths = missedFiles.join(',');
-  mergedGroups.push( {
+  const missingPaths = missedFiles.join(',');
+  mergedGroups.push({
     paths: missingPaths,
-    group: 'Missing'
+    group: 'Missing',
   });
 }
 
@@ -99,4 +97,4 @@ const testMatrix = {
   specs: mergedGroups,
 };
 
-console.log('matrix='+JSON.stringify(testMatrix));
+console.log('matrix=' + JSON.stringify(testMatrix));

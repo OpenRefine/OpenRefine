@@ -2,20 +2,17 @@ describe('Add entity identifiers', () => {
   afterEach(() => {
     cy.addProjectForDeletion();
   });
-  
+
   it('Add a new column that contains the reconciliation id', () => {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
     cy.get('#or-import-locate').should('to.contain', 'Locate an existing Refine project file');
 
-    //we're using here the "automatched" project, so we can test that the facet contains choice for matched and non-matched judgments
-    cy.get('#project-tar-file-input').selectFile('cypress/fixtures/reconciled-project-automatch.zip')
+    // we're using here the "automatched" project, so we can test that the facet contains choice for matched and non-matched judgments
+    cy.get('#project-tar-file-input').selectFile('cypress/fixtures/reconciled-project-automatch.zip');
     cy.get('#import-project-button').click();
 
-    cy.columnActionClick('species', [
-      'Reconcile',
-      'Add entity identifiers column',
-    ]);
+    cy.columnActionClick('species', ['Reconcile', 'Add entity identifiers column']);
 
     // check the dialog, enter a new column name "id_column"
     cy.get('.dialog-container .dialog-header').should(

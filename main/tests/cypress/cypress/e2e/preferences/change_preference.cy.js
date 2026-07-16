@@ -1,7 +1,7 @@
 describe(__filename, function () {
   const testPreferenceName = 'PreferenceName_Test';
   const testPreferenceValue = '"PreferenceValue_Test"';
-  
+
   afterEach(function () {
     cy.deletePreference(testPreferenceName);
   });
@@ -15,11 +15,9 @@ describe(__filename, function () {
       cy.get('table.preferences tr:last-child button.button').click();
     });
 
-    cy.get('table.preferences tr:nth-last-child(2)').contains(
-        testPreferenceName
-    );
+    cy.get('table.preferences tr:nth-last-child(2)').contains(testPreferenceName);
   });
-  
+
   it('Edit a preference', function () {
     cy.visitOpenRefine();
 

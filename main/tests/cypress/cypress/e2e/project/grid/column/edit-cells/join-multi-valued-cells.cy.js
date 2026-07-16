@@ -17,10 +17,7 @@ describe(__filename, function () {
       cy.stub($win, 'prompt').returns(',');
     });
 
-    cy.columnActionClick('Column B', [
-      'Edit cells',
-      'Join multi-valued cells…',
-    ]);
+    cy.columnActionClick('Column B', ['Edit cells', 'Join multi-valued cells…']);
 
     cy.assertGridEquals([
       ['Column A', 'Column B'],

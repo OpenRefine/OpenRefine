@@ -4,28 +4,22 @@ describe(__filename, function () {
   afterEach(() => {
     cy.addProjectForDeletion();
   });
-  
+
   it('Create your first OpenRefine project (using provided data)', function () {
     // For sake of the tutorial we have already downloaded the data into fixtures
     // Step-1:Once OpenRefine is launched in your browser, click Create project from the left hand menu and select Get data from This Computer
     cy.visitOpenRefine();
     cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > a')
-      .contains('This Computer')
-      .click();
+    cy.get('#create-project-ui-source-selection-tabs > a').contains('This Computer').click();
     // Step-2 Click Choose Files (or ‘Browse’, depending on your setup) and locate the file which you have downloaded called doaj-article-sample.csv
     cy.get('.create-project-ui-source-selection-tab-body.selected').contains(
       'Locate one or more files on your computer to upload'
     );
     // add file
-    cy.get(
-      '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
-    ).selectFile('cypress/fixtures/doaj-article-sample.csv');
-    cy.get(
-      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
-    )
-      .contains('Next »')
-      .click();
+    cy.get('.create-project-ui-source-selection-tab-body.selected input[type="file"]').selectFile(
+      'cypress/fixtures/doaj-article-sample.csv'
+    );
+    cy.get('.create-project-ui-source-selection-tab-body.selected button.button-primary').contains('Next »').click();
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure parsing options');
@@ -39,9 +33,7 @@ describe(__filename, function () {
     // create the project and ensure its successful
     // wait until the grid appear, this ensure the job is ready
     cy.get('div[bind="dataPanel"] table.data-table').should('to.exist');
-    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create project »')
-      .click();
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]').contains('Create project »').click();
 
     cy.waitForProjectTable(1001);
   });

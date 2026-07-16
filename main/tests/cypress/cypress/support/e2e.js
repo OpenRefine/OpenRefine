@@ -19,13 +19,12 @@ import './openrefine_api';
 import './ext_wikibase';
 
 let token;
-let loadedProjectIds = [];
+const loadedProjectIds = [];
 // Hide fetch/XHR requests
 const app = window.top;
 if (!app.document.head.querySelector('[data-hide-command-log-request]')) {
   const style = app.document.createElement('style');
-  style.innerHTML =
-      '.command-name-request, .command-name-xhr { display: none }';
+  style.innerHTML = '.command-name-request, .command-name-xhr { display: none }';
   style.setAttribute('data-hide-command-log-request', '');
 
   app.document.head.appendChild(style);
@@ -40,41 +39,29 @@ beforeEach(() => {
 afterEach(() => {
   // DISABLE_PROJECT_CLEANUP is used to disable projects deletion
   // Mostly used in CI/CD for performances
-  if(parseInt(Cypress.env('DISABLE_PROJECT_CLEANUP')) !== 1){
+  if (parseInt(Cypress.env('DISABLE_PROJECT_CLEANUP')) !== 1) {
     cy.cleanupProjects();
   }
 });
 
 before(() => {
-  cy.request(
-    Cypress.env('OPENREFINE_URL') + '/command/core/get-csrf-token'
-  ).then((response) => {
+  cy.request(Cypress.env('OPENREFINE_URL') + '/command/core/get-csrf-token').then((response) => {
     // store one unique token for block of runs
     token = response.body.token;
   });
 });
-
 
 // See https://docs.cypress.io/api/events/catalog-of-events#Uncaught-Exceptions
 // We want to catch some Javascript exception that we consider harmless
 Cypress.on('uncaught:exception', (err, runnable) => {
   // This message occasionally appears with edge
   // Doesn't seem like a blocker, and the test should not fail
-  if (err.message.includes("Cannot read property 'offsetTop' of undefined")
-      || err.message.includes("Cannot read properties of undefined (reading 'offsetTop')")
-    ) {
-    return false
+  if (
+    err.message.includes("Cannot read property 'offsetTop' of undefined") ||
+    err.message.includes("Cannot read properties of undefined (reading 'offsetTop')")
+  ) {
+    return false;
   }
   // we still want to ensure there are no other unexpected
   // errors, so we let them fail the test
-})
-
-// enable debugging of failing tests
-Cypress.on('fail', (error, runnable) => {
-  debugger
-
-  // we now have access to the err instance
-  // and the mocha runnable this failed on
-
-  throw error // throw error to have test still fail
-})
+});

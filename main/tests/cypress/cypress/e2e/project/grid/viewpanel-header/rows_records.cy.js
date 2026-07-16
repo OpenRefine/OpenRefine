@@ -1,7 +1,7 @@
 describe(__filename, function () {
   afterEach(() => {
-    cy.addProjectForDeletion()
-  })
+    cy.addProjectForDeletion();
+  });
 
   it('ensures rows and records display same in csv file', function () {
     cy.loadAndVisitProject('food.small');
@@ -20,15 +20,15 @@ describe(__filename, function () {
       cy.loadAndVisitSampleJSONProject(projectName, jsonValue);
     });
     cy.get('span[bind="modeSelectors"]').contains('records').click();
-    cy.get('span:contains("records")').should('length',3);
+    cy.get('span:contains("records")').should('length', 3);
     cy.get('tr td:nth-child(3)').then((recordNumber) => {
       for (let i = 1; i <= 3; i++) {
-      expect(recordNumber.text()).to.contain(i);
+        expect(recordNumber.text()).to.contain(i);
       }
     });
 
     cy.get('span[bind="modeSelectors"]').contains('row').click();
-    cy.get('span:contains("rows")').should('length',3);
+    cy.get('span:contains("rows")').should('length', 3);
     cy.get('tr td:nth-child(3)').then((rowNumber) => {
       for (let i = 1; i <= 10; i++) {
         expect(rowNumber.text()).to.contain(i);
