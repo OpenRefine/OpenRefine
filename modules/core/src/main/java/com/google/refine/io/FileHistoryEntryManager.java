@@ -205,20 +205,17 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
                 return classNames;
             }
 
-            Pool pool = new Pool();
-            ZipEntry poolEntry = zipFile.getEntry("pool.txt");
-            if (poolEntry != null) {
-                pool.load(new InputStreamReader(zipFile.getInputStream(poolEntry), "UTF-8"));
-            } // else, it's a legacy project file
-
             try (LineNumberReader reader = new LineNumberReader(
                     new InputStreamReader(zipFile.getInputStream(changeEntry), "UTF-8"))) {
                 reader.readLine(); // version, unused here
                 String className = reader.readLine();
                 if (className != null) {
                     classNames.add(className);
-                    if (MassChange.class.getName().equals(className) && isClassAvailable(className)) {
-                        readMassChangeClassNames(reader, pool, classNames);
+                    // The pool is only needed to resolve pooled string values referenced from inside a MassChange's
+                    // nested changes, so only load it (an extra zip-entry read plus a full parse) when we're
+                    // actually about to recurse into one -- every other change file skips this cost entirely.
+                    if (MassChange.class.getName().equals(className)) {
+                        readMassChangeClassNames(reader, loadPool(zipFile), classNames);
                     }
                 }
             }
@@ -227,6 +224,17 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
                     + " while scanning for missing extension classes", e);
         }
         return classNames;
+    }
+
+    private static Pool loadPool(ZipFile zipFile) throws IOException {
+        Pool pool = new Pool();
+        ZipEntry poolEntry = zipFile.getEntry("pool.txt");
+        if (poolEntry != null) {
+            try (InputStreamReader poolReader = new InputStreamReader(zipFile.getInputStream(poolEntry), "UTF-8")) {
+                pool.load(poolReader);
+            }
+        } // else, it's a legacy project file
+        return pool;
     }
 
     /**
@@ -301,6 +309,11 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
      * Advances the reader past a single change's serialized content by actually invoking its {@code load} method -- the
      * same reflective call {@link History#readOneChange} makes -- and discarding the resulting {@link Change}. Only
      * safe to call for classes already confirmed to be available.
+     * <p>
+     * Deliberately catches only {@link Exception}, not {@link Error}: an {@code OutOfMemoryError} thrown here means the
+     * change's actual content is too large to load at all, which is exactly what would happen anyway when this history
+     * entry is later undone/redone/loaded for real -- letting it propagate surfaces that resource problem plainly
+     * instead of swallowing it during what is only a best-effort pre-import warning.
      */
     private static boolean skipChangeContent(String className, LineNumberReader reader, Pool pool) {
         try {

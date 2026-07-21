@@ -90,6 +90,29 @@ public class FileHistoryEntryManagerTests extends RefineTest {
         Assert.assertEquals(missingClasses, List.of("org.example.extension.MissingChange"));
     }
 
+    @Test
+    public void testFindMissingChangeClassesStopsAfterFirstUnresolvable() throws IOException {
+        // Once a nested sub-change's class can't be resolved, we don't know where its content ends, so we can't
+        // locate any sibling sub-changes recorded after it -- even if they're also missing.
+        File projectDir = TestUtils.createTempDirectory("FileHistoryEntryManagerTest");
+        File historyDir = new File(projectDir, FileHistoryEntryManager.HISTORY_DIR);
+        historyDir.mkdirs();
+
+        writeChangeFileContent(new File(historyDir, "1.change.zip"),
+                "1\n" +
+                        "com.google.refine.model.changes.MassChange\n" +
+                        "updateRowContextDependencies=false\n" +
+                        "changeCount=2\n" +
+                        "1\n" +
+                        "org.example.extension.MissingChange\n" +
+                        "1\n" +
+                        "org.example.extension.AnotherMissingChange\n" +
+                        "/ec/\n");
+
+        List<String> missingClasses = FileHistoryEntryManager.findMissingChangeClasses(projectDir);
+        Assert.assertEquals(missingClasses, List.of("org.example.extension.MissingChange"));
+    }
+
     private void writeChangeFile(File file, String className) throws IOException {
         writeChangeFileContent(file, "1\n" + className + "\n");
     }
