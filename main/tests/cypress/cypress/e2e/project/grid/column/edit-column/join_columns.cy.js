@@ -19,7 +19,7 @@ describe(__filename, function () {
     cy.waitForDialogPanel();
 
     cy.get('input[column="NDB_No"]').check();
-    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]','top');
+    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]', 'top');
 
     cy.confirmDialogPanel();
 
@@ -46,7 +46,7 @@ describe(__filename, function () {
     cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns…']);
     cy.waitForDialogPanel();
 
-    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]','top');
+    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]', 'top');
     cy.get('input[column="NDB_No"]').check();
     cy.get('input[bind="field_separatorInput"]').type(':-:');
 
@@ -70,11 +70,7 @@ describe(__filename, function () {
     cy.confirmDialogPanel();
 
     cy.assertCellEquals(0, 'Test_Merged_Column', 'BUTTER,WITH SALT0100115.87');
-    cy.assertCellEquals(
-      1,
-      'Test_Merged_Column',
-      'BUTTER,WHIPPED,WITH SALT0100215.87'
-    );
+    cy.assertCellEquals(1, 'Test_Merged_Column', 'BUTTER,WHIPPED,WITH SALT0100215.87');
   });
   it('Ensures three columns are joined and written into a new column with a given seperator', function () {
     cy.loadAndVisitProject('food.mini');
@@ -91,16 +87,8 @@ describe(__filename, function () {
 
     cy.confirmDialogPanel();
 
-    cy.assertCellEquals(
-      0,
-      'Test_Merged_Column',
-      'BUTTER,WITH SALT:-:01001:-:15.87'
-    );
-    cy.assertCellEquals(
-      1,
-      'Test_Merged_Column',
-      'BUTTER,WHIPPED,WITH SALT:-:01002:-:15.87'
-    );
+    cy.assertCellEquals(0, 'Test_Merged_Column', 'BUTTER,WITH SALT:-:01001:-:15.87');
+    cy.assertCellEquals(1, 'Test_Merged_Column', 'BUTTER,WHIPPED,WITH SALT:-:01002:-:15.87');
   });
   it('Ensures columns are joined and original columns are deleted', function () {
     cy.loadAndVisitProject('food.mini');

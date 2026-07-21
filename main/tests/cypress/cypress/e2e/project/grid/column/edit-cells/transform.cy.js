@@ -34,7 +34,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Transform']);
 
-    cy.typeExpression('value.replace()');;
+    cy.typeExpression('value.replace()');
     cy.get('label[bind="or_views_setBlank"]').click();
     cy.confirmDialogPanel();
 

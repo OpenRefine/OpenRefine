@@ -48,12 +48,15 @@ describe(__filename, function () {
     cy.get('#search-icon').click();
 
     cy.get('#search-input').type('Project B');
+    // The project-name filter has a 500 ms debounce with no observable request.
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(800); // typing timeout is 500 msec
     cy.get('#projects-list table').contains(project1).should('not.be.visible');
     cy.get('#projects-list table').contains(project2).should('be.visible');
 
     // Test no results message
     cy.get('#search-input').type('Z');
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(800); // typing timeout is 500 msec
     cy.get('#projects-list table').contains(project1).should('not.be.visible');
     cy.get('#projects-list table').contains(project2).should('not.be.visible');
@@ -61,11 +64,13 @@ describe(__filename, function () {
 
     // Test matching both project names
     cy.get('#search-input').type('{backspace}{backspace}{backspace}');
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(800); // typing timeout is 500 msec
     cy.get('#projects-list table').contains(project1).should('be.visible');
     cy.get('#projects-list table').contains(project2).should('be.visible');
 
     cy.get('#search-input').type(' A');
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(800); // typing timeout is 500 msec
     cy.get('#projects-list table').contains(project1).should('be.visible');
     cy.get('#projects-list table').contains(project2).should('not.be.visible');

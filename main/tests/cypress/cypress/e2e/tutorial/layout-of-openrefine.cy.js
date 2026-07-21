@@ -1,4 +1,4 @@
- // librarycarpentry.org/lc-open-refine/03-working-with-data/index.html
+// librarycarpentry.org/lc-open-refine/03-working-with-data/index.html
 
 describe(__filename, function () {
   it('Working with rows and records in openrefine', function () {
@@ -15,10 +15,7 @@ describe(__filename, function () {
     });
 
     // Click the dropdown menu at the top of the Author column and Choose Edit cells->Split multi-valued cells
-    cy.columnActionClick('Authors', [
-      'Edit cells',
-      'Split multi-valued cells…',
-    ]);
+    cy.columnActionClick('Authors', ['Edit cells', 'Split multi-valued cells…']);
 
     //   In the prompt type the ( | ) symbol and click OK
     cy.get('.dialog-container label').contains('by separator').click();
@@ -45,10 +42,7 @@ describe(__filename, function () {
       cy.stub($win, 'prompt').returns(',');
     });
 
-    cy.columnActionClick('Authors', [
-      'Edit cells',
-      'Join multi-valued cells…',
-    ]);
+    cy.columnActionClick('Authors', ['Edit cells', 'Join multi-valued cells…']);
 
     cy.get('#summary-bar').should('to.contain', '1,001 records');
 

@@ -1,10 +1,7 @@
 describe(__filename, function () {
   it('Ensure columns are reordered as per order', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.columnActionClick('All', [
-      'Edit columns',
-      'Re-order / remove columns…',
-    ]);
+    cy.columnActionClick('All', ['Edit columns', 'Re-order / remove columns…']);
     cy.waitForDialogPanel();
 
     cy.dragAndDrop('div[column="Shrt_Desc"]', 'div[column="NDB_No"]', 'top');
@@ -22,14 +19,11 @@ describe(__filename, function () {
   });
   it('Ensure columns are removed using remove column', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.columnActionClick('All', [
-      'Edit columns',
-      'Re-order / remove columns…',
-    ]);
+    cy.columnActionClick('All', ['Edit columns', 'Re-order / remove columns…']);
     cy.waitForDialogPanel();
 
-    cy.dragAndDrop('div[column="Shrt_Desc"]', 'div[bind="trashContainer"]','center');
-    cy.dragAndDrop('div[column="Water"]', 'div[bind="trashContainer"]','center');
+    cy.dragAndDrop('div[column="Shrt_Desc"]', 'div[bind="trashContainer"]', 'center');
+    cy.dragAndDrop('div[column="Water"]', 'div[bind="trashContainer"]', 'center');
 
     cy.confirmDialogPanel();
 
