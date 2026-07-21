@@ -48,11 +48,11 @@ public class TransposeColumnsIntoRowsOperationTest extends RefineTest {
 
     @Test
     public void testValidate() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NullPointerException.class,
                 () -> new TransposeColumnsIntoRowsOperation(null, -1, true, false, "a", true, ":").validate());
-        assertThrows(IllegalArgumentException.class, () -> new TransposeColumnsIntoRowsOperation(
+        assertThrows(NullPointerException.class, () -> new TransposeColumnsIntoRowsOperation(
                 "b 1", 2, true, false, null, "value").validate());
-        assertThrows(IllegalArgumentException.class, () -> new TransposeColumnsIntoRowsOperation(
+        assertThrows(NullPointerException.class, () -> new TransposeColumnsIntoRowsOperation(
                 "b 1", 2, true, false, "key", null).validate());
     }
 
