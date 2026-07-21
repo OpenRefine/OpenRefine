@@ -138,7 +138,7 @@ public class BlankDownTests extends RefineTest {
     @Test
     public void testValidate() {
         assertThrows(IllegalArgumentException.class, () -> new BlankDownOperation(invalidEngineConfig, "bar").validate());
-        assertThrows(IllegalArgumentException.class, () -> new BlankDownOperation(defaultEngineConfig, null).validate());
+        assertThrows(NullPointerException.class, () -> new BlankDownOperation(defaultEngineConfig, null).validate());
     }
 
     @Test

@@ -116,7 +116,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
-        assertThrows(IllegalArgumentException.class, () -> invalidEngine.validate());
+        assertThrows(IllegalArgumentException.class, invalidEngine::validate);
         ColumnAdditionOperation missingBaseColumn = new ColumnAdditionOperation(
                 EngineConfig.deserialize("{}"),
                 null,
@@ -124,7 +124,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
-        assertThrows(IllegalArgumentException.class, () -> missingBaseColumn.validate());
+        assertThrows(NullPointerException.class, missingBaseColumn::validate);
         ColumnAdditionOperation invalidExpression = new ColumnAdditionOperation(
                 EngineConfig.deserialize("{}"),
                 "bar",
@@ -132,7 +132,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 OnError.SetToBlank,
                 "newcolumn",
                 2);
-        assertThrows(IllegalArgumentException.class, () -> invalidExpression.validate());
+        assertThrows(IllegalArgumentException.class, invalidExpression::validate);
     }
 
     @Test
