@@ -101,7 +101,7 @@ ReconciliationManager.fetchServiceManifest = function(url, successCallback, erro
       }
     });
   })
-  .always(function() { alwaysCallback(); });
+  .always(function() { if (typeof alwaysCallback === "function") { alwaysCallback(); } });
 };
 
 ReconciliationManager.registerStandardService = function(url, f, silent) {
@@ -195,7 +195,7 @@ ReconciliationManager.reRegisterService = function(service, f, silent) {
       }
     });
   }
-}
+};
 
 ReconciliationManager.save = function(f) {
   Refine.wrapCSRF(function(token) {

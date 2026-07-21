@@ -235,5 +235,5 @@ ReconDialog.prototype._refetchServiceManifest = function(service, f) {
       alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + service.url);
     },
     function() { dismissBusy(); }
-  )
+  );
 };
