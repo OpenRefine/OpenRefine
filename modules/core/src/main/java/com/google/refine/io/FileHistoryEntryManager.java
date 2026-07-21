@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -46,17 +47,24 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
+import com.google.refine.history.Change;
 import com.google.refine.history.History;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryEntryManager;
+import com.google.refine.model.changes.MassChange;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class FileHistoryEntryManager implements HistoryEntryManager {
 
     public static final String HISTORY_DIR = "history";
+
+    final static Logger logger = LoggerFactory.getLogger("FileHistoryEntryManager");
 
     @Override
     public void delete(HistoryEntry historyEntry) {
@@ -172,28 +180,138 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
         }
 
         for (File changeFile : changeFiles) {
-            String className = readChangeClassName(changeFile);
-            if (className != null && !isClassAvailable(className) && !missingClasses.contains(className)) {
-                missingClasses.add(className);
+            for (String className : readChangeClassNames(changeFile)) {
+                if (!isClassAvailable(className) && !missingClasses.contains(className)) {
+                    missingClasses.add(className);
+                }
             }
         }
 
         return missingClasses;
     }
 
-    protected static String readChangeClassName(File changeFile) {
+    /**
+     * Reads all the change class names recorded in a single change file. A plain change only ever records one class
+     * name (line 2 of "change.txt"), but a {@link MassChange} (as used by, e.g., "Apply operations" or column
+     * reordering) bundles several sub-changes together in the same file, each with its own recorded class name -- see
+     * {@link MassChange#save} / {@link History#writeOneChange}. This walks that nested structure so an extension class
+     * referenced from inside a {@link MassChange} is found too, not just top-level ones.
+     */
+    protected static List<String> readChangeClassNames(File changeFile) {
+        List<String> classNames = new ArrayList<>();
         try (ZipFile zipFile = new ZipFile(changeFile)) {
             ZipEntry changeEntry = zipFile.getEntry("change.txt");
             if (changeEntry == null) {
-                return null;
+                return classNames;
             }
+
+            Pool pool = new Pool();
+            ZipEntry poolEntry = zipFile.getEntry("pool.txt");
+            if (poolEntry != null) {
+                pool.load(new InputStreamReader(zipFile.getInputStream(poolEntry), "UTF-8"));
+            } // else, it's a legacy project file
+
             try (LineNumberReader reader = new LineNumberReader(
                     new InputStreamReader(zipFile.getInputStream(changeEntry), "UTF-8"))) {
                 reader.readLine(); // version, unused here
-                return reader.readLine(); // class name
+                String className = reader.readLine();
+                if (className != null) {
+                    classNames.add(className);
+                    if (MassChange.class.getName().equals(className) && isClassAvailable(className)) {
+                        readMassChangeClassNames(reader, pool, classNames);
+                    }
+                }
             }
         } catch (IOException e) {
-            return null;
+            logger.warn("Failed to read change file " + changeFile.getAbsolutePath()
+                    + " while scanning for missing extension classes", e);
+        }
+        return classNames;
+    }
+
+    /**
+     * Parses the envelope {@link MassChange#save} writes ("updateRowContextDependencies=...", "changeCount=N", the N
+     * nested changes themselves, then the "/ec/" marker) in order to recover the class names of the sub-changes it
+     * bundles together, recursing into any of them which are themselves a {@link MassChange}.
+     *
+     * @return true if the whole envelope, including the trailing "/ec/" marker, was consumed, so a sibling change
+     *         recorded immediately afterwards (if any) can be read next; false if scanning had to stop early because
+     *         one of the nested classes could not be resolved (see {@link #readNestedChangeClassName})
+     */
+    private static boolean readMassChangeClassNames(LineNumberReader reader, Pool pool, List<String> classNames) throws IOException {
+        String line;
+        int changeCount = -1;
+        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
+            int equal = line.indexOf('=');
+            if (equal < 0) {
+                continue;
+            }
+            if ("changeCount".equals(line.substring(0, equal))) {
+                try {
+                    changeCount = Integer.parseInt(line.substring(equal + 1));
+                } catch (NumberFormatException e) {
+                    return false; // malformed envelope, nothing more we can safely read
+                }
+                break;
+            }
+        }
+        if (changeCount < 0) {
+            return false; // malformed envelope, nothing more we can safely read
+        }
+
+        for (int i = 0; i < changeCount; i++) {
+            if (!readNestedChangeClassName(reader, pool, classNames)) {
+                // We can't tell where this sub-change's own content ends without its class being available, so we
+                // can't locate any further sibling sub-changes recorded after it in this same change file. Any
+                // extension classes referenced beyond this point won't be flagged as missing until this one is
+                // resolved (e.g. by installing the extension it belongs to).
+                return false;
+            }
+        }
+        reader.readLine(); // "/ec/" end marker
+        return true;
+    }
+
+    /**
+     * Reads one change record (a "VERSION\nclassName\n" header followed by the change's own serialized content) nested
+     * inside a {@link MassChange}, adding its class name to {@code classNames}.
+     *
+     * @return true if the class was available and the reader was advanced past its content, so a sibling change
+     *         recorded immediately afterwards (if any) can be read next; false if the class could not be resolved, in
+     *         which case the reader position can no longer be trusted for anything recorded after it
+     */
+    private static boolean readNestedChangeClassName(LineNumberReader reader, Pool pool, List<String> classNames) throws IOException {
+        reader.readLine(); // version, unused here
+        String className = reader.readLine();
+        if (className == null) {
+            return false;
+        }
+        classNames.add(className);
+
+        if (!isClassAvailable(className)) {
+            return false;
+        }
+        if (MassChange.class.getName().equals(className)) {
+            return readMassChangeClassNames(reader, pool, classNames);
+        }
+        return skipChangeContent(className, reader, pool);
+    }
+
+    /**
+     * Advances the reader past a single change's serialized content by actually invoking its {@code load} method -- the
+     * same reflective call {@link History#readOneChange} makes -- and discarding the resulting {@link Change}. Only
+     * safe to call for classes already confirmed to be available.
+     */
+    private static boolean skipChangeContent(String className, LineNumberReader reader, Pool pool) {
+        try {
+            Class<? extends Change> klass = History.getChangeClass(className);
+            Method load = klass.getMethod("load", LineNumberReader.class, Pool.class);
+            load.invoke(null, reader, pool);
+            return true;
+        } catch (Exception e) {
+            logger.warn("Failed to skip over the content of change class " + className
+                    + " while scanning for missing extension classes", e);
+            return false;
         }
     }
 

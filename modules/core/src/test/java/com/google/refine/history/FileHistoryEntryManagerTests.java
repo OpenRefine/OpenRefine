@@ -63,10 +63,41 @@ public class FileHistoryEntryManagerTests extends RefineTest {
         Assert.assertTrue(FileHistoryEntryManager.findMissingChangeClasses(projectDir).isEmpty());
     }
 
+    @Test
+    public void testFindMissingChangeClassesInsideMassChange() throws IOException {
+        // A MassChange (as produced by "Apply operations" or similar batch operations) bundling a core change
+        // with an extension's change, in the exact format MassChange#save / History#writeOneChange produce.
+        File projectDir = TestUtils.createTempDirectory("FileHistoryEntryManagerTest");
+        File historyDir = new File(projectDir, FileHistoryEntryManager.HISTORY_DIR);
+        historyDir.mkdirs();
+
+        writeChangeFileContent(new File(historyDir, "1.change.zip"),
+                "1\n" +
+                        "com.google.refine.model.changes.MassChange\n" +
+                        "updateRowContextDependencies=false\n" +
+                        "changeCount=2\n" +
+                        "1\n" +
+                        "com.google.refine.model.changes.RowFlagChange\n" +
+                        "row=0\n" +
+                        "newFlagged=true\n" +
+                        "oldFlagged=false\n" +
+                        "/ec/\n" +
+                        "1\n" +
+                        "org.example.extension.MissingChange\n" +
+                        "/ec/\n");
+
+        List<String> missingClasses = FileHistoryEntryManager.findMissingChangeClasses(projectDir);
+        Assert.assertEquals(missingClasses, List.of("org.example.extension.MissingChange"));
+    }
+
     private void writeChangeFile(File file, String className) throws IOException {
+        writeChangeFileContent(file, "1\n" + className + "\n");
+    }
+
+    private void writeChangeFileContent(File file, String content) throws IOException {
         try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
             out.putNextEntry(new ZipEntry("change.txt"));
-            out.write(("1\n" + className + "\n").getBytes("UTF-8"));
+            out.write(content.getBytes("UTF-8"));
             out.closeEntry();
         }
     }
