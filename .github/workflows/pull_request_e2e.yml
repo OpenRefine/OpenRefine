@@ -14,6 +14,28 @@ on:
 permissions: read-all
 
 jobs:
+  lint_cypress:
+    name: Lint Cypress tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: main/tests/cypress/yarn.lock
+      - name: Install test dependencies
+        working-directory: main/tests/cypress
+        run: |
+          npm install --global yarn
+          yarn install --frozen-lockfile
+        env:
+          CYPRESS_INSTALL_BINARY: '0'
+      - name: Check Cypress test formatting and linting
+        working-directory: main/tests/cypress
+        run: yarn lint
+
   prepare_e2e_test_matrix:
     runs-on: ubuntu-latest
     outputs:
@@ -71,7 +93,7 @@ jobs:
           yarn install
 
       - name: Test with Cypress on ${{ matrix.browser }}
-        run: | 
+        run: |
           echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
           echo REFINE_MEMORY=4096M >> ./refine.ini
           ./refine e2e_tests
@@ -99,5 +121,5 @@ jobs:
         run: ./refine build
 
       - name: Test Unix Domain Socket connectivity
-        run: | 
+        run: |
           ./refine uds_tests

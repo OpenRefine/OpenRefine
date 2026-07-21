@@ -16,11 +16,11 @@ describe(__filename, function () {
     cy.get('.viewpanel-sorting a').contains('Sort').click();
     cy.get('.menu-container').contains('Reorder rows permanently').click();
     cy.assertNotificationContainingText('Reorder rows');
-    
+
     // check that it triggered an operation
     cy.get('#or-proj-undoRedo').click();
     cy.get('.history-entry span').should('to.contain', 'Reorder rows');
-    
+
     // after reloading, the grid should still be in the new order
     cy.reload();
     cy.waitForProjectTable();
@@ -53,7 +53,7 @@ describe(__filename, function () {
     // check that it triggered an operation
     cy.get('#or-proj-undoRedo').click();
     cy.get('.history-entry span').should('to.contain', 'Reorder rows');
-    
+
     // after reloading, the grid should still be in the new order
     cy.reload();
     cy.waitForProjectTable();
@@ -87,7 +87,7 @@ describe(__filename, function () {
     // check that it triggered an operation
     cy.get('#or-proj-undoRedo').click();
     cy.get('.history-entry span').should('to.contain', 'Reorder rows');
-    
+
     // after reloading, the grid should still be in the new order
     cy.reload();
     cy.waitForProjectTable();
@@ -133,7 +133,7 @@ describe(__filename, function () {
     // check that it triggered an operation
     cy.get('#or-proj-undoRedo').click();
     cy.get('.history-entry span').should('to.contain', 'Reorder rows');
-    
+
     // after reloading, the grid should still be in the new order
     cy.reload();
     cy.waitForProjectTable();

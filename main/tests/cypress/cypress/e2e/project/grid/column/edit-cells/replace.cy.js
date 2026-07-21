@@ -12,8 +12,8 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Replace']);
 
-    cy.get('.dialog-container input[bind="text_to_findInput"]').type("change");
-    cy.get('.dialog-container input[bind="replacement_textInput"]').type("a");
+    cy.get('.dialog-container input[bind="text_to_findInput"]').type('change');
+    cy.get('.dialog-container input[bind="replacement_textInput"]').type('a');
     cy.confirmDialogPanel();
 
     cy.assertNotificationContainingText('Text transform on 1 cell');
@@ -35,8 +35,8 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Replace']);
 
-    cy.get('.dialog-container input[bind="text_to_findInput"]').type("change");
-    cy.get('.dialog-container input[bind="replacement_textInput"]').type("a");
+    cy.get('.dialog-container input[bind="text_to_findInput"]').type('change');
+    cy.get('.dialog-container input[bind="replacement_textInput"]').type('a');
     cy.get('label[bind="or_views_find_case_insensitive"]').click();
     cy.confirmDialogPanel();
 
@@ -59,8 +59,8 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Replace']);
 
-    cy.get('.dialog-container input[bind="text_to_findInput"]').type("change");
-    cy.get('.dialog-container input[bind="replacement_textInput"]').type("a");
+    cy.get('.dialog-container input[bind="text_to_findInput"]').type('change');
+    cy.get('.dialog-container input[bind="replacement_textInput"]').type('a');
     cy.get('label[bind="or_views_find_whole_word"]').click();
     cy.confirmDialogPanel();
 
@@ -83,8 +83,8 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Replace']);
 
-    cy.get('.dialog-container input[bind="text_to_findInput"]').type("[hc]at");
-    cy.get('.dialog-container input[bind="replacement_textInput"]').type("a");
+    cy.get('.dialog-container input[bind="text_to_findInput"]').type('[hc]at');
+    cy.get('.dialog-container input[bind="replacement_textInput"]').type('a');
     cy.get('label[bind="or_views_find_regExp"]').click();
     cy.confirmDialogPanel();
 
@@ -107,8 +107,8 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Replace']);
 
-    cy.get('.dialog-container input[bind="text_to_findInput"]').type(" ");
-    cy.get('.dialog-container input[bind="replacement_textInput"]').type("\\n");
+    cy.get('.dialog-container input[bind="text_to_findInput"]').type(' ');
+    cy.get('.dialog-container input[bind="replacement_textInput"]').type('\\n');
     cy.get('label[bind="or_views_replace_dont_escape"]').click();
     cy.confirmDialogPanel();
 
@@ -131,8 +131,8 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Replace']);
 
-    cy.get('.dialog-container input[bind="text_to_findInput"]').type(" ");
-    cy.get('.dialog-container input[bind="replacement_textInput"]').type("\\\\n");
+    cy.get('.dialog-container input[bind="text_to_findInput"]').type(' ');
+    cy.get('.dialog-container input[bind="replacement_textInput"]').type('\\\\n');
     cy.get('label[bind="or_views_replace_dont_escape"]').click();
     cy.confirmDialogPanel();
 
@@ -141,26 +141,24 @@ describe(__filename, function () {
     cy.assertCellEquals(0, 'b', 'first_name\\nsecond_name');
     cy.assertCellEquals(1, 'b', 'first_name\\nsecond_name');
     cy.assertCellEquals(2, 'b', 'first_name');
-
   });
-  it('Ensure cells are replaced with \"', function () {
+  it('Ensure cells are replaced with "', function () {
     const fixture = [
       ['a', 'b', 'c'],
-      ['d', 'e', ' f']
+      ['d', 'e', ' f'],
     ];
 
     cy.loadAndVisitProject(fixture);
 
     cy.columnActionClick('b', ['Edit cells', 'Replace']);
 
-    cy.get('.dialog-container input[bind="text_to_findInput"]').type("e");
-    cy.get('.dialog-container input[bind="replacement_textInput"]').type("\"");
+    cy.get('.dialog-container input[bind="text_to_findInput"]').type('e');
+    cy.get('.dialog-container input[bind="replacement_textInput"]').type('"');
     cy.get('label[bind="or_views_replace_dont_escape"]').click();
     cy.confirmDialogPanel();
 
     cy.assertNotificationContainingText('Text transform on 1 cells in column b');
 
-    cy.assertCellEquals(0, 'b', '\"');
-
+    cy.assertCellEquals(0, 'b', '"');
   });
 });

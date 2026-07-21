@@ -2,7 +2,7 @@ describe(__filename, function () {
   afterEach(() => {
     cy.addProjectForDeletion();
   });
-  
+
   it('Check the layout for importing a project', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
@@ -43,7 +43,8 @@ describe(__filename, function () {
   it('Import a project from URL', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');
-    const url = "https://raw.githubusercontent.com/OpenRefine/OpenRefine/master/main/tests/cypress/cypress/fixtures/food-small-csv.openrefine.tar.zip";
+    const url =
+      'https://raw.githubusercontent.com/OpenRefine/OpenRefine/master/main/tests/cypress/cypress/fixtures/food-small-csv.openrefine.tar.zip';
     cy.get('#or-import-url').type(url);
     cy.get('#project-upload-form').submit();
 
@@ -53,12 +54,10 @@ describe(__filename, function () {
 
   it('Delete a file', function () {
     cy.visitOpenRefine();
-    
+
     const projectFile = 'cypress/fixtures/food-small-csv.openrefine.tar.zip';
-    cy.get('#project-upload-form input#project-tar-file-input').selectFile(
-      projectFile, {force: true}
-    );
-    cy.get('#project-tar-file-delete').click({force: true});
+    cy.get('#project-upload-form input#project-tar-file-input').selectFile(projectFile, { force: true });
+    cy.get('#project-tar-file-delete').click({ force: true });
 
     // Verify the project has been deleted
     cy.get('#project-tar-file-input').should('not.contain', projectFile);

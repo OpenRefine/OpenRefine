@@ -27,10 +27,7 @@ describe(__filename, function () {
       cy.stub($win, 'prompt').returns('3');
     });
 
-    cy.columnActionClick('Employee', [
-      'Transpose',
-      'Transpose cells in rows into columns…',
-    ]);
+    cy.columnActionClick('Employee', ['Transpose', 'Transpose cells in rows into columns…']);
 
     const expected = [
       ['Employee 1', 'Employee 2', 'Employee 3'],

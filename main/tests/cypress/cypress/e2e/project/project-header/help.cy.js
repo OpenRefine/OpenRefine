@@ -3,7 +3,7 @@ describe(__filename, function () {
     ['a', 'b', 'c'],
 
     ['0a', '0b', '0c'],
-    ['1a', '1b', '1c']
+    ['1a', '1b', '1c'],
   ];
   it('it checks the permalink', function () {
     cy.loadAndVisitProject(fixture);

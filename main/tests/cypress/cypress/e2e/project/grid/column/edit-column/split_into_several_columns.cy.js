@@ -2,21 +2,16 @@ describe(__filename, function () {
   it('Ensures column is splitted by comma seperator', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', [
-      'Edit column',
-      'Split into several columns…',
-    ]);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Split into several columns…']);
     cy.waitForDialogPanel();
 
     cy.get('input[bind="separatorInput"]').type('{backspace},');
 
     cy.confirmDialogPanel();
     cy.get('body[ajax_in_progress="false"]');
-    cy.assertNotificationContainingText(
-      'Split 2 cell(s) in column Shrt_Desc into several columns by separator '
-    );
+    cy.assertNotificationContainingText('Split 2 cell(s) in column Shrt_Desc into several columns by separator ');
 
-    cy.get('.data-table-header').find('th').should('have.length', 7)
+    cy.get('.data-table-header').find('th').should('have.length', 7);
     cy.get('th:nth-child(3) > div.column-header-title > span').should('to.contain', 'Shrt_Desc 1');
     cy.get('th:nth-child(4) > div.column-header-title > span').should('to.contain', 'Shrt_Desc 2');
     cy.get('th:nth-child(5) > div.column-header-title > span').should('to.contain', 'Shrt_Desc 3');
@@ -28,10 +23,7 @@ describe(__filename, function () {
   it('Ensures column is splitted by comma seperator without removing original column', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', [
-      'Edit column',
-      'Split into several columns…',
-    ]);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Split into several columns…']);
     cy.waitForDialogPanel();
 
     cy.get('input[bind="separatorInput"]').type('{backspace},');
@@ -39,9 +31,7 @@ describe(__filename, function () {
 
     cy.confirmDialogPanel();
     cy.get('body[ajax_in_progress="false"]');
-    cy.assertNotificationContainingText(
-      'Split 2 cell(s) in column Shrt_Desc into several columns by separator '
-    );
+    cy.assertNotificationContainingText('Split 2 cell(s) in column Shrt_Desc into several columns by separator ');
 
     cy.get('.data-table-header').find('th').should('have.length', 8);
     cy.get('th:nth-child(3) > div.column-header-title > span').should('to.contain', 'Shrt_Desc');
@@ -56,10 +46,7 @@ describe(__filename, function () {
   it('Ensures column is splitted by field-lengths seperator', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', [
-      'Edit column',
-      'Split into several columns…',
-    ]);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Split into several columns…']);
     cy.waitForDialogPanel();
 
     cy.get('[type="radio"]').check('lengths');
@@ -67,9 +54,7 @@ describe(__filename, function () {
 
     cy.confirmDialogPanel();
     cy.get('body[ajax_in_progress="false"]');
-    cy.assertNotificationContainingText(
-      'Split 2 cell(s) in column Shrt_Desc into several columns by field lengths'
-    );
+    cy.assertNotificationContainingText('Split 2 cell(s) in column Shrt_Desc into several columns by field lengths');
 
     cy.get('.data-table-header').find('th').should('have.length', 7);
     cy.get('th:nth-child(3) > div.column-header-title > span').should('to.contain', 'Shrt_Desc 1');
@@ -83,10 +68,7 @@ describe(__filename, function () {
   it('Ensures column is splitted by field-lengths seperator without removing original column', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', [
-      'Edit column',
-      'Split into several columns…',
-    ]);
+    cy.columnActionClick('Shrt_Desc', ['Edit column', 'Split into several columns…']);
     cy.waitForDialogPanel();
 
     cy.get('[type="radio"]').check('lengths');
@@ -95,9 +77,7 @@ describe(__filename, function () {
 
     cy.confirmDialogPanel();
     cy.get('body[ajax_in_progress="false"]');
-    cy.assertNotificationContainingText(
-      'Split 2 cell(s) in column Shrt_Desc into several columns by field lengths'
-    );
+    cy.assertNotificationContainingText('Split 2 cell(s) in column Shrt_Desc into several columns by field lengths');
 
     cy.get('.data-table-header').find('th').should('have.length', 9);
     cy.get('th:nth-child(3) > div.column-header-title > span').should('to.contain', 'Shrt_Desc');

@@ -12,9 +12,7 @@
  * Check that a column is reconciled
  */
 Cypress.Commands.add('assertColumnIsReconciled', (columnName) => {
-  cy.get(
-    `table.data-table thead th[title="${columnName}"] div.column-header-recon-stats-matched`
-  ).should('to.exist');
+  cy.get(`table.data-table thead th[title="${columnName}"] div.column-header-recon-stats-matched`).should('to.exist');
 });
 
 /**
@@ -22,19 +20,17 @@ Cypress.Commands.add('assertColumnIsReconciled', (columnName) => {
  */
 Cypress.Commands.add('getFacetContainer', (facetName) => {
   return cy
-    .get(
-      `#refine-tabs-facets .facets-container .facet-container span[bind="titleSpan"]:contains("${facetName}")`,
-      { log: false }
-    )
+    .get(`#refine-tabs-facets .facets-container .facet-container span[bind="titleSpan"]:contains("${facetName}")`, {
+      log: false,
+    })
     .parentsUntil('.facets-container', { log: false });
 });
 
 Cypress.Commands.add('getNumericFacetContainer', (facetName) => {
   return cy
-    .get(
-      `#refine-tabs-facets .facets-container .facet-container span[bind="facetTitle"]:contains("${facetName}")`,
-      { log: false }
-    )
+    .get(`#refine-tabs-facets .facets-container .facet-container span[bind="facetTitle"]:contains("${facetName}")`, {
+      log: false,
+    })
     .parentsUntil('.facets-container', { log: false });
 });
 
@@ -42,10 +38,7 @@ Cypress.Commands.add('getNumericFacetContainer', (facetName) => {
  * Edit a cell, for a given row index, a column name and a value
  */
 Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
-  cy.getCell(rowIndex, columnName)
-    .trigger('mouseover')
-    .find('button.data-table-cell-edit')
-    .click();
+  cy.getCell(rowIndex, columnName).trigger('mouseover').find('button.data-table-cell-edit').click();
   cy.get('.menu-container.data-table-cell-editor textarea').type(value);
   cy.get('.menu-container button[bind="okButton"]').click();
 });
@@ -71,12 +64,8 @@ Cypress.Commands.add('visitOpenRefine', (options) => {
 Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
   cy.navigateTo('Create project');
 
-  cy.get(
-    '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
-  ).selectFile(fixtureFile);
-  cy.get(
-    '.create-project-ui-source-selection-tab-body.selected button.button-primary'
-  ).click();
+  cy.get('.create-project-ui-source-selection-tab-body.selected input[type="file"]').selectFile(fixtureFile);
+  cy.get('.create-project-ui-source-selection-tab-body.selected button.button-primary').click();
 });
 
 /**
@@ -84,9 +73,7 @@ Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
  */
 Cypress.Commands.add('castColumnTo', (selector, target) => {
   cy.get('body[ajax_in_progress="false"]');
-  cy.get(
-    '.data-table th:contains("' + selector + '") .column-header-menu'
-  ).click();
+  cy.get('.data-table th:contains("' + selector + '") .column-header-menu').click();
 
   const targetAction = 'To ' + target;
 
@@ -104,9 +91,7 @@ Cypress.Commands.add('getCell', (rowIndex, columnName) => {
   cy.get(`table.data-table thead th[title="${columnName}"]`).then(($elem) => {
     // there are 3 td at the beginning of each row
     const columnIndex = $elem.index() + 3;
-    return cy.get(
-      `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex})`
-    );
+    return cy.get(`table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex})`);
   });
 });
 
@@ -163,15 +148,18 @@ Cypress.Commands.add('assertGridEquals', (values) => {
 
     const cells = Cypress.$('table.data-table tbody tr')
       .map(function (i, el) {
-        const innerTexts = Cypress.$('td', el).filter(index => index > 2)
+        const innerTexts = Cypress.$('td', el)
+          .filter((index) => index > 2)
           .map(function (index, element) {
             return element.querySelector('div.data-table-cell-content div > span').innerText;
-          }).get();
-        return [ innerTexts
-          .map(function (innerText) {
+          })
+          .get();
+        return [
+          innerTexts.map(function (innerText) {
             // a nulled cell value is exposed in the DOM as the string "null"
-            return innerText === 'null' ? null : innerText
-          }) ];
+            return innerText === 'null' ? null : innerText;
+          }),
+        ];
       })
       .get();
     const fullTable = [headers, ...cells];
@@ -200,7 +188,7 @@ Cypress.Commands.add('typeExpression', (expression, options = {}) => {
  * Utility method to select the Python/Jython interpreter
  */
 Cypress.Commands.add('selectPython', () => {
-  cy.get('textarea.expression-preview-code').clear()
+  cy.get('textarea.expression-preview-code').clear();
   cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
   // Wait for Jython interpreter to load (as indicated by changed error message)
   cy.get('.expression-preview-parsing-status').contains('Syntax error');
@@ -236,9 +224,7 @@ Cypress.Commands.add('waitForDialogPanel', () => {
  * Click on the OK button of a dialog panel
  */
 Cypress.Commands.add('confirmDialogPanel', () => {
-  cy.get(
-    'body > .dialog-container > .dialog-frame .dialog-footer button[bind="okButton"]'
-  ).click();
+  cy.get('body > .dialog-container > .dialog-frame .dialog-footer button[bind="okButton"]').click();
   cy.get('body > .dialog-container > .dialog-frame').should('not.exist');
 });
 
@@ -246,9 +232,7 @@ Cypress.Commands.add('confirmDialogPanel', () => {
  * Click on the Cancel button of a dialog panel
  */
 Cypress.Commands.add('cancelDialogPanel', () => {
-  cy.get(
-    'body > .dialog-container > .dialog-frame .dialog-footer button[bind="cancelButton"]'
-  ).click();
+  cy.get('body > .dialog-container > .dialog-frame .dialog-footer button[bind="cancelButton"]').click();
   cy.get('body > .dialog-container > .dialog-frame').should('not.exist');
 });
 
@@ -257,9 +241,7 @@ Cypress.Commands.add('cancelDialogPanel', () => {
  */
 Cypress.Commands.add('columnActionClick', (columnName, actions) => {
   cy.get('body[ajax_in_progress="false"]'); // OR must not be loading at the moment, column headers will be detached from the dom
-  cy.get(
-    '.data-table th:contains("' + columnName + '") .column-header-menu'
-  ).click();
+  cy.get('.data-table th:contains("' + columnName + '") .column-header-menu').click();
 
   for (let i = 0; i < actions.length; i++) {
     cy.get('body > .menu-container').eq(i).contains(actions[i]).click();
@@ -281,24 +263,21 @@ Cypress.Commands.add('visitProject', (projectId) => {
  *   * an arbitrary array that will be loaded in the grid. The first row is for the columns names
  *   * a file referenced in fixtures.js (food.mini | food.small)
  */
-Cypress.Commands.add(
-    'loadAndVisitProject',
-    (fixture, projectName = Cypress.currentTest.title +'-'+Date.now()) => {
-      cy.loadProject(fixture, projectName, "fooTag").then((projectId) => {
-        cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
-        cy.waitForProjectTable();
-      });
-    }
-);
+Cypress.Commands.add('loadAndVisitProject', (fixture, projectName = Cypress.currentTest.title + '-' + Date.now()) => {
+  cy.loadProject(fixture, projectName, 'fooTag').then((projectId) => {
+    cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+    cy.waitForProjectTable();
+  });
+});
 
 Cypress.Commands.add('waitForProjectTable', (numRows) => {
-  cy.url().should('contain', '/project?project=')
+  cy.url().should('contain', '/project?project=');
   cy.get('#left-panel', { log: false }).should('be.visible');
   cy.get('#right-panel', { log: false }).should('be.visible');
   cy.get('#project-title').should('exist');
-  cy.get(".data-table").find("tr").its('length').should('be.gte', 0);
+  cy.get('.data-table').find('tr').its('length').should('be.gte', 0);
   if (numRows) {
-    cy.get('#summary-bar').should('to.contain', numRows.toLocaleString('en')+' rows');
+    cy.get('#summary-bar').should('to.contain', numRows.toLocaleString('en') + ' rows');
   }
 });
 
@@ -307,14 +286,9 @@ Cypress.Commands.add('assertNotificationContainingText', (text) => {
   cy.get('#notification').should('be.visible').should('to.contain', text);
 });
 
-Cypress.Commands.add(
-  'assertCellNotString',
-  (rowIndex, columnName, expectedType) => {
-    cy.getCell(rowIndex, columnName)
-      .find('.data-table-value-nonstring')
-      .should('to.exist');
-  }
-);
+Cypress.Commands.add('assertCellNotString', (rowIndex, columnName, expectedType) => {
+  cy.getCell(rowIndex, columnName).find('.data-table-value-nonstring').should('to.exist');
+});
 
 /**
  * Performs drag and drop on target and source item
@@ -326,43 +300,28 @@ Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector, position = 
   cy.get(sourceSelector).trigger('mousedown', { which: 1 });
 
   cy.get(targetSelector) // eslint-disable-line
-    .trigger('mousemove',position)
+    .trigger('mousemove', position)
     .trigger('mouseup', { force: true });
 });
 
-Cypress.Commands.add(
-  'loadAndVisitSampleJSONProject',
-  (projectName, fixture) => {
-    const jsonText = JSON.stringify(fixture)
-    cy.visitOpenRefine();
-    cy.navigateTo('Create project');
-    cy.get('#create-project-ui-source-selection-tabs > a')
-      .contains('Clipboard')
-      .click();
-    cy.get('textarea').invoke('val', jsonText);
-    cy.get(
-      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
-    )
-      .contains('Next »')
-      .click();
-    cy.get(
-      '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).clear();
-    cy.get(
-      '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).type(projectName);
-    // need to disable es-lint as force is required to true, if not then
-    // cypress won't detect the element due to `position:fixed` and overlays
-    cy.get('[data-cy=element0]') // eslint-disable-line
-      .first()
-      .scrollIntoView()
-      .click({ force: true });
+Cypress.Commands.add('loadAndVisitSampleJSONProject', (projectName, fixture) => {
+  const jsonText = JSON.stringify(fixture);
+  cy.visitOpenRefine();
+  cy.navigateTo('Create project');
+  cy.get('#create-project-ui-source-selection-tabs > a').contains('Clipboard').click();
+  cy.get('textarea').invoke('val', jsonText);
+  cy.get('.create-project-ui-source-selection-tab-body.selected button.button-primary').contains('Next »').click();
+  cy.get('.default-importing-wizard-header input[bind="projectNameInput"]').clear();
+  cy.get('.default-importing-wizard-header input[bind="projectNameInput"]').type(projectName);
+  // need to disable es-lint as force is required to true, if not then
+  // cypress won't detect the element due to `position:fixed` and overlays
+  cy.get('[data-cy=element0]') // eslint-disable-line
+    .first()
+    .scrollIntoView()
+    .click({ force: true });
 
-    // wait for preview and click next to create the project
-    cy.get('div[bind="dataPanel"] table.data-table').should('to.exist');
-    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create project »')
-      .click();
-    cy.waitForProjectTable();
-  }
-);
+  // wait for preview and click next to create the project
+  cy.get('div[bind="dataPanel"] table.data-table').should('to.exist');
+  cy.get('.default-importing-wizard-header button[bind="nextButton"]').contains('Create project »').click();
+  cy.waitForProjectTable();
+});
