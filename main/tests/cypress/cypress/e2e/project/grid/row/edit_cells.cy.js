@@ -8,16 +8,18 @@ describe(__filename, function () {
 
   it('Ensure the Edit button opens a popup', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.getCell(1, 'Shrt_Desc').trigger('mouseover');
-    cy.getCell(1, 'Shrt_Desc').find('.data-table-cell-edit').click();
+    cy.getCell(1, 'Shrt_Desc').as('cell');
+    cy.get('@cell').trigger('mouseover');
+    cy.get('@cell').find('.data-table-cell-edit').click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').should('have.value', 'BUTTER,WHIPPED,WITH SALT');
   });
 
   it('Test a simple edit', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.getCell(1, 'Shrt_Desc').trigger('mouseover');
-    cy.getCell(1, 'Shrt_Desc').find('.data-table-cell-edit').click();
+    cy.getCell(1, 'Shrt_Desc').as('cell');
+    cy.get('@cell').trigger('mouseover');
+    cy.get('@cell').find('.data-table-cell-edit').click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type('OpenRefine Testing');
     cy.get('.menu-container button[bind="okButton"]').click();
@@ -28,19 +30,22 @@ describe(__filename, function () {
 
   it('Test a simple edit, using keyboard shortcut', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.getCell(1, 'Shrt_Desc').trigger('mouseover');
-    cy.getCell(1, 'Shrt_Desc').find('.data-table-cell-edit').click();
+    cy.getCell(1, 'Shrt_Desc').as('cell');
+    cy.get('@cell').trigger('mouseover');
+    cy.get('@cell').find('.data-table-cell-edit').click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
-    cy.get('.menu-container.data-table-cell-editor textarea').type('OpenRefine Testing');
-    cy.get('.menu-container.data-table-cell-editor textarea').type('{enter}');
+    cy.get('.menu-container.data-table-cell-editor textarea').as('textarea');
+    cy.get('@textarea').type('OpenRefine Testing');
+    cy.get('@textarea').type('{enter}');
     cy.get('.menu-container.data-table-cell-editor').should('not.exist');
     cy.assertCellEquals(1, 'Shrt_Desc', 'OpenRefine Testing');
   });
 
   it('Test the cancel button', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.getCell(1, 'Shrt_Desc').trigger('mouseover');
-    cy.getCell(1, 'Shrt_Desc').find('.data-table-cell-edit').click();
+    cy.getCell(1, 'Shrt_Desc').as('cell');
+    cy.get('@cell').trigger('mouseover');
+    cy.get('@cell').find('.data-table-cell-edit').click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type('OpenRefine Testing');
     cy.get('.menu-container button[bind="cancelButton"]').click();
@@ -51,8 +56,9 @@ describe(__filename, function () {
 
   it('Test the cancel button, using keyboard shortcut', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.getCell(1, 'Shrt_Desc').trigger('mouseover');
-    cy.getCell(1, 'Shrt_Desc').find('.data-table-cell-edit').click();
+    cy.getCell(1, 'Shrt_Desc').as('cell');
+    cy.get('@cell').trigger('mouseover');
+    cy.get('@cell').find('.data-table-cell-edit').click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type('OpenRefine Testing');
     cy.get('body').type('{esc}');
@@ -63,8 +69,9 @@ describe(__filename, function () {
 
   it('Test edit all identical cells', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.getCell(1, 'Water').trigger('mouseover');
-    cy.getCell(1, 'Water').find('.data-table-cell-edit').click();
+    cy.getCell(1, 'Water').as('cell');
+    cy.get('@cell').trigger('mouseover');
+    cy.get('@cell').find('.data-table-cell-edit').click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type(42);
     cy.get('.menu-container button[bind="okallButton"]').click();
@@ -78,11 +85,13 @@ describe(__filename, function () {
 
   it('Test edit all identical cells, using the shortcut', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.getCell(1, 'Water').trigger('mouseover');
-    cy.getCell(1, 'Water').find('.data-table-cell-edit').click();
+    cy.getCell(1, 'Water').as('cell');
+    cy.get('@cell').trigger('mouseover');
+    cy.get('@cell').find('.data-table-cell-edit').click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
-    cy.get('.menu-container.data-table-cell-editor textarea').type(42);
-    cy.get('.menu-container.data-table-cell-editor textarea').type('{ctrl}{enter}');
+    cy.get('.menu-container.data-table-cell-editor textarea').as('textarea');
+    cy.get('@textarea').type(42);
+    cy.get('@textarea').type('{ctrl}{enter}');
 
     // ensure all values has been changed in the grid
     cy.get('.menu-container.data-table-cell-editor').should('not.exist');
@@ -93,8 +102,9 @@ describe(__filename, function () {
 
   it('Test edit a cell to change String to Date data type', function () {
     cy.loadAndVisitProject('food.mini');
-    cy.getCell(1, 'Water').trigger('mouseover');
-    cy.getCell(1, 'Water').find('.data-table-cell-edit').click();
+    cy.getCell(1, 'Water').as('cell');
+    cy.get('@cell').trigger('mouseover');
+    cy.get('@cell').find('.data-table-cell-edit').click();
     cy.get('.menu-container.data-table-cell-editor #typeSelectId').select('date');
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type('2024-12-12');
