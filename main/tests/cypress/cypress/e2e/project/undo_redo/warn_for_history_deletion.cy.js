@@ -32,7 +32,9 @@ describe(__filename, function () {
     cy.get('.history-panel-body .history-future').should('to.contain', 'Remove column Shrt_Desc');
 
     // edit a cell in the grid
-    cy.getCell(1, 'Shrt_Desc').trigger('mouseover').find('button.data-table-cell-edit').click();
+    cy.getCell(1, 'Shrt_Desc').as('editCell');
+    cy.get('@editCell').trigger('mouseover');
+    cy.get('@editCell').find('button.data-table-cell-edit').click();
     cy.get('.menu-container.data-table-cell-editor').should('exist');
     cy.get('.menu-container.data-table-cell-editor textarea').type('OpenRefine Testing');
     cy.get('.menu-container button[bind="okButton"]').click();

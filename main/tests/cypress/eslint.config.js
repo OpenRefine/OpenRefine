@@ -35,9 +35,7 @@ module.exports = [
       'cypress/assertion-before-screenshot': 'warn',
       'cypress/no-force': 'warn',
       'cypress/no-async-tests': 'error',
-      // Migrating the existing command chains is separate from restoring the
-      // legacy lint rules. Keep new chains from expanding that scope later.
-      'cypress/unsafe-to-chain-command': 'off',
+      'cypress/unsafe-to-chain-command': 'error',
     },
   },
   prettier,

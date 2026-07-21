@@ -144,34 +144,34 @@ describe(__filename, () => {
 
     describe('Row count input', () => {
       it('is not valid if value is a negative integer', () => {
+        cy.get('@countInput').clear();
+        cy.get('@countInput').type('-1');
         cy.get('@countInput')
-          .clear()
-          .type('-1')
           .then(($input) => $input[0].checkValidity())
           .should('be.false');
       });
 
       it('is not valid if value is zero', () => {
+        cy.get('@countInput').clear();
+        cy.get('@countInput').type('0');
         cy.get('@countInput')
-          .clear()
-          .type('0')
           .then(($input) => $input[0].checkValidity())
           .should('be.false');
       });
 
       it('is not valid if value is a fraction', () => {
+        cy.get('@countInput').clear();
+        cy.get('@countInput').type('1.5');
         cy.get('@countInput')
-          .clear()
-          .type('1.5')
           .then(($input) => $input[0].checkValidity())
           .should('be.false');
       });
 
       it('is valid if `0 < value ≤ 50`', () => {
         for (let i = 1; i <= 10; i++) {
+          cy.get('@countInput').clear();
+          cy.get('@countInput').type(i);
           cy.get('@countInput')
-            .clear()
-            .type(i)
             .then(($input) => $input[0].checkValidity())
             .should('be.true');
         }

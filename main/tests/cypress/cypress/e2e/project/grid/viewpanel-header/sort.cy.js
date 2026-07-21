@@ -97,19 +97,19 @@ describe(__filename, function () {
   it('Ensure it reverses and reorders bool sort', function () {
     cy.loadAndVisitProject('food.sort');
 
-    cy.getCell(0, 'Fat')
-      .trigger('mouseover')
-      .within(() => {
-        cy.get('.data-table-cell-edit').click();
-      });
+    cy.getCell(0, 'Fat').as('fatCell0');
+    cy.get('@fatCell0').trigger('mouseover');
+    cy.get('@fatCell0').within(() => {
+      cy.get('.data-table-cell-edit').click();
+    });
     cy.get('select').select('boolean');
     cy.get('button').contains(new RegExp('Apply', 'g')).click();
 
-    cy.getCell(1, 'Fat')
-      .trigger('mouseover')
-      .within(() => {
-        cy.get('.data-table-cell-edit').click();
-      });
+    cy.getCell(1, 'Fat').as('fatCell1');
+    cy.get('@fatCell1').trigger('mouseover');
+    cy.get('@fatCell1').within(() => {
+      cy.get('.data-table-cell-edit').click();
+    });
     cy.get('select').select('boolean');
     cy.get('button').contains(new RegExp('Apply', 'g')).click();
 

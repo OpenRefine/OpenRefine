@@ -210,12 +210,10 @@ describe(__filename, function () {
     cy.on('window:alert', stub);
 
     // This should error without any record selected
-    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create project »')
-      .click()
-      .then(() => {
-        expect(stub.getCall(0)).to.be.calledWith('Please specify a record path first.');
-      });
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]').contains('Create project »').click();
+    cy.wrap(stub).then((s) => {
+      expect(s.getCall(0)).to.be.calledWith('Please specify a record path first.');
+    });
 
     // This long selector refers to the Preferred_Term element
     cy.get(
