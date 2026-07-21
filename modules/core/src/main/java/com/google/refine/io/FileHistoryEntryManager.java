@@ -37,13 +37,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import com.google.refine.ProjectManager;
+import com.google.refine.RefineServlet;
 import com.google.refine.history.History;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryEntryManager;
@@ -147,5 +151,58 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
         dir.mkdirs();
 
         return dir;
+    }
+
+    /**
+     * Scans a project's change files for classes (typically registered by extensions) which are not available on this
+     * instance of OpenRefine. This is used to warn users importing a project which depends on extensions they don't
+     * have installed, since undoing or redoing such a change would otherwise fail later on with a much less useful
+     * error.
+     *
+     * @param projectDir
+     *            the directory of the project to scan, as returned by {@link FileProjectManager#getProjectDir(long)}
+     * @return the names of the classes referenced by the project's history which cannot be found
+     */
+    public static List<String> findMissingChangeClasses(File projectDir) {
+        List<String> missingClasses = new ArrayList<>();
+        File historyDir = new File(projectDir, HISTORY_DIR);
+        File[] changeFiles = historyDir.listFiles((dir, name) -> name.endsWith(".change.zip"));
+        if (changeFiles == null) {
+            return missingClasses;
+        }
+
+        for (File changeFile : changeFiles) {
+            String className = readChangeClassName(changeFile);
+            if (className != null && !isClassAvailable(className) && !missingClasses.contains(className)) {
+                missingClasses.add(className);
+            }
+        }
+
+        return missingClasses;
+    }
+
+    protected static String readChangeClassName(File changeFile) {
+        try (ZipFile zipFile = new ZipFile(changeFile)) {
+            ZipEntry changeEntry = zipFile.getEntry("change.txt");
+            if (changeEntry == null) {
+                return null;
+            }
+            try (LineNumberReader reader = new LineNumberReader(
+                    new InputStreamReader(zipFile.getInputStream(changeEntry), "UTF-8"))) {
+                reader.readLine(); // version, unused here
+                return reader.readLine(); // class name
+            }
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    protected static boolean isClassAvailable(String className) {
+        try {
+            RefineServlet.getClass(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 }

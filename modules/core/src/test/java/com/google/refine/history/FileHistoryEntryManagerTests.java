@@ -3,10 +3,16 @@ package com.google.refine.history;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -35,5 +41,33 @@ public class FileHistoryEntryManagerTests extends RefineTest {
         options.setProperty("mode", "save");
         sut.save(historyEntry, writer, options);
         TestUtils.equalAsJson(HistoryEntryTests.fullJson, writer.toString());
+    }
+
+    @Test
+    public void testFindMissingChangeClasses() throws IOException {
+        File projectDir = TestUtils.createTempDirectory("FileHistoryEntryManagerTest");
+        File historyDir = new File(projectDir, FileHistoryEntryManager.HISTORY_DIR);
+        historyDir.mkdirs();
+
+        writeChangeFile(new File(historyDir, "1.change.zip"), Change.class.getName());
+        writeChangeFile(new File(historyDir, "2.change.zip"), "org.example.extension.MissingChange");
+
+        List<String> missingClasses = FileHistoryEntryManager.findMissingChangeClasses(projectDir);
+        Assert.assertEquals(missingClasses, List.of("org.example.extension.MissingChange"));
+    }
+
+    @Test
+    public void testFindMissingChangeClassesNoHistory() throws IOException {
+        File projectDir = TestUtils.createTempDirectory("FileHistoryEntryManagerTest");
+
+        Assert.assertTrue(FileHistoryEntryManager.findMissingChangeClasses(projectDir).isEmpty());
+    }
+
+    private void writeChangeFile(File file, String className) throws IOException {
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
+            out.putNextEntry(new ZipEntry("change.txt"));
+            out.write(("1\n" + className + "\n").getBytes("UTF-8"));
+            out.closeEntry();
+        }
     }
 }
