@@ -7,7 +7,7 @@ Cypress.Commands.add('addWikibaseInstance', (url) => {
 
   cy.get('.wikibase-dialog .dialog-footer button').contains('Add Wikibase').click();
 
-  // ad a manifest
+  // add a manifest
   cy.get('.add-wikibase-dialog input[bind="manifestURLInput"]').invoke('val', url);
   cy.get('.add-wikibase-dialog button').contains('Add Wikibase').click();
 
