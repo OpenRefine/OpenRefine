@@ -4,3 +4,6 @@ out
 yarn.lock
 package.json
 *.md
+.yarnrc.yml
+.pnp.cjs
+.pnp.loader.mjs

@@ -6,9 +6,9 @@
     "author": "OpenRefine",
     "private": true,
     "engines": {
-        "node": ">=20.0.0",
-        "npm": ">=8.11.0",
-        "yarn": ">=1.22.15"
+        "node": ">=24.0.0",
+        "npm": ">=11.16.0",
+        "yarn": ">=4.17.1"
     },
     "scripts": {
         "test": "cypress run --browser electron --headless --quiet",
@@ -27,5 +27,5 @@
         "globals": "^17.7.0",
         "prettier": "3.9.5"
     },
-    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "packageManager": "yarn@4.17.1"
 }
