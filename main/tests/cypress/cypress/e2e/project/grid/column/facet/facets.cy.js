@@ -300,20 +300,17 @@ describe(__filename, function () {
       .parent()
       .within(() => {
         cy.contains('edit').invoke('css', 'visibility', 'visible').click();
-      })
-      .root()
-      .then(() => {
-        // Mass edit all cells that have Water = 15.87
-        cy.get('.data-table-cell-editor textarea').should('exist').type(50);
-        cy.get('.data-table-cell-editor button').contains('Apply').click();
-
-        // Ensure rows have been modified
-        cy.getCell(0, 'Water').should('to.contain', 50);
-        cy.getCell(1, 'Water').should('to.contain', 50);
-
-        // Ensure modification is made only to the rows that had 15.87, not the others
-        cy.getCell(2, 'Water').should('to.contain', 0.24);
       });
+    // Mass edit all cells that have Water = 15.87
+    cy.get('.data-table-cell-editor textarea').should('exist').type(50);
+    cy.get('.data-table-cell-editor button').contains('Apply').click();
+
+    // Ensure rows have been modified
+    cy.getCell(0, 'Water').should('to.contain', 50);
+    cy.getCell(1, 'Water').should('to.contain', 50);
+
+    // Ensure modification is made only to the rows that had 15.87, not the others
+    cy.getCell(2, 'Water').should('to.contain', 0.24);
   });
 
   it('Test opening the clustering from a facet', function () {

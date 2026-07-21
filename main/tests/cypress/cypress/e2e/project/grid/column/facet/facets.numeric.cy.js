@@ -29,11 +29,10 @@ describe(__filename, function () {
     cy.get('.facet-range-status').contains('0 — 94');
 
     // sliding the right slider
-    cy.get('.slider-widget-bracket')
-      .eq(1)
-      .trigger('mousedown', { force: true })
-      .trigger('mousemove', -130, 0, { force: true })
-      .trigger('mouseup', { force: true });
+    cy.get('.slider-widget-bracket').eq(1).as('rightSlider');
+    cy.get('@rightSlider').trigger('mousedown', { force: true });
+    cy.get('@rightSlider').trigger('mousemove', -130, 0, { force: true });
+    cy.get('@rightSlider').trigger('mouseup', { force: true });
     cy.get('.facet-range-status').contains('0 — 45');
     cy.get('#summary-bar').contains('72 matching rows');
 
@@ -41,11 +40,10 @@ describe(__filename, function () {
     cy.get('.browsing-panel-indicator').should('not.be.visible');
 
     // sliding entire selection by the body (middle)
-    cy.get('.slider-widget-draggable')
-      .eq(0)
-      .trigger('mousedown', { force: true })
-      .trigger('mousemove', 130, 0, { force: true })
-      .trigger('mouseup', { force: true });
+    cy.get('.slider-widget-draggable').eq(0).as('draggable');
+    cy.get('@draggable').trigger('mousedown', { force: true });
+    cy.get('@draggable').trigger('mousemove', 130, 0, { force: true });
+    cy.get('@draggable').trigger('mouseup', { force: true });
     cy.get('.facet-range-status').contains('23 — 68');
     cy.get('#summary-bar').contains('74 matching rows');
 
@@ -53,11 +51,10 @@ describe(__filename, function () {
     cy.get('.browsing-panel-indicator').should('not.be.visible');
 
     // sliding the left slider
-    cy.get('.slider-widget-bracket')
-      .eq(0)
-      .trigger('mousedown', { force: true })
-      .trigger('mousemove', 130, 0, { force: true })
-      .trigger('mouseup', { force: true });
+    cy.get('.slider-widget-bracket').eq(0).as('leftSlider');
+    cy.get('@leftSlider').trigger('mousedown', { force: true });
+    cy.get('@leftSlider').trigger('mousemove', 130, 0, { force: true });
+    cy.get('@leftSlider').trigger('mouseup', { force: true });
     cy.get('.facet-range-status').contains('66 — 68');
     cy.get('#summary-bar').contains('3 matching rows');
   });

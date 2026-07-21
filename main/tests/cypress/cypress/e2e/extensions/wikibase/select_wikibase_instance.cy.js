@@ -43,10 +43,8 @@ describe.skip(__filename, function () {
 
     // ensure the new Wikibase is listed
     cy.get('.wikibase-dialog').should('to.contain', 'OpenRefine Wikibase Test');
-    cy.get('.wikibase-dialog .dialog-footer button')
-      .contains('OK')
-      .click()
-      .then(() => resetWikibases(savedValue));
+    cy.get('.wikibase-dialog .dialog-footer button').contains('OK').click();
+    resetWikibases(savedValue);
   });
 
   it('Add a wikibase instance (JSON Manifest copy-pasted in the textarea)', function () {
@@ -87,10 +85,8 @@ describe.skip(__filename, function () {
 
     // ensure the new Wikibase is listed
     cy.get('.wikibase-dialog').should('to.contain', 'OpenRefine Wikibase Cypress Test');
-    cy.get('.wikibase-dialog .dialog-footer button')
-      .contains('OK')
-      .click()
-      .then(() => resetWikibases(savedValue));
+    cy.get('.wikibase-dialog .dialog-footer button').contains('OK').click();
+    resetWikibases(savedValue);
   });
 
   it('Add a wikibase instance (Invalid manifest provided)', function () {
@@ -108,10 +104,8 @@ describe.skip(__filename, function () {
       .should('be.visible')
       .contains('SyntaxError: Unexpected token \'T\', "This is an"... is not valid JSON');
     cy.get('.add-wikibase-dialog .dialog-footer button').contains('Cancel').click();
-    cy.get('.wikibase-dialog .dialog-footer button')
-      .contains('OK')
-      .click()
-      .then(() => resetWikibases(savedValue));
+    cy.get('.wikibase-dialog .dialog-footer button').contains('OK').click();
+    resetWikibases(savedValue);
   });
 
   it('Delete wikibase', function () {
@@ -133,10 +127,8 @@ describe.skip(__filename, function () {
     cy.get('.wikibase-dialog').should('not.to.contain', 'OpenRefine Wikibase Test');
 
     cy.get('.wikibase-dialog').should('to.contain', 'Wikibase');
-    cy.get('.wikibase-dialog .dialog-footer button')
-      .contains('OK')
-      .click()
-      .then(() => resetWikibases(savedValue));
+    cy.get('.wikibase-dialog .dialog-footer button').contains('OK').click();
+    resetWikibases(savedValue);
   });
   function getPreference(name) {
     const openRefineUrl = Cypress.env('OPENREFINE_URL');

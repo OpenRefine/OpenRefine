@@ -38,7 +38,8 @@ Cypress.Commands.add('getNumericFacetContainer', (facetName) => {
  * Edit a cell, for a given row index, a column name and a value
  */
 Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
-  cy.getCell(rowIndex, columnName).trigger('mouseover').find('button.data-table-cell-edit').click();
+  cy.getCell(rowIndex, columnName).trigger('mouseover');
+  cy.getCell(rowIndex, columnName).find('button.data-table-cell-edit').click();
   cy.get('.menu-container.data-table-cell-editor textarea').type(value);
   cy.get('.menu-container button[bind="okButton"]').click();
 });
@@ -198,7 +199,8 @@ Cypress.Commands.add('selectPython', () => {
  * Utility method to select the Clojure interpreter
  */
 Cypress.Commands.add('selectClojure', () => {
-  cy.get('textarea.expression-preview-code').clear().type('(');
+  cy.get('textarea.expression-preview-code').clear();
+  cy.get('textarea.expression-preview-code').type('(');
   cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
   // Wait for Clojure interpreter to load (as indicated by changed error message)
   cy.get('.expression-preview-parsing-status').contains('Syntax error reading source');
