@@ -47,6 +47,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.common.net.UrlEscapers;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
 import mockwebserver3.RecordedRequest;
@@ -244,6 +245,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             assertEquals(op.getColumnDependencies().get(), Set.of("fruits"));
             assertEquals(op.getColumnsDiff().get(), ColumnsDiff.builder().addColumn("rand", "fruits").build());
 
+            // TODO: Seems like this wait could be reduced significantly
+            // since we only have two distinct values at 5ms each.
             runOperation(op, project, 1500);
 
             // Inspect rows
@@ -264,18 +267,24 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         try (MockWebServer server = new MockWebServer()) {
             server.start();
             HttpUrl url = server.url("/random");
-            server.enqueue(new MockResponse.Builder().build());
+            server.enqueue(new MockResponse.Builder().body("random string").build());
+            server.enqueue(new MockResponse.Builder().body("Ahmed").build());
 
             Row row0 = new Row(2);
             row0.setCell(0, new Cell("auinrestrsc", null)); // malformed -> error
             project.rows.add(row0);
             Row row1 = new Row(2);
-            row1.setCell(0, new Cell(url.toString(), null)); // fine
+            row1.setCell(0, new Cell(server.url("/random").toString(), null)); // fine
             project.rows.add(row1);
             Row row2 = new Row(2);
             // well-formed but not resolvable.
             row2.setCell(0, new Cell("http://domain.invalid/random", null));
             project.rows.add(row2);
+            Row row3 = new Row(2);
+            // needs encoding
+            final String ARABIC = "احمد";
+            row3.setCell(0, new Cell(server.url("/") + ARABIC, null));
+            project.rows.add(row3);
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                     "fruits",
@@ -287,13 +296,21 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     null);
 
+            // TODO: Do we really need such a long time?
             runOperation(op, project, 10000);
 
             int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
             // Inspect rows
-            Assert.assertTrue(project.rows.get(0).getCellValue(newCol) instanceof EvalError);
-            Assert.assertNotNull(project.rows.get(1).getCellValue(newCol));
-            Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
+            assertTrue(project.rows.get(0).getCellValue(newCol) instanceof EvalError);
+            assertEquals(project.rows.get(1).getCellValue(newCol), "random string");
+            assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
+            assertEquals(project.rows.get(3).getCellValue(newCol), "Ahmed");
+
+            RecordedRequest request1 = server.takeRequest();
+            assertEquals(request1.getUrl().encodedPath(), "/random");
+            RecordedRequest request2 = server.takeRequest();
+            // verify that path was correctly escaped before request was sent
+            assertEquals(request2.getUrl().encodedPath().substring(1), UrlEscapers.urlPathSegmentEscaper().escape(ARABIC));
         }
     }
 
@@ -370,6 +387,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     false,
                     null);
 
+            // 6 requests (4 retries @1 sec) + final response
             long elapsed = runOperation(op, project, 4500);
 
             // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)

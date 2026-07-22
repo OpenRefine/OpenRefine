@@ -1,8 +1,13 @@
 
 package com.google.refine.util;
 
+import static org.testng.Assert.assertEquals;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
+import com.google.common.net.UrlEscapers;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -26,5 +31,13 @@ public class HttpClientTests {
         Assert.assertTrue(pattern3.matcher("host.domain.org").matches());
         Assert.assertTrue(pattern3.matcher("random.domain.any.com").matches());
         Assert.assertTrue(pattern3.matcher("myhosts.mydomain.mine").matches());
+    }
+
+    @Test
+    public void urlEscaping() throws MalformedURLException, URISyntaxException {
+        final String ARABIC_PATH = "احمد";
+        final String BASE_URL = "https://example.com/";
+        final String TEST_URL = BASE_URL + ARABIC_PATH;
+        assertEquals(HttpClient.getEscapedUrl(TEST_URL), BASE_URL + UrlEscapers.urlPathSegmentEscaper().escape(ARABIC_PATH));
     }
 }
