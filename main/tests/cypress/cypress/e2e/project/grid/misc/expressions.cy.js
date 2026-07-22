@@ -102,13 +102,9 @@ describe(__filename, function () {
     cy.selectPython();
     cy.typeExpression('return value.toNumber()');
 
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('to.contain', 'Error:');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(2) td:last-child').should('to.contain', 'Error:');
     // Ensure the error is NOT shown as null
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('not.to.contain', 'null');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(2) td:last-child').should('not.to.contain', 'null');
   });
 
   it('Test a Clojure language error', function () {
