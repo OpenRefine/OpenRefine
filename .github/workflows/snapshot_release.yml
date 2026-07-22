@@ -74,9 +74,9 @@ jobs:
             ~/.cache
             **/node_modules
             !~/cache/exclude
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn
+            ${{ runner.os }}-yarn-
 
       - name: Install test dependencies
         run: |
