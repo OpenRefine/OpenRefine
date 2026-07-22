@@ -98,7 +98,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         project.columnModel.update();
     }
 
-    public void parseOneFile(
+    private void parseOneFile(
             Project project,
             ProjectMetadata metadata,
             ImportingJob job,
@@ -128,8 +128,11 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
                     filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >= 0);
                 }
 
-                if (useInputStream) {
+                if (importMode == ImportMode.INPUT_STREAM) {
                     parseOneFile(project, metadata, job, fileSource, inputStream,
+                            rootColumnGroup, limit, options, exceptions);
+                } else if (importMode == ImportMode.FILE) {
+                    parseOneFile(project, metadata, job, fileSource, file,
                             rootColumnGroup, limit, options, exceptions);
                 } else {
                     String commonEncoding = JSONUtilities.getString(options, "encoding", null);
@@ -199,6 +202,23 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
             ImportingJob job,
             String fileSource,
             InputStream inputStream,
+            ImportColumnGroup rootColumnGroup,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions) {
+        throw new NotImplementedException();
+    }
+
+    /**
+     * Parse a single file from a File object. The default implementation just throws a NotImplementedException.
+     * Override in subclasses to implement.
+     */
+    public void parseOneFile(
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            File file,
             ImportColumnGroup rootColumnGroup,
             int limit,
             ObjectNode options,
