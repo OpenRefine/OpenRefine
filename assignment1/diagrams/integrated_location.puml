@@ -1,0 +1,48 @@
+@startuml integrated_location
+!pragma layout smetana
+skinparam handwritten true
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName "Comic Sans MS"
+skinparam defaultFontSize 14
+title Integrated Draft -- Where Cluster & Edit lives
+
+rectangle "Cluster & Edit (boundary)" as box {
+  rectangle "UI Dialogs" {
+    rectangle "clustering-dialog.js" as dialog
+    rectangle "clustering-functions-dialog.js" as funcDialog
+  }
+  rectangle "Server Endpoints" {
+    rectangle "ComputeClustersCommand.java" as cmd
+  }
+  rectangle "Clustering Engine" {
+    rectangle "BinningClusterer.java" as binning
+    rectangle "kNNClusterer.java" as knn
+  }
+  dialog --> cmd : requests
+  funcDialog --> cmd : configures
+  cmd --> binning : executes
+  cmd --> knn : executes
+}
+
+rectangle "Triggers & Wiring (Outside)" {
+  rectangle "menu-edit-cells.js" as menu
+  rectangle "controller.js" as wiring
+}
+
+rectangle "Core Data & Edits (Outside)" {
+  rectangle "Project.java" as project
+  rectangle "Cell.java" as cell
+  rectangle "MassEditCommand.java" as massedit
+  rectangle "History.java" as history
+}
+
+wiring ..> box : registers/binds
+menu --> dialog : opens
+binning ..> project : reads
+knn ..> project : reads
+project *-- cell : contains
+dialog --> massedit : on Apply
+massedit --> history : records state
+massedit --> cell : mutates
+@enduml

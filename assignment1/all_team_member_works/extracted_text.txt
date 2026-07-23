@@ -1,0 +1,115 @@
+=== Karry.pdf ===
+Page 1:
+cluster-dialog.jsdialog
+Click cluster and it will
+respond a dialog
+Parse user request
+Server ComputeClustersCommand.java BinningClusterer.java
+Project.java Cell.java History.java
+return clusters
+confirm and select apply
+Put similar string into same bucket
+1
+2
+INSIDE the Boundary:
+1. BinningClusterer.java: it is in the clustering package and use keying algorithm todivide different key values.
+2. clustering-dialogjs: it is clustering interface.3. ComputeClustersCommand.java: it will serialize the clustering result into JSON.
+OUTSIDE the Boundary:1. Project.java: clustering need to readthe data in Project.2. Cell.java: it stores the primitivevalue.
+3. History.java: when user click Merge Selected, the system will produce a Changeobjective and store into History.
+Click Cluster and Edit
+compute cluster command
+Processing: user keyer to compute allkey values to put same key values into
+same buckets 
+interaction: return
+the table by json
+user check the result and confirm it
+update the data and
+record it into history
+=== Kingson.pdf ===
+Page 1:
+H o w  I t  W o r k s
+S t a r t
+C r e a t e  P r o j e c t
+F i n d  th e  c o l u m n  o f  t e x t  t o  e d i t
+M o v e  t o  e d i t  c e l l s
+S e l e c t  C l u s t e r  a n d  e d i t
+S e l e c t  th e  m e th o d  a n d  k e y i n g  f u n c t i o n
+O n c e  s e l e c t e d ,  h i t  “ C l u s t e r ”
+S e l e c t  th e  c l u s t e r  o p t i o n
+E n d
+F i l e  I n c l u s i o n F i l e  E x c l u s i o n
+c o n t r o l l e r . j s  n e e d e d  t o  b e  i n c l u d e d  b e c a u s e  i t  i s  w h e r e  th e  
+d i f f e r e n t  t y p e s  o f  c l u s t e r i n g  o p t i o n s  a r e  b o u n d  t o  th e  
+o p t i o n s  th a t  c a n  b e  c h o s e n  b y  th e  u s e r .  I t  i s  a l s o  th e  e n t r y  
+p o i n t  f o r  w h e n  th e  p r o g r a m  i n i t i a t e s ,  s o  i f  a  d e v e l o p e r  
+w a n t s  t o  a d d  a d d i t i o n a l  c l u s t e r i n g  o p t i o n s ,  th e y  w o u l d  
+n e e d  t o  b i n d  i t  h e r e
+c l u s t e r i n g - f u n c t i o n s - d i a l o g . j s  n e e d e d  t o  b e  i n c l u d e d  
+b e c a u s e  th i s  i s  w h e r e  th e  c l u s t e r i n g  f u n c t i o n  i s  c a l l e d .  I f  a  
+b u g  a p p e a r s  w h e r e  th e  c l u s t e r i n g  f u n c t i o n  i s  n o t  b e i n g  
+c a l l e d  o r  n o t  c a l l e d  c o r r e c tl y ,  i t  m o s t  l i k e l y  i s  w i th i n  o n e  o f  
+e i th e r  th e  p r e v i o u s  f i l e ,  o r  th i s  f i l e
+C o p m p u t e r C l u s t e r s C o m m a n d . j a v a  a b s o l u t e l y  n e e d s  t o  b e  
+i n c l u d e d ,  b e c a u s e  i t  i s  th e  d i r e c t  A P I  c a l l  t o  G o o g l e  i n  
+o r d e r  t o  c l u s t e r  th e  d a t a  i n  th e  f i l e .  T h e  A P I  c a l l  l i e s  h e r e ,  
+a n d  th e  r e s p o n s e  a l s o  l i e s  h e r e ,  s o  a n y th i n g  r e l a t e d  t o  
+c a l l e d  th e  c l u s t e r i n g  f u n c t i o n ,  o r  p r o c e s s i n g  th e  r e t u r n e d  
+d a t a  l i e s  i n  th i s  f i l e .
+O p e n R e f i n e \ m a i n \ w e b a p p \ m o d u l e s \ c o r e \ s c r i p t s \ d i a l o g s \ c l u s t e r i n g - f u n c t i o n s - d i a l o g . h t m l  
+O p e n R e f i n e \ m a i n \ s r c \ c o m \ g o o g l e \ r e f i n e \ c l u s t e r i n g \ b i n n i n g \ B e i d e r M o r s e K e y e r . j a v a  
+O p e n R e f i n e \ m a i n \ s r c \ c o m \ g o o g l e \ r e f i n e \ c l u s t e r i n g \ b i n n i n g \ U s e r D e f i n e d K e y e r . j a v a
+O p e n R e f i n e \ m a i n \ s r c \ c o m \ g o o g l e \ r e f i n e \ c l u s t e r i n g \ k n n \ U s e r D e f i n e d D i s t a n c e . j a v a
+c l u s t e r i n g - f u n c t i o n s - d i a l o g . h t m l  w a s  n o t  i n c l u d e d  b e c a u s e  i t  d e a l s  w i th  s p e c i f i c a l l y  th e  
+l a y o u t  o f  th e  b u t t o n s .  F o r  n o w ,  I  a m  o n l y  i n t e r e s t e d  i n  th e  f u n c t i o n a l i t y  o f  th e  c l u s t e r i n g ,  
+n o t  h o w  i t  i s  d i s p l a y e d
+A  w h o l e  s e c t i o n  o f  th e  p r o j e c t  w a s  d e d i c a t e d  t o  o f f l i n e  u s a g e  o f  th e  p r o g r a m ,  m e a n i n g  
+s o m e  o f  th e  c l u s t e r i n g  f u n c t i o n s  c a n  b e  u s e d  e v e n  o f f l i n e .  B e i d e r M o r s e K e y e r . j a v a  i s  a n  
+e x a m p l e  o f  o n e  o f  th e s e  f u n c t i o n s ,  w h e r e  i n s t e a d  o f  m a k i n g  a  c a l l  t o  th e  G o o g l e  b a c k  
+e n d ,  i t  c a l l s  A p a c h e  f u n c t i o n a l i t y  i n  a  m o d u l e  i n c l u d e d  i n  th e  p r o j e c t  f i l e s
+I n  a d d i t i o n ,  th e  p r o g r a m  a l l o w s  th e  u s e r  t o  d e f i n e  th e i r  o w n  c l u s t e r i n g  f u n c t i o n s .  T h o s e  
+c u s t o m  d e f i n e d  c l u s t e r i n g  f u n c t i o n a l i t y  w o r k  b y  c a l l i n g  th e  G o o g l e  A P I  a s  w e l l .  F o r  n o w  I  
+a m  o n l y  i n t e r e s t e d  i n  s t u d y i n g  a l r e a d y  d e f i n e d  c l u s t e r i n g  f u n c t i o n s ,  s o  th o s e  a r e  
+e x c l u d e d  f r o m  th e  m o d e l s .
+W h e r e  I t  W o r k s
+O p e n R e f i n e \ m a i n \ w e b a p p \ m o d u l e s \ c o r e \ M O D - I N F \ c o n t r o l l e r . j s
+S t a r t
+R e n d e r  G U I
+U p l o a d  d a t a  f i l e
+C r e a t e  p r o j e c t
+S e l e c t  c o l u m n  d r o p  d o w n  m e n u
+H o v e r  e d i t  c e l l s
+S e l e c t  “ C l u s t e r  a n d  e d i t ”
+R e n d e r  G U I  f o r  c l u s t e r
+c o n t r o l l e r . j s  f i l e
+B i n d  e a c h  c l u s t e r  o p t i o n  t o  a n  A P I  
+c a l l  t o  a  g o o g l e  b a c k  e n d ?
+I t  a l s o  a p p e a r s  th a t  th e  b i n d i n g  
+o c c u r s  a t  th e  v e r y  b e g i n n i n g  w h e n  
+th e  p r o g r a m  i s  i n i t i a l i z e d
+ O p e n R e f i n e \ m a i n \ w e b a p p \ m o d u l e s \ c o r e \ s c r i p t s \ d i a l o g s \ c l u s t e r i n g - f u n c t i o n s - d i a l o g . j s
+c l u s t e r i n g - f u n c t i o n s - d i a l o g . j s
+D i s p l a y  th e  c l u s t e r i n g  f u n c t i o n s  a n d  
+o p t i o n s  i n  th e  C l u s t e r  W i n d o w
+U p d a t e  o p t i o n s  a s  u s e r  s e l e c t s  
+d i f f e r e n t  c l u s t e r i n g  o p t i o n s
+W a i t  f o r  C l u s t e r  c o m m a n d
+C o m p u t e C l u s t e r s C o m m a n d . j a v a
+O n  c o m m a n d  a c t i v a t i o n ,  r e q u e s t  a  
+r e s p o n s e  f r o m  th e  G o o g l e  A P I ?
+T h e  t y p e  o f  c l u s t e r i n g  d e p e n d s  o n  
+u s e r  s e l e c t i o n  f r o m  p r e v i o u s  s t e p
+R e s p o n s e  w i l l  b e  a  d a t a  f i l e
+R e n d e r  t a b l e
+A l l o w  u s e r  t o  e d i t  d a t a  i n  e a c h  c e l l  
+s e p a r a t e l y  o r  t o g e th e r
+C o n f i r m  c h a n g e s  i n  th e  n e w  p r o j e c t
+O p e n R e f i n e \ m a i n \ s r c \ c o m \ g o o g l e \ r e f i n e \ c o m m a n d s \ b r o w s i n g \ C o m p u t e C l u s t e r s C o m m a n d . j a v a
+E n d
+F o r  t h i s  s e c t i o n ,  I  c h o s e  t o  u s e  G o o g l e  G e m i n i .  I  
+s p e c i f i c a l l y  d i d  n o t  a l l o w  i t  a c c e s s  t o  t h e  e n t i r e  
+c o d e  b a s e ,  b u t  o n l y  t h e  G i t H u b  r e p o  o n l i n e .  I  
+a p p r o a c h e d  i t  t h i s  w a y  i n  o r d e r  t o  o n l y  u s e  G e m i n i  
+t o  f i n d  t h e  l o c a t i o n  o f  f i l e s  I  w a n t e d  t o  f i n d .  B e c a u s e  
+I  w e n t  w i t h  t h i s  m e t h o d ,  G e m i n i  a c t u a l l y  
+h a l l u c i n a t e d  a  l o t  o f  p a g e s  t h a t  d i d  n o t  e x i s t .
+K i n g s o n  Z h a n g

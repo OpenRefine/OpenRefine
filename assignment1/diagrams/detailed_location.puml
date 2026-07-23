@@ -1,0 +1,100 @@
+@startuml detailed_location
+!pragma layout smetana
+title Cluster & Edit -- where the feature lives in the codebase
+
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam componentStyle rectangle
+skinparam defaultFontName "Helvetica"
+skinparam defaultFontSize 12
+skinparam wrapWidth 220
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #888888
+}
+skinparam note {
+    BackgroundColor #FFFCE0
+    BorderColor #BBB69E
+}
+
+' =====================================================================
+' OUTSIDE the boundary -- the column menu (entry point)
+' =====================================================================
+package "Outside (entry point)" as outsideTop #FFF4E5 {
+    component "menu-edit-cells.js\n<size:10>main/webapp/modules/core/scripts/\nviews/data-table/</size>" as Menu #FFD8A6
+}
+
+' =====================================================================
+' INSIDE the boundary -- the Cluster & Edit feature itself
+' =====================================================================
+package "Cluster & Edit feature boundary" as boundary #E8F4FD {
+
+    package "Frontend (webapp)" as fe {
+        component "<b>ClusteringDialog</b>\n<size:10>main/webapp/modules/core/scripts/dialogs/\nclustering-dialog.js</size>" as Dialog #B6E0FE
+        component "clustering-dialog.html\n+ clustering-dialog.css" as DialogView #DCEEFC
+    }
+
+    package "Server commands\n(com.google.refine.commands.browsing)" as cmds {
+        component "<b>ComputeClustersCommand</b>\n<size:10>main/src/.../ComputeClustersCommand.java</size>" as ComputeCmd #B6E0FE
+        component "GetClusteringFunctionsAndDistances\nCommand" as ListCmd #DCEEFC
+    }
+
+    package "Clustering core (com.google.refine.clustering)" as core {
+        component "<<abstract>>\nClustererConfig\n<size:10>type = binning | knn</size>" as Config #DCEEFC
+        component "<<abstract>>\nClusterer\n<size:10>.../clustering/Clusterer.java</size>" as Clusterer #DCEEFC
+        component "<b>BinningClusterer</b>\n<size:10>.../binning/BinningClusterer.java</size>" as Binning #B6E0FE
+        component "kNNClusterer\n<size:10>.../knn/kNNClusterer.java</size>" as KNN #DCEEFC
+        component "Keyer (abstract)\n+ KeyerFactory\n<size:10>fingerprint, ngram-fingerprint,\nmetaphone3, cologne, daitch-mokotoff,\nbeider-morse</size>" as Keyer #DCEEFC
+        component "SimilarityDistance\n+ DistanceFactory\n<size:10>levenshtein, ngram, jaccard,\nPPM, ... (Vicino library)</size>" as Distance #DCEEFC
+        component "ClusteredEntry (DTO)" as Entry #DCEEFC
+    }
+}
+
+' =====================================================================
+' OUTSIDE the boundary -- where edits are persisted, and module wiring
+' =====================================================================
+package "Outside (apply step + wiring)" as outsideBot #FFF4E5 {
+    component "<b>MassEditCommand</b>\n+ MassEditOperation\n<size:10>com.google.refine.commands.cell /\noperations.cell</size>" as MassEdit #FFD8A6
+    component "<b>controller.js</b> (module wiring)\n<size:10>main/webapp/modules/core/MOD-INF/</size>" as Controller #FFD8A6
+    component "Project / Engine / Row / Cell\n<size:10>com.google.refine.model & .browsing</size>" as Model #F2F2F2
+}
+
+' ---- Connections ----
+Menu --> Dialog : "instantiates\nnew ClusteringDialog(column, ...)"
+
+Dialog --> DialogView : "loads"
+Dialog --> ComputeCmd : "POST compute-clusters"
+Dialog --> ListCmd : "GET keyers + distances"
+Dialog --> MassEdit : "POST mass-edit\n(on Apply / Re-cluster)"
+
+ComputeCmd --> Config : "Jackson deserialize"
+Config --> Binning : "apply()  if type=binning"
+Config --> KNN : "apply()  if type=knn"
+Binning ..|> Clusterer
+KNN ..|> Clusterer
+Binning --> Keyer : "uses"
+KNN --> Distance : "uses"
+Binning --> Entry : "produces"
+KNN --> Entry : "produces"
+Clusterer --> Model : "reads cells via\nEngine.getAllFilteredRows()"
+
+MassEdit --> Model : "mutates Project\n(undo/redo history)"
+
+Controller ..> ComputeCmd : "RS.registerCommand"
+Controller ..> ListCmd : "RS.registerCommand"
+Controller ..> Keyer : "registers built-in keyers"
+Controller ..> Distance : "registers built-in distances"
+
+' Layout hint: pin outside containers above/below the boundary
+Menu -[hidden]down- Dialog
+MassEdit -[hidden]up- Model
+
+legend right
+    |= Color |= Meaning |
+    |<#B6E0FE> blue (dark) | The 3 files I picked **inside** the boundary |
+    |<#DCEEFC> blue (light) | Other inside files (helpers / siblings) |
+    |<#FFD8A6> orange | The 3 files I picked **outside** the boundary |
+    |<#F2F2F2> grey | Shared model classes (deeper in the system) |
+endlegend
+@enduml

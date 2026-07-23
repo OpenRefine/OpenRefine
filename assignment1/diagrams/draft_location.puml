@@ -1,0 +1,25 @@
+@startuml draft_location
+!pragma layout smetana
+skinparam handwritten true
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName "Comic Sans MS"
+skinparam defaultFontSize 14
+title My first draft -- where Cluster & Edit lives
+
+rectangle "Cluster & Edit (boundary)" as box {
+  rectangle "the dialog\n(clustering-dialog.js)" as dialog
+  rectangle "the server command\n(ComputeClustersCommand)" as cmd
+  rectangle "the algorithm\n(BinningClusterer)" as algo
+  dialog --> cmd : asks
+  cmd --> algo : runs
+}
+
+rectangle "column menu\n(menu-edit-cells.js)" as menu
+rectangle "mass edit\n(MassEditCommand)" as massedit
+rectangle "module wiring\n(controller.js)" as wiring
+
+menu --> dialog : opens
+dialog --> massedit : on Apply
+wiring ..> cmd : registers
+@enduml

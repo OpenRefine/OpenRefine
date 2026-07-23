@@ -1,0 +1,83 @@
+@startuml detailed_simulation
+title Cluster & Edit -- end-to-end mental simulation
+
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam defaultFontName "Helvetica"
+skinparam defaultFontSize 12
+skinparam sequence {
+    LifeLineBorderColor #888888
+    ParticipantBorderColor #555555
+    ParticipantBackgroundColor #F4F8FB
+    ActorBackgroundColor #FFFFFF
+}
+
+actor "User" as User
+participant "Column menu\n(menu-edit-cells.js)" as Menu
+participant "ClusteringDialog\n(clustering-dialog.js)" as Dialog
+participant "ComputeClustersCommand\n(server)" as Cmd
+participant "ClustererConfig\n(Jackson polymorphic)" as Config
+participant "BinningClusterer\n/ kNNClusterer" as Clusterer
+participant "KeyerFactory\n/ DistanceFactory" as Factory
+participant "Engine + Project\n(filtered rows)" as Engine
+participant "MassEditCommand\n+ MassEditOperation" as MassEdit
+
+== 1. Open the dialog ==
+User -> Menu : click "Edit cells -> Cluster and edit..."
+Menu -> Dialog : new ClusteringDialog(column, "value")
+Dialog -> Cmd : GET get-clustering-functions-and-distances
+Cmd --> Dialog : { keyers: [...], distances: [...] }
+Dialog --> User : show dialog (method, function, params)
+
+== 2. Compute clusters ==
+User -> Dialog : click "Cluster" (or auto-update)
+Dialog -> Cmd : POST compute-clusters\nbody = { type, function, column, params }\n+ engine JSON + CSRF token
+activate Cmd
+Cmd -> Cmd : hasValidCSRFToken(request)?
+Cmd -> Config : ParsingUtilities.mapper.readValue(\n  ClustererConfig.class)
+note right of Config
+  @JsonTypeInfo property = "type"
+  type = "binning" -> BinningClustererConfig
+  type = "knn"     -> kNNClustererConfig
+end note
+Config -> Factory : KeyerFactory.get("fingerprint")\nor DistanceFactory.get("levenshtein")
+Factory --> Config : Keyer / SimilarityDistance instance
+Config --> Cmd : Clusterer (initialized with column index)
+
+Cmd -> Clusterer : computeClusters(engine)
+activate Clusterer
+Clusterer -> Engine : engine.getAllFilteredRows()
+Engine --> Clusterer : FilteredRows
+Clusterer -> Engine : filteredRows.accept(project, RowVisitor)
+loop for each visible row
+    Engine -> Clusterer : visit(project, rowIndex, row)
+    alt binning
+        Clusterer -> Clusterer : key = keyer.key(cellValue)\nbucket values by key
+    else kNN
+        Clusterer -> Clusterer : NGramClusterer.populate(value)
+    end
+end
+Clusterer -> Clusterer : sort buckets, drop singletons
+Clusterer --> Cmd : List<List<ClusteredEntry>>\n(JSON via @JsonValue)
+deactivate Clusterer
+Cmd --> Dialog : JSON response
+deactivate Cmd
+
+== 3. User reviews and edits ==
+Dialog -> Dialog : _updateData(data)\nbuild facets (size, rowCount, avg, variance)
+Dialog --> User : render table of clusters\n+ histogram facets
+User -> Dialog : tick "Merge", choose new value\n(or click a suggested value)
+User -> Dialog : click "Merge Selected & Re-Cluster"\nor "Merge Selected & Close"
+
+== 4. Apply edits ==
+Dialog -> Dialog : build edits = [{ from: [...], to: value }]
+Dialog -> MassEdit : POST mass-edit\nbody = { columnName, expression, edits }
+activate MassEdit
+MassEdit -> MassEdit : new MassEditOperation(\n  engineConfig, columnName, expression, edits)
+MassEdit -> Engine : create + apply Process\n(replaces matching cell values)
+Engine -> Engine : write history entry (undo/redo)
+MassEdit --> Dialog : ok
+deactivate MassEdit
+Dialog --> User : refresh data table\n(Re-Cluster runs step 2 again, Close dismisses)
+
+@enduml
