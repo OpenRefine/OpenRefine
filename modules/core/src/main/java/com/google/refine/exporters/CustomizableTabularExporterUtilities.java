@@ -49,7 +49,6 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -80,7 +79,12 @@ abstract public class CustomizableTabularExporterUtilities {
             final Engine engine,
             Properties params,
             final TabularSerializer serializer) {
-        exportRows(project, engine, params.getProperty("options"), serializer);
+        try {
+            exportRows(project, engine, params.getProperty("options"), serializer);
+        } catch (IOException e) {
+            // This is what our legacy error "handling" did
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -101,15 +105,11 @@ abstract public class CustomizableTabularExporterUtilities {
             final Project project,
             final Engine engine,
             String optionsString,
-            final TabularSerializer serializer) {
+            final TabularSerializer serializer) throws IOException {
 
         JsonNode optionsTemp = null;
         if (optionsString != null) {
-            try {
-                optionsTemp = ParsingUtilities.mapper.readTree(optionsString);
-            } catch (IOException e) {
-                // Ignore and keep options null.
-            }
+            optionsTemp = ParsingUtilities.mapper.readTree(optionsString);
         }
         final JsonNode options = optionsTemp;
 
@@ -124,7 +124,7 @@ abstract public class CustomizableTabularExporterUtilities {
         if (columnOptionArray == null) {
             List<Column> columns = project.columnModel.columns;
 
-            columnNames = new ArrayList<String>(columns.size());
+            columnNames = new ArrayList<>(columns.size());
             for (Column column : columns) {
                 String name = column.getName();
                 columnNames.add(name);
@@ -133,18 +133,13 @@ abstract public class CustomizableTabularExporterUtilities {
         } else {
             int count = columnOptionArray.size();
 
-            columnNames = new ArrayList<String>(count);
-            for (int i = 0; i < count; i++) {
-                JsonNode columnOptions = columnOptionArray.get(i);
+            columnNames = new ArrayList<>(count);
+            for (JsonNode columnOptions : columnOptionArray) {
                 if (columnOptions != null) {
                     String name = JSONUtilities.getString(columnOptions, "name", null);
                     if (name != null) {
                         columnNames.add(name);
-                        try {
-                            columnNameToFormatter.put(name, ParsingUtilities.mapper.treeToValue(columnOptions, ColumnOptions.class));
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                        }
+                        columnNameToFormatter.put(name, ParsingUtilities.mapper.treeToValue(columnOptions, ColumnOptions.class));
                     }
                 }
             }
@@ -175,7 +170,6 @@ abstract public class CustomizableTabularExporterUtilities {
                     Column column = project.columnModel.getColumnByName(columnName);
                     CellFormatter formatter = columnNameToFormatter.get(columnName);
                     CellData cellData = formatter.format(
-                            project,
                             column,
                             row.getCell(column.getCellIndex()));
 
@@ -203,6 +197,9 @@ abstract public class CustomizableTabularExporterUtilities {
         filteredRows.accept(project, visitor);
     }
 
+    /**
+     * @deprecated since 3.9 with no replacement. Unused internally.
+     */
     @Deprecated(since = "3.9")
     static public int[] countColumnsRows(
             final Project project,
@@ -349,7 +346,12 @@ abstract public class CustomizableTabularExporterUtilities {
             }
         }
 
+        @Deprecated(since = "3.10")
         CellData format(Project project, Column column, Cell cell) {
+            return format(column, cell);
+        }
+
+        CellData format(Column column, Cell cell) {
             if (cell != null) {
                 String link = null;
                 String text = null;

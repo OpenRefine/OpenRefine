@@ -54,7 +54,7 @@ public interface StreamExporter extends Exporter {
     default void export(Project project, Properties options, Engine engine, OutputStream outputStream) throws IOException {
         // We provide a default implementation for new exporters so that they don't have to implement the legacy
         // interface
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Legacy exporter interface not supported by new exporters");
     }
 
     /**
@@ -69,6 +69,7 @@ public interface StreamExporter extends Exporter {
      * @param outputStream
      *            the OutputStream to be written to
      * @throws IOException
+     *             if there's an error during the export
      * @since 3.9
      */
     default void export(Project project, Map<String, String> options, Engine engine, OutputStream outputStream) throws IOException {
