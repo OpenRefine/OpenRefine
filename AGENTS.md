@@ -16,16 +16,16 @@ This file provides important information about the OpenRefine project and reposi
 
 ### Backend
 - **Language**: Java
-- **Minimum Java Version**: JDK 11
-- **Maximum Java Version**: JDK 21
+- **Minimum Java Version**: JDK 21
+- **Maximum Java Version**: JDK 26
 - **Build Tool**: Apache Maven 
 - **Project Structure**: Multi-module Maven project
 
 ### Frontend
 - **JavaScript Libraries**: jQuery, jQuery UI, Select2, Underscore.js
 - **Internationalization**: @wikimedia/jquery.i18n
-- **Build/Package Management**: Node.js 18+ and npm 8.11.0+
-- **E2E Testing**: Cypress with Node.js 20
+- **Build/Package Management**: Node.js 24+ and npm 11.16.0+
+- **E2E Testing**: Cypress with Node.js 24
 
 ### Project Modules
 - `modules/core` - Core OpenRefine functionality
@@ -90,7 +90,7 @@ refine.bat
 ## Testing Infrastructure
 
 ### Unit Tests
-- **Framework**: JUnit (Java)
+- **Framework**: TestNG (Java)
 - **Location**: Throughout the codebase in `src/test` directories
 - **Run**: `./refine test` or `./refine server_test` or `./refine extensions_test`
 
@@ -163,16 +163,17 @@ Each extension is a Maven module with its own structure and can include:
 - Various Apache Commons libraries
 - Jetty - Embedded web server
 - SLF4J - Logging
-- TestNG/JUnit - Testing
+- TestNG - Testing
 
 ### Frontend Dependencies
 - jQuery (3.7.1)
-- jQuery UI (1.13.3)
+- jQuery UI (1.14.2)
 - jQuery Migrate (3.6.0)
-- Select2 (4.1.0-rc.0)
-- js-cookie (3.0.5)
+- Select2 (4.1.0)
+- js-cookie (3.0.8)
 - tablesorter (2.32.0)
-- underscore (1.13.7)
+- underscore (1.13.8)
+- wikimedia/jquery.i18n (1.0.9)
 
 ## Data and Configuration
 
@@ -185,7 +186,7 @@ Each extension is a Maven module with its own structure and can include:
 
 OpenRefine supports multiple languages:
 - Translation files located in `*/langs/` directories
-- Uses Weblate for community translations
+- Uses Weblate for community translations - https://hosted.weblate.org/engage/openrefine/
 - Managed through @wikimedia/jquery.i18n
 
 ## Community and Support
@@ -221,7 +222,7 @@ git clone https://github.com/OpenRefine/OpenRefine.git
 cd OpenRefine
 
 # Ensure you have required tools installed:
-# - JDK 11 or newer (up to JDK 21)
+# - JDK 21 or newer (up to JDK 26)
 # - Apache Maven
 # - Node.js 18 or newer
 
