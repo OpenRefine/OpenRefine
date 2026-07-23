@@ -58,6 +58,16 @@ If you are unfamiliar with git, GitHub, or open source development, please see [
 - make sure all tests are green before submitting your PR
 - we attempt to prioritize PR reviews, but please be patient
 
+
+## What we expect in a Pull Request
+  
+- Keep pull requests small and focused on one change.
+- Always link the related issue in the PR description.
+- Add screenshots for UI changes (if applicable).
+- Include tests for bug fixes and new features.
+- Follow the project’s coding style and guidelines.
+- Avoid unrelated changes in a single PR.
+
 ### New functionality via extensions
 
 OpenRefine supports a plugin architecture to extend its functionality. You can find more information on how to write
