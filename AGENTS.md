@@ -224,7 +224,7 @@ cd OpenRefine
 # Ensure you have required tools installed:
 # - JDK 21 or newer (up to JDK 26)
 # - Apache Maven
-# - Node.js 18 or newer
+# - Node.js 24 or newer
 
 # Build the project
 ./refine build
