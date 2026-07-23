@@ -39,12 +39,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
@@ -171,6 +173,31 @@ public class FileProjectManagerTests {
             assertThrows(IllegalArgumentException.class, () -> manager.untar(subDir, stream));
         } finally {
             tempDir.delete();
+        }
+    }
+
+    @Test
+    public void duplicateProjectTest() throws IOException, Exception {
+
+        FileProjectManager manager = new FileProjectManager(workspaceDir);
+        ProjectManager previous = ProjectManager.singleton;
+        ProjectManager.singleton = manager;
+
+        try {
+            ProjectMetadata metaOriginal = new ProjectMetadata();
+            metaOriginal.setName("Original");
+            manager.registerProject(new Project(), metaOriginal);
+            manager.saveWorkspace();
+
+            long idOriginal = manager.getProjectID("Original");
+            long idDuplicate = manager.duplicateProject(idOriginal);
+
+            Set<Long> projectIDs = manager.getProjectIds();
+
+            assertEquals(projectIDs.size(), 2, "workspace should have two projects");
+            assertNotEquals(idOriginal, idDuplicate, "duplicate must have unique id");
+        } finally {
+            ProjectManager.singleton = previous;
         }
     }
 }

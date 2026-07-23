@@ -261,6 +261,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<table class="tablesorter-blue list-table"><thead><tr>' +
       '<th></th>' +
       '<th></th>' +
+      '<th></th>' +
       '<th>'+$.i18n('core-index-open/last-mod')+'</th>' +
       '<th>'+$.i18n('core-index-open/name')+'</th>' +
       '<th>'+$.i18n('core-index-open/tags')+'</th>' + 
@@ -320,6 +321,34 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .appendTo(
         $(tr.insertCell(tr.cells.length))
       );
+
+      var duplicateProjectLink = $('<a></a>')
+        .addClass("copy-project")
+        .attr("href", "javascript:{}")
+        .attr("title", "Copy Project")
+        .html("<img src='images/copy.svg' style='width: 16px; height: 16px;' />")
+        .on('click', function() {
+
+            if(!confirm("Duplicate project?")){
+              return;
+            }
+
+            Refine.postCSRF(
+              "command/core/duplicate-project",
+              {"project" : project.id},
+              function(data){
+                if (data.code === "ok"){
+                  self._buildTagsAndFetchProjects();
+                } else {
+                  alert("Duplication failed")
+                }
+              },
+              "json"
+            );
+        })
+        .appendTo(
+          $(tr.insertCell(tr.cells.length))
+        );
       
       $('<div></div>')
       .html('<span style="display:none">' + project.modified + '</span>' + project.date)
@@ -377,9 +406,10 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         headers : {
             0: { sorter: false },
             1: { sorter: false },
-            2: { sorter: "text" }
+            2: { sorter: false },
+            3: { sorter: "text"}
         },
-        sortList: [[2,1]],
+        sortList: [[3,1]],
         widthFixed: false
     });
     self._addTagFilter();
@@ -431,7 +461,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
    
     };
     
-    var index = 3;
+    var index = 4;
     refreshMetaField(metaData.name, index); index++;
     refreshMetaTags(metaData.tags, index); index++;
     refreshMetaField(metaData.creator, index); index++;
