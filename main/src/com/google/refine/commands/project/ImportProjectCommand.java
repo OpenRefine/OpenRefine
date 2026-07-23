@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -53,6 +55,8 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
+import com.google.refine.io.FileHistoryEntryManager;
+import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
@@ -88,7 +92,20 @@ public class ImportProjectCommand extends Command {
                     }
                 }
 
-                redirect(response, request.getContextPath() + "/project?project=" + projectID);
+                StringBuilder redirectUrl = new StringBuilder(request.getContextPath() + "/project?project=" + projectID);
+
+                List<String> missingClasses = FileHistoryEntryManager.findMissingChangeClasses(
+                        ((FileProjectManager) ProjectManager.singleton).getProjectDir(projectID));
+                if (!missingClasses.isEmpty()) {
+                    logger.warn(
+                            "Imported project {} depends on classes which are not available on this instance of OpenRefine "
+                                    + "(the project might have been created with extensions which are not currently installed): {}",
+                            projectID, missingClasses);
+                    redirectUrl.append("&missing-extension-classes=")
+                            .append(URLEncoder.encode(String.join(",", missingClasses), "UTF-8"));
+                }
+
+                redirect(response, redirectUrl.toString());
             } else {
                 respondWithErrorPage(request, response, "Failed to import project. Reason unknown.", null);
             }
