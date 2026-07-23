@@ -84,7 +84,8 @@ public class FileProjectManagerTests {
                 "             \"class\" : \"com.google.refine.preference.TopList\",\n" +
                 "             \"list\" : [ ],\n" +
                 "             \"top\" : 2147483647\n" +
-                "           }\n" +
+                "           },\n" +
+                "           \"stopwords\" : \"the,a,and,of,on,in,at,by\"\n" +
                 "         }\n" +
                 "       },\n" +
                 "       \"projectIDs\" : [ 5555 ]\n" +
