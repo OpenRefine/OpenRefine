@@ -10,7 +10,7 @@ delete googleRules['valid-jsdoc'];
 
 module.exports = [
   {
-    ignores: ['out/**', 'node_modules/**', '*.md'],
+    ignores: ['out/**', 'node_modules/**', '*.md', '.pnp.cjs', '.pnp.loader.mjs'],
   },
   js.configs.recommended,
   {
