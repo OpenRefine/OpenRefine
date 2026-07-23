@@ -162,7 +162,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 5,
                 true,
                 null);
-        assertThrows(IllegalArgumentException.class, () -> withInvalidEngine.validate());
+        assertThrows(IllegalArgumentException.class, withInvalidEngine::validate);
         AbstractOperation missingBaseColumn = new ColumnAdditionByFetchingURLsOperation(engine_config,
                 null,
                 "\"https://foo.com/api?city=\"+value",
@@ -172,7 +172,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 5,
                 true,
                 null);
-        assertThrows(IllegalArgumentException.class, () -> missingBaseColumn.validate());
+        assertThrows(NullPointerException.class, missingBaseColumn::validate);
         AbstractOperation missingNewColumn = new ColumnAdditionByFetchingURLsOperation(engine_config,
                 "fruits",
                 "\"https://foo.com/api?city=\"+value",
@@ -182,7 +182,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 5,
                 true,
                 null);
-        assertThrows(IllegalArgumentException.class, () -> missingNewColumn.validate());
+        assertThrows(NullPointerException.class, missingNewColumn::validate);
         AbstractOperation missingExpression = new ColumnAdditionByFetchingURLsOperation(engine_config,
                 "fruits",
                 null,
@@ -192,7 +192,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 5,
                 true,
                 null);
-        assertThrows(IllegalArgumentException.class, () -> missingExpression.validate());
+        assertThrows(NullPointerException.class, missingExpression::validate);
     }
 
     @Test

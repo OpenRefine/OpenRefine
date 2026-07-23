@@ -119,13 +119,13 @@ public class ColumnSplitOperationTests extends RefineTest {
     public void testValidate() {
         AbstractOperation op = new ColumnSplitOperation(invalidEngineConfig, "foo", false, false, ",",
                 false, 0);
-        assertThrows(IllegalArgumentException.class, () -> op.validate());
-        AbstractOperation noColumnName = new ColumnSplitOperation(EngineConfig.reconstruct("{}"), null, false, false, ",",
+        assertThrows(IllegalArgumentException.class, op::validate);
+        AbstractOperation noColumnName = new ColumnSplitOperation(EngineConfig.deserialize("{}"), null, false, false, ",",
                 false, 0);
-        assertThrows(IllegalArgumentException.class, () -> noColumnName.validate());
+        assertThrows(NullPointerException.class, noColumnName::validate);
         AbstractOperation lengths = new ColumnSplitOperation(new EngineConfig(Collections.emptyList(), Mode.RowBased), "hello", false,
                 false, null);
-        assertThrows(IllegalArgumentException.class, () -> lengths.validate());
+        assertThrows(NullPointerException.class, lengths::validate);
     }
 
     @Test

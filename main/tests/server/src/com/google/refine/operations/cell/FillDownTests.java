@@ -125,7 +125,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testValidate() {
         assertThrows(IllegalArgumentException.class, () -> new FillDownOperation(invalidEngineConfig, "bar").validate());
-        assertThrows(IllegalArgumentException.class, () -> new FillDownOperation(defaultEngineConfig, null).validate());
+        assertThrows(NullPointerException.class, () -> new FillDownOperation(defaultEngineConfig, null).validate());
     }
 
     @Test

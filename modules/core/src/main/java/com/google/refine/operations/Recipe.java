@@ -45,7 +45,7 @@ public class Recipe {
     }
 
     /**
-     * Checks that all operations in this recipe are valid (non null, known operations with valid parameters).
+     * Checks that all operations in this recipe are valid (non-null, known operations with valid parameters).
      */
     public void validate() {
         int index = 0;
@@ -58,7 +58,7 @@ public class Recipe {
             }
             try {
                 op.validate();
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | NullPointerException | IndexOutOfBoundsException e) {
                 throw new RecipeValidationException(index, e.getMessage());
             }
         }
