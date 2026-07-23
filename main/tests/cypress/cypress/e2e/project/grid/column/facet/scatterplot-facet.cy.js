@@ -99,41 +99,40 @@ describe(__filename, function () {
       const projectId = url.split('=').slice(-1)[0];
       const openRefineUrl = Cypress.env('OPENREFINE_URL');
 
-      cy.request(openRefineUrl + '/command/core/get-csrf-token').then(
-        (tokenResp) => {
-          const csrfToken = tokenResp.body.token;
+      cy.request(openRefineUrl + '/command/core/get-csrf-token').then((tokenResp) => {
+        const csrfToken = tokenResp.body.token;
 
-          getScatterplotFilteredCount(projectId, openRefineUrl, csrfToken, {
-            from_x: 0.0,
-            to_x: 0.5,
-            from_y: 0.0,
-            to_y: 1.0,
-            dim_x: 'lin',
-            dim_y: 'lin',
-          }).as('noRotationCount');
+        getScatterplotFilteredCount(projectId, openRefineUrl, csrfToken, {
+          from_x: 0.0,
+          to_x: 0.5,
+          from_y: 0.0,
+          to_y: 1.0,
+          dim_x: 'lin',
+          dim_y: 'lin',
+        }).as('noRotationCount');
 
-          getScatterplotFilteredCount(projectId, openRefineUrl, csrfToken, {
-            from_x: 0.0,
-            to_x: 0.5,
-            from_y: 0.0,
-            to_y: 1.0,
-            dim_x: 'log',
-            dim_y: 'log',
-          }).as('logCount');
+        getScatterplotFilteredCount(projectId, openRefineUrl, csrfToken, {
+          from_x: 0.0,
+          to_x: 0.5,
+          from_y: 0.0,
+          to_y: 1.0,
+          dim_x: 'log',
+          dim_y: 'log',
+        }).as('logCount');
 
-          getScatterplotFilteredCount(projectId, openRefineUrl, csrfToken, {
-            from_x: 0.0,
-            to_x: 0.5,
-            from_y: 0.0,
-            to_y: 1.0,
-            dim_x: 'lin',
-            dim_y: 'lin',
-            r: 'cw',
-          }).as('cwCount');
-        }
-      );
+        getScatterplotFilteredCount(projectId, openRefineUrl, csrfToken, {
+          from_x: 0.0,
+          to_x: 0.5,
+          from_y: 0.0,
+          to_y: 1.0,
+          dim_x: 'lin',
+          dim_y: 'lin',
+          r: 'cw',
+        }).as('cwCount');
+      });
     });
 
+    /* eslint no-invalid-this: "warn"*/
     cy.then(function () {
       // With CW rotation or log scale, the same rectangular pixel selection maps
       // to a different region of the data space, so the filtered count differs
@@ -142,5 +141,4 @@ describe(__filename, function () {
       expect(this.logCount).to.equal(29);
     });
   });
-
 });
