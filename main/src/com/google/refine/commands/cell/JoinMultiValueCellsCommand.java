@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.cell;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +64,7 @@ public class JoinMultiValueCellsCommand extends Command {
 
             AbstractOperation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
             op.validate();
-            Process process = op.createProcess(project, new Properties());
+            Process process = op.createProcess(project);
 
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
