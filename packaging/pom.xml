@@ -330,7 +330,7 @@
                 </exec>
 
                 <!-- Codesign JRE -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign" failonerror="true">
                     <arg value="--entitlements" />
                     <arg value="../Entitlements.plist" />
                     <arg value="--sign"/>
@@ -344,7 +344,7 @@
                 </exec>
 
                 <!-- Codesign jars with native code in them -->
-                <exec executable="/bin/bash" os="Mac OS X" dir="${project.build.directory}/${mac.build.directory}">
+                <exec executable="/bin/bash" os="Mac OS X" dir="${project.build.directory}/${mac.build.directory}"  failonerror="true">
                     <arg value="${basedir}/apple_certs/codesign.sh" />
                     <arg value="OpenRefine.app" />
                     <arg value="${mac.signing.identity}" />
@@ -352,7 +352,7 @@
                 </exec>
 
                 <!-- Codesign app -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign" failonerror="true">
                     <arg value="--entitlements" />
                     <arg value="../Entitlements.plist" />
                     <arg value="--sign"/>
@@ -366,7 +366,7 @@
                 </exec>
 
                 <!-- Create DMG (Mac OS X) -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="python3">
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="python3" failonerror="true">
                     <arg value="-m"/>
                     <arg value="dmgbuild"/>
                     <arg value="-s"/>
@@ -397,7 +397,7 @@
                 </exec>
 
                 <!-- Send DMG file to Apple's notarization service -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun" failonerror="true">
                     <arg value="notarytool"/>
                     <arg value="submit"/>
                     <arg value="${mac.dmg.path}"/>
@@ -413,7 +413,7 @@
                 </exec>
 
                 <!-- Staple the notarization ticket to the DMG bundle -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun" failonerror="true">
                     <arg value="stapler"/>
                     <arg value="staple"/>
                     <arg value="${mac.dmg.path}"/>
@@ -536,7 +536,7 @@
           <version>1.2.0</version>
           <dependencies>
             <dependency>
-              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
+              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
