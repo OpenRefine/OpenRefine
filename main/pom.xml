@@ -124,6 +124,9 @@
             <fileset>
               <directory>webapp/WEB-INF/lib</directory>
             </fileset>
+            <fileset>
+              <directory>webapp/WEB-INF/classes</directory>
+            </fileset>
           </filesets>
         </configuration>
       </plugin>
