@@ -8,7 +8,7 @@
     "database-source/alert-user": "Du måste ange en användare för databasen",
     "database-source/alert-password": "Du måste ange ett lösenord för databasen",
     "database-source/alert-connection-name": "Du måste ange ett anslutningsnamn",
-    "database-source/alert-initial-database": "Du måste ange en första databas",
+    "database-source/alert-initial-database": "Du måste ange en startdatabas",
     "database-source/alert-query": "Du måste ange en giltig fråga",
     "database-source/alert-invalid-query-select": "Frågan måste börja med nyckelordet SELECT",
     "database-source/form-validation-failure": "Formuläret för den nya anslutningen är ogiltigt.",
