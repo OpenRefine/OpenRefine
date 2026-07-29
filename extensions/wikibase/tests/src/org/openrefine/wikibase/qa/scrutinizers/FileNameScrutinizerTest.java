@@ -241,4 +241,16 @@ public class FileNameScrutinizerTest extends ScrutinizerTest {
 
         assertWarningsRaised(FileNameScrutinizer.uploadNewFileVersionType);
     }
+
+    @Test
+    public void testMatchedMediaInfoWithoutFilePath() {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(TestingData.matchedMid)
+                .addFileName("Matched.png")
+                .addContributingRowId(123)
+                .build();
+
+        scrutinize(edit);
+
+        assertNoWarningRaised();
+    }
 }

@@ -70,7 +70,7 @@ public class FileNameScrutinizer extends EditScrutinizer {
             return;
         }
 
-        if (edit.isMatched() && !edit.getFilePath().isEmpty()) {
+        if (edit.isMatched() && edit.getFilePath() != null && !edit.getFilePath().isEmpty()) {
             String normalizedFileName = normalizeFileNameSpaces(fileName);
             matchedFileNames.add(normalizedFileName);
             QAWarning issue = new QAWarning(uploadNewFileVersionType, null,
