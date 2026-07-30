@@ -226,27 +226,13 @@ public class CsvExporterTests extends RefineTest {
 
     @Test
     void exportLegacyExporter() throws IOException {
+        CreateGrid(1, 1);
         WriterExporter exporter = new LegacyTestExporter();
         exporter.export(project, options, engine, writer);
-
+        assertEqualsSystemLineEnding(writer.toString(), "column0\n" +
+                "row0cell0\n");
     }
 
-    // all date type cells are in unified format
-    /**
-     * @Ignore
-     * @Test public void exportDateColumnsPreVersion28(){ CreateGrid(1,2); Calendar calendar = Calendar.getInstance();
-     *       Date date = new Date();
-     *
-     *       when(options.getProperty("printColumnHeader")).thenReturn("false"); project.rows.get(0).cells.set(0, new
-     *       Cell(calendar, null)); project.rows.get(0).cells.set(1, new Cell(date, null));
-     *
-     *       try { SUT.export(project, options, engine, writer); } catch (IOException e) { Assert.fail(); }
-     *
-     *       String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
-     *       ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
-     *
-     *       assertEqualsSystemLineEnding(writer.toString(), expectedOutput); }
-     */
     // helper methods
 
     protected void CreateColumns(int noOfColumns) {

@@ -109,7 +109,11 @@ abstract public class CustomizableTabularExporterUtilities {
 
         JsonNode optionsTemp = null;
         if (optionsString != null) {
-            optionsTemp = ParsingUtilities.mapper.readTree(optionsString);
+            try {
+                optionsTemp = ParsingUtilities.mapper.readTree(optionsString);
+            } catch (IOException e) {
+                // Ignore and keep options null.
+            }
         }
         final JsonNode options = optionsTemp;
 
