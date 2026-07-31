@@ -740,19 +740,6 @@ public class StandardReconConfig extends ReconConfig {
         return common / longWords.size();
     }
 
-//    static final protected Set<String> s_stopWords = new HashSet<String>();
-//    static {
-//        // FIXME: This is English specific - needs i18n
-//        s_stopWords.add("the");
-//        s_stopWords.add("a");
-//        s_stopWords.add("and");
-//        s_stopWords.add("of");
-//        s_stopWords.add("on");
-//        s_stopWords.add("in");
-//        s_stopWords.add("at");
-//        s_stopWords.add("by");
-//    }
-
     static protected Set<String> getStopWords() {
 
         Object prefValue = (ProjectManager.singleton.getPreferenceStore().get("stopwords"));
