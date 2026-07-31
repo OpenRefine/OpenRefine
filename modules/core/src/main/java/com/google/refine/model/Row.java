@@ -107,6 +107,12 @@ public class Row implements HasFields {
         return row;
     }
 
+    @JsonIgnore
+    @Override
+    public List<String> getFieldNames() {
+        return List.of(FLAGGED, STARRED, "cells", "record");
+    }
+
     @Override
     public Object getField(String name, Properties bindings) {
         if (FLAGGED.equals(name)) {
