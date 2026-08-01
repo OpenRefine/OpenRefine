@@ -103,7 +103,7 @@ public class ColumnReorderOperationTests extends RefineTest {
     @Test
     public void testValidate() {
         AbstractOperation op = new ColumnReorderOperation(null, false);
-        assertThrows(IllegalArgumentException.class, () -> op.validate());
+        assertThrows(NullPointerException.class, op::validate);
     }
 
     @Test

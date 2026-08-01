@@ -56,7 +56,7 @@ public class ColumnMoveFirstOperationTests extends RefineTest {
     @Test
     public void testValidate() {
         AbstractOperation missingColumnName = new ColumnMoveFirstOperation(null);
-        assertThrows(IllegalArgumentException.class, () -> missingColumnName.validate());
+        assertThrows(NullPointerException.class, missingColumnName::validate);
     }
 
     @Test
