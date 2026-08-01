@@ -110,7 +110,7 @@ public class Row implements HasFields {
     @JsonIgnore
     @Override
     public List<String> getFieldNames() {
-        return List.of(FLAGGED, STARRED, "cells", "record");
+        return List.of(FLAGGED, STARRED);
     }
 
     @Override
