@@ -82,7 +82,7 @@
     <butterfly.version>1.2.6</butterfly.version>
     <slf4j.version>2.0.18</slf4j.version>
     <log4j.version>2.26.1</log4j.version>
-    <jetty.version>12.1.7</jetty.version>
+    <jetty.version>12.1.11</jetty.version>
     <okhttp.version>5.4.0</okhttp.version>
     <okio.version>3.18.0</okio.version>
     <jena.version>6.2.0</jena.version>
