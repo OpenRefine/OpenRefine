@@ -78,7 +78,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Set up Java ${{ matrix.java }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v5.6.0
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -155,7 +155,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Set up Java 26
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v5.6.0
         with:
           distribution: 'temurin'
           java-version: 26
