@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -127,7 +126,7 @@ public class ApplyOperationsCommand extends Command {
             // Run all operations in sequence
             List<HistoryEntry> entries = new ArrayList<>(recipe.getOperations().size());
             for (AbstractOperation operation : recipe.getOperations()) {
-                Process process = operation.createProcess(project, new Properties());
+                Process process = operation.createProcess(project);
                 HistoryEntry entry = project.processManager.queueProcess(process);
                 if (entry != null) {
                     entries.add(entry);

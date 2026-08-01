@@ -29,7 +29,6 @@ import static org.openrefine.wikibase.commands.CommandUtilities.respondError;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -79,7 +78,7 @@ public class SaveWikibaseSchemaCommand extends Command {
             }
 
             AbstractOperation op = new SaveWikibaseSchemaOperation(schema);
-            Process process = op.createProcess(project, new Properties());
+            Process process = op.createProcess(project);
 
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
