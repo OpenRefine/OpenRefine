@@ -50,10 +50,12 @@ import mockwebserver3.SocketEffect;
 import okhttp3.HttpUrl;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -676,5 +678,71 @@ public class StandardReconConfigTests extends RefineTest {
         Recon recon = stub.createNewRecon(2384738L);
         stub.computeFeatures(recon, null);
         assertNotNull(recon.features);
+    }
+
+    @AfterMethod
+    public void resetStopWordsPreference() {
+        ProjectManager.singleton.getPreferenceStore().put("stopwords", null);
+    }
+
+    @Test
+    public void testBreakWordsUsesDefaultStopWordsWhenPreferenceUnset() {
+        ProjectManager.singleton.getPreferenceStore().put("stopwords", null);
+
+        Set<String> result = StandardReconConfig.breakWords("The quick fox jumps on the log");
+
+        assertTrue(!result.contains("the"));
+        assertTrue(!result.contains("on"));
+        assertTrue(result.contains("quick"));
+        assertTrue(result.contains("fox"));
+        assertTrue(result.contains("jumps"));
+        assertTrue(result.contains("log"));
+    }
+
+    @Test
+    public void testBreakWordsUsesCustomPreference() {
+        ProjectManager.singleton.getPreferenceStore().put("stopwords", " le , la , et ");
+
+        Set<String> result = StandardReconConfig.breakWords("Le chat et la souris");
+
+        assertTrue(result.contains("chat"));
+        assertTrue(result.contains("souris"));
+
+        assertTrue(!result.contains("le"));
+        assertTrue(!result.contains("et"));
+        assertTrue(!result.contains("la"));
+    }
+
+    @Test
+    public void testGetStopWordsIsCaseInsensitiveToPreference() {
+        ProjectManager.singleton.getPreferenceStore().put("stopwords", "The,A,And,Of");
+
+        Set<String> stopWords = StandardReconConfig.getStopWords();
+
+        assertTrue(stopWords.contains("the"));
+        assertTrue(stopWords.contains("a"));
+        assertTrue(stopWords.contains("and"));
+        assertTrue(stopWords.contains("of"));
+    }
+
+    @Test
+    public void testGetStopWordsTrimsWhitespace() {
+        ProjectManager.singleton.getPreferenceStore().put("stopwords", " the , a , and ");
+
+        Set<String> stopWords = StandardReconConfig.getStopWords();
+
+        assertEquals(stopWords.size(), 3);
+        assertTrue(stopWords.contains("the"));
+        assertTrue(stopWords.contains("a"));
+        assertTrue(stopWords.contains("and"));
+    }
+
+    @Test
+    public void testGetStopWordsHandlesEmptyPreference() {
+        ProjectManager.singleton.getPreferenceStore().put("stopwords", "");
+
+        Set<String> stopWords = StandardReconConfig.getStopWords();
+
+        assertTrue(stopWords.isEmpty());
     }
 }
