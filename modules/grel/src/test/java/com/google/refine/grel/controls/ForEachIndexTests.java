@@ -29,13 +29,17 @@ package com.google.refine.grel.controls;
 
 import static org.testng.Assert.fail;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.testng.annotations.Test;
 
+import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.expr.WrappedRow;
 import com.google.refine.grel.GrelTestBase;
+import com.google.refine.model.Project;
 
 public class ForEachIndexTests extends GrelTestBase {
 
@@ -91,6 +95,32 @@ public class ForEachIndexTests extends GrelTestBase {
         parseEval(bindings, test2);
         String[] test3 = { "forEachIndex('" + json + "'.parseJson(), k, v, k.toNumber()==v.id).join(',')", "true,true,true" };
         parseEval(bindings, test3);
+    }
+
+
+    @Test
+    public void testForEachHasFields() throws ParsingException {
+
+        Project project = createProject("test project",
+                new String[] { "col1", "col2" },
+                new Serializable[][] {
+                        { "row1col1", "row1col2" },
+                        { "", "row2col2" },
+                });
+        bindings = ExpressionUtils.createBindings(project);
+
+        bindings.put("k", "");
+        bindings.put("v", "");
+        bindings.put("row", project.rows.getFirst());
+        parseEval(bindings, new String[] { "forEachIndex(row, k, v, k).sort().join(',')", "flagged,starred"} );
+        bindings.put("row", new WrappedRow(project, 0, project.rows.getFirst()));
+        parseEval(bindings, new String[] { "forEachIndex(row, k, v, k).sort().join(',')", "cells,columnNames,flagged,index,record,starred"} );
+        parseEval(bindings, new String[] { "forEachIndex(row.cells, k, v, k).sort().join(',')", "col1,col2"} ); // CellTuple
+        parseEval(bindings, new String[] { "forEachIndex(row.cells.col1, k, v, k).sort().join(',')", "value"} );
+        parseEval(bindings, new String[] { "forEachIndex(row.record, k, v, k).sort().join(',')", "cells,fromRowIndex,index,rowCount,toRowIndex"} );
+        parseEval(bindings, new String[] { "forEachIndex(row.record.cells, k, v, k).sort().join(',')", "col1,col2"} ); // RecordCells
+        parseEval(bindings, new String[] { "forEachIndex(row.record.cells.col2, k, v, k).sort().join(',')", "errorMessage,recon,value"} );
+        // TODO: This covers the basics, but could add WrappedCell, WrappedRecord, Recon, ReconCandidate, although the setup is kind of complex
     }
 
     @Test
