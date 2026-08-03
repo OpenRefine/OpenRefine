@@ -16,15 +16,19 @@
     <rootdir>${basedir}/..</rootdir>
     <webapp.dir>../main/webapp</webapp.dir>
     <webapp.target>../main/target</webapp.target>
-    <embedded.jre.version>11</embedded.jre.version>
+    <embedded.jre.version>${java.minversion}</embedded.jre.version>
 
+      <!-- Adoptioum JREs x64 (undocumented x86_64 works too), aarch64; mvn os.arch x86_64, aarch64 -->
     <mac.jre.path>${project.build.directory}/mac_jre</mac.jre.path>
     <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/x64/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
     <mac.build.directory>OpenRefine ${project.version}</mac.build.directory>
     <mac.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</mac.webapp.dir>
     <mac.icon.path>../graphics/icon/openrefine.icns</mac.icon.path>
     <mac.dmg.path>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</mac.dmg.path>
-    <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>
+
+<!--    <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>-->
+    <mac.signing.identity>OpenRefine Code Signing</mac.signing.identity>
+
     <!-- Apple Notarization settings -->
     <apple.notarization.timeout>15m</apple.notarization.timeout>
 
@@ -38,7 +42,10 @@
     <profile>
       <id>default</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <property>
+          <!-- Always active unless explicitly disabled -->
+          <name>!skipDefaultProfile</name>
+        </property>
       </activation>
       <build>
         <plugins>
@@ -114,6 +121,90 @@
         </plugins>
       </build>
     </profile>
+      <profile>
+          <id>mac</id>
+          <activation>
+              <os>
+                  <family>mac</family>
+              </os>
+          </activation>
+      </profile>
+
+      <profile>
+          <id>mac_x86_64</id>
+          <activation>
+              <os>
+                  <family>mac</family>
+                  <arch>x86_64</arch>
+              </os>
+          </activation>
+      </profile>
+      <profile>
+          <id>mac_aarch64</id>
+          <activation>
+              <os>
+                  <family>mac</family>
+                  <arch>aarch64</arch>
+              </os>
+          </activation>
+      </profile>
+      <profile>
+          <id>notarize</id>
+          <activation>
+              <property>
+                  <name>apple.notarization.username</name>
+              </property>
+          </activation>
+          <properties>
+              <mac.codesign.skip>false</mac.codesign.skip>
+          </properties>
+          <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>notarize-dmg</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="notarizeDMG" description="Notarize DMG">
+
+                                <!-- Send DMG file to Apple's notarization service -->
+                                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                                    <arg value="notarytool"/>
+                                    <arg value="submit"/>
+                                    <arg value="${mac.dmg.path}"/>
+                                    <arg value="--apple-id"/>
+                                    <arg value="${apple.notarization.username}"/>
+                                    <arg value="--password"/>
+                                    <arg value="${apple.notarization.password}"/>
+                                    <arg value="--team-id"/>
+                                    <arg value="${apple.notarization.team.id}"/>
+                                    <arg value="--wait"/>
+                                    <arg value="--timeout"/>
+                                    <arg value="${apple.notarization.timeout}"/>
+                                </exec>
+
+                                <!-- Staple the notarization ticket to the DMG bundle -->
+                                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                                    <arg value="stapler"/>
+                                    <arg value="staple"/>
+                                    <arg value="${mac.dmg.path}"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+
+
+                </executions>
+              </plugin>
+            </plugins>
+          </build>
+      </profile>
   </profiles>
 
   <build>
@@ -254,6 +345,7 @@
               <target name="downloadJRE" description="Download JRE">
                 <!-- Download JRE (Mac OS X) -->
                 <exec dir="${project.build.directory}" executable="curl">
+                  <arg line="-S"/>
                   <arg line="-L"/>
                   <arg line="-C"/>
                   <arg line="-"/>
@@ -273,15 +365,14 @@
                 </exec>
 
                 <!-- Unzip Mac JRE archive -->
-                <mkdir dir="${project.build.directory}/mac_jre"/>
+                <mkdir dir="${mac.jre.path}"/>
                 <exec dir="${project.build.directory}" executable="tar">
                   <arg line="-zxf"/>
                   <arg line="mac_jre.tar.gz"/>
-                  <arg line="-C &quot;mac_jre&quot; --strip-components=1"/>
+                  <arg line="-C &quot;${mac.jre.path}&quot; --strip-components=1"/>
                 </exec>
 
                 <!-- Unzip Windows JRE archive -->
-                <!-- The Windows JRE is downloaded as a Zip file so we cannot untar it. -->
                 <!-- We use the mapper to get rid of the root directory whose name is unpredictable -->
                 <mkdir dir="${project.build.directory}/windows_jre"/>
                 <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
@@ -299,7 +390,7 @@
             <configuration>
               <target name="generateDMG" description="Generate DMG">
 
-                <!-- Remove manpages from JRE as they are not accessible anyway, and prevent us from codesigning -->
+                <!-- Remove man pages from JRE as they are not accessible anyway, and prevent us from codesigning -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
                     <arg line="-r"/>
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/man&quot;"/>
@@ -320,7 +411,7 @@
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
                     <arg value="-f"/>
                     <arg value="${mac.dmg.path}"/>
-		</exec>
+                </exec>
 
                 <!-- Remove quarantine bit set recursively on JRE -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
@@ -395,33 +486,10 @@
                     <arg value="${mac.build.directory}"/>
                     <arg value="${mac.build.directory}"/>
                 </exec>
-
-                <!-- Send DMG file to Apple's notarization service -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
-                    <arg value="notarytool"/>
-                    <arg value="submit"/>
-                    <arg value="${mac.dmg.path}"/>
-                    <arg value="--apple-id"/>
-                    <arg value="${apple.notarization.username}"/>
-                    <arg value="--password"/>
-                    <arg value="${apple.notarization.password}"/>
-                    <arg value="--team-id"/>
-                    <arg value="${apple.notarization.team.id}"/>
-                    <arg value="--wait"/>
-                    <arg value="--timeout"/>
-                    <arg value="${apple.notarization.timeout}"/>
-                </exec>
-
-                <!-- Staple the notarization ticket to the DMG bundle -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
-                    <arg value="stapler"/>
-                    <arg value="staple"/>
-                    <arg value="${mac.dmg.path}"/>
-                </exec>
+                  <!-- Notarization is done separately in the notarize profile -->
               </target>
             </configuration>
           </execution>
-
         </executions>
       </plugin>
       <plugin>
@@ -536,7 +604,7 @@
           <version>1.2.0</version>
           <dependencies>
             <dependency>
-              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
+              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
@@ -554,6 +622,7 @@
             <buildDirectory>${project.build.directory}/${mac.build.directory}</buildDirectory>
             <iconFile>${mac.icon.path}</iconFile>
             <generateDiskImageFile>false</generateDiskImageFile>
+              <!-- FIXME: This looks obsolete -->
             <jvmVersion>1.8</jvmVersion>
             <jrePath>${mac.jre.path}</jrePath>
             <jvmOptions>
