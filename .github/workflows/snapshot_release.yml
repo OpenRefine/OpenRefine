@@ -42,7 +42,7 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Set up Java 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v5.6.0
         with:
           distribution: 'temurin'
           java-version: 21
@@ -128,7 +128,7 @@ jobs:
         echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
 
     - name: Set up Java 21
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v5.6.0
       with:
         distribution: 'temurin'
         java-version: 21
@@ -190,7 +190,7 @@ jobs:
     - uses: actions/checkout@v7
 
     - name: Set up Java 21
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v5.6.0
       with:
         distribution: 'temurin'
         java-version: 21
@@ -202,7 +202,7 @@ jobs:
         gpg-passphrase: GPG_PASSPHRASE
 
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: '3' 
 
