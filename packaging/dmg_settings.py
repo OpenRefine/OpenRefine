@@ -2,17 +2,10 @@ import os.path
 import plistlib
 
 #
-# Example settings file for dmgbuild
+# Settings file for dmgbuild of OpenRefine app
 #
-
-# Use like this: dmgbuild -s settings.py "Test Volume" test.dmg
-
-# You can actually use this file for your own application (not just TextEdit)
-# by doing e.g.
-#
-#   dmgbuild -s settings.py -D app=/path/to/My.app "My Application" MyApp.dmg
-
-# .. Useful stuff ..............................................................
+# Invoked by Maven from packaging/pom.xml using a command like:
+#   dmgbuild -s dmg_settings.py -D app=${mac.build.directory}/OpenRefine.app "OpenRefine" path.to.dmg
 
 application = defines.get("app", "OpenRefine.app")  # noqa: F821
 appname = os.path.basename(application)
