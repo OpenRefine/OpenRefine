@@ -75,7 +75,7 @@ public class DataExtensionChangeTest extends RefineTest {
         lineReader.readLine();
         Change change = DataExtensionChange.load(lineReader, pool);
         change.apply(project);
-        assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
+        assertEquals(project.rows.get(0).getCell(1).value, "Wikimedia content project");
     }
 
     @Test
@@ -89,6 +89,6 @@ public class DataExtensionChangeTest extends RefineTest {
         lineReader.readLine();
         Change change = DataExtensionChange.load(lineReader, pool);
         change.apply(project);
-        assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
+        assertEquals(project.rows.get(0).getCell(1).value, "Wikimedia content project");
     }
 }

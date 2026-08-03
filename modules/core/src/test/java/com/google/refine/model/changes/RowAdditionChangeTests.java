@@ -41,7 +41,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -52,6 +51,7 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
 import com.google.refine.history.Change;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -187,7 +187,7 @@ public class RowAdditionChangeTests extends RefineTest {
     // After prepend save, serialization behaves as expected
     public void testPrependSaveSerialization() throws IOException {
         Writer writer = new StringWriter();
-        change.save(writer, new Properties());
+        change.save(writer, SaveOptions.DEFAULT);
         String expected = "index=0\n" +
                 "count=2\n" +
                 "{\"starred\":false,\"flagged\":false,\"cells\":[]}\n" +

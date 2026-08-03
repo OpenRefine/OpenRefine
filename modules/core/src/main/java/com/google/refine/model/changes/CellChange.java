@@ -36,10 +36,10 @@ package com.google.refine.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.Properties;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -78,7 +78,7 @@ public class CellChange implements Change {
     }
 
     @Override
-    public void save(Writer writer, Properties options) throws IOException {
+    public void save(Writer writer, SaveOptions options) throws IOException {
         writer.write("row=");
         writer.write(Integer.toString(row));
         writer.write('\n');

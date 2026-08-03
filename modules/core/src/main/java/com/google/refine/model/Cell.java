@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 import com.google.refine.util.StringUtils;
@@ -154,12 +155,12 @@ public class Cell implements HasFields, Serializable {
         return null;
     }
 
-    public void save(Writer writer, Properties options) {
+    public void save(Writer writer, SaveOptions options) {
+        Pool pool = options.getPool();
+        if (pool != null && recon != null) {
+            pool.pool(recon);
+        }
         try {
-            Pool pool = (Pool) options.get("pool");
-            if (pool != null && recon != null) {
-                pool.pool(recon);
-            }
             ParsingUtilities.saveWriter.writeValue(writer, this);
         } catch (IOException e) {
             logger.error("Error writing cell to writer", e);
