@@ -19,11 +19,11 @@
     <embedded.jre.version>11</embedded.jre.version>
 
     <mac.jre.path>${project.build.directory}/mac_jre</mac.jre.path>
-    <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/x64/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
+    <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/${os.arch}/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
     <mac.build.directory>OpenRefine ${project.version}</mac.build.directory>
     <mac.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</mac.webapp.dir>
     <mac.icon.path>../graphics/icon/openrefine.icns</mac.icon.path>
-    <mac.dmg.path>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</mac.dmg.path>
+    <mac.dmg.path>${project.build.directory}/${project.build.finalName}-mac-${os.arch}-${project.version}.dmg</mac.dmg.path>
     <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>
     <!-- Apple Notarization settings -->
     <apple.notarization.timeout>15m</apple.notarization.timeout>
@@ -114,6 +114,33 @@
         </plugins>
       </build>
     </profile>
+      <profile>
+          <id>mac_x86_64</id>
+          <activation>
+              <os>
+                  <family>mac</family>
+                  <arch>x86_64</arch>
+              </os>
+          </activation>
+      </profile>
+      <profile>
+          <id>mac_arm64</id>
+          <activation>
+              <os>
+                  <family>mac</family>
+                  <arch>arm64</arch>
+              </os>
+          </activation>
+      </profile>
+      <profile>
+          <id>mac_aarch64</id>
+          <activation>
+              <os>
+                  <family>mac</family>
+                  <arch>aarch64</arch>
+              </os>
+          </activation>
+      </profile>
   </profiles>
 
   <build>
