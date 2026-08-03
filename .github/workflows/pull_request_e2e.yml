@@ -19,19 +19,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+
+      - name: Enable corepack
+        run: corepack enable
+
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: '20'
-          cache: 'yarn'
-          cache-dependency-path: main/tests/cypress/yarn.lock
+          node-version: 'lts/*'
+          package-manager-cache: false
+
       - name: Install test dependencies
         working-directory: main/tests/cypress
         run: |
-          npm install --global yarn
           yarn install --frozen-lockfile
-        env:
-          CYPRESS_INSTALL_BINARY: '0'
       - name: Check Cypress test formatting and linting
         working-directory: main/tests/cypress
         run: yarn lint
@@ -42,12 +43,23 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v7
+
+      - name: Enable corepack
+        run: corepack enable
+
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: 'lts/*'
+          package-manager-cache: false
+
+      - name: Install test dependencies
+        run: |
+          cd ./main/tests/cypress
+          yarn install --frozen-lockfile
+
       - id: set-matrix
-        run: npm install --save glob@8.1.0 && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
+        run: npm install glob && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
         env:
           browsers: chrome
   e2e_test:
@@ -66,13 +78,18 @@ jobs:
           java-version: 21
           cache: 'maven'
 
+      # TODO: Cache build artefacts
       - name: Build OpenRefine
         run: ./refine build
+
+      - name: Enable corepack
+        run: corepack enable
 
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: 'lts/*'
+          package-manager-cache: false
 
       - name: Restore Tests dependency cache
         uses: actions/cache@v6
@@ -82,15 +99,14 @@ jobs:
             ~/.cache
             **/node_modules
             !~/cache/exclude
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn
+            ${{ runner.os }}-yarn-
 
       - name: Install test dependencies
         run: |
           cd ./main/tests/cypress
-          npm i -g yarn
-          yarn install
+          yarn install --frozen-lockfile
 
       - name: Test with Cypress on ${{ matrix.browser }}
         run: |
