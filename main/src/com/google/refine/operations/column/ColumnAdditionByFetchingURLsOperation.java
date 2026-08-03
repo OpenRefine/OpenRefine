@@ -73,6 +73,7 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.ExpressionRenamingUtils;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationDescription;
 import com.google.refine.process.LongRunningProcess;
@@ -230,18 +231,17 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
     @Override
     public ColumnAdditionByFetchingURLsOperation renameColumns(Map<String, String> newColumnNames) {
-        String renamedExpression;
-        try {
-            Evaluable evaluable = MetaParser.parse(_urlExpression);
-            Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
-            renamedExpression = renamedEvaluable.getFullSource();
-        } catch (ParsingException e) {
+        Optional<String> renamedExpression = ExpressionRenamingUtils.renameExpressionIfNeeded(
+                _urlExpression,
+                Optional.of(_baseColumnName),
+                newColumnNames);
+        if (renamedExpression.isEmpty()) {
             return this;
         }
         return new ColumnAdditionByFetchingURLsOperation(
                 _engineConfig.renameColumnDependencies(newColumnNames),
                 newColumnNames.getOrDefault(_baseColumnName, _baseColumnName),
-                renamedExpression,
+                renamedExpression.get(),
                 _onError,
                 newColumnNames.getOrDefault(_newColumnName, _newColumnName),
                 _columnInsertIndex,

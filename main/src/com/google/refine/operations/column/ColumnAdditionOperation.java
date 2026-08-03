@@ -65,6 +65,7 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.ExpressionRenamingUtils;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationDescription;
 
@@ -161,18 +162,17 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
 
     @Override
     public AbstractOperation renameColumns(Map<String, String> newColumnNames) {
-        String renamedExpression;
-        try {
-            Evaluable evaluable = MetaParser.parse(_expression);
-            Evaluable renamedEvaluable = evaluable.renameColumnDependencies(newColumnNames);
-            renamedExpression = renamedEvaluable.getFullSource();
-        } catch (ParsingException e) {
+        Optional<String> renamedExpression = ExpressionRenamingUtils.renameExpressionIfNeeded(
+                _expression,
+                Optional.of(_baseColumnName),
+                newColumnNames);
+        if (renamedExpression.isEmpty()) {
             return this;
         }
         return new ColumnAdditionOperation(
                 getEngineConfig().renameColumnDependencies(newColumnNames),
                 newColumnNames.getOrDefault(_baseColumnName, _baseColumnName),
-                renamedExpression,
+                renamedExpression.get(),
                 _onError,
                 newColumnNames.getOrDefault(_newColumnName, _newColumnName),
                 _columnInsertIndex);

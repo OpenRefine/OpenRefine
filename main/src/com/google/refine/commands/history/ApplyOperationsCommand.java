@@ -93,6 +93,9 @@ public class ApplyOperationsCommand extends Command {
             if (renamesJson != null) {
                 renames = ParsingUtilities.mapper.readValue(renamesJson, new TypeReference<Map<String, String>>() {
                 });
+                renames = renames.entrySet().stream()
+                        .filter(entry -> !entry.getKey().equals(entry.getValue()))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             }
 
             Recipe recipe = ParsingUtilities.mapper.readValue(jsonString, Recipe.class);
