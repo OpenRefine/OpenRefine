@@ -43,6 +43,7 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 
 // TODO: Do we want to simplify this and only support StreamExporter (stream is more general)
+// TODO: Also re-review / rethink this design to make sure it's sound
 // or would it be general to provide the exporter with the HttpServletResponse from which we're currently getting the stream/writer?
 public interface WriterExporter extends Exporter {
 
@@ -59,7 +60,7 @@ public interface WriterExporter extends Exporter {
     default void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
         // We provide a default implementation for new exporters so that they don't have to implement the legacy
         // interface
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Legacy exporter interface not supported by new exporters");
     }
 
     /**

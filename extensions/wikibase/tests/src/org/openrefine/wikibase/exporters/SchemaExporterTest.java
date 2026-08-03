@@ -4,7 +4,7 @@ package org.openrefine.wikibase.exporters;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Properties;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 
@@ -29,8 +29,7 @@ public class SchemaExporterTest extends WikidataRefineTest {
                 });
         Engine engine = new Engine(project);
         StringWriter writer = new StringWriter();
-        Properties properties = new Properties();
-        exporter.export(project, properties, engine, writer);
+        exporter.export(project, Map.of(), engine, writer);
         TestUtils.assertEqualsAsJson(writer.toString(),
                 "{\"entityEdits\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}");
     }
