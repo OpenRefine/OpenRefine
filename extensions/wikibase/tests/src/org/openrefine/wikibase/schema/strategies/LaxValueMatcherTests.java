@@ -41,10 +41,14 @@ public class LaxValueMatcherTests {
         StringValue value1 = Datamodel.makeStringValue("https://gnu.org");
         StringValue value2 = Datamodel.makeStringValue("http://gnu.org/");
         StringValue value3 = Datamodel.makeStringValue("http://gnu.org/page");
+        StringValue value4 = Datamodel.makeStringValue("urn:nbn:de:0303-drops-254442");
+        StringValue value5 = Datamodel.makeStringValue("urn:nbn:de:0303-drops-227669");
 
         assertTrue(SUT.match(value1, value2));
         assertTrue(SUT.match(value1, value1));
         assertFalse(SUT.match(value2, value3));
+        assertTrue(SUT.match(value4, value4));
+        assertFalse(SUT.match(value4, value5));
     }
 
     @Test
