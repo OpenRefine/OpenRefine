@@ -681,10 +681,9 @@ public class StandardReconConfigTests extends RefineTest {
 
     @Test
     public void testBreakWordsUsesStopWordsPreference() {
-        StandardReconConfigStub stub = new StandardReconConfigStub();
         ProjectManager.singleton.getPreferenceStore()
                 .put("stopwords", "the,a,and,of,on,in,at,by,le");
-        Set<String> words = stub.breakWords("Le Petit Prince");
+        Set<String> words = StandardReconConfig.breakWords("Le Petit Prince");
         Assert.assertEquals(Set.of("petit", "prince"), words);
         Assert.assertFalse(words.contains("le"));
         Assert.assertTrue(words.contains("petit"));

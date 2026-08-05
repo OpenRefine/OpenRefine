@@ -740,18 +740,35 @@ public class StandardReconConfig extends ReconConfig {
         return common / longWords.size();
     }
 
-    static protected Set<String> getStopWords() {
+    private static final String STOPWORDS_PREF_KEY = "stopwords";
+    private static final String DEFAULT_STOPWORDS_PREF = "the,a,and,of,on,in,at,by";
+    private static volatile String cachedStopwordsPref;
+    private static volatile Set<String> cachedStopWords;
 
-        Object prefValue = (ProjectManager.singleton.getPreferenceStore().get("stopwords"));
-        String stopwordsPref = (prefValue != null) ? prefValue.toString() : null;
+    static protected Set<String> getStopWords() {
+        Object prefValue = ProjectManager.singleton.getPreferenceStore().get(STOPWORDS_PREF_KEY);
+        String stopwordsPref = prefValue != null ? prefValue.toString() : null;
         if (stopwordsPref == null) {
-            stopwordsPref = "the,a,and,of,on,in,at,by";
+            stopwordsPref = DEFAULT_STOPWORDS_PREF;
         }
+
+        Set<String> cached = cachedStopWords;
+        if (cached != null && stopwordsPref.equals(cachedStopwordsPref)) {
+            return cached;
+        }
+
         Set<String> stopWords = new HashSet<>();
-        for (String stopWord : stopwordsPref.split(",")) {
-            stopWords.add(stopWord.trim().toLowerCase());
+        for (String rawStopWord : stopwordsPref.split(",")) {
+            String stopWord = rawStopWord.trim().toLowerCase();
+            if (!stopWord.isEmpty()) {
+                stopWords.add(stopWord);
+            }
         }
-        return stopWords;
+
+        Set<String> immutable = Set.copyOf(stopWords);
+        cachedStopwordsPref = stopwordsPref;
+        cachedStopWords = immutable;
+        return immutable;
     }
 
     static protected Set<String> breakWords(String s) {
