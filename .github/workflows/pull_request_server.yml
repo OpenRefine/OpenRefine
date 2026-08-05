@@ -105,6 +105,16 @@ jobs:
       - name: Build and test with Maven
         run: mvn -T 4 -B jacoco:prepare-agent test jacoco:report
 
+      - name: Coveralls server
+        uses: coverallsapp/github-action@v2
+        with:
+          base-path: server/src
+          files: server/target/site/jacoco/jacoco.xml
+          format: jacoco
+          flag-name: Java-${{ matrix.java }}-server
+          fail-on-error: false
+          parallel: true
+
       - name: Coveralls main
         uses: coverallsapp/github-action@v2
         with:
@@ -112,6 +122,26 @@ jobs:
           files: main/target/site/jacoco/jacoco.xml
           format: jacoco
           flag-name: Java-${{ matrix.java }}-main
+          fail-on-error: false
+          parallel: true
+
+      - name: Coveralls core
+        uses: coverallsapp/github-action@v2
+        with:
+          base-path: modules/core/src/main/java
+          files: modules/core/target/site/jacoco/jacoco.xml
+          format: jacoco
+          flag-name: Java-${{ matrix.java }}-core
+          fail-on-error: false
+          parallel: true
+
+      - name: Coveralls grel
+        uses: coverallsapp/github-action@v2
+        with:
+          base-path: modules/grel/src/main/java
+          files: modules/grel/target/site/jacoco/jacoco.xml
+          format: jacoco
+          flag-name: Java-${{ matrix.java }}-grel
           fail-on-error: false
           parallel: true
 
