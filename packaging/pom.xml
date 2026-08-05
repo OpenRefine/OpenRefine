@@ -42,7 +42,10 @@
     <profile>
       <id>default</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <property>
+          <!-- Always active unless explicitly disabled -->
+          <name>!skipDefaultProfile</name>
+        </property>
       </activation>
       <build>
         <plugins>
