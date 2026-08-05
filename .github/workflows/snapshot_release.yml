@@ -173,7 +173,8 @@ jobs:
       run: cd main/webapp && npm install
 
     - name: Generate dist files
-      run: mvn -B package -DskipTests=true
+      # Override default signing identity to use workflow secrets
+      run: mvn -B package -DskipTests=true -Dmac.signing.identity="Code for Science and Society, Inc."
 
   mac_test_and_deploy:
     if: github.repository == 'OpenRefine/OpenRefine'

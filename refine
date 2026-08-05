@@ -166,19 +166,6 @@ get_version() {
     fi
 }
 
-get_revision() {
-    if [ -d ".svn" ] ; then
-        INFO=`svn info`
-        REVISION=`echo $INFO | sed s/^$VERSION-//`
-    elif [ -d ".git" ] ; then
-        INFO=`git describe`
-        REVISION=`echo $INFO`
-    REVISION=${REVISION:4}
-    else
-        error "cannot obtain revision, exiting!"
-    fi
-}
-    
 download() {
     URL=$1
     DEST=$2
@@ -303,73 +290,11 @@ linux_dist() {
 # but no longer needed as "mvn package" does it directly on both mac and linux.
 mac_dist() {
     check_macosx
-    build_prepare
-    dist_prepare
     get_version $1
-    get_revision
-
-    appbundler_prepare
-
-    ANT_PARAMS="-Dappbundler.dir=${REFINE_TOOLS_DIR}/${APPBUNDLER_DIR}"
-    ant mac
-
-    mkdir -p "$REFINE_BUILD_DIR/mac/.background"
-    cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
-
-    SIZE=350
-
-    if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
-        rm "$REFINE_BUILD_DIR/temp_refine.dmg"
-    fi
-
-# Sign the bundle with a self-signed cert so OS X doesn't frustrate users by making app invisible
-    codesign --deep -s "OpenRefine Code Signing" "$REFINE_BUILD_DIR/mac/OpenRefine.app"
-    spctl --assess --type execute --verbose=4 "$REFINE_BUILD_DIR/mac/OpenRefine.app"
-
-    TITLE="OpenRefine $VERSION"
-    echo "Building MacOSX DMG for $TITLE"
-    hdiutil create -srcfolder "$REFINE_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$REFINE_BUILD_DIR/temp_refine.dmg" || error "can't create empty DMG"
-    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | grep -E '^/dev/' | sed -e "s/^\/dev\///g" -e 1q  | awk '{print $1}'`
-    echo $DEVICE
-    hdiutil attach "$REFINE_BUILD_DIR/temp_refine.dmg" || error "Can't attach temp DMG"
-
-    echo '
-       tell application "Finder"
-         tell disk "'$TITLE'"
-            open
-            set current view of container window to icon view
-            set toolbar visible of container window to false
-            set statusbar visible of container window to false
-            set the bounds of container window to {200, 100, 760, 460}
-            set theViewOptions to the icon view options of container window
-            set arrangement of theViewOptions to not arranged
-            set icon size of theViewOptions to 100
-            set background picture of theViewOptions to file ".background:dmg_background.png"
-            make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
-            set position of item "OpenRefine" of container window to {170, 175}
-            set position of item "Applications" of container window to {380, 175}
-            close
-            open
-            update without registering applications
-            delay 5
-            eject
-         end tell
-       end tell
-    ' | osascript || error "Error running applescript"
-
-    sync
-    sync
-    sleep 3
-    hdiutil detach $DEVICE
-
-    if [ -f "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" ] ; then
-        rm "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg"
-    fi
-
-    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error compressing DMG"
-    hdiutil internet-enable -yes "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error internet-enabling DMG"
-
-    rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
+    build_prepare
+    mvn_prepare
+    "$MVN" versions:set -DnewVersion="$VERSION"
+    "$MVN" package -P default
 }
 
 test() {
@@ -409,8 +334,6 @@ uds_tests() {
 
 
 e2e_tests() {
-    get_revision
-
     CYPRESS_RECORD=0
 
     if [ -z "$CYPRESS_BROWSER" ] ; then
@@ -591,8 +514,8 @@ checkJavaMajorVersion() {
     # Java 9+ starts with x using semver versioning
     major=`echo ${java_ver} | sed -E 's/([0-9]+)(-ea|(\.[0-9]+)*)/\1/g'`
   fi
-  if (( ${major} < 17 )); then
-    error "OpenRefine requires Java version 17 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+  if (( ${major} < 21 )); then
+    error "OpenRefine requires Java version 21 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
   fi
   if (( ${major} > 25 )); then
     echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 25."
@@ -664,7 +587,7 @@ for ((i=0; i<${#args[@]}; i+=1)); do
     --debug) add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) echo "Invalid option: $arg" >&2; exit 1;;
-    *) ACTION="$arg"; break;;
+    *) ACTION="$arg"; set -- "${args[@]:i+1}"; break;; # restore any remaining args as positional parameters
   esac
 done
 
@@ -676,9 +599,8 @@ fi
 
 if [ "$OS" = "macosx" ] ; then
     if [ -z "$JAVA_HOME" ] ; then
-    # We need want recent Java because we're bundling JRE - may want to warn and force developer to set JAVA_HOME
-    # The /usr/libexec/java_home utility may be tied to the Java prefs app, so could go away when Apple removes it
-        export JAVA_HOME=$(/usr/libexec/java_home)
+        # We want to compile with our minimum required Java version
+        export JAVA_HOME=$(/usr/libexec/java_home -v 21)
     fi
 fi
 
