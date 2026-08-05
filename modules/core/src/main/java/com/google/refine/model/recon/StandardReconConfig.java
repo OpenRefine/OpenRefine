@@ -61,6 +61,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -739,26 +740,45 @@ public class StandardReconConfig extends ReconConfig {
         return common / longWords.size();
     }
 
-    static final protected Set<String> s_stopWords = new HashSet<String>();
-    static {
-        // FIXME: This is English specific - needs i18n
-        s_stopWords.add("the");
-        s_stopWords.add("a");
-        s_stopWords.add("and");
-        s_stopWords.add("of");
-        s_stopWords.add("on");
-        s_stopWords.add("in");
-        s_stopWords.add("at");
-        s_stopWords.add("by");
+    private static final String STOPWORDS_PREF_KEY = "stopwords";
+    private static final String DEFAULT_STOPWORDS_PREF = "the,a,and,of,on,in,at,by";
+    private static volatile String cachedStopwordsPref;
+    private static volatile Set<String> cachedStopWords;
+
+    static protected Set<String> getStopWords() {
+        Object prefValue = ProjectManager.singleton.getPreferenceStore().get(STOPWORDS_PREF_KEY);
+        String stopwordsPref = prefValue != null ? prefValue.toString() : null;
+        if (stopwordsPref == null) {
+            stopwordsPref = DEFAULT_STOPWORDS_PREF;
+        }
+
+        Set<String> cached = cachedStopWords;
+        if (cached != null && stopwordsPref.equals(cachedStopwordsPref)) {
+            return cached;
+        }
+
+        Set<String> stopWords = new HashSet<>();
+        for (String rawStopWord : stopwordsPref.split(",")) {
+            String stopWord = rawStopWord.trim().toLowerCase();
+            if (!stopWord.isEmpty()) {
+                stopWords.add(stopWord);
+            }
+        }
+
+        Set<String> immutable = Set.copyOf(stopWords);
+        cachedStopwordsPref = stopwordsPref;
+        cachedStopWords = immutable;
+        return immutable;
     }
 
     static protected Set<String> breakWords(String s) {
         // TODO: This needs i18n
         String[] words = s.toLowerCase().split("\\s+");
 
+        Set<String> stopWords = getStopWords();
         Set<String> set = new HashSet<String>(words.length);
         for (String word : words) {
-            if (!s_stopWords.contains(word)) {
+            if (!stopWords.contains(word)) {
                 set.add(word);
             }
         }

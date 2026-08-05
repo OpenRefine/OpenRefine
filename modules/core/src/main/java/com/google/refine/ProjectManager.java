@@ -654,5 +654,6 @@ public abstract class ProjectManager {
     static protected void preparePreferenceStore(PreferenceStore ps) {
         ps.put("scripting.expressions", new TopList(EXPRESSION_HISTORY_MAX));
         ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
+        ps.put("stopwords", "the,a,and,of,on,in,at,by");
     }
 }
