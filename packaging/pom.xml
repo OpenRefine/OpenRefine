@@ -125,9 +125,6 @@
                   <name>apple.notarization.username</name>
               </property>
           </activation>
-          <properties>
-              <mac.codesign.skip>false</mac.codesign.skip>
-          </properties>
           <build>
             <plugins>
               <plugin>
