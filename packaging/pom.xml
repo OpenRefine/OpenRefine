@@ -332,11 +332,11 @@
                 </exec>
 
                 <!-- Unzip Mac JRE archive -->
-                <mkdir dir="${mac.jre.path}"/>
+                <mkdir dir="${project.build.directory}/mac_jre"/>
                 <exec dir="${project.build.directory}" executable="tar">
                   <arg line="-zxf"/>
                   <arg line="mac_jre.tar.gz"/>
-                  <arg line="-C &quot;${mac.jre.path}&quot; --strip-components=1"/>
+                  <arg line="-C &quot;mac_jre&quot; --strip-components=1"/>
                 </exec>
 
                 <!-- Unzip Windows JRE archive -->
