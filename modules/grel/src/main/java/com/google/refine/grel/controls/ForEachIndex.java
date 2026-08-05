@@ -46,6 +46,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.HasFields;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlDescription;
@@ -76,7 +77,8 @@ public class ForEachIndex implements Control {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;
-        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode) && !(o instanceof ObjectNode)) {
+        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode) && !(o instanceof ObjectNode)
+                && !(o instanceof HasFields)) {
             return new EvalError(ControlEvalError.foreach_index());
         }
 
@@ -133,6 +135,21 @@ public class ForEachIndex implements Control {
                     if (entry != null) {
                         bindings.put(indexName, entry.getKey());
                         bindings.put(elementName, entry.getValue());
+                    } else {
+                        bindings.remove(indexName);
+                        bindings.remove(elementName);
+                    }
+                    Object r = args[3].evaluate(bindings);
+                    results.add(r);
+                }
+            } else if (o instanceof HasFields) {
+                HasFields hasFields = (HasFields) o;
+                results = new ArrayList<>(hasFields.getFieldNames().size());
+                for (String key : hasFields.getFieldNames()) {
+                    Object value = hasFields.getField(key, bindings);
+                    if (value != null) {
+                        bindings.put(indexName, key);
+                        bindings.put(elementName, value);
                     } else {
                         bindings.remove(indexName);
                         bindings.remove(elementName);
