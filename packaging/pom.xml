@@ -42,10 +42,7 @@
     <profile>
       <id>default</id>
       <activation>
-        <property>
-          <!-- Always active unless explicitly disabled -->
-          <name>!skipDefaultProfile</name>
-        </property>
+        <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <plugins>
@@ -121,33 +118,6 @@
         </plugins>
       </build>
     </profile>
-      <profile>
-          <id>mac</id>
-          <activation>
-              <os>
-                  <family>mac</family>
-              </os>
-          </activation>
-      </profile>
-
-      <profile>
-          <id>mac_x86_64</id>
-          <activation>
-              <os>
-                  <family>mac</family>
-                  <arch>x86_64</arch>
-              </os>
-          </activation>
-      </profile>
-      <profile>
-          <id>mac_aarch64</id>
-          <activation>
-              <os>
-                  <family>mac</family>
-                  <arch>aarch64</arch>
-              </os>
-          </activation>
-      </profile>
       <profile>
           <id>notarize</id>
           <activation>

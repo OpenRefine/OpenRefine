@@ -166,16 +166,6 @@ get_version() {
     fi
 }
 
-get_revision() {
-    if [ -d ".git" ] ; then
-        INFO=`git describe`
-        REVISION=`echo $INFO`
-    REVISION=${REVISION:4}
-    else
-        error "cannot obtain revision, exiting!"
-    fi
-}
-    
 download() {
     URL=$1
     DEST=$2
@@ -344,8 +334,6 @@ uds_tests() {
 
 
 e2e_tests() {
-    get_revision
-
     CYPRESS_RECORD=0
 
     if [ -z "$CYPRESS_BROWSER" ] ; then
