@@ -18,7 +18,7 @@
     <webapp.target>../main/target</webapp.target>
     <embedded.jre.version>${java.minversion}</embedded.jre.version>
 
-      <!-- Adoptioum JREs x64 (undocumented x86_64 works too), aarch64; mvn os.arch x86_64, aarch64 -->
+      <!-- Adoptium JREs x64 (undocumented x86_64 works too), aarch64; mvn os.arch x86_64, aarch64 -->
     <mac.jre.path>${project.build.directory}/mac_jre</mac.jre.path>
     <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/x64/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
     <mac.build.directory>OpenRefine ${project.version}</mac.build.directory>
