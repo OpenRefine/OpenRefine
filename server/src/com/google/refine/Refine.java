@@ -186,8 +186,6 @@ class RefineServer extends Server {
     }
 
     public void init(String iface, int port, String host, String socket) throws Exception {
-        logger.info("Operating system {} {} {}", System.getProperty("os.name", ""), System.getProperty("os.version", ""),
-                System.getProperty("os.arch", ""));
         logger.info("Java runtime version {} from java.home: {}", Runtime.version().toString(), System.getProperty("java.home", ""));
         logger.info("Java VM: {} {} {} {}", System.getProperty("java.vm.vendor", ""), System.getProperty("java.vm.name", ""),
                 System.getProperty("java.vm.version", ""), System.getProperty("java.vm.info", ""));
