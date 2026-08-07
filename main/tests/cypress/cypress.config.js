@@ -27,7 +27,7 @@ module.exports = defineConfig({
         ...config.expose,
         OPENREFINE_URL: config.env.OPENREFINE_URL,
         DISABLE_PROJECT_CLEANUP: config.env.DISABLE_PROJECT_CLEANUP,
-      }
+      };
       return require('./cypress/plugins/index.js')(on, config);
     },
     specPattern: './cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
