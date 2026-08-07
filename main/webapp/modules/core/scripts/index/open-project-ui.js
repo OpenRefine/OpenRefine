@@ -119,6 +119,10 @@ Refine.OpenProjectUI._filterTags = function(tag) {
   // Reset the search filter so the visible state matches the active tag.
   const searchInput = $('#search-input');
   if (searchInput.length && searchInput.val() !== '') {
+    // Cancel any pending debounced search update (see _searchInput typingTimer)
+    // so it can't re-apply after the tag filter runs.
+    searchInput.trigger('keydown');
+
     searchInput.val('');
     $("#tableBody").filterListSearch('');
   }

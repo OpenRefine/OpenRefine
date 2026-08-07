@@ -50,7 +50,6 @@ describe(__filename, function () {
 
     cy.get('#search-icon').click();
     cy.get('#search-input').type('Project A');
-    cy.wait(800); // typing timeout is 500 msec
     cy.get('#projects-list table').contains(project2).should('not.be.visible');
 
     // Click the "All" tag — search input should be cleared and all rows shown.
