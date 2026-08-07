@@ -116,6 +116,13 @@ Refine.OpenProjectUI._filterTags = function(tag) {
   // this function can run even if the open project UI is not visible to the user, so only update the URL if it is
   if (window.hash === "#open-project") window.history.pushState("", "", "?tag=" + tag + "#open-project");
 
+  // Reset the search filter so the visible state matches the active tag.
+  const searchInput = $('#search-input');
+  if (searchInput.length && searchInput.val() !== '') {
+    searchInput.val('');
+    $("#tableBody").filterListSearch('');
+  }
+
   $('#tagsUl').children().each(function() {
     $(this).removeClass('current');
   });
