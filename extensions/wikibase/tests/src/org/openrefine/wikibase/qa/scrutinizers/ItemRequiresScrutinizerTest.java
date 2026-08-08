@@ -41,6 +41,9 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         return new ItemRequiresScrutinizer();
     }
 
+    /**
+     * Verifies that edits on existing entities do not raise required statement constraint warnings.
+     */
     @Test
     public void testExistingItemTrigger() {
         ItemIdValue idA = TestingData.existingId;
