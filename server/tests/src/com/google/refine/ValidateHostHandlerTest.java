@@ -37,10 +37,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -64,14 +65,13 @@ public class ValidateHostHandlerTest {
     @Test
     public void testHandleRejectsMissingHostHeader() throws Exception {
         ValidateHostHandler handler = new ValidateHostHandler("127.0.0.1");
-        Request baseRequest = mock(Request.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        Request request = mock(Request.class);
+        Response response = mock(Response.class);
 
-        when(request.getHeader("Host")).thenReturn(null);
+        when(request.getHeaders()).thenReturn(HttpFields.EMPTY);
 
-        handler.handle("/", baseRequest, request, response);
+        handler.handle(request, response, null);
 
-        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid hostname");
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 }
