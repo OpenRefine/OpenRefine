@@ -1156,7 +1156,7 @@ SchemaAlignment._addQualifier = function(container, json, context) {
   var getMainsnakPid = function() {
     // this function will get the pid of the statement's property
 
-    var propInput = container.closest('.wbs-statement-group').find('.wbs-prop-input').first();
+    var propInput = container.closest('.wbs-statement-group').children('.wbs-prop-input').first();
     var mainsnakValue = propInput.data('jsonValue');
     return (mainsnakValue && mainsnakValue.pid) ? mainsnakValue.pid : null;
   };
@@ -1313,12 +1313,10 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
     // this will show suggestions when property fields are empty
     if (!input.val() && !input.data('dont_hide')) {
       var widgetInstance = input.data(widgetName);
-      // probably won't need this if statement, might remove it later
       if (widgetInstance && typeof widgetInstance.request === 'function') {
-        // we pass in an empty search string
-        widgetInstance.request('', 0);
+        widgetInstance.request('');
       }
-    }
+    } 
   };
 
   if (widgetName === 'suggestWikibaseProperty') {
