@@ -60,6 +60,13 @@ public class ToString implements Function {
                     try {
                         return String.format((String) o2, o1);
                     } catch (IllegalFormatException e) {
+                        if (o1 instanceof Long || o1 instanceof Integer || o1 instanceof Short || o1 instanceof Byte) {
+                            try {
+                                return String.format((String) o2, ((Number) o1).doubleValue());
+                            } catch (IllegalFormatException e2) {
+                                return new EvalError(EvalErrorMessage.unknown_format_conversion(e2.getMessage()));
+                            }
+                        }
                         return new EvalError(EvalErrorMessage.unknown_format_conversion(e.getMessage()));
                     }
                 }
