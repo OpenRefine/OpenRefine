@@ -81,9 +81,7 @@ public class IndentingLayout extends AbstractStringLayout {
             return message;
         }
 
-        char leader = message.charAt(0);
-        char secondLeader = message.charAt(1);
-        if ((leader == '<') && (secondLeader == ' ') && (this.indentation > 0)) {
+        if (message.startsWith("< ") && (this.indentation > 0)) {
             this.indentation--;
         }
 
@@ -128,7 +126,7 @@ public class IndentingLayout extends AbstractStringLayout {
         buf.append(delta.toMillis());
         buf.append("ms)\n");
 
-        if ((leader == '>') && (secondLeader == ' ')) {
+        if (message.startsWith("> ")) {
             indentation++;
         }
 
@@ -140,9 +138,7 @@ public class IndentingLayout extends AbstractStringLayout {
     }
 
     private void pad(StringBuilder buffer, int pads, char padchar) {
-        for (int i = 0; i < pads; i++) {
-            buffer.append(padchar);
-        }
+        buffer.repeat(String.valueOf(padchar), Math.max(0, pads));
     }
 
 }
