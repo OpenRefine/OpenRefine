@@ -258,10 +258,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arch@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "arch@npm:2.2.0"
-  checksum: 10c0/4ceaf8d8207817c216ebc4469742052cb0a097bc45d9b7fcd60b7507220da545a28562ab5bdd4dfe87921bb56371a0805da4e10d704e01f93a15f83240f1284c
+"arch@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "arch@npm:3.0.0"
+  checksum: 10c0/abefcc6738a29632a2b48e7f5910f42fb26d2e2f9c6954cac80b6bdfc4048685c604ef8eb3fd862a7c0884785b20a66a1b44e2ba4b628fd34b80a0cc6a5a0493
   languageName: node
   linkType: hard
 
@@ -526,16 +526,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:15.19.0":
-  version: 15.19.0
-  resolution: "cypress@npm:15.19.0"
+"cypress@npm:15.20.1":
+  version: 15.20.1
+  resolution: "cypress@npm:15.20.1"
   dependencies:
     "@cypress/request": "npm:^4.0.0"
     "@cypress/xvfb": "npm:^1.2.4"
     "@types/sinonjs__fake-timers": "npm:8.1.1"
     "@types/sizzle": "npm:^2.3.2"
     "@types/tmp": "npm:^0.2.3"
-    arch: "npm:^2.2.0"
+    arch: "npm:^3.0.0"
     blob-util: "npm:^2.0.2"
     bluebird: "npm:^3.7.2"
     buffer: "npm:^5.7.1"
@@ -566,12 +566,11 @@ __metadata:
     systeminformation: "npm:^5.31.1"
     tmp: "npm:~0.2.4"
     tree-kill: "npm:1.2.2"
-    tslib: "npm:1.14.1"
     untildify: "npm:^4.0.0"
     yauzl: "npm:^3.3.1"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/b411ea7617b91f922709c1b5db8ab5e38090c75d54aaa3721048e9a214e4ae1cf4669df4eab7aa225ceb3cb5d9e6a4e6eb4156e8fb7a7fe77248efc8b9353e9d
+  checksum: 10c0/35ae3824ca0038dcc8d92acf62fe12a1a22ece34c42a7834e6d45989ae822b2278605dec6bb1ebdea495f347db4b5b9daec848f65f180eb830a61da025eb34ed
   languageName: node
   linkType: hard
 
@@ -739,18 +738,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-cypress@npm:^6.4.3":
-  version: 6.4.3
-  resolution: "eslint-plugin-cypress@npm:6.4.3"
+"eslint-plugin-cypress@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "eslint-plugin-cypress@npm:7.0.0"
   dependencies:
-    globals: "npm:^17.7.0"
+    globals: "npm:^17.9.0"
   peerDependencies:
     "@typescript-eslint/parser": ">=8"
-    eslint: ">=9"
+    eslint: ">=10"
   peerDependenciesMeta:
     "@typescript-eslint/parser":
       optional: true
-  checksum: 10c0/461a99e767dc41555c617852b143af5e5a29e69d80104b28930aab63e93c58238dd8b3c8cc8ce760f3e83006e1ce176f5a83998aec0a25de3c6524625fa1ae78
+  checksum: 10c0/d71fd197630ac78c2fca47b163e31d5dea403656ddb39020823e4c7c8c09bf8e9c3df8335048eb7a15a5a7ab5a4c501292121fe74c67d5b08fdeafe0b4b45cb1
   languageName: node
   linkType: hard
 
@@ -1096,7 +1095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^17.7.0, globals@npm:^17.9.0":
+"globals@npm:^17.9.0":
   version: 17.11.0
   resolution: "globals@npm:17.11.0"
   checksum: 10c0/5e1be3d816e04d4d0d01b1cdd40e46b5fb6b5e9f15aece9a5919b060e0fb1b3f1b9e7327dce97ef19e05513a6d65872e0834999ddea251557556dddd0f5fde30
@@ -1566,11 +1565,11 @@ __metadata:
   resolution: "openrefine-cypress-test-suite@workspace:."
   dependencies:
     "@eslint/js": "npm:^10.0.0"
-    cypress: "npm:15.19.0"
+    cypress: "npm:15.20.1"
     eslint: "npm:^10.8.0"
     eslint-config-google: "npm:^0.14.0"
     eslint-config-prettier: "npm:^10.1.8"
-    eslint-plugin-cypress: "npm:^6.4.3"
+    eslint-plugin-cypress: "npm:^7.0.0"
     globals: "npm:^17.9.0"
     prettier: "npm:3.9.6"
   languageName: unknown
@@ -2004,13 +2003,6 @@ __metadata:
   bin:
     tree-kill: cli.js
   checksum: 10c0/7b1b7c7f17608a8f8d20a162e7957ac1ef6cd1636db1aba92f4e072dc31818c2ff0efac1e3d91064ede67ed5dc57c565420531a8134090a12ac10cf792ab14d2
-  languageName: node
-  linkType: hard
-
-"tslib@npm:1.14.1":
-  version: 1.14.1
-  resolution: "tslib@npm:1.14.1"
-  checksum: 10c0/69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
   languageName: node
   linkType: hard
 
