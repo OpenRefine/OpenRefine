@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
 # Create a custom keychain
 security create-keychain -p gh_actions refine-build.keychain
