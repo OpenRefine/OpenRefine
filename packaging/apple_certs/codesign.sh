@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # Adapted from https://github.com/gephi/gephi/blob/6ac653758063f74c56a7b93db800978ead3ea95d/modules/application/src/main/app-resources/codesign.sh
 # Author: Mathieu Bastian
@@ -26,7 +25,8 @@ function codesignJarsInDir {
         # Codesign all all relevant files
         while IFS= read -r -d $'\0' libfile; do
             echo "Codesigning file $(basename "${libfile}")"
-            codesign --verbose --entitlements "$3" --deep --force --timestamp --sign "$2" --options runtime $libfile
+            # Exit with error if codesigning fails
+            codesign --verbose --entitlements "$3" --deep --force --timestamp --sign "$2" --options runtime $libfile || exit $?
         done < <(find -E "$folder" -regex '.*\.(dylib|jnilib)' -print0)
 
         # Create updated JAR
