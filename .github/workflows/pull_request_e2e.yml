@@ -56,7 +56,7 @@ jobs:
       - name: Install test dependencies
         run: |
           cd ./main/tests/cypress
-          yarn install --frozen-lockfile
+          yarn install --immutable
 
       - id: set-matrix
         run: npm install glob && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
@@ -106,7 +106,7 @@ jobs:
       - name: Install test dependencies
         run: |
           cd ./main/tests/cypress
-          yarn install --frozen-lockfile
+          yarn install --immutable
 
       - name: Test with Cypress on ${{ matrix.browser }}
         run: |
