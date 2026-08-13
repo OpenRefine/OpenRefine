@@ -76,8 +76,7 @@ describe(__filename, function () {
     loadExpressionPanel();
     cy.selectClojure();
     cy.typeExpression('(;)');
-    cy.get('.expression-preview-parsing-status').contains('EOF while reading'
-    );
+    cy.get('.expression-preview-parsing-status').contains('EOF while reading');
   });
 
   it('Test a Grel language error', function () {
