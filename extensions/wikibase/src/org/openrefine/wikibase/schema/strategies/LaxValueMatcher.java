@@ -136,7 +136,10 @@ public class LaxValueMatcher implements ValueMatcher {
     // utility function to remove some more differences from URLs
     protected URI extraURINormalize(URI uri) throws URISyntaxException {
         String scheme = uri.getScheme();
-        if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
+        if ("https".equalsIgnoreCase(scheme)) {
+            scheme = "http";
+        }
+        if (!"http".equalsIgnoreCase(scheme)) {
             return uri;
         }
         String userInfo = uri.getUserInfo();
@@ -145,9 +148,6 @@ public class LaxValueMatcher implements ValueMatcher {
         String path = uri.getPath();
         String query = uri.getQuery();
         String fragment = uri.getFragment();
-        if ("https".equals(scheme)) {
-            scheme = "http";
-        }
         if (path != null && path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
         }
