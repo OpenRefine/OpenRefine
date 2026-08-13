@@ -38,7 +38,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Node;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
@@ -51,7 +50,7 @@ import org.apache.logging.log4j.core.layout.AbstractStringLayout;
  * accordingly. This is very useful to visually inspect a debug log and see what calls what. An example of logs are
  * "&gt; method()" and "&lt; method()" where &gt; and &lt; are used to indicate respectively "entering" and "exiting".
  */
-@Plugin(name = "IndentingLayout", elementType = Layout.ELEMENT_TYPE, category = Node.CATEGORY, printObject = true)
+@Plugin(name = "IndentingLayout", category = Node.CATEGORY, printObject = true)
 public class IndentingLayout extends AbstractStringLayout {
 
     protected IndentingLayout(Charset charset) {
@@ -82,9 +81,7 @@ public class IndentingLayout extends AbstractStringLayout {
             return message;
         }
 
-        char leader = message.charAt(0);
-        char secondLeader = message.charAt(1);
-        if ((leader == '<') && (secondLeader == ' ') && (this.indentation > 0)) {
+        if (message.startsWith("< ") && (this.indentation > 0)) {
             this.indentation--;
         }
 
@@ -129,7 +126,7 @@ public class IndentingLayout extends AbstractStringLayout {
         buf.append(delta.toMillis());
         buf.append("ms)\n");
 
-        if ((leader == '>') && (secondLeader == ' ')) {
+        if (message.startsWith("> ")) {
             indentation++;
         }
 
@@ -141,9 +138,7 @@ public class IndentingLayout extends AbstractStringLayout {
     }
 
     private void pad(StringBuilder buffer, int pads, char padchar) {
-        for (int i = 0; i < pads; i++) {
-            buffer.append(padchar);
-        }
+        buffer.repeat(String.valueOf(padchar), Math.max(0, pads));
     }
 
 }
