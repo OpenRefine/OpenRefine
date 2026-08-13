@@ -360,11 +360,6 @@
             <configuration>
               <target name="generateDMG" description="Generate DMG">
 
-                <!-- Remove man pages from JRE as they are not accessible anyway, and prevent us from codesigning -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
-                    <arg line="-r"/>
-                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/man&quot;"/>
-                </exec>
                 <!-- remove JRE licenses folder, cannot be signed -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
                     <arg line="-r"/>
@@ -401,7 +396,7 @@
                     <arg value="--timestamp"/>
                     <arg value="--options"/>
                     <arg value="runtime"/>
-                    <arg value="${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/lib/jli/libjli.dylib" />
+                    <arg value="${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/lib/libjli.dylib" />
                 </exec>
 
                 <!-- Codesign jars with native code in them -->
