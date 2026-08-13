@@ -277,7 +277,7 @@ public class ColumnModel {
             public int compare(ColumnGroup o1, ColumnGroup o2) {
                 int firstDiff = o1.startColumnIndex - o2.startColumnIndex;
                 return firstDiff != 0 ? firstDiff : // whichever group that starts first goes first
-                (o2.columnSpan - o1.columnSpan); // otherwise, the larger group goes first
+                        (o2.columnSpan - o1.columnSpan); // otherwise, the larger group goes first
             }
         });
 
