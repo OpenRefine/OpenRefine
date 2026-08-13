@@ -32,7 +32,7 @@ jobs:
       - name: Install test dependencies
         working-directory: main/tests/cypress
         run: |
-          yarn install --frozen-lockfile
+          yarn install --immutable
       - name: Check Cypress test formatting and linting
         working-directory: main/tests/cypress
         run: yarn lint
@@ -99,7 +99,7 @@ jobs:
             ~/.cache
             **/node_modules
             !~/cache/exclude
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 

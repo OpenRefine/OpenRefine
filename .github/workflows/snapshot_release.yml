@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: main/tests/cypress/yarn.lock
 
       - id: set-matrix
-        run: npm install --save glob@8.1.0 && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
+        run: npm install glob && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
         env:
           browsers: chrome
   e2e_test:
@@ -81,7 +81,7 @@ jobs:
       - name: Install test dependencies
         run: |
           cd ./main/tests/cypress
-          yarn install
+          yarn install --immutable
 
       - name: Test with Cypress on ${{ matrix.browser }}
         run: | 
