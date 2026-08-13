@@ -158,7 +158,7 @@ public class MediaInfoEditTest {
                 .thenReturn(mid);
         when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}\n[[Category:Uploaded with OpenRefine]]", "summary",
                 Collections.emptyList(), false))
-                        .thenReturn(response);
+                .thenReturn(response);
         when(mediaFileUtils.checkIfPageNamesExist(anyList()))
                 .thenReturn(Collections.singleton("File:Foo.png"));
 
@@ -187,7 +187,7 @@ public class MediaInfoEditTest {
                 .thenReturn(mid);
         when(mediaFileUtils.uploadRemoteFile(new URL(url), "Foo.png", "{{wikitext}}\n[[Category:Uploaded with OpenRefine]]", "summary",
                 Collections.emptyList(), false))
-                        .thenReturn(response);
+                .thenReturn(response);
         when(mediaFileUtils.checkIfPageNamesExist(anyList()))
                 .thenReturn(Collections.emptySet())
                 .thenReturn(Collections.emptySet())
