@@ -42,8 +42,8 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
     }
 
     /**
-     * Verifies that edits on existing entities do not raise required statement constraint warnings
-     * (unlike new entities which raise warnings when required statements are missing).
+     * Verifies that edits on existing entities do not raise required statement constraint warnings (unlike new entities
+     * which raise warnings when required statements are missing).
      */
     @Test
     public void testExistingItemDoesNotTriggerWarning() {
