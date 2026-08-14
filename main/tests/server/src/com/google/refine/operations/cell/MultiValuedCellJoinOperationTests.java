@@ -105,9 +105,9 @@ public class MultiValuedCellJoinOperationTests extends RefineTest {
 
     @Test
     public void testValidate() {
-        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellJoinOperation(null, "key", "sep").validate());
-        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellJoinOperation("value", null, "sep").validate());
-        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellJoinOperation("value", "key", null).validate());
+        assertThrows(NullPointerException.class, () -> new MultiValuedCellJoinOperation(null, "key", "sep").validate());
+        assertThrows(NullPointerException.class, () -> new MultiValuedCellJoinOperation("value", null, "sep").validate());
+        assertThrows(NullPointerException.class, () -> new MultiValuedCellJoinOperation("value", "key", null).validate());
     }
 
     @Test

@@ -84,7 +84,7 @@ public class TextTransformOperationTests extends RefineTest {
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
                 false, 0).validate());
-        assertThrows(IllegalArgumentException.class, () -> new TextTransformOperation(
+        assertThrows(NullPointerException.class, () -> new TextTransformOperation(
                 defaultEngineConfig,
                 null,
                 "grel:cells[\"foo\"].value+'_'+value",
