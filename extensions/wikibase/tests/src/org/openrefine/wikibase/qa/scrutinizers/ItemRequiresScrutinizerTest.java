@@ -42,10 +42,11 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
     }
 
     /**
-     * Verifies that edits on existing entities do not raise required statement constraint warnings.
+     * Verifies that edits on existing entities do not raise required statement constraint warnings
+     * (unlike new entities which raise warnings when required statements are missing).
      */
     @Test
-    public void testExistingItemTrigger() {
+    public void testExistingItemDoesNotTriggerWarning() {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, itemValue);
         Statement statement = new StatementImpl("P157", mainSnak, idA);
