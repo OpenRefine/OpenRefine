@@ -82,6 +82,13 @@ public class MatchTests extends GrelTestBase {
     }
 
     @Test
+    public void matchFunctionUnicodeCaseInsensitiveTest() throws Exception {
+        // (?i) must use Unicode case folding so É matches é (#1768).
+        String[] groups = (String[]) invoke("match", "École", "(?i)école");
+        Assert.assertNotNull(groups, "expected (?i) to match É/é with Unicode case folding");
+    }
+
+    @Test
     public void matchFunctionUnicodeDigitsTest() throws Exception {
         // Arabic-Indic digits should be matched by \\d under UNICODE_CHARACTER_CLASS.
         String[] groups = (String[]) invoke("match", "١٢٣", "\\d+");
