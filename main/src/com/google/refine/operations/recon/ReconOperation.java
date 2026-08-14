@@ -40,7 +40,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -91,7 +90,7 @@ public class ReconOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Process createProcess(Project project, Properties options) throws Exception {
+    public Process createProcess(Project project) throws Exception {
         return new ReconProcess(
                 project,
                 getEngineConfig(),

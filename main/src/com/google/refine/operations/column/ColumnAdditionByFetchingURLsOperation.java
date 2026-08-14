@@ -251,7 +251,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     }
 
     @Override
-    public Process createProcess(Project project, Properties options) throws Exception {
+    public Process createProcess(Project project) throws Exception {
         Engine engine = createEngine(project);
         engine.initializeFromConfig(_engineConfig);
 
