@@ -27,8 +27,7 @@ describe('SchemaAlignment.setUpTabs', () => {
   // opens with a Wikibase already auto-selected from the saved schema site IRI.
   it('should populate manifest schema templates without switching Wikibase', () => {
     const commonsSiteIri = 'https://commons.wikimedia.org/entity/';
-    const manifestTemplateName =
-      'Information (basic data for every Wikimedia Commons file)';
+    const manifestTemplateName = 'Information (basic data for every Wikimedia Commons file)';
     const commonsSchema = JSON.stringify({
       entityEdits: [],
       siteIri: commonsSiteIri,
@@ -36,45 +35,33 @@ describe('SchemaAlignment.setUpTabs', () => {
     });
 
     let savedTemplates;
-    cy.request(
-      Cypress.env('OPENREFINE_URL') +
-        '/command/core/get-preference?name=wikibase.templates'
-    ).then((response) => {
-      savedTemplates = response.body.value;
-    });
+    cy.request(Cypress.env('OPENREFINE_URL') + '/command/core/get-preference?name=wikibase.templates').then(
+      (response) => {
+        savedTemplates = response.body.value;
+      }
+    );
 
     cy.setPreference('wikibase.templates', JSON.stringify([{}]));
 
-    cy.loadProject('food.mini', Cypress.currentTest.title + '-' + Date.now()).then(
-      (projectId) => {
-        cy.get('@token', { log: false }).then((token) => {
-          cy.request({
-            method: 'POST',
-            url:
-              `${Cypress.env('OPENREFINE_URL')}/command/wikidata/save-wikibase-schema?project=${projectId}&csrf_token=${token}`,
-            form: true,
-            body: { schema: commonsSchema },
-          });
+    cy.loadProject('food.mini', Cypress.currentTest.title + '-' + Date.now()).then((projectId) => {
+      cy.get('@token', { log: false }).then((token) => {
+        cy.request({
+          method: 'POST',
+          url: `${Cypress.env('OPENREFINE_URL')}/command/wikidata/save-wikibase-schema?project=${projectId}&csrf_token=${token}`,
+          form: true,
+          body: { schema: commonsSchema },
         });
+      });
 
-        cy.visit(
-          Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId
-        );
-        cy.waitForProjectTable();
+      cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+      cy.waitForProjectTable();
 
-        cy.get('#extension-bar-menu-container').contains('Wikibase').click();
-        cy.get('.menu-container a').contains('Edit Wikibase schema').click();
+      cy.get('#extension-bar-menu-container').contains('Wikibase').click();
+      cy.get('.menu-container a').contains('Edit Wikibase schema').click();
 
-        cy.get('#wikibase-instance-selector').should(
-          'have.value',
-          'Wikimedia Commons'
-        );
-        cy.get('#wikibase-template-select option').should(
-          'contain',
-          manifestTemplateName
-        );
-      }
-    );
+      cy.get('#wikibase-instance-selector').should('have.value', 'Wikimedia Commons');
+      cy.get('#wikibase-template-select option').should('contain', manifestTemplateName);
+    });
 
     cy.then(() => {
       if (savedTemplates === undefined || savedTemplates === null) {
