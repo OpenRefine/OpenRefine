@@ -184,9 +184,8 @@
       <version>${juniversalchardet.version}</version>
     </dependency>
     <dependency> <!-- reported as unused by dependency:analyze, but broken without it -->
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlets</artifactId>
-      <version>${jetty.version}</version>
+      <groupId>org.eclipse.jetty.ee8</groupId>
+      <artifactId>jetty-ee8-servlets</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>

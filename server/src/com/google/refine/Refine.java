@@ -37,18 +37,21 @@ import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.BindException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JFrame;
 
@@ -57,16 +60,19 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.eclipse.jetty.compression.server.CompressionConfig;
+import org.eclipse.jetty.compression.server.CompressionHandler;
+import org.eclipse.jetty.ee8.servlet.ServletHolder;
+import org.eclipse.jetty.ee8.webapp.WebAppContext;
+import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.unixdomain.server.UnixDomainServerConnector;
 import org.eclipse.jetty.util.Scanner;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,6 +177,7 @@ class RefineServer extends Server {
         super(createThreadPool());
     }
 
+    // TODO: Can this be replaced with built-in Jetty functionality?
     private static ThreadPool createThreadPool() {
         int maxThreads = Configurations.getInteger("refine.queue.size", 30);
         int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
@@ -212,6 +219,14 @@ class RefineServer extends Server {
             logger.info("Starting Server bound to Unix domain socket at {}", socket);
         }
 
+        // Create and link the StatisticsHandler to the Server.
+        StatisticsHandler statsHandler = new StatisticsHandler();
+        this.setHandler(statsHandler);
+
+        // Create an MBeanContainer with the platform MBeanServer & add it to the root to expose statistics
+        MBeanContainer mbeanContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
+        this.addBean(mbeanContainer);
+
         File webapp = new File(Configurations.get("refine.webapp", "main/webapp"));
 
         if (!isWebapp(webapp)) {
@@ -232,25 +247,30 @@ class RefineServer extends Server {
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(maxFormContentSize);
 
+        // Create and configure CompressionHandler.
+        CompressionHandler compressionHandler = new CompressionHandler();
+        CompressionConfig compressionConfig = CompressionConfig.builder().build();
+        compressionHandler.putConfiguration("/*", compressionConfig);
+
+        statsHandler.setHandler(compressionHandler);
+
         if ("*".equals(host)) {
-            this.setHandler(context);
+            compressionHandler.setHandler(context);
         } else {
             ValidateHostHandler wrapper = new ValidateHostHandler(host);
             wrapper.setHandler(context);
-            this.setHandler(wrapper);
+            compressionHandler.setHandler(wrapper);
         }
 
         this.setStopAtShutdown(true);
-        StatisticsHandler handler = new StatisticsHandler();
-        handler.setServer(this);
-        handler.setHandler(this.getHandler());
-        this.addBean(handler);
+
         // Tell the server we want to try and shutdown gracefully
         // this means that the server will stop accepting new connections
         // right away, but it will continue to process the ones that
         // are in execution for the given timeout before attempting to stop
         // NOTE: this is *not* a blocking method, it just sets a parameter
         // that _server.stop() will rely on
+        // (increased from 3000 to 30000 as part of Jetty 9 update)
         this.setStopTimeout(30000);
 
         // Enable context autoreloading
@@ -297,11 +317,12 @@ class RefineServer extends Server {
     }
 
     static private void scanForUpdates(final File contextRoot, final WebAppContext context) {
-        List<File> scanList = new ArrayList<File>();
+        List<Path> scanList = new ArrayList<>();
 
-        scanList.add(new File(contextRoot, "WEB-INF/web.xml"));
-        findFiles(".class", new File(contextRoot, "WEB-INF/classes"), scanList);
-        findFiles(".jar", new File(contextRoot, "WEB-INF/lib"), scanList);
+        File webInf = new File(contextRoot, "WEB-INF");
+        scanList.add(Path.of(webInf.getPath(), "web.xml"));
+        scanList.addAll(findFilePaths(new File(webInf, "classes"), ".class"));
+        scanList.addAll(findFilePaths(new File(webInf, "lib"), ".jar"));
 
         logger.info("Starting autoreloading scanner... ");
 
@@ -313,41 +334,31 @@ class RefineServer extends Server {
         scanner.addListener(new Scanner.BulkListener() {
 
             @Override
-            public void filesChanged(Set<String> set) {
-                try {
-                    logger.info("Stopping context: " + contextRoot.getAbsolutePath());
-                    context.stop();
+            public void pathsChanged(Map<Path, Scanner.Notification> changeSet) throws Exception {
+                logger.info("Stopping context: {}", contextRoot.getAbsolutePath());
+                context.stop();
 
-                    logger.info("Starting context: " + contextRoot.getAbsolutePath());
-                    context.start();
+                logger.info("Starting context: {}", contextRoot.getAbsolutePath());
+                context.start();
 
-                    configure(context);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
+                configure(context);
             }
         });
 
         try {
             scanner.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("File scanner start failed", e);
         }
     }
 
-    static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
-        baseDir.listFiles(new FileFilter() {
-
-            @Override
-            public boolean accept(File pathname) {
-                if (pathname.isDirectory()) {
-                    findFiles(extension, pathname, found);
-                } else if (pathname.getName().endsWith(extension)) {
-                    found.add(pathname);
-                }
-                return false;
-            }
-        });
+    static private List<Path> findFilePaths(File baseDir, final String extension) {
+        try (Stream<Path> files = Files.find(baseDir.toPath(), 999, (p, bfa) -> bfa.isRegularFile()
+                && p.getFileName().toString().endsWith(extension))) {
+            return files.collect(Collectors.toList());
+        } catch (IOException e) {
+            return Collections.emptyList();
+        }
     }
 
     // inject configuration parameters in the servlets
@@ -477,30 +488,6 @@ class RefineServer extends Server {
         }
 
         return dataDir.getAbsolutePath();
-    }
-
-    /**
-     * For Windows file paths that contain user IDs with non ASCII characters, those characters might get replaced with
-     * ?. We need to use the environment APPDATA value to substitute back the original user ID.
-     */
-    static private String fixWindowsUnicodePath(String path) {
-        int q = path.indexOf('?');
-        if (q < 0) {
-            return path;
-        }
-        int pathSep = path.indexOf(File.separatorChar, q);
-
-        String goodPath = System.getenv("APPDATA");
-        if (goodPath == null || goodPath.length() == 0) {
-            goodPath = System.getenv("USERPROFILE");
-            if (!goodPath.endsWith(File.separator)) {
-                goodPath = goodPath + File.separator;
-            }
-        }
-
-        int goodPathSep = goodPath.indexOf(File.separatorChar, q);
-
-        return path.substring(0, q) + goodPath.substring(q, goodPathSep) + path.substring(pathSep);
     }
 
 }
