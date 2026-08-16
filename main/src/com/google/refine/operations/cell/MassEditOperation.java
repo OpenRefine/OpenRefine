@@ -61,8 +61,8 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.operations.ExpressionRenamingUtils;
 import com.google.refine.operations.OperationDescription;
-import com.google.refine.util.NotImplementedException;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.StringUtils;
 
@@ -165,17 +165,18 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
 
     @Override
     public AbstractOperation renameColumns(Map<String, String> newColumnNames) {
-        try {
-            Evaluable parsed = MetaParser.parse(_expression);
-            Evaluable renamed = parsed.renameColumnDependencies(newColumnNames);
-            return new MassEditOperation(
-                    getEngineConfig().renameColumnDependencies(newColumnNames),
-                    newColumnNames.getOrDefault(_columnName, _columnName),
-                    renamed.getFullSource(),
-                    _edits);
-        } catch (ParsingException | NotImplementedException e) {
+        Optional<String> renamedExpression = ExpressionRenamingUtils.renameExpressionIfNeeded(
+                _expression,
+                Optional.of(_columnName),
+                newColumnNames);
+        if (renamedExpression.isEmpty()) {
             return this;
         }
+        return new MassEditOperation(
+                getEngineConfig().renameColumnDependencies(newColumnNames),
+                newColumnNames.getOrDefault(_columnName, _columnName),
+                renamedExpression.get(),
+                _edits);
     }
 
     @Override

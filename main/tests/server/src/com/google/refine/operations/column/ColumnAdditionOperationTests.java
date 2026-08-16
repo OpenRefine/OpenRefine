@@ -93,7 +93,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     @Test
     public void serializeColumnAdditionOperation() throws Exception {
         String description = OperationDescription.column_addition_brief("organization_json", 3, "employments",
-                "grel:value.parseJson()[\"employment-summary\"].join('###')");
+                "grel:value.parseJson().get(\"employment-summary\").join('###')");
         String json = "{"
                 + "   \"op\":\"core/column-addition\","
                 + "   \"description\":" + new TextNode(description).toString() + ","
@@ -101,7 +101,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 + "   \"newColumnName\":\"organization_json\","
                 + "   \"columnInsertIndex\":3,"
                 + "   \"baseColumnName\":\"employments\","
-                + "   \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
+                + "   \"expression\":\"grel:value.parseJson().get(\\\"employment-summary\\\").join('###')\","
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json);
@@ -118,7 +118,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 2);
         assertThrows(IllegalArgumentException.class, () -> invalidEngine.validate());
         ColumnAdditionOperation missingBaseColumn = new ColumnAdditionOperation(
-                EngineConfig.reconstruct("{}"),
+                EngineConfig.deserialize("{}"),
                 null,
                 "grel:cells[\"foo\"].value+'_'+value",
                 OnError.SetToBlank,
@@ -126,7 +126,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 2);
         assertThrows(IllegalArgumentException.class, () -> missingBaseColumn.validate());
         ColumnAdditionOperation invalidExpression = new ColumnAdditionOperation(
-                EngineConfig.reconstruct("{}"),
+                EngineConfig.deserialize("{}"),
                 "bar",
                 "grel:foo(",
                 OnError.SetToBlank,
@@ -158,7 +158,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     @Test
     public void testRenameColumns() {
         String description = OperationDescription.column_addition_brief("organization_json", 3, "employments",
-                "grel:value.parseJson().get(\"employment-summary\").join('###')");
+                "grel:value.parseJson()[\"employment-summary\"].join('###')");
         String expectedJSON = "{"
                 + "   \"op\":\"core/column-addition\","
                 + "   \"description\":" + new TextNode(description).toString() + ","
@@ -166,12 +166,12 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 + "   \"newColumnName\":\"organization_json\","
                 + "   \"columnInsertIndex\":3,"
                 + "   \"baseColumnName\":\"employments\","
-                + "   \"expression\":\"grel:value.parseJson().get(\\\"employment-summary\\\").join('###')\","
+                + "   \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
 
         var SUT = new ColumnAdditionOperation(
-                EngineConfig.reconstruct("{}"),
+                EngineConfig.deserialize("{}"),
                 "job_titles",
                 "grel:value.parseJson()[\"employment-summary\"].join('###')",
                 OnError.SetToBlank,
@@ -180,6 +180,36 @@ public class ColumnAdditionOperationTests extends RefineTest {
 
         AbstractOperation result = SUT.renameColumns(Map.of("job_titles", "employments", "new_column", "organization_json"));
         TestUtils.isSerializedTo(result, expectedJSON);
+    }
+
+    @Test
+    public void testRenameWithEscapedBackslashOnlyRenamingBaseColumn() {
+        ColumnAdditionOperation SUT = new ColumnAdditionOperation(
+                EngineConfig.deserialize("{}"),
+                "job_titles",
+                "grel:value+\"\\\\\\\\\"",
+                OnError.SetToBlank,
+                "new_column",
+                3);
+
+        ColumnAdditionOperation renamed = (ColumnAdditionOperation) SUT.renameColumns(Map.of("job_titles", "employments"));
+
+        assertEquals(renamed.getExpression(), "grel:value+\"\\\\\\\\\"");
+    }
+
+    @Test
+    public void testRenameWithEscapedBackslashAndDependentColumnRename() {
+        ColumnAdditionOperation SUT = new ColumnAdditionOperation(
+                EngineConfig.deserialize("{}"),
+                "job_titles",
+                "grel:cells['company'].value+\"\\\\\\\\\"",
+                OnError.SetToBlank,
+                "new_column",
+                3);
+
+        ColumnAdditionOperation renamed = (ColumnAdditionOperation) SUT.renameColumns(Map.of("company", "organization"));
+
+        assertEquals(renamed.getExpression(), "grel:cells.get(\"organization\").value + \"\\\\\"");
     }
 
     @Test
