@@ -47,6 +47,8 @@ public class ToStringTests extends GrelTestBase {
         assertEquals(invoke("toString", 100.0), "100.0");
         assertEquals(invoke("toString", 100.0, "%.0f"), "100");
         assertEquals(invoke("toString", 100.0, "%.1f"), String.format("%.1f", 100D));
+        assertEquals(invoke("toString", 1L, "%.4f"), "1.0000");
+        assertEquals(invoke("toString", 12L, "%2.2f"), "12.00");
 
         // test with other radix (2, 8, 10, 16)
         assertEquals(invoke("toString", 100L, "%x"), "64");
@@ -59,7 +61,6 @@ public class ToStringTests extends GrelTestBase {
         assertTrue(invoke("toString", 100L, "%") instanceof EvalError);
         assertTrue(invoke("toString", 100L, "%.") instanceof EvalError);
         assertTrue(invoke("toString", 100L, "%0") instanceof EvalError);
-        assertTrue(invoke("toString", 12L, "%2.2f") instanceof EvalError);
 
         // test with large number
         assertEquals(invoke("toString", 1000000000000000000L, "%d"), "1000000000000000000");
