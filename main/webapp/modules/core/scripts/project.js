@@ -100,6 +100,12 @@ function resize() {
   ui.processPanelDiv
   .css("width", processPanelWidth + "px")
   .css("left", Math.floor((width - processPanelWidth) / 2) + "px");
+  // Position resizer
+$('#facet-resizer').css({
+  left: leftPanelWidth + 'px',
+  top: top + 'px',
+  height: height + 'px'
+});
 }
 
 function resizeTabs() {
@@ -153,6 +159,63 @@ function initializeUI(uiState) {
   ui.exporterManager = new ExporterManager($("#export-button"));
 
   ui.leftPanelTabs.tabs();
+
+// === Facet Panel Resizer START ===
+const resizer = $('<div id="facet-resizer"></div>');
+
+resizer.css({
+  position: 'absolute',
+  width: '8px',
+  cursor: 'col-resize',
+  background: 'rgba(0,0,0,0.1)',
+  zIndex: 1000
+});
+
+// Hover effect
+resizer.hover(
+  function() { $(this).css('background', 'rgba(0,0,0,0.3)'); },
+  function() { $(this).css('background', 'rgba(0,0,0,0.1)'); }
+);
+
+let isDragging = false;
+
+// ✅ MOUSEDOWN
+resizer.on('mousedown', function () {
+  isDragging = true;
+  $('body').css('user-select', 'none');
+});
+
+// ✅ MOUSEMOVE
+$(document).on('mousemove', function (e) {
+  if (!isDragging) return;
+
+  let newWidth = e.clientX;
+
+  if (newWidth < 200) newWidth = 200;
+  if (newWidth > 500) newWidth = 500;
+
+  Refine.setPreference("ui.browsing.facetsHistoryPanelWidth", newWidth);
+
+  // Layout update
+  resize();
+  resizeTabs();
+
+  // 🔥 ONLY THIS WORKS PROPERLY
+  Refine.update({ engineChanged: true });
+});
+// ✅ MOUSEUP
+$(document).on('mouseup', function () {
+  isDragging = false;
+  $('body').css('user-select', 'auto');
+
+  resizeAll(); // final alignment
+});
+
+// Add resizer to DOM
+$('body').append(resizer);
+
+// === Facet Panel Resizer END ===
+
   resize();
   resizeTabs();
 
