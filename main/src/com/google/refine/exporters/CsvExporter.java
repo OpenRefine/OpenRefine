@@ -162,8 +162,8 @@ public class CsvExporter implements WriterExporter {
     }
 
     /**
-     * Filter to work around the fact that the TSV writer doesn't offer a setting to avoid escaping backslashes,
-     * so we collapse doubled backslashes after the fact while leaving {@code \t}, {@code \n}, and {@code \r} alone.
+     * Filter to work around the fact that the TSV writer doesn't offer a setting to avoid escaping backslashes, so we
+     * collapse doubled backslashes after the fact while leaving {@code \t}, {@code \n}, and {@code \r} alone.
      */
     private static class DoubleBackslashFilterWriter extends FilterWriter {
 
