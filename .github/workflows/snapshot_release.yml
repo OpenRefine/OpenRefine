@@ -258,7 +258,7 @@ jobs:
         CENTRAL_PASS: ${{ secrets.CENTRAL_PASS }}
         MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID_TEST }}
+        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         APPLE_BUILD_KEY_ID: ${{ secrets.APPLE_BUILD_KEY_ID }}
         APPLE_BUILD_KEY: ${{ secrets.APPLE_BUILD_KEY }}
         APPLE_ISSUER: ${{ secrets.APPLE_ISSUER }}
