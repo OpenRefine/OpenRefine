@@ -46,25 +46,16 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Setup Node
+      - name: Setup Node for simple standalone npm Javascript run
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
-          cache: 'yarn'
-          cache-dependency-path: main/tests/cypress/yarn.lock
-
-      - name: Install test dependencies
-        run: |
-          cd ./main/tests/cypress
-          yarn install --immutable
 
       - id: set-matrix
         run: npm install glob && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
         env:
           browsers: chrome
+
   e2e_test:
     name: e2e_test ${{ matrix.specs.group }}
     needs: prepare_e2e_test_matrix
