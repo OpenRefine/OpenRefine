@@ -21,20 +21,16 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Setup Node
+      - name: Setup Node for simple standalone npm Javascript run
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
-          cache: 'yarn'
-          cache-dependency-path: main/tests/cypress/yarn.lock
 
       - id: set-matrix
         run: npm install glob && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
         env:
           browsers: chrome
+
   e2e_test:
     if: github.repository == 'OpenRefine/OpenRefine'
     name: e2e_test ${{ matrix.specs.group }}
