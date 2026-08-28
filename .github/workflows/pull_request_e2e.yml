@@ -27,12 +27,14 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
-          package-manager-cache: false
+          cache: 'yarn'
+          cache-dependency-path: main/tests/cypress/yarn.lock
 
       - name: Install test dependencies
         working-directory: main/tests/cypress
         run: |
           yarn install --immutable
+
       - name: Check Cypress test formatting and linting
         working-directory: main/tests/cypress
         run: yarn lint
@@ -51,7 +53,8 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
-          package-manager-cache: false
+          cache: 'yarn'
+          cache-dependency-path: main/tests/cypress/yarn.lock
 
       - name: Install test dependencies
         run: |
@@ -90,6 +93,7 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: 'yarn'
+          cache-dependency-path: main/tests/cypress/yarn.lock
 
       - name: Install test dependencies
         run: |

@@ -66,6 +66,7 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: 'yarn'
+          cache-dependency-path: main/tests/cypress/yarn.lock
 
       - name: Install test dependencies
         run: |
