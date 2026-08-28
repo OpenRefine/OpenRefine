@@ -148,6 +148,7 @@
                                     <arg value="notarytool"/>
                                     <arg value="submit"/>
                                     <arg value="${mac.dmg.path}"/>
+                                    <arg value="--verbose"/>
                                     <arg value="--key-id"/>
                                     <arg value="${apple.notarization.key.id}"/>
                                     <arg value="--key"/>
