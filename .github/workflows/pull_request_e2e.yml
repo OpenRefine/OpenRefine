@@ -14,31 +14,6 @@ on:
 permissions: read-all
 
 jobs:
-  lint_cypress:
-    name: Lint Cypress tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: 'lts/*'
-          cache: 'yarn'
-          cache-dependency-path: main/tests/cypress/yarn.lock
-
-      - name: Install test dependencies
-        working-directory: main/tests/cypress
-        run: |
-          yarn install --immutable
-
-      - name: Check Cypress test formatting and linting
-        working-directory: main/tests/cypress
-        run: yarn lint
-
   prepare_e2e_test_matrix:
     runs-on: ubuntu-latest
     outputs:
@@ -46,10 +21,63 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup Node for simple standalone npm Javascript run
+      - name: Enable corepack for Yarn
+        run: corepack enable
+
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
+
+      - name: Set up caching manually so we can cache Cypress binary
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/cache
+            ~/.cache
+            main/webapp
+            **/node_modules
+            !~/cache/exclude
+            server/classes
+            server/target/lib
+            extensions
+            modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn
+
+      - name: Install test dependencies
+        run: |
+          cd ./main/tests/cypress
+          yarn install --immutable
+          yarn cypress install --force
+          yarn cypress verify
+
+      - name: Check Cypress test formatting and linting (4 sec.)
+        working-directory: main/tests/cypress
+        run: yarn lint
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v5.7.0
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'maven'
+
+      - name: Build OpenRefine
+        run: |
+          ./refine build
+          du -m -s   ~/.cache
+          du -m -s   main/webapp
+          find . -name node_modules -exec du -m -s {} \;
+          du -m -s   server/classes
+          du -m -s   server/target/lib
+          du -m -s   extensions
+          du -m -s   modules
+
+      - name: Test Unix Domain Socket connectivity (10 sec.)
+        run: |
+          ./refine uds_tests
 
       - id: set-matrix
         run: npm install glob && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
@@ -72,10 +100,6 @@ jobs:
           java-version: 21
           cache: 'maven'
 
-      # TODO: Cache build artefacts
-      - name: Build OpenRefine
-        run: ./refine build
-
       - name: Enable corepack
         run: corepack enable
 
@@ -83,13 +107,31 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
-          cache: 'yarn'
-          cache-dependency-path: main/tests/cypress/yarn.lock
+
+      - name: Restore Tests dependency cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/cache
+            ~/.cache
+            /home/runner/.cache
+            main/webapp
+            **/node_modules
+            !~/cache/exclude
+            server/classes
+            server/target/lib
+            extensions
+            modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn
 
       - name: Install test dependencies
         run: |
           cd ./main/tests/cypress
           yarn install --immutable
+          yarn cypress install --force
+          yarn cypress verify
 
       - name: Test with Cypress on ${{ matrix.browser }}
         run: |
@@ -103,22 +145,3 @@ jobs:
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs.paths }}
           CYPRESS_GROUP: ${{ matrix.specs.group }}
-  misc_integration_test:
-    name: Misc integration tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Set up Java 21
-        uses: actions/setup-java@v5.7.0
-        with:
-          distribution: 'temurin'
-          java-version: 21
-          cache: 'maven'
-
-      - name: Build OpenRefine
-        run: ./refine build
-
-      - name: Test Unix Domain Socket connectivity
-        run: |
-          ./refine uds_tests
