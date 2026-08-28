@@ -248,7 +248,7 @@ jobs:
 
     - name: Package and upload to OSSRH
       run: |
-        cat ${APPLE_BUILD_KEY} > apple_build_key.p12
+        echo ${APPLE_BUILD_KEY} > apple_build_key.p12
         mvn -B deploy -DskipTests=true -Dmac.signing.identity="Code for Science and Society, Inc." -DrepositoryId=ossrh-staging-api -Dapple.notarization.key.id=$APPLE_BUILD_KEY_ID-Dapple.notarization.key=apple_build_key.p12 -Dapple.notarization.issuer=$APPLE_ISSUER -Dapple.notarization.team.id=$APPLE_TEAM_ID -Dgpg.signer=bc
         rm apple_build_key.p12
         # The below POST is documented as being necessary, but it seems to work without it. Also not clear if it needs to be authenticated.
