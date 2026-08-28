@@ -131,7 +131,7 @@ describe.skip(__filename, function () {
     resetWikibases(savedValue);
   });
   function getPreference(name) {
-    const openRefineUrl = Cypress.env('OPENREFINE_URL');
+    const openRefineUrl = Cypress.expose('OPENREFINE_URL');
     return cy
       .request({
         method: 'GET',

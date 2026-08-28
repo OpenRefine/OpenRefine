@@ -125,7 +125,7 @@
           <id>notarize</id>
           <activation>
               <property>
-                  <name>apple.notarization.username</name>
+                  <name>apple.notarization.key.id</name>
               </property>
           </activation>
           <build>
@@ -144,14 +144,16 @@
                             <target name="notarizeDMG" description="Notarize DMG">
 
                                 <!-- Send DMG file to Apple's notarization service -->
-                                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun" failonerror="true">
                                     <arg value="notarytool"/>
                                     <arg value="submit"/>
                                     <arg value="${mac.dmg.path}"/>
-                                    <arg value="--apple-id"/>
-                                    <arg value="${apple.notarization.username}"/>
-                                    <arg value="--password"/>
-                                    <arg value="${apple.notarization.password}"/>
+                                    <arg value="--key-id"/>
+                                    <arg value="${apple.notarization.key.id}"/>
+                                    <arg value="--key"/>
+                                    <arg value="${apple.notarization.key}"/>
+                                    <arg value="--issuer"/>
+                                    <arg value="${apple.notarization.issuer}"/>
                                     <arg value="--team-id"/>
                                     <arg value="${apple.notarization.team.id}"/>
                                     <arg value="--wait"/>
@@ -160,7 +162,7 @@
                                 </exec>
 
                                 <!-- Staple the notarization ticket to the DMG bundle -->
-                                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun" failonerror="true">
                                     <arg value="stapler"/>
                                     <arg value="staple"/>
                                     <arg value="${mac.dmg.path}"/>
@@ -360,11 +362,6 @@
             <configuration>
               <target name="generateDMG" description="Generate DMG">
 
-                <!-- Remove man pages from JRE as they are not accessible anyway, and prevent us from codesigning -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
-                    <arg line="-r"/>
-                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/man&quot;"/>
-                </exec>
                 <!-- remove JRE licenses folder, cannot be signed -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
                     <arg line="-r"/>
@@ -391,7 +388,7 @@
                 </exec>
 
                 <!-- Codesign JRE -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign" failonerror="true">
                     <arg value="--entitlements" />
                     <arg value="../Entitlements.plist" />
                     <arg value="--sign"/>
@@ -401,11 +398,11 @@
                     <arg value="--timestamp"/>
                     <arg value="--options"/>
                     <arg value="runtime"/>
-                    <arg value="${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/lib/jli/libjli.dylib" />
+                    <arg value="${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/lib/libjli.dylib" />
                 </exec>
 
                 <!-- Codesign jars with native code in them -->
-                <exec executable="/bin/bash" os="Mac OS X" dir="${project.build.directory}/${mac.build.directory}">
+                <exec executable="/bin/bash" os="Mac OS X" dir="${project.build.directory}/${mac.build.directory}"  failonerror="true">
                     <arg value="${basedir}/apple_certs/codesign.sh" />
                     <arg value="OpenRefine.app" />
                     <arg value="${mac.signing.identity}" />
@@ -413,7 +410,7 @@
                 </exec>
 
                 <!-- Codesign app -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign" failonerror="true">
                     <arg value="--entitlements" />
                     <arg value="../Entitlements.plist" />
                     <arg value="--sign"/>
@@ -427,7 +424,7 @@
                 </exec>
 
                 <!-- Create DMG (Mac OS X) -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="python3">
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="python3" failonerror="true">
                     <arg value="-m"/>
                     <arg value="dmgbuild"/>
                     <arg value="-s"/>

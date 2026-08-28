@@ -56,6 +56,7 @@ If you are unfamiliar with git, GitHub, or open source development, please see [
 - create unit and/or end-to-end tests which cover the bug fix or new feature
 - run `./refine lint` before submitting your PR (CI will fail if lint fails)
 - make sure all tests are green before submitting your PR
+- Add screenshots for UI changes (if applicable).
 - we attempt to prioritize PR reviews, but please be patient
 
 ### New functionality via extensions

@@ -367,7 +367,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
                     Collections.emptyMap(),
                     Datamodel.makeStatementUpdate(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()),
                     Collections.emptyList(), Collections.emptyList()), false, summary, tags))
-                            .thenReturn(new EditingResult(revId));
+                    .thenReturn(new EditingResult(revId));
             revId++;
         }
 
@@ -427,7 +427,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
                     Collections.emptyList());
             when(editor.editEntityDocument(Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) doc.getEntityId(),
                     doc.getRevisionId(), labelsUpdate, statementUpdate), false, summary, tags))
-                            .thenReturn(new EditingResult(revId));
+                    .thenReturn(new EditingResult(revId));
             revId++;
         }
 

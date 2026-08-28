@@ -84,7 +84,7 @@
     <log4j.version>2.26.1</log4j.version>
     <jetty.version>10.0.19</jetty.version>
     <okhttp.version>5.4.0</okhttp.version>
-    <okio.version>3.18.0</okio.version>
+    <okio.version>3.18.1</okio.version>
     <jena.version>6.2.0</jena.version>
     <poi.version>5.5.1</poi.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
@@ -98,11 +98,11 @@
     <commons-compress.version>1.28.0</commons-compress.version>
     <velocity.version>2.4.1</velocity.version>
     <marc4j.version>2.9.6</marc4j.version>
-    <jsoup.version>1.22.2</jsoup.version>
+    <jsoup.version>1.23.1</jsoup.version>
     <odfdom-java.version>0.13.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2.1</vicino.version>
     <clojure.version>1.12.5</clojure.version>
-    <httpclient5.version>5.6.3</httpclient5.version>
+    <httpclient5.version>5.6.4</httpclient5.version>
     <httpcore5.version>5.4.3</httpcore5.version>
     <univocity-csv.version>2.9.1</univocity-csv.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
@@ -276,18 +276,20 @@
       <plugin>
         <groupId>net.revelc.code.formatter</groupId>
         <artifactId>formatter-maven-plugin</artifactId>
-        <version>2.17.1</version>
+        <version>2.29.0</version>
         <configuration>
           <configFile>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</configFile>
           <excludes> <!-- file should not be linted because it was copied from a dependency (sigh) -->
             <exclude>**/Metaphone3.java</exclude>
           </excludes>
+          <!-- removeTrailingWhitespace changed default in 2.18 to true, but we'll leave it as false for now until we do a separate update to remove trailing whitespace -->
+          <removeTrailingWhitespace>false</removeTrailingWhitespace>
         </configuration>
       </plugin>
       <plugin>
         <groupId>net.revelc.code</groupId>
         <artifactId>impsort-maven-plugin</artifactId>
-        <version>1.9.0</version>
+        <version>1.13.0</version>
         <configuration>
           <groups>java.,javax.,*,com.google.refine,org.openrefine</groups>
           <staticGroups>java,*</staticGroups>

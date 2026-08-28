@@ -25,7 +25,8 @@ function codesignJarsInDir {
         # Codesign all all relevant files
         while IFS= read -r -d $'\0' libfile; do
             echo "Codesigning file $(basename "${libfile}")"
-            codesign --verbose --entitlements "$3" --deep --force --timestamp --sign "$2" --options runtime $libfile
+            # Exit with error if codesigning fails
+            codesign --verbose --entitlements "$3" --deep --force --timestamp --sign "$2" --options runtime $libfile || exit $?
         done < <(find -E "$folder" -regex '.*\.(dylib|jnilib)' -print0)
 
         # Create updated JAR
