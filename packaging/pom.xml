@@ -125,7 +125,7 @@
           <id>notarize</id>
           <activation>
               <property>
-                  <name>apple.notarization.username</name>
+                  <name>apple.notarization.key.id</name>
               </property>
           </activation>
           <build>
@@ -148,10 +148,12 @@
                                     <arg value="notarytool"/>
                                     <arg value="submit"/>
                                     <arg value="${mac.dmg.path}"/>
-                                    <arg value="--apple-id"/>
-                                    <arg value="${apple.notarization.username}"/>
-                                    <arg value="--password"/>
-                                    <arg value="${apple.notarization.password}"/>
+                                    <arg value="--key-id"/>
+                                    <arg value="${apple.notarization.key.id}"/>
+                                    <arg value="--key"/>
+                                    <arg value="${apple.notarization.key}"/>
+                                    <arg value="--issuer"/>
+                                    <arg value="${apple.notarization.issuer}"/>
                                     <arg value="--team-id"/>
                                     <arg value="${apple.notarization.team.id}"/>
                                     <arg value="--wait"/>
