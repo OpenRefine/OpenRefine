@@ -65,18 +65,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
-
-      - name: Restore Tests dependency cache
-        uses: actions/cache@v6
-        with:
-          path: |
-            ~/cache
-            ~/.cache
-            **/node_modules
-            !~/cache/exclude
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          cache: 'yarn'
 
       - name: Install test dependencies
         run: |
@@ -84,7 +73,7 @@ jobs:
           yarn install --immutable
 
       - name: Test with Cypress on ${{ matrix.browser }}
-        run: | 
+        run: |
           echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
           echo REFINE_MEMORY=4096M >> ./refine.ini
           ./refine e2e_tests

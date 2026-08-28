@@ -89,19 +89,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
-          package-manager-cache: false
-
-      - name: Restore Tests dependency cache
-        uses: actions/cache@v6
-        with:
-          path: |
-            ~/cache
-            ~/.cache
-            **/node_modules
-            !~/cache/exclude
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          cache: 'yarn'
 
       - name: Install test dependencies
         run: |
