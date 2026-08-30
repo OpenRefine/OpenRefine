@@ -85,25 +85,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   border: 0;
 }
 
-#projects-container table thead th:nth-child(2) {
+#projects-container table thead th:nth-child(2),
+#projects-container table thead th:nth-child(3) {
   border-left: 0;
 }
 
-#projects-container table thead th:nth-child(3) {
+/* Last modified */
+#projects-container table thead th:nth-child(4) {
   white-space: nowrap;
 }
 
-#projects-container table thead th:nth-child(9) {
+#projects-container table thead th:nth-child(10) {
   text-align: end;
 }
 
 /* Subject */
-#projects-container table tbody td:nth-child(7) {
+#projects-container table tbody td:nth-child(8) {
   white-space: nowrap;
 }
 
 /* Row Count is right aligned for numbers */
-#projects-container table tbody td:nth-child(9) {
+#projects-container table tbody td:nth-child(10) {
   text-align: end;
 }
 
@@ -253,4 +255,27 @@ ul#tagsUl li a {
   border-width: 1px; /* fixes missing bottom border */
   margin: 5px; /* aligns table with the tags bar and footer content */
   max-width: calc(100% - 12px); /* prevents horizontal overflow */
+}
+
+/* Bulk selection of projects */
+#projects-bulk-actions {
+  display: none;
+  padding: var(--padding-tight) var(--padding-normal);
+  border-bottom: 1px solid var(--chrome-primary);
+  /* The list is long precisely when this feature is useful, so the bar has to survive
+     scrolling the project list rather than sitting at the top of it. */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--background-primary);
+}
+
+#projects-selection-count {
+  margin-right: var(--padding-normal);
+  font-weight: bold;
+}
+
+.list-table th.project-selector {
+  width: 1%;
+  white-space: nowrap;
 }

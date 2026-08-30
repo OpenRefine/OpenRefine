@@ -56,6 +56,10 @@ Refine.OpenProjectUI = function(elmt) {
   } else {
     $('#projects-workspace-open').hide();
   }
+  this._elmts.deleteSelectedButton.on('click', function() {
+    self._deleteSelectedProjects();
+  });
+
   Refine.TagsManager.allProjectTags = [];
   this._buildTagsAndFetchProjects();
 };
@@ -128,6 +132,8 @@ Refine.OpenProjectUI._filterTags = function(tag) {
       $(this).hide();
     }
   });
+
+  Refine.OpenProjectUI._updateSelection();
 };
 
 Refine.OpenProjectUI.prototype._openSearchInput = function() {
@@ -146,6 +152,7 @@ Refine.OpenProjectUI.prototype._openSearchInput = function() {
       input.val('');
       icon.removeClass("magnifying-glass-open");
       $("#tableBody").filterListSearch("");
+      Refine.OpenProjectUI._updateSelection();
       $("#search-input").hide();
       // $("#tagsUl").show();
     }
@@ -189,6 +196,7 @@ Refine.OpenProjectUI.prototype._searchInput = function() {
     const text = input.val();
     // get the text, get back the projects that contains the text in the metadata
     $("#tableBody").filterListSearch(text);
+    Refine.OpenProjectUI._updateSelection();
   }
 };
 
@@ -259,6 +267,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
 
     var table = $(
       '<table class="tablesorter-blue list-table"><thead><tr>' +
+      '<th class="project-selector"><input type="checkbox" id="select-all-projects" /></th>' +
       '<th></th>' +
       '<th></th>' +
       '<th>'+$.i18n('core-index-open/last-mod')+'</th>' +
@@ -285,6 +294,16 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     var renderProject = function(project) {
       var tr = table.getElementsByTagName('tbody')[0].insertRow(table.rows.length - 1);
       tr.className = "project";
+
+      $('<input type="checkbox" />')
+      .addClass("project-selector")
+      .attr("data-project-id", project.id)
+      .attr("title", $.i18n('core-index-open/select-title', project.name))
+      .attr("aria-label", $.i18n('core-index-open/select-title', project.name))
+      .on('change', Refine.OpenProjectUI._updateSelection)
+      .appendTo(
+        $(tr.insertCell(tr.cells.length))
+      );
 
       var deleteLink = $('<a></a>')
       .addClass("delete-project")
@@ -377,13 +396,106 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         headers : {
             0: { sorter: false },
             1: { sorter: false },
-            2: { sorter: "text" }
+            2: { sorter: false },
+            3: { sorter: "text" }
         },
-        sortList: [[2,1]],
+        sortList: [[3,1]],
         widthFixed: false
     });
+
+    $('#select-all-projects')
+    .attr("title", $.i18n('core-index-open/select-all-title'))
+    .attr("aria-label", $.i18n('core-index-open/select-all-title'))
+    .on('change', function() {
+      var checked = this.checked;
+      $('#tableBody tr:visible input.project-selector').prop('checked', checked);
+      Refine.OpenProjectUI._updateSelection();
+    });
+
     self._addTagFilter();
   }
+  Refine.OpenProjectUI._updateSelection();
+};
+
+/**
+ * Recomputes the bulk-action bar from the currently ticked project selectors.
+ *
+ * A selector belonging to a row hidden by the tag or search filters is cleared first, so that
+ * "selected" and "visible" can never disagree: a project the user cannot see is never deleted by
+ * a bulk action.
+ */
+Refine.OpenProjectUI._updateSelection = function() {
+  $('#tableBody tr:hidden input.project-selector:checked').prop('checked', false);
+
+  var selectors = $('#tableBody tr:visible input.project-selector');
+  var selected = selectors.filter(':checked');
+
+  $('#select-all-projects').prop('checked', selectors.length > 0 && selected.length === selectors.length);
+
+  var bar = $('#projects-bulk-actions');
+  if (selected.length === 0) {
+    bar.hide();
+  } else {
+    $('#projects-selection-count').text($.i18n('core-index-open/selected-count', selected.length));
+    $('#delete-selected-projects').text($.i18n('core-index-open/del-selected', selected.length));
+    bar.show();
+  }
+};
+
+/**
+ * Ids of the projects the user has selected, in the order they are listed.
+ */
+Refine.OpenProjectUI._selectedProjectIds = function() {
+  return $('#tableBody tr:visible input.project-selector:checked').map(function() {
+    return $(this).attr('data-project-id');
+  }).get();
+};
+
+/**
+ * Deletes every selected project, then refreshes the list once.
+ *
+ * The projects are deleted one after another rather than in parallel: the server serializes
+ * deletions anyway and each one rewrites the workspace file, so issuing them concurrently only
+ * increases the chance of a partial failure. Failures are collected and reported at the end
+ * instead of aborting, so one unreadable project cannot strand the rest of the selection.
+ */
+Refine.OpenProjectUI.prototype._deleteSelectedProjects = function() {
+  var self = this;
+  var ids = Refine.OpenProjectUI._selectedProjectIds();
+  if (ids.length === 0) {
+    return;
+  }
+  if (!window.confirm($.i18n('core-index-open/del-selected-body', ids.length))) {
+    return;
+  }
+
+  var failed = [];
+  var deleteNext = function(index) {
+    if (index >= ids.length) {
+      if (failed.length > 0) {
+        alert($.i18n('core-index-open/warning-del-selected', failed.length));
+      }
+      Refine.TagsManager.allProjectTags = [];
+      self._buildTagsAndFetchProjects();
+      return;
+    }
+    Refine.postCSRF(
+      "command/core/delete-project",
+      { "project" : ids[index] },
+      function (data) {
+        if (!(data && typeof data.code != 'undefined' && data.code == "ok")) {
+          failed.push(ids[index]);
+        }
+        deleteNext(index + 1);
+      },
+      "json",
+      function () {
+        failed.push(ids[index]);
+        deleteNext(index + 1);
+      }
+    );
+  };
+  deleteNext(0);
 };
 
 Refine.OpenProjectUI.prototype._addTagFilter = function() {
@@ -393,10 +505,13 @@ Refine.OpenProjectUI.prototype._addTagFilter = function() {
   }
 };
 
+// Index of the project name cell in a row: selector, delete, about, last modified, name.
+Refine.OpenProjectUI.NAME_COLUMN_INDEX = 4;
+
 Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
     
     var refreshMetaField = function(data, index) {
-        if (index === 3) {
+        if (index === Refine.OpenProjectUI.NAME_COLUMN_INDEX) {
             $('a', $('td', tr).eq(index))
             .text(data);
         } else {
@@ -431,7 +546,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
    
     };
     
-    var index = 3;
+    var index = Refine.OpenProjectUI.NAME_COLUMN_INDEX;
     refreshMetaField(metaData.name, index); index++;
     refreshMetaTags(metaData.tags, index); index++;
     refreshMetaField(metaData.creator, index); index++;
