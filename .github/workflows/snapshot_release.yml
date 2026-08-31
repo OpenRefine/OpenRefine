@@ -267,14 +267,13 @@ jobs:
       run: |
         mvn -B deploy -DskipTests=true -Dmac.signing.identity="Code for Science and Society, Inc." -DrepositoryId=ossrh-staging-api \
           -Dapple.notarization.key.id="$APPLE_BUILD_KEY_ID" -Dapple.notarization.key="$RUNNER_TEMP/notary_key.p8" \
-          -Dapple.notarization.issuer="$APPLE_ISSUER" -Dapple.notarization.team.id="$APPLE_TEAM_ID" -Dgpg.signer=bc
+          -Dapple.notarization.issuer="$APPLE_ISSUER" -Dgpg.signer=bc
         rm -f $RUNNER_TEMP/notary_key.p8
       env:
         CENTRAL_USER: ${{ secrets.CENTRAL_USER }}
         CENTRAL_PASS: ${{ secrets.CENTRAL_PASS }}
         MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
     # Make sure key file is deleted even on error
     - name: Remove notarization API key

@@ -155,8 +155,6 @@
                                     <arg value="${apple.notarization.key}"/>
                                     <arg value="--issuer"/>
                                     <arg value="${apple.notarization.issuer}"/>
-                                    <arg value="--team-id"/>
-                                    <arg value="${apple.notarization.team.id}"/>
                                     <arg value="--wait"/>
                                     <arg value="--timeout"/>
                                     <arg value="${apple.notarization.timeout}"/>
