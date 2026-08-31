@@ -181,6 +181,18 @@ jobs:
     steps:
     - uses: actions/checkout@v7
 
+      # Key is multiple lines, so wrap it in quotes
+    - name: Write notarization API key and validate it
+      run: |
+        install -m 600 /dev/null "$RUNNER_TEMP/notary_key.p8"
+        printf '%s\n' "$APPLE_BUILD_KEY" > "$RUNNER_TEMP/notary_key.p8"
+        wc "$RUNNER_TEMP/notary_key.p8"
+        openssl pkey -in "$RUNNER_TEMP/notary_key.p8" -noout \
+          || { echo "::error::APPLE_BUILD_KEY is not a valid PKCS#8 private key"; exit 1; }
+      env:
+        APPLE_BUILD_KEY: |
+          ${{ secrets.APPLE_BUILD_KEY }}
+
     - name: Set up Java 21
       uses: actions/setup-java@v5.7.0
       with:
@@ -231,17 +243,6 @@ jobs:
     - name: Set version string output variable
       id: version_string_variable
       run: echo "output_value=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> "$GITHUB_OUTPUT"
-
-    # Key is multiple lines, so wrap it in quotes
-    - name: Write notarization API key and validate it
-      run: |
-        install -m 600 /dev/null "$RUNNER_TEMP/notary_key.p8"
-        printf '%s\n' "$APPLE_BUILD_KEY" > "$RUNNER_TEMP/notary_key.p8"
-        openssl pkey -in "$RUNNER_TEMP/notary_key.p8" -noout \
-          || { echo "::error::APPLE_BUILD_KEY is not a valid PKCS#8 private key"; exit 1; }
-      env:
-        APPLE_BUILD_KEY: |
-          ${{ secrets.APPLE_BUILD_KEY }}
 
     - name: Package and upload to OSSRH
       run: |
