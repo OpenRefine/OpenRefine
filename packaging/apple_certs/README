@@ -1,7 +1,55 @@
-Apple distribution certificates
-===============================
+Apple code signing and notarization
+===================================
 
-Those certificates are used to code-sign OpenRefine binaries.
-They are decoded in the CI using the embedded GPG key.
+Certificates
+------------
 
+apple_cert.cer / apple_cert.p12 are the Developer ID Application certificate
+used to code-sign the macOS binaries. They are GPG encrypted to the release
+key and decrypted in CI by .github/workflows/release/add_apple_keys.sh.
 
+Decrypting them locally needs the GPG_PRIVATE_KEY repository secret imported
+into your keyring - the GPG_PASSPHRASE alone is not enough, since the files
+are encrypted to a public key rather than with a passphrase.
+
+The certificate is issued by, and can only be renewed by, the Account Holder
+of the Apple Developer team.
+
+Notarization
+------------
+
+Notarization authenticates with an App Store Connect API key, configured
+through four repository secrets:
+
+  APPLE_BUILD_KEY      contents of the AuthKey_XXXXXXXXXX.p8 file, verbatim,
+                       including the -----BEGIN/END PRIVATE KEY----- lines
+  APPLE_BUILD_KEY_ID   the 10 character key ID, which is also the XXXXXXXXXX
+                       portion of the .p8 filename
+  APPLE_ISSUER         the 36 character issuer UUID, from App Store Connect
+                       under Users and Access -> Integrations
+  APPLE_P12_PASSPHRASE passphrase for apple_cert.p12 (signing, not notarization)
+
+Take care pasting the first three. Whitespace and missing PEM header lines are
+invisible in the secrets UI, and Apple reports both as errors that name
+neither the value at fault nor the reason: a malformed key gives
+"Error: invalidP8" and a malformed ID gives "401 Unauthenticated". The
+workflow validates all three before building so such a failure is reported in
+seconds rather than after a full package run.
+
+Checking the credentials
+------------------------
+
+check_notarization_credentials.py validates a key, key ID and issuer ID
+against Apple's notary service without needing macOS, Xcode or a CI run:
+
+  pip install pyjwt cryptography
+  ./check_notarization_credentials.py AuthKey_XXXXXXXXXX.p8 <key-id> <issuer-id>
+
+HTTP 200 means the credentials are valid and hold notarization access, and the
+team's recent submission history is printed. HTTP 401 means the three values do
+not correspond to each other. HTTP 403 means they are valid but lack
+notarization access, which is a permissions question for the Account Holder.
+
+The submission history is team wide, so it also answers when notarization last
+succeeded - useful because a notarization failure does not necessarily fail the
+build in older revisions of the pipeline.
