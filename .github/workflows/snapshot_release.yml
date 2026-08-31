@@ -189,9 +189,28 @@ jobs:
         wc "$RUNNER_TEMP/notary_key.p8"
         openssl pkey -in "$RUNNER_TEMP/notary_key.p8" -noout \
           || { echo "::error::APPLE_BUILD_KEY is not a valid PKCS#8 private key"; exit 1; }
+
+        # Whitespace pasted into these two secrets is invisible in the web UI,
+        # but it changes the JWT and Apple rejects it as "401 Unauthenticated"
+        # with no indication of which value is at fault. Normalise and check
+        # them here, where the error names the culprit.
+        key_id="${APPLE_BUILD_KEY_ID//[[:space:]]/}"
+        issuer="${APPLE_ISSUER//[[:space:]]/}"
+        [ ${#key_id} -eq 10 ] \
+          || { echo "::error::APPLE_BUILD_KEY_ID is ${#key_id} characters after trimming, expected 10"; exit 1; }
+        [ ${#issuer} -eq 36 ] \
+          || { echo "::error::APPLE_ISSUER is ${#issuer} characters after trimming, expected a 36-character UUID"; exit 1; }
+        # Trimmed values are no longer identical to the stored secrets, so they
+        # are not covered by the automatic masking. Mask them explicitly.
+        echo "::add-mask::$key_id"
+        echo "::add-mask::$issuer"
+        echo "APPLE_BUILD_KEY_ID=$key_id" >> "$GITHUB_ENV"
+        echo "APPLE_ISSUER=$issuer" >> "$GITHUB_ENV"
       env:
         APPLE_BUILD_KEY: |
           ${{ secrets.APPLE_BUILD_KEY }}
+        APPLE_BUILD_KEY_ID: ${{ secrets.APPLE_BUILD_KEY_ID }}
+        APPLE_ISSUER: ${{ secrets.APPLE_ISSUER }}
 
     - name: Set up Java 21
       uses: actions/setup-java@v5.7.0
@@ -256,8 +275,6 @@ jobs:
         MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        APPLE_BUILD_KEY_ID: ${{ secrets.APPLE_BUILD_KEY_ID }}
-        APPLE_ISSUER: ${{ secrets.APPLE_ISSUER }}
 
     # Make sure key file is deleted even on error
     - name: Remove notarization API key
