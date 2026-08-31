@@ -240,7 +240,8 @@ jobs:
         openssl pkey -in "$RUNNER_TEMP/notary_key.p8" -noout \
           || { echo "::error::APPLE_BUILD_KEY is not a valid PKCS#8 private key"; exit 1; }
       env:
-        APPLE_BUILD_KEY: ${{ secrets.APPLE_BUILD_KEY }}
+        APPLE_BUILD_KEY: |
+          ${{ secrets.APPLE_BUILD_KEY }}
 
     - name: Package and upload to OSSRH
       run: |
