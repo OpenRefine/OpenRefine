@@ -72,6 +72,7 @@ jobs:
           java-version: 21
           cache: 'maven'
 
+      # TODO: Cache build artefacts
       - name: Build OpenRefine
         run: ./refine build
 
@@ -102,7 +103,6 @@ jobs:
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs.paths }}
           CYPRESS_GROUP: ${{ matrix.specs.group }}
-          
   misc_integration_test:
     name: Misc integration tests
     runs-on: ubuntu-latest
