@@ -65,7 +65,15 @@ jobs:
           cache: 'maven'
 
       - name: Build OpenRefine
-        run: ./refine build
+        run: |
+          ./refine build
+          du -m -s   ~/.cache
+          du -m -s   main/webapp
+          find . -name node_modules -exec du -m -s {} \;
+          du -m -s   server/classes
+          du -m -s   server/target/lib
+          du -m -s   extensions
+          du -m -s   modules
 
       - name: Test Unix Domain Socket connectivity (10 sec.)
         run: |
@@ -142,8 +150,9 @@ jobs:
           CYPRESS_SPECS: ${{ matrix.specs.paths }}
           CYPRESS_GROUP: ${{ matrix.specs.group }}
 
+  # FIXME: DRY up - Everything above here is almost identical to pull_request_e2e.yml
 
-  build:
+  build: # TODO: I think this job is redundant
     if: github.repository == 'OpenRefine/OpenRefine'
     services:
       postgres:
@@ -282,7 +291,8 @@ jobs:
     - name: Set version 
       if: github.event_name == 'release' 
       run: mvn versions:set -DnewVersion=$(echo '${{ steps.get_release_upload_url.outputs.tag_name }}' | sed 's/[^a-zA-Z0-9_\.\-]/_/g')
-      
+
+    # FIXME: Tests should already have been run (and passed) by the time we get here
     - name: Build and test
       run: mvn -B test
       env:
