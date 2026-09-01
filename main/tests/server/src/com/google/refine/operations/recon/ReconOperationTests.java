@@ -45,7 +45,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -234,7 +233,7 @@ public class ReconOperationTests extends RefineTest {
     public void serializeReconProcess() throws Exception {
         ReconOperation op = ParsingUtilities.mapper.readValue(json, ReconOperation.class);
         Project project = mock(Project.class);
-        Process process = op.createProcess(project, new Properties());
+        Process process = op.createProcess(project);
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));
     }
 
@@ -385,7 +384,7 @@ public class ReconOperationTests extends RefineTest {
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
             ReconOperation op = new ReconOperation(EngineConfig.defaultRowBased(), "director", config);
-            Process process = op.createProcess(project, new Properties());
+            Process process = op.createProcess(project);
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());
@@ -491,7 +490,7 @@ public class ReconOperationTests extends RefineTest {
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
             ReconOperation op = new ReconOperation(EngineConfig.defaultRowBased(), "director", config);
-            Process process = op.createProcess(project, new Properties());
+            Process process = op.createProcess(project);
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());

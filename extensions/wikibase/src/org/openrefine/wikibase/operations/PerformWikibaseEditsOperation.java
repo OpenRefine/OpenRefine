@@ -170,7 +170,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Process createProcess(Project project, Properties options)
+    public Process createProcess(Project project)
             throws Exception {
         return new PerformEditsProcess(
                 project,
