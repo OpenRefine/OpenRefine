@@ -14,31 +14,6 @@ on:
 permissions: read-all
 
 jobs:
-  lint_cypress:
-    name: Lint Cypress tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: 'lts/*'
-          cache: 'yarn'
-          cache-dependency-path: main/tests/cypress/yarn.lock
-
-      - name: Install test dependencies
-        working-directory: main/tests/cypress
-        run: |
-          yarn install --immutable
-
-      - name: Check Cypress test formatting and linting
-        working-directory: main/tests/cypress
-        run: yarn lint
-
   prepare_e2e_test_matrix:
     runs-on: ubuntu-latest
     outputs:
@@ -46,10 +21,63 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup Node for simple standalone npm Javascript run
+      - name: Enable corepack for Yarn
+        run: corepack enable
+
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
+
+      - name: Set up caching manually so we can cache Cypress binary
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/cache
+            ~/.cache
+            main/webapp
+            **/node_modules
+            !~/cache/exclude
+            server/classes
+            server/target/lib
+            extensions
+            modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn
+
+      - name: Install test dependencies
+        run: |
+          cd ./main/tests/cypress
+          yarn install --immutable
+          yarn cypress install --force
+          yarn cypress verify
+
+      - name: Check Cypress test formatting and linting (4 sec.)
+        working-directory: main/tests/cypress
+        run: yarn lint
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v5.7.0
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'maven'
+
+      - name: Build OpenRefine
+        run: |
+          ./refine build
+          du -m -s   ~/.cache
+          du -m -s   main/webapp
+          find . -name node_modules -exec du -m -s {} \;
+          du -m -s   server/classes
+          du -m -s   server/target/lib
+          du -m -s   extensions
+          du -m -s   modules
+
+      - name: Test Unix Domain Socket connectivity (10 sec.)
+        run: |
+          ./refine uds_tests
 
       - id: set-matrix
         run: npm install glob && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
@@ -72,10 +100,6 @@ jobs:
           java-version: 21
           cache: 'maven'
 
-      # TODO: Cache build artefacts
-      - name: Build OpenRefine
-        run: ./refine build
-
       - name: Enable corepack
         run: corepack enable
 
@@ -83,13 +107,31 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
-          cache: 'yarn'
-          cache-dependency-path: main/tests/cypress/yarn.lock
+
+      - name: Restore Tests dependency cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/cache
+            ~/.cache
+            /home/runner/.cache
+            main/webapp
+            **/node_modules
+            !~/cache/exclude
+            server/classes
+            server/target/lib
+            extensions
+            modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn
 
       - name: Install test dependencies
         run: |
           cd ./main/tests/cypress
           yarn install --immutable
+          yarn cypress install --force
+          yarn cypress verify
 
       - name: Test with Cypress on ${{ matrix.browser }}
         run: |
@@ -103,11 +145,45 @@ jobs:
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs.paths }}
           CYPRESS_GROUP: ${{ matrix.specs.group }}
-  misc_integration_test:
-    name: Misc integration tests
+
+  unit_test:
+    needs: prepare_e2e_test_matrix
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 'postgres'
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:8
+        ports:
+          - 3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 3
+
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # This is wasteful, but needed for git describe
+
+      - name: Set up secrets
+        run: |
+          echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
 
       - name: Set up Java 21
         uses: actions/setup-java@v5.7.0
@@ -115,10 +191,35 @@ jobs:
           distribution: 'temurin'
           java-version: 21
           cache: 'maven'
+          server-id: ossrh-staging-api
+          server-username: CENTRAL_USER
+          server-password: CENTRAL_PASS
 
-      - name: Build OpenRefine
-        run: ./refine build
+      - name: Configure connections to databases
+        id: configure_db_connections
+        run: cat extensions/database/tests/conf/github_actions_tests.xml | sed -e "s/MYSQL_PORT/${{ job.services.mysql.ports[3306] }}/g" | sed -e "s/POSTGRES_PORT/${{ job.services.postgres.ports[5432] }}/g" > extensions/database/tests/conf/tests.xml
 
-      - name: Test Unix Domain Socket connectivity
+      - name: Populate databases with test data
+        id: populate_databases_with_test_data
         run: |
-          ./refine uds_tests
+          mysql -u root -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -proot -e 'CREATE DATABASE test_db;'
+          mysql -u root -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -proot < extensions/database/tests/conf/test-mysql.sql
+          psql -U postgres test_db -h 127.0.0.1 -p ${{ job.services.postgres.ports[5432] }} < extensions/database/tests/conf/test-pgsql.sql
+        env:
+          PGPASSWORD: postgres
+
+      - name: Install webapp dependencies
+        run: cd main/webapp && npm install
+
+      - name: Build and test with Maven
+        run: mvn -B jacoco:prepare-agent test jacoco:report
+
+      # TODO: Skip Coveralls for PRs?
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ env.COVERALLS_TOKEN }}
+          format: jacoco
+          flag-name: Java ${{ matrix.java }}
+          build-number: ${{ github.event.number }}
+          fail-on-error: false
