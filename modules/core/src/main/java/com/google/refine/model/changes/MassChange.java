@@ -38,12 +38,12 @@ import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import com.google.common.collect.Lists;
 
 import com.google.refine.history.Change;
 import com.google.refine.history.History;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
@@ -84,7 +84,7 @@ public class MassChange implements Change {
     }
 
     @Override
-    public void save(Writer writer, Properties options) throws IOException {
+    public void save(Writer writer, SaveOptions options) throws IOException {
         writer.write("updateRowContextDependencies=");
         writer.write(Boolean.toString(_updateRowContextDependencies));
         writer.write('\n');

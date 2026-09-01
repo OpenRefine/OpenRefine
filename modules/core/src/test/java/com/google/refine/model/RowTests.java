@@ -50,6 +50,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.util.Pool;
 import com.google.refine.util.TestUtils;
 
@@ -64,13 +65,14 @@ public class RowTests extends RefineTest {
     // dependencies
     StringWriter writer;
     Project project;
-    Properties options;
+    SaveOptions options = mock(SaveOptions.class);
+    Properties bindings = mock(Properties.class);
 
     @BeforeMethod
     public void SetUp() {
         writer = new StringWriter();
         project = new Project();
-        options = mock(Properties.class);
+        options = mock(SaveOptions.class);
     }
 
     @AfterMethod
@@ -108,18 +110,6 @@ public class RowTests extends RefineTest {
         row.save(writer, options);
         TestUtils.assertEqualsAsJson("{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}",
                 writer.getBuffer().toString());
-    }
-
-    // This way of serializing a row with indices is now deprecated, see GetRowsCommand.
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void saveRowWithRecordIndex() {
-        Row row = new Row(5);
-        row.setCell(0, new Cell("I'm not empty", null));
-        when(options.containsKey("rowIndex")).thenReturn(true);
-        when(options.get("rowIndex")).thenReturn(0);
-        when(options.containsKey("recordIndex")).thenReturn(true);
-        when(options.get("recordIndex")).thenReturn(1);
-        row.save(writer, options);
     }
 
     @Test
@@ -180,14 +170,14 @@ public class RowTests extends RefineTest {
     public void getFlaggedField() {
         Row row = new Row(5);
         row.flagged = true;
-        Assert.assertTrue((Boolean) row.getField("flagged", options));
+        Assert.assertTrue((Boolean) row.getField("flagged", bindings));
     }
 
     @Test
     public void getStarredField() {
         Row row = new Row(5);
         row.starred = true;
-        Assert.assertTrue((Boolean) row.getField("starred", options));
+        Assert.assertTrue((Boolean) row.getField("starred", bindings));
     }
 
     @Test

@@ -50,5 +50,38 @@ public interface Change {
 
     public void revert(Project project);
 
-    public void save(Writer writer, Properties options) throws IOException;
+    /**
+     * Legacy API for save.
+     * 
+     * @deprecated since 4.0. New implementations should override {@link #save(Writer, SaveOptions)}
+     */
+    @Deprecated(since = "4.0", forRemoval = true)
+    default void save(Writer writer, Properties options) throws IOException {
+        throw new UnsupportedOperationException("Calling old-style API for new Changes is not supported");
+    }
+
+    /**
+     * Save a change to the given writer, using the given options. The default implementation of this method will call
+     * the old save() method, but new implementations should override this method with their own implementation.
+     * 
+     * @param writer
+     *            writer to save to
+     * @param options
+     *            save options
+     * @throws IOException
+     *             if save failed
+     * @since 4.0
+     */
+    default void save(Writer writer, SaveOptions options) throws IOException {
+        Properties properties = new Properties();
+        if (options != null) {
+            if (options.isSaveMode()) {
+                properties.put("mode", "save");
+            }
+            if (options.getPool() != null) {
+                properties.put("pool", options.getPool());
+            }
+        }
+        save(writer, properties);
+    }
 }
