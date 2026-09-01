@@ -1,0 +1,77 @@
+<div class="grid-layout layout-loose layout-full">
+  <table role="presentation">
+    <tr>
+      <td colspan="2"></td>
+      <td>
+        <div class="grid-layout layout-tighter layout-full">
+          <table role="presentation">
+            <tr>
+              <td style="text-align: right;">&#160;</td>
+              <td width="1%">
+                <button class="button" bind="previewButton"></button>
+              </td>
+            </tr>
+            <tr>
+              <td style="..."></td>
+              <td width="1%">
+                <input type="checkbox" bind="disableAutoPreviewCheckbox" id="$disable" />
+                <label for="$disable" id="or-disable-auto-preview"></label>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </tr>
+    <tr>
+  
+      <td>
+        <div class="grid-layout layout-tightest">
+          <table role="presentation">
+            <tr>
+              <td width="1%">
+                <input type="checkbox" bind="limitCheckbox" id="$limit" />
+              </td>
+              <td>
+                <label for="$limit" id="or-import-load"></label>
+              </td>
+              <td>
+                <input bind="limitInput" type="number" class="lightweight" size="7" value="0" />
+                <label for="$limit" id="or-import-rows2"></label>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+      <td>
+        <div class="grid-layout layout-tightest">
+          <table role="presentation">
+            <tr>
+              <td width="1%">
+                <input type="checkbox" bind="includeFileSourcesCheckbox" id="$include-file-sources" />
+              </td>
+              <td>
+                <label for="$include-file-sources" id="or-import-source"></label>
+              </td>
+            </tr>
+            <tr>
+              <td width="1%">
+                <input type="checkbox" bind="includeArchiveFileCheckbox" id="$include-archive-file" />
+              </td>
+              <td>
+                <label for="$include-archive-file" id="or-import-archive"></label>
+              </td>
+            </tr>
+            <tr>
+              <td width="1%">
+                <input type="checkbox" bind="forceTextCheckbox" id="$force-text" />
+              </td>
+              <td>
+                <label for="$force-text" id="or-force-text"></label>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
