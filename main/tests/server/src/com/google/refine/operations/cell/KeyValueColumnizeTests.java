@@ -126,8 +126,8 @@ public class KeyValueColumnizeTests extends RefineTest {
 
     @Test
     public void testValidate() {
-        assertThrows(IllegalArgumentException.class, () -> new KeyValueColumnizeOperation(null, "foo", "bar").validate());
-        assertThrows(IllegalArgumentException.class, () -> new KeyValueColumnizeOperation("foo", null, "bar").validate());
+        assertThrows(NullPointerException.class, () -> new KeyValueColumnizeOperation(null, "foo", "bar").validate());
+        assertThrows(NullPointerException.class, () -> new KeyValueColumnizeOperation("foo", null, "bar").validate());
     }
 
     @Test
