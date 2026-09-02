@@ -396,6 +396,7 @@
                 <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
                   <mapper type="regexp" from="^([^/]*)/(.*)$$" to="\2"/>
                 </unzip>
+
               </target>
             </configuration>
           </execution>

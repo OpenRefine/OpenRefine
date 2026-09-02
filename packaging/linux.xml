@@ -16,7 +16,6 @@
     <fileSet>
       <directory>${rootdir}/main/webapp</directory>
       <outputDirectory>webapp</outputDirectory>
-
         <excludes>
     <exclude>node_modules/**</exclude>
     <exclude>package.json</exclude>
@@ -31,14 +30,14 @@
 	<exclude>**/pom.xml</exclude>
 	<exclude>**/.settings/**</exclude>
 	<exclude>**/.project</exclude>
-	<exclude>licenses/**</exclude> <!-- added below, separately -->
+	<exclude>licenses/**</exclude> <!-- added separately below -->
       </excludes>
     </fileSet>
     <fileSet> <!-- licenses for the frontend -->
       <directory>${rootdir}/main/webapp/licenses</directory>
       <outputDirectory>licenses</outputDirectory>
     </fileSet>
-    <fileSet> <!-- this copies the licenses for the backend -->
+    <fileSet> <!-- licenses for the backend -->
       <directory>${project.build.directory}/generated-resources</directory>
       <outputDirectory>.</outputDirectory>
     </fileSet>
@@ -63,7 +62,6 @@
       </excludes>
     </fileSet>
   </fileSets>
-  <!-- TODO replace $VERSION by ${project.version} in WEB-INF/web.xml -->
   <files>
     <file>
       <source>${rootdir}/refine</source>

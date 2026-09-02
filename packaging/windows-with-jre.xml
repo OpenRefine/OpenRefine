@@ -76,7 +76,6 @@
       </excludes>
     </fileSet>
   </fileSets>
-  <!-- TODO replace $VERSION by ${project.version} in WEB-INF/web.xml -->
   <files>
     <file>
       <source>target/openrefine_with_jre.exe</source>

@@ -494,18 +494,6 @@ jobs:
         name: installertemp-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
         path: ./packaging/target/openrefine-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
 
-#    - name: Sign the executables
-#      uses: nextgens/authenticode-sign-action@v1.0.1
-#      with:
-#        certificate: '${{ secrets.CERTIFICATES }}'
-#        credentials: '${{ secrets.CERTIFICATE_CREDENTIALS }}'
-#        key-uri: "projects/myProject/locations/europe-west2/keyRings/code-signing/cryptoKeys/ev/cryptoKeyVersions/1"
-#        timestamp-url: 'http://timestamp.digicert.com'
-#        description: 'OpenRefine'
-#        description-url: 'https://openrefine.org'
-#        folder: "./packaging/target/openrefine-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}"
-#        recursive: true
-
     - name: Build self-containing installer with InnoSetup 6 for Windows
       id: build-installer-innosetup-win-with-java
       run: |
@@ -519,22 +507,6 @@ jobs:
         name: installertemp-win-with-java-${{ needs.mac_test_and_deploy.outputs.version_number_string }}
         useGlob: false
         failOnError: false
-
-#    - name: Sign the installer
-#      uses: nextgens/authenticode-sign-action@v1.0.1
-#      with:
-#        certificate: '${{ secrets.CERTIFICATES }}'
-#        credentials: '${{ secrets.CERTIFICATE_CREDENTIALS }}'
-#        key-uri: "projects/myProject/locations/europe-west2/keyRings/code-signing/cryptoKeys/ev/cryptoKeyVersions/1"
-#        timestamp-url: 'http://timestamp.digicert.com'
-#        description: 'OpenRefine Installer'
-#        description-url: 'https://openrefine.org'
-#        folder: "./packaging/target"
-#        recursive: false
-
-#    - name: Verify the signature
-#      run: call "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.17763.0\x86\signtool.exe" verify /v /pa "OpenRefine-Installer-${{ needs.mac_test_and_deploy.outputs.version_number_string }}.exe"
-#      shell: cmd
 
     - name: Upload the installer as an artifact
       id: upload-build-artifact-win-with-java-installer
