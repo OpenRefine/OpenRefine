@@ -67,8 +67,8 @@
                 <id>package-distributions</id>
                 <configuration>
                   <descriptors>
-                    <descriptor>linux.xml</descriptor>
-                    <descriptor>windows-with-jre.xml</descriptor>
+                    <descriptor>assembly-linux.xml</descriptor>
+                    <descriptor>assembly-windows.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
                 </configuration>
@@ -90,7 +90,7 @@
                 <id>package-distributions</id>
                 <configuration>
                   <descriptors>
-                    <descriptor>linux.xml</descriptor>
+                    <descriptor>assembly-linux.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
                 </configuration>
@@ -116,7 +116,7 @@
                 <id>package-distributions</id>
                 <configuration>
                   <descriptors>
-                    <descriptor>windows-with-jre.xml</descriptor>
+                    <descriptor>assembly-windows.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
                 </configuration>
