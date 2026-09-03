@@ -123,6 +123,26 @@
               </execution>
             </executions>
           </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.6.3</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <id>build-inno-setup</id>
+                <configuration>
+                  <executable>ISCC.exe</executable>
+                  <workingDirectory>target</workingDirectory>
+                  <arguments>
+                    <argument>-DMyAppVersion=${project.version}</argument>
+                    <argument>-DMyProgramFiles=openrefine-win-with-java-${project.version}</argument>
+                    <argument>openrefine.iss</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
     </profile>
@@ -147,7 +167,7 @@
                         </goals>
                         <configuration>
                             <target name="notarizeDMG" description="Notarize DMG">
-
+                              <!-- TODO: This only uses antrun:exec, so could be exec:exec -->
                                 <!-- Send DMG file to Apple's notarization service -->
                                 <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun" failonerror="true">
                                     <arg value="notarytool"/>
