@@ -545,9 +545,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:15.21.1":
-  version: 15.21.1
-  resolution: "cypress@npm:15.21.1"
+"cypress@npm:16.0.0":
+  version: 16.0.0
+  resolution: "cypress@npm:16.0.0"
   dependencies:
     "@cypress/request": "npm:^4.0.0"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -565,7 +565,7 @@ __metadata:
     cli-table3: "npm:0.6.1"
     commander: "npm:^6.2.1"
     common-tags: "npm:^1.8.0"
-    dayjs: "npm:^1.10.4"
+    dayjs: "npm:^1.11.23"
     debug: "npm:^4.3.4"
     eventemitter2: "npm:6.4.7"
     execa: "npm:4.1.0"
@@ -590,7 +590,7 @@ __metadata:
     yauzl: "npm:^3.3.1"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/4d3d58a7482c04b3c4a1b2cbcf13925a58122a3bf1c55a97253a0de464e49af2c473a125e0cc7e35a44acda671319181acbe2f0010be503a773d7e78d22ec72a
+  checksum: 10c0/c506208f683f9e003686fa14597a2e5d97c8d9e8a71a7a7ea0fc6979da8375d0d2d401a9b1895535bb0ad7e54619e3f79c6cbf0fbce23715939095b8933e5ba8
   languageName: node
   linkType: hard
 
@@ -603,10 +603,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.10.4":
-  version: 1.11.18
-  resolution: "dayjs@npm:1.11.18"
-  checksum: 10c0/83b67f5d977e2634edf4f5abdd91d9041a696943143638063016915d2cd8c7e57e0751e40379a07ebca8be7a48dd380bef8752d22a63670f2d15970e34f96d7a
+"dayjs@npm:^1.11.23":
+  version: 1.11.23
+  resolution: "dayjs@npm:1.11.23"
+  checksum: 10c0/69ab04bf19c676e44ab50cc2fca223d265f3dafd107151ef3b0f3ad74d360c37caa602abe62f87cb25d90bd9f6bee003698af47df5b0dbf10a998b7b5f3bb3f1
   languageName: node
   linkType: hard
 
@@ -1115,10 +1115,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^17.11.0, globals@npm:^17.9.0":
+"globals@npm:^17.11.0":
   version: 17.11.0
   resolution: "globals@npm:17.11.0"
   checksum: 10c0/5e1be3d816e04d4d0d01b1cdd40e46b5fb6b5e9f15aece9a5919b060e0fb1b3f1b9e7327dce97ef19e05513a6d65872e0834999ddea251557556dddd0f5fde30
+  languageName: node
+  linkType: hard
+
+"globals@npm:^17.12.0":
+  version: 17.12.0
+  resolution: "globals@npm:17.12.0"
+  checksum: 10c0/8325cf8818c848871d17c32974c2c74e9c5f09c1b0e04421886f64f21e77c3e95f3ba25586743895a73acd860ada151132481d87d44a1f12993ae7758a694d03
   languageName: node
   linkType: hard
 
@@ -1585,12 +1592,12 @@ __metadata:
   resolution: "openrefine-cypress-test-suite@workspace:."
   dependencies:
     "@eslint/js": "npm:^10.0.0"
-    cypress: "npm:15.21.1"
+    cypress: "npm:16.0.0"
     eslint: "npm:^10.9.1"
     eslint-config-google: "npm:^0.14.0"
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-cypress: "npm:^7.0.1"
-    globals: "npm:^17.9.0"
+    globals: "npm:^17.12.0"
     prettier: "npm:3.9.6"
   languageName: unknown
   linkType: soft
