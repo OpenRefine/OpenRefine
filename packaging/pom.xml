@@ -31,7 +31,7 @@
     <mac_aarch64.jre.path>${project.build.directory}/mac_aarch64_jre</mac_aarch64.jre.path>
     <mac_aarch64.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/aarch64/jre/hotspot/normal/eclipse?project=jdk</mac_aarch64.jre.url>
     <mac_aarch64.dmg.filename>${project.build.finalName}-mac-aarch64</mac_aarch64.dmg.filename>
-    <mac_aarch64.dmg.path>${project.build.directory}/${mac_aarch64.dmg.filename}-${project.version}.dmg</mac_aarch64.dmg.path>
+    <mac_aarch64.dmg.path>${project.build.directory}/${mac_aarch64.dmg.filename}_${project.version}.dmg</mac_aarch64.dmg.path>
 
     <!-- The default value allows developers to use a self-signed cert locally. This is overridden for production releases -->
     <!--    <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>-->
@@ -67,8 +67,8 @@
                 <id>package-distributions</id>
                 <configuration>
                   <descriptors>
-                    <descriptor>linux.xml</descriptor>
-                    <descriptor>windows-with-jre.xml</descriptor>
+                    <descriptor>assembly-linux.xml</descriptor>
+                    <descriptor>assembly-windows.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
                 </configuration>
@@ -90,7 +90,7 @@
                 <id>package-distributions</id>
                 <configuration>
                   <descriptors>
-                    <descriptor>linux.xml</descriptor>
+                    <descriptor>assembly-linux.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
                 </configuration>
@@ -116,9 +116,29 @@
                 <id>package-distributions</id>
                 <configuration>
                   <descriptors>
-                    <descriptor>windows-with-jre.xml</descriptor>
+                    <descriptor>assembly-windows.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.6.3</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <id>build-inno-setup</id>
+                <configuration>
+                  <executable>ISCC.exe</executable>
+                  <workingDirectory>target</workingDirectory>
+                  <arguments>
+                    <argument>-DMyAppVersion=${project.version}</argument>
+                    <argument>-DMyProgramFiles=openrefine-win-with-java-${project.version}</argument>
+                    <argument>openrefine.iss</argument>
+                  </arguments>
                 </configuration>
               </execution>
             </executions>
@@ -147,7 +167,7 @@
                         </goals>
                         <configuration>
                             <target name="notarizeDMG" description="Notarize DMG">
-
+                              <!-- TODO: This only uses antrun:exec, so could be exec:exec -->
                                 <!-- Send DMG file to Apple's notarization service -->
                                 <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun" failonerror="true">
                                     <arg value="notarytool"/>
@@ -396,6 +416,7 @@
                 <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
                   <mapper type="regexp" from="^([^/]*)/(.*)$$" to="\2"/>
                 </unzip>
+
               </target>
             </configuration>
           </execution>
