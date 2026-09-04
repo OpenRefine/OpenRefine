@@ -31,7 +31,7 @@
     <mac_aarch64.jre.path>${project.build.directory}/mac_aarch64_jre</mac_aarch64.jre.path>
     <mac_aarch64.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/aarch64/jre/hotspot/normal/eclipse?project=jdk</mac_aarch64.jre.url>
     <mac_aarch64.dmg.filename>${project.build.finalName}-mac-aarch64</mac_aarch64.dmg.filename>
-    <mac_aarch64.dmg.path>${project.build.directory}/${mac_aarch64.dmg.filename}-${project.version}.dmg</mac_aarch64.dmg.path>
+    <mac_aarch64.dmg.path>${project.build.directory}/${mac_aarch64.dmg.filename}_${project.version}.dmg</mac_aarch64.dmg.path>
 
     <!-- The default value allows developers to use a self-signed cert locally. This is overridden for production releases -->
     <!--    <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>-->
