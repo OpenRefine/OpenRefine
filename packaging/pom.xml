@@ -25,7 +25,7 @@
     <mac.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</mac.webapp.dir>
     <mac.icon.path>../graphics/icon/openrefine.icns</mac.icon.path>
     <mac.dmg.filename>${project.build.finalName}-mac-x86_64</mac.dmg.filename>
-    <mac.dmg.path>${project.build.directory}/${mac.dmg.filename}-${project.version}.dmg</mac.dmg.path>
+    <mac.dmg.path>${project.build.directory}/${mac.dmg.filename}_${project.version}.dmg</mac.dmg.path>
 
     <mac_aarch64.build.directory>OpenRefine ${project.version} aarch64</mac_aarch64.build.directory>
     <mac_aarch64.jre.path>${project.build.directory}/mac_aarch64_jre</mac_aarch64.jre.path>
