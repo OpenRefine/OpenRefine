@@ -20,11 +20,18 @@
 
     <!-- Adoptium JREs x64 (undocumented x86_64 works too), aarch64; mvn os.arch x86_64, aarch64 -->
     <mac.jre.path>${project.build.directory}/mac_jre</mac.jre.path>
-    <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/x64/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
+    <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/x86_64/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
     <mac.build.directory>OpenRefine ${project.version}</mac.build.directory>
     <mac.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</mac.webapp.dir>
     <mac.icon.path>../graphics/icon/openrefine.icns</mac.icon.path>
-    <mac.dmg.path>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</mac.dmg.path>
+    <mac.dmg.filename>${project.build.finalName}-mac-x86_64</mac.dmg.filename>
+    <mac.dmg.path>${project.build.directory}/${mac.dmg.filename}-${project.version}.dmg</mac.dmg.path>
+
+    <mac_aarch64.build.directory>OpenRefine ${project.version} aarch64</mac_aarch64.build.directory>
+    <mac_aarch64.jre.path>${project.build.directory}/mac_aarch64_jre</mac_aarch64.jre.path>
+    <mac_aarch64.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/aarch64/jre/hotspot/normal/eclipse?project=jdk</mac_aarch64.jre.url>
+    <mac_aarch64.dmg.filename>${project.build.finalName}-mac-aarch64</mac_aarch64.dmg.filename>
+    <mac_aarch64.dmg.path>${project.build.directory}/${mac_aarch64.dmg.filename}-${project.version}.dmg</mac_aarch64.dmg.path>
 
     <!-- The default value allows developers to use a self-signed cert locally. This is overridden for production releases -->
     <!--    <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>-->
@@ -163,6 +170,30 @@
                                 <arg value="staple"/>
                                 <arg value="${mac.dmg.path}"/>
                               </exec>
+
+                              <!-- Do it all over again for aarch64 -->
+                              <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun" failonerror="true">
+                                <arg value="notarytool"/>
+                                <arg value="submit"/>
+                                <arg value="${mac_aarch64.dmg.path}"/>
+                                <arg value="--key-id"/>
+                                <arg value="${apple.notarization.key.id}"/>
+                                <arg value="--key"/>
+                                <arg value="${apple.notarization.key}"/>
+                                <arg value="--issuer"/>
+                                <arg value="${apple.notarization.issuer}"/>
+                                <arg value="--wait"/>
+                                <arg value="--timeout"/>
+                                <arg value="${apple.notarization.timeout}"/>
+                              </exec>
+
+                              <!-- Staple the notarization ticket to the DMG bundle -->
+                              <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun" failonerror="true">
+                                <arg value="stapler"/>
+                                <arg value="staple"/>
+                                <arg value="${mac_aarch64.dmg.path}"/>
+                              </exec>
+
                             </target>
                         </configuration>
                     </execution>
@@ -311,7 +342,7 @@
             </goals>
             <configuration>
               <target name="downloadJRE" description="Download JRE">
-                <!-- Download JRE (Mac OS X) -->
+                <!-- Download JRE (Mac OS X x86_64) -->
                 <exec dir="${project.build.directory}" executable="curl">
                   <arg line="-S"/>
                   <arg line="-L"/>
@@ -322,23 +353,41 @@
                   <arg line="${mac.jre.url}"/>
                 </exec>
 
-                <!-- Download JRE (Windows) -->
+                <!-- Untar Mac x86 JRE archive -->
+                <mkdir dir="${mac.jre.path}"/>
+                <exec dir="${project.build.directory}" executable="tar">
+                  <arg line="-zxf"/>
+                  <arg line="mac_jre.tar.gz"/>
+                  <arg line="-C &quot;${mac.jre.path}&quot; --strip-components=1"/>
+                </exec>
+
+                <!-- Download JRE (Mac OS X arch64) -->
                 <exec dir="${project.build.directory}" executable="curl">
                   <arg line="-S"/>
                   <arg line="-L"/>
                   <arg line="-C"/>
                   <arg line="-"/>
                   <arg line="-o"/>
-                  <arg line="windows_jre.zip"/>
-                  <arg line="${windows.jre.url}"/>
+                  <arg line="mac_jre_aarch64.tar.gz"/>
+                  <arg line="${mac_aarch64.jre.url}"/>
                 </exec>
 
-                <!-- Unzip Mac JRE archive -->
-                <mkdir dir="${project.build.directory}/mac_jre"/>
+                <!-- Untar Mac aarch64 JRE archive -->
+                <mkdir dir="${mac_aarch64.jre.path}"/>
                 <exec dir="${project.build.directory}" executable="tar">
                   <arg line="-zxf"/>
-                  <arg line="mac_jre.tar.gz"/>
-                  <arg line="-C &quot;mac_jre&quot; --strip-components=1"/>
+                  <arg line="mac_jre_aarch64.tar.gz"/>
+                  <arg line="-C &quot;${mac_aarch64.jre.path}&quot; --strip-components=1"/>
+                </exec>
+
+                <!-- Download JRE (Windows) -->
+                <exec dir="${project.build.directory}" executable="curl">
+                  <arg line="-L"/>
+                  <arg line="-C"/>
+                  <arg line="-"/>
+                  <arg line="-o"/>
+                  <arg line="windows_jre.zip"/>
+                  <arg line="${windows.jre.url}"/>
                 </exec>
 
                 <!-- Unzip Windows JRE archive -->
@@ -478,9 +527,8 @@
             </plist>
             <jdk>
               <include>true</include>
-              <location>${mac.jre.path}</location>
             </jdk>
-            <nativeBinary>X86_64</nativeBinary>
+            <nativeBinary>UNIVERSAL</nativeBinary>
             <dmg>
               <generate>true</generate>
               <additionalResources>
@@ -521,6 +569,31 @@
               <goals>
                 <goal>bundle</goal>
               </goals>
+              <configuration>
+                <jdk>
+                  <location>${mac.jre.path}</location>
+                </jdk>
+                <dmg>
+                  <dmgFileName>${mac.dmg.filename}</dmgFileName>
+                </dmg>
+              </configuration>
+            </execution>
+            <execution>
+              <id>bundle-aarm64</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>bundle</goal>
+              </goals>
+              <configuration>
+                <jdk>
+                  <location>${mac_aarch64.jre.path}</location>
+                </jdk>
+                <dmg>
+                  <dmgFileName>${mac_aarch64.dmg.filename}</dmgFileName>
+                  <!-- hack to keep from getting error on symlink attempt in 2nd build -->
+                  <createApplicationsSymlink>false</createApplicationsSymlink>
+                </dmg>
+              </configuration>
             </execution>
           </executions>
         </plugin>
