@@ -99,6 +99,23 @@ describe(__filename, function () {
     cy.get('.dialog-container .dialog-header').contains(`Edit facet's Expression`);
   });
 
+  it('Re-enables choice edits when a GREL facet is restored to its default expression', function () {
+    cy.loadAndVisitProject('food.small');
+    cy.columnActionClick('Shrt_Desc', ['Facet', 'Custom text facet']);
+    cy.typeExpression('value.toUppercase()');
+    cy.confirmDialogPanel();
+    cy.get('body[ajax_in_progress="false"]');
+    cy.getFacetContainer('Shrt_Desc').find('.facet-choice-edit').should('not.exist');
+
+    cy.getFacetContainer('Shrt_Desc').find('a[bind="changeButton"]').click();
+    cy.typeExpression('value');
+    cy.get('.expression-preview-table-wrapper tbody > tr:nth-child(1) > td:nth-child(3)').should('have.text', 'value');
+    cy.confirmDialogPanel();
+    cy.get('body[ajax_in_progress="false"]');
+
+    cy.getFacetContainer('Shrt_Desc').find('.facet-choice-edit').should('exist');
+  });
+
   it('Test editing a facet / Preview', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);

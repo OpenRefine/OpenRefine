@@ -393,7 +393,8 @@ class ListFacet extends Facet {
       return temp.text(s).html();
     };
 
-    var renderEdit = this._config.expression === "value";
+    var renderEdit =
+      this._config.expression === "value" || this._config.expression === "grel:value";
     var renderChoice = function(index, choice, customLabel) {
       var label = customLabel || choice.v.l;
       var count = choice.c;
