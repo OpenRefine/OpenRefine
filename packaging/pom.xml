@@ -104,6 +104,7 @@
       <id>windows</id>
       <build>
         <plugins>
+          <!-- TODO: Unnecessary Mac plugin in Windows profile? -->
           <plugin>
             <groupId>de.perdian.maven.plugins</groupId>
             <artifactId>macosappbundler-maven-plugin</artifactId>
@@ -347,6 +348,22 @@
                   <replacefilter token="../../extensions" value="extensions"/>
                 </replace>
 
+                <!-- TODO: Is this still needed? -->
+                <!-- adapt file permissions, for https://github.com/OpenRefine/OpenRefine/issues/5160 -->
+                <exec executable="chmod">
+                  <arg line="-R" />
+                  <arg line="go+r" />
+                  <arg line="&quot;${mac.webapp.dir}/WEB-INF/&quot;" />
+                </exec>
+
+                <!-- Codesign jars with native code in them -->
+                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.webapp.dir}">
+                  <arg value="${basedir}/apple_certs/codesign.sh" />
+                  <arg value="WEB-INF" />
+                  <arg value="${mac.signing.identity}" />
+                  <arg value="${basedir}/Entitlements.plist" />
+                </exec>
+
               </target>
 
             </configuration>
@@ -381,6 +398,56 @@
                   <arg line="-C &quot;${mac.jre.path}&quot; --strip-components=1"/>
                 </exec>
 
+                <!-- TODO: Is this still needed? -->
+                <!-- remove JRE legal folder, cannot be signed -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
+                  <arg line="-r"/>
+                  <arg line="&quot;${mac.jre.path}/Contents/Home/legal&quot;"/>
+                </exec>
+
+                <!-- Clear the quarantine bit set on downloaded files recursively on JRE -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
+                  <arg line="-rd"/>
+                  <arg line="com.apple.quarantine"/>
+                  <arg line="&quot;${mac.jre.path}/Contents&quot;"/>
+                </exec>
+
+                <!-- Codesign JRE -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                  <arg value="--entitlements" />
+                  <arg value="../Entitlements.plist" />
+                  <arg value="--sign"/>
+                  <arg value="${mac.signing.identity}"/>
+                  <arg value="--deep"/>
+                  <arg value="--force"/>
+                  <arg value="--timestamp"/>
+                  <arg value="--options"/>
+                  <arg value="runtime"/>
+                  <arg value="${mac.jre.path}/Contents/Home/lib/libjli.dylib" />
+                </exec>
+
+                <!-- Codesign jars with native code in them -->
+                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.jre.path}/Contents/Home/lib">
+                  <arg value="${basedir}/apple_certs/codesign.sh" />
+                  <arg value="OpenRefine.app" />
+                  <arg value="${mac.signing.identity}" />
+                  <arg value="../../Entitlements.plist" />
+                </exec>
+
+                <!-- Codesign app -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                  <arg value="--entitlements" />
+                  <arg value="../Entitlements.plist" />
+                  <arg value="--sign"/>
+                  <arg value="${mac.signing.identity}"/>
+                  <arg value="--deep"/>
+                  <arg value="--force"/>
+                  <arg value="--timestamp"/>
+                  <arg value="--options"/>
+                  <arg value="runtime"/>
+                  <arg value="${mac.build.directory}/OpenRefine.app"/>
+                </exec>
+
                 <!-- Download JRE (Mac OS X arch64) -->
                 <exec dir="${project.build.directory}" executable="curl">
                   <arg line="-S"/>
@@ -400,6 +467,7 @@
                   <arg line="-C &quot;${mac_aarch64.jre.path}&quot; --strip-components=1"/>
                 </exec>
 
+                <!-- TODO: Split to Windows build job -->
                 <!-- Download JRE (Windows) -->
                 <exec dir="${project.build.directory}" executable="curl">
                   <arg line="-L"/>
@@ -581,6 +649,8 @@
             </app>
             <codesign>
               <identity>${mac.signing.identity}</identity>
+              <enable>true</enable>
+              <preserveMetadata>entitlements</preserveMetadata>
             </codesign>
           </configuration>
           <executions>
