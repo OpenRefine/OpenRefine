@@ -16,6 +16,82 @@ describe('In-cell reconciliation buttons', () => {
     cy.getCell(0, 'entity').find('.data-table-recon-visibility').should('to.contain', 'Search for match');
   });
 
+  it('Opens suggested entities with modified clicks without selecting them', () => {
+    const serviceUrl = 'https://wikidata.reconci.link/en/api';
+    const entityUrl = 'https://www.wikidata.org/wiki/Q42';
+    const service = {
+      name: 'Test reconciliation service',
+      identifierSpace: 'http://www.wikidata.org/entity/',
+      schemaSpace: 'http://www.wikidata.org/prop/direct/',
+      view: {
+        url: 'https://www.wikidata.org/wiki/{{id}}',
+      },
+      suggest: {
+        entity: {
+          service_url: '/reconciliation-test',
+          service_path: '/suggest/entity',
+        },
+      },
+      ui: {
+        access: 'json',
+      },
+      url: serviceUrl,
+    };
+
+    cy.intercept(
+      {
+        method: 'GET',
+        pathname: '/command/core/get-preference',
+        query: {
+          name: 'reconciliation.standardServices',
+        },
+      },
+      {
+        value: JSON.stringify([service]),
+      }
+    );
+    cy.intercept('GET', '/reconciliation-test/suggest/entity*', {
+      result: [
+        {
+          id: 'Q42',
+          name: 'Douglas Adams',
+        },
+      ],
+    }).as('suggestEntities');
+
+    cy.visitOpenRefine();
+    cy.navigateTo('Import project');
+    cy.get('#project-tar-file-input').selectFile('cypress/fixtures/reconciled-project-no-match.zip');
+    cy.get('#import-project-button').click();
+
+    cy.getCell(0, 'entity').find('.data-table-recon-visibility').contains('Search for match').click();
+    cy.wait('@suggestEntities');
+    cy.get('.fbs-pane:visible .fbs-item').should('have.length', 1).as('suggestion');
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('windowOpen');
+      cy.spy(win.Refine, 'postCoreProcess').as('postCoreProcess');
+    });
+
+    cy.get('@suggestion').trigger('mouseover');
+    cy.get('@suggestion').trigger('mousedown', { button: 1 });
+    cy.get('@suggestion').trigger('mouseup', { button: 1 });
+    cy.get('@suggestion').trigger('click', { button: 1 });
+    cy.get('@windowOpen').should('have.been.calledOnceWith', entityUrl, '_blank');
+    cy.get('@postCoreProcess').should('not.have.been.called');
+    cy.get('.dialog-frame').should('be.visible');
+
+    cy.get('@suggestion').click({ metaKey: true });
+    cy.get('@windowOpen').should('have.been.calledTwice');
+    cy.get('@windowOpen').should('have.been.calledWith', entityUrl, '_blank');
+    cy.get('@postCoreProcess').should('not.have.been.called');
+    cy.get('.dialog-frame').should('be.visible');
+
+    cy.get('@suggestion').click();
+    cy.get('@postCoreProcess').should('have.been.calledOnce');
+    cy.get('.dialog-frame').should('not.exist');
+    cy.getCell(0, 'entity').should('contain', 'Douglas Adams');
+  });
+
   it('Display see more / see less when there are candidates', () => {
     cy.visitOpenRefine();
     cy.navigateTo('Import project');

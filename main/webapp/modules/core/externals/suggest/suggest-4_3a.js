@@ -202,6 +202,9 @@
       .on("click", function(e) {
         //console.log("pane click");
         e.stopPropagation();
+        if (e.button === 1 || (e.button === 0 && e.metaKey)) {
+          return;
+        }
         var s = self.get_selected();
         if (s) {
           self.onselect(s, true);
@@ -1301,14 +1304,13 @@
       }
 
       // If we know of a view URL for this suggest service,
-      // clicking with the middle button sends the user to
-      // the view page.
+      // middle-clicking or Command-clicking sends the user
+      // to the view page.
       if('view_url' in this.options && data.id) {
         var view_url = this.options.view_url.replace('{{id}}', data.id).replace('${id}', data.id);
         li.on('mousedown', function(e) {
-           if (e.which == 2) {
-              var win = window.open(view_url, '_blank');
-              win.focus();
+           if (e.button === 1 || (e.button === 0 && e.metaKey)) {
+              window.open(view_url, '_blank');
               e.preventDefault();
            }
         });
