@@ -467,6 +467,34 @@
                   <arg line="-C &quot;${mac_aarch64.jre.path}&quot; --strip-components=1"/>
                 </exec>
 
+                <!-- TODO: Is this still needed? -->
+                <!-- remove JRE legal folder, cannot be signed -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
+                  <arg line="-r"/>
+                  <arg line="&quot;${mac_aarch64.jre.path}/Contents/Home/legal&quot;"/>
+                </exec>
+
+                <!-- Clear the quarantine bit set on downloaded files recursively on JRE -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
+                  <arg line="-rd"/>
+                  <arg line="com.apple.quarantine"/>
+                  <arg line="&quot;${mac_aarch64.jre.path}/Contents&quot;"/>
+                </exec>
+
+                <!-- Codesign JRE -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
+                  <arg value="--entitlements" />
+                  <arg value="../Entitlements.plist" />
+                  <arg value="--sign"/>
+                  <arg value="${mac.signing.identity}"/>
+                  <arg value="--deep"/>
+                  <arg value="--force"/>
+                  <arg value="--timestamp"/>
+                  <arg value="--options"/>
+                  <arg value="runtime"/>
+                  <arg value="${mac_aarch64.jre.path}/Contents/Home/lib/libjli.dylib" />
+                </exec>
+
                 <!-- TODO: Split to Windows build job -->
                 <!-- Download JRE (Windows) -->
                 <exec dir="${project.build.directory}" executable="curl">
