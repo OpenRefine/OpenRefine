@@ -353,13 +353,13 @@
                 <exec executable="chmod">
                   <arg line="-R" />
                   <arg line="go+r" />
-                  <arg line="&quot;${mac.webapp.dir}/WEB-INF/&quot;" />
+                  <arg line="&quot;${mac.webapp.dir}/&quot;" />
                 </exec>
 
                 <!-- Codesign jars with native code in them -->
-                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.webapp.dir}">
+                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.webapp.dir}" failonerror="true">
                   <arg value="${basedir}/apple_certs/codesign.sh" />
-                  <arg value="WEB-INF" />
+                  <arg value="." />
                   <arg value="${mac.signing.identity}" />
                   <arg value="${basedir}/Entitlements.plist" />
                 </exec>
@@ -427,7 +427,7 @@
                 </exec>
 
                 <!-- Codesign jars with native code in them -->
-                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.jre.path}/Contents/Home/lib">
+                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.jre.path}/Contents/Home/lib" failonerror="true">
                   <arg value="${basedir}/apple_certs/codesign.sh" />
                   <arg value="OpenRefine.app" />
                   <arg value="${mac.signing.identity}" />
