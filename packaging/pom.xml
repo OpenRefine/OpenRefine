@@ -647,7 +647,7 @@
             </jdk>
             <nativeBinary>UNIVERSAL</nativeBinary>
             <dmg>
-              <generate>true</generate>
+              <generate>false</generate>
               <additionalResources>
                 <fileSet>
                   <directory>target</directory>
