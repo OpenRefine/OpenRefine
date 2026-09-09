@@ -105,10 +105,10 @@
       <build>
         <plugins>
           <!-- TODO: Unnecessary Mac plugin in Windows profile? -->
-          <plugin>
-            <groupId>de.perdian.maven.plugins</groupId>
-            <artifactId>macosappbundler-maven-plugin</artifactId>
-          </plugin>
+<!--          <plugin>-->
+<!--            <groupId>de.perdian.maven.plugins</groupId>-->
+<!--            <artifactId>macosappbundler-maven-plugin</artifactId>-->
+<!--          </plugin>-->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>

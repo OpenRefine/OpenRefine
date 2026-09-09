@@ -253,13 +253,13 @@ jobs:
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
         gpg-passphrase: GPG_PASSPHRASE
 
-    - name: Set up Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: '3' 
+#    - name: Set up Python
+#      uses: actions/setup-python@v7
+#      with:
+#        python-version: '3'
 
-    - name: Install dmgbuild
-      run: pip install dmgbuild
+#    - name: Install dmgbuild
+#      run: pip install dmgbuild
 
     - name: Decrypt Apple certificates
       run: |
@@ -269,6 +269,7 @@ jobs:
       env:
         P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
 
+    # FIXME: Already done before e2e tests and cached?
     - name: Install webapp dependencies
       run: cd main/webapp && npm install
 
@@ -284,10 +285,10 @@ jobs:
       run: mvn versions:set -DnewVersion=$(echo '${{ steps.get_release_upload_url.outputs.tag_name }}' | sed 's/[^a-zA-Z0-9_\.\-]/_/g')
 
     # FIXME: Tests should already have been run (and passed) by the time we get here
-    - name: Build and test
-      run: mvn -B test
-      env:
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+#    - name: Build and test
+#      run: mvn -B test
+#      env:
+#        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
     - name: Set version string output variable
       id: version_string_variable
@@ -304,6 +305,7 @@ jobs:
         APPLE_BUILD_KEY: |
           ${{ secrets.APPLE_BUILD_KEY }}
 
+    # TODO: Split this into multiple steps so that Mac notarization doesn't get other builds
     - name: Package and upload to OSSRH
       run: |
         mvn -B deploy -DskipTests=true -Dmac.signing.identity="Code for Science and Society, Inc." -DrepositoryId=ossrh-staging-api \
@@ -344,7 +346,8 @@ jobs:
       id: unzip-build-artifact-win-with-java
       run: unzip ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip -d ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}
 
-    - name: Upload build artifact for Windows (with Java) for Installer
+    # TODO: Uploading a temp artefact just so that we can download it again is a kludge. Refactor.
+    - name: Upload temp build artifact for Windows (with Java) for Installer
       id: upload-build-artifact-win-with-java-for-installer
       uses: actions/upload-artifact@v7
       with:
