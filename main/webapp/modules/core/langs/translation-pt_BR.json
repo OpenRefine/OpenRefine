@@ -367,7 +367,7 @@
     "core-util-enc/aliases": "Alias",
     "core-views/all": "Todos",
     "core-views/custom-facet": "Faceta personalizada na coluna",
-    "core-views/copy-recon-judg": "Copiar análise de reconciliação a partir da coluna",
+    "core-views/copy-recon-judg": "Copiar análise de reconciliação a partir da coluna $1",
     "core-views/to-date": "Para data…",
     "core-views/to-date/header": "Para data",
     "core-views/to-date/single": "Para data",

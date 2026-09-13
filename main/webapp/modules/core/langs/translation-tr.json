@@ -614,7 +614,7 @@
     "core-views/sort-by": "Şuna göre sırala",
     "core-views/pos-blank": "Boşlukları ve hataları konumlandır",
     "core-views/apply-to-cell": "Karar verilen hücrelere uygula",
-    "core-views/copy-recon-judg": "Sütundan uzlaşma kararlarını kopyala",
+    "core-views/copy-recon-judg": "Sütundan uzlaşma kararlarını kopyala $1",
     "core-views/new-recon": "yeni uzlaşma kararları",
     "core-views/start-recon": "Uzlaşmaya başla…",
     "core-views/by-judg": "Karara göre",

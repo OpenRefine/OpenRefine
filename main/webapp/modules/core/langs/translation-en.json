@@ -569,7 +569,7 @@
     "core-views/blanks": "Blanks",
     "core-views/errors": "Errors",
     "core-views/search-fb-topic": "Search for an item to match all filtered cells",
-    "core-views/copy-recon-judg": "Copy recon judgments from column",
+    "core-views/copy-recon-judg": "Copy recon judgments from column $1",
     "core-views/copy-to-col": "Copy to columns",
     "core-views/copy-opt": "Copying options",
     "core-views/apply-to-cell": "Apply to judged cells",

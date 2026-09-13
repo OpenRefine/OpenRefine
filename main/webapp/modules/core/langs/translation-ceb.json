@@ -365,7 +365,7 @@
     "core-util-enc/aliases": "Alyas",
     "core-views/all": "Tanan",
     "core-views/custom-facet": "Kustom facet ani nga kolum",
-    "core-views/copy-recon-judg": "Kopyaha sa rekon ang hukom gikan sa kolum…",
+    "core-views/copy-recon-judg": "Kopyaha sa rekon ang hukom gikan sa kolum… $1",
     "core-views/hist-entries": "Hukom aksyon sa timestamp",
     "core-views/text": "text",
     "core-views/match-identical": "Imatch tanang mgkapareha nga cells",

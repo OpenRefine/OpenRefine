@@ -269,7 +269,7 @@
     "core-views/custom-text-trans": "Transformação do texto personalizada na coluna",
     "core-views/judgment": "$1: julgamento",
     "core-project/filter": "Filtrar",
-    "core-views/copy-recon-judg": "Copiar análise de reconciliação a partir da coluna",
+    "core-views/copy-recon-judg": "Copiar análise de reconciliação a partir da coluna $1",
     "core-views/not-valid-number": "Não é um número válido.",
     "core-index-import/column-widths": "Largura das colunas",
     "core-dialogs/error-getColumnInfo": "Erro ao chamar 'get-columns-info'",
