@@ -63,6 +63,9 @@ public class DBExtensionTests {
     protected final String SQLITE_DB_NAME = "sqlite";
     protected final String DEFAULT_SQLITE_DB_NAME = "tests/resources/test_db.sqlite";
 
+    protected final String DUCKDB_DB_NAME = "duckdb";
+    protected final String DEFAULT_DUCKDB_DB_NAME = "tests/resources/test_db.duckdb";
+
     protected final String DEFAULT_TEST_TABLE = "test_data";
 
     protected Properties properties;

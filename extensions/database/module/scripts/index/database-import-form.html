@@ -31,6 +31,7 @@
                                                <option value="mysql" selected="selected">MySQL</option>
                                                <option value="mariadb">MariaDB</option>
                                                 <option value="sqlite">SQLite</option>
+                                                <option value="duckdb">DuckDB</option>
                                             </select>
                                        </div>
 
@@ -50,7 +51,7 @@
                                           <label id="databasePasswordLabel" for="databasePassword"></label> 
                                           <input bind="databasePasswordInput" id="databasePassword" type="password" placeholder="" required>
                                         </div>
-                                        <div class=" dbtype-options dbt-postgresql dbt-mysql dbt-mariadb dbt-sqlite">
+                                        <div class=" dbtype-options dbt-postgresql dbt-mysql dbt-mariadb dbt-sqlite dbt-duckdb">
                                           <label id="databaseNameLabel" for="initialDatabase"></label> 
                                           <input spellcheck="false" bind="initialDatabaseInput" id="initialDatabase" type="text" placeholder="" required>
                                         </div>

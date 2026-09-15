@@ -220,6 +220,11 @@ Refine.DatabaseSourceUI.prototype._updateDatabaseType = function(databaseType) {
       $( "#databasePort" ).val("0");
       $( "#databaseHost" ).val("na");
     
+  } else if(databaseType === "duckdb") {
+      $( "#databaseUser" ).val("na");
+      $( "#databasePort" ).val("0");
+      $( "#databaseHost" ).val("na");
+    
   } else {
       $( "#databaseUser" ).val("root");
       $( "#databasePort" ).val("3306");
@@ -229,7 +234,7 @@ Refine.DatabaseSourceUI.prototype._updateDatabaseType = function(databaseType) {
   $("div.dbtype-options").hide();
   $("div.dbtype-options.dbt-"+databaseType).show();
   
-  if (databaseType == "sqlite") {
+  if (databaseType == "sqlite" || databaseType == "duckdb") {
     $('#databaseNameLabel').text($.i18n('database-source/databaseFileNameLabel'));
     $('input#initialDatabase').attr('placeholder', $.i18n('database-source/databaseFileNamePlaceholder'));
     
