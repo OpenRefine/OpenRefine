@@ -29,6 +29,13 @@
     <parameter name = "sqliteDbPassword" value=""/>
     <parameter name = "sqliteDbTestTable" value="test_table"/>
 
+    <parameter name = "duckdbDbName" value="tests/resources/test_db.duckdb"/>
+    <parameter name = "duckdbDbHost" value=""/>
+    <parameter name = "duckdbDbPort" value=""/>
+    <parameter name = "duckdbDbUser" value=""/>
+    <parameter name = "duckdbDbPassword" value=""/>
+    <parameter name = "duckdbDbTestTable" value="test_table"/>
+
     <test name="DatabaseExtensionUnitTest">
         <groups>
             <run>
@@ -51,6 +58,8 @@
             <class name="com.google.refine.extension.database.pgsql.PgSQLDatabaseServiceTest" />
             <class name="com.google.refine.extension.database.sqlite.SQLiteConnectionManagerTest"/>
             <class name="com.google.refine.extension.database.sqlite.SQLiteDatabaseServiceTest" />
+            <class name="com.google.refine.extension.database.duckdb.DuckDBConnectionManagerTest"/>
+            <class name="com.google.refine.extension.database.duckdb.DuckDBDatabaseServiceTest" />
         </classes>
     </test>
 </suite>
