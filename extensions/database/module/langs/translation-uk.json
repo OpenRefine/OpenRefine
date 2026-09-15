@@ -59,5 +59,6 @@
     "database-parsing/store-cell": "Зберігати порожні клітинки як null",
     "database-source/alert-conn-name-invalid-character": "Помилка введення назви з'єднання: неприпустимий символ. Дозволено лише [a-zA-Z0-9._-]",
     "database-source/alert-db-host-invalid-character": "Помилка хоста бази даних: неприпустимий символ у полі введення. Дозволено лише буквено-цифрові символи",
-    "database-source/alert-db-user-invalid-character": "Помилка користувача бази даних: неприпустимий символ у полі введення. Дозволено лише буквено-цифрові символи"
+    "database-source/alert-db-user-invalid-character": "Помилка користувача бази даних: неприпустимий символ у полі введення. Дозволено лише буквено-цифрові символи",
+    "database-source/alert-db-port-invalid-character": "Помилка порту бази даних: неприпустимий символ у полі введення. Дозволено лише числові значення."
 }
