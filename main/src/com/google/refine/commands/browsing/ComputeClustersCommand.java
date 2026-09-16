@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.browsing;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.browsing.Engine;
 import com.google.refine.clustering.Clusterer;
 import com.google.refine.clustering.ClustererConfig;
+import com.google.refine.clustering.ClusteringProcess;
 import com.google.refine.clustering.binning.KeyerFactory;
 import com.google.refine.clustering.binning.UserDefinedKeyer;
 import com.google.refine.clustering.knn.DistanceFactory;
@@ -58,17 +60,17 @@ public class ComputeClustersCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("compute-clusters_command");
 
+    private static final ConcurrentHashMap<Long, ClusteringProcess> _activeProcesses = new ConcurrentHashMap<>();
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // This command triggers evaluation expression and therefore requires CSRF-protection
         if (!hasValidCSRFToken(request)) {
             respondCSRFError(response);
             return;
         }
 
         try {
-            long start = System.currentTimeMillis();
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
             String clusterer_conf = request.getParameter("clusterer");
@@ -86,19 +88,38 @@ public class ComputeClustersCommand extends Command {
             }
 
             ClustererConfig clustererConfig = ParsingUtilities.mapper.readValue(clusterer_conf, ClustererConfig.class);
-
             Clusterer clusterer = clustererConfig.apply(project);
 
-            clusterer.computeClusters(engine);
+            // Cancel any existing clustering for this project
+            cancelActiveProcess(project.id);
 
-            KeyerFactory.remove("userdefinedkeyer");
-            DistanceFactory.remove("userdefineddistance");
+            ClusteringProcess process = new ClusteringProcess(
+                    clusterer, engine,
+                    "Clustering column by " + clustererConfig.getType());
 
-            respondJSON(response, clusterer);
-            logger.info("computed clusters [{}] in {}ms",
-                    new Object[] { clustererConfig.getType(), Long.toString(System.currentTimeMillis() - start) });
+            _activeProcesses.put(project.id, process);
+
+            project.getProcessManager().queueProcess(process);
+
+            respondJSON(response, ParsingUtilities.mapper.createObjectNode().put("code", "pending"));
+            logger.info("queued clustering process [{}] for project {}", clustererConfig.getType(), project.id);
         } catch (Exception e) {
             respondException(response, e);
+        }
+    }
+
+    static ClusteringProcess getActiveProcess(long projectId) {
+        return _activeProcesses.get(projectId);
+    }
+
+    static void removeActiveProcess(long projectId) {
+        _activeProcesses.remove(projectId);
+    }
+
+    static void cancelActiveProcess(long projectId) {
+        ClusteringProcess existing = _activeProcesses.remove(projectId);
+        if (existing != null && existing.isRunning()) {
+            existing.cancel();
         }
     }
 }
