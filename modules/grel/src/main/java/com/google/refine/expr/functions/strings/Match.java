@@ -53,7 +53,10 @@ public class Match implements Function {
 
             if (s != null && p != null && (p instanceof String || p instanceof Pattern)) {
 
-                Pattern pattern = (p instanceof String) ? Pattern.compile((String) p) : (Pattern) p;
+                Pattern pattern = (p instanceof String)
+                        ? Pattern.compile((String) p,
+                                Pattern.UNICODE_CHARACTER_CLASS | Pattern.UNICODE_CASE)
+                        : (Pattern) p;
 
                 Matcher matcher = pattern.matcher(s.toString());
 

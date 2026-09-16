@@ -93,7 +93,8 @@ public class TextSearchFacet implements Facet {
                 try {
                     Pattern.compile(
                             _query,
-                            _caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+                            Pattern.UNICODE_CHARACTER_CLASS
+                                    | (_caseSensitive ? 0 : Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE));
                 } catch (java.util.regex.PatternSyntaxException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -176,7 +177,8 @@ public class TextSearchFacet implements Facet {
                 try {
                     _pattern = Pattern.compile(
                             _query,
-                            _config._caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+                            Pattern.UNICODE_CHARACTER_CLASS
+                                    | (_config._caseSensitive ? 0 : Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE));
                 } catch (java.util.regex.PatternSyntaxException e) {
                     PatternSyntaxExceptionParser err = new PatternSyntaxExceptionParser(e);
                     throw new IllegalArgumentException(err.getUserMessage());
