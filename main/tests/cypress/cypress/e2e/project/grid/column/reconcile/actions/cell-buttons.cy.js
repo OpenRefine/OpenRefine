@@ -80,8 +80,16 @@ describe('In-cell reconciliation buttons', () => {
     cy.get('@postCoreProcess').should('not.have.been.called');
     cy.get('.dialog-frame').should('be.visible');
 
-    cy.get('@suggestion').click({ metaKey: true });
+    // Some browsers do not report the middle button on the click event
+    cy.get('@suggestion').trigger('mousedown', { button: 1 });
+    cy.get('@suggestion').trigger('mouseup', { button: 1 });
+    cy.get('@suggestion').trigger('click', { button: 0 });
     cy.get('@windowOpen').should('have.been.calledTwice');
+    cy.get('@postCoreProcess').should('not.have.been.called');
+    cy.get('.dialog-frame').should('be.visible');
+
+    cy.get('@suggestion').click({ metaKey: true });
+    cy.get('@windowOpen').should('have.been.calledThrice');
     cy.get('@windowOpen').should('have.been.calledWith', entityUrl, '_blank');
     cy.get('@postCoreProcess').should('not.have.been.called');
     cy.get('.dialog-frame').should('be.visible');
