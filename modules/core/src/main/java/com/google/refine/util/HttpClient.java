@@ -113,8 +113,6 @@ public class HttpClient {
                 .setConnectionManager(connManager)
                 // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)
                 .setRetryStrategy(new ExponentialBackoffRetryStrategy(3, TimeValue.ofMilliseconds(_retryInterval)))
-//                .setRedirectStrategy(new LaxRedirectStrategy()) // TODO: No longer needed since default doesn't exclude POST?
-//               .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
                 .addRequestInterceptorFirst(new HttpRequestInterceptor() {
 
                     private long nextRequestTime = System.currentTimeMillis();
@@ -129,7 +127,7 @@ public class HttpClient {
                         if (delay > 0) {
                             try {
                                 Thread.sleep(delay);
-                            } catch (InterruptedException e) {
+                            } catch (InterruptedException ignored) {
                             }
                         }
                         nextRequestTime = System.currentTimeMillis() + _delay;
@@ -137,14 +135,14 @@ public class HttpClient {
                     }
                 });
 
-        // Should we use the system defined proxy
+        // Should we use the system-defined proxy?
         if ("true".equals(System.getProperty("java.net.useSystemProxies"))) {
             logger.info("Use system defined proxy for http connections");
             httpClient = httpClientBuilder.useSystemProperties().build();
             return;
         }
 
-        // Is a proxy defined
+        // Is a proxy defined?
         proxyHost = System.getProperty("http.proxyHost");
         proxyPort = Integer.parseInt(System.getProperty("http.proxyPort", "0"));
         if (proxyHost != null && proxyPort != 0) {
@@ -171,21 +169,6 @@ public class HttpClient {
                 httpClientBuilder.setRoutePlanner(routePlanner);
             }
         }
-
-        // TODO: Placeholder for future Basic Auth implementation
-//        String userinfo = url.getUserInfo();
-//        // HTTPS only - no sending password in the clear over HTTP
-//        if ("https".equals(url.getProtocol()) && userinfo != null) {
-//            int s = userinfo.indexOf(':');
-//            if (s > 0) {
-//                String user = userinfo.substring(0, s);
-//                String pw = userinfo.substring(s + 1, userinfo.length());
-//                CredentialsProvider credsProvider = new BasicCredentialsProvider();
-//                credsProvider.setCredentials(new AuthScope(url.getHost(), 443),
-//                        new UsernamePasswordCredentials(user, pw.toCharArray()));
-//                httpClientBuilder = httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
-//            }
-//        }
 
         httpClient = httpClientBuilder.build();
     }
@@ -220,15 +203,7 @@ public class HttpClient {
             public String handleResponse(final ClassicHttpResponse response) throws IOException {
                 final int status = response.getCode();
                 if (status >= HttpStatus.SC_SUCCESS && status < HttpStatus.SC_REDIRECTION) {
-                    final HttpEntity entity = response.getEntity();
-                    if (entity == null) {
-                        throw new IOException("No content found in " + urlString);
-                    }
-                    try {
-                        return EntityUtils.toString(entity);
-                    } catch (final ParseException ex) {
-                        throw new ClientProtocolException(ex);
-                    }
+                    return getString(response, urlString);
                 } else {
                     // String errorBody = EntityUtils.toString(response.getEntity());
                     throw new ClientProtocolException(String.format("HTTP error %d : %s for URL %s", status,
@@ -238,6 +213,18 @@ public class HttpClient {
         };
 
         return getResponse(urlString, headers, responseHandler);
+    }
+
+    private String getString(ClassicHttpResponse response, String urlString) throws IOException {
+        final HttpEntity entity = response.getEntity();
+        if (entity == null) {
+            throw new IOException("No content found in " + urlString);
+        }
+        try {
+            return EntityUtils.toString(entity);
+        } catch (final ParseException ex) {
+            throw new ClientProtocolException(ex);
+        }
     }
 
     public String getResponse(String urlString, Header[] headers, HttpClientResponseHandler<String> responseHandler) throws IOException {
@@ -264,16 +251,15 @@ public class HttpClient {
                 throw new IOException(String.format("HTTP error %d : %s for URL %s", statusCode, reasonPhrase,
                         request.getRequestUri()));
             }
-
-            return ParsingUtilities.inputStreamToString(response.getEntity().getContent());
+            return getString(response, request.getRequestUri());
         }
     }
 
     /**
-     * Use binary exponential backoff strategy, instead of the default fixed retry interval, if the server doesn't
+     * Use binary exponential backoff strategy instead of the default fixed retry interval, if the server doesn't
      * provide a Retry-After time.
      */
-    class ExponentialBackoffRetryStrategy extends DefaultHttpRequestRetryStrategy {
+    static class ExponentialBackoffRetryStrategy extends DefaultHttpRequestRetryStrategy {
 
         private final TimeValue defaultInterval;
 
