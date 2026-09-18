@@ -41,6 +41,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -69,6 +70,12 @@ public class ReconCandidate implements HasFields {
         this.name = topicName;
         this.types = typeIDs == null ? new String[0] : typeIDs;
         this.score = score;
+    }
+
+    @JsonIgnore
+    @Override
+    public List<String> getFieldNames() {
+        return List.of("id", "name", "type", "score");
     }
 
     @Override

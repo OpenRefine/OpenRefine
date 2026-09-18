@@ -248,6 +248,13 @@ public class Recon implements HasFields {
         features[feature] = v;
     }
 
+    @JsonIgnore
+    @Override
+    public List<String> getFieldNames() {
+        return List.of("id", "best", "candidates", "judgment", "judgmentAction", "judgmentHistoryEntry", "judgmentBatchSize", "matched",
+                "new", "match", "error", "matchRank", "features", "service", "identifierSpace", "schemaSpace");
+    }
+
     @Override
     public Object getField(String name, Properties bindings) {
         if ("id".equals(name)) {
@@ -297,6 +304,12 @@ public class Recon implements HasFields {
     }
 
     public class Features implements HasFields {
+
+        @JsonIgnore
+        @Override
+        public List<String> getFieldNames() {
+            return s_featureMap.keySet().stream().toList();
+        }
 
         @Override
         public Object getField(String name, Properties bindings) {
