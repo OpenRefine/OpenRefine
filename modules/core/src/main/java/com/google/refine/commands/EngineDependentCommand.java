@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -75,7 +74,7 @@ abstract public class EngineDependentCommand extends Command {
 
             AbstractOperation op = createOperation(project, request, getEngineConfig(request));
             op.validate();
-            Process process = op.createProcess(project, new Properties());
+            Process process = op.createProcess(project);
 
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
