@@ -41,10 +41,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -83,7 +83,7 @@ public class History {
     }
 
     static public void writeOneChange(OutputStream out, Change change, Pool pool) throws IOException {
-        Writer writer = new OutputStreamWriter(out, "UTF-8");
+        Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         try {
             History.writeOneChange(writer, change, pool);
         } finally {
@@ -92,14 +92,11 @@ public class History {
     }
 
     static public void writeOneChange(Writer writer, Change change, Pool pool) throws IOException {
-        Properties options = new Properties();
-        options.setProperty("mode", "save");
-        options.put("pool", pool);
-
+        SaveOptions options = new SaveOptions(true, pool);
         writeOneChange(writer, change, options);
     }
 
-    static public void writeOneChange(Writer writer, Change change, Properties options) throws IOException {
+    static public void writeOneChange(Writer writer, Change change, SaveOptions options) throws IOException {
         writer.write(RefineServlet.VERSION);
         writer.write('\n');
         writer.write(change.getClass().getName());
@@ -271,7 +268,7 @@ public class History {
      * method here can acquire that lock or a deadlock will result. Be careful of thread synchronization to avoid
      * deadlocks.
      */
-    synchronized public void save(Writer writer, Properties options) throws IOException {
+    synchronized public void save(Writer writer, SaveOptions options) throws IOException {
         writer.write("pastEntryCount=");
         writer.write(Integer.toString(_pastEntries.size()));
         writer.write('\n');
