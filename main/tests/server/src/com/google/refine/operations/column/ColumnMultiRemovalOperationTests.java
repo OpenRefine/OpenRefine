@@ -56,7 +56,7 @@ public class ColumnMultiRemovalOperationTests extends RefineTest {
     @Test
     public void testValidate() {
         ColumnMultiRemovalOperation SUT = new ColumnMultiRemovalOperation(null);
-        assertThrows(IllegalArgumentException.class, () -> SUT.validate());
+        assertThrows(NullPointerException.class, SUT::validate);
     }
 
     @Test

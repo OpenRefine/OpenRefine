@@ -66,12 +66,17 @@ abstract public class AbstractOperation {
 
     /**
      * Checks whether the parameters of this operation are suitably filled. Those checks should not happen in the
-     * deserialization constructor as it would risk rejecting JSON certain representations at project loading time.
+     * deserialization constructor as it would risk rejecting JSON certain representations at project loading time. This
+     * leans on apache.commons.lang3.Validate so the exception strategy mirrors what is specified for it.
      * 
      * @throws IllegalArgumentException
-     *             if any parameter is missing or inconsistent
+     *             if any argument is missing or inconsistent
+     * @throws NullPointerException
+     *             is an argument is null when not allowed
+     * @throws IndexOutOfBoundsException
+     *             when an invalid index into any array/collection/map/string is given
      */
-    public void validate() throws IllegalArgumentException {
+    public void validate() throws IllegalArgumentException, NullPointerException, IndexOutOfBoundsException {
 
     }
 
