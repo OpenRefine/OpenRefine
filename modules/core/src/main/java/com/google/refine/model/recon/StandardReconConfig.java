@@ -567,6 +567,15 @@ public class StandardReconConfig extends ReconConfig {
         return getHttpClient().postNameValue(url, "queries", queriesString);
     }
 
+    /**
+     * Reconcile a batch of queries by sending them to the reconciliation service.
+     * 
+     * @param jobs
+     *            List of reconciliation jobs to process
+     * @param historyEntryID
+     *            Identifier for the history entry associated with this batch
+     * @return List of reconciliations corresponding to the input jobs
+     */
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
@@ -588,53 +597,46 @@ public class StandardReconConfig extends ReconConfig {
         String responseString = "";
         ObjectNode o = null;
         try {
-
             responseString = postQueries(service, queriesString);
             o = ParsingUtilities.mapper.readValue(responseString, ObjectNode.class);
         } catch (IOException e) {
-            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-            recon.error = e.getMessage();
-            recon.judgment = Judgment.Error;
-            recons.add(recon);
-        }
-
-        if (o == null) { // utility method returns null instead of throwing
-            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-            recon.error = "The reconciliation service returned an invalid response";
-            recon.judgment = Judgment.Error;
-            recons.add(recon);
-
-        } else {
+            // Store error for all entries in the failed job
             for (int i = 0; i < jobs.size(); i++) {
-                StandardReconJob job = (StandardReconJob) jobs.get(i);
-                Recon recon = null;
-
-                String text = job.text;
-                String key = "q" + i;
-                if (o.has(key) && o.get(key) instanceof ObjectNode) {
-                    ObjectNode o2 = (ObjectNode) o.get(key);
-                    if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
-                        ArrayNode results = (ArrayNode) o2.get("result");
-
-                        recon = createReconServiceResults(text, results, historyEntryID);
-                    } else {
-                        recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-                        recon.error = "The service returned a JSON response without \"result\" field for query " + key;
-                        recon.judgment = Judgment.Error;
-
-                    }
-                } else {
-                    recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-                    recon.error = "The service returned a JSON response without \"" + key + "\" field ";
-                    recon.judgment = Judgment.Error;
-                }
-
-                if (recon != null) {
-                    recon.service = service;
-                }
+                Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                recon.error = e.getMessage();
+                recon.judgment = Judgment.Error;
                 recons.add(recon);
             }
+            return recons;
+        }
 
+        for (int i = 0; i < jobs.size(); i++) {
+            StandardReconJob job = (StandardReconJob) jobs.get(i);
+            Recon recon = null;
+
+            String text = job.text;
+            String key = "q" + i;
+            if (o.has(key) && o.get(key) instanceof ObjectNode) {
+                ObjectNode o2 = (ObjectNode) o.get(key);
+                if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
+                    ArrayNode results = (ArrayNode) o2.get("result");
+
+                    recon = createReconServiceResults(text, results, historyEntryID);
+                } else {
+                    recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                    recon.error = "The service returned a JSON response without \"result\" field for query " + key;
+                    recon.judgment = Judgment.Error;
+                }
+            } else {
+                recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                recon.error = "The service returned a JSON response without \"" + key + "\" field ";
+                recon.judgment = Judgment.Error;
+            }
+
+            if (recon != null) {
+                recon.service = service;
+            }
+            recons.add(recon);
         }
 
         while (recons.size() < jobs.size()) {
