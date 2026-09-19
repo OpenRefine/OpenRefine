@@ -199,5 +199,8 @@ StatementConfigurationDialog.launch = function(statement) {
     }
   });
 
+  // Match the focus behavior of save-schema-dialog and perform-edits-dialog so
+  // the user can interact with the dialog immediately via the keyboard.
+  this._elmts.modeInput.focus();
 };
 
