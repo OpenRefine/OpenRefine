@@ -113,6 +113,25 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
     }
 
     @Test
+    public void testExtremeExponent() {
+        setRow("1E+2147483647");
+        isSkipped(exprWithoutUnit);
+    }
+
+    @Test
+    public void testExtremeNegativeExponent() {
+        setRow("1E-2000000000");
+        isSkipped(exprWithoutUnit);
+    }
+
+    @Test
+    public void testLargeValidExponent() throws SkipSchemaExpressionException, QAWarningException {
+        setRow("1.5E+100");
+        QuantityValue val = exprWithoutUnit.evaluate(ctxt);
+        assertEquals(0, new BigDecimal("1.5E+100").compareTo(val.getNumericValue()));
+    }
+
+    @Test
     public void testValidate() throws ModelException {
         ColumnModel columnModel = new ColumnModel();
         columnModel.addColumn(0, new Column(0, "column A"), true);
