@@ -157,6 +157,18 @@ public class TsvExporterTests extends RefineTest {
     }
 
     @Test
+    public void exportTsvPreservesBackslashes() throws IOException {
+        CreateGrid(2, 2);
+
+        project.rows.get(1).cells.set(1, new Cell("C:\\Users\\OpenRefine\\data", null));
+        SUT.export(project, options, engine, writer);
+
+        assertEqualsSystemLineEnding(writer.toString(), "column0\tcolumn1\n" +
+                "row0cell0\trow0cell1\n" +
+                "row1cell0\tC:\\Users\\OpenRefine\\data\n");
+    }
+
+    @Test
     public void exportTsvWithLeadingAndTrailingNewline() throws IOException {
         // Regression test for https://github.com/OpenRefine/OpenRefine/issues/7770
         // univocity-parsers trims leading/trailing whitespace by default; we must disable that.
