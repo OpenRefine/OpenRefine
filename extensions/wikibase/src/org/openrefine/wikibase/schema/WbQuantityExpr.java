@@ -89,6 +89,13 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
         try {
             parsedAmount = new BigDecimal(originalAmount);
 
+            // amounts with extreme exponents (e.g. "1E+2147483647") are stored
+            // compactly by BigDecimal, but expanding them with toPlainString()
+            // below would exhaust memory: treat them as invalid amounts instead
+            if (parsedAmount.scale() > 1000 || parsedAmount.scale() < -1000) {
+                throw new NumberFormatException();
+            }
+
             if (originalAmount.contains("E")) {
                 // engineering notation: we derive the precision from
                 // the expression (feature!)
