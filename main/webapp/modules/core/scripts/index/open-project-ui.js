@@ -98,6 +98,9 @@ Refine.OpenProjectUI.refreshTagsListPanel = function() {
     var a = $('<a/>').attr('href', '?tag=#open-project').text('All').appendTo(li);
     a.on('click', function(e) {
       e.preventDefault();
+      // "All" resets the complete project list state, including text search.
+      $('#search-input').val('');
+      $('#tableBody').filterListSearch('');
       Refine.OpenProjectUI._filterTags('');
     });
 
