@@ -45,9 +45,6 @@ import com.univocity.parsers.common.AbstractWriter;
 import com.univocity.parsers.csv.CsvFormat;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
-import com.univocity.parsers.tsv.TsvFormat;
-import com.univocity.parsers.tsv.TsvWriter;
-import com.univocity.parsers.tsv.TsvWriterSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +55,6 @@ import com.google.refine.util.ParsingUtilities;
 public class CsvExporter implements WriterExporter {
 
     static CsvFormat DEFAULT_FORMAT = new CsvWriterSettings().getFormat();
-    static TsvFormat TSV_FORMAT = new TsvWriterSettings().getFormat();
     static char DEFAULT_SEPARATOR = DEFAULT_FORMAT.getDelimiter();
     static String DEFAULT_LINE_ENDING = DEFAULT_FORMAT.getLineSeparatorString();
 
@@ -109,13 +105,10 @@ public class CsvExporter implements WriterExporter {
                 ? Boolean.parseBoolean(params.getProperty("printColumnHeader"))
                 : true;
 
-        AbstractWriter csvWriter;
-        if ("\t".equals(separator)) {
-            TsvWriterSettings tsvSettings = new TsvWriterSettings();
-            tsvSettings.setIgnoreLeadingWhitespaces(false);
-            tsvSettings.setIgnoreTrailingWhitespaces(false);
-            tsvSettings.getFormat().setLineSeparator(lineSeparator);
-            csvWriter = new TsvWriter(writer, tsvSettings);
+        final boolean tsv = "\t".equals(separator);
+        final AbstractWriter csvWriter;
+        if (tsv) {
+            csvWriter = null;
         } else {
             CsvWriterSettings settings = new CsvWriterSettings();
             settings.setIgnoreLeadingWhitespaces(false);
@@ -148,7 +141,16 @@ public class CsvExporter implements WriterExporter {
                 if (!isHeader || printColumnHeader) {
                     Stream<String> strings = cells.stream()
                             .map(cellData -> (cellData != null && cellData.text != null) ? cellData.text : "");
-                    csvWriter.writeRow(strings.toArray());
+                    String[] values = strings.toArray(String[]::new);
+                    if (tsv) {
+                        try {
+                            writeTsvRow(writer, values, lineSeparator);
+                        } catch (IOException e) {
+                            throw new RuntimeException("Unable to write TSV row", e);
+                        }
+                    } else {
+                        csvWriter.writeRow(values);
+                    }
                 }
             }
         };
@@ -160,5 +162,31 @@ public class CsvExporter implements WriterExporter {
     @Override
     public String getContentType() {
         return "text/plain";
+    }
+
+    /**
+     * Writes TSV values using OpenRefine's historical escaping contract. Tabs and line separators must be escaped to
+     * keep one record per line, while backslashes are data and must remain unchanged (issue #7704).
+     */
+    private static void writeTsvRow(Writer writer, String[] values, String lineSeparator) throws IOException {
+        for (int i = 0; i < values.length; i++) {
+            if (i > 0) {
+                writer.write('\t');
+            }
+            String value = values[i];
+            for (int j = 0; j < value.length(); j++) {
+                char ch = value.charAt(j);
+                if (ch == '\t') {
+                    writer.write("\\t");
+                } else if (ch == '\n') {
+                    writer.write("\\n");
+                } else if (ch == '\r') {
+                    writer.write("\\r");
+                } else {
+                    writer.write(ch);
+                }
+            }
+        }
+        writer.write(lineSeparator);
     }
 }
