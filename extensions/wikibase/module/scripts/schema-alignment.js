@@ -197,6 +197,11 @@ SchemaAlignment._rerenderTabs = function() {
   schemaElmts.saveNewTemplateButton.text($.i18n('wikibase-schema/save-button'));
 
   WikibaseTemplateManager.loadTemplates(function() {
+    // Make sure schema templates declared in the manifest of the currently
+    // selected Wikibase are available in the dropdown. Without this, the
+    // dropdown would be empty on a fresh project where the Wikibase was
+    // auto-selected from the saved schema's site IRI (issue #6939).
+    WikibaseManager.ensureManifestTemplatesRegistered(WikibaseManager.getSelectedWikibaseName());
     SchemaAlignment.updateAvailableTemplates();
   });
   schemaElmts.saveNewTemplateButton.on('click', function(e) {
