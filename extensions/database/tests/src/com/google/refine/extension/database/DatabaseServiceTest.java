@@ -10,6 +10,7 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.google.refine.extension.database.duckdb.DuckDBDatabaseService;
 import com.google.refine.extension.database.mariadb.MariaDBDatabaseService;
 import com.google.refine.extension.database.model.DatabaseColumn;
 import com.google.refine.extension.database.model.DatabaseInfo;
@@ -84,6 +85,14 @@ public class DatabaseServiceTest extends DBExtensionTests {
         DatabaseService dbService = DatabaseService.get(SQLiteDatabaseService.DB_NAME);
         Assert.assertNotNull(dbService);
         Assert.assertEquals(dbService.getClass(), SQLiteDatabaseService.class);
+    }
+
+    @Test(groups = { "requiresDuckDB" })
+    public void testGetDuckDBDBService() {
+
+        DatabaseService dbService = DatabaseService.get(DuckDBDatabaseService.DB_NAME);
+        Assert.assertNotNull(dbService);
+        Assert.assertEquals(dbService.getClass(), DuckDBDatabaseService.class);
     }
 
     @Test(groups = { "requiresMySQL" })

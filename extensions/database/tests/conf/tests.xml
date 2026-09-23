@@ -37,6 +37,13 @@
     <parameter name = "sqliteDbPassword" value=""/>
     <parameter name = "sqliteDbTestTable" value="test_table"/>
 
+    <parameter name = "duckdbDbName" value="tests/resources/test_db.duckdb"/>
+    <parameter name = "duckdbDbHost" value=""/>
+    <parameter name = "duckdbDbPort" value=""/>
+    <parameter name = "duckdbDbUser" value=""/>
+    <parameter name = "duckdbDbPassword" value=""/>
+    <parameter name = "duckdbDbTestTable" value="test_data"/>
+
     <test name="DatabaseExtensionUnitTest">
         <groups>
             <run>
