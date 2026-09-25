@@ -391,7 +391,7 @@
     "core-util-enc/aliases": "Alias",
     "core-views/all": "Toutes",
     "core-views/custom-facet": "Facette personnalisée sur la colonne",
-    "core-views/copy-recon-judg": "Copier les avis de réconciliation depuis la colonne",
+    "core-views/copy-recon-judg": "Copier les avis de réconciliation depuis la colonne $1",
     "core-views/to-date": "En date…",
     "core-views/to-date/header": "En date",
     "core-views/to-date/single": "En date",

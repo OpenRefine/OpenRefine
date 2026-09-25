@@ -382,7 +382,7 @@
     "core-util-enc/aliases": "別名",
     "core-views/all": "全て",
     "core-views/custom-facet": "カラムのカスタムファセット",
-    "core-views/copy-recon-judg": "照合判断をカラムからコピー",
+    "core-views/copy-recon-judg": "照合判断をカラムからコピー $1",
     "core-views/hist-entries": "$1: 判断アクションのタイムスタンプ",
     "core-views/text": "文字列",
     "core-views/match-identical": "一致する全セルにマッチ",
