@@ -89,7 +89,7 @@ public class TransposeRowsIntoColumnsOperationTests extends RefineTest {
 
     @Test
     public void testValidate() {
-        assertThrows(IllegalArgumentException.class, () -> new TransposeRowsIntoColumnsOperation(null, 2).validate());
+        assertThrows(NullPointerException.class, () -> new TransposeRowsIntoColumnsOperation(null, 2).validate());
     }
 
     @Test
