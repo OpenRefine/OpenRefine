@@ -332,6 +332,13 @@ function registerImporting() {
   );
 }
 
+function registerSamplers() {
+   var SR = Packages.com.google.refine.sampling.SamplerRegistry;
+   SR.registerSampler("bernoulli", new Packages.com.google.refine.sampling.BernoulliSampler());
+   SR.registerSampler("reservoir", new Packages.com.google.refine.sampling.ReservoirSampler());
+   SR.registerSampler("systematic", new Packages.com.google.refine.sampling.SystematicSampler());
+}
+
 function registerExporters() {
    var ER = Packages.com.google.refine.exporters.ExporterRegistry;
    ER.registerExporter("csv", new Packages.com.google.refine.exporters.CsvExporter());
@@ -377,6 +384,7 @@ function init() {
   registerCommands();
   registerOperations();
   registerImporting();
+  registerSamplers();
   registerExporters();
   registerLanguages();
   registerDistances();
