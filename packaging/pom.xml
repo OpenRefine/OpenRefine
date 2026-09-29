@@ -570,8 +570,9 @@
             </plist>
             <jdk>
               <include>true</include>
+              <location>${mac.jre.path}</location>
             </jdk>
-            <nativeBinary>UNIVERSAL</nativeBinary>
+            <nativeBinary>X86_64</nativeBinary>
             <dmg>
               <generate>false</generate>
               <additionalResources>
