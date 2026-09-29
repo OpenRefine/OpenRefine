@@ -308,7 +308,8 @@ WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError
   };
 
   // The manifest host must support CORS.
-  $.ajax("/command/wikidata/fetch-manifest?url=" + manifestURL, {
+  // Relative URL so path-prefixed installs (e.g. /openrefine) resolve correctly. See #7387.
+  $.ajax("command/wikidata/fetch-manifest?url=" + manifestURL, {
     "dataType": "json",
     "timeout": 5000
   }).done(function (data) {
