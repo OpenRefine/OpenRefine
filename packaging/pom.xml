@@ -718,6 +718,49 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>3.2.0</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <id>codesign-and-generate-dmg</id>
+              <configuration>
+                <target name="codesignAndGenerateDMG" description="Codesign and generate DMG">
+
+                  <!-- Codesign app a second time so we can include hardened runtime -->
+                  <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign" failonerror="true" >
+                    <arg value="--entitlements" />
+                    <arg value="../Entitlements.plist" />
+                    <arg value="--sign"/>
+                    <arg value="${mac.signing.identity}"/>
+                    <arg value="--deep"/>
+                    <arg value="--force"/>
+                    <arg value="--timestamp"/>
+                    <arg value="--options"/>
+                    <arg value="runtime"/>
+                    <arg value="OpenRefine.app"/>
+                  </exec>
+
+                  <!-- Build DMG -->
+                  <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil" failonerror="true">
+                    <arg value="create" />
+                    <arg value="-srcfolder" />
+                    <arg value="OpenRefine.app" />
+                    <arg value="-volname"/>
+                    <arg value="OpenRefine"/>
+                    <arg value="${mac.dmg.path}"/>
+                  </exec>
+
+                </target>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven-deploy-plugin.version}</version>
           <configuration>
