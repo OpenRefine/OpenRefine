@@ -248,8 +248,8 @@ jobs:
         java-version: 21
         cache: 'maven'
         server-id: ossrh-staging-api
-        server-username: CENTRAL_USER
-        server-password: CENTRAL_PASS
+        server-username-env-var: CENTRAL_USER
+        server-password-env-var: CENTRAL_PASS
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
         gpg-passphrase-env-var: MAVEN_GPG_PASSPHRASE
 
