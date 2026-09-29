@@ -251,7 +251,7 @@ jobs:
         server-username: CENTRAL_USER
         server-password: CENTRAL_PASS
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-        gpg-passphrase: GPG_PASSPHRASE
+        gpg-passphrase-env-var: MAVEN_GPG_PASSPHRASE
 
 #    - name: Set up Python
 #      uses: actions/setup-python@v7
