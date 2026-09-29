@@ -25,7 +25,7 @@
     <mac.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</mac.webapp.dir>
     <mac.icon.path>../graphics/icon/openrefine.icns</mac.icon.path>
     <mac.dmg.filename>${project.build.finalName}-mac-x86_64</mac.dmg.filename>
-    <mac.dmg.path>${project.build.directory}/${mac.dmg.filename}_${project.version}.dmg</mac.dmg.path>
+    <mac.dmg.path>${project.build.directory}/${mac.dmg.filename}-${project.version}.dmg</mac.dmg.path>
 
     <!-- The default value allows developers to use a self-signed cert locally. This is overridden for production releases -->
     <!--    <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>-->
