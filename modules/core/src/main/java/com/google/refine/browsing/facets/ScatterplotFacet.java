@@ -128,7 +128,7 @@ public class ScatterplotFacet implements Facet {
         protected String columnName_y; // column to base the y expression on, if any
 
         @JsonProperty(SIZE)
-        protected int size; // Default value 100 if missing
+        protected int size = 100; // Default value 100 if missing
         @JsonProperty(DIM_X)
         protected LinLog dim_x = LinLog.LIN;
         @JsonProperty(DIM_Y)
@@ -145,25 +145,25 @@ public class ScatterplotFacet implements Facet {
         }
 
         @JsonProperty(DOT)
-        protected double dot; // Default value if missing 0.5
+        protected double dot = 0.5; // Default value if missing 0.5
 
         @JsonIgnore
         protected String color_str = "000000";
 
-        // FIXME: color support was never used, so this is dead code
+        // NOTE: color support was never used, so this is dead code
         @JsonIgnore
         protected Color getColor() {
             return new Color(Integer.parseInt(color_str, 16));
         }
 
         @JsonProperty(FROM_X)
-        protected double from_x; // the numeric selection for the x axis, from 0 to 1. Default value 0 if missing
+        protected double from_x = 0; // the numeric selection for the x axis, from 0 to 1. Default value 0 if missing
         @JsonProperty(TO_X)
-        protected double to_x; // Default value 1 if missing
+        protected double to_x = 1; // Default value 1 if missing
         @JsonProperty(FROM_Y)
-        protected double from_y; // the numeric selection for the y axis, from 0 to 1. Default value 0 if missing
+        protected double from_y = 0; // the numeric selection for the y axis, from 0 to 1. Default value 0 if missing
         @JsonProperty(TO_Y)
-        protected double to_y; // Default value 1 if missing
+        protected double to_y = 1; // Default value 1 if missing
 
         // false if we're certain that all rows will match
         // and there isn't any filtering to do
