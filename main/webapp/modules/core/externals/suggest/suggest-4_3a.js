@@ -188,6 +188,9 @@
       }
       p.on("mousedown", function(e) {
         //console.log("pane mousedown");
+        // Remember modified presses here: the button reported on the
+        // subsequent click event is not reliable across browsers.
+        self.suppress_click = $.suggest.is_view_click(e);
         self.input.data("dont_hide", true);
         e.stopPropagation();
       })
@@ -202,6 +205,11 @@
       .on("click", function(e) {
         //console.log("pane click");
         e.stopPropagation();
+        var suppress = self.suppress_click || $.suggest.is_view_click(e);
+        self.suppress_click = false;
+        if (suppress) {
+          return;
+        }
         var s = self.get_selected();
         if (s) {
           self.onselect(s, true);
@@ -928,6 +936,13 @@
       zIndex: null
     },
 
+    // Middle-click or Command-click should open the view page
+    // instead of selecting the suggestion.
+    is_view_click: function(e) {
+      var middle = e.button === 1 || e.which === 2;
+      return middle || (e.metaKey && e.button === 0);
+    },
+
     strongify: function(str, substr) {
       // safely markup substr within str with <strong>
       var strong;
@@ -1301,14 +1316,13 @@
       }
 
       // If we know of a view URL for this suggest service,
-      // clicking with the middle button sends the user to
-      // the view page.
+      // middle-clicking or Command-clicking sends the user
+      // to the view page.
       if('view_url' in this.options && data.id) {
         var view_url = this.options.view_url.replace('{{id}}', data.id).replace('${id}', data.id);
         li.on('mousedown', function(e) {
-           if (e.which == 2) {
-              var win = window.open(view_url, '_blank');
-              win.focus();
+           if ($.suggest.is_view_click(e)) {
+              window.open(view_url, '_blank');
               e.preventDefault();
            }
         });
