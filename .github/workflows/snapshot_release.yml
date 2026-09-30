@@ -243,8 +243,8 @@ jobs:
             runner: macos-15-intel
             maven_goal: deploy
           - architecture: aarch64
-            native_binary: ARM64
-            runner: macos-14
+            native_binary: ARM_64
+            runner: macos-15
             maven_goal: package
 
     outputs: 
