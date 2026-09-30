@@ -14,6 +14,10 @@
     <version>3.10-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <database.test.excludedGroups>requiresMySQL,requiresPgSQL,requiresMariaDB</database.test.excludedGroups>
+  </properties>
+
   <build>
     <finalName>openrefine-database</finalName>
     <resources>
@@ -29,9 +33,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
 	<version>${surefire.version}</version>
         <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>tests/conf/tests.xml</suiteXmlFile>
-          </suiteXmlFiles>
+          <excludedGroups>${database.test.excludedGroups}</excludedGroups>
         </configuration>
       </plugin>
     </plugins>
@@ -175,4 +177,3 @@
   </dependencies>
 
 </project>
-

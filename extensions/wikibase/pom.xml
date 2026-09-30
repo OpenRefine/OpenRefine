@@ -38,9 +38,13 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>tests/conf/tests.xml</suiteXmlFile>
-          </suiteXmlFiles>
+          <excludedGroups>broken</excludedGroups>
+          <properties>
+            <property>
+              <name>objectfactory</name>
+              <value>org.powermock.modules.testng.PowerMockObjectFactory</value>
+            </property>
+          </properties>
         </configuration>
       </plugin>
       <plugin>

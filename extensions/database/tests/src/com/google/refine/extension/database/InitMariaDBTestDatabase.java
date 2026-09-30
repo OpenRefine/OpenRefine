@@ -5,8 +5,6 @@ import java.sql.SQLException;
 
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.extension.database.mariadb.MariaDBDatabaseService;
@@ -17,12 +15,13 @@ public class InitMariaDBTestDatabase extends DBExtensionTests {
     private DatabaseConfiguration mariadbDbConfig;
 
     @BeforeSuite
-    @Parameters({ "mariadbDbName", "mariadbDbHost", "mariadbDbPort", "mariadbDbUser", "mariadbDbPassword", "mariadbTestTable" })
-    public void beforeSuite(
-            @Optional(DEFAULT_MARIADB_NAME) String mariadbDbName, @Optional(DEFAULT_MARIADB_HOST) String mariadbDbHost,
-            @Optional(DEFAULT_MARIADB_PORT) String mariadbDbPort, @Optional(DEFAULT_MARIADB_USER) String mariadbDbUser,
-            @Optional(DEFAULT_MARIADB_PASSWORD) String mariadbDbPassword, @Optional(DEFAULT_TEST_TABLE) String mariadbTestTable)
-            throws DatabaseServiceException, SQLException {
+    public void beforeSuite() throws DatabaseServiceException, SQLException {
+        String mariadbDbName = getTestParameter("mariadbDbName", DEFAULT_MARIADB_NAME);
+        String mariadbDbHost = getTestParameter("mariadbDbHost", DEFAULT_MARIADB_HOST);
+        String mariadbDbPort = getTestParameter("mariadbDbPort", DEFAULT_MARIADB_PORT);
+        String mariadbDbUser = getTestParameter("mariadbDbUser", DEFAULT_MARIADB_USER);
+        String mariadbDbPassword = getTestParameter("mariadbDbPassword", DEFAULT_MARIADB_PASSWORD);
+        String mariadbTestTable = getTestParameter("mariadbTestTable", DEFAULT_TEST_TABLE);
 
         mariadbDbConfig = new DatabaseConfiguration();
         mariadbDbConfig.setDatabaseHost(mariadbDbHost);

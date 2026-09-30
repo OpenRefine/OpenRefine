@@ -199,10 +199,6 @@ jobs:
           server-username: CENTRAL_USER
           server-password: CENTRAL_PASS
 
-      - name: Configure connections to databases
-        id: configure_db_connections
-        run: cat extensions/database/tests/conf/github_actions_tests.xml | sed -e "s/MYSQL_PORT/${{ job.services.mysql.ports[3306] }}/g" | sed -e "s/POSTGRES_PORT/${{ job.services.postgres.ports[5432] }}/g" > extensions/database/tests/conf/tests.xml
-
       - name: Populate databases with test data
         id: populate_databases_with_test_data
         run: |
@@ -216,7 +212,28 @@ jobs:
         run: cd main/webapp && npm install
 
       - name: Build and test with Maven
-        run: mvn -B jacoco:prepare-agent test jacoco:report
+        run: |
+          mvn -B \
+            -Ddatabase.test.excludedGroups= \
+            -DmySqlDbName=test_db \
+            -DmySqlDbHost=127.0.0.1 \
+            -DmySqlDbPort=${{ job.services.mysql.ports[3306] }} \
+            -DmySqlDbUser=root \
+            -DmySqlDbPassword=root \
+            -DmySqlTestTable=test_table \
+            -DpgSqlDbName=test_db \
+            -DpgSqlDbHost=127.0.0.1 \
+            -DpgSqlDbPort=${{ job.services.postgres.ports[5432] }} \
+            -DpgSqlDbUser=postgres \
+            -DpgSqlDbPassword=postgres \
+            -DpgSqlTestTable=test_table \
+            -DmariadbDbName=test_db \
+            -DmariadbDbHost=127.0.0.1 \
+            -DmariadbDbPort=${{ job.services.mysql.ports[3306] }} \
+            -DmariadbDbUser=root \
+            -DmariadbDbPassword=root \
+            -DmariadbTestTable=test_table \
+            jacoco:prepare-agent test jacoco:report
 
       # TODO: Skip Coveralls for PRs?
       - name: Coveralls

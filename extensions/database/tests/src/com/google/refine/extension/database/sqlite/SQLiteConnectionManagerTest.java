@@ -34,8 +34,6 @@ import java.sql.SQLException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.extension.database.DBExtensionTests;
@@ -49,10 +47,9 @@ public class SQLiteConnectionManagerTest extends DBExtensionTests {
     private DatabaseConfiguration testDbConfig;
 
     @BeforeTest
-    @Parameters({ "sqliteDbName", "sqliteTestTable" })
-    public void beforeTest(@Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName,
-            @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
-            throws DatabaseServiceException, SQLException {
+    public void beforeTest() throws DatabaseServiceException, SQLException {
+        String sqliteDbName = getTestParameter("sqliteDbName", DEFAULT_SQLITE_DB_NAME);
+        String sqliteTestTable = getTestParameter("sqliteTestTable", DEFAULT_SQLITE_TEST_TABLE);
 
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseName(sqliteDbName);

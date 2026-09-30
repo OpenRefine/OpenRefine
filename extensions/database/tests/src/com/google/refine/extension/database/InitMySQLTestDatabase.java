@@ -5,8 +5,6 @@ import java.sql.SQLException;
 
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.extension.database.mysql.MySQLDatabaseService;
@@ -17,12 +15,13 @@ public class InitMySQLTestDatabase extends DBExtensionTests {
     private DatabaseConfiguration mysqlDbConfig;
 
     @BeforeSuite
-    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable" })
-    public void beforeSuite(
-            @Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName, @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost,
-            @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
-            @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable)
-            throws DatabaseServiceException, SQLException {
+    public void beforeSuite() throws DatabaseServiceException, SQLException {
+        String mySqlDbName = getTestParameter("mySqlDbName", DEFAULT_MYSQL_DB_NAME);
+        String mySqlDbHost = getTestParameter("mySqlDbHost", DEFAULT_MYSQL_HOST);
+        String mySqlDbPort = getTestParameter("mySqlDbPort", DEFAULT_MYSQL_PORT);
+        String mySqlDbUser = getTestParameter("mySqlDbUser", DEFAULT_MYSQL_USER);
+        String mySqlDbPassword = getTestParameter("mySqlDbPassword", DEFAULT_MYSQL_PASSWORD);
+        String mySqlTestTable = getTestParameter("mySqlTestTable", DEFAULT_TEST_TABLE);
 
         // System.out.println("@BeforeSuite\n");
         mysqlDbConfig = new DatabaseConfiguration();

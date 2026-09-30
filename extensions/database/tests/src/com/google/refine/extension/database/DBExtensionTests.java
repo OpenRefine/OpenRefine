@@ -43,30 +43,35 @@ public class DBExtensionTests {
     protected final String DEFAULT_MYSQL_HOST = "127.0.0.1";
     protected final String DEFAULT_MYSQL_PORT = "3306";
     protected final String DEFAULT_MYSQL_USER = "root";
-    protected final String DEFAULT_MYSQL_PASSWORD = "secret";
-    protected final String DEFAULT_MYSQL_DB_NAME = "testdb";
+    protected final String DEFAULT_MYSQL_PASSWORD = "";
+    protected final String DEFAULT_MYSQL_DB_NAME = "test_db";
 
     protected final String PGSQL_DB_NAME = "postgresql";
     protected final String DEFAULT_PGSQL_HOST = "127.0.0.1";
     protected final String DEFAULT_PGSQL_PORT = "5432";
     protected final String DEFAULT_PGSQL_USER = "postgres";
     protected final String DEFAULT_PGSQL_PASSWORD = "";
-    protected final String DEFAULT_PGSQL_DB_NAME = "testdb";
+    protected final String DEFAULT_PGSQL_DB_NAME = "test_db";
 
     protected final String MARIA_DB_NAME = "mariadb";
     protected final String DEFAULT_MARIADB_HOST = "127.0.0.1";
     protected final String DEFAULT_MARIADB_PORT = "3306";
     protected final String DEFAULT_MARIADB_USER = "root";
-    protected final String DEFAULT_MARIADB_PASSWORD = "secret";
-    protected final String DEFAULT_MARIADB_NAME = "testdb";
+    protected final String DEFAULT_MARIADB_PASSWORD = "";
+    protected final String DEFAULT_MARIADB_NAME = "test_db";
 
     protected final String SQLITE_DB_NAME = "sqlite";
     protected final String DEFAULT_SQLITE_DB_NAME = "tests/resources/test_db.sqlite";
 
-    protected final String DEFAULT_TEST_TABLE = "test_data";
+    protected final String DEFAULT_TEST_TABLE = "test_table";
+    protected final String DEFAULT_SQLITE_TEST_TABLE = "test_data";
 
     protected Properties properties;
 
     protected Logger logger;
+
+    protected String getTestParameter(String name, String defaultValue) {
+        return System.getProperty(name, defaultValue);
+    }
 
 }

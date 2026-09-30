@@ -21,8 +21,6 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
@@ -239,9 +237,9 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     }
 
     @BeforeTest
-    @Parameters({ "sqliteDbName", "sqliteTestTable" })
-    public void beforeTest(
-            @Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName, @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable) {
+    public void beforeTest() {
+        String sqliteDbName = getTestParameter("sqliteDbName", DEFAULT_SQLITE_DB_NAME);
+        String sqliteTestTable = getTestParameter("sqliteTestTable", DEFAULT_SQLITE_TEST_TABLE);
 
         // Much of the below is ignored, but required by validation
         // in {@link DatabaseImportController#getQueryInfo}

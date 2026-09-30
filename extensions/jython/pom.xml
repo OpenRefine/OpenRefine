@@ -31,9 +31,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>tests/conf/tests.xml</suiteXmlFile>
-          </suiteXmlFiles>
+          <excludedGroups>broken</excludedGroups>
         </configuration>
       </plugin>
       <plugin>
@@ -105,4 +103,3 @@
   </dependencies>
 
 </project>
-

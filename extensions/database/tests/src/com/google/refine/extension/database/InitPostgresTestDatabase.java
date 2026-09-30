@@ -5,8 +5,6 @@ import java.sql.SQLException;
 
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.extension.database.pgsql.PgSQLDatabaseService;
@@ -17,12 +15,13 @@ public class InitPostgresTestDatabase extends DBExtensionTests {
     private DatabaseConfiguration pgsqlDbConfig;
 
     @BeforeSuite
-    @Parameters({ "pgSqlDbName", "pgSqlDbHost", "pgSqlDbPort", "pgSqlDbUser", "pgSqlDbPassword", "pgSqlTestTable" })
-    public void beforeSuite(
-            @Optional(DEFAULT_PGSQL_DB_NAME) String pgSqlDbName, @Optional(DEFAULT_PGSQL_HOST) String pgSqlDbHost,
-            @Optional(DEFAULT_PGSQL_PORT) String pgSqlDbPort, @Optional(DEFAULT_PGSQL_USER) String pgSqlDbUser,
-            @Optional(DEFAULT_PGSQL_PASSWORD) String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String pgSqlTestTable)
-            throws DatabaseServiceException, SQLException {
+    public void beforeSuite() throws DatabaseServiceException, SQLException {
+        String pgSqlDbName = getTestParameter("pgSqlDbName", DEFAULT_PGSQL_DB_NAME);
+        String pgSqlDbHost = getTestParameter("pgSqlDbHost", DEFAULT_PGSQL_HOST);
+        String pgSqlDbPort = getTestParameter("pgSqlDbPort", DEFAULT_PGSQL_PORT);
+        String pgSqlDbUser = getTestParameter("pgSqlDbUser", DEFAULT_PGSQL_USER);
+        String pgSqlDbPassword = getTestParameter("pgSqlDbPassword", DEFAULT_PGSQL_PASSWORD);
+        String pgSqlTestTable = getTestParameter("pgSqlTestTable", DEFAULT_TEST_TABLE);
 
         pgsqlDbConfig = new DatabaseConfiguration();
         pgsqlDbConfig.setDatabaseHost(pgSqlDbHost);
