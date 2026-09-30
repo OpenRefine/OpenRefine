@@ -48,12 +48,7 @@ public class SQLiteConnectionManagerTest extends DBExtensionTests {
 
     @BeforeTest
     public void beforeTest() throws DatabaseServiceException, SQLException {
-        String sqliteDbName = getTestParameter("sqliteDbName", DEFAULT_SQLITE_DB_NAME);
-        String sqliteTestTable = getTestParameter("sqliteTestTable", DEFAULT_SQLITE_TEST_TABLE);
-
-        testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseName(sqliteDbName);
-        testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
+        testDbConfig = getSQLiteDatabaseConfiguration();
 
         DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
     }

@@ -238,18 +238,13 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
 
     @BeforeTest
     public void beforeTest() {
-        String sqliteDbName = getTestParameter("sqliteDbName", DEFAULT_SQLITE_DB_NAME);
-        String sqliteTestTable = getTestParameter("sqliteTestTable", DEFAULT_SQLITE_TEST_TABLE);
-
         // Much of the below is ignored, but required by validation
         // in {@link DatabaseImportController#getQueryInfo}
-        testDbConfig = new DatabaseConfiguration();
+        testDbConfig = getSQLiteDatabaseConfiguration();
         testDbConfig.setDatabaseHost(""); // This is ignored, but not allowed to be null
-        testDbConfig.setDatabaseName(sqliteDbName);
         testDbConfig.setDatabasePassword(""); // This is ignored, but not allowed to be null
-        testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
         testDbConfig.setDatabaseUser(""); // This is ignored, but not allowed to be null
-        query = "SELECT count(*) FROM " + sqliteTestTable;
+        query = "SELECT count(*) FROM " + getDatabaseTestTable("sqlite", DEFAULT_SQLITE_TEST_TABLE);
 
         DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
 

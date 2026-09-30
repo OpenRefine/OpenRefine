@@ -14,12 +14,7 @@ public class InitSQLiteTestDatabase extends DBExtensionTests {
 
     @BeforeSuite
     public void beforeSuite() throws DatabaseServiceException, SQLException {
-        String sqliteDbName = getTestParameter("sqliteDbName", DEFAULT_SQLITE_DB_NAME);
-        String sqliteTestTable = getTestParameter("sqliteTestTable", DEFAULT_SQLITE_TEST_TABLE);
-
-        sqliteDbConfig = new DatabaseConfiguration();
-        sqliteDbConfig.setDatabaseName(sqliteDbName);
-
+        sqliteDbConfig = getSQLiteDatabaseConfiguration();
         DBExtensionTestUtils.initTestData(sqliteDbConfig);
     }
 

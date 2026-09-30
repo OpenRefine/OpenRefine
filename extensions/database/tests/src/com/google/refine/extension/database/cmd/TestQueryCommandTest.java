@@ -41,24 +41,10 @@ public class TestQueryCommandTest extends DBExtensionTests {
 
     @BeforeTest
     public void beforeTest() {
-        String mySqlDbName = getTestParameter("mySqlDbName", DEFAULT_MYSQL_DB_NAME);
-        String mySqlDbHost = getTestParameter("mySqlDbHost", DEFAULT_MYSQL_HOST);
-        String mySqlDbPort = getTestParameter("mySqlDbPort", DEFAULT_MYSQL_PORT);
-        String mySqlDbUser = getTestParameter("mySqlDbUser", DEFAULT_MYSQL_USER);
-        String mySqlDbPassword = getTestParameter("mySqlDbPassword", DEFAULT_MYSQL_PASSWORD);
-        String mySqlTestTable = getTestParameter("mySqlTestTable", DEFAULT_TEST_TABLE);
-
         mocks = MockitoAnnotations.openMocks(this);
-        testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseHost(mySqlDbHost);
-        testDbConfig.setDatabaseName(mySqlDbName);
-        testDbConfig.setDatabasePassword(mySqlDbPassword);
-        testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
-        testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
-        testDbConfig.setDatabaseUser(mySqlDbUser);
-        testDbConfig.setUseSSL(false);
+        testDbConfig = getMySQLDatabaseConfiguration();
 
-        testTable = mySqlTestTable;
+        testTable = getDatabaseTestTable("mySql", DEFAULT_TEST_TABLE);
         // DBExtensionTestUtils.initTestData(testDbConfig);
 
         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());

@@ -20,21 +20,7 @@ public class PgSQLConnectionManagerTest extends DBExtensionTests {
 
     @BeforeTest
     public void beforeTest() {
-        String pgSqlDbName = getTestParameter("pgSqlDbName", DEFAULT_PGSQL_DB_NAME);
-        String pgSqlDbHost = getTestParameter("pgSqlDbHost", DEFAULT_PGSQL_HOST);
-        String pgSqlDbPort = getTestParameter("pgSqlDbPort", DEFAULT_PGSQL_PORT);
-        String pgSqlDbUser = getTestParameter("pgSqlDbUser", DEFAULT_PGSQL_USER);
-        String pgSqlDbPassword = getTestParameter("pgSqlDbPassword", DEFAULT_PGSQL_PASSWORD);
-        String pgSqlTestTable = getTestParameter("pgSqlTestTable", DEFAULT_TEST_TABLE);
-
-        testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseHost(pgSqlDbHost);
-        testDbConfig.setDatabaseName(pgSqlDbName);
-        testDbConfig.setDatabasePassword(pgSqlDbPassword);
-        testDbConfig.setDatabasePort(Integer.parseInt(pgSqlDbPort));
-        testDbConfig.setDatabaseType(PgSQLDatabaseService.DB_NAME);
-        testDbConfig.setDatabaseUser(pgSqlDbUser);
-        testDbConfig.setUseSSL(false);
+        testDbConfig = getPgSQLDatabaseConfiguration();
 
         // testTable = mySqlTestTable;
         // DBExtensionTestUtils.initTestData(testDbConfig);

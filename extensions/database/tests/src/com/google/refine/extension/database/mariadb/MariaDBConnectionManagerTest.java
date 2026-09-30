@@ -20,21 +20,7 @@ public class MariaDBConnectionManagerTest extends DBExtensionTests {
 
     @BeforeTest
     public void beforeTest() {
-        String mariaDbName = getTestParameter("mariadbDbName", DEFAULT_MARIADB_NAME);
-        String mariaDbHost = getTestParameter("mariadbDbHost", DEFAULT_MARIADB_HOST);
-        String mariaDbPort = getTestParameter("mariadbDbPort", DEFAULT_MARIADB_PORT);
-        String mariaDbUser = getTestParameter("mariadbDbUser", DEFAULT_MARIADB_USER);
-        String mariaDbPassword = getTestParameter("mariadbDbPassword", DEFAULT_MARIADB_PASSWORD);
-        String mariaDbTestTable = getTestParameter("mariadbTestTable", DEFAULT_TEST_TABLE);
-
-        testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseHost(mariaDbHost);
-        testDbConfig.setDatabaseName(mariaDbName);
-        testDbConfig.setDatabasePassword(mariaDbPassword);
-        testDbConfig.setDatabasePort(Integer.parseInt(mariaDbPort));
-        testDbConfig.setDatabaseType(MariaDBDatabaseService.DB_NAME);
-        testDbConfig.setDatabaseUser(mariaDbUser);
-        testDbConfig.setUseSSL(false);
+        testDbConfig = getMariaDBDatabaseConfiguration();
 
 //        testTable = mariaDbTestTable;
         // DBExtensionTestUtils.initTestData(testDbConfig);
