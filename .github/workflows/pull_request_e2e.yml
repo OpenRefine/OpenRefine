@@ -39,6 +39,9 @@ jobs:
             !~/cache/exclude
             server/classes
             server/target/lib
+            main/webapp/WEB-INF/lib
+            main/webapp/modules/core/3rdparty
+            extensions/*/module/MOD-INF/lib
             extensions/*/target
             modules/*/target
           key: ${{ runner.os }}-modules-v2-${{ hashFiles('**/yarn.lock') }}
