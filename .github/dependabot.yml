@@ -3,38 +3,45 @@
 
 version: 2
 updates:
-# For openrefine java deps
-- package-ecosystem: maven
-  directory: "/"
-  schedule:
-    interval: "weekly"
-  open-pull-requests-limit: 15
-  ignore:
-    - dependency-name: "org.eclipse.jetty:jetty-*"
-      versions:
-        - ">= 10.0.0"
-  target-branch: "master"
-   
-# For main webapp
-- package-ecosystem: "npm"
-  directory: "main/webapp"
-  schedule:
-    interval: "weekly"
-# For github actions
-- package-ecosystem: "github-actions"
-  directory: "/"
-  schedule:
-    interval: "monthly"
-  groups:
-    actions:
-       patterns:
-         - "*"
-# For cypress test_suite
-- package-ecosystem: "npm"
-  directory: "main/tests/cypress"
-  schedule:
-    interval: "weekly"
-  groups:
-    cypress:
-      patterns:
-        - "*"
+
+  # For openrefine java deps
+  - package-ecosystem: maven
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+      semver-major-days: 28
+    open-pull-requests-limit: 15
+    ignore:
+      - dependency-name: "org.eclipse.jetty:jetty-*"
+        versions:
+          - ">= 10.0.0"
+    target-branch: "master"
+
+  # For main webapp
+  - package-ecosystem: "npm"
+    directory: "main/webapp"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+      semver-major-days: 28
+  # For github actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      actions:
+        patterns:
+          - "*"
+  # For cypress test_suite
+  - package-ecosystem: "npm"
+    directory: "main/tests/cypress"
+    schedule:
+      interval: "weekly"
+    groups:
+      cypress:
+        patterns:
+          - "*"
