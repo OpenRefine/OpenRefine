@@ -35,16 +35,18 @@ jobs:
           path: |
             ~/cache
             ~/.cache
-            main/webapp
             **/node_modules
             !~/cache/exclude
             server/classes
             server/target/lib
-            extensions
-            modules
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+            main/webapp/WEB-INF/lib
+            main/webapp/modules/core/3rdparty
+            extensions/*/module/MOD-INF/lib
+            extensions/*/target
+            modules/*/target
+          key: ${{ runner.os }}-modules-v2-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn
+            ${{ runner.os }}-modules-v2-
 
       - name: Install test dependencies
         run: |
@@ -115,16 +117,15 @@ jobs:
             ~/cache
             ~/.cache
             /home/runner/.cache
-            main/webapp
             **/node_modules
             !~/cache/exclude
             server/classes
             server/target/lib
-            extensions
-            modules
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+            extensions/*/target
+            modules/*/target
+          key: ${{ runner.os }}-modules-v2-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn
+            ${{ runner.os }}-modules-v2-
 
       - name: Install test dependencies
         run: |
