@@ -35,16 +35,11 @@ jobs:
           path: |
             ~/cache
             ~/.cache
-            main/webapp
             **/node_modules
             !~/cache/exclude
-            server/classes
-            server/target/lib
-            extensions
-            modules
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: modules-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn
+            modules-${{ runner.os }}-
 
       - name: Install test dependencies
         run: |
@@ -78,6 +73,20 @@ jobs:
       - name: Test Unix Domain Socket connectivity (10 sec.)
         run: |
           ./refine uds_tests
+
+      - name: Upload OpenRefine build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: server-build
+          path: |
+            server/classes
+            server/target/lib
+            main/webapp/WEB-INF/lib
+            main/webapp/modules/core/3rdparty
+            extensions/*/module/MOD-INF/lib
+            extensions/*/target
+            modules/*/target
+          if-no-files-found: error
 
       - id: set-matrix
         run: npm install glob && node main/tests/cypress/build-test-matrix.js >> $GITHUB_OUTPUT
@@ -119,16 +128,17 @@ jobs:
             ~/cache
             ~/.cache
             /home/runner/.cache
-            main/webapp
             **/node_modules
             !~/cache/exclude
-            server/classes
-            server/target/lib
-            extensions
-            modules
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: modules-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn
+            modules-${{ runner.os }}-
+
+      - name: Download OpenRefine build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: server-build
+          path: .
 
       - name: Install test dependencies
         run: |
