@@ -82,7 +82,7 @@ public class ScatterplotFacet implements Facet {
         @JsonProperty("log") LOG;
     }
 
-    // NOTE: legacy values of right (cw) & left (ccw) no longer supported
+    // NOTE: legacy values of right (cw) & left (ccw) are no longer supported, but they're unused by our client
     public enum Rotation {
         @JsonEnumDefaultValue @JsonProperty("none") NO_ROTATION,
         @JsonProperty("cw") ROTATE_CW,
