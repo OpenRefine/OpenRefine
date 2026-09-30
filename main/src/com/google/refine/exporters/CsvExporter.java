@@ -140,6 +140,7 @@ public class CsvExporter implements WriterExporter {
 
             @Override
             public void endFile() {
+                csvWriter.flush();
             }
 
             @Override
