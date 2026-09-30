@@ -1,4 +1,45 @@
 describe(__filename, function () {
+  it('Keeps the text transform dialog layout stable while the preview changes', function () {
+    cy.loadAndVisitProject([
+      ['a', 'b'],
+      ['0a', 'change'],
+      ['1a', 'change'],
+    ]);
+
+    cy.columnActionClick('b', ['Edit cells', 'Transform']);
+
+    cy.get('.dialog-frame.text-transform-dialog').then(($dialog) => {
+      const { width, height } = $dialog[0].getBoundingClientRect();
+      const assertDialogLayout = () => {
+        cy.get('.dialog-frame.text-transform-dialog').should(($currentDialog) => {
+          const bounds = $currentDialog[0].getBoundingClientRect();
+          expect(bounds.width).to.equal(width);
+          expect(bounds.height).to.equal(height);
+        });
+        cy.get('.text-transform-dialog .dialog-footer button').each(($button) => {
+          cy.wrap($button).should('be.visible').should(($visibleButton) => {
+            const bounds = $visibleButton[0].getBoundingClientRect();
+            expect(bounds.top).to.be.at.least(0);
+            expect(bounds.bottom).to.be.at.most(Cypress.config('viewportHeight'));
+          });
+        });
+      };
+
+      cy.typeExpression('()');
+      cy.get('.expression-preview-parsing-status').should('contain', 'Parsing error');
+      assertDialogLayout();
+
+      cy.typeExpression('value');
+      cy.get('.expression-preview-parsing-status').should('contain', 'No syntax error.');
+      assertDialogLayout();
+
+      ['Preview', 'Help', 'History', 'Starred'].forEach((tab) => {
+        cy.get('#expression-preview-tabs li').contains(tab).click();
+        assertDialogLayout();
+      });
+    });
+  });
+
   it('Ensure cells are transformed', function () {
     const fixture = [
       ['a', 'b', 'c'],
