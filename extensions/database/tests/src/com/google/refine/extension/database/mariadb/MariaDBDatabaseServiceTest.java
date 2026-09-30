@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.extension.database.DBExtensionTestUtils;
@@ -27,21 +25,9 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests {
     private String testTable;
 
     @BeforeTest
-    @Parameters({ "mariadbDbName", "mariadbDbHost", "mariadbDbPort", "mariadbDbUser", "mariadbDbPassword", "mariadbTestTable" })
-    public void beforeTest(@Optional(DEFAULT_MARIADB_NAME) String mariaDbName, @Optional(DEFAULT_MARIADB_HOST) String mariaDbHost,
-            @Optional(DEFAULT_MARIADB_PORT) String mariaDbPort, @Optional(DEFAULT_MARIADB_USER) String mariaDbUser,
-            @Optional(DEFAULT_MARIADB_PASSWORD) String mariaDbPassword, @Optional(DEFAULT_TEST_TABLE) String mariaDbTestTable) {
-
-        testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseHost(mariaDbHost);
-        testDbConfig.setDatabaseName(mariaDbName);
-        testDbConfig.setDatabasePassword(mariaDbPassword);
-        testDbConfig.setDatabasePort(Integer.parseInt(mariaDbPort));
-        testDbConfig.setDatabaseType(MariaDBDatabaseService.DB_NAME);
-        testDbConfig.setDatabaseUser(mariaDbUser);
-        testDbConfig.setUseSSL(false);
-
-        testTable = mariaDbTestTable;
+    public void beforeTest() {
+        testDbConfig = getMariaDBDatabaseConfiguration();
+        testTable = getDatabaseTestTable("mariadb", DEFAULT_TEST_TABLE);
         // DBExtensionTestUtils.initTestData(testDbConfig);
 
         DatabaseService.DBType.registerDatabase(MariaDBDatabaseService.DB_NAME, MariaDBDatabaseService.getInstance());

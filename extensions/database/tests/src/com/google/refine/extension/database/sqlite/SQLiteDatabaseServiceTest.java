@@ -35,8 +35,6 @@ import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.extension.database.DBExtensionTests;
@@ -54,16 +52,9 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
     private String testTable;
 
     @BeforeTest
-    @Parameters({ "sqliteDbName", "sqliteTestTable" })
-    public void beforeTest(@Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName,
-            @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
-            throws DatabaseServiceException, SQLException {
-
-        testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseName(sqliteDbName);
-        testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
-
-        testTable = sqliteTestTable;
+    public void beforeTest() throws DatabaseServiceException, SQLException {
+        testDbConfig = getSQLiteDatabaseConfiguration();
+        testTable = getDatabaseTestTable("sqlite", DEFAULT_SQLITE_TEST_TABLE);
 
         DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
     }

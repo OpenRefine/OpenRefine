@@ -21,8 +21,6 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
@@ -239,19 +237,14 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
     }
 
     @BeforeTest
-    @Parameters({ "sqliteDbName", "sqliteTestTable" })
-    public void beforeTest(
-            @Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName, @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable) {
-
+    public void beforeTest() {
         // Much of the below is ignored, but required by validation
         // in {@link DatabaseImportController#getQueryInfo}
-        testDbConfig = new DatabaseConfiguration();
+        testDbConfig = getSQLiteDatabaseConfiguration();
         testDbConfig.setDatabaseHost(""); // This is ignored, but not allowed to be null
-        testDbConfig.setDatabaseName(sqliteDbName);
         testDbConfig.setDatabasePassword(""); // This is ignored, but not allowed to be null
-        testDbConfig.setDatabaseType(SQLiteDatabaseService.DB_NAME);
         testDbConfig.setDatabaseUser(""); // This is ignored, but not allowed to be null
-        query = "SELECT count(*) FROM " + sqliteTestTable;
+        query = "SELECT count(*) FROM " + getDatabaseTestTable("sqlite", DEFAULT_SQLITE_TEST_TABLE);
 
         DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
 

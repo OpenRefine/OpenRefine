@@ -199,10 +199,6 @@ jobs:
           server-username: CENTRAL_USER
           server-password: CENTRAL_PASS
 
-      - name: Configure connections to databases
-        id: configure_db_connections
-        run: cat extensions/database/tests/conf/github_actions_tests.xml | sed -e "s/MYSQL_PORT/${{ job.services.mysql.ports[3306] }}/g" | sed -e "s/POSTGRES_PORT/${{ job.services.postgres.ports[5432] }}/g" > extensions/database/tests/conf/tests.xml
-
       - name: Populate databases with test data
         id: populate_databases_with_test_data
         run: |
@@ -216,7 +212,7 @@ jobs:
         run: cd main/webapp && npm install
 
       - name: Build and test with Maven
-        run: mvn -B jacoco:prepare-agent test jacoco:report
+        run: bash .github/scripts/run-unit-tests.sh "${{ job.services.mysql.ports[3306] }}" "${{ job.services.postgres.ports[5432] }}" -B
 
       # TODO: Skip Coveralls for PRs?
       - name: Coveralls

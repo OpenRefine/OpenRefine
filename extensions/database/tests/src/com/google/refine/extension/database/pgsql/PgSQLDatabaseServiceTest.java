@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.extension.database.DBExtensionTestUtils;
@@ -26,21 +24,9 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests {
     private String testTable;
 
     @BeforeTest
-    @Parameters({ "pgSqlDbName", "pgSqlDbHost", "pgSqlDbPort", "pgSqlDbUser", "pgSqlDbPassword", "pgSqlTestTable" })
-    public void beforeTest(@Optional(DEFAULT_PGSQL_DB_NAME) String pgSqlDbName, @Optional(DEFAULT_PGSQL_HOST) String pgSqlDbHost,
-            @Optional(DEFAULT_PGSQL_PORT) String pgSqlDbPort, @Optional(DEFAULT_PGSQL_USER) String pgSqlDbUser,
-            @Optional(DEFAULT_PGSQL_PASSWORD) String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String pgSqlTestTable) {
-
-        testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseHost(pgSqlDbHost);
-        testDbConfig.setDatabaseName(pgSqlDbName);
-        testDbConfig.setDatabasePassword(pgSqlDbPassword);
-        testDbConfig.setDatabasePort(Integer.parseInt(pgSqlDbPort));
-        testDbConfig.setDatabaseType(PgSQLDatabaseService.DB_NAME);
-        testDbConfig.setDatabaseUser(pgSqlDbUser);
-        testDbConfig.setUseSSL(false);
-
-        testTable = pgSqlTestTable;
+    public void beforeTest() {
+        testDbConfig = getPgSQLDatabaseConfiguration();
+        testTable = getDatabaseTestTable("pgSql", DEFAULT_TEST_TABLE);
         // DBExtensionTestUtils.initTestData(testDbConfig);
 
         DatabaseService.DBType.registerDatabase(PgSQLDatabaseService.DB_NAME, PgSQLDatabaseService.getInstance());
