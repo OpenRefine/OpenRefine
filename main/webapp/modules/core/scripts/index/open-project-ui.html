@@ -10,6 +10,10 @@
             <input type="text" id="search-input" class="header-search-box" placeholder="Search">
             <ul id="tagsUl"></ul>
         </div>
+        <div bind="bulkActions" id="projects-bulk-actions">
+            <span bind="selectionCount" id="projects-selection-count" aria-live="polite"></span>
+            <button type="button" class="button" bind="deleteSelectedButton" id="delete-selected-projects"></button>
+        </div>
         <div bind="projectList" id="projects-list"></div>
     </div>
     <div bind="workspaceControls" id="projects-workspace-controls">
