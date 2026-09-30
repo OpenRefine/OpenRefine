@@ -18,13 +18,14 @@
     <webapp.target>../main/target</webapp.target>
     <embedded.jre.version>${java.minversion}</embedded.jre.version>
 
-    <!-- Adoptium JREs x64 (undocumented x86_64 works too), aarch64; mvn os.arch x86_64, aarch64 -->
-    <mac.jre.path>${project.build.directory}/mac_jre</mac.jre.path>
-    <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/x86_64/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
+    <mac.arch>x86_64</mac.arch>
+    <mac.native.binary>X86_64</mac.native.binary>
+    <mac.jre.path>${project.build.directory}/mac_jre-${mac.arch}</mac.jre.path>
+    <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/${mac.arch}/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
     <mac.build.directory>OpenRefine ${project.version}</mac.build.directory>
     <mac.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</mac.webapp.dir>
     <mac.icon.path>../graphics/icon/openrefine.icns</mac.icon.path>
-    <mac.dmg.filename>${project.build.finalName}-mac-x86_64</mac.dmg.filename>
+    <mac.dmg.filename>${project.build.finalName}-mac-${mac.arch}</mac.dmg.filename>
     <mac.dmg.path>${project.build.directory}/${mac.dmg.filename}-${project.version}.dmg</mac.dmg.path>
 
     <!-- The default value allows developers to use a self-signed cert locally. This is overridden for production releases -->
@@ -98,11 +99,6 @@
       <id>windows</id>
       <build>
         <plugins>
-          <!-- TODO: Unnecessary Mac plugin in Windows profile? -->
-<!--          <plugin>-->
-<!--            <groupId>de.perdian.maven.plugins</groupId>-->
-<!--            <artifactId>macosappbundler-maven-plugin</artifactId>-->
-<!--          </plugin>-->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
@@ -185,8 +181,6 @@
                       <arg value="staple"/>
                       <arg value="${mac.dmg.path}"/>
                     </exec>
-
-                    <!-- TODO: Do it all over again for aarch64 -->
 
                   </target>
                 </configuration>
@@ -352,7 +346,7 @@
             </goals>
             <configuration>
               <target name="downloadJRE" description="Download JRE">
-                <!-- Download JRE (Mac OS X x86_64) -->
+                <!-- Download JRE for the configured macOS architecture -->
                 <exec dir="${project.build.directory}" executable="curl">
                   <arg line="-S"/>
                   <arg line="-L"/>
@@ -363,7 +357,7 @@
                   <arg line="${mac.jre.url}"/>
                 </exec>
 
-                <!-- Untar Mac x86 JRE archive -->
+                <!-- Untar the macOS JRE archive -->
                 <mkdir dir="${mac.jre.path}"/>
                 <exec dir="${project.build.directory}" executable="tar">
                   <arg line="-zxf"/>
@@ -572,7 +566,7 @@
               <include>true</include>
               <location>${mac.jre.path}</location>
             </jdk>
-            <nativeBinary>X86_64</nativeBinary>
+            <nativeBinary>${mac.native.binary}</nativeBinary>
             <dmg>
               <generate>false</generate>
               <additionalResources>
@@ -610,7 +604,7 @@
           </configuration>
           <executions>
             <execution>
-              <id>bundle-x86</id>
+              <id>bundle-mac</id>
               <phase>prepare-package</phase>
               <goals>
                 <goal>bundle</goal>
@@ -623,13 +617,6 @@
                   <dmgFileName>${mac.dmg.filename}</dmgFileName>
                 </dmg>
               </configuration>
-            </execution>
-            <execution>
-              <id>bundle-aarm64</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>bundle</goal>
-              </goals>
             </execution>
           </executions>
         </plugin>
