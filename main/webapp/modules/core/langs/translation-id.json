@@ -283,7 +283,7 @@
     "core-views/apply-to-cell": "Terapkan ke semua cell yang sudah ditetapkan",
     "core-views/copy-opt": "Pilihan Penyalinan",
     "core-views/copy-to-col": "Salin ke Kolom",
-    "core-views/copy-recon-judg": "Salin ketetapan rekonsiliasi dari kolom",
+    "core-views/copy-recon-judg": "Salin ketetapan rekonsiliasi dari kolom $1",
     "core-views/search-fb-topic": "Cari item untuk mencocokkan semua cell yang difilter",
     "core-views/errors": "Kesalahan",
     "core-views/blanks": "Kosong",

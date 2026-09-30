@@ -251,7 +251,7 @@
     "clustering-keyers/metaphone3": "metaphone 3",
     "core-views/all": "Összes",
     "core-views/custom-facet": "Egyéni facetta az oszlopon",
-    "core-views/copy-recon-judg": "Oszlop összeegyeztetési döntéseinek másolása",
+    "core-views/copy-recon-judg": "Oszlop összeegyeztetési döntéseinek másolása $1",
     "core-views/hist-entries": "Döntés időbélyege",
     "core-views/text": "szöveg",
     "core-views/match-identical": "Összes azonos cella illesztése",

@@ -482,7 +482,7 @@
     "core-views/create-topic-cell": "Utwórz nowy element dla tej komórki",
     "core-views/best-score": "Wynik najlepszego kandydata",
     "core-views/apply-to-cell": "Zastosuj do rozstrzygniętych komórek",
-    "core-views/copy-recon-judg": "Kopiuj uzgodnione rozstrzygnięcia z kolumny",
+    "core-views/copy-recon-judg": "Kopiuj uzgodnione rozstrzygnięcia z kolumny $1",
     "core-views/best-edit-dist": "Odległość edycji nazwy najlepszego kandydata",
     "core-views/warning-no-property": "Najpierw wybierz właściwość.",
     "core-views/url-fetch": "Sformułuj adresy URL do pobrania:",

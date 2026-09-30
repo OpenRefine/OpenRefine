@@ -342,7 +342,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doCopyAcrossColumns = function() {
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/copy-recon-across-columns-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/copy-recon-judg')+" " + column.name);
+    elmts.dialogHeader.text($.i18n('core-views/copy-recon-judg', column.name));
     
     elmts.or_views_copyToCol.text($.i18n('core-views/copy-to-col'));
     elmts.or_views_copyOpt.text($.i18n('core-views/copy-opt'));

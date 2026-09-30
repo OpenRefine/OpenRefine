@@ -186,7 +186,7 @@
     "core-views/smallest-first": "menores primeiro",
     "core-views/earliest-first": "recentes primeiros",
     "core-views/false-true": "falso, depois verdadeiro",
-    "core-views/copy-recon-judg": "Copiar análise de reconciliação a partir da coluna",
+    "core-views/copy-recon-judg": "Copiar análise de reconciliação a partir da coluna $1",
     "core-views/warning-sel-judg": "Por favor, selecione ao menos um tipo de resultado para copiar.",
     "core-views/by-judg": "Por julgamento",
     "core-views/judgment": "$1: julgamento",
