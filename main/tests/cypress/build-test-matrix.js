@@ -67,7 +67,7 @@ const matchedFiles = [];
 groups.forEach((group) => {
   group.specs.forEach((pattern) => {
     const files = glob.sync(`main/tests/cypress/${pattern}`);
-    matchedFiles.push(...files);
+    matchedFiles.push(...files.map((file) => file.replace(/^\.\//, '')));
   });
 });
 
@@ -76,8 +76,9 @@ const allSpecFiles = glob.sync(`./main/tests/cypress/cypress/e2e/**/*.cy.js`);
 const missedFiles = [];
 
 for (const file of allSpecFiles) {
-  const relativeFile = file.substring('./main/tests/cypress/'.length);
-  if (!matchedFiles.includes(file.substring(2))) {
+  const normalizedFile = file.replace(/^\.\//, '');
+  const relativeFile = normalizedFile.substring('main/tests/cypress/'.length);
+  if (!matchedFiles.includes(normalizedFile)) {
     missedFiles.push(relativeFile);
   }
 }
