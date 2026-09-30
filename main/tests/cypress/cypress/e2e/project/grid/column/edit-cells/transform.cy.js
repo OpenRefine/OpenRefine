@@ -17,11 +17,13 @@ describe(__filename, function () {
           expect(bounds.height).to.equal(height);
         });
         cy.get('.text-transform-dialog .dialog-footer button').each(($button) => {
-          cy.wrap($button).should('be.visible').should(($visibleButton) => {
-            const bounds = $visibleButton[0].getBoundingClientRect();
-            expect(bounds.top).to.be.at.least(0);
-            expect(bounds.bottom).to.be.at.most(Cypress.config('viewportHeight'));
-          });
+          cy.wrap($button)
+            .should('be.visible')
+            .should(($visibleButton) => {
+              const bounds = $visibleButton[0].getBoundingClientRect();
+              expect(bounds.top).to.be.at.least(0);
+              expect(bounds.bottom).to.be.at.most(Cypress.config('viewportHeight'));
+            });
         });
       };
 
