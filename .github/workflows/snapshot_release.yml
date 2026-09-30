@@ -232,8 +232,20 @@ jobs:
 
   mac_test_and_deploy:
     if: github.repository == 'OpenRefine/OpenRefine'
-    runs-on: macos-15-intel
+    name: mac_test_and_deploy (${{ matrix.architecture }})
+    runs-on: ${{ matrix.runner }}
     needs: [unit_test, e2e_test]
+    strategy:
+      matrix:
+        include:
+          - architecture: x86_64
+            native_binary: X86_64
+            runner: macos-15-intel
+            maven_goal: deploy
+          - architecture: aarch64
+            native_binary: ARM64
+            runner: macos-14
+            maven_goal: package
 
     outputs: 
       version_number_string: ${{ steps.version_string_variable.outputs.output_value }}
@@ -294,7 +306,8 @@ jobs:
     # TODO: Split this into multiple steps so that Mac notarization doesn't get other builds
     - name: Package and upload to OSSRH
       run: |
-        mvn -B deploy -DskipTests=true -Dmac.signing.identity="Code for Science and Society, Inc." -DrepositoryId=ossrh-staging-api \
+        mvn -B ${{ matrix.maven_goal }} -DskipTests=true -Dmac.arch=${{ matrix.architecture }} -Dmac.native.binary=${{ matrix.native_binary }} \
+          -Dmac.signing.identity="Code for Science and Society, Inc." -DrepositoryId=ossrh-staging-api \
           -Dapple.notarization.key.id="$APPLE_BUILD_KEY_ID" -Dapple.notarization.key="$RUNNER_TEMP/notary_key.p8" \
           -Dapple.notarization.issuer="$APPLE_ISSUER" -Dgpg.signer=bc
         rm -f $RUNNER_TEMP/notary_key.p8
@@ -313,7 +326,7 @@ jobs:
 
     - name: Upload release asset for Windows (with Java)
       id: upload-release-asset-win-with-java
-      if: github.event_name == 'release'
+      if: github.event_name == 'release' && matrix.architecture == 'x86_64'
       uses: shogo82148/actions-upload-release-asset@v1.10.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
@@ -323,6 +336,7 @@ jobs:
 
     - name: Upload build artifact for Windows (with Java)
       id: upload-build-artifact-win-with-java
+      if: matrix.architecture == 'x86_64'
       uses: actions/upload-artifact@v7
       with:
         path: "./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip"
@@ -330,11 +344,13 @@ jobs:
 
     - name: Unzip build artifact for Windows (with Java) for Installer
       id: unzip-build-artifact-win-with-java
+      if: matrix.architecture == 'x86_64'
       run: unzip ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}.zip -d ./packaging/target/openrefine-win-with-java-${{ steps.version_string_variable.outputs.output_value }}
 
     # TODO: Uploading a temp artefact just so that we can download it again is a kludge. Refactor.
     - name: Upload temp build artifact for Windows (with Java) for Installer
       id: upload-build-artifact-win-with-java-for-installer
+      if: matrix.architecture == 'x86_64'
       uses: actions/upload-artifact@v7
       with:
         name: installertemp-win-with-java-${{ steps.version_string_variable.outputs.output_value }}
@@ -342,7 +358,7 @@ jobs:
 
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
-      if: github.event_name == 'release'
+      if: github.event_name == 'release' && matrix.architecture == 'x86_64'
       uses: shogo82148/actions-upload-release-asset@v1.10.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
@@ -352,27 +368,28 @@ jobs:
 
     - name: Upload build artifact for Linux
       id: upload-build-artifact-linux
+      if: matrix.architecture == 'x86_64'
       uses: actions/upload-artifact@v7
       with:
         path: "./packaging/target/openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}.tar.gz"
         name: openrefine-linux-${{ steps.version_string_variable.outputs.output_value }}
 
-    - name: Upload Release Asset Mac
+    - name: Upload Release Asset Mac (${{ matrix.architecture }})
       id: upload-release-asset-mac
       if: github.event_name == 'release'
       uses: shogo82148/actions-upload-release-asset@v1.10.4
       with:
         upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
-        asset_path: ./packaging/target/openrefine-mac-x86_64-${{ steps.version_string_variable.outputs.output_value }}.dmg
-        asset_name: openrefine-mac-x86_64-${{ steps.version_string_variable.outputs.output_value }}.dmg
+        asset_path: ./packaging/target/openrefine-mac-${{ matrix.architecture }}-${{ steps.version_string_variable.outputs.output_value }}.dmg
+        asset_name: openrefine-mac-${{ matrix.architecture }}-${{ steps.version_string_variable.outputs.output_value }}.dmg
         asset_content_type: application/x-apple-diskimage
 
-    - name: Upload build artifact for Mac
+    - name: Upload build artifact for Mac (${{ matrix.architecture }})
       id: upload-build-artifact-mac
       uses: actions/upload-artifact@v7
       with:
-        path: "./packaging/target/openrefine-mac-x86_64-${{ steps.version_string_variable.outputs.output_value }}.dmg"
-        name: openrefine-mac-x86_64-${{ steps.version_string_variable.outputs.output_value }}
+        path: "./packaging/target/openrefine-mac-${{ matrix.architecture }}-${{ steps.version_string_variable.outputs.output_value }}.dmg"
+        name: openrefine-mac-${{ matrix.architecture }}-${{ steps.version_string_variable.outputs.output_value }}
 
   windows_installer:
     if: github.repository == 'OpenRefine/OpenRefine'
