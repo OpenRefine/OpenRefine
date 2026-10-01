@@ -110,6 +110,9 @@ public class CsvExporter implements WriterExporter {
         AbstractWriter csvWriter;
         if ("\t".equals(separator)) {
             TsvWriterSettings tsvSettings = new TsvWriterSettings();
+            if (lineSeparator.contains(String.valueOf(tsvSettings.getFormat().getEscapeChar()))) {
+                throw new IOException("Line separator cannot contain the escape character (\\)");
+            }
             tsvSettings.setIgnoreLeadingWhitespaces(false);
             tsvSettings.setIgnoreTrailingWhitespaces(false);
             tsvSettings.getFormat().setLineSeparator(lineSeparator);
