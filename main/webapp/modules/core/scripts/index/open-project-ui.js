@@ -266,22 +266,22 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     var projectsUl = $("<ul/>").attr('id', 'projectsUl').appendTo(container);
 
     var table = $(
-      '<table class="tablesorter-blue list-table"><thead><tr>' +
-      '<th class="project-selector"><input type="checkbox" id="select-all-projects" /></th>' +
-      '<th></th>' +
-      '<th></th>' +
-      '<th>'+$.i18n('core-index-open/last-mod')+'</th>' +
-      '<th>'+$.i18n('core-index-open/name')+'</th>' +
-      '<th>'+$.i18n('core-index-open/tags')+'</th>' + 
-      '<th>'+$.i18n('core-index-open/creator')+'</th>' +
-      '<th>'+$.i18n('core-index-open/subject')+'</th>' +
-      '<th>'+$.i18n('core-index-open/description')+'</th>' +
-      '<th>'+$.i18n('core-index-open/row-count')+'</th>' + 
+      '<table class="list-table"><thead><tr>' +
+      '<th data-sort="none" class="project-selector"><input type="checkbox" id="select-all-projects" /></th>' +
+      '<th data-sort="none"></th>' +
+      '<th data-sort="none"></th>' +
+      '<th data-sort="date" aria-sort="descending">'+$.i18n('core-index-open/last-mod')+'</th>' +
+      '<th data-sort="text">'+$.i18n('core-index-open/name')+'</th>' +
+      '<th data-sort="text">'+$.i18n('core-index-open/tags')+'</th>' +
+      '<th data-sort="text">'+$.i18n('core-index-open/creator')+'</th>' +
+      '<th data-sort="text">'+$.i18n('core-index-open/subject')+'</th>' +
+      '<th data-sort="text">'+$.i18n('core-index-open/description')+'</th>' +
+      '<th data-sort="number">'+$.i18n('core-index-open/row-count')+'</th>' +
       (function() {
           var htmlDisplay = "";
           for (var n in data.customMetadataColumns) {
             if (data.customMetadataColumns[n].display) {
-              htmlDisplay += '<th>'+ data.customMetadataColumns[n].name + '</th>';
+              htmlDisplay += '<th data-sort="text">'+ data.customMetadataColumns[n].name + '</th>';
             }
           }
           
@@ -341,18 +341,18 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       );
       
       $('<div></div>')
-      .html('<span style="display:none">' + project.modified + '</span>' + project.date)
+      .html(project.date)
       .addClass("last-modified")
-      .appendTo($(tr.insertCell(tr.cells.length)));
+      .appendTo($(tr.insertCell(tr.cells.length)).attr('data-sort-value', project.modified));
       
       var nameLink = $('<a></a>')
       .addClass("project-name")
       .addClass("searchable")
       .text(project.name)
       .attr("href", "project?project=" + project.id)
-      .appendTo($(tr.insertCell(tr.cells.length)));
+      .appendTo($(tr.insertCell(tr.cells.length)).attr('data-sort-value', project.name));
       
-    var tagsCell = $(tr.insertCell(tr.cells.length));
+    var tagsCell = $(tr.insertCell(tr.cells.length)).attr('data-sort-value', project.tags.join(','));
     var tags = project.tags;
     tags.map(function(tag){
         $("<span/>")
@@ -365,23 +365,23 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     });
     
     
-    var appendMetaField = function(data) {
+    var appendMetaField = function(data, sortValue) {
         $('<div></div>')
         .addClass("searchable")
         .html(data)
-        .appendTo($(tr.insertCell(tr.cells.length)));
+        .appendTo($(tr.insertCell(tr.cells.length)).attr('data-sort-value', sortValue));
     };
     
-    appendMetaField(project.creator);
-    appendMetaField(project.subject);
-    appendMetaField(project.description, '20%');
-    appendMetaField(project.rowCount);
+    appendMetaField(project.creator, project.creator);
+    appendMetaField(project.subject, project.subject);
+    appendMetaField(project.description, project.description);
+    appendMetaField(project.rowCount, project.rowCount);
     
     var data = project.userMetadata;
     for(var i in data)
     {
          if (data[i].display === true) {
-             appendMetaField(data[i].value);
+             appendMetaField(data[i].value, data[i].value);
          }
     }
         
@@ -392,17 +392,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       renderProject(projects[i]);
     }
 
-    $(table).tablesorter({
-        headers : {
-            0: { sorter: false },
-            1: { sorter: false },
-            2: { sorter: false },
-            3: { sorter: "text" }
-        },
-        sortList: [[3,1]],
-        widthFixed: false
-    });
-
     $('#select-all-projects')
     .attr("title", $.i18n('core-index-open/select-all-title'))
     .attr("aria-label", $.i18n('core-index-open/select-all-title'))
@@ -412,6 +401,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       Refine.OpenProjectUI._updateSelection();
     });
 
+    self._initTableSorting(table);
     self._addTagFilter();
   }
   Refine.OpenProjectUI._updateSelection();
@@ -507,6 +497,91 @@ Refine.OpenProjectUI.prototype._addTagFilter = function() {
 
 // Index of the project name cell in a row: selector, delete, about, last modified, name.
 Refine.OpenProjectUI.NAME_COLUMN_INDEX = 4;
+
+Refine.OpenProjectUI.prototype._initTableSorting = function(table) {
+  var self = this;
+  var tbody = table.querySelector('tbody');
+  var rows = Array.from(tbody.rows);
+  var headers = table.querySelectorAll('thead th[data-sort]');
+  var collator = new Intl.Collator(Refine.userLang || navigator.language, {numeric: true, sensitivity: 'base'});
+
+  // Sort direction state per column: 'asc', 'desc', or null (default)
+  // Default sort is Modified date descending (column index 3)
+  var sortDirections = {};
+  let defaultSortColumnIndex = 3;
+  sortDirections[defaultSortColumnIndex] = 'desc';
+
+  self._sortTable(tbody, rows, defaultSortColumnIndex, 'desc', collator);
+  table.querySelector('thead th:nth-child(' + (defaultSortColumnIndex + 1) + ')').setAttribute('aria-sort', 'descending');
+
+  headers.forEach(function(th, colIndex) {
+    var sortType = th.getAttribute('data-sort');
+    if (sortType === 'none') return;
+
+    th.style.cursor = 'pointer';
+    th.style.userSelect = 'none';
+
+    th.addEventListener('click', function() {
+      var currentDir = sortDirections[colIndex] || null;
+      var newDir;
+
+      // Default sort column (Modified date) only toggles asc/desc, no null state
+      // Other columns: null → asc → desc → null
+      if (colIndex === defaultSortColumnIndex) {
+        newDir = currentDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        if (currentDir === null) {
+          newDir = 'asc';
+        } else if (currentDir === 'asc') {
+          newDir = 'desc';
+        } else { // currentDir === 'desc'
+          newDir = null;
+        }
+      }
+      sortDirections[colIndex] = newDir;
+
+      // Reset other columns' aria-sort
+      headers.forEach(function(h) { h.removeAttribute('aria-sort'); });
+
+      if (newDir === null) {
+        // Default: revert to Modified date descending
+        th.removeAttribute('aria-sort');
+        sortDirections[defaultSortColumnIndex] = 'desc';
+        table.querySelector('thead th:nth-child(' + (defaultSortColumnIndex + 1) + ')').setAttribute('aria-sort', 'descending');
+        self._sortTable(tbody, rows, defaultSortColumnIndex, 'desc', collator);
+      } else {
+        th.setAttribute('aria-sort', newDir === 'asc' ? 'ascending' : 'descending');
+        self._sortTable(tbody, rows, colIndex, newDir, collator);
+      }
+    });
+  });
+};
+
+Refine.OpenProjectUI.prototype._sortTable = function(tbody, rows, colIndex, direction, collator) {
+  var th = tbody.closest('table').querySelector('thead th:nth-child(' + (colIndex + 1) + ')');
+  var sortType = th ? th.getAttribute('data-sort') : 'text';
+
+  rows.sort(function(a, b) {
+    var cellA = a.cells[colIndex];
+    var cellB = b.cells[colIndex];
+    var valA = cellA ? cellA.getAttribute('data-sort-value') : '';
+    var valB = cellB ? cellB.getAttribute('data-sort-value') : '';
+
+    var comparison = 0;
+    if (sortType === 'number') {
+      comparison = (parseFloat(valA) || 0) - (parseFloat(valB) || 0);
+    } else if (sortType === 'date') {
+      comparison = new Date(valA).getTime() - new Date(valB).getTime();
+    } else {
+      comparison = collator.compare(valA || '', valB || '');
+    }
+
+    return direction === 'asc' ? comparison : -comparison;
+  });
+
+  // Re-append rows in sorted order
+  rows.forEach(function(row) { tbody.appendChild(row); });
+};
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
     
