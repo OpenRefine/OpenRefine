@@ -41,7 +41,7 @@ SaveSchemaDialog.launch = function() {
      SaveSchemaDialog._elmts.nameInput.val($(this).val());
   });
 
-  elmts.nameInput.focus();
+  elmts.nameInput.trigger("focus")
   elmts.nameInput.on('change', function(e) {
      SaveSchemaDialog._elmts.templateSelect.val('__placeholder__');
   });

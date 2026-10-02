@@ -147,7 +147,7 @@ Refine.OpenProjectUI.prototype._openSearchInput = function() {
       $("#search-input").show();
       icon.addClass("magnifying-glass-open");
       input.show();
-      input.focus();
+      input.trigger("focus")
     } else {
       input.hide();
       input.val('');
