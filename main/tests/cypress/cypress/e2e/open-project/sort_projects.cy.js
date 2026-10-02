@@ -104,7 +104,7 @@ describe(__filename, function () {
       cy
         .get('#projects-list tbody tr td:nth-child(5) a.project-name')
         .then(($els) => $els.map((i, el) => Cypress.$(el).text()).get())
-        .then((names) => names.filter(n => n.startsWith('Project ')));
+        .then((names) => names.filter((n) => n.startsWith('Project ')));
 
     // Click Name header once (ascending A-Z)
     cy.get('#projects-list thead th[data-sort="text"]').eq(0).click();
