@@ -272,7 +272,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<th data-sort="none"></th>' +
       '<th data-sort="date" aria-sort="descending">'+$.i18n('core-index-open/last-mod')+'</th>' +
       '<th data-sort="text">'+$.i18n('core-index-open/name')+'</th>' +
-      '<th data-sort="text">'+$.i18n('core-index-open/tags')+'</th>' +
+      '<th data-sort="none">'+$.i18n('core-index-open/tags')+'</th>' +
       '<th data-sort="text">'+$.i18n('core-index-open/creator')+'</th>' +
       '<th data-sort="text">'+$.i18n('core-index-open/subject')+'</th>' +
       '<th data-sort="text">'+$.i18n('core-index-open/description')+'</th>' +
