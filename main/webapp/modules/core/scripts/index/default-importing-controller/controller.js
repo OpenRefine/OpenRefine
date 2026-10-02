@@ -210,7 +210,7 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
         .fail(function(xhr, status, text) {
             dismissBusy();
             // jQuery won't parse JSON response with a non-200 status code, so we have to do it ourselves
-            let response = $.parseJSON(xhr.responseText);
+            let response = JSON.parse(xhr.responseText);
             if (response && response.message) {
               // TODO: I18N
               DialogSystem.alert(response.message);
@@ -301,7 +301,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
     var projectName = jQueryTrim(this._parsingPanelElmts.projectNameInput[0].value);
     if (projectName.length === 0) {
       DialogSystem.alert($.i18n('core-index-import/warning-name'));
-      this._parsingPanelElmts.projectNameInput.focus();
+      this._parsingPanelElmts.projectNameInput.trigger("focus")
       return;
     }
 

@@ -186,9 +186,7 @@ Refine.DatabaseImportController.prototype._showParsingPanel = function() {
 
     this._parsingPanelElmts.createProjectButton.on('click',function() { self._createProject(); });
     this._parsingPanelElmts.previewButton.on('click',function() { self._updatePreview(); });
-    //alert("datetime::" + $.now());
-    //this._parsingPanelElmts.projectNameInput[0].value = this._queryInfo.connectionName + "_" + this._queryInfo.databaseUser + "_" + $.now();
-    this._parsingPanelElmts.projectNameInput[0].value = this._queryInfo.databaseServer +  "_" + this._queryInfo.initialDatabase + "_" + $.now();
+    this._parsingPanelElmts.projectNameInput[0].value = this._queryInfo.databaseServer +  "_" + this._queryInfo.initialDatabase + "_" + Date.now();
 
 
     if (this._options.limit > 0) {
@@ -320,7 +318,7 @@ Refine.DatabaseImportController.prototype._createProject = function() {
     var projectName = jQueryTrim(this._parsingPanelElmts.projectNameInput[0].value);
     if (projectName.length == 0) {
       window.alert("Please name the project.");
-      this._parsingPanelElmts.projectNameInput.focus();
+      this._parsingPanelElmts.projectNameInput.trigger("focus");
       return;
     }
 

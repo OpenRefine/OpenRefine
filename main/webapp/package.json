@@ -16,7 +16,6 @@
     "jquery-ui": "1.14.2",
     "js-cookie": "3.0.8",
     "select2": "4.1.0",
-    "tablesorter": "2.32.0",
     "underscore": "1.13.8"
   },
   "packageManager": "yarn@4.17.1"
