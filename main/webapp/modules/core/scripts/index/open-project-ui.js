@@ -40,13 +40,14 @@ Refine.OpenProjectUI = function(elmt) {
   this._elmts = DOM.bind(elmt);
   
   if (Host.isLocalhost()) {
-    $('#projects-workspace-open').text($.i18n('core-index-open/browse'));
-    $('#projects-workspace-open').on('click',function() {
+    $('#projects-workspace-open')
+      .text($.i18n('core-index-open/browse'))
+      .on('click',function() {
       Refine.postCSRF(
         "command/core/open-workspace-dir",
         {},
         function (data) {
-          if (data.code != "ok" && "message" in data) {
+          if (data.code !== "ok" && "message" in data) {
             alert(data.message);
           }
         },
@@ -316,7 +317,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
             "command/core/delete-project",
             { "project" : project.id },
             function (data) {
-              if (data && typeof data.code != 'undefined' && data.code == "ok") {
+              if (data && typeof data.code != 'undefined' && data.code === "ok") {
                 Refine.TagsManager.allProjectTags = [];
                 self._buildTagsAndFetchProjects();
               }
@@ -363,8 +364,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         .appendTo(tagsCell);
         $(tr).addClass(tag);
     });
-    
-    
+
     var appendMetaField = function(data, sortValue) {
         $('<div></div>')
         .addClass("searchable")
@@ -473,7 +473,7 @@ Refine.OpenProjectUI.prototype._deleteSelectedProjects = function() {
       "command/core/delete-project",
       { "project" : ids[index] },
       function (data) {
-        if (!(data && typeof data.code != 'undefined' && data.code == "ok")) {
+        if (!(data && typeof data.code != 'undefined' && data.code === "ok")) {
           failed.push(ids[index]);
         }
         deleteNext(index + 1);
@@ -571,7 +571,8 @@ Refine.OpenProjectUI.prototype._sortTable = function(tbody, rows, colIndex, dire
     if (sortType === 'number') {
       comparison = (parseFloat(valA) || 0) - (parseFloat(valB) || 0);
     } else if (sortType === 'date') {
-      comparison = new Date(valA).getTime() - new Date(valB).getTime();
+      // Dates are ISO 8601 strings, so can be compared directly
+      comparison = (valA < valB) ? -1 : ((valA > valB) ? 1 : 0);
     } else {
       comparison = collator.compare(valA || '', valB || '');
     }
