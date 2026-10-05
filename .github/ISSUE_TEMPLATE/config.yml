@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/OpenRefine/OpenRefine/security/advisories/new
+    about: Privately report a vulnerability to the OpenRefine team. See SECURITY.md.
   - name: Ask a question (forum)
     url: https://forum.openrefine.org/
     about: Please ask and answer questions here.
