@@ -16,15 +16,15 @@
         "lint": "prettier --check . && eslint ."
     },
     "dependencies": {
-        "cypress": "16.1.0"
+        "cypress": "16.1.1"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.0",
-        "eslint": "^10.11.0",
+        "eslint": "^10.12.0",
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-cypress": "^7.0.2",
-        "globals": "^17.12.0",
+        "globals": "^17.13.0",
         "prettier": "3.9.9"
     },
     "packageManager": "yarn@4.18.0"
