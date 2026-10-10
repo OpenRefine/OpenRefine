@@ -72,7 +72,7 @@ abstract public class AbstractOperation {
      * @throws IllegalArgumentException
      *             if any argument is missing or inconsistent
      * @throws NullPointerException
-     *             is an argument is null when not allowed
+     *             if an argument is null when not allowed
      * @throws IndexOutOfBoundsException
      *             when an invalid index into any array/collection/map/string is given
      */
