@@ -31,6 +31,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+.dialog-frame.text-transform-dialog {
+  width: 900px;
+  min-height: 560px;
+  max-width: 92vw;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  resize: both;
+}
+
+.dialog-frame.text-transform-dialog .dialog-border {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
 #expression-preview-tabs .ui-tabs-nav li a {
   padding: 0.15em 1em;
 }
@@ -43,10 +60,19 @@ textarea.expression-preview-code {
 
 .expression-preview-parsing-status {
   color: var(--light-grey);
+  min-height: 5em;
+  max-height: 5em;
+  overflow: auto;
+  overflow-wrap: anywhere;
 }
 
 .expression-preview-parsing-status.error {
   color: var(--error-red);
+}
+
+#expression-preview-tabs {
+  width: 100%;
+  max-width: 100%;
 }
 
 #expression-preview-tabs-preview,
@@ -55,15 +81,17 @@ textarea.expression-preview-code {
 #expression-preview-tabs-starred {
   padding: var(--padding-tight);
   overflow: hidden;
+  height: 240px;
+  box-sizing: border-box;
 }
 
 #expression-preview-tabs-preview>div,
 #expression-preview-tabs-help>div,
 #expression-preview-tabs-history>div,
-#expression-preview-tabs-starred {
-  height: 200px;
+#expression-preview-tabs-starred>div {
+  height: 100%;
   overflow: auto;
-  max-width: 90vw;        /* never exceed viewport width */
+  max-width: 100%;
 }
 
 #expression-preview-tabs-preview td, #expression-preview-tabs-preview th,
@@ -76,6 +104,14 @@ textarea.expression-preview-code {
 .expression-preview-table-wrapper {
   padding: var(--padding-normal);
   width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+#expression-preview-tabs-history .expression-preview-table-wrapper table,
+#expression-preview-tabs-starred .expression-preview-table-wrapper table {
+  width: max-content;
+  min-width: 100%;
 }
 
 .expression-preview-container td {
@@ -115,8 +151,8 @@ td.expression-preview-value {
 .expression-preview-doc-item-returns {}
 
 .expression-preview-doc-item-desc {
-  max-width: 250px;
+  max-width: none;
   white-space: pre-wrap;
-  overflow-x: hidden;
+  overflow-wrap: anywhere;
   color: #666;
 }
