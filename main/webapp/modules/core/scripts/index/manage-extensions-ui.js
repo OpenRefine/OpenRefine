@@ -17,19 +17,35 @@ Refine.ManageExtensionsUI = function(elmt) {
     Refine.ManageExtensionsUI._renderExtensions();
 };
 
+// Use relative command URLs (no leading "/") so installs under a path prefix
+// such as /openrefine still resolve correctly. See #7387.
 Refine.ManageExtensionsUI._fetchExtensions = function() {
-    return fetch("/command/core/get-version").then(response => response.json()).then(data => {
-        return data.module_names;
+    return new Promise(function(resolve, reject) {
+        $.getJSON("command/core/get-version", null)
+            .done(function(data) {
+                resolve(data.module_names);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                reject(errorThrown || textStatus);
+            });
     });
-}
+};
 
 Refine.ManageExtensionsUI._openExtensionDirectory = function() {
-    fetch("/command/core/get-csrf-token").then(response => response.json()).then(data => {
-        fetch("/command/core/open-extensions-dir", { method: "POST", body: new URLSearchParams({ csrf_token: data.token }) }).catch(error => {
-            console.error("Failed to open extension directory", error);
-        });
-    });
-}
+    Refine.postCSRF(
+        "command/core/open-extensions-dir",
+        {},
+        function(data) {
+            if (data && data.code != "ok" && "message" in data) {
+                alert(data.message);
+            }
+        },
+        "json",
+        function(jqXHR, textStatus, errorThrown) {
+            console.error("Failed to open extension directory", errorThrown || textStatus);
+        }
+    );
+};
 
 Refine.ManageExtensionsUI._renderExtensions = function() {
     const coreExtensions = ["core", "database", "gdata", "jython", "pc-axis", "wikidata"];
@@ -45,7 +61,7 @@ Refine.ManageExtensionsUI._renderExtensions = function() {
             extensionContainer.appendChild(extensionRow);
         });
     });
-}
+};
 
 Refine.actionAreas.push({
     id: "manage-extensions",
