@@ -56,74 +56,96 @@ import com.google.refine.util.TestUtils;
 
 public class ScatterplotFacetTests extends RefineTest {
 
-    public static String configJson = "{\n" +
-            "          \"to_x\": 1,\n" +
-            "          \"to_y\": 1,\n" +
-            "          \"dot\": 1,\n" +
-            "          \"from_x\": 0.21333333333333335,\n" +
-            "          \"l\": 150,\n" +
-            "          \"type\": \"scatterplot\",\n" +
-            "          \"from_y\": 0.26666666666666666,\n" +
-            "          \"dim_y\": \"lin\",\n" +
-            "          \"ex\": \"value\",\n" +
-            "          \"dim_x\": \"lin\",\n" +
-            "          \"ey\": \"value\",\n" +
-            "          \"cx\": \"my column\",\n" +
-            "          \"cy\": \"e\",\n" +
-            "          \"name\": \"my column (x) vs. e (y)\"\n" +
-            "        }";
+    public static String configJson = """
+            {
+                      "to_x": 1,
+                      "to_y": 1,
+                      "dot": 1,
+                      "from_x": 0.21333333333333335,
+                      "l": 150,
+                      "type": "scatterplot",
+                      "from_y": 0.26666666666666666,
+                      "dim_y": "lin",
+                      "ex": "value",
+                      "dim_x": "lin",
+                      "ey": "value",
+                      "cx": "my column",
+                      "cy": "e",
+                      "name": "my column (x) vs. e (y)"
+                    }""";
 
-    public static String configJsonRenamed = "{\n" +
-            "          \"to_x\": 1,\n" +
-            "          \"to_y\": 1,\n" +
-            "          \"dot\": 1,\n" +
-            "          \"from_x\": 0.21333333333333335,\n" +
-            "          \"l\": 150,\n" +
-            "          \"type\": \"scatterplot\",\n" +
-            "          \"from_y\": 0.26666666666666666,\n" +
-            "          \"dim_y\": \"lin\",\n" +
-            "          \"ex\": \"grel:value\",\n" +
-            "          \"dim_x\": \"lin\",\n" +
-            "          \"ey\": \"grel:value\",\n" +
-            "          \"cx\": \"my column\",\n" +
-            "          \"cy\": \"f\",\n" +
-            "          \"name\": \"my column (x) vs. e (y)\"\n" +
-            "        }";
+    public static String configJsonLog = """
+            {
+                      "to_x": 1,
+                      "to_y": 1,
+                      "dot": 1,
+                      "from_x": 0.21333333333333335,
+                      "l": 150,
+                      "type": "scatterplot",
+                      "from_y": 0.26666666666666666,
+                      "dim_y": "log",
+                      "ex": "value",
+                      "dim_x": "log",
+                      "r": "cw",
+                      "ey": "value",
+                      "cx": "my column",
+                      "cy": "e",
+                      "name": "my column (x) vs. e (y)"
+                    }""";
 
-    public static String configJsonWithParseError = "{\n" +
-            "          \"to_x\": 1,\n" +
-            "          \"to_y\": 1,\n" +
-            "          \"dot\": 1,\n" +
-            "          \"from_x\": 0.21333333333333335,\n" +
-            "          \"l\": 150,\n" +
-            "          \"type\": \"scatterplot\",\n" +
-            "          \"from_y\": 0.26666666666666666,\n" +
-            "          \"dim_y\": \"lin\",\n" +
-            "          \"ex\": \"value\",\n" +
-            "          \"dim_x\": \"lin\",\n" +
-            "          \"ey\": \"foo(\",\n" +
-            "          \"cx\": \"my column\",\n" +
-            "          \"cy\": \"e\",\n" +
-            "          \"name\": \"my column (x) vs. e (y)\"\n" +
-            "        }";
+    public static String configJsonRenamed = """
+            {
+                      "to_x": 1,
+                      "to_y": 1,
+                      "dot": 1,
+                      "from_x": 0.21333333333333335,
+                      "l": 150,
+                      "type": "scatterplot",
+                      "from_y": 0.26666666666666666,
+                      "dim_y": "lin",
+                      "ex": "grel:value",
+                      "dim_x": "lin",
+                      "ey": "grel:value",
+                      "cx": "my column",
+                      "cy": "f",
+                      "name": "my column (x) vs. e (y)"
+                    }""";
 
-    public static String facetJson = "{"
-            + "\"name\":\"my column (x) vs. e (y)\","
-            + "\"cx\":\"my column\","
-            + "\"ex\":\"value\","
-            + "\"cy\":\"e\","
-            + "\"ey\":\"value\","
-            + "\"l\":150,"
-            + "\"dot\":1,"
-            + "\"r\":0,"
-            + "\"dim_x\":0,"
-            + "\"dim_y\":0,"
-            + "\"color\":\"000000\","
-            + "\"from_x\":0.21333333333333335,"
-            + "\"to_x\":1,"
-            + "\"from_y\":0.26666666666666666,"
-            + "\"to_y\":1"
-            + "}";
+    public static String configJsonWithParseError = """
+            {
+                      "to_x": 1,
+                      "to_y": 1,
+                      "dot": 1,
+                      "from_x": 0.21333333333333335,
+                      "l": 150,
+                      "type": "scatterplot",
+                      "from_y": 0.26666666666666666,
+                      "dim_y": "lin",
+                      "ex": "value",
+                      "dim_x": "lin",
+                      "ey": "foo(",
+                      "cx": "my column",
+                      "cy": "e",
+                      "name": "my column (x) vs. e (y)"
+                    }""";
+
+    public static String facetJson = """
+            {
+                "name":"my column (x) vs. e (y)",
+                "cx":"my column",
+                "ex":"value",
+                "cy":"e",
+                "ey":"value",
+                "l":150,
+                "dot":1,
+                "dim_x":"lin",
+                "dim_y":"lin",
+                "color":"000000",
+                "from_x":0.21333333333333335,
+                "to_x":1,
+                "from_y":0.26666666666666666,
+                "to_y":1
+            }""";
 
     @BeforeMethod
     public void registerGRELParser() {
@@ -139,6 +161,15 @@ public class ScatterplotFacetTests extends RefineTest {
     public void serializeScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson);
+    }
+
+    @Test
+    public void deserializeLogAndRotationConfig() throws JsonParseException, JsonMappingException, IOException {
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJsonLog, ScatterplotFacetConfig.class);
+        assertEquals(config.dim_x, ScatterplotFacet.LinLog.LOG);
+        assertEquals(config.dim_y, ScatterplotFacet.LinLog.LOG);
+        assertEquals(config.rotation, ScatterplotFacet.Rotation.ROTATE_CW);
+        TestUtils.isSerializedTo(config, configJsonLog);
     }
 
     @Test
