@@ -61,6 +61,7 @@ public class Recipe {
             } catch (IllegalArgumentException | NullPointerException | IndexOutOfBoundsException e) {
                 throw new RecipeValidationException(index, e.getMessage());
             }
+            index++;
         }
 
         // currentColumnNames represents the current set of column names in the project,
