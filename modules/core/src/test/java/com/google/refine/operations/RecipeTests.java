@@ -209,7 +209,7 @@ public class RecipeTests {
                 () -> new Recipe(List.of(
                         new OpaqueOperation(),
                         new ValidationFailureOperation(new IndexOutOfBoundsException("Invalid parameter index"))))
-                                .validate());
+                        .validate());
         assertEquals(indexOutOfBoundsException.index, 1);
         assertEquals(indexOutOfBoundsException.getMessage(), "Operation #2: Invalid parameter index");
     }
