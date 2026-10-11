@@ -422,9 +422,9 @@ jobs:
 
     - name: Build self-containing installer with InnoSetup 6 for Windows
       id: build-installer-innosetup-win-with-java
-      shell: cmd
       run: |
         "%ProgramFiles(x86)%\Inno Setup 6\iscc.exe" -DMyAppVersion="${{ steps.version_string_variable.outputs.output_value }}" -DMyProgramFiles="target\openrefine-${{ steps.version_string_variable.outputs.output_value }}" "packaging\openrefine.iss"
+      shell: cmd
 
     - name: Upload the installer as an artifact
       id: upload-build-artifact-win-with-java-installer
