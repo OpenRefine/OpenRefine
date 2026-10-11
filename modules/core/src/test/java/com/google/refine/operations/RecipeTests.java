@@ -3,6 +3,7 @@ package com.google.refine.operations;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
+import static org.testng.Assert.expectThrows;
 
 import java.util.Collections;
 import java.util.List;
@@ -161,6 +162,20 @@ public class RecipeTests {
         }
     }
 
+    static class ValidationFailureOperation extends AbstractOperation {
+
+        private final RuntimeException exception;
+
+        ValidationFailureOperation(RuntimeException exception) {
+            this.exception = exception;
+        }
+
+        @Override
+        public void validate() {
+            throw exception;
+        }
+    }
+
     @Test
     public void testDeserialize() throws Exception {
         Recipe recipe = ParsingUtilities.mapper.readValue(json, Recipe.class);
@@ -180,6 +195,23 @@ public class RecipeTests {
 
         new Recipe(List.of(
                 new ColumnRemovalOperation("foo"))).validate();
+    }
+
+    @Test
+    public void testValidationExceptionWrapping() {
+        Recipe.RecipeValidationException nullPointerException = expectThrows(Recipe.RecipeValidationException.class,
+                () -> new Recipe(List.of(new ValidationFailureOperation(new NullPointerException("Missing parameter"))))
+                        .validate());
+        assertEquals(nullPointerException.index, 0);
+        assertEquals(nullPointerException.getMessage(), "Operation #1: Missing parameter");
+
+        Recipe.RecipeValidationException indexOutOfBoundsException = expectThrows(Recipe.RecipeValidationException.class,
+                () -> new Recipe(List.of(
+                        new OpaqueOperation(),
+                        new ValidationFailureOperation(new IndexOutOfBoundsException("Invalid parameter index"))))
+                                .validate());
+        assertEquals(indexOutOfBoundsException.index, 1);
+        assertEquals(indexOutOfBoundsException.getMessage(), "Operation #2: Invalid parameter index");
     }
 
     @Test
