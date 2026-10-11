@@ -37,6 +37,7 @@
     <windows.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/windows/x64/jre/hotspot/normal/eclipse?project=jdk</windows.jre.url>
     <windows.copyright.line>Copyright (c) 2018 OpenRefine contributors, 2010 Google, Inc.</windows.copyright.line>
     <windows.fullversion>0.0.0.0</windows.fullversion>
+    <skip.mac.packaging>false</skip.mac.packaging>
   </properties>
 
   <profiles>
@@ -63,7 +64,6 @@
                 <configuration>
                   <descriptors>
                     <descriptor>assembly-linux.xml</descriptor>
-                    <descriptor>assembly-windows.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
                 </configuration>
@@ -97,6 +97,9 @@
     </profile>
     <profile>
       <id>windows</id>
+      <properties>
+        <skip.mac.packaging>true</skip.mac.packaging>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -110,6 +113,85 @@
                     <descriptor>assembly-windows.xml</descriptor>
                   </descriptors>
                   <attach>false</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+              <execution>
+                <id>download-windows-jre</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target name="downloadWindowsJRE" description="Download Windows JRE">
+                    <exec dir="${project.build.directory}" executable="curl.exe" failonerror="true">
+                      <arg line="-S"/>
+                      <arg line="-L"/>
+                      <arg line="-C"/>
+                      <arg line="-"/>
+                      <arg line="-o"/>
+                      <arg line="windows_jre.zip"/>
+                      <arg line="${windows.jre.url}"/>
+                    </exec>
+                    <mkdir dir="${project.build.directory}/windows_jre"/>
+                    <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
+                      <mapper type="regexp" from="^([^/]*)/(.*)$$" to="\2"/>
+                    </unzip>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.akathist.maven.plugins.launch4j</groupId>
+            <artifactId>launch4j-maven-plugin</artifactId>
+            <version>2.6.0</version>
+            <executions>
+              <execution>
+                <id>l4j-clui-with-jre</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>launch4j</goal>
+                </goals>
+                <configuration>
+                  <headerType>console</headerType>
+                  <outfile>target/openrefine_with_jre.exe</outfile>
+                  <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
+                  <dontWrapJar>true</dontWrapJar>
+                  <saveConfig>true</saveConfig>
+                  <icon>openrefine.ico</icon>
+                  <classPath>
+                    <mainClass>com.google.refine.Refine</mainClass>
+                    <jarLocation>server/target/lib/</jarLocation>
+                    <postCp>server/target/lib/*.jar</postCp>
+                  </classPath>
+                  <jre>
+                    <path>server/target/jre</path>
+                    <minVersion>${java.minversion}</minVersion>
+                    <maxVersion>${java.maxversion}</maxVersion>
+                    <initialHeapSize>512</initialHeapSize>
+                    <maxHeapSize>2048</maxHeapSize>
+                    <opts>
+                      <opt>-Djava.library.path=server/target/lib/native/windows</opt>
+                    </opts>
+                  </jre>
+                  <versionInfo>
+                    <fileVersion>${windows.fullversion}</fileVersion>
+                    <txtFileVersion>${project.version}</txtFileVersion>
+                    <fileDescription>openrefine</fileDescription>
+                    <copyright>${windows.copyright.line}</copyright>
+                    <productVersion>${windows.fullversion}</productVersion>
+                    <txtProductVersion>${project.version}</txtProductVersion>
+                    <productName>OpenRefine</productName>
+                    <internalName>openrefine</internalName>
+                    <originalFilename>openrefine.exe</originalFilename>
+                  </versionInfo>
                 </configuration>
               </execution>
             </executions>
@@ -245,7 +327,7 @@
             <phase>prepare-package</phase>
             <id>prepare-mac-bundle</id>
             <configuration>
-
+              <skip>${skip.mac.packaging}</skip>
               <target>
                 <mkdir dir="./target/"/>
                 <touch file="./target/dummy_artifact.jar" />
@@ -345,6 +427,7 @@
               <goal>run</goal>
             </goals>
             <configuration>
+              <skip>${skip.mac.packaging}</skip>
               <target name="downloadJRE" description="Download JRE">
                 <!-- Download JRE for the configured macOS architecture -->
                 <exec dir="${project.build.directory}" executable="curl">
@@ -415,74 +498,9 @@
                   <arg value="${mac.build.directory}/OpenRefine.app"/>
                 </exec>
 
-                <!-- TODO: Split to Windows build job -->
-                <!-- Download JRE (Windows) -->
-                <exec dir="${project.build.directory}" executable="curl">
-                  <arg line="-L"/>
-                  <arg line="-C"/>
-                  <arg line="-"/>
-                  <arg line="-o"/>
-                  <arg line="windows_jre.zip"/>
-                  <arg line="${windows.jre.url}"/>
-                </exec>
-
-                <!-- Unzip Windows JRE archive -->
-                <!-- We use the mapper to get rid of the root directory whose name is unpredictable -->
-                <mkdir dir="${project.build.directory}/windows_jre"/>
-                <unzip src="${project.build.directory}/windows_jre.zip" dest="${project.build.directory}/windows_jre">
-                  <mapper type="regexp" from="^([^/]*)/(.*)$$" to="\2"/>
-                </unzip>
-
               </target>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>com.akathist.maven.plugins.launch4j</groupId>
-        <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.6.0</version>
-        <executions>
-          <execution>
-            <id>l4j-clui-with-jre</id>
-            <phase>package</phase>
-            <goals><goal>launch4j</goal></goals>
-            <configuration>
-              <headerType>console</headerType>
-              <outfile>target/openrefine_with_jre.exe</outfile>
-              <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
-              <dontWrapJar>true</dontWrapJar>
-              <saveConfig>true</saveConfig>
-              <icon>openrefine.ico</icon>
-              <classPath>
-                <mainClass>com.google.refine.Refine</mainClass>
-                <jarLocation>server/target/lib/</jarLocation>
-                <postCp>server/target/lib/*.jar</postCp>
-              </classPath>
-              <jre>
-                <path>server/target/jre</path>
-                <minVersion>${java.minversion}</minVersion>
-                <maxVersion>${java.maxversion}</maxVersion>
-                <initialHeapSize>512</initialHeapSize>
-                <maxHeapSize>2048</maxHeapSize>
-                <opts>
-                  <opt>-Djava.library.path=server/target/lib/native/windows</opt>
-                </opts>
-              </jre>
-              <versionInfo>
-                <fileVersion>${windows.fullversion}</fileVersion>
-                <txtFileVersion>${project.version}</txtFileVersion>
-                <fileDescription>openrefine</fileDescription>
-                <copyright>${windows.copyright.line}</copyright>
-                <productVersion>${windows.fullversion}</productVersion>
-                <txtProductVersion>${project.version}</txtProductVersion>
-                <productName>OpenRefine</productName>
-                <internalName>openrefine</internalName>
-                <originalFilename>openrefine.exe</originalFilename>
-              </versionInfo>
-            </configuration>
-          </execution>
-
         </executions>
       </plugin>
       <plugin>
