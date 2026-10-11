@@ -400,7 +400,8 @@ jobs:
       id: version_string_variable
       shell: pwsh
       run: |
-        $version = (mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout).Trim()
+        [xml]$pom = Get-Content -Path pom.xml -Raw
+        $version = $pom.SelectSingleNode("/*[local-name()='project']/*[local-name()='version']").InnerText
         "output_value=$version" >> $env:GITHUB_OUTPUT
 
     - name: Install webapp dependencies
