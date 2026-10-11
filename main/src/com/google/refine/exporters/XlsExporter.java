@@ -35,11 +35,8 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Properties;
+import java.util.Calendar;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -52,12 +49,33 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
 
-public class XlsExporter implements StreamExporter {
+public class XlsExporter extends AbstractSpreadsheetExporter<XlsExporter.XlsState> {
+
+    /**
+     * State of one export. It is not stored in the exporter itself because the exporter is shared by all requests.
+     */
+    static final class XlsState {
+
+        final Workbook wb;
+        final int maxRows;
+        final int maxColumns;
+        final int maxTextLength;
+
+        Sheet sheet;
+        Row row;
+        Cell cell;
+        int rowCount = 0;
+        CellStyle dateStyle;
+
+        XlsState(Workbook wb, SpreadsheetVersion version) {
+            this.wb = wb;
+            this.maxRows = version.getMaxRows();
+            this.maxColumns = version.getMaxColumns();
+            this.maxTextLength = version.getMaxTextLength();
+        }
+    }
 
     final private boolean xml;
 
@@ -71,93 +89,83 @@ public class XlsExporter implements StreamExporter {
     }
 
     @Override
-    public void export(final Project project, Properties params, Engine engine,
-            OutputStream outputStream) throws IOException {
+    protected XlsState createState(Project project) {
+        return new XlsState(xml ? new SXSSFWorkbook() : new HSSFWorkbook(), getSpreadsheetVersion());
+    }
 
-        final Workbook wb = xml ? new SXSSFWorkbook() : new HSSFWorkbook();
-        final int maxRows = getSpreadsheetVersion().getMaxRows();
-        final int maxColumns = getSpreadsheetVersion().getMaxColumns();
-        final int maxTextLength = getSpreadsheetVersion().getMaxTextLength();
+    @Override
+    protected void startSheet(XlsState state, String projectName) {
+        state.sheet = state.wb.createSheet();
+        state.wb.setSheetName(0, WorkbookUtil.createSafeSheetName(projectName));
 
-        TabularSerializer serializer = new TabularSerializer() {
+        state.dateStyle = state.wb.createCellStyle();
+        state.dateStyle.setDataFormat(
+                state.wb.getCreationHelper().createDataFormat().getFormat("YYYY-MM-DD")); // TODO what format here?
+    }
 
-            Sheet s;
-            int rowCount = 0;
-            CellStyle dateStyle;
+    @Override
+    protected void startRow(XlsState state) {
+        if (state.rowCount >= state.maxRows) {
+            throw new ExporterException(String.format("Maximum number of rows exceeded for export format (%d)", state.maxRows));
+        }
+        state.row = state.sheet.createRow(state.rowCount++);
+    }
 
-            @Override
-            public void startFile(JsonNode options) {
-                s = wb.createSheet();
-                String sheetName = WorkbookUtil.createSafeSheetName(
-                        ProjectManager.singleton.getProjectMetadata(project.id).getName());
-                wb.setSheetName(0, sheetName);
+    @Override
+    protected void startCell(XlsState state, int column, int columnCount) {
+        state.cell = state.row.createCell(column);
+        if (column == (state.maxColumns - 1) && columnCount > state.maxColumns) {
+            throw new ExporterException(String.format("Maximum number of columns exceeded for export format (%d)", state.maxColumns));
+        }
+    }
 
-                dateStyle = wb.createCellStyle();
-                dateStyle.setDataFormat(
-                        wb.getCreationHelper().createDataFormat().getFormat("YYYY-MM-DD")); // TODO what format here?
-            }
+    @Override
+    protected void writeNumber(XlsState state, double value) {
+        state.cell.setCellValue(value);
+    }
 
-            @Override
-            public void endFile() {
-            }
+    @Override
+    protected void writeBoolean(XlsState state, boolean value) {
+        state.cell.setCellValue(value);
+    }
 
-            @Override
-            public void addRow(List<CellData> cells, boolean isHeader) {
-                if (rowCount >= maxRows) {
-                    throw new ExporterException(String.format("Maximum number of rows exceeded for export format (%d)", maxRows));
-                }
-                Row r = s.createRow(rowCount++);
+    @Override
+    protected void writeDate(XlsState state, Calendar value) {
+        state.cell.setCellValue(value);
+        state.cell.setCellStyle(state.dateStyle);
+    }
 
-                for (int i = 0; i < cells.size(); i++) {
-                    Cell c = r.createCell(i);
-                    if (i == (maxColumns - 1) && cells.size() > maxColumns) {
-                        throw new ExporterException(String.format("Maximum number of columns exceeded for export format (%d)", maxColumns));
-                    } else {
-                        CellData cellData = cells.get(i);
+    @Override
+    protected void writeText(XlsState state, int column, String text) {
+        if (text.length() > state.maxTextLength) {
+            throw new ExporterException(
+                    String.format("Maximum size (%d) of cell [%d, %d] exceeded for export format", state.maxTextLength,
+                            state.rowCount, column));
+        }
+        state.cell.setCellValue(text);
+    }
 
-                        if (cellData != null && cellData.text != null && cellData.value != null) {
-                            Object v = cellData.value;
-                            if (v instanceof Number) {
-                                c.setCellValue(((Number) v).doubleValue());
-                            } else if (v instanceof Boolean) {
-                                c.setCellValue(((Boolean) v).booleanValue());
-                            } else if (v instanceof OffsetDateTime) {
-                                OffsetDateTime odt = (OffsetDateTime) v;
-                                c.setCellValue(ParsingUtilities.offsetDateTimeToCalendar(odt));
-                                c.setCellStyle(dateStyle);
-                            } else {
-                                String s = cellData.text;
-                                if (s.length() > maxTextLength) {
-                                    throw new ExporterException(
-                                            String.format("Maximum size (%d) of cell [%d, %d] exceeded for export format", maxTextLength,
-                                                    rowCount, i));
-                                }
-                                c.setCellValue(s);
-                            }
+    @Override
+    protected void writeLink(XlsState state, String text, String link) {
+        try {
+            Hyperlink hl = state.wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            hl.setLabel(text);
+            hl.setAddress(link);
+            state.cell.setHyperlink(hl);
+        } catch (IllegalArgumentException e) {
+            // If we failed to create the hyperlink and add it to the cell,
+            // we just use the string value as fallback
+        }
+    }
 
-                            if (cellData.link != null) {
-                                try {
-                                    Hyperlink hl = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
-                                    hl.setLabel(cellData.text);
-                                    hl.setAddress(cellData.link);
-                                    c.setHyperlink(hl);
-                                } catch (IllegalArgumentException e) {
-                                    // If we failed to create the hyperlink and add it to the cell,
-                                    // we just use the string value as fallback
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
+    @Override
+    protected void writeDocument(XlsState state, OutputStream outputStream) throws IOException {
+        state.wb.write(outputStream);
+    }
 
-        CustomizableTabularExporterUtilities.exportRows(
-                project, engine, params, serializer);
-
-        wb.write(outputStream);
-        outputStream.flush();
-        wb.close();
+    @Override
+    protected void closeDocument(XlsState state) throws IOException {
+        state.wb.close();
     }
 
     /**
