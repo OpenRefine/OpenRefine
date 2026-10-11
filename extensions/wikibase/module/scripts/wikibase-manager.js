@@ -152,22 +152,32 @@ WikibaseManager.areStructuredMediaInfoFieldsDisabledForSelectedWikibase = functi
 WikibaseManager.selectWikibase = function (wikibaseName) {
   if (WikibaseManager.wikibases.hasOwnProperty(wikibaseName)) {
     WikibaseManager.selected = wikibaseName;
+    WikibaseManager.ensureManifestTemplatesRegistered(wikibaseName);
+  }
+};
 
-    // add any default templates that might not exist yet
-    let manifest = WikibaseManager.wikibases[wikibaseName];
-    if (manifest.schema_templates !== undefined) {
-      let templateAdded = false;
-      for (let template of manifest.schema_templates) {
-        if (WikibaseTemplateManager.getTemplate(template.name) === undefined) {
-          WikibaseTemplateManager.addTemplate(manifest.mediawiki.name, template.name, template.schema);
-          templateAdded = true;
-        }
-      }
-      if (templateAdded) {
-        WikibaseTemplateManager.saveTemplates();
-      }
+// Registers any schema_templates declared in the manifest of the given
+// Wikibase with the WikibaseTemplateManager, so that they appear in the
+// "Start from an existing schema" dropdown. Templates that are already
+// registered (e.g. previously saved to preferences) are left untouched.
+// This is called both when the user actively selects a Wikibase and when
+// the schema UI initializes with a Wikibase already selected (for instance
+// on project load), to avoid issue #6939 where the dropdown was empty
+// until the user manually switched Wikibase instances.
+WikibaseManager.ensureManifestTemplatesRegistered = function (wikibaseName) {
+  let manifest = WikibaseManager.wikibases[wikibaseName];
+  if (manifest === undefined || manifest.schema_templates === undefined) {
+    return;
+  }
+  let templateAdded = false;
+  for (let template of manifest.schema_templates) {
+    if (WikibaseTemplateManager.getTemplate(manifest.mediawiki.name, template.name) === undefined) {
+      WikibaseTemplateManager.addTemplate(manifest.mediawiki.name, template.name, template.schema);
+      templateAdded = true;
     }
-
+  }
+  if (templateAdded) {
+    WikibaseTemplateManager.saveTemplates();
   }
 };
 
