@@ -247,15 +247,15 @@ public class ColumnSplitChange implements Change {
 
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("columnName=");
-        writer.write(_columnName);
+        writer.write("columnNameJSON=");
+        writer.write(ParsingUtilities.mapper.writeValueAsString(_columnName));
         writer.write('\n');
 
-        writer.write("columnNameCount=");
+        writer.write("columnNameJSONCount=");
         writer.write(Integer.toString(_columnNames.size()));
         writer.write('\n');
         for (String name : _columnNames) {
-            writer.write(name);
+            writer.write(ParsingUtilities.mapper.writeValueAsString(name));
             writer.write('\n');
         }
         writer.write("rowIndexCount=");
@@ -340,14 +340,18 @@ public class ColumnSplitChange implements Change {
 
             if ("columnName".equals(field)) {
                 columnName = value;
-            } else if ("columnNameCount".equals(field)) {
+            } else if ("columnNameJSON".equals(field)) {
+                columnName = ParsingUtilities.mapper.readValue(value, String.class);
+            } else if ("columnNameCount".equals(field) || "columnNameJSONCount".equals(field)) {
                 int count = Integer.parseInt(value);
 
                 columnNames = new ArrayList<String>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        columnNames.add(line);
+                        columnNames.add("columnNameJSONCount".equals(field)
+                                ? ParsingUtilities.mapper.readValue(line, String.class)
+                                : line);
                     }
                 }
             } else if ("rowIndexCount".equals(field)) {

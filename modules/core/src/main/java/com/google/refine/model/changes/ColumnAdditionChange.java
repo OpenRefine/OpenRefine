@@ -46,6 +46,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class ColumnAdditionChange extends ColumnChange {
@@ -127,8 +128,8 @@ public class ColumnAdditionChange extends ColumnChange {
 
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("columnName=");
-        writer.write(_columnName);
+        writer.write("columnNameJSON=");
+        writer.write(ParsingUtilities.mapper.writeValueAsString(_columnName));
         writer.write('\n');
         writer.write("columnIndex=");
         writer.write(Integer.toString(_columnIndex));
@@ -161,6 +162,8 @@ public class ColumnAdditionChange extends ColumnChange {
 
             if ("columnName".equals(field)) {
                 columnName = line.substring(equal + 1);
+            } else if ("columnNameJSON".equals(field)) {
+                columnName = ParsingUtilities.mapper.readValue(line.substring(equal + 1), String.class);
             } else if ("columnIndex".equals(field)) {
                 columnIndex = Integer.parseInt(line.substring(equal + 1));
             } else if ("newCellIndex".equals(field)) {

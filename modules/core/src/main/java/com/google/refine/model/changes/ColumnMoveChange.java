@@ -45,6 +45,7 @@ import com.google.refine.history.Change;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class ColumnMoveChange extends ColumnChange {
@@ -95,8 +96,8 @@ public class ColumnMoveChange extends ColumnChange {
 
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("columnName=");
-        writer.write(_columnName);
+        writer.write("columnNameJSON=");
+        writer.write(ParsingUtilities.mapper.writeValueAsString(_columnName));
         writer.write('\n');
         writer.write("oldColumnIndex=");
         writer.write(Integer.toString(_oldColumnIndex));
@@ -126,6 +127,8 @@ public class ColumnMoveChange extends ColumnChange {
                 newColumnIndex = Integer.parseInt(value);
             } else if ("columnName".equals(field)) {
                 columnName = value;
+            } else if ("columnNameJSON".equals(field)) {
+                columnName = ParsingUtilities.mapper.readValue(value, String.class);
             } else if ("oldColumnGroupCount".equals(field)) {
                 int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
 
