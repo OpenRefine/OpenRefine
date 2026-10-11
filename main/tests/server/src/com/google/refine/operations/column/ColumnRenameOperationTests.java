@@ -84,9 +84,9 @@ public class ColumnRenameOperationTests extends RefineTest {
     @Test
     public void testValidate() {
         ColumnRenameOperation noOldName = new ColumnRenameOperation(null, "newfoo");
-        assertThrows(IllegalArgumentException.class, () -> noOldName.validate());
+        assertThrows(NullPointerException.class, noOldName::validate);
         ColumnRenameOperation noNewName = new ColumnRenameOperation("foo", null);
-        assertThrows(IllegalArgumentException.class, () -> noNewName.validate());
+        assertThrows(NullPointerException.class, noNewName::validate);
     }
 
     @Test
