@@ -34,9 +34,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.clustering.knn;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,9 +46,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import edu.mit.simile.vicino.clustering.NGramClusterer;
-import edu.mit.simile.vicino.clustering.VPTreeClusterer;
-import edu.mit.simile.vicino.distances.Distance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,73 +129,18 @@ public class kNNClusterer extends Clusterer {
 
     final static Logger logger = LoggerFactory.getLogger("kNN_clusterer");
 
-    class VPTreeClusteringRowVisitor implements RowVisitor {
-
-        Distance _distance;
-        kNNClustererConfigParameters _params;
-        VPTreeClusterer _clusterer;
-
-        public VPTreeClusteringRowVisitor(Distance d, kNNClustererConfigParameters params) {
-            _distance = d;
-            _clusterer = new VPTreeClusterer(_distance);
-            _params = params;
-        }
-
-        @Override
-        public void start(Project project) {
-            // nothing to do
-        }
-
-        @Override
-        public void end(Project project) {
-            // nothing to do
-        }
-
-        @Override
-        public boolean visit(Project project, int rowIndex, Row row) {
-            Cell cell = row.getCell(_colindex);
-            if (cell != null && cell.value != null) {
-                Object v = cell.value;
-                String s = (v instanceof String) ? ((String) v) : v.toString();
-                _clusterer.populate(s);
-                count(s);
-            }
-            return false;
-        }
-
-        public List<Set<Serializable>> getClusters() {
-            return _clusterer.getClusters(_params.radius);
-        }
-    }
-
     class BlockingClusteringRowVisitor implements RowVisitor {
 
         SimilarityDistance _distance;
         double _radius = 1.0d;
         int _blockingNgramSize = 6;
-        HashSet<String> _data;
-        NGramClusterer _clusterer;
-
-        private class DistanceWrapper extends Distance {
-
-            private final SimilarityDistance _d;
-
-            protected DistanceWrapper(SimilarityDistance d) {
-                _d = d;
-            }
-
-            @Override
-            public double d(String arg0, String arg1) {
-                return _d.compute(arg0, arg1);
-            }
-        }
+        NGramBlockingClusterer _clusterer;
 
         public BlockingClusteringRowVisitor(SimilarityDistance _distance2, kNNClustererConfigParameters params) {
             _distance = _distance2;
-            _data = new HashSet<String>();
             _blockingNgramSize = params.blockingNgramSize;
             _radius = params.radius;
-            _clusterer = new NGramClusterer(new DistanceWrapper(_distance), _blockingNgramSize);
+            _clusterer = new NGramBlockingClusterer(_distance, _blockingNgramSize);
         }
 
         @Override
@@ -220,11 +162,12 @@ public class kNNClusterer extends Clusterer {
                 _clusterer.populate(s);
                 count(s);
             }
-            return false;
+            return _canceled;
         }
 
         public List<Set<Serializable>> getClusters() {
-            return _clusterer.getClusters(_radius);
+            return _clusterer.getClusters(_radius, () -> _canceled,
+                    pct -> _progress = 50 + pct / 2);
         }
     }
 
@@ -236,11 +179,18 @@ public class kNNClusterer extends Clusterer {
 
     @Override
     public void computeClusters(Engine engine) {
-        // VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
+        _stage = "scanning-rows";
         BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance, _params);
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(_project, visitor);
 
+        if (_canceled) {
+            _clusters = new ArrayList<>();
+            return;
+        }
+
+        _progress = 50; // row iteration complete
+        _stage = "finding-clusters";
         _clusters = visitor.getClusters();
     }
 

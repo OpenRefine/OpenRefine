@@ -133,12 +133,14 @@ public class BinningClusterer extends Clusterer {
         Keyer _keyer;
         Object[] _params;
         BinningParameters _parameters;
+        BinningClusterer _clusterer;
 
         Map<String, Map<String, Integer>> _map = new HashMap<String, Map<String, Integer>>();
 
-        public BinningRowVisitor(Keyer k, BinningParameters parameters) {
+        public BinningRowVisitor(Keyer k, BinningParameters parameters, BinningClusterer clusterer) {
             _keyer = k;
             _parameters = parameters;
+            _clusterer = clusterer;
             if (k instanceof NGramFingerprintKeyer) {
                 if (_parameters != null) {
                     _params = new Object[1];
@@ -177,7 +179,7 @@ public class BinningClusterer extends Clusterer {
                     _map.put(key, m);
                 }
             }
-            return false;
+            return _clusterer._canceled;
         }
 
         public Map<String, Map<String, Integer>> getMap() {
@@ -227,7 +229,7 @@ public class BinningClusterer extends Clusterer {
 
     @Override
     public void computeClusters(Engine engine) {
-        BinningRowVisitor visitor = new BinningRowVisitor(_keyer, _parameters);
+        BinningRowVisitor visitor = new BinningRowVisitor(_keyer, _parameters, this);
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(_project, visitor);
 

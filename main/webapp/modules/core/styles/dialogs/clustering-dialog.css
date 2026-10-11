@@ -75,6 +75,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   column-gap: 5px;
 }
 
+.clustering-dialog-progress-panel {
+  margin: 1em 0;
+  padding: 0.75em 1em;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.clustering-dialog-progress-panel.hidden {
+  display: none;
+}
+
+.clustering-dialog-progress-message {
+  white-space: nowrap;
+  color: #666;
+}
+
+.clustering-dialog-progress-bar-container {
+  flex: 1;
+  height: 16px;
+  background: #ddd;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.clustering-dialog-progress-bar-body {
+  height: 100%;
+  width: 0%;
+  background: #6090B0;
+  transition: width 0.3s ease;
+}
+
 .clustering-dialog-table-container {
   height: 450px;
   width: 650px;
