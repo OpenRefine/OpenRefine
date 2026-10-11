@@ -39,6 +39,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
@@ -148,6 +149,33 @@ public class RangeFacetTests extends RefineTest {
     public void testColumnDependencies() throws Exception {
         RangeFacetConfig facetConfig = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
         assertEquals(facetConfig.getColumnDependencies(), Optional.of(Collections.singleton("my column")));
+    }
+
+    @DataProvider
+    public Object[][] engineModes() {
+        return new Object[][] { { Engine.Mode.RowBased }, { Engine.Mode.RecordBased } };
+    }
+
+    @Test(dataProvider = "engineModes")
+    public void computeChoicesWithoutColumn(Engine.Mode mode) throws IOException {
+        Project project = createProject(
+                new String[] { "my column" },
+                new Serializable[][] { { 89.2 }, { -45.9 }, { "blah" }, { 0.4 } });
+        Engine engine = new Engine(project);
+        engine.setMode(mode);
+        RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
+        config._columnName = "";
+        config._expression = "cells[\"my column\"].value";
+        RangeFacet facet = config.apply(project);
+
+        if (mode == Engine.Mode.RowBased) {
+            facet.computeChoices(project, engine.getAllFilteredRows());
+        } else {
+            facet.computeChoices(project, engine.getFilteredRecords());
+        }
+
+        TestUtils.isSerializedTo(facet, facetJson.replace("\"columnName\":\"my column\"", "\"columnName\":\"\"")
+                .replace("\"expression\":\"value\"", "\"expression\":\"cells[\\\"my column\\\"].value\""));
     }
 
     @Test
