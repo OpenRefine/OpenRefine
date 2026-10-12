@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -40,6 +41,8 @@ import java.util.Properties;
  * e.g., cells.Country, cells["Type of Disaster"].
  */
 public interface HasFields {
+
+    List<String> getFieldNames();
 
     public Object getField(String name, Properties bindings);
 

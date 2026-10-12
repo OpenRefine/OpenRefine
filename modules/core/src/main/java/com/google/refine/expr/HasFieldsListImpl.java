@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class HasFieldsListImpl extends ArrayList<HasFields> implements HasFieldsList {
@@ -58,6 +59,11 @@ public class HasFieldsListImpl extends ArrayList<HasFields> implements HasFields
             }
             return r;
         }
+    }
+
+    @Override
+    public List<String> getFieldNames() {
+        return this.get(0).getFieldNames();
     }
 
     @Override
