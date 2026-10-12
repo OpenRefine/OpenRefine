@@ -56,6 +56,11 @@ public class Now implements Function {
     }
 
     @Override
+    public String getParams() {
+        return ""; // none
+    }
+
+    @Override
     public String getReturns() {
         return "date";
     }

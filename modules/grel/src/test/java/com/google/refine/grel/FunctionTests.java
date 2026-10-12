@@ -38,11 +38,20 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -53,7 +62,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.functions.NoopFunction;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -71,16 +80,6 @@ public class FunctionTests extends GrelTestBase {
     }
 
     @BeforeMethod
-    public void registerGRELParser() {
-        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-    }
-
-    @AfterMethod
-    public void unregisterGRELParser() {
-        MetaParser.unregisterLanguageParser("grel");
-    }
-
-    @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         project = createProjectWithColumns("FunctionTests", "Column A");
         bindings = new Properties();
@@ -89,7 +88,7 @@ public class FunctionTests extends GrelTestBase {
         // Five rows of a's and five of 1s
         for (int i = 0; i < 10; i++) {
             Row row = new Row(1);
-            row.setCell(0, new Cell(i < 5 ? "a" : new Integer(1), null));
+            row.setCell(0, new Cell(i < 5 ? "a" : Integer.valueOf(1), null));
             project.rows.add(row);
         }
     }
@@ -108,9 +107,9 @@ public class FunctionTests extends GrelTestBase {
 
     @Test
     public void testFacetCount() {
-        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"), Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"), Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"), Integer.valueOf(5));
+        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"), 5);
+        Assert.assertEquals(invoke("facetCount", 1, "value", "Column A"), 5);
+        Assert.assertEquals(invoke("facetCount", 2, "value+1", "Column A"), 5);
     }
 
     @Test
@@ -125,9 +124,9 @@ public class FunctionTests extends GrelTestBase {
                 "fingerprint", "get", "parseJson", "partition", "rpartition",
                 "slice", "substring", // synonyms for Slice
                 "unicode", "unicodeType"));
-        Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
+        Set<String> returnsFalse = new HashSet<>(List.of("hasField"));
 
-        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMap().entrySet()) {
             Function func = entry.getValue();
             Object result = func.call(bindings, new Object[0]);
             if (returnsNull.contains(ControlFunctionRegistry.getFunctionName(func))) {
@@ -147,11 +146,11 @@ public class FunctionTests extends GrelTestBase {
                 "fingerprint", "get", "now", "parseJson", "partition", "rpartition",
                 "slice", "substring", // synonyms for Slice
                 "unicode", "unicodeType"));
-        Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
-        Set<String> exempt = new HashSet<>(Arrays.asList(
+        Set<String> returnsFalse = new HashSet<>(List.of("hasField"));
+        Set<String> exempt = new HashSet<>(List.of(
                 "jsonize" // returns literal string "null"
         ));
-        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMap().entrySet()) {
             Function func = entry.getValue();
             // No functions take 8 arguments, so they should all error
             Object result = func.call(bindings, new Object[] { null, null, null, null, null, null, null, null });
@@ -173,7 +172,7 @@ public class FunctionTests extends GrelTestBase {
         Set<String> twoArgs = new HashSet<>(
                 Arrays.asList("atan2", "factn", "greatestCommonDenominator", "leastCommonMultiple", "max", "min", "mod", "pow", "quotient",
                         "randomNumber"));
-        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMap().entrySet()) {
             Function func = entry.getValue();
             if (oneArgs.contains(ControlFunctionRegistry.getFunctionName(func))) {
                 Object result = func.call(bindings, new Object[] { null });
@@ -182,6 +181,92 @@ public class FunctionTests extends GrelTestBase {
                 Object result2 = func.call(bindings, new Object[] { null, null });
                 assertTrue(result2 instanceof EvalError, ControlFunctionRegistry.getFunctionName(func) + " didn't error on null args");
             }
+        }
+    }
+
+    @Test
+    void testZeroParamNewStyle() {
+        // Make sure that a new style function which doesn't implement getParams(), like Now() previously,
+        // still works and returns an empty string for params instead of erroring.
+        Function noop = new NoopFunction();
+        assertEquals(noop.getParams(), "");
+    }
+
+    /*
+     * Test a pre-Jackson (late 2018) legacy function to verify that we can get the necessary help text from it to
+     * construct the help tab in the transform dialog.
+     */
+    @Test
+    void testLegacyFunction() throws Exception {
+        // Use the actual Georefine extension from 2014 as our test case.
+        // We pin to a specific commit to avoid breakage if the extension is updated and to minimize
+        // the risk of injection attacks.
+        String commit = "7a355daf4be0a052d4b4a6ed9296bec8dd7d2975";
+        String legacyExtension = "https://codeload.github.com/ryanfb/georefine/zip/" + commit;
+
+        Path tempDir = Files.createTempDirectory("georefine-legacy-");
+        try {
+            Path zipPath = tempDir.resolve("georefine.zip");
+            try (var in = URI.create(legacyExtension).toURL().openStream()) {
+                Files.copy(in, zipPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            Path unzipDir = tempDir.resolve("unzipped");
+            Files.createDirectories(unzipDir);
+            try (java.util.zip.ZipInputStream zis = new java.util.zip.ZipInputStream(Files.newInputStream(zipPath))) {
+                java.util.zip.ZipEntry entry;
+                while ((entry = zis.getNextEntry()) != null) {
+                    if (entry.getName().startsWith("georefine-" + commit + "/module/")) {
+                        if (entry.isDirectory()) {
+                            Files.createDirectories(unzipDir.resolve(entry.getName()));
+                        } else {
+                            Path out = unzipDir.resolve(entry.getName());
+                            Files.createDirectories(out.getParent());
+                            Files.copy(zis, out, StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    }
+                    zis.closeEntry();
+                }
+            }
+
+            Path classesRoot = unzipDir.resolve("georefine-" + commit + "/module/MOD-INF/classes");
+            Path libDir = unzipDir.resolve("georefine-" + commit + "/module/MOD-INF/lib");
+            URL[] urls;
+            try (Stream<Path> jars = Files.exists(libDir) ? Files.list(libDir) : Stream.empty()) {
+                urls = Stream.concat(
+                        Stream.of(classesRoot),
+                        jars.filter(path -> path.getFileName().toString().endsWith(".jar")))
+                        .map(path -> {
+                            try {
+                                return path.toUri().toURL();
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+                        .toArray(URL[]::new);
+            }
+            try (URLClassLoader loader = new URLClassLoader(urls, this.getClass().getClassLoader())) {
+                Class<?> clazz = Class.forName("io.github.ryanfb.georefine.CreatePoint", true, loader);
+                Object function = clazz.getDeclaredConstructor().newInstance();
+
+                Method getDescription = clazz.getMethod("getDescription");
+                Method getParams = clazz.getMethod("getParams");
+                Method getReturns = clazz.getMethod("getReturns");
+
+                assertEquals(getDescription.invoke(function), "creates a point from coordinates");
+                assertEquals(getParams.invoke(function), "latitude, longitude");
+                assertEquals(getReturns.invoke(function), "primitive");
+            }
+        } finally {
+            Files.walk(tempDir)
+                    .sorted((a, b) -> b.compareTo(a))
+                    .forEach(path -> {
+                        try {
+                            Files.deleteIfExists(path);
+                        } catch (IOException ignored) {
+                            // Best-effort temp cleanup for test isolation.
+                        }
+                    });
         }
     }
 }
