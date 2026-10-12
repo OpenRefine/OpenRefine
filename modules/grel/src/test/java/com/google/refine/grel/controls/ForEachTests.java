@@ -91,6 +91,14 @@ public class ForEachTests extends GrelTestBase {
     }
 
     @Test
+    public void testMapAlias() throws ParsingException {
+        String[] test = { "map([5,4,3,2.0], v, v*2).join(',')", "10,8,6,4.0" };
+        bindings = new Properties();
+        bindings.put("v", "");
+        parseEval(bindings, test);
+    }
+
+    @Test
     public void testForEachJsonArray() throws ParsingException {
         String[] test = { "forEach('[3,2,1.0]'.parseJson(), v, v*2).join(',')", "6,4,2.0" };
         bindings = new Properties();
