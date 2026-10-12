@@ -35,22 +35,33 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Properties;
+import java.util.Calendar;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
 
-public class OdsExporter implements StreamExporter {
+public class OdsExporter extends AbstractSpreadsheetExporter<OdsExporter.OdsState> {
+
+    /**
+     * State of one export. It is not stored in the exporter itself because the exporter is shared by all requests.
+     */
+    static final class OdsState {
+
+        final OdfSpreadsheetDocument odfDoc;
+
+        OdfTable table;
+        OdfTableRow row;
+        OdfTableCell cell;
+        int rowBeforeHeader = 0;
+
+        OdsState(OdfSpreadsheetDocument odfDoc) {
+            this.odfDoc = odfDoc;
+        }
+    }
 
     @Override
     public String getContentType() {
@@ -58,89 +69,80 @@ public class OdsExporter implements StreamExporter {
     }
 
     @Override
-    public void export(final Project project, Properties params, Engine engine,
-            OutputStream outputStream) throws IOException {
-
-        final OdfSpreadsheetDocument odfDoc;
+    protected OdsState createState(Project project) throws IOException {
         try {
-            odfDoc = OdfSpreadsheetDocument.newSpreadsheetDocument();
+            return new OdsState(OdfSpreadsheetDocument.newSpreadsheetDocument());
         } catch (Exception e) {
             throw new IOException("Failed to create spreadsheet", e);
         }
+    }
 
-        TabularSerializer serializer = new TabularSerializer() {
+    @Override
+    protected void startSheet(OdsState state, String tableName) {
+        state.table = OdfTable.newTable(state.odfDoc);
 
-            OdfTable table;
-            // int rowCount = 0;
-            int rowBeforeHeader = 0;
-
-            @Override
-            public void startFile(JsonNode options) {
-                table = OdfTable.newTable(odfDoc);
-                String tableName = ProjectManager.singleton.getProjectMetadata(project.id).getName();
-
-                // the ODF document might already contain some other tables
-                try {
-                    table.setTableName(tableName);
-                } catch (IllegalArgumentException e) {
-                    // there is already a table with that name
-                    table = odfDoc.getTableByName(tableName);
-                }
-                // delete any other table which has another name
-                odfDoc.getTableList().stream()
-                        .filter(table -> !table.getTableName().equals(tableName))
-                        .forEach(OdfTable::remove);
-                rowBeforeHeader = table.getRowCount();
-            }
-
-            @Override
-            public void endFile() {
-            }
-
-            @Override
-            public void addRow(List<CellData> cells, boolean isHeader) {
-                OdfTableRow r = table.appendRow();
-                // rowCount++;
-
-                for (int i = 0; i < cells.size(); i++) {
-                    OdfTableCell c = r.getCellByIndex(i); // implicitly creates cell
-                    CellData cellData = cells.get(i);
-
-                    if (cellData != null && cellData.text != null && cellData.value != null) {
-                        Object v = cellData.value;
-                        if (v instanceof Number) {
-                            c.setDoubleValue(((Number) v).doubleValue());
-                        } else if (v instanceof Boolean) {
-                            c.setBooleanValue(((Boolean) v).booleanValue());
-                        } else if (v instanceof OffsetDateTime) {
-                            OffsetDateTime odt = (OffsetDateTime) v;
-                            c.setDateValue(ParsingUtilities.offsetDateTimeToCalendar(odt));
-                        } else {
-                            c.setStringValue(cellData.text);
-                        }
-
-                        if (cellData.link != null) {
-                            // TODO: How do we do output hyperlinks?
-                        }
-                    }
-                }
-                if (rowBeforeHeader != 0) { // avoid the api change the default values again
-                    int nowRows = table.getRowCount();
-                    table.removeRowsByIndex(0, rowBeforeHeader);
-                    rowBeforeHeader -= nowRows - table.getRowCount();
-                }
-            }
-        };
-
-        CustomizableTabularExporterUtilities.exportRows(
-                project, engine, params, serializer);
-
+        // the ODF document might already contain some other tables
         try {
-            odfDoc.save(outputStream);
+            state.table.setTableName(tableName);
+        } catch (IllegalArgumentException e) {
+            // there is already a table with that name
+            state.table = state.odfDoc.getTableByName(tableName);
+        }
+        // delete any other table which has another name
+        state.odfDoc.getTableList().stream()
+                .filter(table -> !table.getTableName().equals(tableName))
+                .forEach(OdfTable::remove);
+        state.rowBeforeHeader = state.table.getRowCount();
+    }
+
+    @Override
+    protected void startRow(OdsState state) {
+        state.row = state.table.appendRow();
+    }
+
+    @Override
+    protected void startCell(OdsState state, int column, int columnCount) {
+        state.cell = state.row.getCellByIndex(column); // implicitly creates cell
+    }
+
+    @Override
+    protected void writeNumber(OdsState state, double value) {
+        state.cell.setDoubleValue(value);
+    }
+
+    @Override
+    protected void writeBoolean(OdsState state, boolean value) {
+        state.cell.setBooleanValue(value);
+    }
+
+    @Override
+    protected void writeDate(OdsState state, Calendar value) {
+        state.cell.setDateValue(value);
+    }
+
+    @Override
+    protected void writeText(OdsState state, int column, String text) {
+        state.cell.setStringValue(text);
+    }
+
+    // TODO: How do we do output hyperlinks? Until then writeLink keeps the default behaviour of ignoring them.
+
+    @Override
+    protected void endRow(OdsState state) {
+        if (state.rowBeforeHeader != 0) { // avoid the api change the default values again
+            int nowRows = state.table.getRowCount();
+            state.table.removeRowsByIndex(0, state.rowBeforeHeader);
+            state.rowBeforeHeader -= nowRows - state.table.getRowCount();
+        }
+    }
+
+    @Override
+    protected void writeDocument(OdsState state, OutputStream outputStream) throws IOException {
+        try {
+            state.odfDoc.save(outputStream);
         } catch (Exception e) {
             throw new IOException("Error saving spreadsheet", e);
         }
-        outputStream.flush();
     }
 
 }
