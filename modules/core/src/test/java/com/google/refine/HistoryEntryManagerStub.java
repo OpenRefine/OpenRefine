@@ -35,10 +35,10 @@ package com.google.refine;
 
 import java.io.File;
 import java.io.Writer;
-import java.util.Properties;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryEntryManager;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.io.FileProjectManager;
 
 public class HistoryEntryManagerStub implements HistoryEntryManager {
@@ -48,7 +48,7 @@ public class HistoryEntryManagerStub implements HistoryEntryManager {
     }
 
     @Override
-    public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
+    public void save(HistoryEntry historyEntry, Writer writer, SaveOptions options) {
     }
 
     @Override

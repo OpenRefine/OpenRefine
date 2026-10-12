@@ -29,7 +29,6 @@ import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -38,6 +37,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
@@ -116,7 +116,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
             }
         }
 
-        public void save(Writer writer, Properties options)
+        public void save(Writer writer, SaveOptions options)
                 throws IOException {
             writer.write("newSchema=");
             writeWikibaseSchema(_newSchema, writer);

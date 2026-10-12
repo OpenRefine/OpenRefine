@@ -38,7 +38,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -47,6 +46,7 @@ import com.google.refine.ProjectManager;
 import com.google.refine.history.History;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryEntryManager;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
@@ -63,9 +63,9 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
     }
 
     @Override
-    public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
+    public void save(HistoryEntry historyEntry, Writer writer, SaveOptions options) {
         try {
-            if ("save".equals(options.getProperty("mode"))) {
+            if (options.isSaveMode()) {
                 ParsingUtilities.saveWriter.writeValue(writer, historyEntry);
             } else {
                 ParsingUtilities.defaultWriter.writeValue(writer, historyEntry);

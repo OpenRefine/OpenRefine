@@ -37,10 +37,10 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.List;
-import java.util.Properties;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -126,7 +126,7 @@ public class MassCellChange implements Change {
     }
 
     @Override
-    public void save(Writer writer, Properties options) throws IOException {
+    public void save(Writer writer, SaveOptions options) throws IOException {
         if (_commonColumnName != null) {
             writer.write("commonColumnName=");
             writer.write(_commonColumnName);

@@ -36,10 +36,10 @@ package com.google.refine.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.Properties;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
@@ -72,7 +72,7 @@ public class ColumnRenameChange extends ColumnChange {
     }
 
     @Override
-    public void save(Writer writer, Properties options) throws IOException {
+    public void save(Writer writer, SaveOptions options) throws IOException {
         writer.write("oldColumnName=");
         writer.write(_oldColumnName);
         writer.write('\n');

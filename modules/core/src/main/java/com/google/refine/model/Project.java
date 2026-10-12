@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,6 +56,7 @@ import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.history.History;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
@@ -145,12 +145,9 @@ public class Project {
             }
         }
 
-        Writer writer = new OutputStreamWriter(out, "UTF-8");
+        Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         try {
-            Properties options = new Properties();
-            options.setProperty("mode", "save");
-            options.put("pool", pool);
-
+            SaveOptions options = new SaveOptions(true, pool);
             saveToWriter(writer, options);
         } finally {
             writer.flush();
@@ -165,7 +162,7 @@ public class Project {
         }
     }
 
-    protected void saveToWriter(Writer writer, Properties options) throws IOException {
+    protected void saveToWriter(Writer writer, SaveOptions options) throws IOException {
         writer.write(RefineServlet.VERSION);
         writer.write('\n');
 
