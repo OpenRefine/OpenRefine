@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +64,7 @@ public class AddRowsCommand extends Command {
 
             AbstractOperation op = new RowAdditionOperation(rows, insertionIndex);
             op.validate();
-            Process process = op.createProcess(project, new Properties());
+            Process process = op.createProcess(project);
 
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {

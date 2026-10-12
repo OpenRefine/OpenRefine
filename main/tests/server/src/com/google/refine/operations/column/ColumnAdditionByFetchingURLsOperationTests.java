@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -147,7 +146,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     @Test
     public void serializeUrlFetchingProcess() throws Exception {
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
-        Process process = op.createProcess(project, new Properties());
+        Process process = op.createProcess(project);
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));
     }
 

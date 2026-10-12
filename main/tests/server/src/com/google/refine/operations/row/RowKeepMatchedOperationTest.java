@@ -58,7 +58,6 @@ public class RowKeepMatchedOperationTest extends RefineTest {
     }
 
     Project projectIssue567;
-    Properties options;
     EngineConfig engine_config;
     Engine engine;
     Properties bindings;
@@ -134,7 +133,7 @@ public class RowKeepMatchedOperationTest extends RefineTest {
         checkRowCounts(5, 4);
 
         EngineDependentOperation op = new RowKeepMatchedOperation(engine_config);
-        HistoryEntry historyEntry = op.createProcess(projectIssue567, options).performImmediate();
+        HistoryEntry historyEntry = op.createProcess(projectIssue567).performImmediate();
         // After keeping matched rows, we should have 4 rows (the ones with "a")
         checkRowCounts(4, 4);
 

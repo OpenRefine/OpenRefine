@@ -38,6 +38,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.HistoryEntry;
 
+/**
+ * Processes come in two flavors:
+ * <ul>
+ * <li>Immediate - which get executed immediately in the foreground</li>
+ * <li>Long-running which get executed in the background on a separate thread and can be polled for status, completion,
+ * etc.</li>
+ * </ul>
+ */
 public abstract class Process {
 
     @JsonProperty("immediate")
