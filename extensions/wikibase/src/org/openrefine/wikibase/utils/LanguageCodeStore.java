@@ -102,13 +102,17 @@ public class LanguageCodeStore {
         String wbclcontext = (context == LanguageCodeContext.TERM) ? "term" : "monolingualtext";
         String url = mediaWikiApiEndpoint
                 + "?action=query&meta=wbcontentlanguages&wbclprop=code&wbclcontext=" + wbclcontext + "&format=json";
+        // TODO: Need to be able to pass user email address or Wiki account for better rate limit (although this is only
+        // called once per session, most likely)
         OkHttpClient client = HttpClient.getClient();
         Request request = new Request.Builder().url(url).build();
-        Response response = client.newCall(request).execute();
-        if (!response.isSuccessful()) {
-            throw new IOException("Failed to fetch Wikibase language codes. HTTP Response code: " + response.code());
+        JsonNode jsonNode;
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Failed to fetch Wikibase language codes. HTTP Response code: " + response.code());
+            }
+            jsonNode = new ObjectMapper().readTree(response.body().string());
         }
-        JsonNode jsonNode = new ObjectMapper().readTree(response.body().string());
         JsonNode languages = jsonNode.path("query").path("wbcontentlanguages");
         Set<String> supportedLangCodes = new HashSet<>();
         for (JsonNode language : languages) {
@@ -121,7 +125,7 @@ public class LanguageCodeStore {
      * Fallback language codes for term context (labels, descriptions, aliases). Used only when API fetch fails;
      * Wikidata-only. Update with wbclcontext=term.
      */
-    private static Set<String> DEFAULT_TERM_LANGUAGE_CODES = new HashSet<>(Arrays.asList(
+    private static final Set<String> DEFAULT_TERM_LANGUAGE_CODES = new HashSet<>(Arrays.asList(
             "aa",
             "aae",
             "ab",
@@ -755,7 +759,7 @@ public class LanguageCodeStore {
             "zh-yue",
             "zu"));
 
-    private static Set<String> DEFAULT_LANGUAGE_CODES = new HashSet<>(Arrays.asList(
+    private static final Set<String> DEFAULT_LANGUAGE_CODES = new HashSet<>(Arrays.asList(
             "aa",
             "aae",
             "ab",
