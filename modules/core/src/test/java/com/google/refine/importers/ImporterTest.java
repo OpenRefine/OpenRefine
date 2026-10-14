@@ -30,6 +30,7 @@ package com.google.refine.importers;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -222,5 +223,20 @@ public abstract class ImporterTest extends RefineTest {
             e.printStackTrace();
         }
         assertEquals(exceptions.size(), 0);
+    }
+
+    protected void parseOneFile(ImportingParserBase parser, File file) {
+        List<Exception> exceptions = new ArrayList<>();
+        parser.parseOneFile(
+                project,
+                metadata,
+                job,
+                "file-source",
+                file,
+                -1,
+                options,
+                exceptions);
+        assertEquals(exceptions.size(), 0, "Unexpected exception(s) thrown: " + exceptions);
+        project.update();
     }
 }
