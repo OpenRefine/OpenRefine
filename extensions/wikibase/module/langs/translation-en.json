@@ -143,7 +143,7 @@
     "wikibase-account/logo-alt-text": "$1 Logo",
     "perform-wikibase-edits/dialog-header": "Upload edits to $1",
     "perform-wikibase-edits/review-your-edits": "You are about to upload $1 edits to <a href=\"$2\" target=\"_blank\">$3</a>. Please check them carefully. Large edit batches should be submitted for <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">bot review</a> first.",
-    "perform-wikibase-edits/mass-editing-warning": "Please ensure your edits comply with <a href=\"https://www.wikidata.org/wiki/Wikidata:Mass_editing_policy\" target=\"_blank\">Wikidata's mass-editing policy</a>.",
+    "perform-wikibase-edits/mass-editing-warning": "Please ensure your edits comply with <a href=\"https://www.wikidata.org/wiki/Wikidata:Mass-editing_policy\" target=\"_blank\">Wikidata's mass-editing policy</a>.",
     "perform-wikibase-edits/logged-in-as": "You are logged in as",
     "perform-wikibase-edits/edit-summary-label": "summary",
     "perform-wikibase-edits/edit-summary-placeholder": "a few words to describe your edits",
