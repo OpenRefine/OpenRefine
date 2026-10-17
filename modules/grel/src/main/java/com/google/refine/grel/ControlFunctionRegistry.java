@@ -351,6 +351,8 @@ public class ControlFunctionRegistry {
         registerControl("if", new If());
         registerControl("with", new With());
         registerControl("forEach", new ForEach());
+        registerControl("any", new Any());
+        registerControl("all", new All());
         registerControl("forEachIndex", new ForEachIndex());
         registerControl("forRange", new ForRange());
         registerControl("filter", new Filter());
