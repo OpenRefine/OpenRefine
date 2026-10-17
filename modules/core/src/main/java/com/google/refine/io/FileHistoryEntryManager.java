@@ -49,6 +49,7 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+import com.google.refine.history.MissingExtensionChange;
 
 public class FileHistoryEntryManager implements HistoryEntryManager {
 
@@ -82,7 +83,25 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
         try {
             loadChange(historyEntry, changeFile);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load change file " + changeFile.getAbsolutePath(), e);
+            
+            Throwable cause = e;
+            boolean isMissingExtension = false;
+            String missingClassName = "Unknown";
+            
+            while (cause != null) {
+                if (cause instanceof ClassNotFoundException) {
+                    isMissingExtension = true;
+                    missingClassName = cause.getMessage();
+                    break;
+                }
+                cause = cause.getCause();
+            }
+            
+            if (isMissingExtension) {
+                historyEntry.setChange(new MissingExtensionChange(missingClassName));
+            } else {
+                throw new RuntimeException("Failed to load change file " + changeFile.getAbsolutePath(), e);
+            }
         }
     }
 
