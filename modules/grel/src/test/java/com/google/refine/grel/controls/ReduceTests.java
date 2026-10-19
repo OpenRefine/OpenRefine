@@ -55,6 +55,9 @@ public class ReduceTests extends GrelTestBase {
     @Test
     public void testBaseReduce() throws ParsingException {
         Object result = getResult("reduce([1, 2, 3], v, acc, 0, v + acc)");
+        Assert.assertEquals(getResult("reduce([1, 2, 3], v, acc, 0, v + acc)"), 6L);
+        Assert.assertEquals(getResult("reduce(parseJson('[1, 2, 3]'), v, acc, 0, v + acc)"), 6L);
+        Assert.assertEquals(getResult("reduce(['a', 'b', 'c'], v, acc, 'z', acc + v)"), "zabc");
         Assert.assertEquals(result, 6L);
     }
 
