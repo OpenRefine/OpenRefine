@@ -60,7 +60,7 @@ public class ReduceTests extends GrelTestBase {
 
     @Test
     public void testExpressionExceptions() throws ParsingException {
-        Object result = getResult("reduce([1, 2, 3], v, acc, \"a\", v - acc)");
+        Object result = getResult("reduce([1, 2, 3], v, acc, \"a\", length(null))");
         Assert.assertTrue(ExpressionUtils.isError(result));
 
         result = getResult("reduce(1, v, acc, 0, v + acc)");
