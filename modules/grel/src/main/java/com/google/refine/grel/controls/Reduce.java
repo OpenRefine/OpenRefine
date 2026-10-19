@@ -33,9 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.controls;
 
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import com.google.refine.expr.EvalError;
@@ -73,42 +75,36 @@ public class Reduce implements Control {
         bindings.put(accumulatorVariable, initialValue);
         Evaluable expr = args[4];
 
+        Iterable<Object> values;
         if (inputList.getClass().isArray()) {
-            Object[] values = (Object[]) inputList;
-
-            for (Object v : values) {
-                safePut(bindings, valueVariable, v);
-                Object result = expr.evaluate(bindings);
-                if (ExpressionUtils.isError(result)) {
-                    return result;
-                }
-                safePut(bindings, accumulatorVariable, result);
-            }
+            values = Arrays.asList((Object[]) inputList);
         } else if (inputList instanceof ArrayNode) {
-            ArrayNode a = (ArrayNode) inputList;
-            int l = a.size();
+            ArrayNode arrayNode = (ArrayNode) inputList;
+            values = () -> new Iterator<Object>() {
 
-            for (int i = 0; i < l; i++) {
-                Object v = JsonValueConverter.convert(a.get(i));
+                private final Iterator<JsonNode> it = arrayNode.elements();
 
-                safePut(bindings, valueVariable, v);
-                Object result = expr.evaluate(bindings);
-                if (ExpressionUtils.isError(result)) {
-                    return result;
+                @Override
+                public boolean hasNext() {
+                    return it.hasNext();
                 }
-                safePut(bindings, accumulatorVariable, result);
-            }
+
+                @Override
+                public Object next() {
+                    return JsonValueConverter.convert(it.next());
+                }
+            };
         } else {
-            Collection<Object> collection = ExpressionUtils.toObjectCollection(inputList);
+            values = ExpressionUtils.toObjectCollection(inputList);
+        }
 
-            for (Object v : collection) {
-                safePut(bindings, valueVariable, v);
-                Object result = expr.evaluate(bindings);
-                if (ExpressionUtils.isError(result)) {
-                    return result;
-                }
-                safePut(bindings, accumulatorVariable, result);
+        for (Object v : values) {
+            safePut(bindings, valueVariable, v);
+            Object result = expr.evaluate(bindings);
+            if (ExpressionUtils.isError(result)) {
+                return result;
             }
+            safePut(bindings, accumulatorVariable, result);
         }
 
         return bindings.get(accumulatorVariable);
