@@ -77,17 +77,12 @@ public class Reduce implements Control {
             Object[] values = (Object[]) inputList;
 
             for (Object v : values) {
-                if (v != null) {
-                    bindings.put(valueVariable, v);
-                } else {
-                    bindings.remove(valueVariable);
-                }
-
+                safePut(bindings, valueVariable, v);
                 Object result = expr.evaluate(bindings);
                 if (ExpressionUtils.isError(result)) {
                     return result;
                 }
-                bindings.put(accumulatorVariable, result);
+                safePut(bindings, accumulatorVariable, result);
             }
         } else if (inputList instanceof ArrayNode) {
             ArrayNode a = (ArrayNode) inputList;
@@ -96,33 +91,23 @@ public class Reduce implements Control {
             for (int i = 0; i < l; i++) {
                 Object v = JsonValueConverter.convert(a.get(i));
 
-                if (v != null) {
-                    bindings.put(valueVariable, v);
-                } else {
-                    bindings.remove(valueVariable);
-                }
-
+                safePut(bindings, valueVariable, v);
                 Object result = expr.evaluate(bindings);
                 if (ExpressionUtils.isError(result)) {
                     return result;
                 }
-                bindings.put(accumulatorVariable, result);
+                safePut(bindings, accumulatorVariable, result);
             }
         } else {
             Collection<Object> collection = ExpressionUtils.toObjectCollection(inputList);
 
             for (Object v : collection) {
-                if (v != null) {
-                    bindings.put(valueVariable, v);
-                } else {
-                    bindings.remove(valueVariable);
-                }
-
+                safePut(bindings, valueVariable, v);
                 Object result = expr.evaluate(bindings);
                 if (ExpressionUtils.isError(result)) {
                     return result;
                 }
-                bindings.put(accumulatorVariable, result);
+                safePut(bindings, accumulatorVariable, result);
             }
         }
 
@@ -154,6 +139,14 @@ public class Reduce implements Control {
     @Override
     public String getReturns() {
         return "object";
+    }
+
+    private static void safePut(Properties bindings, String name, Object value) {
+        if (value != null) {
+            bindings.put(name, value);
+        } else {
+            bindings.remove(name);
+        }
     }
 
 }
