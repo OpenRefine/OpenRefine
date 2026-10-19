@@ -76,6 +76,7 @@ public class ReduceTests extends GrelTestBase {
     public void testArgumentLengths() {
         try {
             MetaParser.parse("grel:reduce(v, acc, \"a\", v - acc)");
+            Assert.fail("Failed to throw expected ParsingException");
         } catch (ParsingException p) {
             Assert.assertTrue(p.getMessage().contains(ControlEvalError.expects_five_args("reduce")));
         }
