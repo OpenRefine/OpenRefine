@@ -322,9 +322,9 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 checkBox.on('change', function() {
                     cluster.checkBoxes[c] = this.checked;
                 });
-                checkBox.attr("checked" , cluster.checkBoxes[c]);
+                checkBox.prop("checked" , cluster.checkBoxes[c]);
                 if(!cluster.edit){
-                    checkBox.attr("disabled","true");
+                    checkBox.prop("disabled",true);
                 }
                 var checkBoxID = 'Checkbox' + index.toString() + "_Choice" + c.toString();
                 checkBox.attr("id", checkBoxID);

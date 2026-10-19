@@ -47,24 +47,115 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   bottom: 0;
 }
 
-#projects-container>table {
+#projects-container table {
   width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
-#projects-container>table>tbody>tr>td,
-#projects-container>table>tbody>tr>th {
+#projects-container table tbody tr td,
+#projects-container table tbody tr th {
   padding-top: var(--padding-tight);
   text-align: left;
   vertical-align: baseline;
   padding: var(--padding-tighter) var(--padding-tight);
   font-size: 1.1em;
-  color: var(--text-tertiary);
-  border-bottom: dotted 1px var(--faint-grey);
+  color: var(--text-secondary);
+  border-left: 1px solid var(--faint-grey);
+  border-right: 1px solid var(--faint-grey);
+  border-bottom: 1px dotted var(--faint-grey);
 }
 
-#projects-container>table>tbody>tr>th {
+#projects-container table thead tr th {
+  font-weight: bold;
+  background: #f0f0f0;
+  border: 1px solid var(--faint-grey);
+  padding-bottom: var(--padding-normal);
+}
+
+#projects-container table tbody tr th {
   font-weight: bold;
   background: var(--chrome-secondary);
+  border: 1px solid var(--faint-grey);
+  border-width: 0 1px 1px 0;
+}
+
+/* Sortable column headers */
+#projects-container table thead tr th[data-sort]:not([data-sort="none"]) {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 28px;
+  background-color: #f0f0f0;
+  white-space: nowrap;
+}
+
+#projects-container table thead tr th[data-sort]:not([data-sort="none"]):hover {
+  background-color: #e0e0e0;
+}
+
+/* Sort indicators - CSS triangles */
+#projects-container table thead tr th[data-sort]:not([data-sort="none"])::before,
+#projects-container table thead tr th[data-sort]:not([data-sort="none"])::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+/* Unsorted state: both triangles (diamond) */
+#projects-container table thead tr th[data-sort]:not([data-sort="none"]):not([aria-sort])::before,
+#projects-container table thead tr th[data-sort]:not([data-sort="none"])[aria-sort=""]::before {
+  top: 35%;
+  border-bottom: 5px solid var(--text-tertiary);
+  opacity: 0.5;
+}
+#projects-container table thead tr th[data-sort]:not([data-sort="none"]):not([aria-sort])::after,
+#projects-container table thead tr th[data-sort]:not([data-sort="none"])[aria-sort=""]::after {
+  top: 65%;
+  border-top: 5px solid var(--text-tertiary);
+  opacity: 0.5;
+}
+
+/* Ascending: only up triangle */
+#projects-container table thead tr th[aria-sort="ascending"] {
+  background-color: #e0e0e0;
+}
+#projects-container table thead tr th[aria-sort="ascending"]::before {
+  top: 50%;
+  transform: translateY(-50%);
+  border-bottom: 6px solid var(--text-primary);
+  opacity: 1;
+}
+#projects-container table thead tr th[aria-sort="ascending"]::after {
+  display: none;
+}
+
+/* Descending: only down triangle */
+#projects-container table thead tr th[aria-sort="descending"] {
+  background-color: #e0e0e0;
+}
+#projects-container table thead tr th[aria-sort="descending"]::before {
+  display: none;
+}
+#projects-container table thead tr th[aria-sort="descending"]::after {
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 6px solid var(--text-primary);
+  opacity: 1;
+}
+
+/* Non-sortable columns */
+#projects-container table thead th[data-sort="none"] {
+  cursor: default;
+  background-color: #f0f0f0;
+}
+#projects-container table thead th[data-sort="none"]::before,
+#projects-container table thead th[data-sort="none"]::after {
+  display: none;
 }
 
 #projects-container .project .project-name {
@@ -81,22 +172,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-size: 170%;
 }
 
-#projects-container>table thead th:nth-child(1) {
+#projects-container table thead th:nth-child(1) {
   border: 0;
-}
-
-#projects-container table thead th:nth-child(2),
-#projects-container table thead th:nth-child(3) {
-  border-left: 0;
 }
 
 /* Last modified */
 #projects-container table thead th:nth-child(4) {
   white-space: nowrap;
-}
-
-#projects-container table thead th:nth-child(10) {
-  text-align: end;
 }
 
 /* Subject */
@@ -105,11 +187,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 /* Row Count is right aligned for numbers */
+#projects-container table thead th:nth-child(10),
 #projects-container table tbody td:nth-child(10) {
   text-align: end;
 }
 
-#projects-container>table>tbody>tr>td {
+#projects-container table tbody tr td {
   word-wrap: break-word;
 }
 
@@ -249,12 +332,16 @@ ul#tagsUl li a {
   font-size: x-large;
 }
 
-/* Tablesorter overrides */
-
-.tablesorter-blue {
-  border-width: 1px; /* fixes missing bottom border */
+.list-table {
   margin: 5px; /* aligns table with the tags bar and footer content */
   max-width: calc(100% - 12px); /* prevents horizontal overflow */
+  border-left: 1px solid var(--faint-grey);
+  border-bottom: 1px dotted var(--faint-grey);
+}
+
+/* Hover row highlight */
+.list-table tbody tr:hover > td {
+  background-color: var(--fill-secondary);
 }
 
 /* Bulk selection of projects */

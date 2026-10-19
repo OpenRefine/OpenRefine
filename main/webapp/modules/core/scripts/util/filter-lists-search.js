@@ -16,7 +16,7 @@
         }
         var listElements = $(this);
         /* FILTER: select a text and filter */
-        listElements.bind("filterSearch", function( e, text ) {
+        listElements.on("filterSearch", function( e, text ) {
             // get each project row
             var projects = $(this).find("tr");
 
@@ -35,7 +35,7 @@
         });
 
         /* FILTERPORTFOLIO: pass in a class to show, all others will be hidden */
-        listElements.bind("filterSearchList", function( e, classToShow ) {
+        listElements.on("filterSearchList", function( e, classToShow ) {
             if( text == ''){
                 return
             }else{
