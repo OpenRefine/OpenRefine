@@ -110,6 +110,31 @@ public class ColumnNameSerializationTests extends RefineTest {
         loaded.apply(project);
     }
 
+    @DataProvider
+    public Object[][] reconciliationColumnNames() {
+        return new Object[][] {
+                { "ordinary" },
+                { "first\nsecond" }
+        };
+    }
+
+    @Test(dataProvider = "reconciliationColumnNames")
+    public void reconChangeUndoRedoAfterReload(String name) throws Exception {
+        Project project = createProject(new String[] { name }, new Serializable[0][0]);
+        ReconChange original = new ReconChange(Collections.emptyList(), name, null, null);
+        original.apply(project);
+
+        StringWriter writer = new StringWriter();
+        original.save(writer, new Properties());
+        ReconChange loaded = (ReconChange) ReconChange.load(
+                new LineNumberReader(new StringReader(writer.toString())), new Pool());
+
+        loaded.revert(project);
+        assertEquals(project.columnModel.getColumnNames(), List.of(name));
+        loaded.apply(project);
+        assertEquals(project.columnModel.getColumnNames(), List.of(name));
+    }
+
     @Test(dataProvider = "columnNames")
     public void renameUndoAfterReload(String name) throws Exception {
         Project project = createProject(new String[] { name }, new Serializable[0][0]);
@@ -162,6 +187,11 @@ public class ColumnNameSerializationTests extends RefineTest {
         MassCellChange cells = (MassCellChange) MassCellChange.load(
                 new LineNumberReader(new StringReader("commonColumnName=" + name + "\ncellChangeCount=0\n/ec/\n")), new Pool());
         assertEquals(cells._commonColumnName, name);
+        ReconChange recon = (ReconChange) ReconChange.load(
+                new LineNumberReader(new StringReader("commonColumnName=" + name
+                        + "\ncellChangeCount=0\n/ec/\n")),
+                new Pool());
+        assertEquals(recon._commonColumnName, name);
         DataExtensionChange extended = (DataExtensionChange) DataExtensionChange.load(
                 new LineNumberReader(new StringReader("baseColumnName=" + name + "\ncolumnNameCount=1\n" + name + "\n/ec/\n")), new Pool());
         assertEquals(extended._baseColumnName, name);
