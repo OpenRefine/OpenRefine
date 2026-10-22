@@ -105,4 +105,5 @@ public class GetLanguagesCommand extends Command {
 
         respondJSON(response, new LanguagesResponse(module));
     }
+
 }
