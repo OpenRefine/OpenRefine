@@ -261,6 +261,28 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             );
           }
         },
+        {
+          id: "core/hidden-chars-facet",
+          label: $.i18n('core-views/hidden-chars-facet'),
+          click: function() {
+            // Lists the escape codes (such as \u00A0) of the invisible characters found in each cell.
+            // The character set follows the invisible characters highlighted by VS Code
+            // (https://github.com/hediet/vscode-unicode-data), plus the C0/C1 control characters.
+            // Tab, line feed and the regular space are deliberately left out.
+            var hiddenChars = "[\\u0000-\\u0008\\u000B-\\u001F\\u007F-\\u00A0\\u00AD\\u034F\\u061C\\u115F\\u1160" +
+                "\\u17B4\\u17B5\\u180B-\\u180F\\u1CBB\\u1CBC\\u2000-\\u200F\\u2028-\\u202F\\u205F-\\u206F" +
+                "\\u2800\\u3000\\u3164\\uFE00-\\uFE0F\\uFEFF\\uFFA0\\uFFF0-\\uFFF8\\uFFFC" +
+                "\\x{1D173}-\\x{1D17A}\\x{E0000}-\\x{E007F}\\x{E0100}-\\x{E01EF}]";
+            ui.browsingEngine.addFacet(
+                "list",
+                {
+                  "name": column.name,
+                  "columnName": column.name,
+                  "expression": "forEach(value.find(/" + hiddenChars + "/), c, c.escape('javascript'))"
+                }
+            );
+          }
+        },
         {},
         {
           id: "core/error-facet",
