@@ -59,6 +59,7 @@ import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
+import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.Row;
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.model.recon.StandardReconConfig.ReconResult;
@@ -309,7 +310,6 @@ public class StandardReconConfigTests extends RefineTest {
     }
 
     @Test
-
     public void batchReconTestSuccessful() throws Exception {
         String reconResponse = """
                 {
@@ -567,7 +567,9 @@ public class StandardReconConfigTests extends RefineTest {
 
     /**
      * The UI format and the backend format differ for serialization (the UI never deserializes and the backend
-     * serialization did not matter). TODO: change the frontend so it uses the same format.
+     * serialization did not matter).
+     * <p>
+     * TODO: change the frontend so it uses the same format.
      */
     @Test
     public void deserializeColumnDetail() throws JsonParseException, JsonMappingException, IOException {
@@ -758,5 +760,249 @@ public class StandardReconConfigTests extends RefineTest {
         Assert.assertFalse(words.contains("of"));
         Assert.assertTrue(words.contains("lord"));
         Assert.assertTrue(words.contains("rings"));
+    }
+
+    @Test
+    public void batchReconTestMultipleJobsConnectionError() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
+            server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
+            server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
+            server.enqueue(new MockResponse.Builder().onResponseStart(new SocketEffect.CloseSocket()).build());
+
+            String configJson = """
+                    {
+                    "mode": "standard-service",
+                    "service": "%s",
+                    "identifierSpace": "http://www.wikidata.org/entity/",
+                    "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                    "type": {
+                            "id": "Q11424",
+                            "name": "film"
+                    },
+                    "autoMatch": true,
+                    "columnDetails": [
+                       {
+                         "column": "director",
+                         "propertyName": "Director",
+                         "propertyID": "P57"
+                       }
+                    ]}
+                    """.formatted(url);
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+
+            StandardReconConfig.StandardReconJob job1 = new StandardReconConfig.StandardReconJob();
+            job1.text = "david lynch";
+            job1.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+
+            StandardReconConfig.StandardReconJob job2 = new StandardReconConfig.StandardReconJob();
+            job2.text = "steven spielberg";
+            job2.code = "{\"query\":\"steven spielberg\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"steven spielberg\"}],\"type_strict\":\"should\"}";
+
+            StandardReconConfig.StandardReconJob job3 = new StandardReconConfig.StandardReconJob();
+            job3.text = "christopher nolan";
+            job3.code = "{\"query\":\"christopher nolan\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"christopher nolan\"}],\"type_strict\":\"should\"}";
+
+            List<ReconJob> jobList = new ArrayList<>();
+            jobList.add(job1);
+            jobList.add(job2);
+            jobList.add(job3);
+
+            List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
+
+            assertEquals(returnReconList.size(), 3);
+            for (Recon recon : returnReconList) {
+                assertNotNull(recon.error);
+                assertEquals(recon.judgment, Judgment.Error);
+            }
+        }
+    }
+
+    @Test
+    public void batchReconTestMultipleJobsMissingResultField() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            String reconResponse = """
+                    {
+                      q0: {
+                      },
+                      q1: {
+                      }
+                    }
+                    """;
+            server.enqueue(new MockResponse.Builder().body(reconResponse).build());
+
+            String configJson = """
+                    {
+                     "mode": "standard-service",
+                     "service": "%s",
+                     "identifierSpace": "http://www.wikidata.org/entity/",
+                     "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                     "type": {
+                             "id": "Q11424",
+                             "name": "film"
+                     },
+                     "autoMatch": true,
+                     "columnDetails": [
+                        {
+                          "column": "director",
+                          "propertyName": "Director",
+                          "propertyID": "P57"
+                        }
+                     ]}
+                    """.formatted(url);
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+
+            StandardReconConfig.StandardReconJob job1 = new StandardReconConfig.StandardReconJob();
+            job1.text = "david lynch";
+            job1.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+
+            StandardReconConfig.StandardReconJob job2 = new StandardReconConfig.StandardReconJob();
+            job2.text = "steven spielberg";
+            job2.code = "{\"query\":\"steven spielberg\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"steven spielberg\"}],\"type_strict\":\"should\"}";
+
+            List<ReconJob> jobList = new ArrayList<>();
+            jobList.add(job1);
+            jobList.add(job2);
+
+            List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
+
+            assertEquals(returnReconList.size(), 2);
+            for (Recon recon : returnReconList) {
+                assertNotNull(recon.error);
+                assertEquals(recon.judgment, Judgment.Error);
+                assertTrue(recon.error.contains("without \"result\" field"));
+            }
+        }
+    }
+
+    @Test
+    public void batchReconTestMultipleJobsMissingQueryKey() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            String reconResponse = """
+                    {
+                      q0: {
+                        "result": []
+                      }
+                    }
+                    """;
+            server.enqueue(new MockResponse.Builder().body(reconResponse).build());
+
+            String configJson = """
+                    {
+                     "mode": "standard-service",
+                     "service": "%s",
+                     "identifierSpace": "http://www.wikidata.org/entity/",
+                     "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                     "type": {
+                             "id": "Q11424",
+                             "name": "film"
+                     },
+                     "autoMatch": true,
+                     "columnDetails": [
+                        {
+                          "column": "director",
+                          "propertyName": "Director",
+                          "propertyID": "P57"
+                        }
+                     ]}
+                    """.formatted(url);
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+
+            StandardReconConfig.StandardReconJob job1 = new StandardReconConfig.StandardReconJob();
+            job1.text = "david lynch";
+            job1.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+
+            StandardReconConfig.StandardReconJob job2 = new StandardReconConfig.StandardReconJob();
+            job2.text = "steven spielberg";
+            job2.code = "{\"query\":\"steven spielberg\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"steven spielberg\"}],\"type_strict\":\"should\"}";
+
+            List<ReconJob> jobList = new ArrayList<>();
+            jobList.add(job1);
+            jobList.add(job2);
+
+            List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
+
+            assertEquals(returnReconList.size(), 2);
+            assertNull(returnReconList.get(0).error);
+            assertNotNull(returnReconList.get(1).error);
+            assertEquals(returnReconList.get(1).judgment, Judgment.Error);
+            assertTrue(returnReconList.get(1).error.contains("without \"q1\" field"));
+        }
+    }
+
+    @Test
+    public void batchReconTestMultipleJobsMixedSuccessFailure() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            String reconResponse = """
+                    {
+                      q0: {
+                        "result": [
+                          {
+                            "id": "Q12345",
+                            "name": "David Lynch",
+                            "score": 100,
+                            "match": true,
+                            "type": [{"id": "Q5", "name": "human"}]
+                          }
+                        ]
+                      },
+                      q1: {
+                      }
+                    }
+                    """;
+            server.enqueue(new MockResponse.Builder().body(reconResponse).build());
+
+            String configJson = """
+                    {
+                     "mode": "standard-service",
+                     "service": "%s",
+                     "identifierSpace": "http://www.wikidata.org/entity/",
+                     "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                     "type": {
+                             "id": "Q11424",
+                             "name": "film"
+                     },
+                     "autoMatch": true,
+                     "columnDetails": [
+                        {
+                          "column": "director",
+                          "propertyName": "Director",
+                          "propertyID": "P57"
+                        }
+                     ]}
+                    """.formatted(url);
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+
+            StandardReconConfig.StandardReconJob job1 = new StandardReconConfig.StandardReconJob();
+            job1.text = "david lynch";
+            job1.code = "{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}";
+
+            StandardReconConfig.StandardReconJob job2 = new StandardReconConfig.StandardReconJob();
+            job2.text = "steven spielberg";
+            job2.code = "{\"query\":\"steven spielberg\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"steven spielberg\"}],\"type_strict\":\"should\"}";
+
+            List<ReconJob> jobList = new ArrayList<>();
+            jobList.add(job1);
+            jobList.add(job2);
+
+            List<Recon> returnReconList = config.batchRecon(jobList, 1000000000);
+
+            assertEquals(returnReconList.size(), 2);
+            assertNull(returnReconList.get(0).error);
+            assertNotNull(returnReconList.get(0).match);
+            assertEquals(returnReconList.get(0).match.id, "Q12345");
+
+            assertNotNull(returnReconList.get(1).error);
+            assertEquals(returnReconList.get(1).judgment, Judgment.Error);
+            assertTrue(returnReconList.get(1).error.contains("without \"result\" field"));
+        }
     }
 }
