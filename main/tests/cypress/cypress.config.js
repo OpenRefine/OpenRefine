@@ -16,7 +16,6 @@ module.exports = defineConfig({
     OPENREFINE_URL: 'http://localhost:3333',
     DISABLE_PROJECT_CLEANUP: 0,
   },
-  allowCypressEnv: false,
   e2e: {
     experimentalRunAllSpecs: true,
     // We've imported your old cypress plugins here.
