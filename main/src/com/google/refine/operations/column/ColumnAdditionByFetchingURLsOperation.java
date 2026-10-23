@@ -35,7 +35,6 @@ package com.google.refine.operations.column;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +42,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang.Validate;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.message.BasicHeader;
@@ -58,7 +53,6 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
-import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
@@ -76,6 +70,9 @@ import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.ExpressionRenamingUtils;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationDescription;
+import com.google.refine.operations.column.fetching.CachingUrlFetcher;
+import com.google.refine.operations.column.fetching.HttpUrlFetcher;
+import com.google.refine.operations.column.fetching.UrlFetcher;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.HttpClient;
@@ -257,12 +254,18 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
         Evaluable eval = MetaParser.parse(_urlExpression);
 
+        // Decorator pattern: start from the plain HTTP fetcher and wrap it with caching only if requested
+        UrlFetcher fetcher = new HttpUrlFetcher(_httpClient, httpHeaders, _onError);
+        if (_cacheResponses) {
+            fetcher = new CachingUrlFetcher(fetcher);
+        }
+
         return new ColumnAdditionByFetchingURLsProcess(
                 project,
                 engine,
                 eval,
                 getBriefDescription(null),
-                _cacheResponses);
+                fetcher);
     }
 
     public class ColumnAdditionByFetchingURLsProcess extends LongRunningProcess implements Runnable {
@@ -272,37 +275,20 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         final protected Evaluable _eval;
         final protected long _historyEntryID;
         protected int _cellIndex;
-        protected LoadingCache<String, Serializable> _urlCache;
+        final protected UrlFetcher _fetcher;
 
         public ColumnAdditionByFetchingURLsProcess(
                 Project project,
                 Engine engine,
                 Evaluable eval,
                 String description,
-                boolean cacheResponses) {
+                UrlFetcher fetcher) {
             super(description);
             _project = project;
             _engine = engine;
             _eval = eval;
             _historyEntryID = HistoryEntry.allocateID();
-            _urlCache = null;
-            if (cacheResponses) {
-                _urlCache = CacheBuilder.newBuilder()
-                        .maximumSize(2048)
-                        .expireAfterWrite(10, TimeUnit.MINUTES)
-                        .build(
-                                new CacheLoader<String, Serializable>() {
-
-                                    public Serializable load(String urlString) throws Exception {
-                                        Serializable result = fetch(urlString, httpHeaders);
-                                        if (result == null) {
-                                            // the load method should not return any null value
-                                            throw new Exception("null result returned by fetch");
-                                        }
-                                        return result;
-                                    }
-                                });
-            }
+            _fetcher = fetcher;
         }
 
         @Override
@@ -333,12 +319,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             for (CellAtRow urlData : urls) {
                 String urlString = urlData.cell.value.toString();
 
-                Serializable response = null;
-                if (_urlCache != null) {
-                    response = cachedFetch(urlString);
-                } else {
-                    response = fetch(urlString, httpHeaders);
-                }
+                Serializable response = _fetcher.fetch(urlString);
 
                 if (response != null) {
                     CellAtRow cellAtRow = new CellAtRow(
@@ -368,26 +349,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
                 _project.history.addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
-            }
-        }
-
-        Serializable cachedFetch(String urlString) {
-            try {
-                return _urlCache.get(urlString);
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        Serializable fetch(String urlString, Header[] headers) {
-            try { // HttpClients.createDefault()) {
-                try {
-                    return _httpClient.getAsString(urlString, headers);
-                } catch (IOException e) {
-                    return _onError == OnError.StoreError ? new EvalError(e) : null;
-                }
-            } catch (Exception e) {
-                return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
             }
         }
 
