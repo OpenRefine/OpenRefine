@@ -388,16 +388,16 @@ e2e_tests() {
         CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --ci-build-id=$CYPRESS_CI_BUILD_ID --tag $CYPRESS_BROWSER --group "$CYPRESS_GROUP""
     fi
     export MOZ_FORCE_DISABLE_E10S=1
-    echo $CYPRESS_RUN_CMD
-    pushd main/tests/cypress
-    $CYPRESS_RUN_CMD
-    popd
 
+    pushd main/tests/cypress
+    echo $CYPRESS_RUN_CMD
+    $CYPRESS_RUN_CMD
     if [ "$?" = "0" ] ; then
         UI_TEST_SUCCESS="1"
     else
         UI_TEST_SUCCESS="0"
     fi
+    popd
 
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         echo "You can review tests on Cypress.io: https://dashboard.cypress.io/projects/$CYPRESS_PROJECT_ID/runs"
