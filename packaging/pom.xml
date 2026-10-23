@@ -396,6 +396,22 @@
                   <replacefilter token="../../extensions" value="extensions"/>
                 </replace>
 
+                <!-- TODO: Is this still needed? -->
+                <!-- adapt file permissions, for https://github.com/OpenRefine/OpenRefine/issues/5160 -->
+                <exec executable="chmod">
+                  <arg line="-R" />
+                  <arg line="go+r" />
+                  <arg line="&quot;${mac.webapp.dir}/&quot;" />
+                </exec>
+
+                <!-- Codesign jars with native code in them (we'd prefer the authors do this, but not all do) -->
+                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.webapp.dir}" failonerror="true">
+                  <arg value="${basedir}/apple_certs/codesign.sh" />
+                  <arg value="." />
+                  <arg value="${mac.signing.identity}" />
+                  <arg value="${basedir}/Entitlements.plist" />
+                </exec>
+
               </target>
 
             </configuration>
