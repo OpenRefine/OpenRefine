@@ -1,8 +1,9 @@
 ---
 name: Bug report
+type: bug
 about: Create a report to help us improve OpenRefine
 title: ''
-labels: ['Type: Bug', 'Status: Pending Review']
+labels: ['Status: Pending Review']
 assignees: ''
 
 ---
