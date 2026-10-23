@@ -18,8 +18,7 @@
     <webapp.target>../main/target</webapp.target>
     <embedded.jre.version>${java.minversion}</embedded.jre.version>
 
-    <mac.arch>x86_64</mac.arch>
-    <mac.native.binary>X86_64</mac.native.binary>
+    <mac.arch>${os.arch}</mac.arch>
     <mac.jre.path>${project.build.directory}/mac_jre-${mac.arch}</mac.jre.path>
     <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/${mac.arch}/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
     <mac.build.directory>OpenRefine ${project.version}</mac.build.directory>
@@ -397,22 +396,6 @@
                   <replacefilter token="../../extensions" value="extensions"/>
                 </replace>
 
-                <!-- TODO: Is this still needed? -->
-                <!-- adapt file permissions, for https://github.com/OpenRefine/OpenRefine/issues/5160 -->
-                <exec executable="chmod">
-                  <arg line="-R" />
-                  <arg line="go+r" />
-                  <arg line="&quot;${mac.webapp.dir}/&quot;" />
-                </exec>
-
-                <!-- Codesign jars with native code in them -->
-                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.webapp.dir}" failonerror="true">
-                  <arg value="${basedir}/apple_certs/codesign.sh" />
-                  <arg value="." />
-                  <arg value="${mac.signing.identity}" />
-                  <arg value="${basedir}/Entitlements.plist" />
-                </exec>
-
               </target>
 
             </configuration>
@@ -455,49 +438,19 @@
                   <arg line="&quot;${mac.jre.path}/Contents/Home/legal&quot;"/>
                 </exec>
 
+                <!-- Make sure we can write to the JRE contents -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="chmod">
+                  <arg line="-R"/>
+                  <arg line="u+w"/>
+                  <arg line="&quot;${mac.jre.path}/Contents&quot;"/>
+                </exec>
+
                 <!-- Clear the quarantine bit set on downloaded files recursively on JRE -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
                   <arg line="-rd"/>
                   <arg line="com.apple.quarantine"/>
                   <arg line="&quot;${mac.jre.path}/Contents&quot;"/>
                 </exec>
-
-                <!-- Codesign JRE -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
-                  <arg value="--entitlements" />
-                  <arg value="../Entitlements.plist" />
-                  <arg value="--sign"/>
-                  <arg value="${mac.signing.identity}"/>
-                  <arg value="--deep"/>
-                  <arg value="--force"/>
-                  <arg value="--timestamp"/>
-                  <arg value="--options"/>
-                  <arg value="runtime"/>
-                  <arg value="${mac.jre.path}/Contents/Home/lib/libjli.dylib" />
-                </exec>
-
-                <!-- Codesign jars with native code in them -->
-                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.jre.path}/Contents/Home/lib" failonerror="true">
-                  <arg value="${basedir}/apple_certs/codesign.sh" />
-                  <arg value="OpenRefine.app" />
-                  <arg value="${mac.signing.identity}" />
-                  <arg value="../../Entitlements.plist" />
-                </exec>
-
-                <!-- Codesign app -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
-                  <arg value="--entitlements" />
-                  <arg value="../Entitlements.plist" />
-                  <arg value="--sign"/>
-                  <arg value="${mac.signing.identity}"/>
-                  <arg value="--deep"/>
-                  <arg value="--force"/>
-                  <arg value="--timestamp"/>
-                  <arg value="--options"/>
-                  <arg value="runtime"/>
-                  <arg value="${mac.build.directory}/OpenRefine.app"/>
-                </exec>
-
               </target>
             </configuration>
           </execution>
@@ -584,9 +537,8 @@
               <include>true</include>
               <location>${mac.jre.path}</location>
             </jdk>
-            <nativeBinary>${mac.native.binary}</nativeBinary>
             <dmg>
-              <generate>false</generate>
+              <generate>true</generate>
               <additionalResources>
                 <fileSet>
                   <directory>target</directory>
@@ -618,6 +570,8 @@
               <identity>${mac.signing.identity}</identity>
               <enable>true</enable>
               <preserveMetadata>entitlements</preserveMetadata>
+              <hardened>true</hardened>
+              <entitlementsFile>${basedir}/Entitlements.plist</entitlementsFile>
             </codesign>
           </configuration>
           <executions>
@@ -634,49 +588,6 @@
                 <dmg>
                   <dmgFileName>${mac.dmg.filename}</dmgFileName>
                 </dmg>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>3.2.0</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>run</goal>
-              </goals>
-              <id>codesign-and-generate-dmg</id>
-              <configuration>
-                <target name="codesignAndGenerateDMG" description="Codesign and generate DMG">
-
-                  <!-- Codesign app a second time so we can include hardened runtime -->
-                  <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign" failonerror="true" >
-                    <arg value="--entitlements" />
-                    <arg value="../Entitlements.plist" />
-                    <arg value="--sign"/>
-                    <arg value="${mac.signing.identity}"/>
-                    <arg value="--deep"/>
-                    <arg value="--force"/>
-                    <arg value="--timestamp"/>
-                    <arg value="--options"/>
-                    <arg value="runtime"/>
-                    <arg value="OpenRefine.app"/>
-                  </exec>
-
-                  <!-- Build DMG -->
-                  <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil" failonerror="true">
-                    <arg value="create" />
-                    <arg value="-srcfolder" />
-                    <arg value="OpenRefine.app" />
-                    <arg value="-volname"/>
-                    <arg value="OpenRefine"/>
-                    <arg value="${mac.dmg.path}"/>
-                  </exec>
-
-                </target>
               </configuration>
             </execution>
           </executions>
