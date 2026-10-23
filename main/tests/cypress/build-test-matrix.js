@@ -72,12 +72,12 @@ groups.forEach((group) => {
 });
 
 // step2 , add a last group that contains missed files
-const allSpecFiles = glob.sync(`./main/tests/cypress/cypress/e2e/**/*.cy.js`);
+const allSpecFiles = glob.sync(`main/tests/cypress/cypress/e2e/**/*.cy.js`);
 const missedFiles = [];
 
 for (const file of allSpecFiles) {
-  const relativeFile = file.substring('./main/tests/cypress/'.length);
-  if (!matchedFiles.includes(file.substring(2))) {
+  const relativeFile = file.substring('main/tests/cypress/'.length);
+  if (!matchedFiles.includes(file)) {
     missedFiles.push(relativeFile);
   }
 }
