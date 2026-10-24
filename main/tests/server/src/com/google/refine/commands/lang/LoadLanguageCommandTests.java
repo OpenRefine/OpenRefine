@@ -4,10 +4,13 @@ package com.google.refine.commands.lang;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.servlet.ServletException;
 
@@ -132,5 +135,60 @@ public class LoadLanguageCommandTests extends CommandTestBase {
         ObjectNode merged = LoadLanguageCommand.mergeLanguages(preferred, fallback);
 
         assertEquals(merged, expected);
+    }
+
+    // tests that valid language files return the correct JSON when called by loadLanguage
+    @Test
+    public void testLoadLanguageWithValidFile() throws IOException {
+        File moduleDir = createLangsDir();
+        Files.writeString(new File(moduleDir, "langs/translation-valid.json").toPath(),
+                "{\"greeting\": \"hello\"}");
+        RefineServlet servlet = mockServletFor(moduleDir);
+
+        ObjectNode result = LoadLanguageCommand.loadLanguage(servlet, "test", "valid");
+
+        assertNotNull(result);
+        assertEquals(result.get("greeting").asText(), "hello");
+    }
+
+    // tests that missing language files return null when called by loadLanguage
+    @Test
+    public void testLoadLanguageWithMissingFile() throws IOException {
+        File moduleDir = createLangsDir();
+        RefineServlet servlet = mockServletFor(moduleDir);
+
+        ObjectNode result = LoadLanguageCommand.loadLanguage(servlet, "test", "zz");
+
+        assertNull(result);
+    }
+
+    // tests that malformed language files return null when called by loadLanguage
+    @Test
+    public void testLoadLanguageWithMalformedFile() throws IOException {
+        File moduleDir = createLangsDir();
+        Files.writeString(new File(moduleDir, "langs/translation-broken.json").toPath(),
+                "{\"greeting\":");
+        RefineServlet servlet = mockServletFor(moduleDir);
+
+        ObjectNode result = LoadLanguageCommand.loadLanguage(servlet, "test", "broken");
+
+        assertNull(result);
+    }
+
+    // creates a temporary directory with a subdirectory called langs
+    private File createLangsDir() throws IOException {
+        File moduleDir = TestUtils.createTempDirectory("openrefine-test-lang-module");
+        File langsDir = new File(moduleDir, "langs");
+        langsDir.mkdirs();
+        return moduleDir;
+    }
+
+    // creates a fake servlet that tells load language to load from the temp folder
+    private RefineServlet mockServletFor(File moduleDir) {
+        ButterflyModule module = mock(ButterflyModule.class);
+        when(module.getPath()).thenReturn(moduleDir);
+        RefineServlet servlet = mock(RefineServlet.class);
+        when(servlet.getModule("test")).thenReturn(module);
+        return servlet;
     }
 }
