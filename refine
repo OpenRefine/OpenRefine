@@ -96,10 +96,12 @@ check_running() {
 
     CHECK_STR="<title>OpenRefine</title>"
     URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
+    # curl and wget match these against the host name in the URL, not the address it resolves to
+    NO_PROXY_HOSTS="127.0.0.1,localhost"
 
     if [ -n "$REFINE_SOCKET" ] ; then
         if [ "$CURL" ] ; then
-            RUNNING=`curl --unix-socket $REFINE_SOCKET --noproxy 127.0.0.1 -s http://localhost | grep "$CHECK_STR"`
+            RUNNING=`curl --unix-socket $REFINE_SOCKET --noproxy $NO_PROXY_HOSTS -s http://localhost | grep "$CHECK_STR"`
         else
             # wget does not support connecting to unix domain sockets
             # instead use a simple filesystem check to determine whether a file exists at the socket path
@@ -113,13 +115,13 @@ check_running() {
     fi
 
     if [ "$CURL" ] ; then
-        curl --noproxy 127.0.0.1 -s -S -f $URL > /dev/null 2>&1
+        curl --noproxy $NO_PROXY_HOSTS -s -S -f $URL > /dev/null 2>&1
         CURL_RETURN=$?
         if [ $CURL_RETURN -eq "7" ] || [ $CURL_RETURN -eq "22" ]  ; then
             NOT_RUNNING="1"
         fi
     elif [ "$WGET" ] ; then
-        no_proxy=127.0.0.1 wget -O - $URL > /dev/null 2>&1  
+        no_proxy=$NO_PROXY_HOSTS wget -O - $URL > /dev/null 2>&1
         if [ "$?" = "4" ] ; then
             NOT_RUNNING="1"
         fi
@@ -127,9 +129,9 @@ check_running() {
 
     if [ -z "${NOT_RUNNING}" ] ; then
         if [ "$CURL" ] ; then
-            RUNNING=`curl --noproxy 127.0.0.1 -s $URL | grep "$CHECK_STR"`
+            RUNNING=`curl --noproxy $NO_PROXY_HOSTS -s $URL | grep "$CHECK_STR"`
         elif [ "$WGET" ] ; then
-            RUNNING=`no_proxy=127.0.0.1 wget -O - $URL| grep "$CHECK_STR"` 
+            RUNNING=`no_proxy=$NO_PROXY_HOSTS wget -O - $URL| grep "$CHECK_STR"`
         fi    
         
         if [ -z "${RUNNING}" ] ; then
