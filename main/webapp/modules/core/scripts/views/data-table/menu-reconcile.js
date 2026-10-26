@@ -274,7 +274,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       .html($.i18n('core-buttons/ok'))
       .appendTo(footer);
 
-    form.on('submit', function() {
+    form.on('submit', function(event) {
+          event.preventDefault();
           var service = select.val();
           var identifierSpace = null;
           var schemaSpace = null;
@@ -287,8 +288,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           if (identifierSpace === null) {
               alert($.i18n('core-views/choose-reconciliation-service-alert'));
           } else {
-              onSelect(service, identifierSpace, schemaSpace);
+              // dismiss this dialog first: onSelect can open another one (such as
+              // the confirmation of history erasure) which must not be dismissed with it
               DialogSystem.dismissUntil(level - 1);
+              onSelect(service, identifierSpace, schemaSpace);
           }
       });
 

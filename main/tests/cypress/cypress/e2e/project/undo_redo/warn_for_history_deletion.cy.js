@@ -85,4 +85,29 @@ describe(__filename, function () {
     // There are no future changes anymore, since they have been deleted
     cy.get('.history-panel-body .history-future a').should('not.exist');
   });
+
+  it('Use values as identifiers after undoing some changes', function () {
+    const fixture = [
+      ['identifier', 'other'],
+      ['2253634', 'a'],
+      ['2328088', 'b'],
+    ];
+    cy.loadAndVisitProject(fixture);
+
+    // delete a column, then undo it
+    cy.deleteColumn('other');
+    cy.get('#or-proj-undoRedo').click();
+    cy.get('.history-panel-body .history-past a.history-entry:first-of-type').click();
+    cy.get('.history-panel-body .history-future').should('to.contain', 'Remove column other');
+
+    cy.columnActionClick('identifier', ['Reconcile', 'Use values as identifiers']);
+    cy.get('.recon-service-selection-dialog .dialog-footer button').contains('OK').click();
+
+    // ensure we get a dialog warning us for deletion of changes
+    cy.get('.dialog-header').should('to.contain', 'Confirm deletion of project history');
+    cy.get('.dialog-footer .button-primary').contains('Apply anyway').click();
+
+    cy.assertColumnIsReconciled('identifier');
+    cy.get('.history-panel-body .history-future a').should('not.exist');
+  });
 });
