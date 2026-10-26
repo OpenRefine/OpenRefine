@@ -365,7 +365,7 @@
     "core-util-enc/aliases": "Mga alyas",
     "core-views/all": "Ang lahat",
     "core-views/custom-facet": "I-custom ang Facet sa kolum",
-    "core-views/copy-recon-judg": "Kopyahin ang mga hatol sa recon mula sa kolum",
+    "core-views/copy-recon-judg": "Kopyahin ang mga hatol sa recon mula sa kolum $1",
     "core-views/to-date": "Para sa petsa…",
     "core-views/to-date/header": "Para sa petsa",
     "core-views/to-date/single": "Para sa petsa",

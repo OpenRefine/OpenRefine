@@ -365,7 +365,7 @@
     "core-util-enc/aliases": "aliases",
     "core-views/all": "lahat",
     "core-views/custom-facet": "Pasadyang Facet sa haligi",
-    "core-views/copy-recon-judg": "Kopyahin ang mga paghuhusga ng haligi mula sa haligi",
+    "core-views/copy-recon-judg": "Kopyahin ang mga paghuhusga ng haligi mula sa haligi $1",
     "core-views/to-date": "Sa ngayon…",
     "core-views/to-date/header": "Sa ngayon",
     "core-views/to-date/single": "Sa ngayon",
