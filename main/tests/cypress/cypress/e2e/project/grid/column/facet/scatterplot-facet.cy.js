@@ -97,7 +97,7 @@ describe(__filename, function () {
     // jQuery imgareaselect widget
     cy.url().then((url) => {
       const projectId = url.split('=').slice(-1)[0];
-      const openRefineUrl = Cypress.env('OPENREFINE_URL');
+      const openRefineUrl = Cypress.expose('OPENREFINE_URL');
 
       cy.request(openRefineUrl + '/command/core/get-csrf-token').then((tokenResp) => {
         const csrfToken = tokenResp.body.token;
