@@ -145,19 +145,20 @@ public class SqlCreateBuilder {
         }
 
         StringBuffer sql = new StringBuffer();
+        String quotedTable = addQuotes(table);
 
         boolean includeDrop = JSONUtilities.getBoolean(options, "includeDropStatement", false);
         boolean addIfExist = JSONUtilities.getBoolean(options, "includeIfExistWithDropStatement", true);
         if (includeDrop) {
             if (addIfExist) {
-                sql.append("DROP TABLE IF EXISTS " + table + ";\n");
+                sql.append("DROP TABLE IF EXISTS " + quotedTable + ";\n");
             } else {
-                sql.append("DROP TABLE " + table + ";\n");
+                sql.append("DROP TABLE " + quotedTable + ";\n");
             }
 
         }
 
-        sql.append("CREATE TABLE ").append(table);
+        sql.append("CREATE TABLE ").append(quotedTable);
         sql.append(" (").append("\n");
         sql.append(createSB.toString());
         sql.append(")").append(";" + "\n");

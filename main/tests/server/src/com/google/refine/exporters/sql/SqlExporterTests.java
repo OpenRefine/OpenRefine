@@ -39,6 +39,7 @@ import static org.testng.Assert.assertNotEquals;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -128,8 +129,8 @@ public class SqlExporterTests extends RefineTest {
         logger.debug("result = \n" + result);
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
-        boolean checkResult = result.contains("CREATE TABLE " + tableName);
-        checkResult = result.contains("INSERT INTO " + tableName);
+        boolean checkResult = result.contains("CREATE TABLE \"" + tableName + "\"");
+        checkResult = result.contains("INSERT INTO \"" + tableName + "\"");
         Assert.assertEquals(checkResult, true);
 
     }
@@ -170,7 +171,7 @@ public class SqlExporterTests extends RefineTest {
 
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
-        Assert.assertTrue(result.contains("INSERT INTO " + tableName));
+        Assert.assertTrue(result.contains("INSERT INTO \"" + tableName + "\""));
 
     }
 
@@ -187,10 +188,10 @@ public class SqlExporterTests extends RefineTest {
         String result = writer.toString();
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
-        boolean checkResult = result.contains("CREATE TABLE " + tableName);
+        boolean checkResult = result.contains("CREATE TABLE \"" + tableName + "\"");
         Assert.assertEquals(checkResult, false);
 
-        checkResult = result.contains("INSERT INTO " + tableName);
+        checkResult = result.contains("INSERT INTO \"" + tableName + "\"");
         Assert.assertEquals(checkResult, true);
 
     }
@@ -208,10 +209,10 @@ public class SqlExporterTests extends RefineTest {
         String result = writer.toString();
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
-        boolean checkResult = result.contains("CREATE TABLE " + tableName);
+        boolean checkResult = result.contains("CREATE TABLE \"" + tableName + "\"");
         Assert.assertEquals(checkResult, true);
 
-        checkResult = result.contains("INSERT INTO " + tableName);
+        checkResult = result.contains("INSERT INTO \"" + tableName + "\"");
         Assert.assertEquals(checkResult, false);
 
     }
@@ -234,13 +235,13 @@ public class SqlExporterTests extends RefineTest {
 //        assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
 //        assertNotEquals(writer.toString(), SqlExporter.NO_COL_SELECTED_ERROR);
 
-        boolean checkResult = result.contains("CREATE TABLE " + tableName);
+        boolean checkResult = result.contains("CREATE TABLE \"" + tableName + "\"");
         Assert.assertEquals(checkResult, true);
 
-        checkResult = result.contains("INSERT INTO " + tableName);
+        checkResult = result.contains("INSERT INTO \"" + tableName + "\"");
         Assert.assertEquals(checkResult, true);
 
-        checkResult = result.contains("DROP TABLE IF EXISTS " + tableName + ";");
+        checkResult = result.contains("DROP TABLE IF EXISTS \"" + tableName + "\";");
         Assert.assertEquals(checkResult, true);
 
     }
@@ -280,14 +281,14 @@ public class SqlExporterTests extends RefineTest {
         String result = writer.toString();
         logger.debug("\nresult:={} ", result);
 
-        Assert.assertTrue(result.contains("DROP TABLE IF EXISTS sql_table_test;\n" +
-                "CREATE TABLE sql_table_test (\n" +
+        Assert.assertTrue(result.contains("DROP TABLE IF EXISTS \"sql_table_test\";\n" +
+                "CREATE TABLE \"sql_table_test\" (\n" +
                 "\"_column_0_\" VARCHAR(100) NOT NULL,\n" +
                 "\"_column_1_\" VARCHAR(100) NOT NULL,\n" +
                 "\"_column_2_\" VARCHAR(100) NOT NULL,\n" +
                 "\"_column_3_\" VARCHAR(100) NOT NULL\n" +
                 ");\n" +
-                "INSERT INTO sql_table_test (\"_column_0_\",\"_column_1_\",\"_column_2_\",\"_column_3_\") VALUES \n" +
+                "INSERT INTO \"sql_table_test\" (\"_column_0_\",\"_column_1_\",\"_column_2_\",\"_column_3_\") VALUES \n" +
                 "( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
 
     }
@@ -355,16 +356,59 @@ public class SqlExporterTests extends RefineTest {
         String result = writer.toString();
         logger.debug("\nresult:={} ", result);
 
-        Assert.assertTrue(result.contains("DROP TABLE IF EXISTS sql_table_test;\n" +
-                "CREATE TABLE sql_table_test (\n" +
+        Assert.assertTrue(result.contains("DROP TABLE IF EXISTS \"sql_table_test\";\n" +
+                "CREATE TABLE \"sql_table_test\" (\n" +
                 "\"column0\" VARCHAR(100) NOT NULL,\n" +
                 "\"column1\" VARCHAR(100) NOT NULL,\n" +
                 "\"column2\" VARCHAR(100) NOT NULL,\n" +
                 "\"column3\" VARCHAR(100) NOT NULL\n" +
                 ");\n" +
-                "INSERT INTO sql_table_test (\"column0\",\"column1\",\"column2\",\"column3\") VALUES \n" +
+                "INSERT INTO \"sql_table_test\" (\"column0\",\"column1\",\"column2\",\"column3\") VALUES \n" +
                 "( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
 
+    }
+
+    @Test
+    public void testExportSqlQuotesNumericTableName() throws IOException {
+        createGrid(1, 2);
+        String tableName = "20240503";
+        ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
+        optionsJson.put("includeStructure", true);
+        optionsJson.put("includeDropStatement", true);
+
+        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        SUT.export(project, options, engine, writer);
+
+        String result = writer.toString();
+        logger.debug("\nresult:={} ", result);
+
+        Assert.assertTrue(result.contains("DROP TABLE IF EXISTS \"20240503\";\n" +
+                "CREATE TABLE \"20240503\" (\n" +
+                "\"column0\" VARCHAR(100) NOT NULL,\n" +
+                "\"column1\" VARCHAR(100) NOT NULL\n" +
+                ");\n" +
+                "INSERT INTO \"20240503\" (\"column0\",\"column1\") VALUES \n" +
+                "( 'row0cell0','row0cell1' )"));
+    }
+
+    @Test
+    public void testTableNameWithDoubleQuoteIsEscaped() {
+        createGrid(1, 1);
+        String tableName = "my\"table";
+        ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
+        optionsJson.put("includeDropStatement", true);
+        optionsJson.put("includeIfExistWithDropStatement", false);
+        List<String> columns = project.columnModel.columns.stream().map(col -> col.getName()).collect(Collectors.toList());
+        List<ArrayList<SqlData>> rows = new ArrayList<>();
+        ArrayList<SqlData> row = new ArrayList<>();
+        row.add(new SqlData("column0", "row0cell0", "row0cell0"));
+        rows.add(row);
+
+        String createSql = new SqlCreateBuilder(tableName, columns, optionsJson).getCreateSQL();
+        String insertSql = new SqlInsertBuilder(tableName, columns, rows, optionsJson).getInsertSQL();
+
+        Assert.assertTrue(createSql.startsWith("DROP TABLE \"my\"\"table\";\nCREATE TABLE \"my\"\"table\" (\n"));
+        Assert.assertTrue(insertSql.startsWith("INSERT INTO \"my\"\"table\" (\"column0\") VALUES \n"));
     }
 
     // helper methods
