@@ -1,8 +1,9 @@
 ---
 name: Feature request
-about: Suggest an idea for OpenRefine
+type: feature
+about: Suggest a feature or enhancement for OpenRefine
 title: ''
-labels: ["Type: Feature Request", "Status: Pending Review"]
+labels: ['Status: Pending Review']
 assignees: ''
 
 ---
