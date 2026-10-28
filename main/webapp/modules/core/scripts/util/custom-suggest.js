@@ -38,6 +38,7 @@ function sanitizeSuggestOptions(options) {
     query_param_name: options.query_param_name,
     access: options.access,
     formatter_url: options.formatter_url,
+    view_url: options.view_url,
     service_url:options.service_url,
     service_path:options.service_path,
   };
