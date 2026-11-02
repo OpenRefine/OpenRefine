@@ -205,7 +205,7 @@ Cypress.Commands.add('selectClojure', () => {
   cy.get('@clojureTextarea').type('(');
   cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
   // Wait for Clojure interpreter to load (as indicated by changed error message)
-  cy.get('.expression-preview-parsing-status').contains('Syntax error reading source');
+  cy.get('.expression-preview-parsing-status').contains('EOF while reading');
 });
 
 /**
