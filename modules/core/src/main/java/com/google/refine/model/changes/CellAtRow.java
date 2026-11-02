@@ -36,8 +36,8 @@ package com.google.refine.model.changes;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Objects;
-import java.util.Properties;
 
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Cell;
 import com.google.refine.util.Pool;
 
@@ -51,7 +51,7 @@ public class CellAtRow {
         this.cell = cell;
     }
 
-    public void save(Writer writer, Properties options) throws IOException {
+    public void save(Writer writer, SaveOptions options) throws IOException {
         writer.write(Integer.toString(row));
         writer.write(';');
         if (cell != null) {

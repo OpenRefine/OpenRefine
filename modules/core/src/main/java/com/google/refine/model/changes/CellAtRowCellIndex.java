@@ -35,10 +35,10 @@ package com.google.refine.model.changes;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Cell;
 import com.google.refine.util.Pool;
 
@@ -55,7 +55,7 @@ public class CellAtRowCellIndex {
         this.cellIndex = cellIndex;
     }
 
-    public void save(Writer writer, Properties options) throws IOException {
+    public void save(Writer writer, SaveOptions options) throws IOException {
         writer.write(Integer.toString(row));
         writer.write(';');
         writer.write(Integer.toString(cellIndex));

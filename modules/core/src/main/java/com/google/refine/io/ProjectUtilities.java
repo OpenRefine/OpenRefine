@@ -91,8 +91,7 @@ public class ProjectUtilities {
     }
 
     protected static void saveToFile(Project project, File file) throws IOException {
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
-        try {
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
             Pool pool = new Pool();
 
             out.putNextEntry(new ZipEntry("data.txt"));
@@ -108,8 +107,6 @@ public class ProjectUtilities {
             } finally {
                 out.closeEntry();
             }
-        } finally {
-            out.close();
         }
     }
 
