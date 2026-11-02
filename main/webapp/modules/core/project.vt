@@ -44,7 +44,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </script>
     <script type="text/javascript" src="wirings.js"></script>
     $scriptInjection
-    <script>Refine.encodings = $encodingJson;</script>
+    <script type="text/javascript">
+      // Fetch encodings from API
+      (function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'command/core/get-encodings', false); // synchronous
+        xhr.send(null);
+
+        if (xhr.status === 200) {
+          window.Refine = window.Refine || {};
+          window.Refine.encodings = JSON.parse(xhr.responseText);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="header">
