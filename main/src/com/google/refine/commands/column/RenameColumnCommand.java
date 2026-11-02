@@ -53,6 +53,7 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.column.ColumnRenameOperation;
 import com.google.refine.process.Process;
 
+// TODO: Can this extend OperationCommand and avoid the duplication of code with other column operations?
 public class RenameColumnCommand extends Command {
 
     protected static class RenameResult extends HistoryEntryResponse {
