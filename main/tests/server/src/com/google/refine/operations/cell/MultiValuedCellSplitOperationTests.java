@@ -162,9 +162,9 @@ public class MultiValuedCellSplitOperationTests extends RefineTest {
 
     @Test
     public void testValidate() {
-        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellSplitOperation(null, "key", "sep", false).validate());
-        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellSplitOperation("value", null, "sep", false).validate());
-        assertThrows(IllegalArgumentException.class, () -> new MultiValuedCellSplitOperation("value", "key", null, false).validate());
+        assertThrows(NullPointerException.class, () -> new MultiValuedCellSplitOperation(null, "key", "sep", false).validate());
+        assertThrows(NullPointerException.class, () -> new MultiValuedCellSplitOperation("value", null, "sep", false).validate());
+        assertThrows(NullPointerException.class, () -> new MultiValuedCellSplitOperation("value", "key", null, false).validate());
     }
 
     @Test

@@ -4,7 +4,7 @@ package com.google.refine.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * A column added by an operation, part of a {@link ColumnsDiff}. <br>

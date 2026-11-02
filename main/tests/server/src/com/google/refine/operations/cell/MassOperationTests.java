@@ -181,11 +181,11 @@ public class MassOperationTests extends RefineTest {
     public void testValidate() {
         assertThrows(IllegalArgumentException.class,
                 () -> new MassEditOperation(invalidEngineConfig, "foo", "grel:value", editsWithFromBlank).validate());
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NullPointerException.class,
                 () -> new MassEditOperation(defaultEngineConfig, null, "grel:value", editsWithFromBlank).validate());
         assertThrows(IllegalArgumentException.class,
                 () -> new MassEditOperation(defaultEngineConfig, "foo", "grel:invalid(", editsWithFromBlank).validate());
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NullPointerException.class,
                 () -> new MassEditOperation(defaultEngineConfig, "foo", "grel:value", null).validate());
     }
 
