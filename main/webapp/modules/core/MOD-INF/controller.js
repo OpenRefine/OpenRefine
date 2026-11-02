@@ -91,6 +91,8 @@ function registerCommands() {
 
   RS.registerCommand(module, "compute-facets", new Packages.com.google.refine.commands.browsing.ComputeFacetsCommand());
   RS.registerCommand(module, "compute-clusters", new Packages.com.google.refine.commands.browsing.ComputeClustersCommand());
+  RS.registerCommand(module, "get-clustering-status", new Packages.com.google.refine.commands.browsing.GetClusteringStatusCommand());
+  RS.registerCommand(module, "cancel-clustering", new Packages.com.google.refine.commands.browsing.CancelClusteringCommand());
   RS.registerCommand(module, "get-clustering-functions-and-distances", new Packages.com.google.refine.commands.browsing.GetClusteringFunctionsAndDistancesCommand());
 
   RS.registerCommand(module, "edit-one-cell", new Packages.com.google.refine.commands.cell.EditOneCellCommand());
