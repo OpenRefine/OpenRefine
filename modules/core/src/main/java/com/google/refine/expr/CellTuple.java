@@ -33,7 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import java.util.List;
 import java.util.Properties;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
@@ -62,6 +65,12 @@ public class CellTuple implements HasFields {
             }
         }
         return null;
+    }
+
+    @JsonIgnore
+    @Override
+    public List<String> getFieldNames() {
+        return project.columnModel.getColumnNames();
     }
 
     @Override
