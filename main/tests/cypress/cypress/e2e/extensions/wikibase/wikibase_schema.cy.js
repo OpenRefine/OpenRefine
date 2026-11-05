@@ -87,10 +87,10 @@ describe('SchemaAlignment.setUpTabs', () => {
         }).then(() => {
           cy.visit(openRefineUrl + '/project?project=' + projectId);
           cy.waitForProjectTable();
-          // loadWikibases applies the site IRI only after the manifests preference returns.
-          cy.window().should((win) => {
-            expect(win.WikibaseManager.getSelectedWikibaseName()).to.equal('Wikimedia Commons');
-          });
+          // loadWikibases applies the site IRI after the manifests preference returns, then
+          // setUpTabs renders the instance selector. WikibaseManager is a top-level const,
+          // so it is not a property of window and cannot be read as win.WikibaseManager.
+          cy.get('#wikibase-instance-selector').should('have.value', 'Wikimedia Commons');
 
           cy.get('#extension-bar-menu-container').contains('Wikibase').click();
           cy.get('.menu-container a').contains('Edit Wikibase schema').click();
