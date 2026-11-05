@@ -172,14 +172,16 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void trimLeadingTrailingWhitespaceOnTrimStrings() throws Exception {
-        String ScraperwikiOutput = "[\n" +
-                "{\n" +
-                "        \"school\": \"  University of Cambridge  \",\n" +
-                "        \"name\": \"          Amy Zhang                   \",\n" +
-                "        \"student-faculty-score\": \"100\",\n" +
-                "        \"intl-student-score\": \"95\"\n" +
-                "    }\n" +
-                "]\n";
+        String ScraperwikiOutput = """
+                [
+                {
+                        "school": "  University of Cambridge  ",
+                        "name": "          Amy Zhang                   ",
+                        "student-faculty-score": "100",
+                        "intl-student-score": "95"
+                    }
+                ]
+                """;
         RunTest(ScraperwikiOutput, true);
 
         Project expectedProject = createProject(
@@ -192,14 +194,16 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings() throws Exception {
-        String ScraperwikiOutput = "[\n" +
-                "{\n" +
-                "        \"school\": \"  University of Cambridge  \",\n" +
-                "        \"name\": \"          Amy Zhang                   \",\n" +
-                "        \"student-faculty-score\": \"100\",\n" +
-                "        \"intl-student-score\": \"95\"\n" +
-                "    }\n" +
-                "]\n";
+        String ScraperwikiOutput = """
+                [
+                {
+                        "school": "  University of Cambridge  ",
+                        "name": "          Amy Zhang                   ",
+                        "student-faculty-score": "100",
+                        "intl-student-score": "95"
+                    }
+                ]
+                """;
         RunTest(ScraperwikiOutput);
 
         Project expectedProject = createProject(
@@ -325,32 +329,32 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void testJSONMinimumArray() throws Exception {
-        String ScraperwikiOutput = "[\n" +
-                "{\n" +
-                "        \"school\": \"University of Cambridge\\n" +
-                "                            United Kingdom\",\n" +
-                "        \"student-faculty-score\": \"100\",\n" +
-                "        \"intl-student-score\": \"95\",\n" +
-                "        \"intl-faculty-score\": \"96\",\n" +
-                "        \"rank\": \"#1\",\n" +
-                "        \"peer-review-score\": \"100\",\n" +
-                "        \"emp-review-score\": \"100\",\n" +
-                "        \"score\": \"100.0\",\n" +
-                "        \"citations-score\": \"93\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"school\": \"Harvard University\\n" +
-                "                            United States\",\n" +
-                "        \"student-faculty-score\": \"97\",\n" +
-                "        \"intl-student-score\": \"87\",\n" +
-                "        \"intl-faculty-score\": \"71\",\n" +
-                "        \"rank\": \"#2\",\n" +
-                "        \"peer-review-score\": \"100\",\n" +
-                "        \"emp-review-score\": \"100\",\n" +
-                "        \"score\": \"99.2\",\n" +
-                "        \"citations-score\": \"100\"\n" +
-                "    }\n" +
-                "]\n";
+        String ScraperwikiOutput = """
+                [
+                {
+                        "school": "University of Cambridge\\n                            United Kingdom",
+                        "student-faculty-score": "100",
+                        "intl-student-score": "95",
+                        "intl-faculty-score": "96",
+                        "rank": "#1",
+                        "peer-review-score": "100",
+                        "emp-review-score": "100",
+                        "score": "100.0",
+                        "citations-score": "93"
+                    },
+                    {
+                        "school": "Harvard University\\n                            United States",
+                        "student-faculty-score": "97",
+                        "intl-student-score": "87",
+                        "intl-faculty-score": "71",
+                        "rank": "#2",
+                        "peer-review-score": "100",
+                        "emp-review-score": "100",
+                        "score": "99.2",
+                        "citations-score": "100"
+                    }
+                ]
+                """;
         RunTest(ScraperwikiOutput);
 
         Project expectedProject = createProject(
@@ -705,11 +709,10 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     private static String getSampleWithError() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        sb.append("{\"id\":" + "\"\n\";");
-        sb.append("]");
-        return sb.toString();
+        return """
+                [{"id": "
+                ";]
+                """;
     }
 
     private void RunTest(String testString) {
