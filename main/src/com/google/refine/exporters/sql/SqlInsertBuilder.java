@@ -128,6 +128,10 @@ public class SqlInsertBuilder {
 
                         handleNullField(allowNullChkBox, defaultValue, nullValueNull, val.getColumnName(), rowValue, false);
 
+                    } else if (val.getValue() instanceof Boolean) {// booleans are exported as 1 or 0
+
+                        rowValue.append((Boolean) val.getValue() ? "1" : "0");
+
                     } else {// value not null
 
                         if (type.equals(SqlData.SQL_TYPE_NUMERIC)) {// test if number is numeric (decimal(p,s) number is
