@@ -166,8 +166,8 @@ public class JsonImporterTests extends ImporterTest {
                 options,
                 exceptions);
         Assert.assertFalse(exceptions.isEmpty());
-        assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate Object entries",
-                exceptions.get(0).getMessage());
+        assertEquals(exceptions.get(0).getMessage(),
+                "Unexpected character (';' (code 59)): was expecting comma to separate Object entries");
     }
 
     @Test
@@ -385,8 +385,8 @@ public class JsonImporterTests extends ImporterTest {
             }
             i++;
             if (i == 3) {
-                assertEquals(Token.Value, token);
-                assertEquals("field", parser.getFieldName());
+                assertEquals(token, Token.Value);
+                assertEquals(parser.getFieldName(), "field");
             }
         }
 
@@ -400,7 +400,7 @@ public class JsonImporterTests extends ImporterTest {
             }
             i++;
             if (i == 3) {
-                assertEquals(Token.StartEntity, token);
+                assertEquals(token, Token.StartEntity);
                 assertEquals(parser.getFieldName(), "field");
             }
         }
@@ -444,9 +444,9 @@ public class JsonImporterTests extends ImporterTest {
             }
             i++;
             if (i == 3) {
-                assertEquals(Token.Value, token);
-                assertEquals("\tfield", parser.getFieldName());
-                assertEquals("\tvalue", parser.getFieldValue());
+                assertEquals(token, Token.Value);
+                assertEquals(parser.getFieldName(), "\tfield");
+                assertEquals(parser.getFieldValue(), "\tvalue");
             }
         }
     }
