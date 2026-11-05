@@ -382,7 +382,7 @@
     "core-views/blanks": "空白",
     "core-views/errors": "错误",
     "core-views/search-fb-topic": "搜索与所有已过滤单元格匹配的项目：",
-    "core-views/copy-recon-judg": "复制预判，从列",
+    "core-views/copy-recon-judg": "复制预判，从列 $1",
     "core-views/copy-to-col": "复制到列",
     "core-views/copy-opt": "复制选项",
     "core-views/apply-to-cell": "应用于已审查单元格",
