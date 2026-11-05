@@ -143,7 +143,7 @@ public class JsonImporterTests extends ImporterTest {
         assertEquals(options.get("error").asText(),
                 "com.fasterxml.jackson.core.JsonParseException: Unexpected character (';' (code 59)): was expecting comma to separate Object entries\n"
                         +
-                        " at [Source: (File); line: 1, column: 11]");
+                        " at [Source: (File); line: 2, column: 2]");
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, JsonImporter.ANONYMOUS);
         JSONUtilities.safePut(options, "recordPath", path);
