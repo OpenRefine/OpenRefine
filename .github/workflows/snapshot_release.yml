@@ -306,7 +306,15 @@ jobs:
         APPLE_BUILD_KEY: |
           ${{ secrets.APPLE_BUILD_KEY }}
 
-    # TODO: Split this into multiple steps so that Mac notarization doesn't get other builds
+    # mvn package runs `stapler staple` after notarization, but this often doesn't work on Github Intel runners
+    # stapler talks to api.apple-cloudkit.com over HTTP/3 (UDP 443), which the Intel runners drop about half the
+    # time since 2026-10-12 ("The network connection was lost", Error 68). Blocking UDP 443 makes it fall back to
+    # HTTPS over TCP, which works. Remove once actions/runner-images#14924 is fixed.
+    - name: Work around stapler network failures (actions/runner-images#14924)
+      run: |
+        echo "block return out quick proto udp from any to any port 443" | sudo pfctl -f -
+        sudo pfctl -E
+
     - name: Package and upload to OSSRH
       run: |
         mvn -B ${{ matrix.maven_goal }} -DskipTests=true -Dmac.arch=${{ matrix.architecture }} -Dmac.native.binary=${{ matrix.native_binary }} \
