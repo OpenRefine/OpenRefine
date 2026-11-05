@@ -136,7 +136,7 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(fileRecord, "format", "text/json");
         JSONUtilities.safePut(fileRecord, "fileName", "(clipboard)");
         File jsonFile = new File(job.getRawDataDir(), "test.json");
-        Files.write(jsonFile.toPath(), errJSON.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(jsonFile.toPath(), errJSON);
         JSONUtilities.safePut(fileRecord, "location", "test.json");
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, List.of(fileRecord), "text/json");
@@ -375,7 +375,7 @@ public class JsonImporterTests extends ImporterTest {
         String sampleJson2 = "{\"field\":{}}";
         String sampleJson3 = "{\"field\":[{},{}]}";
 
-        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
+        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes(StandardCharsets.UTF_8)));
         Token token = Token.Ignorable;
         int i = 0;
         while (token != null) {
@@ -390,7 +390,7 @@ public class JsonImporterTests extends ImporterTest {
             }
         }
 
-        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson2.getBytes("UTF-8")));
+        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson2.getBytes(StandardCharsets.UTF_8)));
         token = Token.Ignorable;
         i = 0;
         while (token != null) {
@@ -405,7 +405,7 @@ public class JsonImporterTests extends ImporterTest {
             }
         }
 
-        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson3.getBytes("UTF-8")));
+        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson3.getBytes(StandardCharsets.UTF_8)));
         token = Token.Ignorable;
         i = 0;
         while (token != null) {
@@ -434,7 +434,7 @@ public class JsonImporterTests extends ImporterTest {
         // Use un-escaped tabs here.
         String sampleJson = "{\"\tfield\":\t\"\tvalue\"}";
 
-        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
+        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes(StandardCharsets.UTF_8)));
         Token token = Token.Ignorable;
         int i = 0;
         while (token != null) {
@@ -457,7 +457,7 @@ public class JsonImporterTests extends ImporterTest {
         // This allows error messages to show user data instead of "REDACTED"
         String invalidJson = "{\"test\": invalid}";
 
-        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(invalidJson.getBytes("UTF-8")));
+        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(invalidJson.getBytes(StandardCharsets.UTF_8)));
 
         try {
             while (parser.hasNext()) {
@@ -733,7 +733,8 @@ public class JsonImporterTests extends ImporterTest {
     private String getComplexJSON(String fileName) throws IOException {
         InputStream in = this.getClass().getClassLoader()
                 .getResourceAsStream(fileName);
-        String content = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+        Assert.assertNotNull(in);
+        String content = org.apache.commons.io.IOUtils.toString(in, StandardCharsets.UTF_8);
 
         return content;
     }
