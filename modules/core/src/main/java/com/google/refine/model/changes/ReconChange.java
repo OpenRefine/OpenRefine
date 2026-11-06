@@ -192,6 +192,8 @@ public class ReconChange extends MassCellChange {
                 }
             } else if ("commonColumnName".equals(field)) {
                 commonColumnName = value;
+            } else if ("commonColumnNameJSON".equals(field)) {
+                commonColumnName = ParsingUtilities.mapper.readValue(value, String.class);
             } else if ("cellChangeCount".equals(field)) {
                 int cellChangeCount = Integer.parseInt(value);
 

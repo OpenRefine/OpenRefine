@@ -294,8 +294,8 @@ public class DataExtensionChange implements Change {
 
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("baseColumnName=");
-        writer.write(_baseColumnName);
+        writer.write("baseColumnNameJSON=");
+        writer.write(ParsingUtilities.mapper.writeValueAsString(_baseColumnName));
         writer.write('\n');
         writer.write("service=");
         writer.write(_service);
@@ -309,11 +309,11 @@ public class DataExtensionChange implements Change {
         writer.write("columnInsertIndex=");
         writer.write(Integer.toString(_columnInsertIndex));
         writer.write('\n');
-        writer.write("columnNameCount=");
+        writer.write("columnNameJSONCount=");
         writer.write(Integer.toString(_columnNames.size()));
         writer.write('\n');
         for (String name : _columnNames) {
-            writer.write(name);
+            writer.write(ParsingUtilities.mapper.writeValueAsString(name));
             writer.write('\n');
         }
         writer.write("columnTypeCount=");
@@ -380,6 +380,8 @@ public class DataExtensionChange implements Change {
 
             if ("baseColumnName".equals(field)) {
                 baseColumnName = value;
+            } else if ("baseColumnNameJSON".equals(field)) {
+                baseColumnName = ParsingUtilities.mapper.readValue(value, String.class);
             } else if ("service".equals(field)) {
                 service = value;
             } else if ("identifierSpace".equals(field)) {
@@ -400,14 +402,16 @@ public class DataExtensionChange implements Change {
                         rowIndices.add(Integer.parseInt(line));
                     }
                 }
-            } else if ("columnNameCount".equals(field)) {
+            } else if ("columnNameCount".equals(field) || "columnNameJSONCount".equals(field)) {
                 int count = Integer.parseInt(value);
 
                 columnNames = new ArrayList<String>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        columnNames.add(line);
+                        columnNames.add("columnNameJSONCount".equals(field)
+                                ? ParsingUtilities.mapper.readValue(line, String.class)
+                                : line);
                     }
                 }
             } else if ("columnTypeCount".equals(field)) {
