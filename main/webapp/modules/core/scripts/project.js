@@ -632,6 +632,10 @@ function onLoad() {
       }
     }
 
+    if ("missing-extension-classes" in params) {
+      alert($.i18n('core-project/warning-missing-extensions', params["missing-extension-classes"]));
+    }
+
     Refine.reinitializeProjectData(
       function() {
         initializeUI(uiState);
