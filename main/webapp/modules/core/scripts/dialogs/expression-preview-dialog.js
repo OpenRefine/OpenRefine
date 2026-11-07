@@ -583,9 +583,9 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
         var message = (data.type == "parser") ? data.message : $.i18n('core-dialogs/internal-err');
         this._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
     }
-    
+    var fragment = document.createDocumentFragment();
     for (var i = 0; i < this._values.length; i++) {
-        var tr = table.insertRow(table.rows.length);
+        var tr = document.createElement('tr');
         
         $(tr.insertCell(0)).attr("width", "1%").html((this._rowIndices[i] + 1) + ".");
         
@@ -596,7 +596,9 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
             var v = this._results[i];
             renderValue(tdValue, v);
         }
+        fragment.appendChild(tr);
     }
+    table.appendChild(fragment);
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderClusters = function(clusters) {
