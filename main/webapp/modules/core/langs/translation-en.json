@@ -647,6 +647,7 @@
     "core-views/text-length-facet": "Text length facet",
     "core-views/log-length-facet": "Log of text length facet",
     "core-views/unicode-facet": "Unicode char-code facet",
+    "core-views/hidden-chars-facet": "Hidden characters facet",
     "core-views/facet-error": "Facet by error",
     "core-views/facet-blank": "Facet by blank (null or empty string)",
     "core-views/facet-null": "Facet by null",
