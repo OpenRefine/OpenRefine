@@ -1681,7 +1681,7 @@ SchemaAlignment.setupStringInputValidation = function(input, regex) {
     input.removeClass('wbs-unvalidated-input');
   }).on('blur',function() {
     var currentValue = input.val();
-    if (regex.test(currentValue)) {
+    if (regex.test(currentValue) || currentValue === "#NOVALUE#" || currentValue === "#SOMEVALUE#") {
        input.addClass('wbs-validated-input');
     } else {
        input.addClass('wbs-unvalidated-input');
