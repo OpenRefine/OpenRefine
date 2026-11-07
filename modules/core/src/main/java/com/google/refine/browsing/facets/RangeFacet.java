@@ -366,10 +366,12 @@ public class RangeFacet implements Facet {
 
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "numeric-bin:row-based:" + _config._expression;
-            NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
+            NumericBinIndex index = column == null ? null : (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
                 index = new NumericBinRowIndex(project, rowEvaluable);
-                column.setPrecompute(key, index);
+                if (column != null) {
+                    column.setPrecompute(key, index);
+                }
             }
 
             retrieveDataFromBaseBinIndex(index);
@@ -388,10 +390,12 @@ public class RangeFacet implements Facet {
 
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "numeric-bin:record-based:" + _config._expression;
-            NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
+            NumericBinIndex index = column == null ? null : (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
                 index = new NumericBinRecordIndex(project, rowEvaluable);
-                column.setPrecompute(key, index);
+                if (column != null) {
+                    column.setPrecompute(key, index);
+                }
             }
 
             retrieveDataFromBaseBinIndex(index);
