@@ -40,6 +40,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -73,6 +74,12 @@ public class Cell implements HasFields, Serializable {
     public Cell(Serializable value, Recon recon) {
         this.value = value;
         this.recon = recon;
+    }
+
+    @JsonIgnore
+    @Override
+    public List<String> getFieldNames() {
+        return List.of("value", "recon", "errorMessage");
     }
 
     @Override
