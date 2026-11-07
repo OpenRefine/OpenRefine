@@ -191,7 +191,7 @@ public class SqlInsertBuilder {
 
         StringBuffer sql = new StringBuffer();
 
-        sql.append("INSERT INTO ").append(table);
+        sql.append("INSERT INTO ").append(SqlCreateBuilder.addQuotes(table));
         sql.append(" (");
         sql.append(colNamesWithSep);
         sql.append(") VALUES ").append("\n");
