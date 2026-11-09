@@ -7,7 +7,12 @@ import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -23,7 +28,6 @@ import com.google.refine.process.Process;
 import com.google.refine.translate.TranslationException;
 import com.google.refine.translate.TranslationLanguage;
 import com.google.refine.translate.TranslationService;
-import com.google.refine.util.ParsingUtilities;
 
 public class TranslateColumnOperationTests extends RefineTest {
 
@@ -45,217 +49,249 @@ public class TranslateColumnOperationTests extends RefineTest {
     @Test
     public void testValidate() {
         assertThrows(IllegalArgumentException.class,
-                () -> createOperation("review", null, 10, 1000, 3, "key").validate());
+                () -> createOperation((String) null, TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH).validate());
         assertThrows(IllegalArgumentException.class,
-                () -> createOperation(null, TranslationLanguage.SPANISH, 10, 1000, 3, "key").validate());
+                () -> createOperation("", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH).validate());
         assertThrows(IllegalArgumentException.class,
-                () -> createOperation("review", TranslationLanguage.SPANISH, 10, 1000, 3, "").validate());
+                () -> createOperation("review", null, TranslationLanguage.SPANISH).validate());
         assertThrows(IllegalArgumentException.class,
-                () -> createOperation("review", TranslationLanguage.SPANISH, 21, 1000, 3, "key").validate());
+                () -> createOperation("review", TranslationLanguage.ENGLISH, null).validate());
         assertThrows(IllegalArgumentException.class,
-                () -> createOperation("review", TranslationLanguage.SPANISH, 10, 0, 3, "key").validate());
+                () -> createOperation("review", TranslationLanguage.ENGLISH, TranslationLanguage.ENGLISH).validate());
         assertThrows(IllegalArgumentException.class,
-                () -> createOperation("review", TranslationLanguage.SPANISH, 10, 1000, 6, "key").validate());
+                () -> createOperation("review", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH, null).validate());
         assertThrows(IllegalArgumentException.class,
-                () -> createOperation("review", TranslationLanguage.SPANISH, 10, 1000, 3, "").validate());
+                () -> createOperation("review", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH, "").validate());
+        assertThrows(IllegalArgumentException.class,
+                () -> createOperation("review", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH, "review").validate());
+        assertThrows(IllegalArgumentException.class,
+                () -> createOperation(
+                        "review", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH, 0, 3)
+                        .validate());
+        assertThrows(IllegalArgumentException.class,
+                () -> createOperation(
+                        "review", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH, 1000, -1).validate());
+        assertThrows(IllegalArgumentException.class,
+                () -> createOperation(
+                        "review", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH, 1000, 6).validate());
         assertThrows(IllegalArgumentException.class,
                 () -> createOperation(
                         "review",
+                        TranslationLanguage.ENGLISH,
                         TranslationLanguage.SPANISH,
-                        "ftp://example.invalid/chat/completions",
-                        10,
+                        "review_spanish",
+                        "ftp://example.invalid/translate",
                         1000,
-                        3,
-                        "key").validate());
+                        3).validate());
     }
 
     @Test
-    public void testContinueAfterPartialFailureAndCommitResults() throws Exception {
-        TranslationService service = new PartialFailureTranslationService();
-        AbstractOperation operation = createOperation(service, 1, TranslationLanguage.SPANISH);
+    public void testCreateNewColumnAndPreserveSourceDataAndRowOrder() throws Exception {
+        Map<String, String> translations = Map.of(
+                "one", "uno",
+                "two", "dos",
+                "three", "tres");
+        CountingTranslationService service = new CountingTranslationService(translations);
+        AbstractOperation operation = createOperation(service, TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH);
 
         assertEquals(operation.getColumnDependencies().get(), java.util.Set.of("review"));
-        assertEquals(operation.getColumnsDiff().get(), ColumnsDiff.modifySingleColumn("review"));
+        assertEquals(
+                operation.getColumnsDiff().get(),
+                ColumnsDiff.builder().addColumn("review_spanish", "review").build());
 
-        runOperation(operation, project, 1000);
+        runOperation(operation, project, 5000);
 
-        int reviewIndex = project.columnModel.getColumnByName("review").getCellIndex();
-        assertEquals(project.rows.get(0).getCellValue(reviewIndex), "ES: one");
-        assertTrue(project.rows.get(1).getCell(reviewIndex) == null
-                || "".equals(project.rows.get(1).getCellValue(reviewIndex)));
-        assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(reviewIndex)));
-        assertTrue(ExpressionUtils.isError(project.rows.get(3).getCellValue(reviewIndex)));
-        assertEquals(project.rows.get(4).getCellValue(reviewIndex), "ES: three");
-        long historyEntryId = project.history.getLastPastEntries(1).get(0).id;
-        assertEquals(project.history.getLastPastEntries(1).size(), 1);
-
-        project.history.undoRedo(0);
+        assertEquals(project.columnModel.getColumnNames(), List.of("review", "review_spanish", "other"));
+        int reviewIndex = project.columnModel.getColumnIndexByName("review");
+        int translatedIndex = project.columnModel.getColumnByName("review_spanish").getCellIndex();
+        int otherIndex = project.columnModel.getColumnByName("other").getCellIndex();
         assertEquals(project.rows.get(0).getCellValue(reviewIndex), "one");
-        assertEquals(project.rows.get(2).getCellValue(reviewIndex), "two");
-        assertEquals(project.rows.get(4).getCellValue(reviewIndex), "three");
+        assertEquals(project.rows.get(0).getCellValue(translatedIndex), "uno");
+        assertEquals(project.rows.get(0).getCellValue(otherIndex), "keep 1");
+        assertTrue(project.rows.get(1).getCell(translatedIndex) == null);
+        assertEquals(project.rows.get(1).getCellValue(otherIndex), "keep 2");
+        assertEquals(project.rows.get(2).getCellValue(translatedIndex), "dos");
         assertTrue(ExpressionUtils.isError(project.rows.get(3).getCellValue(reviewIndex)));
-
-        project.history.undoRedo(historyEntryId);
-        assertEquals(project.rows.get(0).getCellValue(reviewIndex), "ES: one");
-        assertTrue(project.rows.get(1).getCell(reviewIndex) == null
-                || "".equals(project.rows.get(1).getCellValue(reviewIndex)));
+        assertTrue(project.rows.get(3).getCell(translatedIndex) == null);
+        assertEquals(project.rows.get(4).getCellValue(translatedIndex), "tres");
+        assertEquals(service.calls.size(), 3);
+        assertEquals(project.history.getLastPastEntries(1).size(), 1);
     }
 
     @Test
-    public void testBlankAndErrorCellsAreNotTranslated() throws Exception {
-        TranslationService service = new CountingTranslationService();
-        AbstractOperation operation = createOperation(service, 20, TranslationLanguage.SPANISH);
+    public void testContinueAfterFailureAndCommitOtherTranslations() throws Exception {
+        Map<String, String> translations = new HashMap<>();
+        translations.put("one", "uno");
+        translations.put("three", "tres");
+        CountingTranslationService service = new CountingTranslationService(translations, List.of("two"));
 
-        runOperation(operation, project, 1000);
+        runOperation(createOperation(service), project, 5000);
 
-        assertEquals(((CountingTranslationService) service).calls.size(), 1);
-        assertEquals(((CountingTranslationService) service).calls.get(0), List.of("one", "two", "three"));
-        int reviewIndex = project.columnModel.getColumnByName("review").getCellIndex();
-        assertTrue(project.rows.get(1).getCell(reviewIndex) == null
-                || "".equals(project.rows.get(1).getCellValue(reviewIndex)));
-        assertEquals(((EvalError) project.rows.get(3).getCellValue(reviewIndex)).message, "existing error");
+        int translatedIndex = project.columnModel.getColumnByName("review_spanish").getCellIndex();
+        assertEquals(project.rows.get(0).getCellValue(translatedIndex), "uno");
+        assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(translatedIndex)));
+        assertEquals(project.rows.get(4).getCellValue(translatedIndex), "tres");
+        assertEquals(service.calls.size(), 3);
     }
 
     @Test
-    public void testNoCellsDoesNotCallTranslationService() throws Exception {
-        project = createProject(
-                new String[] { "review", "other" },
-                new Serializable[][] {
-                        { "", "keep 1" },
-                        { null, "keep 2" }
-                });
-        TranslationService service = new CountingTranslationService();
+    public void testCreateEmptyColumnWithoutCallingService() throws Exception {
+        Project emptyProject = createProject(
+                new String[] { "review" },
+                new Serializable[][] { { "" }, { null } });
+        CountingTranslationService service = new CountingTranslationService(Map.of());
 
-        runOperation(createOperation(service, 20, TranslationLanguage.SPANISH), project, 1000);
+        runOperation(createOperation(service), emptyProject, 5000);
 
-        assertTrue(((CountingTranslationService) service).calls.isEmpty());
-        assertEquals(project.history.getLastPastEntries(1), List.of());
+        assertEquals(emptyProject.columnModel.getColumnNames(), List.of("review", "review_spanish"));
+        assertEquals(service.calls.size(), 0);
     }
 
     @Test
-    public void testNumericCellsAreSentAsText() throws Exception {
-        project = createProject(
-                new String[] { "review", "other" },
-                new Serializable[][] {
-                        { 123, "keep 1" },
-                        { 45.67, "keep 2" }
-                });
-        TranslationService service = new CountingTranslationService();
+    public void testFailWhenTargetColumnAlreadyExists() throws Exception {
+        Project existingProject = createProject(
+                new String[] { "review", "review_spanish" },
+                new Serializable[][] { { "one", "existing" } });
+        CountingTranslationService service = new CountingTranslationService(Map.of("one", "uno"));
+        AbstractOperation operation = createOperation(service);
+        operation.validate();
 
-        runOperation(createOperation(service, 20, TranslationLanguage.SPANISH), project, 1000);
+        Process process = operation.createProcess(existingProject, new java.util.Properties());
+        process.startPerforming(existingProject.getProcessManager());
+        waitForProcess(process);
 
-        assertEquals(((CountingTranslationService) service).calls.get(0), List.of("123", "45.67"));
+        assertEquals(existingProject.columnModel.getColumnNames(), List.of("review", "review_spanish"));
+        assertEquals(existingProject.rows.get(0).getCellValue(1), "existing");
+        assertEquals(existingProject.history.getLastPastEntries(-1).size(), 0);
     }
 
     @Test
-    public void testMissingColumnFailsProcessWithoutHistory() throws Exception {
-        AbstractOperation operation = createOperation(new CountingTranslationService(), 20, TranslationLanguage.SPANISH);
-        project.columnModel.removeColumnByCellIndex(project.columnModel.getColumnByName("review").getCellIndex());
-        project.columnModel.update();
+    public void testCancelDiscardsPartialResults() throws Exception {
+        BlockingTranslationService service = new BlockingTranslationService();
+        AbstractOperation operation = createOperation(service);
+        operation.validate();
         Process process = operation.createProcess(project, new java.util.Properties());
 
         process.startPerforming(project.getProcessManager());
-        waitForProcess(process);
-
-        assertTrue(project.history.getLastPastEntries(1).isEmpty());
-    }
-
-    @Test
-    public void testCancellationRetainsCompletedBatches() throws Exception {
-        CancellationTranslationService service = new CancellationTranslationService();
-        Process process = createOperation(service, 1, TranslationLanguage.SPANISH)
-                .createProcess(project, new java.util.Properties());
-
-        process.startPerforming(project.getProcessManager());
-        assertTrue(service.firstCallCompleted.await(5, java.util.concurrent.TimeUnit.SECONDS));
-        assertTrue(service.secondCallStarted.await(5, java.util.concurrent.TimeUnit.SECONDS));
+        assertTrue(service.firstCallStarted.await(5, TimeUnit.SECONDS));
         process.cancel();
-        service.releaseSecondCall.countDown();
+        service.releaseFirstCall.countDown();
         waitForProcess(process);
 
-        assertEquals(service.calls.size(), 2);
-        int reviewIndex = project.columnModel.getColumnByName("review").getCellIndex();
-        assertEquals(project.rows.get(0).getCellValue(reviewIndex), "ES: one");
-        assertEquals(project.rows.get(2).getCellValue(reviewIndex), "ES: two");
-        assertEquals(project.rows.get(4).getCellValue(reviewIndex), "three");
-        assertEquals(project.history.getLastPastEntries(1).size(), 1);
+        assertFalse(project.columnModel.getColumnNames().contains("review_spanish"));
+        assertEquals(project.history.getLastPastEntries(-1).size(), 0);
     }
 
     @Test
-    public void testApiKeyIsNotSerialized() throws Exception {
-        String serialized = ParsingUtilities.mapper.writeValueAsString(
-                createOperation("review", TranslationLanguage.SPANISH, 10, 1000, 3, "secret-key"));
+    public void testRenameColumns() {
+        TranslateColumnOperation operation = createOperation(
+                "review", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH);
+        TranslateColumnOperation renamed = operation.renameColumns(Map.of("review", "feedback"));
 
-        assertFalse(serialized.contains("secret-key"));
-        assertTrue(serialized.contains("\"batchSize\":10"));
-    }
-
-    @Test
-    public void testRenameColumn() {
-        AbstractOperation operation = createOperation("review", TranslationLanguage.SPANISH, 10, 1000, 3, "key");
-        AbstractOperation renamed = operation.renameColumns(java.util.Map.of("review", "feedback"));
-
+        assertEquals(renamed.getColumnName(), "feedback");
+        assertEquals(renamed.getTargetColumnName(), "review_spanish");
         assertEquals(renamed.getColumnDependencies().get(), java.util.Set.of("feedback"));
-        assertEquals(((TranslateColumnOperation) renamed).getColumnName(), "feedback");
+    }
+
+    @Test
+    public void testRenameTargetColumn() {
+        TranslateColumnOperation operation = createOperation(
+                "review", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH);
+        TranslateColumnOperation renamed = operation.renameColumns(Map.of("review_spanish", "translated_review"));
+
+        assertEquals(renamed.getColumnName(), "review");
+        assertEquals(renamed.getTargetColumnName(), "translated_review");
     }
 
     @Test
     public void testBriefDescription() {
-        AbstractOperation operation = createOperation("review", TranslationLanguage.SPANISH, 10, 1000, 3, "key");
+        AbstractOperation operation = createOperation(
+                "review", TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH);
         assertEquals(
                 operation.getJsonDescription(),
-                OperationDescription.column_translation_brief("review", "Spanish"));
+                OperationDescription.column_translation_brief("review", "Spanish", "review_spanish"));
     }
 
     private TranslateColumnOperation createOperation(
             String columnName,
-            TranslationLanguage language,
-            int batchSize,
-            int timeoutMillis,
-            int maxRetries,
-            String apiKey) {
+            TranslationLanguage sourceLanguage,
+            TranslationLanguage targetLanguage) {
+        return createOperation(columnName, sourceLanguage, targetLanguage, 1000, 3);
+    }
+
+    private TranslateColumnOperation createOperation(
+            String columnName,
+            TranslationLanguage sourceLanguage,
+            TranslationLanguage targetLanguage,
+            String targetColumnName) {
         return createOperation(
                 columnName,
-                language,
-                "https://api.openai.com/v1/chat/completions",
-                batchSize,
-                timeoutMillis,
-                maxRetries,
-                apiKey);
+                sourceLanguage,
+                targetLanguage,
+                targetColumnName,
+                "http://localhost:5000/translate",
+                1000,
+                3);
     }
 
     private TranslateColumnOperation createOperation(
             String columnName,
-            TranslationLanguage language,
-            String endpoint,
-            int batchSize,
+            TranslationLanguage sourceLanguage,
+            TranslationLanguage targetLanguage,
             int timeoutMillis,
-            int maxRetries,
-            String apiKey) {
+            int maxRetries) {
+        return createOperation(
+                columnName,
+                sourceLanguage,
+                targetLanguage,
+                "review_spanish",
+                "http://localhost:5000/translate",
+                timeoutMillis,
+                maxRetries);
+    }
+
+    private TranslateColumnOperation createOperation(
+            String columnName,
+            TranslationLanguage sourceLanguage,
+            TranslationLanguage targetLanguage,
+            String targetColumnName,
+            String endpoint,
+            int timeoutMillis,
+            int maxRetries) {
         return new TranslateColumnOperation(
                 columnName,
-                language,
+                sourceLanguage,
+                targetLanguage,
+                targetColumnName,
                 endpoint,
-                "test-model",
-                batchSize,
                 timeoutMillis,
-                maxRetries,
-                apiKey);
+                maxRetries);
+    }
+
+    private TranslateColumnOperation createOperation(TranslationService service) {
+        return createOperation(service, TranslationLanguage.ENGLISH, TranslationLanguage.SPANISH);
     }
 
     private TranslateColumnOperation createOperation(
             TranslationService service,
-            int batchSize,
-            TranslationLanguage language) {
-        return new TranslateColumnOperation(
+            TranslationLanguage sourceLanguage,
+            TranslationLanguage targetLanguage) {
+        TranslateColumnOperation operation = createOperation(
                 "review",
-                language,
-                "https://api.openai.com/v1/chat/completions",
-                "test-model",
-                batchSize,
+                sourceLanguage,
+                targetLanguage,
+                "review_spanish",
+                "http://localhost:5000/translate",
                 1000,
-                3,
-                "test-key") {
+                3);
+        return new TranslateColumnOperation(
+                operation.getColumnName(),
+                operation.getSourceLanguage(),
+                operation.getTargetLanguage(),
+                operation.getTargetColumnName(),
+                operation.getEndpoint(),
+                operation.getTimeoutMillis(),
+                operation.getMaxRetries()) {
 
             @Override
             protected TranslationService createTranslationService() {
@@ -266,55 +302,54 @@ public class TranslateColumnOperationTests extends RefineTest {
 
     private static class CountingTranslationService implements TranslationService {
 
-        final List<List<String>> calls = new java.util.ArrayList<>();
+        final Map<String, String> translations;
+        final List<String> errors;
+        final List<String> calls = new ArrayList<>();
+
+        CountingTranslationService(Map<String, String> translations) {
+            this(translations, List.of());
+        }
+
+        CountingTranslationService(Map<String, String> translations, List<String> errors) {
+            this.translations = translations;
+            this.errors = errors;
+        }
 
         @Override
-        public List<String> translate(List<String> texts, TranslationLanguage language) {
-            calls.add(texts);
-            return texts.stream().map(text -> "ES: " + text).collect(java.util.stream.Collectors.toList());
+        public List<String> translate(
+                List<String> texts,
+                TranslationLanguage sourceLanguage,
+                TranslationLanguage targetLanguage) throws TranslationException {
+            calls.addAll(texts);
+            List<String> results = new ArrayList<>();
+            for (String text : texts) {
+                if (errors.contains(text)) {
+                    throw new TranslationException("bad input");
+                }
+                results.add(translations.get(text));
+            }
+            return results;
         }
     }
 
-    private static class PartialFailureTranslationService implements TranslationService {
+    private static class BlockingTranslationService implements TranslationService {
 
-        int calls;
-
-        @Override
-        public List<String> translate(List<String> texts, TranslationLanguage language)
-                throws TranslationException {
-            calls++;
-            if (calls == 2) {
-                throw new TranslationException("review 67 failed");
-            }
-            return texts.stream().map(text -> "ES: " + text).collect(java.util.stream.Collectors.toList());
-        }
-    }
-
-    private static class CancellationTranslationService implements TranslationService {
-
-        final List<List<String>> calls = new java.util.ArrayList<>();
-        final java.util.concurrent.CountDownLatch firstCallCompleted = new java.util.concurrent.CountDownLatch(1);
-        final java.util.concurrent.CountDownLatch secondCallStarted = new java.util.concurrent.CountDownLatch(1);
-        final java.util.concurrent.CountDownLatch releaseSecondCall = new java.util.concurrent.CountDownLatch(1);
+        final CountDownLatch firstCallStarted = new CountDownLatch(1);
+        final CountDownLatch releaseFirstCall = new CountDownLatch(1);
 
         @Override
-        public List<String> translate(List<String> texts, TranslationLanguage language) {
-            calls.add(texts);
-            if (calls.size() == 1) {
-                try {
-                    return texts.stream().map(text -> "ES: " + text).collect(java.util.stream.Collectors.toList());
-                } finally {
-                    firstCallCompleted.countDown();
-                }
-            } else {
-                secondCallStarted.countDown();
-                try {
-                    releaseSecondCall.await(5, java.util.concurrent.TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+        public List<String> translate(
+                List<String> texts,
+                TranslationLanguage sourceLanguage,
+                TranslationLanguage targetLanguage) throws TranslationException {
+            firstCallStarted.countDown();
+            try {
+                releaseFirstCall.await(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new TranslationException("Translation was canceled", e);
             }
-            return texts.stream().map(text -> "ES: " + text).collect(java.util.stream.Collectors.toList());
+            return texts.stream().map(text -> "uno").toList();
         }
     }
 

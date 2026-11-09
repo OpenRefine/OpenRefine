@@ -39,13 +39,12 @@ public class TranslateColumnCommand extends Command {
     AbstractOperation createOperation(HttpServletRequest request) {
         return new TranslateColumnOperation(
                 request.getParameter("columnName"),
-                TranslationLanguage.fromName(request.getParameter("language")),
+                TranslationLanguage.fromName(request.getParameter("sourceLanguage")),
+                TranslationLanguage.fromName(request.getParameter("targetLanguage")),
+                request.getParameter("targetColumnName"),
                 request.getParameter("endpoint"),
-                request.getParameter("model"),
-                getRequiredIntegerParameter(request, "batchSize"),
                 getRequiredIntegerParameter(request, "timeoutMillis"),
-                getRequiredIntegerParameter(request, "maxRetries"),
-                request.getParameter("apiKey"));
+                getRequiredIntegerParameter(request, "maxRetries"));
     }
 
     private int getRequiredIntegerParameter(HttpServletRequest request, String name) {

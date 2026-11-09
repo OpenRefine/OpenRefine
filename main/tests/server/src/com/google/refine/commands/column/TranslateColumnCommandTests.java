@@ -42,16 +42,58 @@ public class TranslateColumnCommandTests extends CommandTestBase {
         assertTrue(operation instanceof TranslateColumnOperation);
         TranslateColumnOperation translateOperation = (TranslateColumnOperation) operation;
         assertEquals(translateOperation.getColumnName(), "reviews");
-        assertEquals(translateOperation.getLanguage(), TranslationLanguage.SPANISH);
-        assertEquals(translateOperation.getBatchSize(), 10);
+        assertEquals(translateOperation.getSourceLanguage(), TranslationLanguage.ENGLISH);
+        assertEquals(translateOperation.getTargetLanguage(), TranslationLanguage.SPANISH);
+        assertEquals(translateOperation.getTargetColumnName(), "reviews_spanish");
+        assertEquals(translateOperation.getEndpoint(), "http://localhost:5000/translate");
         assertEquals(translateOperation.getTimeoutMillis(), 1000);
         assertEquals(translateOperation.getMaxRetries(), 3);
     }
 
     @Test
+    public void testCreateOperationRejectsMissingLanguage() {
+        stubValidParameters();
+        when(request.getParameter("sourceLanguage")).thenReturn(null);
+
+        assertThrows(IllegalArgumentException.class, () -> command.createOperation(request));
+    }
+
+    @Test
+    public void testCreateOperationRejectsUnsupportedLanguage() {
+        stubValidParameters();
+        when(request.getParameter("targetLanguage")).thenReturn("FRENCH");
+
+        assertThrows(IllegalArgumentException.class, () -> command.createOperation(request).validate());
+    }
+
+    @Test
+    public void testCreateOperationRejectsSameSourceAndTargetLanguage() {
+        stubValidParameters();
+        when(request.getParameter("targetLanguage")).thenReturn("ENGLISH");
+
+        assertThrows(IllegalArgumentException.class, () -> command.createOperation(request).validate());
+    }
+
+    @Test
+    public void testCreateOperationRejectsMissingTargetColumnName() {
+        stubValidParameters();
+        when(request.getParameter("targetColumnName")).thenReturn("");
+
+        assertThrows(IllegalArgumentException.class, () -> command.createOperation(request).validate());
+    }
+
+    @Test
+    public void testCreateOperationRejectsInvalidEndpoint() {
+        stubValidParameters();
+        when(request.getParameter("endpoint")).thenReturn("ftp://example.invalid/translate");
+
+        assertThrows(IllegalArgumentException.class, () -> command.createOperation(request).validate());
+    }
+
+    @Test
     public void testCreateOperationRejectsMissingNumericParameter() {
         stubValidParameters();
-        when(request.getParameter("batchSize")).thenReturn(null);
+        when(request.getParameter("timeoutMillis")).thenReturn(null);
 
         assertThrows(IllegalArgumentException.class, () -> command.createOperation(request));
     }
@@ -64,30 +106,13 @@ public class TranslateColumnCommandTests extends CommandTestBase {
         assertThrows(IllegalArgumentException.class, () -> command.createOperation(request));
     }
 
-    @Test
-    public void testCreateOperationRejectsUnsupportedLanguage() {
-        stubValidParameters();
-        when(request.getParameter("language")).thenReturn("FRENCH");
-
-        assertThrows(IllegalArgumentException.class, () -> command.createOperation(request).validate());
-    }
-
-    @Test
-    public void testCreateOperationRejectsInvalidEndpoint() {
-        stubValidParameters();
-        when(request.getParameter("endpoint")).thenReturn("ftp://example.invalid/chat/completions");
-
-        assertThrows(IllegalArgumentException.class, () -> command.createOperation(request).validate());
-    }
-
     private void stubValidParameters() {
         when(request.getParameter("columnName")).thenReturn("reviews");
-        when(request.getParameter("language")).thenReturn("SPANISH");
-        when(request.getParameter("endpoint")).thenReturn("https://api.example.com/chat/completions");
-        when(request.getParameter("model")).thenReturn("test-model");
-        when(request.getParameter("batchSize")).thenReturn("10");
+        when(request.getParameter("sourceLanguage")).thenReturn("ENGLISH");
+        when(request.getParameter("targetLanguage")).thenReturn("SPANISH");
+        when(request.getParameter("targetColumnName")).thenReturn("reviews_spanish");
+        when(request.getParameter("endpoint")).thenReturn("http://localhost:5000/translate");
         when(request.getParameter("timeoutMillis")).thenReturn("1000");
         when(request.getParameter("maxRetries")).thenReturn("3");
-        when(request.getParameter("apiKey")).thenReturn("test-key");
     }
 }

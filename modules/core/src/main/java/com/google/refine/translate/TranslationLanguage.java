@@ -5,7 +5,7 @@ import java.util.Locale;
 
 public enum TranslationLanguage {
 
-    SPANISH("Spanish", "es"), MANDARIN("Mandarin", "zh-Hans"), TELUGU("Telugu", "te"), TAMIL("Tamil", "ta"), TAGALOG("Tagalog", "tl");
+    ENGLISH("English", "en"), SPANISH("Spanish", "es"), MANDARIN("Mandarin Chinese", "zh");
 
     private final String displayName;
     private final String code;
