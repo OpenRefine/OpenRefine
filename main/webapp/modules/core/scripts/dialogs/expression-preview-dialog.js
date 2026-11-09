@@ -521,6 +521,12 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
             "blocking-ngram-size" : Number(document.getElementById('blockingChars').value)
         };
 
+        // Clear any previous clustering poll
+        if (self._clusterPollTimerID) {
+            window.clearTimeout(self._clusterPollTimerID);
+            self._clusterPollTimerID = null;
+        }
+
         Refine.postCSRF(
             "command/core/compute-clusters?" + $.param({ project: theProject.id }),
             {
@@ -533,16 +539,11 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
                 })
             },
             function(data) {
-                var clusters = [];
-                if (data.code != "error") {
-                    $.each(data, function() {
-                        var cluster = {
-                            choices: this,
-                        };
-                        clusters.push(cluster);
-                    });
+                if (data.code === "pending") {
+                    self._pollExpressionClusteringStatus();
+                } else {
+                    self._processClusterData(data);
                 }
-                self._renderClusters(clusters);
             },
             "json"
         );
@@ -550,6 +551,42 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
 };
 
 ExpressionPreviewDialog.Widget.prototype._prepareUpdate = function(params) {
+};
+
+ExpressionPreviewDialog.Widget.prototype._pollExpressionClusteringStatus = function() {
+    var self = this;
+    this._clusterPollTimerID = window.setTimeout(function() {
+        $.getJSON(
+            "command/core/get-clustering-status?" + $.param({ project: theProject.id }),
+            function(data) {
+                if (data.status === "running" || data.status === "pending") {
+                    self._pollExpressionClusteringStatus();
+                } else if (data.status === "done") {
+                    self._clusterPollTimerID = null;
+                    self._processClusterData(data.clusters);
+                } else {
+                    self._clusterPollTimerID = null;
+                    self._renderClusters([]);
+                }
+            }
+        ).fail(function() {
+            self._clusterPollTimerID = null;
+            self._renderClusters([]);
+        });
+    }, 500);
+};
+
+ExpressionPreviewDialog.Widget.prototype._processClusterData = function(data) {
+    var clusters = [];
+    if (data.code != "error") {
+        $.each(data, function() {
+            var cluster = {
+                choices: this,
+            };
+            clusters.push(cluster);
+        });
+    }
+    this._renderClusters(clusters);
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, data) {
