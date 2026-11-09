@@ -3,31 +3,34 @@ function doTranslateColumnForColumn(column) {
   var elmts = DOM.bind(frame);
 
   elmts.dialogHeader.text($.i18n('core-views/translate-column') + " " + column.name);
-  elmts.or_views_translateLanguage.text($.i18n('core-views/translate-language'));
+  elmts.or_views_translateSourceLanguage.text($.i18n('core-views/translate-source-language'));
+  elmts.or_views_translateTargetLanguage.text($.i18n('core-views/translate-target-language'));
+  elmts.or_views_translateTargetColumn.text($.i18n('core-views/translate-target-column'));
+  elmts.languageEnglish.text($.i18n('core-views/translate-language-english'));
   elmts.languageSpanish.text($.i18n('core-views/translate-language-spanish'));
   elmts.languageMandarin.text($.i18n('core-views/translate-language-mandarin'));
-  elmts.languageTelugu.text($.i18n('core-views/translate-language-telugu'));
-  elmts.languageTamil.text($.i18n('core-views/translate-language-tamil'));
-  elmts.languageTagalog.text($.i18n('core-views/translate-language-tagalog'));
+  elmts.targetLanguageEnglish.text($.i18n('core-views/translate-language-english'));
+  elmts.targetLanguageSpanish.text($.i18n('core-views/translate-language-spanish'));
+  elmts.targetLanguageMandarin.text($.i18n('core-views/translate-language-mandarin'));
   elmts.or_views_translateEndpoint.text($.i18n('core-views/translate-endpoint'));
-  elmts.or_views_translateModel.text($.i18n('core-views/translate-model'));
-  elmts.or_views_translateApiKey.text($.i18n('core-views/translate-api-key'));
-  elmts.or_views_translateBatchSize.text($.i18n('core-views/translate-batch-size'));
   elmts.or_views_translateTimeout.text($.i18n('core-views/translate-timeout'));
   elmts.or_views_translateMilliseconds.text($.i18n('core-views/translate-milliseconds'));
   elmts.or_views_translateRetries.text($.i18n('core-views/translate-retries'));
-  elmts.translateNotice.text($.i18n('core-views/translate-api-key-warning'));
+  elmts.translateNotice.text($.i18n('core-views/translate-notice'));
   elmts.okButton.html($.i18n('core-buttons/ok'));
   elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+  elmts.endpointInput[0].value = "http://localhost:5000/translate";
+  elmts.targetColumnInput[0].value = column.name + "_translation";
+  elmts.targetColumnInput.trigger('focus');
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
   var clearValidationError = function() {
     elmts.validationMessage.hide().empty();
+    elmts.targetColumnInput.removeAttr('aria-invalid');
     elmts.endpointInput.removeAttr('aria-invalid');
-    elmts.modelInput.removeAttr('aria-invalid');
-    elmts.apiKeyInput.removeAttr('aria-invalid');
   };
 
   var showValidationError = function(message) {
@@ -38,38 +41,34 @@ function doTranslateColumnForColumn(column) {
   elmts.form.on('submit', function(event) {
     event.preventDefault();
 
+    var targetColumnName = jQueryTrim(elmts.targetColumnInput[0].value);
     var endpoint = jQueryTrim(elmts.endpointInput[0].value);
-    var model = jQueryTrim(elmts.modelInput[0].value);
-    var apiKey = elmts.apiKeyInput[0].value;
-    var batchSize = Number.parseInt(elmts.batchSizeInput[0].value, 10);
     var timeoutMillis = Number.parseInt(elmts.timeoutInput[0].value, 10);
     var maxRetries = Number.parseInt(elmts.retriesInput[0].value, 10);
 
     clearValidationError();
 
-    try {
-      var parsedEndpoint = new URL(endpoint);
-      if (parsedEndpoint.protocol !== 'http:' && parsedEndpoint.protocol !== 'https:') {
-        throw new Error('unsupported endpoint protocol');
-      }
-    } catch (error) {
-      elmts.endpointInput.attr('aria-invalid', 'true');
-      showValidationError($.i18n('core-views/translate-invalid-endpoint'));
+    if (targetColumnName.length === 0) {
+      elmts.targetColumnInput.attr('aria-invalid', 'true');
+      showValidationError($.i18n('core-views/translate-required-target-column'));
       return;
     }
-    if (model.length === 0 || apiKey.length === 0) {
-      if (model.length === 0) {
-        elmts.modelInput.attr('aria-invalid', 'true');
-      }
-      if (apiKey.length === 0) {
-        elmts.apiKeyInput.attr('aria-invalid', 'true');
-      }
-      showValidationError($.i18n('core-views/translate-required-fields'));
+    if (Refine.columnNameToColumnIndex(targetColumnName) >= 0) {
+      elmts.targetColumnInput.attr('aria-invalid', 'true');
+      showValidationError($.i18n('core-views/translate-existing-target-column'));
       return;
     }
-    if (Number.isNaN(batchSize) || batchSize < 1 || batchSize > 20) {
-      showValidationError($.i18n('core-views/translate-invalid-batch-size'));
-      return;
+    if (endpoint.length > 0) {
+      try {
+        var parsedEndpoint = new URL(endpoint);
+        if (parsedEndpoint.protocol !== 'http:' && parsedEndpoint.protocol !== 'https:') {
+          throw new Error('unsupported endpoint protocol');
+        }
+      } catch (error) {
+        elmts.endpointInput.attr('aria-invalid', 'true');
+        showValidationError($.i18n('core-views/translate-invalid-endpoint'));
+        return;
+      }
     }
     if (Number.isNaN(timeoutMillis) || timeoutMillis < 1) {
       showValidationError($.i18n('core-views/translate-invalid-timeout'));
@@ -84,20 +83,19 @@ function doTranslateColumnForColumn(column) {
       "translate-column",
       {
         columnName: column.name,
-        language: elmts.languageInput[0].value,
+        sourceLanguage: elmts.sourceLanguageInput[0].value,
+        targetLanguage: elmts.targetLanguageInput[0].value,
+        targetColumnName: targetColumnName,
         endpoint: endpoint,
-        model: model,
-        batchSize: batchSize,
         timeoutMillis: timeoutMillis,
         maxRetries: maxRetries
       },
-      { apiKey: apiKey },
+      null,
       { rowIdsPreserved: true, recordIdsPreserved: true, includeEngine: false },
       { onDone: dismiss }
     );
   });
+  elmts.targetColumnInput.on('input', clearValidationError);
   elmts.endpointInput.on('input', clearValidationError);
-  elmts.modelInput.on('input', clearValidationError);
-  elmts.apiKeyInput.on('input', clearValidationError);
-  elmts.apiKeyInput.trigger('focus');
+  elmts.targetColumnInput.trigger('focus');
 }

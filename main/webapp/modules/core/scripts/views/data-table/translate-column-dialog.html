@@ -6,32 +6,32 @@
         <div class="grid-layout layout-normal layout-full">
           <table role="presentation" style="width: 620px;">
             <tr>
-              <td width="1%" style="white-space: pre;"><label for="translateLanguageInputId" bind="or_views_translateLanguage"></label></td>
+              <td width="1%" style="white-space: pre;"><label for="translateSourceLanguageInputId" bind="or_views_translateSourceLanguage"></label></td>
               <td>
-                <select bind="languageInput" id="translateLanguageInputId">
+                <select bind="sourceLanguageInput" id="translateSourceLanguageInputId">
+                  <option value="ENGLISH" bind="languageEnglish"></option>
                   <option value="SPANISH" bind="languageSpanish"></option>
                   <option value="MANDARIN" bind="languageMandarin"></option>
-                  <option value="TELUGU" bind="languageTelugu"></option>
-                  <option value="TAMIL" bind="languageTamil"></option>
-                  <option value="TAGALOG" bind="languageTagalog"></option>
                 </select>
               </td>
             </tr>
             <tr>
+              <td width="1%" style="white-space: pre;"><label for="translateTargetLanguageInputId" bind="or_views_translateTargetLanguage"></label></td>
+              <td>
+                <select bind="targetLanguageInput" id="translateTargetLanguageInputId">
+                  <option value="ENGLISH" bind="targetLanguageEnglish"></option>
+                  <option value="SPANISH" bind="targetLanguageSpanish"></option>
+                  <option value="MANDARIN" bind="targetLanguageMandarin"></option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td width="1%" style="white-space: pre;"><label for="translateTargetColumnInputId" bind="or_views_translateTargetColumn"></label></td>
+              <td><input bind="targetColumnInput" id="translateTargetColumnInputId" type="text" size="50" /></td>
+            </tr>
+            <tr>
               <td width="1%" style="white-space: pre;"><label for="translateEndpointInputId" bind="or_views_translateEndpoint"></label></td>
-              <td><input bind="endpointInput" id="translateEndpointInputId" type="text" size="50" value="https://api.openai.com/v1/chat/completions" /></td>
-            </tr>
-            <tr>
-              <td width="1%" style="white-space: pre;"><label for="translateModelInputId" bind="or_views_translateModel"></label></td>
-              <td><input bind="modelInput" id="translateModelInputId" type="text" size="50" value="gpt-4o-mini" /></td>
-            </tr>
-            <tr>
-              <td width="1%" style="white-space: pre;"><label for="translateApiKeyInputId" bind="or_views_translateApiKey"></label></td>
-              <td><input bind="apiKeyInput" id="translateApiKeyInputId" type="password" size="50" autocomplete="off" /></td>
-            </tr>
-            <tr>
-              <td width="1%" style="white-space: pre;"><label for="translateBatchSizeInputId" bind="or_views_translateBatchSize"></label></td>
-              <td><input bind="batchSizeInput" id="translateBatchSizeInputId" type="number" min="1" max="20" value="10" /></td>
+              <td><input bind="endpointInput" id="translateEndpointInputId" type="url" size="50" /></td>
             </tr>
             <tr>
               <td width="1%" style="white-space: pre;"><label for="translateTimeoutInputId" bind="or_views_translateTimeout"></label></td>
