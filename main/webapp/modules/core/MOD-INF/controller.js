@@ -109,6 +109,7 @@ function registerCommands() {
   
   RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
   RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
+  RS.registerCommand(module, "translate-column", new Packages.com.google.refine.commands.column.TranslateColumnCommand());
   RS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
   RS.registerCommand(module, "rename-column", new Packages.com.google.refine.commands.column.RenameColumnCommand());
   RS.registerCommand(module, "move-column", new Packages.com.google.refine.commands.column.MoveColumnCommand());
@@ -179,6 +180,7 @@ function registerOperations() {
   OR.registerOperation(module, "column-move-last", Packages.com.google.refine.operations.column.ColumnMoveLastOperation);
   OR.registerOperation(module, "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);
   OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation);
+  OR.registerOperation(module, "translate-column", Packages.com.google.refine.operations.column.TranslateColumnOperation);
   OR.registerOperation(module, "column-reorder", Packages.com.google.refine.operations.column.ColumnReorderOperation);
 
   OR.registerOperation(module, "row-removal", Packages.com.google.refine.operations.row.RowRemovalOperation);
@@ -537,6 +539,7 @@ function init() {
       "scripts/views/data-table/menu-facets.js",
       "scripts/views/data-table/menu-edit-cells.js",
       "scripts/views/data-table/menu-edit-column.js",
+      "scripts/views/data-table/translate-column-dialog.js",
       "scripts/views/data-table/menu-reconcile.js",
 
       "scripts/reconciliation/recon-manager.js",

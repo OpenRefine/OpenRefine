@@ -1,0 +1,59 @@
+<div class="dialog-frame" style="min-width: 620px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <form bind="form">
+      <div class="dialog-body" bind="dialogBody">
+        <div class="grid-layout layout-normal layout-full">
+          <table role="presentation" style="width: 620px;">
+            <tr>
+              <td width="1%" style="white-space: pre;"><label for="translateLanguageInputId" bind="or_views_translateLanguage"></label></td>
+              <td>
+                <select bind="languageInput" id="translateLanguageInputId">
+                  <option value="SPANISH" bind="languageSpanish"></option>
+                  <option value="MANDARIN" bind="languageMandarin"></option>
+                  <option value="TELUGU" bind="languageTelugu"></option>
+                  <option value="TAMIL" bind="languageTamil"></option>
+                  <option value="TAGALOG" bind="languageTagalog"></option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td width="1%" style="white-space: pre;"><label for="translateEndpointInputId" bind="or_views_translateEndpoint"></label></td>
+              <td><input bind="endpointInput" id="translateEndpointInputId" type="text" size="50" value="https://api.openai.com/v1/chat/completions" /></td>
+            </tr>
+            <tr>
+              <td width="1%" style="white-space: pre;"><label for="translateModelInputId" bind="or_views_translateModel"></label></td>
+              <td><input bind="modelInput" id="translateModelInputId" type="text" size="50" value="gpt-4o-mini" /></td>
+            </tr>
+            <tr>
+              <td width="1%" style="white-space: pre;"><label for="translateApiKeyInputId" bind="or_views_translateApiKey"></label></td>
+              <td><input bind="apiKeyInput" id="translateApiKeyInputId" type="password" size="50" autocomplete="off" /></td>
+            </tr>
+            <tr>
+              <td width="1%" style="white-space: pre;"><label for="translateBatchSizeInputId" bind="or_views_translateBatchSize"></label></td>
+              <td><input bind="batchSizeInput" id="translateBatchSizeInputId" type="number" min="1" max="20" value="10" /></td>
+            </tr>
+            <tr>
+              <td width="1%" style="white-space: pre;"><label for="translateTimeoutInputId" bind="or_views_translateTimeout"></label></td>
+              <td><input bind="timeoutInput" id="translateTimeoutInputId" type="number" min="1" value="30000" /> <span bind="or_views_translateMilliseconds"></span></td>
+            </tr>
+            <tr>
+              <td width="1%" style="white-space: pre;"><label for="translateRetriesInputId" bind="or_views_translateRetries"></label></td>
+              <td><input bind="retriesInput" id="translateRetriesInputId" type="number" min="0" max="5" value="3" /></td>
+            </tr>
+            <tr>
+              <td colspan="2" bind="translateNotice"></td>
+            </tr>
+            <tr>
+              <td colspan="2"><div bind="validationMessage" role="alert" aria-live="assertive" style="display: none; color: #c00;"></div></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="dialog-footer" bind="dialogFooter">
+        <button class="button button-primary" type="submit" bind="okButton"></button>
+        <button class="button" type="button" bind="cancelButton"></button>
+      </div>
+    </form>
+  </div>
+</div>
