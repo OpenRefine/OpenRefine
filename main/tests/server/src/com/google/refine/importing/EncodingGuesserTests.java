@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
 import com.google.refine.util.JSONUtilities;
@@ -26,9 +27,7 @@ public class EncodingGuesserTests {
     };
 
     private static File getTestDir() {
-        String dir = ClassLoader.getSystemResource(ENCODINGS[0] + ".txt").getPath();
-        dir = dir.substring(0, dir.lastIndexOf('/'));
-        return new File(dir);
+        return FileUtils.toFile(ClassLoader.getSystemResource(ENCODINGS[0] + ".txt")).getParentFile();
     }
 
     public class ImportingJobStub extends ImportingJob {

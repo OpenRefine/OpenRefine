@@ -235,9 +235,9 @@ public class XmlImporterTests extends ImporterTest {
     @Test
     public void testAddFileColumn() throws Exception {
         final String FILE = "xml-sample-format-1.xml";
-        String filename = ClassLoader.getSystemResource(FILE).getPath();
+        File file = FileUtils.toFile(ClassLoader.getSystemResource(FILE));
         // File is assumed to be in job.getRawDataDir(), so copy it there
-        FileUtils.copyFile(new File(filename), new File(job.getRawDataDir(), FILE));
+        FileUtils.copyFile(file, new File(job.getRawDataDir(), FILE));
         List<ObjectNode> fileRecords = new ArrayList<>();
         fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
                 String.format("{\"location\": \"%s\",\"fileName\": \"%s\"}", FILE, "xml-sample-format-1.xml")));

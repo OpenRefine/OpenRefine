@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,8 +84,8 @@ public class TextFormatGuesserTests extends ImporterTest {
     @Test
     public void xlsTextGuessTest() throws FileNotFoundException, IOException {
         // Test an XLSX file without the correct file extension
-        String dir = ClassLoader.getSystemResource("Colorado-Municipalities-small-xlsx.gz").getPath();
-        InputStream is = new GZIPInputStream(new FileInputStream(new File(dir)));
+        File file = FileUtils.toFile(ClassLoader.getSystemResource("Colorado-Municipalities-small-xlsx.gz"));
+        InputStream is = new GZIPInputStream(new FileInputStream(file));
         File tmp = File.createTempFile("openrefinetests-textguesser", "");
         FileUtils.copyInputStreamToFile(is, tmp);
         String format = guesser.guess(tmp, "UTF-8", "text");
@@ -112,12 +113,12 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     private void extensionGuesserTests(String extension, String expectedFormat) throws IOException {
-        String dir = ClassLoader.getSystemResource("food.csv").getPath();
-        dir = dir.substring(0, dir.lastIndexOf('/'));
-        File testDataDir = new File(dir);
-        for (String testFile : testDataDir.list(new PatternFilenameFilter(".+\\." + extension))) {
+        File testDataDir = FileUtils.toFile(ClassLoader.getSystemResource("food.csv")).getParentFile();
+        String[] testFiles = testDataDir.list(new PatternFilenameFilter(".+\\." + extension));
+        assertTrue(testFiles.length > 0, "No ." + extension + " test files found in " + testDataDir);
+        for (String testFile : testFiles) {
             String encoding = EncodingGuesser.guessEncoding(testDataDir, testFile);
-            String format = guesser.guess(new File(dir, testFile), encoding, "text");
+            String format = guesser.guess(new File(testDataDir, testFile), encoding, "text");
             assertEquals(format, expectedFormat, "Format guess failed for " + testFile);
         }
     }
