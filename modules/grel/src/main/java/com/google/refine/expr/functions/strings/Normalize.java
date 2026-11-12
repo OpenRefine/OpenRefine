@@ -2,6 +2,7 @@
 package com.google.refine.expr.functions.strings;
 
 import java.text.Normalizer;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -22,7 +23,17 @@ public class Normalize implements Function {
             Object o = args[0];
             return (o instanceof String ? normalize((String) o) : normalize(o.toString()));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single string parameter");
+        if (args.length == 2 && args[0] != null && args[1] instanceof String) {
+            try {
+                Normalizer.Form form = Normalizer.Form.valueOf(((String) args[1]).toUpperCase(Locale.ROOT));
+                return Normalizer.normalize(args[0].toString(), form);
+            } catch (IllegalArgumentException e) {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                        + " expects NFC, NFD, NFKC or NFKD as the normalization form");
+            }
+        }
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                + " expects a string and an optional Unicode normalization form");
 
     }
 
@@ -39,7 +50,7 @@ public class Normalize implements Function {
 
     @Override
     public String getParams() {
-        return "string s";
+        return "string s, optional string form";
     }
 
     @Override
