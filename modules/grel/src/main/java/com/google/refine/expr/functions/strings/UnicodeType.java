@@ -45,11 +45,7 @@ public class UnicodeType implements Function {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
             String s = (o instanceof String) ? (String) o : o.toString();
-            String[] output = new String[s.length()];
-            for (int i = 0; i < s.length(); i++) {
-                output[i] = translateType(Character.getType(s.codePointAt(i)));
-            }
-            return output;
+            return s.codePoints().mapToObj(cp -> translateType(Character.getType(cp))).toArray(String[]::new);
         }
         return null;
     }
