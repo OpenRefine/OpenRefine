@@ -473,7 +473,7 @@
     "core-views/warning-other-col": "Vyberte jiné buňky, do nichž se bude kopírovat.",
     "core-views/what-to-copy": "Co kopírovat",
     "core-views/apply-to-cell": "Použít na posuzované buňky",
-    "core-views/copy-recon-judg": "Kopírovat rekonciliované rozsudky ze sloupců",
+    "core-views/copy-recon-judg": "Kopírovat rekonciliované rozsudky ze sloupců $1",
     "core-views/blanks": "Prázdná místa",
     "core-views/valid-values": "Platné hodnoty",
     "core-views/false-true": "ne, pak ano",
