@@ -184,7 +184,10 @@ public class Parser {
             RegexToken t = (RegexToken) _token;
 
             try {
-                Pattern pattern = Pattern.compile(_token.text, t.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+                Pattern pattern = Pattern.compile(
+                        _token.text,
+                        Pattern.UNICODE_CHARACTER_CLASS
+                                | (t.caseInsensitive ? Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE : 0));
                 eval = new LiteralExpr(pattern, t.fullSource());
                 next(false);
             } catch (Exception e) {

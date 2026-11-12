@@ -186,6 +186,36 @@ public class TextSearchFacetTests extends RefineTest {
     }
 
     @Test
+    public void testUnicodeRegExFilter() throws Exception {
+        // Regression test for #1768: regex text filter must use Unicode-aware
+        // predefined character classes. \\w must match accented letters.
+        project = createProject("TextSearchFacetUnicode",
+                new String[] { "Value" },
+                new Serializable[][] {
+                        { "café" },
+                        { " Espresso" },
+                        { "123" },
+                        { "Ångström" }
+                });
+
+        // \w should match accented Unicode letters.
+        String filter = "{\"type\":\"text\","
+                + "\"name\":\"Value\","
+                + "\"columnName\":\"Value\","
+                + "\"mode\":\"regex\","
+                + "\"caseSensitive\":true,"
+                + "\"invert\":false,"
+                + "\"query\":\"\\\\w+\"}";
+
+        configureFilter(filter);
+
+        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), true); // "café"
+        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), true); // " Espresso"
+        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), true); // "123"
+        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)), true); // "Ångström"
+    }
+
+    @Test
     public void testCaseSensitiveFilter() throws Exception {
         // Apply case-sensitive filter "A"
 
