@@ -64,6 +64,20 @@ describe(__filename, function () {
     cy.assertCellEquals(1, 'b', 'a');
     cy.assertCellEquals(2, 'b', 'a');
   });
+  it('Makes the current column name available to Python expressions', function () {
+    cy.loadAndVisitProject([
+      ['product name', 'price'],
+      ['tea', '5'],
+    ]);
+
+    cy.columnActionClick('product name', ['Edit cells', 'Transform']);
+    cy.selectPython();
+    cy.typeExpression('return columnName');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(2) td:last-child').should('have.text', 'product name');
+    cy.confirmDialogPanel();
+
+    cy.assertCellEquals(0, 'product name', 'product name');
+  });
   it('Ensure cells are set to blank when error occurs', function () {
     const fixture = [
       ['a', 'b', 'c'],
