@@ -54,7 +54,8 @@ public class OpenAiCompatibleTranslationService implements TranslationService {
             int maxRetries) {
         this.endpoint = endpoint == null || endpoint.isBlank() ? DEFAULT_ENDPOINT : endpoint;
         this.model = model;
-        this.apiKey = apiKey;
+        // Pasted keys often carry stray whitespace, which breaks the "Bearer <key>" header.
+        this.apiKey = apiKey == null ? null : apiKey.strip();
         if (timeoutMillis <= 0) {
             throw new IllegalArgumentException("Timeout must be greater than zero");
         }
@@ -144,10 +145,13 @@ public class OpenAiCompatibleTranslationService implements TranslationService {
 
         ObjectNode userMessage = messages.addObject();
         userMessage.put("role", "user");
-        ArrayNode inputArray = userMessage.putArray("content");
+        // Chat Completions accepts content only as a string or an array of typed parts,
+        // so the batch is sent as JSON text, matching the system prompt.
+        ArrayNode inputArray = objectMapper.createArrayNode();
         for (String text : texts) {
             inputArray.add(text);
         }
+        userMessage.put("content", inputArray.toString());
 
         return requestBody;
     }
@@ -257,6 +261,10 @@ public class OpenAiCompatibleTranslationService implements TranslationService {
     private String parseErrorMessage(String responseBody, int statusCode) {
         try {
             JsonNode root = objectMapper.readTree(responseBody);
+            if (root.isArray() && !root.isEmpty()) {
+                // Gemini's OpenAI-compatible endpoint wraps the error object in an array.
+                root = root.get(0);
+            }
             JsonNode error = root.path("error");
             if (error.isObject()) {
                 JsonNode message = error.path("message");

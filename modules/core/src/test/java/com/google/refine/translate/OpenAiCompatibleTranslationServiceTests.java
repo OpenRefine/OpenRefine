@@ -8,6 +8,8 @@ import static org.testng.Assert.fail;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
 import mockwebserver3.RecordedRequest;
@@ -107,6 +109,69 @@ public class OpenAiCompatibleTranslationServiceTests {
                 assertEquals(e.getMessage(), "invalid key");
             }
             assertEquals(server.getRequestCount(), 1);
+        }
+    }
+
+    @Test
+    public void translateStripsWhitespaceAroundPastedApiKey() throws Exception {
+        // OpenRouter answers "Missing Authentication header" when the key after "Bearer " starts with whitespace.
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.enqueue(new MockResponse.Builder().body(TRANSLATION_RESPONSE).build());
+
+            OpenAiCompatibleTranslationService service = new OpenAiCompatibleTranslationService(
+                    server.url("/chat/completions").toString(), "test-model", " \ttest-key \n", 1000);
+            service.translate(List.of("hello", "goodbye"), TranslationLanguage.SPANISH);
+
+            assertEquals(server.takeRequest().getHeaders().get("Authorization"), "Bearer test-key");
+        }
+    }
+
+    @Test
+    public void translateSendsTextsAsJsonStringInUserMessage() throws Exception {
+        // OpenAI and Gemini reject a user message whose content is an array of bare strings
+        // (Gemini: "Value is not a struct"), so the batch must be sent as JSON text.
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.enqueue(new MockResponse.Builder().body(TRANSLATION_RESPONSE).build());
+
+            OpenAiCompatibleTranslationService service = new OpenAiCompatibleTranslationService(
+                    server.url("/chat/completions").toString(), "test-model", "test-key", 1000);
+            service.translate(List.of("hello", "goodbye"), TranslationLanguage.SPANISH);
+
+            JsonNode body = new ObjectMapper().readTree(server.takeRequest().getBody().utf8());
+            JsonNode userContent = body.path("messages").get(1).path("content");
+            assertTrue(userContent.isTextual(), "user message content must be a string, was: " + userContent);
+            assertEquals(new ObjectMapper().readTree(userContent.asText()),
+                    new ObjectMapper().readTree("[\"hello\",\"goodbye\"]"));
+        }
+    }
+
+    @Test
+    public void translateReportsErrorMessageFromArrayWrappedErrorBody() throws Exception {
+        // Gemini's OpenAI-compatible endpoint wraps error objects in a JSON array.
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.enqueue(new MockResponse.Builder().code(400).body("""
+                    [{
+                      "error": {
+                        "code": 400,
+                        "message": "Please pass a valid API key",
+                        "status": "INVALID_ARGUMENT"
+                      }
+                    }
+                    ]
+                    """).build());
+
+            OpenAiCompatibleTranslationService service = new OpenAiCompatibleTranslationService(
+                    server.url("/chat/completions").toString(), "test-model", "test-key", 1000, 0);
+
+            try {
+                service.translate(List.of("hello"), TranslationLanguage.SPANISH);
+                fail("Expected a translation exception for a rejected request");
+            } catch (TranslationException e) {
+                assertEquals(e.getMessage(), "Please pass a valid API key");
+            }
         }
     }
 
