@@ -94,7 +94,10 @@ DataTableView.resizingState = {
 
 DataTableView.prototype._startResizing = function(columnIndex, clickEvent) {
   var self = this;
-  var columnHeader = self._columnHeaderUIs[columnIndex];
+  // Collapsed columns have no header UI, so array positions differ from column indices.
+  var columnHeader = self._columnHeaderUIs.find(function(header) {
+    return header._columnIndex === columnIndex;
+  });
   clickEvent.preventDefault();
   var state = DataTableView.resizingState;
   state.dragging = true;
