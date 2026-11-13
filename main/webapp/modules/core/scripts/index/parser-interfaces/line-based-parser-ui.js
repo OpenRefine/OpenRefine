@@ -125,8 +125,7 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
   $('#or-import-encoding').html($.i18n('core-index-import/char-encoding'));
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
   $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));
-  $('#or-import-parseEvery').html($.i18n('core-index-parser/parse-every'));
-  $('#or-import-linesIntoRow').html($.i18n('core-index-parser/lines-into-row'));
+  $('#or-import-linesPerRow').text($.i18n('core-index-parser/lines-per-row'));
   $('#or-import-blank').text($.i18n('core-index-parser/store-blank'));
   $('#or-import-blank-columns').text($.i18n('core-index-parser/store-blank-columns'));
   $('#or-import-null').text($.i18n('core-index-parser/store-nulls'));
