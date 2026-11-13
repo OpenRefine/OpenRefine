@@ -39,6 +39,7 @@ public class TranslateColumnCommand extends Command {
     AbstractOperation createOperation(HttpServletRequest request) {
         return new TranslateColumnOperation(
                 request.getParameter("columnName"),
+                request.getParameter("newColumnName"),
                 TranslationLanguage.fromName(request.getParameter("language")),
                 request.getParameter("endpoint"),
                 request.getParameter("model"),

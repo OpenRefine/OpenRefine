@@ -24,8 +24,8 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ColumnsDiff;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.changes.CellChange;
-import com.google.refine.model.changes.MassCellChange;
+import com.google.refine.model.changes.CellAtRow;
+import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.OperationDescription;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
@@ -42,6 +42,8 @@ public class TranslateColumnOperation extends AbstractOperation {
 
     @JsonProperty("columnName")
     final protected String _columnName;
+    @JsonProperty("newColumnName")
+    final protected String _newColumnName;
     @JsonProperty("language")
     final protected TranslationLanguage _language;
     @JsonProperty("endpoint")
@@ -60,6 +62,7 @@ public class TranslateColumnOperation extends AbstractOperation {
     @JsonCreator
     public TranslateColumnOperation(
             @JsonProperty("columnName") String columnName,
+            @JsonProperty("newColumnName") String newColumnName,
             @JsonProperty("language") TranslationLanguage language,
             @JsonProperty("endpoint") String endpoint,
             @JsonProperty("model") String model,
@@ -68,6 +71,7 @@ public class TranslateColumnOperation extends AbstractOperation {
             @JsonProperty("maxRetries") int maxRetries,
             @JsonProperty("apiKey") String apiKey) {
         _columnName = columnName;
+        _newColumnName = newColumnName;
         _language = language;
         _endpoint = endpoint;
         _model = model;
@@ -80,6 +84,8 @@ public class TranslateColumnOperation extends AbstractOperation {
     @Override
     public void validate() {
         Validate.notNull(_columnName, "Missing column name");
+        Validate.notNull(_newColumnName, "Missing new column name");
+        Validate.isTrue(!_newColumnName.isBlank(), "Missing new column name");
         Validate.notNull(_language, "Missing target language");
         Validate.notNull(_model, "Missing translation model");
         Validate.isTrue(!_model.isBlank(), "Missing translation model");
@@ -96,6 +102,11 @@ public class TranslateColumnOperation extends AbstractOperation {
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
+    }
+
+    @JsonProperty("newColumnName")
+    public String getNewColumnName() {
+        return _newColumnName;
     }
 
     @JsonProperty("language")
@@ -146,7 +157,7 @@ public class TranslateColumnOperation extends AbstractOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return OperationDescription.column_translation_brief(_columnName, _language.getDisplayName());
+        return OperationDescription.column_translation_brief(_columnName, _language.getDisplayName(), _newColumnName);
     }
 
     @Override
@@ -156,13 +167,14 @@ public class TranslateColumnOperation extends AbstractOperation {
 
     @Override
     public Optional<ColumnsDiff> getColumnsDiff() {
-        return Optional.of(ColumnsDiff.modifySingleColumn(_columnName));
+        return Optional.of(ColumnsDiff.builder().addColumn(_newColumnName, _columnName).build());
     }
 
     @Override
     public TranslateColumnOperation renameColumns(Map<String, String> newColumnNames) {
         return new TranslateColumnOperation(
                 newColumnNames.getOrDefault(_columnName, _columnName),
+                newColumnNames.getOrDefault(_newColumnName, _newColumnName),
                 _language,
                 _endpoint,
                 _model,
@@ -210,24 +222,34 @@ public class TranslateColumnOperation extends AbstractOperation {
                 _project.processManager.onFailedProcess(this, new Exception("No column named " + _columnName));
                 return;
             }
+            if (_project.columnModel.getColumnByName(_newColumnName) != null) {
+                _project.processManager.onFailedProcess(this, new Exception("Another column already named " + _newColumnName));
+                return;
+            }
 
-            int cellIndex = column.getCellIndex();
-            snapshotTargets(cellIndex);
-            List<CellChange> cellChanges = translateTargets(cellIndex);
+            snapshotTargets(column.getCellIndex());
+            List<CellAtRow> newCells = translateTargets();
             if (_targets.isEmpty()) {
                 _progress = 100;
             }
 
             try {
-                if (!cellChanges.isEmpty()) {
-                    HistoryEntry historyEntry = new HistoryEntry(
-                            _historyEntryID,
-                            _project,
-                            _description,
-                            TranslateColumnOperation.this,
-                            new MassCellChange(cellChanges, _columnName, true));
-                    _project.history.addEntry(historyEntry);
+                // Resolve the position at commit time so the new column lands right of the source.
+                int columnInsertIndex;
+                synchronized (_project) {
+                    Column sourceColumn = _project.columnModel.getColumnByName(_columnName);
+                    if (sourceColumn == null) {
+                        throw new Exception("No column named " + _columnName);
+                    }
+                    columnInsertIndex = _project.columnModel.columns.indexOf(sourceColumn) + 1;
                 }
+                HistoryEntry historyEntry = new HistoryEntry(
+                        _historyEntryID,
+                        _project,
+                        _description,
+                        TranslateColumnOperation.this,
+                        new ColumnAdditionChange(_newColumnName, columnInsertIndex, newCells));
+                _project.history.addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
             } catch (Exception e) {
                 _project.processManager.onFailedProcess(this, e);
@@ -243,13 +265,13 @@ public class TranslateColumnOperation extends AbstractOperation {
                             || !ExpressionUtils.isNonBlankData(oldCell.value)) {
                         continue;
                     }
-                    _targets.add(new TranslationTarget(rowIndex, oldCell, oldCell.value.toString()));
+                    _targets.add(new TranslationTarget(rowIndex, oldCell.value.toString()));
                 }
             }
         }
 
-        private List<CellChange> translateTargets(int cellIndex) {
-            List<CellChange> cellChanges = new ArrayList<>(_targets.size());
+        private List<CellAtRow> translateTargets() {
+            List<CellAtRow> newCells = new ArrayList<>(_targets.size());
             int completedCount = 0;
 
             for (int start = 0; !_canceled && start < _targets.size(); start += _batchSize) {
@@ -268,31 +290,22 @@ public class TranslateColumnOperation extends AbstractOperation {
                     }
                     translations = null;
                     for (int index = start; index < end; index++) {
-                        TranslationTarget target = _targets.get(index);
-                        cellChanges.add(new CellChange(
-                                target.rowIndex,
-                                cellIndex,
-                                target.oldCell,
+                        newCells.add(new CellAtRow(
+                                _targets.get(index).rowIndex,
                                 new Cell(new EvalError("Translation failed: " + e.getMessage()), null)));
                     }
                 }
 
                 if (translations != null && translations.size() != texts.size()) {
                     for (int index = start; index < end; index++) {
-                        TranslationTarget target = _targets.get(index);
-                        cellChanges.add(new CellChange(
-                                target.rowIndex,
-                                cellIndex,
-                                target.oldCell,
+                        newCells.add(new CellAtRow(
+                                _targets.get(index).rowIndex,
                                 new Cell(new EvalError("Translation failed: response size mismatch"), null)));
                     }
                 } else if (translations != null) {
                     for (int index = start; index < end; index++) {
-                        TranslationTarget target = _targets.get(index);
-                        cellChanges.add(new CellChange(
-                                target.rowIndex,
-                                cellIndex,
-                                target.oldCell,
+                        newCells.add(new CellAtRow(
+                                _targets.get(index).rowIndex,
                                 new Cell(translations.get(index - start), null)));
                     }
                 }
@@ -304,18 +317,16 @@ public class TranslateColumnOperation extends AbstractOperation {
                 }
             }
 
-            return cellChanges;
+            return newCells;
         }
 
         protected static class TranslationTarget {
 
             final protected int rowIndex;
-            final protected Cell oldCell;
             final protected String text;
 
-            protected TranslationTarget(int rowIndex, Cell oldCell, String text) {
+            protected TranslationTarget(int rowIndex, String text) {
                 this.rowIndex = rowIndex;
-                this.oldCell = oldCell;
                 this.text = text;
             }
         }

@@ -42,6 +42,7 @@ public class TranslateColumnCommandTests extends CommandTestBase {
         assertTrue(operation instanceof TranslateColumnOperation);
         TranslateColumnOperation translateOperation = (TranslateColumnOperation) operation;
         assertEquals(translateOperation.getColumnName(), "reviews");
+        assertEquals(translateOperation.getNewColumnName(), "reviews (Spanish)");
         assertEquals(translateOperation.getLanguage(), TranslationLanguage.SPANISH);
         assertEquals(translateOperation.getBatchSize(), 10);
         assertEquals(translateOperation.getTimeoutMillis(), 1000);
@@ -82,6 +83,7 @@ public class TranslateColumnCommandTests extends CommandTestBase {
 
     private void stubValidParameters() {
         when(request.getParameter("columnName")).thenReturn("reviews");
+        when(request.getParameter("newColumnName")).thenReturn("reviews (Spanish)");
         when(request.getParameter("language")).thenReturn("SPANISH");
         when(request.getParameter("endpoint")).thenReturn("https://api.example.com/chat/completions");
         when(request.getParameter("model")).thenReturn("test-model");

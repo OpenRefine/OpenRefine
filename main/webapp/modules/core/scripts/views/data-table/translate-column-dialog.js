@@ -9,6 +9,7 @@ function doTranslateColumnForColumn(column) {
   elmts.languageTelugu.text($.i18n('core-views/translate-language-telugu'));
   elmts.languageTamil.text($.i18n('core-views/translate-language-tamil'));
   elmts.languageTagalog.text($.i18n('core-views/translate-language-tagalog'));
+  elmts.or_views_translateNewColumnName.text($.i18n('core-views/translate-new-column-name'));
   elmts.or_views_translateEndpoint.text($.i18n('core-views/translate-endpoint'));
   elmts.or_views_translateModel.text($.i18n('core-views/translate-model'));
   elmts.or_views_translateApiKey.text($.i18n('core-views/translate-api-key'));
@@ -20,11 +21,24 @@ function doTranslateColumnForColumn(column) {
   elmts.okButton.html($.i18n('core-buttons/ok'));
   elmts.cancelButton.text($.i18n('core-buttons/cancel'));
 
+  // Suggest "<column> (<Language>)" and keep it in step with the language until the user edits it.
+  var suggestedColumnName = function() {
+    return column.name + ' (' + elmts.languageInput.find('option:selected').text() + ')';
+  };
+  var newColumnNameEdited = false;
+  elmts.newColumnNameInput.val(suggestedColumnName());
+  elmts.languageInput.on('change', function() {
+    if (!newColumnNameEdited) {
+      elmts.newColumnNameInput.val(suggestedColumnName());
+    }
+  });
+
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
   var clearValidationError = function() {
     elmts.validationMessage.hide().empty();
+    elmts.newColumnNameInput.removeAttr('aria-invalid');
     elmts.endpointInput.removeAttr('aria-invalid');
     elmts.modelInput.removeAttr('aria-invalid');
     elmts.apiKeyInput.removeAttr('aria-invalid');
@@ -38,6 +52,7 @@ function doTranslateColumnForColumn(column) {
   elmts.form.on('submit', function(event) {
     event.preventDefault();
 
+    var newColumnName = jQueryTrim(elmts.newColumnNameInput[0].value);
     var endpoint = jQueryTrim(elmts.endpointInput[0].value);
     var model = jQueryTrim(elmts.modelInput[0].value);
     var apiKey = elmts.apiKeyInput[0].value;
@@ -46,6 +61,17 @@ function doTranslateColumnForColumn(column) {
     var maxRetries = Number.parseInt(elmts.retriesInput[0].value, 10);
 
     clearValidationError();
+
+    if (newColumnName.length === 0) {
+      elmts.newColumnNameInput.attr('aria-invalid', 'true');
+      showValidationError($.i18n('core-views/translate-new-column-name-required'));
+      return;
+    }
+    if (Refine.columnNameToColumnIndex(newColumnName) >= 0) {
+      elmts.newColumnNameInput.attr('aria-invalid', 'true');
+      showValidationError($.i18n('core-views/translate-new-column-name-exists', newColumnName));
+      return;
+    }
 
     try {
       var parsedEndpoint = new URL(endpoint);
@@ -84,6 +110,7 @@ function doTranslateColumnForColumn(column) {
       "translate-column",
       {
         columnName: column.name,
+        newColumnName: newColumnName,
         language: elmts.languageInput[0].value,
         endpoint: endpoint,
         model: model,
@@ -92,9 +119,13 @@ function doTranslateColumnForColumn(column) {
         maxRetries: maxRetries
       },
       { apiKey: apiKey },
-      { rowIdsPreserved: true, recordIdsPreserved: true, includeEngine: false },
+      { modelsChanged: true, rowIdsPreserved: true, recordIdsPreserved: true, includeEngine: false },
       { onDone: dismiss }
     );
+  });
+  elmts.newColumnNameInput.on('input', function() {
+    newColumnNameEdited = true;
+    clearValidationError();
   });
   elmts.endpointInput.on('input', clearValidationError);
   elmts.modelInput.on('input', clearValidationError);

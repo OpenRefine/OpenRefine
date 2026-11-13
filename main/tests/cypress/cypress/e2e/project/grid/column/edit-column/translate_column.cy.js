@@ -21,6 +21,42 @@ describe(__filename, function () {
     cy.cancelDialogPanel();
   });
 
+  it('suggests a new column name that follows the language until edited', function () {
+    cy.columnActionClick('review', ['Edit column', 'Translate column…']);
+    cy.waitForDialogPanel();
+
+    cy.get('.dialog-container input[bind="newColumnNameInput"]').should('have.value', 'review (Spanish)');
+    cy.get('.dialog-container select[bind="languageInput"]').select('TAMIL');
+    cy.get('.dialog-container input[bind="newColumnNameInput"]').should('have.value', 'review (Tamil)');
+
+    cy.get('.dialog-container input[bind="newColumnNameInput"]').clear();
+    cy.get('.dialog-container input[bind="newColumnNameInput"]').type('my translations');
+    cy.get('.dialog-container select[bind="languageInput"]').select('TAGALOG');
+    cy.get('.dialog-container input[bind="newColumnNameInput"]').should('have.value', 'my translations');
+
+    cy.cancelDialogPanel();
+  });
+
+  it('rejects a new column name that already exists', function () {
+    cy.intercept('POST', '**/command/core/translate-column*').as('translateColumn');
+    cy.columnActionClick('review', ['Edit column', 'Translate column…']);
+    cy.waitForDialogPanel();
+
+    cy.get('.dialog-container input[bind="newColumnNameInput"]').clear();
+    cy.get('.dialog-container input[bind="newColumnNameInput"]').type('other');
+    cy.get('.dialog-container input[bind="modelInput"]').clear();
+    cy.get('.dialog-container input[bind="modelInput"]').type('test-model');
+    cy.get('.dialog-container input[bind="apiKeyInput"]').type('test-key');
+    cy.get('.dialog-container .dialog-footer button[type="submit"]').click();
+
+    cy.get('.dialog-container [bind="validationMessage"]')
+      .should('be.visible')
+      .and('contain', 'already exists');
+    cy.get('@translateColumn.all').should('have.length', 0);
+
+    cy.cancelDialogPanel();
+  });
+
   it('shows inline validation for an invalid endpoint', function () {
     cy.columnActionClick('review', ['Edit column', 'Translate column…']);
     cy.waitForDialogPanel();
@@ -46,6 +82,7 @@ describe(__filename, function () {
       const parameters = new URLSearchParams(request.url.split('?')[1]);
       const requestBody = new URLSearchParams(request.body);
       expect(parameters.get('columnName')).to.equal('review');
+      expect(parameters.get('newColumnName')).to.equal('review (Spanish)');
       expect(parameters.get('language')).to.equal('SPANISH');
       expect(parameters.get('endpoint')).to.equal('https://translation.example.invalid/chat/completions');
       expect(parameters.get('model')).to.equal('test-model');
