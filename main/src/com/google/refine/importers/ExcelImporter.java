@@ -56,6 +56,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.ExcelNumberFormat;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,6 +180,13 @@ public class ExcelImporter extends TabularImportingParserBase {
             exceptions.add(new ImportException(
                     "Attempted to parse as an Excel file but failed. " +
                             "Invalid XML.",
+                    e));
+            return;
+        } catch (RecordFormatException e) {
+            exceptions.add(new ImportException(
+                    "Attempted to parse as an Excel file but failed. " +
+                            "The file contains a record that is too large to import safely. " +
+                            "Try re-saving it in Excel or importing it as TSV or CSV instead.",
                     e));
             return;
         }
