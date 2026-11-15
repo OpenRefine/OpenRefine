@@ -76,7 +76,9 @@ public class ExpressionUtils {
         Project project = (Project) bindings.get("project");
 
         bindings.put("rowIndex", rowIndex);
-        bindings.put("row", new WrappedRow(project, rowIndex, row));
+        WrappedRow wrappedRow = new WrappedRow(project, rowIndex, row);
+        bindings.put("row", wrappedRow);
+        bindings.put("record", wrappedRow.getField("record", bindings));
         bindings.put("cells", new CellTuple(project, row));
 
         if (columnName != null) {
@@ -93,6 +95,12 @@ public class ExpressionUtils {
             } else {
                 bindings.put("value", cell.value);
             }
+        }
+
+        if (cell != null && cell.recon != null) {
+            bindings.put("recon", cell.recon);
+        } else {
+            bindings.remove("recon");
         }
 
         for (Binder binder : s_binders) {
