@@ -96,6 +96,9 @@ PerformEditsDialog.updateEditCount = function(edit_count) {
       WikibaseManager.getSelectedWikibaseMainPage(),
       WikibaseManager.getSelectedWikibaseName(),
   ));
+  this._elmts.reviewYourEdits.append(
+    $('<p style="margin-top: 10px;"></p>').html($.i18n('perform-wikibase-edits/mass-editing-warning'))
+);
 };
 
 PerformEditsDialog._updateWarnings = function(data) {
