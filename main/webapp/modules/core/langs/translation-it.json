@@ -378,7 +378,7 @@
     "core-util-enc/aliases": "Alias",
     "core-views/all": "Tutti",
     "core-views/custom-facet": "Faccetta personalizzata per la colonna",
-    "core-views/copy-recon-judg": "Copia i risultati della riconciliazione dalla colonna",
+    "core-views/copy-recon-judg": "Copia i risultati della riconciliazione dalla colonna $1",
     "core-views/to-date": "A data…",
     "core-views/to-date/header": "A data",
     "core-views/to-date/single": "A data",

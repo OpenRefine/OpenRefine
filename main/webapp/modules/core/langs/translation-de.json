@@ -421,7 +421,7 @@
     "core-util-enc/aliases": "Aliase",
     "core-views/all": "Alle",
     "core-views/custom-facet": "Benutzerdefinierte Facette in Spalte",
-    "core-views/copy-recon-judg": "Abgleichsbeurteilungen aus Spalte kopieren",
+    "core-views/copy-recon-judg": "Abgleichsbeurteilungen aus Spalte kopieren $1",
     "core-views/to-date": "In Datum…",
     "core-views/to-date/header": "In Datum",
     "core-views/to-date/single": "In Datum",

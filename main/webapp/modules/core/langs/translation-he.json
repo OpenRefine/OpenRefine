@@ -382,7 +382,7 @@
     "core-views/blanks": "חסרים",
     "core-views/errors": "שגיאות",
     "core-views/search-fb-topic": "חפש פריט שיתאים לכל התאים המסוננים",
-    "core-views/copy-recon-judg": "העתקת שיקולי השלמה מהעמודה",
+    "core-views/copy-recon-judg": "העתקת שיקולי השלמה מהעמודה $1",
     "core-views/copy-to-col": "העתקה לעמודות",
     "core-views/copy-opt": "העתקת אפשרויות",
     "core-views/apply-to-cell": "יישום על תאים שנשפטו",

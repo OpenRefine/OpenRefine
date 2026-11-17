@@ -655,7 +655,7 @@
     "core-views/view": "Amaga / Mostra",
     "core-recon/against-type": "Concilia contra el tipus:",
     "core-views/match-this": "Coincideix només amb aquesta cel·la",
-    "core-views/copy-recon-judg": "Copia els judicis de reconciliació des de la columna",
+    "core-views/copy-recon-judg": "Copia els judicis de reconciliació des de la columna $1",
     "core-views/blank-out/header": "A nul",
     "core-views/add-col-fetch": "Afegeix una columna recuperant els URL basats en la columna",
     "core-views/best-name": "Coincidència de nom del millor candidat",
