@@ -41,6 +41,7 @@ import java.util.Properties;
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class ColumnRenameChange extends ColumnChange {
@@ -73,11 +74,11 @@ public class ColumnRenameChange extends ColumnChange {
 
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("oldColumnName=");
-        writer.write(_oldColumnName);
+        writer.write("oldColumnNameJSON=");
+        writer.write(ParsingUtilities.mapper.writeValueAsString(_oldColumnName));
         writer.write('\n');
-        writer.write("newColumnName=");
-        writer.write(_newColumnName);
+        writer.write("newColumnNameJSON=");
+        writer.write(ParsingUtilities.mapper.writeValueAsString(_newColumnName));
         writer.write('\n');
         writer.write("/ec/\n"); // end of change marker
     }
@@ -94,8 +95,12 @@ public class ColumnRenameChange extends ColumnChange {
 
             if ("oldColumnName".equals(field)) {
                 oldColumnName = value;
+            } else if ("oldColumnNameJSON".equals(field)) {
+                oldColumnName = ParsingUtilities.mapper.readValue(value, String.class);
             } else if ("newColumnName".equals(field)) {
                 newColumnName = value;
+            } else if ("newColumnNameJSON".equals(field)) {
+                newColumnName = ParsingUtilities.mapper.readValue(value, String.class);
             }
         }
 
