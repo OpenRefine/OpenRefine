@@ -210,7 +210,24 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         }
     }
 
+    @Test
+    public void testEntityKindMismatchWithoutConstraints() throws Exception {
+        ObjectNode preview = previewItemValue("P8017", "wikibase-form", false,
+                "manifest/wikidata-manifest-v1.0-without-constraints.json");
+        JsonNode mismatch = null;
+        for (JsonNode warning : preview.path("warnings")) {
+            if ("property-datatype-mismatch".equals(warning.path("type").asText())) {
+                mismatch = warning;
+            }
+        }
+        assertNotNull(mismatch, "Intrinsic datatype checks should also run without property-constraint configuration");
+    }
+
     private ObjectNode previewItemValue(String propertyId, String datatype, boolean slowMode) throws Exception {
+        return previewItemValue(propertyId, datatype, slowMode, "manifest/wikidata-manifest-v1.0.json");
+    }
+
+    private ObjectNode previewItemValue(String propertyId, String datatype, boolean slowMode, String manifestFile) throws Exception {
         project = createProject("entity-kind-preview", new String[] { "Subject", "Value" },
                 new Serializable[][] { { "Synthetic subject", "Synthetic Item value" } });
         project.rows.get(0).cells.set(0, TestingData.makeMatchedCell("Q1032248", "Synthetic subject"));
@@ -229,7 +246,7 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         schemaProperty.put("datatype", datatype);
         when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
         when(request.getParameter("schema")).thenReturn(schema.toString());
-        when(request.getParameter("manifest")).thenReturn(jsonFromFile("manifest/wikidata-manifest-v1.0.json"));
+        when(request.getParameter("manifest")).thenReturn(jsonFromFile(manifestFile));
         when(request.getParameter("slow_mode")).thenReturn(Boolean.toString(slowMode));
 
         command.doPost(request, response);
