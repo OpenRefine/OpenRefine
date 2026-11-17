@@ -37,6 +37,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.fail;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -54,7 +55,11 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
+import com.google.refine.model.ReconCandidate;
+import com.google.refine.model.Row;
 
 public class GrelTests extends GrelTestBase {
 
@@ -74,6 +79,45 @@ public class GrelTests extends GrelTestBase {
     }
 
     // -----------------tests------------
+
+    @Test
+    public void testRecordVariable() throws ParsingException {
+        project = createProject(new String[] { "key", "value" }, new Serializable[][] {
+                { "first", "a" },
+                { null, "b" },
+                { "second", "c" }
+        });
+        bindings = ExpressionUtils.createBindings(project);
+        for (int rowIndex = 0; rowIndex < project.rows.size(); rowIndex++) {
+            Row row = project.rows.get(rowIndex);
+            ExpressionUtils.bind(bindings, row, rowIndex, "value", row.getCell(1));
+            parseEval(bindings, new String[] { "record.rowCount", rowIndex < 2 ? "2" : "1" });
+            parseEval(bindings, new String[] { "record.index == row.record.index", "true" });
+            parseEval(bindings, new String[] { "record.cells['value'].value.join(',')", rowIndex < 2 ? "a,b" : "c" });
+        }
+        parseEval(bindings, new String[] { "with(42, record, record)", "42" });
+        parseEval(bindings, new String[] { "record.rowCount", "1" });
+    }
+
+    @Test
+    public void testReconVariable() throws ParsingException {
+        project = createProject(new String[] { "value" }, new Serializable[][] { { "a" } });
+        bindings = ExpressionUtils.createBindings(project);
+        Row row = project.rows.get(0);
+        Recon recon = new Recon(0, null, null);
+        recon.match = new ReconCandidate("Q1", "first", new String[0], 100);
+        ExpressionUtils.bind(bindings, row, 0, "value", new Cell("a", recon));
+        parseEval(bindings, new String[] { "recon.match.id", "Q1" });
+        parseEval(bindings, new String[] { "recon.match.id == cell.recon.match.id", "true" });
+        parseEval(bindings, new String[] { "with(42, recon, recon)", "42" });
+        parseEval(bindings, new String[] { "recon.match.id", "Q1" });
+
+        ExpressionUtils.bind(bindings, row, 0, "value", new Cell("a", null));
+        parseEval(bindings, new String[] { "recon", null });
+        ExpressionUtils.bind(bindings, row, 0, "value", new Cell("a", recon));
+        ExpressionUtils.bind(bindings, row, 0, "value", null);
+        parseEval(bindings, new String[] { "recon", null });
+    }
 
     @Test
     public void testInvalidSyntax() {
