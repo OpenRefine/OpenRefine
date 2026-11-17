@@ -63,6 +63,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.util.ZipArchiveFakeEntry;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -210,6 +211,19 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(1)).get("skipDataLines");
         verify(options, times(1)).get("limit");
         verify(options, times(1)).get("storeBlankCellsAsNulls");
+    }
+
+    @Test
+    public void readXlsxWithOversizedZipEntryReportsImportError() throws IOException {
+        int previousMaxEntrySize = ZipArchiveFakeEntry.getMaxEntrySize();
+        ZipArchiveFakeEntry.setMaxEntrySize(1024);
+        try (InputStream stream = new FileInputStream(xlsxFile)) {
+            List<Exception> exceptions = parseOneFileAndReturnExceptions(SUT, stream);
+            assertEquals(exceptions.size(), 1, "Expected one import error, got: " + exceptions);
+            assertTrue(exceptions.get(0) instanceof ImportException, "Expected an ImportException, got: " + exceptions.get(0));
+        } finally {
+            ZipArchiveFakeEntry.setMaxEntrySize(previousMaxEntrySize);
+        }
     }
 
     @Test
