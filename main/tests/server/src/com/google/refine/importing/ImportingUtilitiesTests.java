@@ -331,12 +331,12 @@ public class ImportingUtilitiesTests extends ImporterTest {
      * @throws IOException
      */
     private void importArchive(String filename, String mimeType) throws IOException {
-        String filepath = ClassLoader.getSystemResource(filename).getPath();
+        File file = FileUtils.toFile(ClassLoader.getSystemResource(filename));
         // Make a copy in our data directory where it's expected
         String suffix = filename.substring(filename.lastIndexOf("."));
         File tmp = File.createTempFile("openrefine-test-movies", suffix, job.getRawDataDir());
         tmp.deleteOnExit();
-        FileUtils.copyFile(new File(filepath), tmp);
+        FileUtils.copyFile(file, tmp);
 
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
@@ -402,11 +402,11 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @Test
     public void importCompressedNonArchive() throws IOException {
         String filename = "persons.csv.gz";
-        String filepath = ClassLoader.getSystemResource(filename).getPath();
+        File file = FileUtils.toFile(ClassLoader.getSystemResource(filename));
         // Make a copy in our data directory where it's expected
         File tmp = File.createTempFile("openrefine-test-persons", ".csv.gz", job.getRawDataDir());
         tmp.deleteOnExit();
-        FileUtils.copyFile(new File(filepath), tmp);
+        FileUtils.copyFile(file, tmp);
 
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
@@ -464,11 +464,11 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     private void testInvalidZipFile(String basename) throws IOException {
         String filename = basename + ".zip";
-        String filepath = ClassLoader.getSystemResource(filename).getPath();
+        File file = FileUtils.toFile(ClassLoader.getSystemResource(filename));
         // Make a copy in our data directory where it's expected
         File tmp = File.createTempFile("openrefine-test-" + basename, ".zip", job.getRawDataDir());
         tmp.deleteOnExit();
-        FileUtils.copyFile(new File(filepath), tmp);
+        FileUtils.copyFile(file, tmp);
 
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
@@ -547,7 +547,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 { "unsupportedPPMD.zip", true },
         };
         for (Object[] test : cases) {
-            assertEquals(ImportingUtilities.isCompressed(new File(ClassLoader.getSystemResource((String) test[0]).getFile())), test[1],
+            assertEquals(ImportingUtilities.isCompressed(FileUtils.toFile(ClassLoader.getSystemResource((String) test[0]))), test[1],
                     "Wrong value for isCompressed of: " + Arrays.toString(test));
         }
 
@@ -644,18 +644,18 @@ public class ImportingUtilitiesTests extends ImporterTest {
     private void testMultipleFiles(String file1, String file2, String fileSuffix, ContentType contentType, String expectedFormat)
             throws IOException, FileUploadException {
 
-        String filepath1 = ClassLoader.getSystemResource(file1 + fileSuffix).getPath();
-        String filepath2 = ClassLoader.getSystemResource(file2 + fileSuffix).getPath();
+        File source1 = FileUtils.toFile(ClassLoader.getSystemResource(file1 + fileSuffix));
+        File source2 = FileUtils.toFile(ClassLoader.getSystemResource(file2 + fileSuffix));
 
         File tmp1 = File.createTempFile("openrefine-test-" + file1, fileSuffix, job.getRawDataDir());
         tmp1.deleteOnExit();
 
-        FileUtils.copyFile(new File(filepath1), tmp1);
+        FileUtils.copyFile(source1, tmp1);
 
         File tmp2 = File.createTempFile("openrefine-test-" + file2, fileSuffix, job.getRawDataDir());
         tmp2.deleteOnExit();
 
-        FileUtils.copyFile(new File(filepath2), tmp2);
+        FileUtils.copyFile(source2, tmp2);
 
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         FileBody fileBody1 = new FileBody(tmp1, contentType);
