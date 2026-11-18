@@ -2,6 +2,7 @@
 package com.google.refine.jython;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.time.OffsetDateTime;
@@ -153,8 +154,19 @@ public class JythonEvaluableTest {
     }
 
     @Test
+    public void testJythonColumnName() {
+        Properties bindings = createBindings();
+        Evaluable evaluable = new JythonEvaluable("return columnName");
+
+        assertEquals(evaluable.evaluate(bindings), "number");
+        bindings.setProperty("columnName", "product name");
+        assertEquals(evaluable.evaluate(bindings), "product name");
+        assertNull(evaluable.evaluate(new Properties()));
+    }
+
+    @Test
     public void testEvalErrorOnSomeBindings() {
-        String testKey = "columnName";
+        String testKey = "PI";
         Properties bindings = createBindings();
         assertTrue(bindings.containsKey(testKey), "Bindings should contain '" + testKey + "'.");
 

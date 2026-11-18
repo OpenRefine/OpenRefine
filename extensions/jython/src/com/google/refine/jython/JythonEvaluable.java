@@ -133,7 +133,7 @@ public class JythonEvaluable implements Evaluable {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("def ");
         sb.append(s_functionName);
-        sb.append("(value, cell, cells, row, rowIndex, value1, value2):");
+        sb.append("(value, cell, cells, row, rowIndex, value1, value2, columnName):");
         for (String line : lines) {
             sb.append("\n  ");
             sb.append(line);
@@ -155,7 +155,8 @@ public class JythonEvaluable implements Evaluable {
                             getObject("row", bindings),
                             getValue("rowIndex", bindings),
                             getValue("value1", bindings),
-                            getValue("value2", bindings)
+                            getValue("value2", bindings),
+                            getValue("columnName", bindings)
                     });
 
             return unwrap(result);
