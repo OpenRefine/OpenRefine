@@ -43,6 +43,7 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import org.openrefine.wikibase.qa.QAWarning;
 import org.openrefine.wikibase.testing.TestingData;
@@ -78,10 +79,10 @@ public class PropertyDatatypeScrutinizerTest extends StatementScrutinizerTest {
     public void testKnownEntityKinds(String datatype, Value matchingValue, Value mismatchingValue,
             String expectedEntityType, String actualEntityType) {
         setDatatype(formProperty, datatype);
-        scrutinize(statement(formProperty, matchingValue));
+        scrutinize(entityStatement(formProperty, matchingValue));
         assertNoWarningRaised();
 
-        scrutinize(statement(formProperty, mismatchingValue));
+        scrutinize(entityStatement(formProperty, mismatchingValue));
         assertWarningRaised(expectedWarning(formProperty, expectedEntityType, actualEntityType, 1));
     }
 
@@ -146,6 +147,15 @@ public class PropertyDatatypeScrutinizerTest extends StatementScrutinizerTest {
         DatatypeIdValue datatypeValue = Datamodel.makeDatatypeIdValueFromJsonString(datatype);
         when(property.getDatatype()).thenReturn(datatypeValue);
         when(cache.get(propertyId)).thenReturn(property);
+    }
+
+    private Statement entityStatement(PropertyIdValue propertyId, Value value) {
+        // WDTK 0.17 cannot construct Lexeme/Form/Sense snaks. Test their native entity IDs through the ValueSnak
+        // interface; the Item-to-Form preview and qualifier/reference cases still use real WDTK snaks.
+        ValueSnak snak = mock(ValueSnak.class);
+        when(snak.getPropertyId()).thenReturn(propertyId);
+        when(snak.getValue()).thenReturn(value);
+        return new StatementImpl("", snak, TestingData.existingId);
     }
 
     private Statement statement(PropertyIdValue propertyId, Value value) {
