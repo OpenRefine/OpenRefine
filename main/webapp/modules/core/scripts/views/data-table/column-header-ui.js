@@ -59,6 +59,10 @@ DataTableColumnHeaderUI.prototype.getColumn = function() {
   return this._column;
 };
 
+DataTableColumnHeaderUI.prototype.getColumnIndex = function() {
+  return this._columnIndex;
+};
+
 DataTableColumnHeaderUI.prototype._render = function() {
   var self = this;
   var td = $(this._td);
