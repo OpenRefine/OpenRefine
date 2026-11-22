@@ -49,6 +49,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   float: right;
 }
 
+.viewpanel-records-notice {
+  clear: both;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin-top: var(--padding-normal);
+  padding: 4px 8px;
+  font-size: 0.85em;
+  background: var(--notification-primary);
+  border-radius: 2px;
+}
+
+.viewpanel-records-notice-dismiss img {
+  display: block;
+  height: 12px;
+}
+
 .viewpanel-pagingcount {
   font-weight: bold;
 }
