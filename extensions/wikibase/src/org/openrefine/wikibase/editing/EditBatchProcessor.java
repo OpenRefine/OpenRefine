@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.OptionalLong;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,6 +67,7 @@ import org.openrefine.wikibase.updates.scheduler.WikibaseAPIUpdateScheduler;
 public class EditBatchProcessor {
 
     static final Logger logger = LoggerFactory.getLogger(EditBatchProcessor.class);
+    private static final String FETCH_FAILED_MESSAGE = "Failed to fetch entities to edit";
 
     private WikibaseDataFetcher fetcher;
     private WikibaseDataEditor editor;
@@ -81,6 +83,7 @@ public class EditBatchProcessor {
     private int batchCursor;
     private int globalCursor;
     private Map<String, EntityDocument> currentDocs;
+    private boolean documentFetchFailed;
     private int batchSize;
     private int filePageWaitTime;
     private int filePageMaxWaitTime;
@@ -142,7 +145,6 @@ public class EditBatchProcessor {
         this.batchCursor = 0;
         this.remainingUpdates = new ArrayList<>(scheduled);
         this.currentBatch = Collections.emptyList();
-        this.currentDocs = Collections.emptyMap();
     }
 
     /**
@@ -159,6 +161,9 @@ public class EditBatchProcessor {
             prepareNewBatch();
         }
         EntityEdit update = currentBatch.get(batchCursor);
+        if (documentFetchFailed) {
+            return fetchFailure(update, FETCH_FAILED_MESSAGE);
+        }
 
         // Rewrite mentions to new entities
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getEntityId());
@@ -204,13 +209,19 @@ public class EditBatchProcessor {
                 // Existing entities
                 EntityUpdate entityUpdate = null;
                 if (update.requiresFetchingExistingState()) {
-                    String entityId = update.getEntityId().getId();
-                    if (currentDocs.get(entityId) != null) {
-                        entityUpdate = update.toEntityUpdate(currentDocs.get(entityId));
-                    } else {
-                        logger.warn(String.format("Skipping editing of %s as it could not be retrieved", entityId));
-                        entityUpdate = null;
+                    if (currentDocs == null) {
+                        fetchCurrentDocs();
+                        if (currentDocs == null) {
+                            documentFetchFailed = true;
+                            return fetchFailure(update, FETCH_FAILED_MESSAGE);
+                        }
                     }
+                    String entityId = update.getEntityId().getId();
+                    EntityDocument document = currentDocs.get(entityId);
+                    if (document == null) {
+                        return fetchFailure(update, "Could not retrieve entity " + entityId);
+                    }
+                    entityUpdate = update.toEntityUpdate(document);
                 } else if (!update.isEmpty()) {
                     entityUpdate = update.toEntityUpdate(null);
                 }
@@ -271,6 +282,11 @@ public class EditBatchProcessor {
 
         batchCursor++;
         return new EditResult(update.getContributingRowIds(), null, null, oldRevisionId, lastRevisionId, newEntityUrl);
+    }
+
+    private EditResult fetchFailure(EntityEdit update, String message) {
+        batchCursor++;
+        return new EditResult(update.getContributingRowIds(), "fetch-failed", message, 0L, OptionalLong.empty(), null);
     }
 
     public static class EditResult {
@@ -346,14 +362,28 @@ public class EditBatchProcessor {
         } else {
             currentBatch = remainingUpdates.subList(0, batchSize);
         }
-        List<String> idsToFetch = currentBatch.stream()
-                .filter(u -> u.requiresFetchingExistingState())
-                .map(u -> u.getEntityId().getId())
+        batchCursor = 0;
+        currentDocs = null;
+    }
+
+    private String getEntityIdToFetch(EntityEdit update) {
+        EntityIdValue entityId = update.getEntityId();
+        if (update.requiresFetchingExistingState()) {
+            return entityId.getId();
+        }
+        if (update.isNew() && entityId instanceof ReconEntityIdValue) {
+            return library.getId(((ReconEntityIdValue) entityId).getReconInternalId());
+        }
+        return null;
+    }
+
+    private void fetchCurrentDocs() throws InterruptedException {
+        List<String> idsToFetch = currentBatch.subList(batchCursor, currentBatch.size()).stream()
+                .map(this::getEntityIdToFetch)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        // Get the current documents for this batch of updates
         logger.info("Requesting documents");
-        currentDocs = null;
         int retries = 5;
         int backoff = 2;
         int sleepTime = 5000;
@@ -375,9 +405,7 @@ public class EditBatchProcessor {
         }
         if (currentDocs == null && !idsToFetch.isEmpty()) {
             logger.warn("Giving up on fetching documents to edit. Skipping " + remainingEdits() + " remaining edits.");
-            globalCursor = scheduled.size();
         }
-        batchCursor = 0;
     }
 
     private String getDocumentLabel(Map<String, MonolingualTextValue> labels, String defaultName) {
