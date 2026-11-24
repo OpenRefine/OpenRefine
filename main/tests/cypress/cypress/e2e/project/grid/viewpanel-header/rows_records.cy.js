@@ -127,4 +127,40 @@ describe('records mode notice', function () {
     switchToRecords();
     cy.get(notice).should('not.exist');
   });
+
+  it('stays hidden after dismissing, without a reload', function () {
+    loadJSONProject();
+    switchToRecords();
+
+    cy.get(`${notice} a.viewpanel-records-notice-dismiss`).click();
+    cy.get(notice).should('not.exist');
+
+    cy.get('span[bind="modeSelectors"]').contains('rows').click();
+    cy.get('span[bind="modeSelectors"] a.selected').should('contain', 'rows');
+    switchToRecords();
+    cy.get(notice).should('not.exist');
+  });
+
+  it('stays dismissed in other projects', function () {
+    cy.setPreference(preferenceName, 'true');
+    loadJSONProject();
+    switchToRecords();
+    cy.get(notice).should('not.exist');
+  });
+
+  it('shows only one notice after the grid redraws', function () {
+    loadJSONProject();
+    switchToRecords();
+    cy.get(notice).should('have.length', 1);
+
+    // pick a page size that is not currently selected, so that the grid redraws
+    cy.get('.viewpanel-pagesize a.action')
+      .first()
+      .invoke('text')
+      .then((pageSize) => {
+        cy.get('.viewpanel-pagesize a.action').first().click();
+        cy.get('.viewpanel-pagesize a.selected').should('have.text', pageSize);
+      });
+    cy.get(notice).should('have.length', 1);
+  });
 });
