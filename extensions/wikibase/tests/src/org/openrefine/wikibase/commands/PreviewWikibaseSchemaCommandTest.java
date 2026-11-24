@@ -24,13 +24,18 @@
 
 package org.openrefine.wikibase.commands;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikibase.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
@@ -40,7 +45,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 
 import com.google.refine.util.LocaleUtils;
 import com.google.refine.util.ParsingUtilities;
@@ -170,5 +179,80 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         }
         assertFalse(existingitemrequirescertainotherstatementwithsuggestedvalue_P633P17);
         assertFalse(existingitemrequirescertainotherstatement_P633P18);
+    }
+
+    @DataProvider(name = "inspectionModes")
+    public Object[][] inspectionModes() {
+        return new Object[][] { { false }, { true } };
+    }
+
+    @Test(dataProvider = "inspectionModes")
+    public void testEntityKindMismatch(boolean slowMode) throws Exception {
+        ObjectNode preview = previewItemValue("P8017", "wikibase-form", slowMode);
+        JsonNode mismatch = null;
+        for (JsonNode warning : preview.path("warnings")) {
+            if ("property-datatype-mismatch".equals(warning.path("type").asText())) {
+                mismatch = warning;
+            }
+        }
+        assertNotNull(mismatch, "Preview should report an Item value supplied to a Form-valued property");
+        assertEquals(mismatch.path("properties").path("property_entity").path("id").asText(), "P8017");
+        assertEquals(mismatch.path("properties").path("expected_entity_type").asText(), "Form");
+        assertEquals(mismatch.path("properties").path("actual_entity_type").asText(), "Item");
+        assertEquals(mismatch.path("count").asInt(), 1);
+    }
+
+    @Test(dataProvider = "inspectionModes")
+    public void testMatchingEntityKind(boolean slowMode) throws Exception {
+        ObjectNode preview = previewItemValue("P31", "wikibase-item", slowMode);
+        for (JsonNode warning : preview.path("warnings")) {
+            assertFalse("property-datatype-mismatch".equals(warning.path("type").asText()));
+        }
+    }
+
+    @Test
+    public void testEntityKindMismatchWithoutConstraints() throws Exception {
+        ObjectNode preview = previewItemValue("P8017", "wikibase-form", false,
+                "manifest/wikidata-manifest-v1.0-without-constraints.json");
+        JsonNode mismatch = null;
+        for (JsonNode warning : preview.path("warnings")) {
+            if ("property-datatype-mismatch".equals(warning.path("type").asText())) {
+                mismatch = warning;
+            }
+        }
+        assertNotNull(mismatch, "Intrinsic datatype checks should also run without property-constraint configuration");
+    }
+
+    private ObjectNode previewItemValue(String propertyId, String datatype, boolean slowMode) throws Exception {
+        return previewItemValue(propertyId, datatype, slowMode, "manifest/wikidata-manifest-v1.0.json");
+    }
+
+    private ObjectNode previewItemValue(String propertyId, String datatype, boolean slowMode, String manifestFile) throws Exception {
+        project = createProject("entity-kind-preview", new String[] { "Subject", "Value" },
+                new Serializable[][] { { "Synthetic subject", "Synthetic Item value" } });
+        project.rows.get(0).cells.set(0, TestingData.makeMatchedCell("Q1032248", "Synthetic subject"));
+        project.rows.get(0).cells.set(1, TestingData.makeMatchedCell("Q5", "Synthetic Item value"));
+
+        PropertyDocument property = mock(PropertyDocument.class);
+        when(property.getDatatype()).thenReturn(Datamodel.makeDatatypeIdValueFromJsonString(datatype));
+        EntityCache cache = mock(EntityCache.class);
+        when(cache.get(any(EntityIdValue.class))).thenReturn(property);
+        when(cache.getMultipleDocuments(anyList())).thenReturn(Collections.singletonList(property));
+        EntityCache.setEntityCache(Datamodel.SITE_WIKIDATA, cache);
+
+        ObjectNode schema = ParsingUtilities.evaluateJsonStringToObjectNode(jsonFromFile("schema/entity_kind_preview.json"));
+        ObjectNode schemaProperty = (ObjectNode) schema.path("entityEdits").get(0).path("statementGroups").get(0).path("property");
+        schemaProperty.put("pid", propertyId);
+        schemaProperty.put("datatype", datatype);
+        when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
+        when(request.getParameter("schema")).thenReturn(schema.toString());
+        when(request.getParameter("manifest")).thenReturn(jsonFromFile(manifestFile));
+        when(request.getParameter("slow_mode")).thenReturn(Boolean.toString(slowMode));
+
+        command.doPost(request, response);
+
+        ObjectNode preview = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+        assertEquals(preview.path("edits_preview").size(), 1, preview.toString());
+        return preview;
     }
 }

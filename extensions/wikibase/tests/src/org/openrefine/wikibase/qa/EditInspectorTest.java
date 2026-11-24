@@ -3,6 +3,7 @@ package org.openrefine.wikibase.qa;
 
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
@@ -11,13 +12,14 @@ import com.google.refine.model.Recon;
 import org.openrefine.wikibase.manifests.Manifest;
 import org.openrefine.wikibase.manifests.ManifestParser;
 import org.openrefine.wikibase.qa.QAWarning.Severity;
+import org.openrefine.wikibase.qa.scrutinizers.PropertyDatatypeScrutinizer;
 import org.openrefine.wikibase.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikibase.testing.TestingData;
 
 public class EditInspectorTest {
 
-    private static final int scrutinizerCount = 24;
-    private static final int scrutinizerNotDependingOnPropertyConstraintCount = 9;
+    private static final int scrutinizerCount = 25;
+    private static final int scrutinizerNotDependingOnPropertyConstraintCount = 10;
 
     @Test
     public void testNoScrutinizerSkipped() throws Exception {
@@ -25,6 +27,7 @@ public class EditInspectorTest {
         Manifest manifest = ManifestParser.parse(manifestJson);
         EditInspector editInspector = new EditInspector(new QAWarningStore(), manifest, false);
         assertEquals(editInspector.scrutinizers.size(), scrutinizerCount);
+        assertTrue(editInspector.scrutinizers.containsKey(PropertyDatatypeScrutinizer.class.getName()));
     }
 
     @Test
@@ -33,6 +36,7 @@ public class EditInspectorTest {
         Manifest manifest = ManifestParser.parse(manifestJson);
         EditInspector editInspector = new EditInspector(new QAWarningStore(), manifest, false);
         assertEquals(editInspector.scrutinizers.size(), scrutinizerNotDependingOnPropertyConstraintCount);
+        assertTrue(editInspector.scrutinizers.containsKey(PropertyDatatypeScrutinizer.class.getName()));
     }
 
     @Test
@@ -41,6 +45,7 @@ public class EditInspectorTest {
         Manifest manifest = ManifestParser.parse(manifestJson);
         EditInspector editInspector = new EditInspector(new QAWarningStore(), manifest, false);
         assertEquals(editInspector.scrutinizers.size(), scrutinizerNotDependingOnPropertyConstraintCount);
+        assertTrue(editInspector.scrutinizers.containsKey(PropertyDatatypeScrutinizer.class.getName()));
     }
 
     @Test

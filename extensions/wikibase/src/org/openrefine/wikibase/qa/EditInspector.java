@@ -58,6 +58,7 @@ import org.openrefine.wikibase.qa.scrutinizers.LabelScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.MultiValueScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.NewEntityScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.NoEditsMadeScrutinizer;
+import org.openrefine.wikibase.qa.scrutinizers.PropertyDatatypeScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.QualifierCompatibilityScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.QuantityScrutinizer;
 import org.openrefine.wikibase.qa.scrutinizers.RestrictedPositionScrutinizer;
@@ -114,9 +115,9 @@ public class EditInspector {
         this.connection = new BasicApiConnection(manifest.getMediaWikiApiEndpoint());
         this.slowMode = slowMode;
 
+        entityCache = EntityCache.getEntityCache(manifest.getSiteIri(), manifest.getMediaWikiApiEndpoint());
         String propertyConstraintPid = manifest.getConstraintsRelatedId("property_constraint_pid");
         if (propertyConstraintPid != null) {
-            entityCache = EntityCache.getEntityCache(manifest.getSiteIri(), manifest.getMediaWikiApiEndpoint());
             this.fetcher = new ConstraintFetcher(entityCache, propertyConstraintPid);
         }
 
@@ -135,6 +136,7 @@ public class EditInspector {
         register(new QuantityScrutinizer());
         register(new RestrictedValuesScrutinizer());
         register(new EntityTypeScrutinizer());
+        register(new PropertyDatatypeScrutinizer(entityCache));
         register(new CalendarScrutinizer());
         register(new CommonDescriptionScrutinizer());
         register(new EnglishDescriptionScrutinizer());

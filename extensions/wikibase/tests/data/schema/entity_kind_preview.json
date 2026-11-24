@@ -1,0 +1,38 @@
+{
+  "entityEdits": [
+    {
+      "type": "wbitemeditexpr",
+      "subject": {
+        "type": "wbentityvariable",
+        "columnName": "Subject"
+      },
+      "statementGroups": [
+        {
+          "property": {
+            "type": "wbpropconstant",
+            "pid": "P8017",
+            "label": "Synthetic property",
+            "datatype": "wikibase-form"
+          },
+          "statements": [
+            {
+              "value": {
+                "type": "wbentityvariable",
+                "columnName": "Value"
+              },
+              "qualifiers": [],
+              "references": []
+            }
+          ]
+        }
+      ],
+      "nameDescs": []
+    }
+  ],
+  "siteIri": "http://www.wikidata.org/entity/",
+  "entityTypeSiteIRI": {
+    "item": "http://www.wikidata.org/entity/",
+    "property": "http://www.wikidata.org/entity/"
+  },
+  "mediaWikiApiEndpoint": "https://www.wikidata.org/w/api.php"
+}
