@@ -47,6 +47,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class ColumnReorderChange extends ColumnChange {
@@ -144,11 +145,11 @@ public class ColumnReorderChange extends ColumnChange {
 
     @Override
     public void save(Writer writer, Properties options) throws IOException {
-        writer.write("columnNameCount=");
+        writer.write("columnNameJSONCount=");
         writer.write(Integer.toString(_columnNames.size()));
         writer.write('\n');
         for (String n : _columnNames) {
-            writer.write(n);
+            writer.write(ParsingUtilities.mapper.writeValueAsString(n));
             writer.write('\n');
         }
         writer.write("oldColumnCount=");
@@ -197,12 +198,14 @@ public class ColumnReorderChange extends ColumnChange {
             int equal = line.indexOf('=');
             CharSequence field = line.subSequence(0, equal);
 
-            if ("columnNameCount".equals(field)) {
+            if ("columnNameCount".equals(field) || "columnNameJSONCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        columnNames.add(line);
+                        columnNames.add("columnNameJSONCount".equals(field)
+                                ? ParsingUtilities.mapper.readValue(line, String.class)
+                                : line);
                     }
                 }
             } else if ("oldColumnCount".equals(field)) {

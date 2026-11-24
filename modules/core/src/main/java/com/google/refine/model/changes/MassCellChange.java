@@ -44,6 +44,7 @@ import com.google.refine.history.Change;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class MassCellChange implements Change {
@@ -128,8 +129,8 @@ public class MassCellChange implements Change {
     @Override
     public void save(Writer writer, Properties options) throws IOException {
         if (_commonColumnName != null) {
-            writer.write("commonColumnName=");
-            writer.write(_commonColumnName);
+            writer.write("commonColumnNameJSON=");
+            writer.write(ParsingUtilities.mapper.writeValueAsString(_commonColumnName));
             writer.write('\n');
         }
         writer.write("updateRowContextDependencies=");
@@ -156,6 +157,8 @@ public class MassCellChange implements Change {
 
             if ("commonColumnName".equals(field)) {
                 commonColumnName = line.substring(equal + 1);
+            } else if ("commonColumnNameJSON".equals(field)) {
+                commonColumnName = ParsingUtilities.mapper.readValue(line.substring(equal + 1), String.class);
             } else if ("updateRowContextDependencies".equals(field)) {
                 updateRowContextDependencies = Boolean.parseBoolean(line.substring(equal + 1));
             } else if ("cellChangeCount".equals(field)) {
