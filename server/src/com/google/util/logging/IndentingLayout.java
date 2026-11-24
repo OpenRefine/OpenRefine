@@ -77,9 +77,6 @@ public class IndentingLayout extends AbstractStringLayout {
         if (message == null) {
             return "";
         }
-        if (message.length() < 2) {
-            return message;
-        }
 
         if (message.startsWith("< ") && (this.indentation > 0)) {
             this.indentation--;
@@ -103,6 +100,7 @@ public class IndentingLayout extends AbstractStringLayout {
 //        }
 
         buf.append(TIME_FORMATTER.format(now));
+        buf.append(" ").append(event.getLevel());
 
         buf.append(" [");
         String context = event.getLoggerName();
