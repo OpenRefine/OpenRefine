@@ -384,7 +384,7 @@
     "core-util-enc/aliases": "Alias",
     "core-views/all": "Todo",
     "core-views/custom-facet": "Faceta personalizada en columna",
-    "core-views/copy-recon-judg": "Copiar parámetros de cotejo desde la columna",
+    "core-views/copy-recon-judg": "Copiar parámetros de cotejo desde la columna $1",
     "core-views/hist-entries": "historial de entradas",
     "core-views/boolean": "booleano",
     "core-views/text": "texto",

@@ -400,7 +400,7 @@
     "core-util-enc/aliases": "Псевдонимы",
     "core-views/all": "Все",
     "core-views/custom-facet": "Настроить текстовый фасет по колонке",
-    "core-views/copy-recon-judg": "Копирование решений сверки из колонки",
+    "core-views/copy-recon-judg": "Копирование решений сверки из колонки $1",
     "core-views/hist-entries": "Записи истории",
     "core-views/text": "текст",
     "core-views/match-identical": "Других аналогичных ячеек",
