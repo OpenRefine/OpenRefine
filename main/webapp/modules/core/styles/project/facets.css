@@ -168,6 +168,11 @@ li.facet-state-minimize a.facet-title-minimize:hover {
   margin: 5px 0;
 }
 
+.facet-body-scrollable .facet-body-controls {
+  /* Leave room for a horizontal overlay scrollbar below the controls. */
+  padding-bottom: var(--padding-looser);
+}
+
 .facet-choice {
   white-space: pre-wrap;
   padding: 2px 5px;
