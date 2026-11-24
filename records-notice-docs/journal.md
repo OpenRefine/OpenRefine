@@ -91,9 +91,11 @@ We ran the spec against a separate OpenRefine server on port 3334 with an empty 
 - **Rows mode:** banner hides, then comes back in records mode.
 - **CSV switched to records by hand:** no banner in rows, banner after clicking "records".
 - **Dismissed stays dismissed:** banner stays gone after ✕ and a reload.
-- **Dismissed without reload (added later by Kaley):** after clicking ✕, switching to rows and back to records keeps the banner gone.
-- **Dismissed across projects (added later by Kaley):** once dismissed, a different records project shows no banner.
-- **One banner after redraw (added later by Kaley):** changing the page size still leaves exactly one banner.
+- **Dismissed without reload (added later by Ethan and Kaley):** after clicking ✕, switching to rows and back to records keeps the banner gone.
+- **Dismissed across projects (added later by Ethan and Kaley):** once dismissed, a different records project shows no banner.
+- **One banner after redraw (added later by Ethan and Kaley):** changing the page size still leaves exactly one banner.
+
+![Automated tests pass](tests-pass.png)
 
 ### Manual verification
 
