@@ -26,12 +26,20 @@ package org.openrefine.wikibase.editing;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -48,6 +56,7 @@ import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
+import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
@@ -62,9 +71,11 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiErrorMessage;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.util.ParsingUtilities;
 
 import org.openrefine.wikibase.editing.EditBatchProcessor.EditResult;
+import org.openrefine.wikibase.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikibase.testing.TestingData;
 import org.openrefine.wikibase.testing.WikidataRefineTest;
 import org.openrefine.wikibase.updates.EntityEdit;
@@ -145,6 +156,117 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         expectedLibrary.setId(1234L, "Q1234");
         expectedLibrary.setName(1234L, "better label");
         assertEquals(expectedLibrary, library);
+    }
+
+    @Test
+    public void testLinkingTwoNewItems()
+            throws InterruptedException, MediaWikiApiErrorException, IOException {
+        ItemIdValue idA = Datamodel.makeWikidataItemIdValue("Q1234");
+        ItemIdValue idB = Datamodel.makeWikidataItemIdValue("Q4567");
+        ItemDocument createdA = ItemDocumentBuilder.forItemId(idA).withRevisionId(100L).build();
+        ItemDocument createdB = ItemDocumentBuilder.forItemId(idB).withRevisionId(101L).build();
+        when(fetcher.getEntityDocuments(List.of(idA.getId(), idB.getId())))
+                .thenReturn(Map.of(idA.getId(), createdA, idB.getId(), createdB));
+        when(editor.editEntityDocument(any(), eq(false), eq(summary), eq(tags))).thenReturn(new EditingResult(102L));
+
+        EditBatchProcessor processor = prepareLinkedItemEdits(createdA, createdB, 123, 50);
+        assertEquals(4, processor.remainingEdits());
+        processor.performEdit();
+        processor.performEdit();
+        assertEquals(50, processor.progress());
+        processor.performEdit();
+        processor.performEdit();
+        assertEquals(0, processor.remainingEdits());
+        assertEquals(100, processor.progress());
+
+        EntityUpdate expectedA = new ItemEditBuilder(idA)
+                .addStatement(TestingData.generateStatementAddition(idA, idB))
+                .addContributingRowId(123).build().toEntityUpdate(createdA);
+        EntityUpdate expectedB = new ItemEditBuilder(idB)
+                .addStatement(TestingData.generateStatementAddition(idB, idA))
+                .addContributingRowId(123).build().toEntityUpdate(createdB);
+        verify(editor).editEntityDocument(expectedA, false, summary, tags);
+        verify(editor).editEntityDocument(expectedB, false, summary, tags);
+    }
+
+    @Test
+    public void testLinkingTwoNewItemsWithMissingDocument()
+            throws InterruptedException, MediaWikiApiErrorException, IOException {
+        ItemIdValue idA = Datamodel.makeWikidataItemIdValue("Q1234");
+        ItemIdValue idB = Datamodel.makeWikidataItemIdValue("Q4567");
+        ItemDocument createdA = ItemDocumentBuilder.forItemId(idA).withRevisionId(100L).build();
+        ItemDocument createdB = ItemDocumentBuilder.forItemId(idB).withRevisionId(101L).build();
+        when(fetcher.getEntityDocuments(List.of(idA.getId(), idB.getId()))).thenReturn(Map.of(idA.getId(), createdA));
+        when(editor.editEntityDocument(any(), eq(false), eq(summary), eq(tags))).thenReturn(new EditingResult(102L));
+
+        EditBatchProcessor processor = prepareLinkedItemEdits(createdA, createdB, 124, 50);
+        EditResultsFormatter formatter = new EditResultsFormatter("https://www.wikidata.org/");
+        formatter.add(processor.performEdit());
+        formatter.add(processor.performEdit());
+        EditResult linked = processor.performEdit();
+        formatter.add(linked);
+        formatter.add(processor.performEdit());
+
+        assertEquals(processor.remainingEdits(), 0);
+        assertEquals(processor.progress(), 100);
+        assertNull(linked.getErrorCode());
+        assertEquals(linked.getLastRevisionId().getAsLong(), 102L);
+        verify(editor, times(1)).editEntityDocument(any(), eq(false), eq(summary), eq(tags));
+        Object resultB = formatter.toCells().stream().filter(cell -> cell.row == 124).findFirst().orElseThrow().cell.value;
+        assertEquals(resultB, new EvalError("[fetch-failed] Could not retrieve entity Q4567"));
+        assertEquals(library.getId(((ReconEntityIdValue) TestingData.newIdA).getReconInternalId()), idA.getId());
+        assertEquals(library.getId(((ReconEntityIdValue) TestingData.newIdB).getReconInternalId()), idB.getId());
+    }
+
+    @Test
+    public void testDocumentFetchRetriesExhaustedAcrossBatches()
+            throws InterruptedException, MediaWikiApiErrorException, IOException {
+        ItemIdValue idA = Datamodel.makeWikidataItemIdValue("Q1234");
+        ItemIdValue idB = Datamodel.makeWikidataItemIdValue("Q4567");
+        ItemDocument createdA = ItemDocumentBuilder.forItemId(idA).withRevisionId(100L).build();
+        ItemDocument createdB = ItemDocumentBuilder.forItemId(idB).withRevisionId(101L).build();
+        when(fetcher.getEntityDocuments(anyList())).thenThrow(new IOException("fetch failed"));
+
+        EditBatchProcessor processor = spy(prepareLinkedItemEdits(createdA, createdB, 124, 1));
+        doNothing().when(processor).waitBeforeFetchRetry(anyInt());
+        EditResultsFormatter formatter = new EditResultsFormatter("https://www.wikidata.org/w/api.php");
+        formatter.add(processor.performEdit());
+        formatter.add(processor.performEdit());
+        clearInvocations(editor);
+        formatter.add(processor.performEdit());
+        formatter.add(processor.performEdit());
+
+        assertEquals(processor.remainingEdits(), 0);
+        assertEquals(processor.progress(), 100);
+        Map<Integer, Object> results = formatter.toCells().stream()
+                .collect(Collectors.toMap(cell -> cell.row, cell -> cell.cell.value));
+        EvalError fetchError = new EvalError("[fetch-failed] Failed to fetch entities to edit");
+        assertEquals(results, Map.of(123, fetchError, 124, fetchError));
+        verify(fetcher, times(5)).getEntityDocuments(anyList());
+        verifyNoMoreInteractions(fetcher);
+        verifyNoInteractions(editor);
+        assertEquals(library.getId(((ReconEntityIdValue) TestingData.newIdA).getReconInternalId()), idA.getId());
+        assertEquals(library.getId(((ReconEntityIdValue) TestingData.newIdB).getReconInternalId()), idB.getId());
+    }
+
+    private EditBatchProcessor prepareLinkedItemEdits(ItemDocument createdA, ItemDocument createdB, int rowB, int batchSize)
+            throws MediaWikiApiErrorException, IOException {
+        MonolingualTextValue labelA = Datamodel.makeMonolingualTextValue("first item", "en");
+        MonolingualTextValue labelB = Datamodel.makeMonolingualTextValue("second item", "en");
+        ItemIdValue newIdA = TestingData.newIdA;
+        ItemIdValue newIdB = TestingData.newIdB;
+        List<EntityEdit> batch = List.of(
+                new ItemEditBuilder(newIdA).addLabel(labelA, true)
+                        .addStatement(TestingData.generateStatementAddition(newIdA, newIdB))
+                        .addContributingRowId(123).build(),
+                new ItemEditBuilder(newIdB).addLabel(labelB, true)
+                        .addStatement(TestingData.generateStatementAddition(newIdB, newIdA))
+                        .addContributingRowId(rowB).build());
+        when(editor.createEntityDocument(ItemDocumentBuilder.forItemId(newIdA).withLabel(labelA).build(), summary, tags))
+                .thenReturn(createdA);
+        when(editor.createEntityDocument(ItemDocumentBuilder.forItemId(newIdB).withLabel(labelB).build(), summary, tags))
+                .thenReturn(createdB);
+        return new EditBatchProcessor(fetcher, editor, connection, batch, library, summary, maxlag, tags, batchSize, 60);
     }
 
     @Test
