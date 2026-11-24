@@ -833,6 +833,8 @@
     "core-views/ctrl-enter": "Ctrl-Enter",
     "core-views/rows": "rows",
     "core-views/records": "records",
+    "core-views/records-mode-notice": "This project is shown in records mode: rows are grouped into records based on the first column.",
+    "core-views/records-mode-notice-dismiss": "Don't show again",
     "core-views/show": "Show",
     "core-views/hide": "Hide",
     "core-views/text-to-find": "Find",

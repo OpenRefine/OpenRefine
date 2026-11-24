@@ -186,7 +186,7 @@ DataTableView.prototype.render = function() {
   });
 
   var html = $(
-    '<div class="viewpanel-header">' +
+    '<div class="viewpanel-header" bind="viewPanelHeader">' +
       '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
         '<span bind="modeSelectors"></span>' + 
       '</div>' +
@@ -225,6 +225,8 @@ DataTableView.prototype.render = function() {
   renderBrowsingModeLink($.i18n('core-views/rows'), "row-based");
   renderBrowsingModeLink($.i18n('core-views/records'), "record-based");
 
+  this._renderRecordsModeNotice(elmts.viewPanelHeader);
+
   this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
 
   if (this._sorting.criteria.length > 0) {
@@ -240,6 +242,48 @@ DataTableView.prototype.render = function() {
   this.resize();
   
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
+};
+
+DataTableView.recordsModeNoticePreference = "ui.browsing.recordsModeNotice.dismissed";
+DataTableView.recordsModeDocsUrl = "https://openrefine.org/docs/manual/exploring#rows-vs-records";
+
+/**
+ * Shows a dismissible notice explaining records mode, as long as the grid is in
+ * records mode and the user has not dismissed it yet (workspace preference).
+ */
+DataTableView.prototype._renderRecordsModeNotice = function(header) {
+  var self = this;
+  // the preference may come back as a string after a page reload
+  var dismissed = Refine.getPreference(DataTableView.recordsModeNoticePreference, false);
+  if (ui.browsingEngine.getMode() !== "record-based" || dismissed === true || dismissed === "true") {
+    return;
+  }
+
+  var notice = $('<div>')
+    .addClass("viewpanel-records-notice")
+    .appendTo(header);
+  $('<span>')
+    .text($.i18n('core-views/records-mode-notice'))
+    .appendTo(notice);
+  $('<a>')
+    .addClass("viewpanel-records-notice-link")
+    .attr("href", DataTableView.recordsModeDocsUrl)
+    .attr("target", "_blank")
+    .attr("rel", "noopener noreferrer")
+    .html($.i18n('core-project/learn-more'))
+    .appendTo(notice);
+  $('<a href="javascript:{}"></a>')
+    .addClass("viewpanel-records-notice-dismiss")
+    .attr("title", $.i18n('core-views/records-mode-notice-dismiss'))
+    .append($('<img>')
+      .attr("src", "images/close.svg")
+      .attr("alt", $.i18n('core-views/records-mode-notice-dismiss')))
+    .appendTo(notice)
+    .on('click', function() {
+      Refine.setPreference(DataTableView.recordsModeNoticePreference, true);
+      notice.remove();
+      self.resize();
+    });
 };
 
 DataTableView.prototype._renderSortingControls = function(sortingControls) {
