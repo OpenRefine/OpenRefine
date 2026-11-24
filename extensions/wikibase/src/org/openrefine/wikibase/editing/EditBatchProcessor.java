@@ -400,12 +400,16 @@ public class EditBatchProcessor {
             sleepTime *= backoff;
             if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !idsToFetch.isEmpty()) {
                 logger.warn("Retrying in " + sleepTime + " ms");
-                Thread.sleep(sleepTime);
+                waitBeforeFetchRetry(sleepTime);
             }
         }
         if (currentDocs == null && !idsToFetch.isEmpty()) {
             logger.warn("Giving up on fetching documents to edit. Skipping " + remainingEdits() + " remaining edits.");
         }
+    }
+
+    void waitBeforeFetchRetry(int millis) throws InterruptedException {
+        Thread.sleep(millis);
     }
 
     private String getDocumentLabel(Map<String, MonolingualTextValue> labels, String defaultName) {

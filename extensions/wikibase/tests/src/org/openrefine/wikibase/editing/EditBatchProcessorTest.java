@@ -26,10 +26,17 @@ package org.openrefine.wikibase.editing;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -207,6 +214,37 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         verify(editor, times(1)).editEntityDocument(any(), eq(false), eq(summary), eq(tags));
         Object resultB = formatter.toCells().stream().filter(cell -> cell.row == 124).findFirst().orElseThrow().cell.value;
         assertEquals(resultB, new EvalError("[fetch-failed] Could not retrieve entity Q4567"));
+        assertEquals(library.getId(((ReconEntityIdValue) TestingData.newIdA).getReconInternalId()), idA.getId());
+        assertEquals(library.getId(((ReconEntityIdValue) TestingData.newIdB).getReconInternalId()), idB.getId());
+    }
+
+    @Test
+    public void testDocumentFetchRetriesExhaustedAcrossBatches()
+            throws InterruptedException, MediaWikiApiErrorException, IOException {
+        ItemIdValue idA = Datamodel.makeWikidataItemIdValue("Q1234");
+        ItemIdValue idB = Datamodel.makeWikidataItemIdValue("Q4567");
+        ItemDocument createdA = ItemDocumentBuilder.forItemId(idA).withRevisionId(100L).build();
+        ItemDocument createdB = ItemDocumentBuilder.forItemId(idB).withRevisionId(101L).build();
+        when(fetcher.getEntityDocuments(anyList())).thenThrow(new IOException("fetch failed"));
+
+        EditBatchProcessor processor = spy(prepareLinkedItemEdits(createdA, createdB, 124, 1));
+        doNothing().when(processor).waitBeforeFetchRetry(anyInt());
+        EditResultsFormatter formatter = new EditResultsFormatter("https://www.wikidata.org/w/api.php");
+        formatter.add(processor.performEdit());
+        formatter.add(processor.performEdit());
+        clearInvocations(editor);
+        formatter.add(processor.performEdit());
+        formatter.add(processor.performEdit());
+
+        assertEquals(processor.remainingEdits(), 0);
+        assertEquals(processor.progress(), 100);
+        Map<Integer, Object> results = formatter.toCells().stream()
+                .collect(Collectors.toMap(cell -> cell.row, cell -> cell.cell.value));
+        EvalError fetchError = new EvalError("[fetch-failed] Failed to fetch entities to edit");
+        assertEquals(results, Map.of(123, fetchError, 124, fetchError));
+        verify(fetcher, times(5)).getEntityDocuments(anyList());
+        verifyNoMoreInteractions(fetcher);
+        verifyNoInteractions(editor);
         assertEquals(library.getId(((ReconEntityIdValue) TestingData.newIdA).getReconInternalId()), idA.getId());
         assertEquals(library.getId(((ReconEntityIdValue) TestingData.newIdB).getReconInternalId()), idB.getId());
     }
