@@ -33,12 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import java.io.Serializable;
+import java.util.Properties;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
+import com.google.refine.model.Row;
 
 public class ExpressionUtilsTests extends RefineTest {
 
@@ -49,6 +56,53 @@ public class ExpressionUtilsTests extends RefineTest {
     }
 
     // -----------------tests------------
+
+    @Test
+    public void testBindRecord() {
+        Project project = createProject("records", new String[] { "key", "value" }, new Serializable[][] {
+                { "first", "a" },
+                { null, "b" },
+                { "second", "c" }
+        });
+        Properties bindings = ExpressionUtils.createBindings(project);
+
+        Row row = project.rows.get(1);
+        ExpressionUtils.bind(bindings, row, 1, "value", row.getCell(1));
+        Assert.assertTrue(bindings.get("record") instanceof HasFields);
+        HasFields record = (HasFields) bindings.get("record");
+        Assert.assertEquals(record.getField("rowCount", bindings), 2);
+        Assert.assertEquals(record.getField("index", bindings), 0);
+        HasFields nestedRecord = (HasFields) ((HasFields) bindings.get("row")).getField("record", bindings);
+        Assert.assertEquals(record.getField("fromRowIndex", bindings), nestedRecord.getField("fromRowIndex", bindings));
+
+        row = project.rows.get(2);
+        ExpressionUtils.bind(bindings, row, 2, "value", row.getCell(1));
+        record = (HasFields) bindings.get("record");
+        Assert.assertEquals(record.getField("rowCount", bindings), 1);
+        Assert.assertEquals(record.getField("index", bindings), 1);
+    }
+
+    @Test
+    public void testBindRecon() {
+        Project project = createProject("reconciliation", new String[] { "value" }, new Serializable[][] { { "a" } });
+        Properties bindings = ExpressionUtils.createBindings(project);
+        Row row = project.rows.get(0);
+        Recon first = new Recon(0, null, null);
+        Recon second = new Recon(1, null, null);
+
+        ExpressionUtils.bind(bindings, row, 0, "value", new Cell("a", first));
+        Assert.assertSame(bindings.get("recon"), first);
+
+        ExpressionUtils.bind(bindings, row, 0, "value", new Cell(null, second));
+        Assert.assertSame(bindings.get("recon"), second);
+
+        ExpressionUtils.bind(bindings, row, 0, "value", new Cell("a", null));
+        Assert.assertFalse(bindings.containsKey("recon"));
+
+        ExpressionUtils.bind(bindings, row, 0, "value", new Cell("a", first));
+        ExpressionUtils.bind(bindings, row, 0, "value", null);
+        Assert.assertFalse(bindings.containsKey("recon"));
+    }
 
     @Test
     public void testSameValueTrue() {
