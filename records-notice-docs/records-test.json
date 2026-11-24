@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Alice",
+    "city": "San Diego",
+    "pets": [
+      { "type": "cat", "pet_name": "Milo" },
+      { "type": "dog", "pet_name": "Rex" }
+    ]
+  },
+  {
+    "name": "Bob",
+    "city": "Seattle",
+    "pets": [
+      { "type": "fish", "pet_name": "Bubbles" }
+    ]
+  },
+  {
+    "name": "Cara",
+    "city": "Austin",
+    "pets": [
+      { "type": "dog", "pet_name": "Luna" },
+      { "type": "bird", "pet_name": "Kiwi" },
+      { "type": "cat", "pet_name": "Tom" }
+    ]
+  }
+]
