@@ -172,6 +172,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     });
   };
 
+  var doTranslateColumn = function() {
+    doTranslateColumnForColumn(column);
+  };
+
   var doAddColumnByReconciliation = function() {
     var columnIndex = Refine.columnNameToColumnIndex(column.name);
     var o = DataTableView.sampleVisibleRows(column);
@@ -605,6 +609,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         label: $.i18n('core-views/add-by-urls'),
         icon: 'images/operations/fetch-urls.svg',
         click: doAddColumnByFetchingURLs
+      },
+      {
+        id: "core/translate-column",
+        label: $.i18n('core-views/translate-column'),
+        icon: 'images/operations/transform.svg',
+        click: doTranslateColumn
       },
       {
         id: "core/add-column-by-reconciliation",
