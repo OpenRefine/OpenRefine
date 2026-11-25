@@ -733,8 +733,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
     elmts.or_views_keepOr.text($.i18n('core-views/keep-or'));
     elmts.or_views_setBlank.text($.i18n('core-views/set-blank'));
     elmts.or_views_storeErr.text($.i18n('core-views/store-err'));
-    elmts.or_views_reTrans.text($.i18n('core-views/re-trans'));
-    elmts.or_views_timesChang.text($.i18n('core-views/times-chang'));
+    elmts.or_views_reTransMax.text($.i18n('core-views/re-trans-max-times'));
     elmts.okButton.html($.i18n('core-buttons/ok'));
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));    
 
