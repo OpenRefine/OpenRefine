@@ -35,6 +35,11 @@ package com.google.refine.grel;
 
 public class Scanner {
 
+    /**
+     * The spread operator, which unpacks an array into separate function arguments, as in {@code or(a...)}.
+     */
+    static public final String SPREAD = "...";
+
     static public enum TokenType {
         Error, Delimiter, Operator, Identifier, Number, String, Regex
     }
@@ -278,6 +283,14 @@ public class Scanner {
 
             detail = "Regex not properly closed";
             // fall through
+        } else if (_index + SPREAD.length() <= _limit && _text.startsWith(SPREAD, _index)) { // spread operator
+            _index += SPREAD.length();
+
+            return new Token(
+                    start,
+                    _index,
+                    TokenType.Operator,
+                    SPREAD);
         } else if ("+-*/.%".indexOf(c) >= 0) { // operator
             _index++;
 
