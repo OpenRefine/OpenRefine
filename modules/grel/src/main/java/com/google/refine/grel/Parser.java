@@ -52,6 +52,7 @@ import com.google.refine.grel.ast.FieldAccessorExpr;
 import com.google.refine.grel.ast.FunctionCallExpr;
 import com.google.refine.grel.ast.LiteralExpr;
 import com.google.refine.grel.ast.OperatorCallExpr;
+import com.google.refine.grel.ast.SpreadExpr;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class Parser {
@@ -78,6 +79,7 @@ public class Parser {
         _token = _scanner.next(true);
 
         _root = parseExpression();
+        checkNoMisplacedSpread();
     }
 
     public Evaluable getExpression() {
@@ -228,7 +230,7 @@ public class Parser {
 
                 next(true); // swallow (
 
-                List<Evaluable> args = parseExpressionList(")");
+                List<Evaluable> args = parseExpressionList(")", c != null ? text : null);
 
                 if (c != null) {
                     Evaluable[] argsA = makeArray(args);
@@ -245,6 +247,7 @@ public class Parser {
             next(true);
 
             eval = new BracketedExpr(parseExpression());
+            checkNoMisplacedSpread();
 
             if (_token != null && _token.type == TokenType.Delimiter && _token.text.equals(")")) {
                 next(false);
@@ -305,17 +308,28 @@ public class Parser {
     }
 
     /*
-     * <expression-list> := <empty> | <expression> ( "," <expression> )*
+     * <expression-list> := <empty> | <argument> ( "," <argument> )*
      *
      */
     protected List<Evaluable> parseExpressionList(String closingDelimiter) throws ParsingException {
+        return parseExpressionList(closingDelimiter, null);
+    }
+
+    /**
+     * @param closingDelimiter
+     *            the delimiter which ends the list
+     * @param controlName
+     *            the name of the control whose arguments are being parsed, or null for function arguments and array
+     *            elements. The arguments of a control cannot be spread.
+     */
+    protected List<Evaluable> parseExpressionList(String closingDelimiter, String controlName) throws ParsingException {
         List<Evaluable> l = new LinkedList<Evaluable>();
 
         if (_token != null &&
                 (_token.type != TokenType.Delimiter || !_token.text.equals(closingDelimiter))) {
 
             while (_token != null) {
-                Evaluable eval = parseExpression();
+                Evaluable eval = parseArgument(controlName);
 
                 l.add(eval);
 
@@ -334,6 +348,41 @@ public class Parser {
         }
 
         return l;
+    }
+
+    /*
+     * <argument> := <expression> | <expression> "..."
+     *
+     */
+    protected Evaluable parseArgument(String controlName) throws ParsingException {
+        Evaluable eval = parseExpression();
+
+        if (isSpread(_token)) {
+            if (controlName != null) {
+                throw makeException("The spread operator " + Scanner.SPREAD
+                        + " cannot be used in the arguments of control " + controlName);
+            }
+            next(false); // swallow ...
+
+            eval = new SpreadExpr(eval);
+        }
+
+        return eval;
+    }
+
+    protected boolean isSpread(Token token) {
+        return token != null && token.type == TokenType.Operator && token.text.equals(Scanner.SPREAD);
+    }
+
+    /**
+     * Rejects a spread operator left over after parsing an expression, as it is only allowed after a function argument
+     * or an array element.
+     */
+    protected void checkNoMisplacedSpread() throws ParsingException {
+        if (isSpread(_token)) {
+            throw makeException("The spread operator " + Scanner.SPREAD
+                    + " can only be used after a function argument or an array element");
+        }
     }
 
     protected Evaluable[] makeArray(List<Evaluable> l) {

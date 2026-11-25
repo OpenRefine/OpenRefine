@@ -33,9 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,6 +51,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.functions.Get;
+import com.google.refine.grel.EvalErrorMessage;
 import com.google.refine.grel.Function;
 
 /**
@@ -98,18 +101,45 @@ public class FunctionCallExpr extends GrelExpr {
     @Override
     public Object evaluate(Properties bindings) {
         Object[] args = new Object[_args.length];
+        boolean hasSpread = false;
         for (int i = 0; i < _args.length; i++) {
             Object v = _args[i].evaluate(bindings);
             if (ExpressionUtils.isError(v)) {
                 return v; // bubble up the error
             }
+            if (_args[i] instanceof SpreadExpr) {
+                v = SpreadExpr.toElements(v);
+                if (v == null) {
+                    return new EvalError(EvalErrorMessage.expects_array_to_spread());
+                }
+                hasSpread = true;
+            }
             args[i] = v;
+        }
+        if (hasSpread) {
+            args = spliceSpreadArguments(args);
         }
         try {
             return _function.call(bindings, args);
         } catch (Exception e) {
             return new EvalError(e);
         }
+    }
+
+    /**
+     * Replaces the values of spread arguments, already converted to arrays by {@link SpreadExpr#toElements(Object)}, by
+     * their elements.
+     */
+    private Object[] spliceSpreadArguments(Object[] values) {
+        List<Object> spliced = new ArrayList<>(values.length);
+        for (int i = 0; i < values.length; i++) {
+            if (_args[i] instanceof SpreadExpr) {
+                Collections.addAll(spliced, (Object[]) values[i]);
+            } else {
+                spliced.add(values[i]);
+            }
+        }
+        return spliced.toArray();
     }
 
     @Override

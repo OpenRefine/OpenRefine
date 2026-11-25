@@ -38,6 +38,7 @@ import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.fail;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -54,6 +55,11 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.grel.ast.ArrayExpr;
+import com.google.refine.grel.ast.FunctionCallExpr;
+import com.google.refine.grel.ast.OperatorCallExpr;
+import com.google.refine.grel.ast.SpreadExpr;
+import com.google.refine.grel.ast.VariableExpr;
 import com.google.refine.model.Project;
 
 public class GrelTests extends GrelTestBase {
@@ -255,6 +261,7 @@ public class GrelTests extends GrelTestBase {
                 { "value + ' ' + cells.foo.value", "base,foo" },
                 { "cells[\"foo\"].value+'_'+value", "base,foo" },
                 { "parseHtml(value.trim())", "base" },
+                { "[value, cells.foo.value...]", "base,foo" },
                 { "cells", null },
                 // this could be analyzed too, but we will never reach completeness anyway!
                 { "get(cells, 'foo'+'bar')", null },
@@ -289,6 +296,12 @@ public class GrelTests extends GrelTestBase {
                 { "toDate( value+4 )", "toDate(value + 4)" },
                 { "(value + 4).toDate()", "(value + 4).toDate()" },
                 { "forEach([3, 4,8,7], v, mod(v,2))", "forEach([3, 4, 8, 7], v, mod(v, 2))" },
+                { "or(value ...)", "or(value...)" },
+                { "[value..., 'a', [1, 2]...]", "[value..., 'a', [1, 2]...]" },
+                { "value.substring(cells.foo.value.split(',')...)", "value.substring(cells.foo.value.split(',')...)" },
+                { "coalesce(value + [1]...)", "coalesce(value + [1]...)" },
+                { "value[[1, 3]...]", "value.get([1, 3]...)" },
+                { "forEach([value...], v, v)", "forEach([value...], v, v)" },
         };
         for (String[] test : tests) {
             Evaluable eval = MetaParser.parse("grel:" + test[0]);
@@ -297,6 +310,100 @@ public class GrelTests extends GrelTestBase {
             // check that the produced source can still be parsed
             Evaluable reparsed = MetaParser.parse(eval.getSource());
             Assert.assertEquals(reparsed, eval);
+        }
+    }
+
+    @Test
+    public void testSpreadParsing() throws ParsingException {
+        Function or = ControlFunctionRegistry.getFunction("or");
+        Evaluable a = new VariableExpr("a");
+        Evaluable b = new VariableExpr("b");
+
+        assertEquals(MetaParser.parse("grel:or(a...)"),
+                new FunctionCallExpr(new Evaluable[] { new SpreadExpr(a) }, or, "or", false));
+        assertEquals(MetaParser.parse("grel:a.or(b...)"),
+                new FunctionCallExpr(new Evaluable[] { a, new SpreadExpr(b) }, or, "or", true));
+        assertEquals(MetaParser.parse("grel:[a..., b]"),
+                new ArrayExpr(new Evaluable[] { new SpreadExpr(a), b }));
+        // the spread operator applies to the whole argument
+        assertEquals(MetaParser.parse("grel:or(a + b...)"),
+                new FunctionCallExpr(new Evaluable[] { new SpreadExpr(new OperatorCallExpr(new Evaluable[] { a, b }, "+")) },
+                        or, "or", false));
+    }
+
+    @Test
+    public void testSpread() throws ParsingException {
+        bindings.put("list", List.of(false, true));
+        bindings.put("strings", new String[] { "b", "c" });
+        String tests[][] = {
+                { "or([false, true]...)", "true" },
+                { "and([true, true, false]...)", "false" },
+                { "or(false, [false]..., list...)", "true" },
+                { "and(list...)", "false" },
+                { "or('[false, true]'.parseJson()...)", "true" },
+                { "coalesce('[null, 2]'.parseJson()...)", "2" },
+                { "['a', strings..., 'd'].join('|')", "a|b|c|d" },
+                { "[[1, 2]..., []..., 'x'.split(',')...].join('|')", "1|2|x" },
+                { "'internationalization'.substring([5, 11]...)", "nation" },
+                { "'hello'[[1, 3]...]", "el" },
+                { "forEach([[1, 2]..., 3], v, v * 2).join('|')", "2|4|6" },
+                { "if(or([false, true]...), 'yes', 'no')", "yes" },
+        };
+        for (String[] test : tests) {
+            parseEval(bindings, test);
+        }
+    }
+
+    @Test
+    public void testSpreadNonArray() throws ParsingException {
+        String tests[] = {
+                "or(true...)",
+                "coalesce('abc'...)",
+                "[null...]",
+                "['{\"a\": 1}'.parseJson()...]",
+        };
+        for (String test : tests) {
+            Object result = MetaParser.parse("grel:" + test).evaluate(bindings);
+            Assert.assertTrue(result instanceof EvalError, "Expected an error for expression: " + test);
+        }
+    }
+
+    @Test
+    public void testSpreadSyntaxErrors() {
+        String misplaced[] = {
+                "value...",
+                "value... + 1",
+                "1 + value...",
+                "(value...)",
+                "length((value...))",
+        };
+        for (String test : misplaced) {
+            assertParsingError(test, "The spread operator ... can only be used after a function argument or an array element");
+        }
+
+        assertParsingError("if([true]..., 1, 2)", "The spread operator ... cannot be used in the arguments of control if");
+        assertParsingError("forEach([1, 2], v, [v]...)",
+                "The spread operator ... cannot be used in the arguments of control forEach");
+
+        String others[] = {
+                "length(value... + 1)",
+                "length(value......)",
+                "length(...value)",
+                "[...]",
+        };
+        for (String test : others) {
+            assertThrows("Expression failed to generate parse syntax error: " + test, ParsingException.class,
+                    () -> MetaParser.parse("grel:" + test));
+        }
+    }
+
+    private void assertParsingError(String expression, String expectedMessage) {
+        try {
+            MetaParser.parse("grel:" + expression);
+            fail("No parsing error for expression: " + expression);
+        } catch (ParsingException e) {
+            Assert.assertTrue(e.getMessage().endsWith(expectedMessage),
+                    "Unexpected message for expression: " + expression + ": " + e.getMessage());
         }
     }
 
@@ -317,6 +424,7 @@ public class GrelTests extends GrelTestBase {
                 { "cells[\"foo\"].value+'_'+value", "cells[\"bar\"].value+'_'+value" },
                 { "toDate(cells[\"foo\"].value)", "toDate(cells[\"bar\"].value)" },
                 { "parseHtml(value.trim())", "parseHtml(value.trim())" },
+                { "or(cells.foo.value...)", "or(cells.bar.value...)" },
                 // when the dependencies cannot be isolated, we just return the original
                 { "cells", "cells" },
                 // this could be analyzed too, but we will never reach completeness anyway!
