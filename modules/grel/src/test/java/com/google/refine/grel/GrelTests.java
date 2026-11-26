@@ -344,6 +344,26 @@ public class GrelTests extends GrelTestBase {
         }
     }
 
+    // Regression test for #1768: Unicode-aware predefined character classes in GREL regex literals.
+    @Test
+    public void testUnicodeRegexLiterals() throws ParsingException {
+        String tests[][] = {
+                // \w covers Unicode letters in regex literals consumed by find/match/replace/split.
+                { "'café'.find(/\\w+/).join('|')", "café" },
+                // Unicode digits (Arabic-Indic) matched by \d.
+                { "'١٢٣'.find(/\\d+/).join('|')", "١٢٣" },
+                // Case-insensitive regex literal folds Unicode case (É -> é).
+                { "'Élysée'.find(/élysée/i).join('|')", "Élysée" },
+                // Split on Unicode whitespace (NBSP between b and c).
+                { "'a b\u00A0c'.split(/\\s+/).join(',')", "a,b,c" },
+                // replace() honors Unicode \w through the regex literal path.
+                { "'café'.replace(/\\w/, 'X')", "XXXX" },
+        };
+        for (String[] test : tests) {
+            parseEval(bindings, test);
+        }
+    }
+
     @Test
     public void testGetters() throws ParsingException {
         Evaluable evaluable = MetaParser.parse("grel:value + \" foo\"");
