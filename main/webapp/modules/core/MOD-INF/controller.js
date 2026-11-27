@@ -407,7 +407,6 @@ function init() {
     "index/scripts",
     module,
     commonModules.concat([
-      "3rdparty/tablesorter/jquery.tablesorter.js",
       "3rdparty/select2/select2.js",
 
       "scripts/util/misc.js",
@@ -458,7 +457,6 @@ function init() {
     [
       "3rdparty/jquery-ui/css/ui-lightness/jquery-ui.css",
       "3rdparty/select2/select2.css",
-      "3rdparty/tablesorter/theme.blue.css",
 
       "styles/theme.css",
       "styles/jquery-ui-overrides.css",

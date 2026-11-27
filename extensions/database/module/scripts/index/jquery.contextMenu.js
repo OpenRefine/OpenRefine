@@ -743,7 +743,7 @@
                 // focus input
                 var $input = $prev.find('input, textarea, select');
                 if ($input.length) {
-                    $input.focus();
+                    $input.trigger("focus")
                 }
             },
             // select next possible command in menu
@@ -787,7 +787,7 @@
                 // focus input
                 var $input = $next.find('input, textarea, select');
                 if ($input.length) {
-                    $input.focus();
+                    $input.trigger("focus");
                 }
             },
             // flag that we're inside an input so the key handler can act accordingly

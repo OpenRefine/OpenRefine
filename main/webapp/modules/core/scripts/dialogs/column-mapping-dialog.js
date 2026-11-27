@@ -76,9 +76,9 @@ function ColumnMappingDialog(operations, analyzedOperations) {
       .attr('name', name);
     if (defaultValue === '') {
       $('<option></option>')
-        .attr('value', '')
-        .attr('selected', 'true')
-        .attr('disabled', 'true')
+        .prop('value', '')
+        .prop('selected', true)
+        .prop('disabled', true)
         .css('display', 'none')
         .appendTo(select);
     }
