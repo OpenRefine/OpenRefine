@@ -82,6 +82,9 @@ public class Get implements Function {
                             if (start < 0) {
                                 start = length + start;
                             }
+                            if (to == null && start < 0) {
+                                throw new IndexOutOfBoundsException("Index " + from + " out of bounds for length " + length);
+                            }
                             start = Math.min(length, Math.max(0, start));
 
                             if (to == null) {
@@ -130,6 +133,9 @@ public class Get implements Function {
                             int start = ((Number) from).intValue();
                             if (start < 0) {
                                 start = s.length() + start;
+                            }
+                            if (to == null && start < 0) {
+                                throw new IndexOutOfBoundsException("Index " + from + " out of bounds for length " + s.length());
                             }
                             start = Math.min(s.length(), Math.max(0, start));
 
