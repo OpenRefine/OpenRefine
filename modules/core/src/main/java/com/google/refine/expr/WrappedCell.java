@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import java.util.List;
 import java.util.Properties;
 
 import com.google.refine.model.Cell;
@@ -48,6 +49,11 @@ public class WrappedCell implements HasFields {
         this.project = project;
         this.columnName = columnName;
         this.cell = cell;
+    }
+
+    @Override
+    public List<String> getFieldNames() {
+        return cell.getFieldNames();
     }
 
     @Override
