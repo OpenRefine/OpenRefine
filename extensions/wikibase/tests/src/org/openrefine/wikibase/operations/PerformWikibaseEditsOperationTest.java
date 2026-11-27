@@ -88,6 +88,15 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     }
 
     @Test
+    public void testGetColumnsDiffNoResults() {
+        var operation = new PerformWikibaseEditsOperation(
+                EngineConfig.defaultRowBased(), "my summary", 5, "", 60, "openrefine-${version}", null);
+
+        assertEquals(operation.getColumnsDiff(), Optional.of(ColumnsDiff.empty()));
+        assertEquals(operation.getColumnDependencies(), Optional.of(Set.of()));
+    }
+
+    @Test
     public void testRenameColumns() {
         var operation = new PerformWikibaseEditsOperation(
                 EngineConfig.defaultRowBased(), "my summary", 5, "", 60, "openrefine-${version}", "results column");
