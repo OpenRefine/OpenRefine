@@ -1,13 +1,18 @@
 
 package com.google.refine.commands.browsing;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.AfterMethod;
@@ -53,7 +58,7 @@ public class ComputeClustersCommandTests extends CommandTestBase {
     }
 
     @Test
-    public void testUserDefinedClustering() throws ServletException, IOException {
+    public void testUserDefinedClustering() throws Exception {
         String clusteringConf = "{"
                 + "  \"type\": \"binning\","
                 + "  \"params\":{"
@@ -67,7 +72,30 @@ public class ComputeClustersCommandTests extends CommandTestBase {
 
         command.doPost(request, response);
 
-        JsonNode results = ParsingUtilities.mapper.readTree(writer.toString());
-        assertEquals(results.get(0).size(), 3);
+        // Command now returns async "pending" response
+        JsonNode result = ParsingUtilities.mapper.readTree(writer.toString());
+        assertEquals(result.get("code").asText(), "pending");
+
+        // Wait for async process to complete
+        long deadline = System.currentTimeMillis() + 5000;
+        while (ComputeClustersCommand.getActiveProcess(project.id) != null
+                && !ComputeClustersCommand.getActiveProcess(project.id).isCompleted()
+                && System.currentTimeMillis() < deadline) {
+            Thread.sleep(50);
+        }
+
+        // Poll status via GetClusteringStatusCommand
+        GetClusteringStatusCommand statusCmd = new GetClusteringStatusCommand();
+        HttpServletRequest statusRequest = mock(HttpServletRequest.class);
+        HttpServletResponse statusResponse = mock(HttpServletResponse.class);
+        StringWriter statusWriter = new StringWriter();
+        when(statusResponse.getWriter()).thenReturn(new PrintWriter(statusWriter));
+        when(statusRequest.getParameter("project")).thenReturn(Long.toString(project.id));
+
+        statusCmd.doGet(statusRequest, statusResponse);
+
+        JsonNode statusResult = ParsingUtilities.mapper.readTree(statusWriter.toString());
+        assertEquals(statusResult.get("status").asText(), "done");
+        assertEquals(statusResult.get("clusters").get(0).size(), 3);
     }
 }
