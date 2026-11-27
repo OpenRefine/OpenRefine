@@ -35,7 +35,6 @@ package com.google.refine.commands.column;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +82,7 @@ public class RenameColumnCommand extends Command {
 
             AbstractOperation op = new ColumnRenameOperation(oldColumnName, newColumnName);
             op.validate();
-            Process process = op.createProcess(project, new Properties());
+            Process process = op.createProcess(project);
 
             HistoryEntry historyEntry = project.processManager.queueProcess(process);
             if (historyEntry != null) {

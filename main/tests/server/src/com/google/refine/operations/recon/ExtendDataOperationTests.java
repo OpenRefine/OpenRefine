@@ -245,7 +245,7 @@ public class ExtendDataOperationTests extends RefineTest {
     @Test
     public void serializeExtendDataProcess() throws Exception {
         Process p = ParsingUtilities.mapper.readValue(operationJsonLegacy, ExtendDataOperation.class)
-                .createProcess(project, new Properties());
+                .createProcess(project);
         TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()));
     }
 

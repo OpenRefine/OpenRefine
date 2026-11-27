@@ -408,7 +408,7 @@ public class RefineTest {
         Set<String> columnNamesBefore = project.columnModel.columns.stream()
                 .map(column -> column.getName())
                 .collect(Collectors.toSet());
-        Process process = operation.createProcess(project, new Properties());
+        Process process = operation.createProcess(project);
         if (process.isImmediate()) {
             process.performImmediate();
         } else {

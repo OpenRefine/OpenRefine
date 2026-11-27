@@ -86,7 +86,6 @@ public class RowRemovalOperationTests extends RefineTest {
 
     // dependencies
     Project projectIssue567;
-    Properties options;
     EngineConfig engine_config;
     Engine engine;
     Properties bindings;
@@ -163,7 +162,7 @@ public class RowRemovalOperationTests extends RefineTest {
         checkRowCounts(5, 4);
 
         EngineDependentOperation op = new RowRemovalOperation(engine_config);
-        HistoryEntry historyEntry = op.createProcess(projectIssue567, options).performImmediate();
+        HistoryEntry historyEntry = op.createProcess(projectIssue567).performImmediate();
         checkRowCounts(1, 0);
 
         historyEntry.revert(projectIssue567);
