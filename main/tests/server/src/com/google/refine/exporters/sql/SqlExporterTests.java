@@ -339,6 +339,32 @@ public class SqlExporterTests extends RefineTest {
     }
 
     @Test
+    public void testExportSqlWithBooleansInIntColumns() throws IOException {
+        createGridWithBooleans(2, 2);
+        ObjectNode optionsJson = createOptionsFromProject("sql_table_test", SqlData.SQL_TYPE_INT, "", null, false);
+
+        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        SUT.export(project, options, engine, writer);
+
+        String result = writer.toString();
+        logger.debug("\nresult:={} ", result);
+        Assert.assertTrue(result.contains("(\"column0\",\"column1\") VALUES \n( 1,0 ),\n( 0,1 )"));
+    }
+
+    @Test
+    public void testExportSqlWithBooleansInNumericColumns() throws IOException {
+        createGridWithBooleans(2, 2);
+        ObjectNode optionsJson = createOptionsFromProject("sql_table_test", SqlData.SQL_TYPE_NUMERIC, "", null, false);
+
+        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        SUT.export(project, options, engine, writer);
+
+        String result = writer.toString();
+        logger.debug("\nresult:={} ", result);
+        Assert.assertTrue(result.contains("(\"column0\",\"column1\") VALUES \n( 1,0 ),\n( 0,1 )"));
+    }
+
+    @Test
     public void testExportSqlWithSingleQuote() throws IOException {
         int noOfCols = 4;
         int noOfRows = 1;
@@ -423,6 +449,18 @@ public class SqlExporterTests extends RefineTest {
             Row row = new Row(noOfColumns);
             for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("It's row" + i + "cell" + j, null));
+            }
+            project.rows.add(row);
+        }
+    }
+
+    protected void createGridWithBooleans(int noOfRows, int noOfColumns) {
+        createColumns(noOfColumns);
+
+        for (int i = 0; i < noOfRows; i++) {
+            Row row = new Row(noOfColumns);
+            for (int j = 0; j < noOfColumns; j++) {
+                row.cells.add(new Cell((i + j) % 2 == 0, null));
             }
             project.rows.add(row);
         }
