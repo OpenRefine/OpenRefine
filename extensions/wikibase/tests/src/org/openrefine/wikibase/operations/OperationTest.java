@@ -32,13 +32,13 @@ import java.io.LineNumberReader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Properties;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.history.Change;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
@@ -94,7 +94,7 @@ public abstract class OperationTest extends WikidataRefineTest {
     protected String saveChange(Change change)
             throws IOException {
         StringWriter writer = new StringWriter();
-        change.save(writer, new Properties());
+        change.save(writer, SaveOptions.DEFAULT);
         return writer.toString();
     }
 

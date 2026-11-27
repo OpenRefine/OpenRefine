@@ -36,7 +36,6 @@ package com.google.refine.history;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.Properties;
 
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
@@ -68,7 +67,7 @@ public class ChangeSequence implements Change {
     }
 
     @Override
-    public void save(Writer writer, Properties options) throws IOException {
+    public void save(Writer writer, SaveOptions options) throws IOException {
         writer.write("count=");
         writer.write(Integer.toString(_changes.length));
         writer.write('\n');

@@ -48,6 +48,7 @@ import com.google.common.base.CharMatcher;
 
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
@@ -193,18 +194,10 @@ public class Row implements HasFields {
         return cells;
     }
 
-    /*
-     * @JsonView(JsonViews.SaveMode.class) public
-     */
-
-    public void save(Writer writer, Properties options) {
-        if (options.containsKey("rowIndex")) {
-            // See GetRowsCommand to serialize a row with indices
-            throw new IllegalArgumentException("Serializing with row indices is not supported anymore.");
-        }
+    public void save(Writer writer, SaveOptions options) {
         try {
             ParsingUtilities.saveWriter.writeValue(writer, this);
-            Pool pool = (Pool) options.get("pool");
+            Pool pool = options.getPool();
             if (pool != null) {
                 for (Cell c : cells) {
                     if (c != null && c.recon != null) {

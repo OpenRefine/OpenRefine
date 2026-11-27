@@ -39,10 +39,10 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -97,18 +97,18 @@ public class MassReconChange implements Change {
     }
 
     @Override
-    public void save(Writer writer, Properties options) throws IOException {
+    public void save(Writer writer, SaveOptions options) throws IOException {
         writeRecons(writer, options, _oldRecons, "oldReconCount");
         writeRecons(writer, options, _newRecons, "newReconCount");
         writer.write("/ec/\n"); // end of change marker
     }
 
-    protected void writeRecons(Writer writer, Properties options, Map<Long, Recon> recons, String key) throws IOException {
+    protected void writeRecons(Writer writer, SaveOptions options, Map<Long, Recon> recons, String key) throws IOException {
         writer.write(key + "=");
         writer.write(Integer.toString(recons.size()));
         writer.write('\n');
         for (Recon recon : recons.values()) {
-            Pool pool = (Pool) options.get("pool");
+            Pool pool = options.getPool();
             pool.poolReconCandidates(recon);
 
             ParsingUtilities.saveWriter.writeValue(writer, recon);

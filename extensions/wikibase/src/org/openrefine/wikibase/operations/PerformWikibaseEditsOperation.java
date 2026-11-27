@@ -62,6 +62,7 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.history.SaveOptions;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnsDiff;
@@ -232,7 +233,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         }
 
         @Override
-        public void save(Writer writer, Properties options)
+        public void save(Writer writer, SaveOptions options)
                 throws IOException {
             if (newEntityLibrary != null) {
                 writer.write("newItems=");
