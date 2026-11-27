@@ -75,4 +75,23 @@ describe(__filename, function () {
     cy.get('#projects-list table').contains(project1).should('be.visible');
     cy.get('#projects-list table').contains(project2).should('not.be.visible');
   });
+
+  it('Reset search when selecting all project tags', function () {
+    const project1 = 'Project A';
+    const project2 = 'Project B';
+    cy.loadProject('food.mini', project1, 'TestTagOne');
+    cy.loadProject('food.mini', project2, 'TestTagTwo');
+    cy.visitOpenRefine();
+    cy.navigateTo('Open project');
+    cy.get('#search-icon').click();
+    cy.get('#search-input').type(project2);
+    // The project-name filter has a 500 ms debounce with no observable request.
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(800);
+    cy.get('#projects-list table').contains(project1).should('not.be.visible');
+    cy.get('#projectTags ul').children().contains('All').click();
+    cy.get('#search-input').should('have.value', '');
+    cy.get('#projects-list table').contains(project1).should('be.visible');
+    cy.get('#projects-list table').contains(project2).should('be.visible');
+  });
 });
