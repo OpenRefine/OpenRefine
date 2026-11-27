@@ -58,10 +58,12 @@ import com.google.refine.process.Process;
  * Note that there are interactions on the client side that change only individual cells or individual rows (such as
  * starring one row or editing the text of one cell). These interactions do not depend on the faceted browsing engine's
  * configuration, and so they don't invoke commands that subclass this class. See AnnotateOneRowCommand and
- * EditOneCellCommand as examples.
+ * EditOneCellCommand as examples. Conversely, there are commands like GetRowsCommand and ExportRowsCommand which use
+ * the engine config, but don't modify the project, which don't subclass this.
  */
 abstract public class EngineDependentCommand extends Command {
 
+    // TODO: This duplicates OperationCommand.doPost, but we need to figure out a way to introduce it compatibly
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

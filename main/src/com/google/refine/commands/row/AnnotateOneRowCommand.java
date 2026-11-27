@@ -46,6 +46,7 @@ import com.google.refine.model.changes.RowFlagChange;
 import com.google.refine.model.changes.RowStarChange;
 import com.google.refine.process.QuickHistoryEntryProcess;
 
+// TODO: Define new super class ProcessCommand ?
 public class AnnotateOneRowCommand extends Command {
 
     @Override
