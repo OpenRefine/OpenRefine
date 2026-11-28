@@ -67,6 +67,12 @@ public class FindTests extends GrelTestBase {
         Assert.assertEquals(matches.length, 0);
     }
 
+    @Test(timeOut = 5000)
+    public void findFunctionFindEmptySubstringTest() throws Exception {
+        String[] matches = (String[]) invoke("find", "abc", "");
+        Assert.assertEquals(matches.length, 0);
+    }
+
     @Test
     public void findFunctionFindRegexTest() throws Exception {
         String[] matches = (String[]) invoke("find", "hello 123456 goodbye.", Pattern.compile("\\d{6}|hello"));
