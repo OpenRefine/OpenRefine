@@ -49,7 +49,8 @@ public class Find implements Function {
             Object s = args[0];
             Object p = args[1];
 
-            if (s != null && p != null && p instanceof String) {
+            // An empty substring matches at every index, so indexOf would never return -1.
+            if (s != null && p != null && p instanceof String && !((String) p).isEmpty()) {
                 int fromIndex = 0;
                 while ((fromIndex = s.toString().indexOf(p.toString(), fromIndex)) != -1) {
                     allMatches.add(p.toString());
