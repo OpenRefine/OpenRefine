@@ -2,6 +2,8 @@
 package com.google.refine.commands.lang;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -27,11 +29,13 @@ import com.google.refine.util.TestUtils;
 
 public class LoadLanguageCommandTests extends CommandTestBase {
 
+    private ButterflyModule coreModule;
+
     @BeforeMethod
     public void setUpCommand() throws IOException {
         FileProjectManager.initialize(TestUtils.createTempDirectory("openrefine-test-workspace-dir"));
         command = new LoadLanguageCommand();
-        ButterflyModule coreModule = mock(ButterflyModule.class);
+        coreModule = mock(ButterflyModule.class);
 
         when(coreModule.getName()).thenReturn("core");
         when(coreModule.getPath()).thenReturn(new File("webapp/modules/core"));
@@ -50,6 +54,20 @@ public class LoadLanguageCommandTests extends CommandTestBase {
         JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertTrue(response.has("dictionary"));
         assertEquals(response.get("lang").asText(), "en_GB");
+    }
+
+    @Test
+    public void testLoadEnglishOnce() throws ServletException, IOException {
+        when(request.getParameter("module")).thenReturn("core");
+        // Values from a real request are new strings, never the literal "en".
+        when(request.getParameterValues("lang")).thenReturn(new String[] { new String("en") });
+
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertEquals(response.get("lang").asText(), "en");
+        // English is the fallback, so it must not be added again when it is already the language asked for.
+        verify(coreModule, times(1)).getPath();
     }
 
     public void testLoadMultiLanguages() throws ServletException, IOException {
