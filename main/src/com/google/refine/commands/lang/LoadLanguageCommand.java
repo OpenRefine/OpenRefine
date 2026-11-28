@@ -105,7 +105,7 @@ public class LoadLanguageCommand extends Command {
         }
 
         // Add default English language as least favored...
-        if (langs.length == 0 || langs[langs.length - 1] != "en") {
+        if (langs.length == 0 || !"en".equals(langs[langs.length - 1])) {
             langs = Arrays.copyOf(langs, langs.length + 1);
             langs[langs.length - 1] = "en";
         }
