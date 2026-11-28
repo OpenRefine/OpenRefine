@@ -272,7 +272,7 @@
     "core-dialogs/template-export": "Templating export",
     "core-dialogs/template-prefix": "Prefix",
     "core-dialogs/template-rowt": "Row template",
-    "core-dialogs/template-rows": "Row separator",
+    "core-dialogs/template-rows": "Separator between rows or records",
     "core-dialogs/template-suffix": "Suffix",
     "core-dialogs/template-preview": "Template preview",
     "core-dialogs/idling": "Idling…",
